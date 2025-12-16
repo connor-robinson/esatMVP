@@ -34,6 +34,11 @@ export async function requireUser(
 }
 
 export async function requireRouteUser(request: Request) {
+  // During build time, return a mock response to prevent errors
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
+  }
+  
   const supabase = createRouteClient();
   const {
     data: { session },

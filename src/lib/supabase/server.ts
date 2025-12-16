@@ -15,20 +15,33 @@ export function createServerClient() {
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase environment variables");
   }
-  const cookieStore = cookies();
-  return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+  
+  // During build time, cookies() is not available, so we need to handle this gracefully
+  try {
+    const cookieStore = cookies();
+    return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options?: any) {
+          cookieStore.set(name, value, options);
+        },
+        remove(name: string, options?: any) {
+          cookieStore.delete(name);
+        },
       },
-      set(name: string, value: string, options?: any) {
-        cookieStore.set(name, value, options);
+    });
+  } catch (error) {
+    // If cookies() fails (e.g., during build), create a client without cookie handling
+    // This will only work for read operations during build
+    return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll: () => [],
+        setAll: () => {},
       },
-      remove(name: string, options?: any) {
-        cookieStore.delete(name);
-      },
-    },
-  });
+    });
+  }
 }
 
 // Alias for route handlers - uses the same server client
