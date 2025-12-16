@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    overflow-y: scroll;
+  }
+
+  body {
+    @apply bg-background text-gray-100 antialiased;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+  }
+
+  body::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    border: none;
+  }
+
+  body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  :root {
+    --subj-maths: #5da8f0;
+    --subj-physics: #a78bfa;
+    --subj-chem: #ef7d7d;
+    --subj-bio: #85BC82;
+    --subj-interview: #7b6fa6;
+  }
+}
+
+
