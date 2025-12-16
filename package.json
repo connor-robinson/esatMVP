@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "build:check": "npm run type-check && npm run lint && npm run build"
+    "build:check": "npm run type-check && npm run lint && npm run build",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@dnd-kit/accessibility": "^3.1.1",
