@@ -47,7 +47,7 @@ const rows = items.map((item) => ({
     last_time_sec: item.lastTimeSec ?? null,
   }));
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("drill_items")
     .upsert(rows, { onConflict: "user_id,paper_name,question_number" });
 

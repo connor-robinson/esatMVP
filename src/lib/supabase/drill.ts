@@ -116,7 +116,15 @@ export async function getDrillStats(paperName?: string) {
 
     if (error) throw error;
 
-    const reviewed = data.filter(item => item.last_reviewed_at).length;
+    if (!data) {
+      return {
+        reviewed: 0,
+        never: 0,
+        total: 0
+      };
+    }
+
+    const reviewed = data.filter((item: { last_reviewed_at: string | null }) => item.last_reviewed_at).length;
     const never = data.length - reviewed;
 
     return {

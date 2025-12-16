@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .insert({
       id: payload.id,
@@ -91,7 +91,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Missing session id" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .update({
       paper_id: payload.paperId ?? null,
@@ -139,7 +139,7 @@ export async function GET(request: Request) {
   const id = searchParams.get("id");
 
   if (id) {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("paper_sessions")
       .select("*")
       .eq("id", id)
@@ -154,7 +154,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ session: data ?? null });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .select("*")
     .eq("user_id", session.user.id)

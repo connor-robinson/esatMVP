@@ -4,25 +4,32 @@
 
 import { supabase, handleSupabaseError } from './client';
 import type { PaperSession } from '@/types/papers';
+import type { PaperSessionInsert } from './types';
 
 export async function createPaperSession(session: Omit<PaperSession, 'id' | 'createdAt' | 'updatedAt'>) {
   try {
-    const { data, error } = await supabase
+    // Note: user_id will be set automatically by RLS or should be passed separately
+    const insertData: Omit<PaperSessionInsert, 'user_id'> & { user_id?: string } = {
+      paper_name: session.paperName,
+      paper_variant: session.paperVariant,
+      session_name: session.sessionName,
+      started_at: new Date(session.startedAt).toISOString(),
+      ended_at: session.endedAt ? new Date(session.endedAt).toISOString() : null,
+      time_limit_minutes: session.timeLimitMinutes,
+      question_start: session.questionRange.start,
+      question_end: session.questionRange.end,
+      selected_sections: session.selectedSections || null,
+      answers: session.answers as any,
+      correct_flags: session.correctFlags as any,
+      guessed_flags: session.guessedFlags as any,
+      mistake_tags: session.mistakeTags as any,
+      score: session.score as any,
+      notes: session.notes || null,
+    };
+
+    const { data, error } = await (supabase as any)
       .from('paper_sessions')
-      .insert({
-        paper_name: session.paperName,
-        paper_variant: session.paperVariant,
-        session_name: session.sessionName,
-        started_at: new Date(session.startedAt).toISOString(),
-        ended_at: session.endedAt ? new Date(session.endedAt).toISOString() : null,
-        time_limit_minutes: session.timeLimitMinutes,
-        answers: session.answers,
-        correct_flags: session.correctFlags,
-        guessed_flags: session.guessedFlags,
-        mistake_tags: session.mistakeTags,
-        score: session.score,
-        notes: session.notes,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -36,22 +43,23 @@ export async function createPaperSession(session: Omit<PaperSession, 'id' | 'cre
 
 export async function updatePaperSession(id: string, updates: Partial<PaperSession>) {
   try {
-    const { data, error } = await supabase
+    const updateData: Partial<PaperSessionInsert> = {
+      ...(updates.paperName && { paper_name: updates.paperName }),
+      ...(updates.paperVariant && { paper_variant: updates.paperVariant }),
+      ...(updates.sessionName && { session_name: updates.sessionName }),
+      ...(updates.endedAt && { ended_at: new Date(updates.endedAt).toISOString() }),
+      ...(updates.timeLimitMinutes && { time_limit_minutes: updates.timeLimitMinutes }),
+      ...(updates.answers && { answers: updates.answers as any }),
+      ...(updates.correctFlags && { correct_flags: updates.correctFlags as any }),
+      ...(updates.guessedFlags && { guessed_flags: updates.guessedFlags as any }),
+      ...(updates.mistakeTags && { mistake_tags: updates.mistakeTags as any }),
+      ...(updates.score && { score: updates.score as any }),
+      ...(updates.notes && { notes: updates.notes || null }),
+    };
+
+    const { data, error } = await (supabase as any)
       .from('paper_sessions')
-      .update({
-        ...(updates.paperName && { paper_name: updates.paperName }),
-        ...(updates.paperVariant && { paper_variant: updates.paperVariant }),
-        ...(updates.sessionName && { session_name: updates.sessionName }),
-        ...(updates.endedAt && { ended_at: new Date(updates.endedAt).toISOString() }),
-        ...(updates.timeLimitMinutes && { time_limit_minutes: updates.timeLimitMinutes }),
-        ...(updates.answers && { answers: updates.answers }),
-        ...(updates.correctFlags && { correct_flags: updates.correctFlags }),
-        ...(updates.guessedFlags && { guessed_flags: updates.guessedFlags }),
-        ...(updates.mistakeTags && { mistake_tags: updates.mistakeTags }),
-        ...(updates.score && { score: updates.score }),
-        ...(updates.notes && { notes: updates.notes }),
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
