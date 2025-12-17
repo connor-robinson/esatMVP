@@ -82,7 +82,7 @@ export function Navbar() {
   }, [router, supabase]);
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
