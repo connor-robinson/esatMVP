@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -23,7 +23,7 @@ import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import { MISTAKE_OPTIONS } from "@/types/papers";
 import { getConversionTable, getConversionRows, scaleScore, findFallbackConversionTable } from "@/lib/supabase/questions";
 import { supabase } from "@/lib/supabase/client";
-import { fetchEsatTable, interpolatePercentile, mapSectionToTable } from "@/lib/esat/percentiles";
+import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { Letter, MistakeTag } from "@/types/papers";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -677,8 +677,12 @@ export default function PapersMarkPage() {
   }, [hasConversion, conversionRows, sectionAnalytics, examName]);
 
   // Section percentiles state - for all exams
-  const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }>>({});
+  const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }>>({});
   const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
+  // NSAA: toggle to show individual subjects vs averaged
+  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
+  // NSAA: averaged percentile across all subjects
+  const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
 
   useEffect(() => {
     // Calculate percentiles for all exams that have percentile tables
@@ -943,8 +947,8 @@ export default function PapersMarkPage() {
                     </div>
                   );
                 })}
-                    </div>
-                  </div>
+              </div>
+            </div>
 
             {/* Right column: detail view (fills, scrolls) */}
             <div className="p-4 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
@@ -1192,12 +1196,58 @@ export default function PapersMarkPage() {
 
                   {/* Section Percentiles - for all exams */}
                   <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
-                    <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
+                      {/* NSAA Toggle: Show individual subjects vs averaged */}
+                      {examName === 'NSAA' && Object.entries(sectionAnalytics).length > 1 && (
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <span className="text-xs text-neutral-400">Show individual subjects</span>
+                          <div className="relative inline-block w-11 h-6">
+                            <input
+                              type="checkbox"
+                              checked={showIndividualNSAASubjects}
+                              onChange={(e) => setShowIndividualNSAASubjects(e.target.checked)}
+                              className="sr-only"
+                            />
+                            <div className={`block w-11 h-6 rounded-full transition-colors ${showIndividualNSAASubjects ? 'bg-[#85BC82]' : 'bg-neutral-700'}`}>
+                              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showIndividualNSAASubjects ? 'translate-x-5' : ''}`}></div>
+                            </div>
+                          </div>
+                        </label>
+                      )}
+                    </div>
+                    
+                    {/* NSAA Averaged View (when toggle is off) */}
+                    {examName === 'NSAA' && !showIndividualNSAASubjects && nsaaAveragedPercentile !== null && (
+                      <div className="p-3 rounded-md bg-neutral-900">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full bg-[#85BC82]">
+                                Average (All Subjects)
+                              </span>
+                            </div>
+                            <div className="text-xs text-neutral-400 mt-1">
+                              Averaged across {Object.entries(sectionAnalytics).length} subject{Object.entries(sectionAnalytics).length > 1 ? 's' : ''}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
+                          TOP {(Math.max(0, 100 - nsaaAveragedPercentile)).toFixed(1)}%
+                        </div>
+                        <div className="mt-2 text-xs text-neutral-400 text-center">
+                          If you sat the NSAA today, {(100 - nsaaAveragedPercentile).toFixed(1)}% of test-takers would outperform you on average across all subjects.
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {(() => {
                         const entries = Object.entries(sectionAnalytics);
-                        return entries.map(([section, data], idx) => {
-                          const isLastSingle = entries.length % 2 === 1 && idx === entries.length - 1;
+                        // For NSAA, only show individual if toggle is on
+                        const displayEntries = (examName === 'NSAA' && !showIndividualNSAASubjects) ? [] : entries;
+                        return displayEntries.map(([section, data], idx) => {
+                          const isLastSingle = displayEntries.length % 2 === 1 && idx === displayEntries.length - 1;
                         const sp = sectionPercentiles[section];
                         const pct = sp?.percentile;
                         const score = sp?.score;
@@ -1208,6 +1258,8 @@ export default function PapersMarkPage() {
                         const partLetterRaw = (match?.partLetter || section).toString();
                         const partNameFull = match?.partName || '';
                         const sectionNameForColor = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
+                        const examYear = qs?.[0]?.examYear as number | undefined;
+                        const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
                         return (
                           <div key={section} className={`p-3 rounded-md bg-neutral-900 ${isLastSingle ? 'md:col-span-2 md:max-w-[560px] md:mx-auto' : ''}`}>
                             <div className="flex items-start justify-between">
@@ -1243,6 +1295,30 @@ export default function PapersMarkPage() {
                             <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
                               {Number.isFinite(pct as any) ? `TOP ${(Math.max(0, 100 - (pct as number))).toFixed(1)}%` : '—'}
                             </div>
+                            
+                            {/* TMUA Score Change Info Box for <=2023 papers */}
+                            {isTmuAPre2024 && sp?.oldPercentile !== null && sp?.oldPercentile !== undefined && sp?.newEquivalentScore !== null && sp?.newEquivalentScore !== undefined && (
+                              <div className="mt-3 p-3 rounded-md bg-neutral-800/50 border border-neutral-700">
+                                <div className="flex items-start gap-2">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 mt-0.5 flex-shrink-0">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="16" x2="12" y2="12" />
+                                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                                  </svg>
+                                  <div className="flex-1 text-xs text-neutral-300">
+                                    <div className="font-medium mb-1">Score Change Notice</div>
+                                    <div className="text-neutral-400 mb-2">
+                                      Your percentile ({sp.oldPercentile.toFixed(1)}%) is based on the pre-2024 TMUA scoring system. 
+                                      If you achieved the same percentile in 2024-2025, your score would be approximately {sp.newEquivalentScore.toFixed(1)}.
+                                    </div>
+                                    <div className="text-neutral-500 text-[10px]">
+                                      TMUA changed its scoring system in 2024. This shows your equivalent performance under the new system.
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            
                             {/* Explanation moved to tooltip above */}
                             {/* Mini percentile chart */}
                             {sp?.table && percentileTables[sp.table] && (
@@ -1646,13 +1722,14 @@ export default function PapersMarkPage() {
                       )}
                     </div>
                   </div>
+                  </div>
 
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
                   {/* Key Insights removed */}
                 </div>
               ) : (
-              <>
+              <div className="space-y-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="text-base font-semibold text-neutral-200">Question</div>
@@ -1980,69 +2057,6 @@ export default function PapersMarkPage() {
                 </div>
               )}
 
-              {/* Fullscreen overlay (match /solve structure) */}
-              {isFullscreen && createPortal(
-                <div className="fixed inset-0 z-[99999] bg-black">
-                  {/* Exit Fullscreen Button - Top Right */}
-                  <div className="absolute top-6 right-6 z-[100001] pointer-events-auto">
-                        <button
-                      onClick={() => {
-                        setIsFullscreen(false);
-                        setFullscreenImage(null);
-                      }}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
-                      title="Exit fullscreen mode"
-                    >
-                      <span className="hidden sm:inline">Exit Fullscreen</span>
-                        </button>
-                    </div>
-                  {/* Dark/Light toggle bottom-right */}
-                  <div className="absolute bottom-8 right-8 z-[100001] pointer-events-auto" style={{ bottom: '32px' }}>
-                            <button
-                      onClick={() => setIsDarkMode(!isDarkMode)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
-                      title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                    >
-                      {isDarkMode ? (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                          </svg>
-                          <span className="hidden sm:inline">Light</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                          <span className="hidden sm:inline">Dark</span>
-                        </>
-                      )}
-                            </button>
-                </div>
-                  {/* Image centered */}
-                  <div className="absolute inset-0 z-[100000] flex items-center justify-center p-6">
-                    {(() => {
-                      const question = usePaperSessionStore.getState().questions[selectedIndex];
-                      const isSolution = fullscreenImage === 'solution';
-                      const imgSrc = isSolution 
-                        ? (croppedAnswerImage || question?.solutionImage)
-                        : (croppedQuestionImage || question?.questionImage);
-                      const imgAlt = isSolution ? 'Solution' : `Question ${questionNumbers[selectedIndex]}`;
-                      return (
-                        <img
-                          src={imgSrc as string}
-                          alt={imgAlt}
-                          className="rounded-md object-contain max-h-full max-w-full"
-                          style={{ filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none' }}
-                        />
-                      );
-                    })()}
-          </div>
-                </div>,
-                document.body
-              )}
-
               {/* Notes for this question & Add to Drill */}
               <div className="mt-4 space-y-3">
                 <div className="flex items-center justify-between gap-3">
@@ -2095,7 +2109,67 @@ export default function PapersMarkPage() {
                   </div>
                 )}
               </div>
-              </>
+              </div>
+              )}
+              
+              {/* Fullscreen overlay */}
+              {selectedIndex !== -1 && isFullscreen && createPortal(
+                <div className="fixed inset-0 z-[99999] bg-black">
+                  <div className="absolute top-6 right-6 z-[100001] pointer-events-auto">
+                    <button
+                      onClick={() => {
+                        setIsFullscreen(false);
+                        setFullscreenImage(null);
+                      }}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
+                      title="Exit fullscreen mode"
+                    >
+                      <span className="hidden sm:inline">Exit Fullscreen</span>
+                    </button>
+                  </div>
+                  <div className="absolute bottom-8 right-8 z-[100001] pointer-events-auto">
+                    <button
+                      onClick={() => setIsDarkMode(!isDarkMode)}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200 backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25"
+                      title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+                    >
+                      {isDarkMode ? (
+                        <>
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                          <span className="hidden sm:inline">Light</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                          </svg>
+                          <span className="hidden sm:inline">Dark</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="absolute inset-0 z-[100000] flex items-center justify-center p-6">
+                    {(() => {
+                      const question = usePaperSessionStore.getState().questions[selectedIndex];
+                      const isSolution = fullscreenImage === 'solution';
+                      const imgSrc = isSolution 
+                        ? (croppedAnswerImage || question?.solutionImage)
+                        : (croppedQuestionImage || question?.questionImage);
+                      const imgAlt = isSolution ? 'Solution' : `Question ${questionNumbers[selectedIndex]}`;
+                      return (
+                        <img
+                          src={imgSrc as string}
+                          alt={imgAlt}
+                          className="rounded-md object-contain max-h-full max-w-full"
+                          style={{ filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none' }}
+                        />
+                      );
+                    })()}
+                  </div>
+                </div>,
+                document.body
               )}
             </div>
           </div>
