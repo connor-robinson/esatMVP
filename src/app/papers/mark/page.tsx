@@ -676,38 +676,19 @@ export default function PapersMarkPage() {
     return Math.round((weightedSum / totalWeight) * 10) / 10;
   }, [hasConversion, conversionRows, sectionAnalytics, examName]);
 
-  // Section percentiles state - only for ESAT
+  // Section percentiles state - for all exams
   const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }>>({});
   const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
 
   useEffect(() => {
-    // Only calculate percentiles for ESAT papers (which use ESAT percentile tables)
-    if (examName !== 'ESAT') {
-      // For non-ESAT exams, just show the converted scores without percentiles
-      const qs = usePaperSessionStore.getState().questions;
-      const entries = Object.entries(sectionAnalytics);
-      const out: Record<string, { percentile: null; score: number | null; table: null; label: string }> = {};
-      for (const [section, data] of entries) {
-        const match = qs.find(q => (q.partLetter || '').trim() === section);
-        const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
-        const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
-        const convPartName = resolved.name;
-        const scaled = hasConversion ? scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest') : null;
-        const score = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
-        out[section] = { percentile: null, score, table: null, label: `${examName} Score` };
-      }
-      setSectionPercentiles(out);
-      setPercentileTables({});
-      return;
-    }
-
-    // ESAT-specific percentile calculation
+    // Calculate percentiles for all exams that have percentile tables
     (async () => {
       try {
         const qs = usePaperSessionStore.getState().questions;
         const entries = Object.entries(sectionAnalytics);
         if (entries.length === 0) return;
-        // Compute ESAT per section and decide table keys
+        
+        // Compute per section and decide table keys
         const needed: Record<string, { score: number | null; tableKey: string | null; label: string } > = {};
         for (const [section, data] of entries) {
           const match = qs.find(q => (q.partLetter || '').trim() === section);
@@ -719,26 +700,42 @@ export default function PapersMarkPage() {
           const { key: tableKey, label } = mapSectionToTable({ examName, sectionLetter: partLetterRaw, sectionName: match?.partName });
           needed[section] = { score, tableKey, label };
         }
-        // Fetch unique tables (only for ESAT)
+        
+        // Fetch unique percentile tables (for exams that have them)
         const uniqueKeys = Array.from(new Set(Object.values(needed).map(v => v.tableKey).filter(Boolean))) as string[];
         const keyToRows: Record<string, any[]> = {};
         await Promise.all(uniqueKeys.map(async (k) => {
-          keyToRows[k] = await fetchEsatTable(k);
+          try {
+            keyToRows[k] = await fetchEsatTable(k);
+          } catch (e) {
+            // Table doesn't exist for this exam/section - that's okay, we'll handle it gracefully
+            console.log(`[mark] Percentile table not available: ${k}`, e);
+          }
         }));
+        
         const out: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> = {};
         for (const [section, info] of Object.entries(needed)) {
-          if (!info.score || !info.tableKey || !keyToRows[info.tableKey]) {
-            out[section] = { percentile: null, score: info.score, table: info.tableKey, label: info.label };
+          // Always include the score
+          if (!info.score) {
+            out[section] = { percentile: null, score: null, table: info.tableKey, label: info.label || `${examName} Score` };
             continue;
           }
-          const p = interpolatePercentile(keyToRows[info.tableKey], info.score);
-          const clamped = Math.max(0, Math.min(100, p));
-          out[section] = { percentile: clamped, score: info.score, table: info.tableKey, label: info.label };
+          
+          // If we have a percentile table and it loaded successfully, calculate percentile
+          if (info.tableKey && keyToRows[info.tableKey] && keyToRows[info.tableKey].length > 0) {
+            const p = interpolatePercentile(keyToRows[info.tableKey], info.score);
+            const clamped = Math.max(0, Math.min(100, p));
+            out[section] = { percentile: clamped, score: info.score, table: info.tableKey, label: info.label };
+          } else {
+            // No percentile table available, but still show the score
+            out[section] = { percentile: null, score: info.score, table: info.tableKey, label: info.label || `${examName} Score` };
+          }
         }
         setSectionPercentiles(out);
         setPercentileTables(keyToRows as any);
       } catch (e) {
         // fail-soft
+        console.error('[mark] Error calculating section percentiles', e);
       }
     })();
   }, [sectionAnalytics, hasConversion, JSON.stringify(conversionRows), examName]);
@@ -1193,8 +1190,7 @@ export default function PapersMarkPage() {
 
                   
 
-                  {/* Section Percentiles (only for ESAT) or Section Scores (for other exams) */}
-                  {examName === 'ESAT' ? (
+                  {/* Section Percentiles - for all exams */}
                   <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
                     <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1222,9 +1218,7 @@ export default function PapersMarkPage() {
                                   </span>
                                 </div>
                                 <div className="text-xs text-neutral-400">
-                                  {examName === 'ESAT' 
-                                    ? `from ESAT ${typeof score === 'number' ? score.toFixed(1) : '—'}`
-                                    : `${examName} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
+                                  {typeof score === 'number' ? `${examName} score: ${score.toFixed(1)}` : '—'}
                                 </div>
                               </div>
                               <div className="flex items-center gap-1">
@@ -1239,8 +1233,8 @@ export default function PapersMarkPage() {
                                     </svg>
                                   </button>
                                   <div className="absolute right-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
-                                    {examName === 'ESAT' 
-                                      ? "We use the section's cumulative distribution: locate your ESAT score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
+                                    {sp?.table && percentileTables[sp.table] 
+                                      ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
                                       : `We use ${examName} conversion tables to convert your raw score to a scaled score.`}
                                   </div>
                                 </div>
@@ -1317,65 +1311,15 @@ export default function PapersMarkPage() {
                               </div>
                             )}
                             <div className="mt-2 text-xs text-neutral-400">
-                              If you sat the {examName} today, {Number.isFinite(pct as any) ? (100 - (pct as number)).toFixed(1) : '—'}% of test-takers would outperform you in {section}.
+                              {Number.isFinite(pct as any) 
+                                ? `If you sat the ${examName} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
+                                : `Your ${examName} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
                             </div>
                           </div>
                         );
                       });
                     })()}
                   </div>
-                </div>
-                  ) : (
-                  <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
-                    <div className="text-base font-semibold text-neutral-100">Section Scores</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {(() => {
-                        const entries = Object.entries(sectionAnalytics);
-                        return entries.map(([section, data], idx) => {
-                          const isLastSingle = entries.length % 2 === 1 && idx === entries.length - 1;
-                          const sp = sectionPercentiles[section];
-                          const score = sp?.score;
-                          const qs = usePaperSessionStore.getState().questions;
-                          const match = qs.find(q => (q.partLetter || '').trim() === section);
-                          const partLetterRaw = (match?.partLetter || section).toString();
-                          const partNameFull = match?.partName || '';
-                          const sectionNameForColor = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
-                          const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
-                          return (
-                            <div key={section} className={`p-3 rounded-md bg-neutral-900 ${isLastSingle ? 'md:col-span-2 md:max-w-[560px] md:mx-auto' : ''}`}>
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
-                                      {section}
-                                    </span>
-                                  </div>
-                                  <div className="text-xs text-neutral-400">
-                                    {examName} score: {typeof score === 'number' ? score.toFixed(1) : '—'}
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  <div className="text-xs text-neutral-400">{examName}</div>
-                                  <div className="text-xl font-semibold text-neutral-100">{score !== null && score !== undefined ? score.toFixed(1) : '—'}</div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2 mb-2 mt-2">
-                                <div className="flex-1 h-2 bg-neutral-700 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full" style={{ width: `${accuracy}%`, backgroundColor: accuracy >= 80 ? PAPER_COLORS.biology : accuracy >= 60 ? PAPER_COLORS.advanced : PAPER_COLORS.chemistry }} />
-                                </div>
-                                <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
-                              </div>
-                              <div className="flex items-center justify-between text-xs text-neutral-400">
-                                <span>Avg: {formatTime(Math.round(data.avgTime))}</span>
-                                {data.guessed > 0 && <span>{data.guessed} guessed</span>}
-                              </div>
-                            </div>
-                          );
-                        });
-                      })()}
-                    </div>
-                  </div>
-                  )}
 
                   {/* Guessing Behavior (separate container) */}
                   <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
@@ -2148,12 +2092,12 @@ export default function PapersMarkPage() {
                       className="w-full px-4 py-3 text-neutral-100 rounded-lg bg-white/5 text-sm resize-none placeholder:text-neutral-400 outline-none focus:outline-none focus:ring-0 ring-0 border-0"
                       rows={4}
                     />
-        </div>
-                  )}
-                </div>
-               </>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
+              </>
+              )}
+            </div>
           </div>
         </Card>
 

@@ -29,13 +29,31 @@ export type MapArgs = {
 export function mapSectionToTable({ examName, sectionLetter, sectionName }: MapArgs): { key: string | null; label: string } {
   const exam = (examName || '').toUpperCase();
   const name = (sectionName || '').toLowerCase();
+  const letter = (sectionLetter || '').toUpperCase();
+  
+  // ESAT mapping
+  if (exam === 'ESAT') {
+    if (name.includes('biology')) return { key: 'biology_cumulative', label: 'Biology' };
+    if (name.includes('chem')) return { key: 'chemistry_cumulative', label: 'Chemistry' };
+    if (name.includes('phys')) return { key: 'physics_cumulative', label: 'Physics' };
+    if (name.includes('math') || name.includes('mathematics')) return { key: 'math2_cumulative', label: 'Mathematics' };
+  }
+  
+  // ENGAA mapping
   if (exam === 'ENGAA') {
     return { key: 'combined_math_phys', label: 'Combined (Math/Phys)' };
   }
-  if (name.includes('biology')) return { key: 'biology_cumulative', label: 'Biology' };
-  if (name.includes('chem')) return { key: 'chemistry_cumulative', label: 'Chemistry' };
-  if (name.includes('phys')) return { key: 'physics_cumulative', label: 'Physics' };
-  if (name.includes('math') || name.includes('mathematics')) return { key: 'math2_cumulative', label: 'Mathematics' };
+  
+  // TMUA mapping - Paper 1 and Paper 2
+  if (exam === 'TMUA') {
+    if (name.includes('paper 1') || name.includes('paper1') || letter === 'A' || letter === '1') {
+      return { key: 'tmua_paper1', label: 'Paper 1' };
+    }
+    if (name.includes('paper 2') || name.includes('paper2') || letter === 'B' || letter === '2') {
+      return { key: 'tmua_paper2', label: 'Paper 2' };
+    }
+  }
+  
   return { key: null, label: 'Unknown' };
 }
 
