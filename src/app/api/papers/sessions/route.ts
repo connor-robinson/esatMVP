@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { requireRouteUser } from "@/lib/supabase/auth";
+import { requireRouteUser, getOptionalSession } from "@/lib/supabase/auth";
+import { createRouteClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,10 +35,15 @@ function toIso(value?: number | null) {
 }
 
 export async function POST(request: Request) {
-  const { session, supabase } = await requireRouteUser(request);
+  const session = await getOptionalSession();
   if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Authentication required", code: "AUTH_REQUIRED" },
+      { status: 401 }
+    );
   }
+
+  const supabase = createRouteClient();
 
   const payload = (await request.json()) as SessionPayload;
   if (!payload?.id || !payload.paperName || !payload.sessionName) {
@@ -82,10 +88,15 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { session, supabase } = await requireRouteUser(request);
+  const session = await getOptionalSession();
   if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Authentication required", code: "AUTH_REQUIRED" },
+      { status: 401 }
+    );
   }
+
+  const supabase = createRouteClient();
 
   const payload = (await request.json()) as SessionPayload;
   if (!payload?.id) {
@@ -131,10 +142,15 @@ export async function PATCH(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const { session, supabase } = await requireRouteUser(request);
+  const session = await getOptionalSession();
   if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Authentication required", code: "AUTH_REQUIRED" },
+      { status: 401 }
+    );
   }
+
+  const supabase = createRouteClient();
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");

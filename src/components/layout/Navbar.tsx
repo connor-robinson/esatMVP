@@ -70,7 +70,8 @@ export function Navbar() {
   }, []);
 
   const loginHref = useMemo(() => {
-    const redirectTo = pathname && pathname !== "/login" ? pathname : "/papers/plan";
+    // Default to /papers/plan if on home page or login page
+    const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/plan";
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 
@@ -164,6 +165,18 @@ export function Navbar() {
             <div className="flex items-center space-x-2">
               {session?.user ? (
                 <>
+                  <Link
+                    href="/profile"
+                    className={cn(
+                      "hidden md:inline px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wider transition-all duration-fast ease-signature",
+                      pathname === "/profile"
+                        ? "bg-primary/10 text-primary"
+                        : "text-white/60 hover:text-white/90 hover:bg-white/5"
+                    )}
+                  >
+                    Profile
+                  </Link>
+                  <span className="hidden lg:inline text-sm text-white/50">|</span>
                   <span className="hidden md:inline text-sm text-white/70">
                     {session.user.email}
                   </span>

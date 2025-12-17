@@ -67,3 +67,37 @@ export async function requireRouteUser(request: Request) {
   }
 }
 
+/**
+ * Check if user is authenticated without redirecting
+ * Useful for optional auth scenarios
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const supabase = createServerClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return !!session?.user;
+  } catch (error) {
+    console.error("[auth] isAuthenticated error:", error);
+    return false;
+  }
+}
+
+/**
+ * Get current session without requiring authentication
+ * Returns null if not authenticated
+ */
+export async function getOptionalSession(): Promise<Session | null> {
+  try {
+    const supabase = createServerClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  } catch (error) {
+    console.error("[auth] getOptionalSession error:", error);
+    return null;
+  }
+}
+
