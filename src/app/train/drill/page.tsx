@@ -5,7 +5,7 @@
 "use client";
 
 import { Suspense, lazy } from "react";
-import { DndContext, DragOverlay, closestCenter } from "@dnd-kit/core";
+import { DndContext, DragOverlay, pointerWithin } from "@dnd-kit/core";
 import { Container } from "@/components/layout/Container";
 import { getAllTopics, getTopic } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
@@ -56,7 +56,7 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <DndContext
-        collisionDetection={closestCenter}
+        collisionDetection={pointerWithin}
         onDragStart={(e) => builder.handleDragStart(String(e.active.id))}
         onDragEnd={builder.handleDragEnd}
       >
@@ -71,13 +71,13 @@ export default function BuilderPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
             {/* Left: Topic selector */}
             <div>
               <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
                 <TopicSelector
                   topics={allTopics}
-                  selectedTopicIds={builder.selectedTopics}
+                  selectedTopicIds={builder.selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`)}
                   onAddTopic={builder.addTopic}
                 />
               </Suspense>
@@ -88,18 +88,16 @@ export default function BuilderPage() {
               <div>
                 <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
                   <SessionFolder
-                    selectedTopics={builder.selectedTopics.map(id => getTopic(id)!).filter(Boolean)}
+                    selectedTopicVariants={builder.selectedTopicVariants}
                     questionCount={builder.questionCount}
                     onQuestionCountChange={builder.setQuestionCount}
-                    onRemoveTopic={builder.removeTopic}
+                    onRemoveTopicVariant={builder.removeTopicVariant}
                     onClear={builder.clearTopics}
                     onSave={handleSavePreset}
                     onStart={builder.startSession}
                     canStart={builder.canStart}
                     presets={builder.presets}
                     onLoadPreset={builder.loadPreset}
-                    topicLevels={builder.topicLevels}
-                    onTopicLevelChange={builder.setTopicLevel}
                   />
                 </Suspense>
               </div>
@@ -123,11 +121,30 @@ export default function BuilderPage() {
         {/* Drag overlay */}
         <DragOverlay>
           {builder.activeId ? (
-            <div className="px-4 py-2.5 rounded-xl bg-primary/20 border border-primary/40 text-white/95 text-sm font-semibold shadow-2xl backdrop-blur-md">
+            <div className="px-4 py-2.5 rounded-xl bg-primary/20 ring-2 ring-primary/40 text-white/95 text-sm font-semibold shadow-2xl backdrop-blur-md">
               {(() => {
-                const topicId = builder.activeId.replace("topic-", "");
-                const topic = getTopic(topicId);
-                return topic?.name || topicId;
+                const topicVariantId = builder.activeId.replace("topic-", "");
+                // Check if it's a topic ID (not a variant - variants have format "topicId-variantId")
+                const topic = getTopic(topicVariantId);
+                if (topic) {
+                  // It's a topic - show topic name
+                  return topic.name;
+                }
+                // Check if it's a variant ID (contains hyphen)
+                if (topicVariantId.includes('-')) {
+                  const parts = topicVariantId.split('-');
+                  // Try to find the topic (progressive matching)
+                  for (let i = 1; i < parts.length; i++) {
+                    const possibleTopicId = parts.slice(0, i).join('-');
+                    const possibleTopic = getTopic(possibleTopicId);
+                    if (possibleTopic) {
+                      const variantId = parts.slice(i).join('-');
+                      const variant = possibleTopic.variants?.find(v => v.id === variantId);
+                      return variant ? `${possibleTopic.name}: ${variant.name}` : possibleTopic.name;
+                    }
+                  }
+                }
+                return topicVariantId;
               })()}
             </div>
           ) : null}

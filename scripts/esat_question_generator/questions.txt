@@ -1,0 +1,78 @@
+================================================================================
+ESAT QUESTION GENERATOR - EXPORT
+Total Questions: 1
+================================================================================
+
+
+================================================================================
+QUESTION #1
+================================================================================
+ID: M6-Easy-ef6fe37bcb
+Schema: M6
+Difficulty: Easy
+Run ID: 20251218_013053
+Attempts: 1
+Created: 2025-12-18T01:33:01.595744
+
+--------------------------------------------------------------------------------
+QUESTION PACKAGE
+--------------------------------------------------------------------------------
+STEM:
+What is the value of the sum $$ \sum_{n=1}^{99} \frac{1}{\sqrt{n} + \sqrt{n+1}} $$
+
+
+OPTIONS:
+  A: \sqrt{99} - 1
+  B: 9 [CORRECT]
+  C: \sqrt{99}
+  D: 10
+  E: 11
+CORRECT_OPTION: B
+
+SOLUTION:
+REASONING:
+Rationalise the denominator of the general term: $$ \frac{1}{\sqrt{n} + \sqrt{n+1}} = \frac{1}{\sqrt{n} + \sqrt{n+1}} \times \frac{\sqrt{n+1} - \sqrt{n}}{\sqrt{n+1} - \sqrt{n}} = \frac{\sqrt{n+1} - \sqrt{n}}{(n+1) - n} = \sqrt{n+1} - \sqrt{n} $$ The sum becomes a telescoping series: $$ \sum_{n=1}^{99} (\sqrt{n+1} - \sqrt{n}) = (\sqrt{2} - \sqrt{1}) + (\sqrt{3} - \sqrt{2}) + \dots + (\sqrt{100} - \sqrt{99}) $$ All intermediate terms cancel, leaving only the final positive term and the initial negative term: $$ \sqrt{100} - \sqrt{1} = 10 - 1 = 9 $$
+
+
+KEY_INSIGHT:
+Rationalising the denominator transforms the summand into a difference, creating a telescoping series where only the boundary terms survive.
+
+
+DISTRACTOR_MAP:
+  A: Result of a "fencepost" error where the upper bound is taken as $\sqrt{99}$ (using $n$ instead of $n+1$).
+  B: Correct. [CORRECT]
+  C: Result of forgetting the lower bound term ($-1$) and using the wrong upper bound ($\sqrt{99}$).
+  D: Result of forgetting the lower bound term ($-1$) and only calculating the upper term ($\sqrt{100}$).
+  E: Result of an addition sign error in the final calculation ($\sqrt{100} + \sqrt{1}$).
+
+--------------------------------------------------------------------------------
+VERIFIER REPORT
+--------------------------------------------------------------------------------
+Verdict: PASS
+Confidence: high
+Notes:
+  - The mathematical derivation is correct; the series telescopes to $\sqrt{100} - \sqrt{1} = 9$.
+  - The question is standard for ESAT/ENGAA Mathematics 1, testing algebraic manipulation and series summation without a calculator.
+  - Distractors are well-chosen, covering fencepost errors, sign errors, and forgetting the initial term.
+  - Difficulty is appropriate for the time limit (under 2 minutes for a well-prepared candidate).
+
+--------------------------------------------------------------------------------
+STYLE REPORT
+--------------------------------------------------------------------------------
+Verdict: PASS
+Scores:
+  authenticity: 10/10
+  one_idea_purity: 10/10
+  no_calculator: 10/10
+  elegance: 10/10
+  distractor_realism: 10/10
+  plausibility: 10/10
+Summary: This is a perfectly constructed question, testing a classic telescoping series problem. It is concise, requires no calculator, and features excellent distractors that target common errors.
+
+--------------------------------------------------------------------------------
+IDEA PLAN (from Designer)
+--------------------------------------------------------------------------------
+Schema ID: M6
+Idea Summary: Evaluate a finite sum where the summand is a fraction involving radicals in the denominator. The candidate must rationalise the denominator to transform the expression into a difference of terms, creating a telescoping series where all intermediate terms cancel out.
+
+

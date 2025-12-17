@@ -68,4 +68,21 @@ export function getPaperTypeColor(paperType: string): string {
   return PAPER_TYPE_COLORS[paperType as keyof typeof PAPER_TYPE_COLORS] || PAPER_COLORS.mathematics;
 }
 
-
+/**
+ * Helper function to desaturate a color (convert to rgba with reduced opacity)
+ */
+export function desaturateColor(color: string, opacity: number = 0.6): string {
+  // Convert hex to rgba if needed
+  if (color.startsWith("#")) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+  // If already rgba, extract and modify
+  const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (match) {
+    return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`;
+  }
+  return color;
+}

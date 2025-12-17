@@ -351,7 +351,33 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               console.log('Final filtered questions count:', processedQuestions.length);
               console.log('Final questions first 3:', processedQuestions.slice(0, 3).map(q => ({ num: q.questionNumber, part: q.partName })));
               
-              set({ questions: processedQuestions, sectionStarts, questionsLoading: false });
+              // Update questionRange to match actual loaded questions count
+              const currentState = get();
+              const actualQuestionCount = processedQuestions.length;
+              const expectedCount = currentState.questionRange.end - currentState.questionRange.start + 1;
+              
+              if (actualQuestionCount !== expectedCount) {
+                console.warn(`[loadQuestions] Question count mismatch: expected ${expectedCount}, got ${actualQuestionCount}. Updating questionRange.`);
+                set({
+                  questions: processedQuestions,
+                  sectionStarts,
+                  questionsLoading: false,
+                  questionRange: {
+                    start: 1,
+                    end: actualQuestionCount,
+                  },
+                  // Resize arrays to match actual question count
+                  answers: Array.from({ length: actualQuestionCount }, (_, i) => currentState.answers[i] || initialAnswer()),
+                  perQuestionSec: Array.from({ length: actualQuestionCount }, (_, i) => currentState.perQuestionSec[i] || 0),
+                  correctFlags: Array.from({ length: actualQuestionCount }, (_, i) => currentState.correctFlags[i] ?? null),
+                  guessedFlags: Array.from({ length: actualQuestionCount }, (_, i) => currentState.guessedFlags[i] || false),
+                  mistakeTags: Array.from({ length: actualQuestionCount }, (_, i) => (currentState.mistakeTags[i] || 'None') as MistakeTag),
+                  visitedQuestions: Array.from({ length: actualQuestionCount }, () => false),
+                  questionOrder: Array.from({ length: actualQuestionCount }, (_, i) => i + 1),
+                });
+              } else {
+                set({ questions: processedQuestions, sectionStarts, questionsLoading: false });
+              }
             } catch (error) {
               console.error('Error loading questions:', error);
               set({

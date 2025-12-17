@@ -6,7 +6,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { PAPER_COLORS, PAPER_TYPE_COLORS, SECTION_COLORS } from "@/config/colors";
+import { PAPER_COLORS, PAPER_TYPE_COLORS, SECTION_COLORS, desaturateColor } from "@/config/colors";
 import type { PaperType, PaperSection } from "@/types/papers";
 
 interface TrendDataPoint {
@@ -23,23 +23,6 @@ interface AnalyticsTrendChartProps {
   className?: string;
 }
 
-// Helper to desaturate a color (reduce opacity)
-function desaturateColor(color: string, opacity: number = 0.6): string {
-  // Convert hex to rgba if needed
-  if (color.startsWith("#")) {
-    const r = parseInt(color.slice(1, 3), 16);
-    const g = parseInt(color.slice(3, 5), 16);
-    const b = parseInt(color.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  }
-  // If already rgba, extract and modify
-  const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-  if (match) {
-    return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`;
-  }
-  return color;
-}
-
 export function AnalyticsTrendChart({ 
   allSessions, 
   filterMode, 
@@ -47,19 +30,35 @@ export function AnalyticsTrendChart({
   className 
 }: AnalyticsTrendChartProps) {
   const [animate, setAnimate] = useState(false);
+  const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number; percentage: number; date: number } | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setAnimate(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const { lines, legend } = useMemo(() => {
-    const width = 1200;
-    const height = 260;
-    const padding = 28;
-    const pointMaxRadius = 6;
-    const xPadding = padding + pointMaxRadius;
+  const width = 1200;
+  const height = 260;
+  const padding = 28;
+  const pointMaxRadius = 6;
+  const xPadding = padding + pointMaxRadius;
 
+  // Calculate overall min/max for consistent scaling
+  const allPercentages = allSessions.map(s => s.percentage);
+  const minPct = Math.min(0, ...allPercentages);
+  const maxPct = Math.max(100, ...allPercentages);
+  const range = maxPct - minPct || 100;
+
+  const scaleX = (index: number, total: number) => {
+    if (total <= 1) return xPadding;
+    return xPadding + (index / (total - 1)) * (width - 2 * xPadding);
+  };
+
+  const scaleY = (percentage: number) => {
+    return height - padding - ((percentage - minPct) / range) * (height - 2 * padding);
+  };
+
+  const { lines, legend, allLineGroups } = useMemo(() => {
     // Group sessions for different lines based on filter mode
     let lineGroups: Record<string, TrendDataPoint[]> = {};
 
@@ -87,21 +86,6 @@ export function AnalyticsTrendChart({
         }
       });
     }
-
-    // Calculate overall min/max for consistent scaling
-    const allPercentages = allSessions.map(s => s.percentage);
-    const minPct = Math.min(0, ...allPercentages);
-    const maxPct = Math.max(100, ...allPercentages);
-    const range = maxPct - minPct || 100;
-
-    const scaleX = (index: number, total: number) => {
-      if (total <= 1) return xPadding;
-      return xPadding + (index / (total - 1)) * (width - 2 * xPadding);
-    };
-
-    const scaleY = (percentage: number) => {
-      return height - padding - ((percentage - minPct) / range) * (height - 2 * padding);
-    };
 
     // Build smooth path using Catmull-Rom spline (same as TimeScatterChart)
     const buildSmoothPath = (points: TrendDataPoint[]): string | null => {
@@ -175,13 +159,12 @@ export function AnalyticsTrendChart({
       legendItems.push({ label: key, color });
     });
 
-    return { lines, legend: legendItems };
+    return { lines, legend: legendItems, allLineGroups: lineGroups };
   }, [allSessions, filterMode, selectedFilters]);
 
   if (allSessions.length === 0 || lines.length === 0) {
     return (
       <div className={`space-y-3 ${className}`}>
-        <div className="text-sm font-medium text-neutral-200">Performance Trends</div>
         <div className="rounded-md bg-neutral-900 p-2 flex justify-center items-center h-64">
           <div className="text-xs text-neutral-500">
             {allSessions.length === 0 
@@ -195,14 +178,8 @@ export function AnalyticsTrendChart({
     );
   }
 
-  const width = 1200;
-  const height = 260;
-  const padding = 28;
-
   return (
     <div className={`space-y-3 ${className}`}>
-      <div className="text-sm font-medium text-neutral-200">Performance Trends</div>
-      
       <div className="relative">
         <svg
           width={width}
@@ -262,24 +239,64 @@ export function AnalyticsTrendChart({
             );
           })}
 
-          {/* Trend lines */}
-          {lines.map((line, index) => (
-            <path
-              key={index}
-              d={line.path}
-              stroke={line.color}
-              strokeWidth={2}
-              fill="none"
-              pathLength={1}
-              style={{ 
-                strokeDasharray: 1, 
-                strokeDashoffset: animate ? 0 : 1, 
-                transition: 'stroke-dashoffset 900ms ease' 
-              }}
-              opacity={0.9}
-            />
-          ))}
+          {/* Trend lines with points */}
+          {lines.map((line, lineIndex) => {
+            const lineGroup = allLineGroups[line.label] || [];
+            
+            return (
+              <g key={lineIndex}>
+                <path
+                  d={line.path}
+                  stroke={line.color}
+                  strokeWidth={2}
+                  fill="none"
+                  pathLength={1}
+                  style={{ 
+                    strokeDasharray: 1, 
+                    strokeDashoffset: animate ? 0 : 1, 
+                    transition: 'stroke-dashoffset 900ms ease' 
+                  }}
+                  opacity={0.9}
+                />
+                {/* Interactive points */}
+                {lineGroup.map((session, sessionIndex) => {
+                  const x = scaleX(sessionIndex, lineGroup.length);
+                  const y = scaleY(session.percentage);
+                  const pointColor = filterMode === "all" ? "#ffffff" : line.color;
+                  
+                  return (
+                    <circle
+                      key={sessionIndex}
+                      cx={x}
+                      cy={y}
+                      r={4}
+                      fill={pointColor}
+                      opacity={0.9}
+                      className="cursor-pointer"
+                      style={{ transition: 'r 0.2s' }}
+                      onMouseEnter={() => setHoverPoint({ x, y, percentage: session.percentage, date: session.date })}
+                      onMouseLeave={() => setHoverPoint(null)}
+                    />
+                  );
+                })}
+              </g>
+            );
+          })}
         </svg>
+
+        {/* Tooltip */}
+        {hoverPoint && (
+          <div
+            className="absolute px-2 py-1 rounded-md text-xs text-neutral-200 bg-black/80 border border-white/10 pointer-events-none z-10"
+            style={{ 
+              left: Math.min(hoverPoint.x, width - 160), 
+              top: Math.max(hoverPoint.y - 32, 0) 
+            }}
+          >
+            <div>Score: {Math.round(hoverPoint.percentage)}%</div>
+            <div>Date: {new Date(hoverPoint.date).toLocaleDateString()}</div>
+          </div>
+        )}
 
         {/* Legend */}
         {legend.length > 0 && (

@@ -24,7 +24,7 @@ import {
 import type { PaperSession } from "@/types/papers";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { getPaperTypeColor } from "@/config/colors";
+import { getPaperTypeColor, PAPER_TYPE_COLORS, desaturateColor } from "@/config/colors";
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
@@ -149,7 +149,7 @@ export default function PapersAnalyticsPage() {
         />
 
         {/* Combined Filters and Trends Card */}
-        <Card className="p-6">
+        <Card className="p-6 bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
           <div className="space-y-6">
             {/* Compact Filters */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-4 border-b border-white/10">
@@ -299,36 +299,44 @@ export default function PapersAnalyticsPage() {
           </div>
         </Card>
 
-        {/* Stats Section - Smaller Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">
-              {Math.round(analytics.averageScore)}%
+        {/* Stats Section - Grouped Cards */}
+        <Card className="p-6 bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-base font-semibold text-neutral-100 mb-1">Performance Summary</h2>
+              <p className="text-xs text-neutral-400">Key metrics from your paper sessions</p>
             </div>
-            <div className="text-sm text-neutral-400">Average Score</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-cyan-400 mb-2">
-              {analytics.totalSessions}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="p-4 text-center rounded-xl bg-white/5">
+                <div className="text-2xl font-bold text-neutral-200 mb-1">
+                  {Math.round(analytics.averageScore)}%
+                </div>
+                <div className="text-xs text-neutral-400">Average Score</div>
+              </div>
+              <div className="p-4 text-center rounded-xl bg-white/5">
+                <div className="text-2xl font-bold text-neutral-200 mb-1">
+                  {analytics.totalSessions}
+                </div>
+                <div className="text-xs text-neutral-400">Sessions Completed</div>
+              </div>
+              <div className="p-4 text-center rounded-xl bg-white/5">
+                <div className="text-2xl font-bold text-neutral-200 mb-1">
+                  {Math.round(analytics.averageTime)} min
+                </div>
+                <div className="text-xs text-neutral-400">Avg Time</div>
+              </div>
+              <div className="p-4 text-center rounded-xl bg-white/5">
+                <div className="text-2xl font-bold text-neutral-200 mb-1">
+                  {sectionsPracticed}
+                </div>
+                <div className="text-xs text-neutral-400">Sections Practiced</div>
+              </div>
             </div>
-            <div className="text-sm text-neutral-400">Sessions Completed</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">
-              {Math.round(analytics.averageTime)} min
-            </div>
-            <div className="text-sm text-neutral-400">Avg Time</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-400 mb-2">
-              {sectionsPracticed}
-            </div>
-            <div className="text-sm text-neutral-400">Sections Practiced</div>
-          </Card>
-        </div>
+          </div>
+        </Card>
 
         {/* History Section - Big Card */}
-        <Card className="p-6">
+        <Card className="p-6 bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
           <div className="space-y-4">
             <div>
               <h2 className="text-lg font-semibold text-neutral-100 mb-2">Session History</h2>
@@ -369,11 +377,16 @@ export default function PapersAnalyticsPage() {
                   return (
                     <div 
                       key={session.id} 
-                      className="flex items-center justify-between p-4 bg-white/5 rounded-organic-md border border-white/10 hover:border-white/20 transition-colors"
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors"
                     >
-                      {/* Left: Color-coded Icon */}
+                      {/* Left: Color-coded Icon with filled rounded square background */}
                       <div className="flex-shrink-0 mr-4">
-                        <FileText className="w-5 h-5" style={{ color: iconColor }} />
+                        <div 
+                          className="w-8 h-8 rounded-md flex items-center justify-center"
+                          style={{ backgroundColor: desaturateColor(iconColor, 0.3) }}
+                        >
+                          <FileText className="w-4 h-4 text-white" />
+                        </div>
                       </div>
 
                       {/* Middle: Session Info */}
@@ -417,7 +430,7 @@ export default function PapersAnalyticsPage() {
         {/* Bottom Section - Half Page Split */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left: Mistake Patterns */}
-          <Card className="p-6">
+          <Card className="p-6 bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-semibold text-neutral-100 mb-2">Mistake Patterns</h2>
@@ -434,7 +447,7 @@ export default function PapersAnalyticsPage() {
           </Card>
 
           {/* Right: Section Performance (placeholder for now) */}
-          <Card className="p-6">
+          <Card className="p-6 bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
             <div className="space-y-4">
               <div>
                 <h2 className="text-lg font-semibold text-neutral-100 mb-2">Section Performance</h2>

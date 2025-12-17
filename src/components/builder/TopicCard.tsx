@@ -30,11 +30,11 @@ export function TopicCard({ topic, onAdd, isSelected = false }: TopicCardProps) 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center justify-between w-full rounded-xl px-3.5 py-3.5 text-white/90 border transition-all",
+        "flex items-center justify-between w-full rounded-xl px-3.5 py-3.5 text-white/90 transition-all",
         isDragging && "opacity-50",
         isSelected 
-          ? "bg-primary/10 border-primary/30" 
-          : "bg-white/5 border-white/10 hover:bg-white/[0.07] hover:border-white/15"
+          ? "bg-primary/10 shadow-sm" 
+          : "bg-white/5 hover:bg-white/[0.07] shadow-sm"
       )}
     >
       {/* Drag handle + label + description */}
@@ -63,10 +63,10 @@ export function TopicCard({ topic, onAdd, isSelected = false }: TopicCardProps) 
         }}
         disabled={isSelected}
         className={cn(
-          "h-8 w-8 inline-flex items-center justify-center rounded-lg border flex-shrink-0 transition-all",
+          "h-8 w-8 inline-flex items-center justify-center rounded-lg flex-shrink-0 transition-all",
           isSelected
-            ? "bg-primary/20 border-primary/30 text-primary cursor-default"
-            : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20 interaction-scale"
+            ? "bg-primary/20 text-primary cursor-default shadow-sm"
+            : "bg-white/5 text-white/70 hover:bg-white/10 interaction-scale shadow-sm"
         )}
         aria-label={`Add ${topic.name}`}
         title={isSelected ? "Already added" : "Add to session"}

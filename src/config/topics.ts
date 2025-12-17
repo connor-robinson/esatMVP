@@ -3,7 +3,7 @@
  * Currently includes: Addition and Multiplication
  */
 
-import { Topic, TopicCategory, SubjectId } from "@/types/core";
+import { Topic, TopicCategory, SubjectId, TopicVariant } from "@/types/core";
 
 export const TOPICS: Record<string, Topic> = {
   // Arithmetic
@@ -13,7 +13,43 @@ export const TOPICS: Record<string, Topic> = {
     subjectId: "maths",
     category: "arithmetic",
     description: "Master quick mental addition with proven shortcuts",
-    levels: 5,
+    variants: [
+      {
+        id: "single-digit",
+        name: "Single Digit",
+        description: "1 digit + 1 digit",
+        difficulty: 1,
+        config: { digits: 1 },
+      },
+      {
+        id: "double-no-carry",
+        name: "Double Digit (No Carrying)",
+        description: "2 digits + 2 digits, no carrying",
+        difficulty: 2,
+        config: { digits: 2, allowCarry: false },
+      },
+      {
+        id: "double-with-carry",
+        name: "Double Digit (With Carrying)",
+        description: "2 digits + 2 digits, with carrying",
+        difficulty: 3,
+        config: { digits: 2, allowCarry: true },
+      },
+      {
+        id: "mental-add-5",
+        name: "Mental Math: Adding 5, 10, 15",
+        description: "Quick addition of 5, 10, 15, etc.",
+        difficulty: 2,
+        config: { type: "mental", values: [5, 10, 15, 20] },
+      },
+      {
+        id: "three-numbers",
+        name: "Three Number Addition",
+        description: "Add three numbers together",
+        difficulty: 4,
+        config: { count: 3 },
+      },
+    ],
     icon: "Plus",
   },
   multiplication: {
@@ -22,7 +58,50 @@ export const TOPICS: Record<string, Topic> = {
     subjectId: "maths",
     category: "arithmetic",
     description: "Lightning-fast multiplication using clever tricks",
-    levels: 6,
+    variants: [
+      {
+        id: "single-digit",
+        name: "Single Digit",
+        description: "1 digit × 1 digit",
+        difficulty: 1,
+        config: { digits: 1 },
+      },
+      {
+        id: "tables-up-to-10",
+        name: "Multiplication Tables (up to 10)",
+        description: "Times tables 1-10",
+        difficulty: 2,
+        config: { max: 10 },
+      },
+      {
+        id: "double-single",
+        name: "2 digits × 1 digit",
+        description: "Two digit by single digit",
+        difficulty: 3,
+        config: { digits: [2, 1] },
+      },
+      {
+        id: "double-double",
+        name: "2 digits × 2 digits",
+        description: "Two digit by two digit",
+        difficulty: 4,
+        config: { digits: [2, 2] },
+      },
+      {
+        id: "squares",
+        name: "Perfect Squares",
+        description: "Squaring numbers",
+        difficulty: 3,
+        config: { type: "squares" },
+      },
+      {
+        id: "mental-tricks",
+        name: "Mental Math Tricks",
+        description: "Special multiplication shortcuts",
+        difficulty: 5,
+        config: { type: "mental" },
+      },
+    ],
     icon: "X",
   },
   fractions: {
@@ -340,17 +419,76 @@ export const CATEGORIES: Record<TopicCategory, string[]> = {
   ecology: [],
 };
 
+/**
+ * Create default variants from legacy levels property
+ */
+function createDefaultVariants(levels: number): TopicVariant[] {
+  return Array.from({ length: levels }, (_, i) => ({
+    id: `level-${i + 1}`,
+    name: `Level ${i + 1}`,
+    difficulty: i + 1,
+    config: { level: i + 1 },
+  }));
+}
+
+/**
+ * Get a topic with guaranteed variants (converts legacy levels if needed)
+ */
 export function getTopic(id: string): Topic | undefined {
-  return TOPICS[id];
+  const topic = TOPICS[id];
+  if (!topic) return undefined;
+  
+  // If topic has variants, return as-is
+  if (topic.variants && topic.variants.length > 0) {
+    return topic;
+  }
+  
+  // Convert legacy levels to variants
+  if (topic.levels) {
+    return {
+      ...topic,
+      variants: createDefaultVariants(topic.levels),
+    };
+  }
+  
+  // If no variants or levels, create a default one
+  return {
+    ...topic,
+    variants: [{
+      id: "default",
+      name: "Default",
+      difficulty: 1,
+      config: {},
+    }],
+  };
 }
 
 export function getAllTopics(): Topic[] {
-  return Object.values(TOPICS);
+  return Object.values(TOPICS).map(topic => {
+    if (topic.variants && topic.variants.length > 0) {
+      return topic;
+    }
+    if (topic.levels) {
+      return {
+        ...topic,
+        variants: createDefaultVariants(topic.levels),
+      };
+    }
+    return {
+      ...topic,
+      variants: [{
+        id: "default",
+        name: "Default",
+        difficulty: 1,
+        config: {},
+      }],
+    };
+  });
 }
 
 export function getTopicsByCategory(category: TopicCategory): Topic[] {
   const topicIds = CATEGORIES[category] || [];
-  return topicIds.map(id => TOPICS[id]).filter(Boolean);
+  return topicIds.map(id => getTopic(id)!).filter(Boolean);
 }
 
 

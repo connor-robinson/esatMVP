@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M6-Easy-ef6fe37bcb</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M6-Easy-ef6fe37bcb<br>
+            <strong>Schema:</strong> M6<br>
+            <strong>Difficulty:</strong> Easy<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-18T01:33:01.595744<br>
+            
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                What is the value of the sum $$ \sum_{n=1}^{99} \frac{1}{\sqrt{n} + \sqrt{n+1}} $$
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> \sqrt{99} - 1</div>
+                <div class="option correct"><strong>B:</strong> 9 ✓ CORRECT</div>
+                <div class="option"><strong>C:</strong> \sqrt{99}</div>
+                <div class="option"><strong>D:</strong> 10</div>
+                <div class="option"><strong>E:</strong> 11</div>
+
+            </div>
+            <p><strong>Correct Answer: B</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Rationalise the denominator of the general term: $$ \frac{1}{\sqrt{n} + \sqrt{n+1}} = \frac{1}{\sqrt{n} + \sqrt{n+1}} \times \frac{\sqrt{n+1} - \sqrt{n}}{\sqrt{n+1} - \sqrt{n}} = \frac{\sqrt{n+1} - \sqrt{n}}{(n+1) - n} = \sqrt{n+1} - \sqrt{n} $$ The sum becomes a telescoping series: $$ \sum_{n=1}^{99} (\sqrt{n+1} - \sqrt{n}) = (\sqrt{2} - \sqrt{1}) + (\sqrt{3} - \sqrt{2}) + \dots + (\sqrt{100} - \sqrt{99}) $$ All intermediate terms cancel, leaving only the final positive term and the initial negative term: $$ \sqrt{100} - \sqrt{1} = 10 - 1 = 9 $$
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Rationalising the denominator transforms the summand into a difference, creating a telescoping series where only the boundary terms survive.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Result of a &quot;fencepost&quot; error where the upper bound is taken as $\sqrt{99}$ (using $n$ instead of $n+1$).</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Correct. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Result of forgetting the lower bound term ($-1$) and using the wrong upper bound ($\sqrt{99}$).</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Result of forgetting the lower bound term ($-1$) and only calculating the upper term ($\sqrt{100}$).</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Result of an addition sign error in the final calculation ($\sqrt{100} + \sqrt{1}$).</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

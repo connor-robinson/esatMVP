@@ -552,8 +552,15 @@ export default function PapersPlanPage() {
     // Use actual question count from database, fallback to defaults
     const totalQuestions = actualQuestionCount || 20;
     
-    // Calculate time: 1.5 minutes per question
-    const calculatedTime = Math.ceil(totalQuestions * 1.5);
+    // Calculate time based on exam type
+    let calculatedTime: number;
+    if (selectedPaper === 'TMUA') {
+      // TMUA: 75 minutes per section (Paper 1 or Paper 2)
+      calculatedTime = selectedSections.length > 0 ? selectedSections.length * 75 : 75;
+    } else {
+      // Other exams: 1.5 minutes per question
+      calculatedTime = Math.ceil(totalQuestions * 1.5);
+    }
     
     return {
       totalQuestions,
@@ -798,6 +805,18 @@ export default function PapersPlanPage() {
 
       const variantString = `${selectedYear}-${selectedPaperName}-${selectedExamType}`;
 
+      console.log('[plan:startSession] Starting session with:', {
+        paperId: paper.id,
+        paperName: selectedPaper,
+        selectedSections,
+        timeLimitMinutes: sessionSettings.totalTime,
+        questionRange: {
+          start: sessionSettings.questionStart,
+          end: sessionSettings.questionEnd,
+        },
+        actualQuestionCount,
+      });
+
       startSession({
         paperId: paper.id,
         paperName: selectedPaper,
@@ -812,6 +831,19 @@ export default function PapersPlanPage() {
       });
 
       await loadQuestions(paper.id);
+      
+      // Verify questions were loaded correctly
+      const { questions: loadedQuestions } = usePaperSessionStore.getState();
+      console.log('[plan:startSession] After loadQuestions:', {
+        questionsLoaded: loadedQuestions.length,
+        expectedCount: actualQuestionCount,
+        selectedSections,
+        sampleQuestions: loadedQuestions.slice(0, 5).map(q => ({
+          num: q.questionNumber,
+          partLetter: q.partLetter,
+          partName: q.partName,
+        })),
+      });
 
       const { questions, questionsError } = usePaperSessionStore.getState();
       if (questionsError) {

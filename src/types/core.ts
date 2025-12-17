@@ -32,14 +32,24 @@ export interface Subject {
   categories: TopicCategory[];
 }
 
+export interface TopicVariant {
+  id: string;
+  name: string;
+  description?: string;
+  difficulty: number; // For sorting/suggesting progression
+  config?: Record<string, any>; // Variant-specific configuration for generators
+}
+
 export interface Topic {
   id: string;
   name: string;
   subjectId: SubjectId;
   category: TopicCategory;
   description: string;
-  levels: number;
+  variants?: TopicVariant[]; // Optional - will be created from levels if not provided
   icon?: string;
+  // Legacy support - will be computed from variants if variants exist
+  levels?: number;
 }
 
 // Extended slide block types for rich tutorials
@@ -156,6 +166,11 @@ export interface DrillResult {
 }
 
 // Additional types for builder and analytics
+export interface TopicVariantSelection {
+  topicId: string;
+  variantId: string;
+}
+
 export interface SessionPreset {
   id: string;
   name: string;
@@ -163,7 +178,8 @@ export interface SessionPreset {
   topicIds: string[];
   questionCount: number;
   durationMin: number;
-  topicLevels: Record<string, number>;
+  topicVariantSelections: TopicVariantSelection[]; // Array of topic-variant pairs
+  topicLevels?: Record<string, number>; // Legacy support for old presets
   createdAt: number;
 }
 

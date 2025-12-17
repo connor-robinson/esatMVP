@@ -4,53 +4,52 @@
 
 "use client";
 
-import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { X, Play, Save, Trash2, Clock, GripVertical, FolderDown } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Topic, SessionPreset } from "@/types/core";
+import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";
+import { getTopic } from "@/config/topics";
 import { cn } from "@/lib/utils";
 
 interface SessionFolderProps {
-  selectedTopics: Topic[];
+  selectedTopicVariants: TopicVariantSelection[]; // Array of topic-variant pairs
   questionCount: number;
   onQuestionCountChange: (count: number) => void;
-  onRemoveTopic: (topicId: string) => void;
+  onRemoveTopicVariant: (topicVariantId: string) => void; // Remove by "topicId-variantId" or "topicId"
   onClear: () => void;
   onSave: () => void;
   onStart: () => void;
   canStart: boolean;
   presets?: SessionPreset[];
   onLoadPreset?: (preset: SessionPreset) => void;
-  topicLevels?: Record<string, number>;
-  onTopicLevelChange?: (topicId: string, level: number) => void;
 }
 
-function SortableTopicChip({ 
-  topic, 
-  onRemove, 
-  level = 1,
-  onLevelChange 
+function SortableVariantChip({ 
+  topicVariant,
+  onRemove 
 }: { 
-  topic: Topic; 
-  onRemove: () => void;
-  level?: number;
-  onLevelChange?: (level: number) => void;
+  topicVariant: TopicVariantSelection;
+  onRemove: (topicVariantId: string) => void;
 }) {
+  const topic = getTopic(topicVariant.topicId);
+  if (!topic) return null;
+
+  const variant = topic.variants?.find(v => v.id === topicVariant.variantId);
+  const variantName = variant?.name || topicVariant.variantId;
+  const displayText = `${topic.name}: ${variantName}`;
+  const topicVariantId = `${topicVariant.topicId}-${topicVariant.variantId}`;
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: topic.id,
+    id: topicVariantId,
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
-  const maxLevel = topic.levels || 1;
-  const hasMultipleLevels = maxLevel > 1;
 
   return (
     <div 
@@ -61,51 +60,30 @@ function SortableTopicChip({
         isDragging && "opacity-30"
       )}
     >
-      <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white/90 hover:bg-white/[0.07] hover:border-white/20 transition-colors">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-white/90 hover:bg-white/[0.07] transition-colors shadow-sm">
         {/* Drag handle */}
         <button
-          className="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white cursor-grab active:cursor-grabbing transition-colors"
+          className="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white cursor-grab active:cursor-grabbing transition-colors flex-shrink-0"
           {...attributes}
           {...listeners}
-          aria-label={`Drag ${topic.name}`}
+          aria-label={`Drag ${displayText}`}
           type="button"
         >
           <GripVertical size={18} strokeWidth={2} />
         </button>
 
-        <span className="truncate font-semibold text-base">{topic.name}</span>
-
-        {/* Level selector - circular knob with fixed width */}
-        <div className="w-[120px] flex items-center justify-end gap-1.5">
-          {hasMultipleLevels && onLevelChange ? (
-            <>
-              <span className="text-xs text-white/40 uppercase tracking-wider">Lvl</span>
-              <div className="flex gap-1">
-                {Array.from({ length: maxLevel }, (_, i) => i + 1).map((lvl) => (
-                  <button
-                    key={lvl}
-                    onClick={() => onLevelChange(lvl)}
-                    className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all",
-                      level === lvl
-                        ? "bg-primary text-neutral-900 shadow-md scale-110"
-                        : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white/70"
-                    )}
-                    title={`Level ${lvl}`}
-                  >
-                    {lvl}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+          <span className="truncate font-semibold text-base">{displayText}</span>
+          {topic.description && (
+            <span className="truncate text-xs text-white/40">{topic.description}</span>
+          )}
         </div>
 
         {/* Remove button */}
         <button
-          onClick={onRemove}
-          className="p-1 rounded-lg hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all"
-          aria-label={`Remove ${topic.name}`}
+          onClick={() => onRemove(topicVariantId)}
+          className="p-1 rounded-lg hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all flex-shrink-0"
+          aria-label={`Remove ${displayText}`}
           type="button"
         >
           <X size={18} strokeWidth={2} />
@@ -115,10 +93,15 @@ function SortableTopicChip({
   );
 }
 
-function DropZone() {
+function DropZone({ isOver }: { isOver: boolean }) {
   return (
     <div className="col-span-full w-full h-full min-h-[240px]">
-      <div className="rounded-2xl border-2 border-dashed border-white/10 hover:border-white/20 bg-white/[0.02] hover:bg-white/[0.03] text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200 h-full">
+      <div className={cn(
+        "rounded-2xl text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200 h-full",
+        isOver 
+          ? "bg-primary/10 text-primary/80 scale-[1.02]" 
+          : "bg-white/[0.02] hover:bg-white/[0.03]"
+      )}>
         <div className="flex items-center gap-3 text-lg">
           <GripVertical size={20} strokeWidth={2} className="opacity-70" />
           <span className="font-semibold">Drag topics here</span>
@@ -130,63 +113,65 @@ function DropZone() {
 }
 
 export function SessionFolder({
-  selectedTopics,
+  selectedTopicVariants,
   questionCount,
   onQuestionCountChange,
-  onRemoveTopic,
+  onRemoveTopicVariant,
   onClear,
   onSave,
   onStart,
   canStart,
   presets = [],
   onLoadPreset,
-  topicLevels = {},
-  onTopicLevelChange,
 }: SessionFolderProps) {
   const { isOver, setNodeRef } = useDroppable({
     id: "session-folder",
   });
 
+  const totalItems = selectedTopicVariants.length;
+  
+  // Generate sortable IDs for each variant
+  const sortableIds = selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`);
+
   return (
     <Card
+      variant="flat"
       className={cn(
-        "p-5 transition-all duration-200",
-        isOver && "ring-2 ring-primary/50 shadow-glow"
+        "p-5 transition-all duration-200 shadow-sm",
+        isOver && "ring-2 ring-primary/50 shadow-[0_0_20px_rgba(74,140,111,0.4)]"
       )}
     >
       {/* Entire card is droppable */}
-      <div ref={setNodeRef}>
+      <div ref={setNodeRef} className="h-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
             Session Folder
           </h2>
           <span className="text-sm text-white/50 font-medium">
-            {selectedTopics.length} topics
+            {totalItems} {totalItems === 1 ? 'item' : 'items'}
           </span>
         </div>
 
         {/* Drop zone / Topics - Fixed height to prevent resizing */}
         <div
           className={cn(
-            "min-h-[260px] rounded-2xl p-5 mb-5 transition-colors duration-200 relative",
+            "min-h-[260px] rounded-2xl p-5 mb-5 transition-all duration-200 relative shadow-sm",
             isOver 
-              ? "bg-primary/10 border-2 border-primary/40 shadow-[0_0_16px_rgba(74,140,111,0.2)]" 
-              : "bg-white/[0.03] border-2 border-white/5 hover:border-white/10"
+              ? "bg-primary/15 ring-2 ring-primary/60 shadow-[0_0_20px_rgba(74,140,111,0.3)] scale-[1.01]" 
+              : "bg-white/[0.03]"
           )}
         >
-          {selectedTopics.length === 0 ? (
-            <DropZone />
+          {selectedTopicVariants.length === 0 ? (
+            <DropZone isOver={isOver} />
           ) : (
-            <SortableContext items={selectedTopics.map(t => t.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
               <div className="flex flex-col gap-3 pb-12">
-                {selectedTopics.map((topic) => (
-                  <SortableTopicChip
-                    key={topic.id}
-                    topic={topic}
-                    onRemove={() => onRemoveTopic(topic.id)}
-                    level={topicLevels[topic.id] || 1}
-                    onLevelChange={onTopicLevelChange ? (level) => onTopicLevelChange(topic.id, level) : undefined}
+                {selectedTopicVariants.map((topicVariant) => (
+                  <SortableVariantChip
+                    key={`${topicVariant.topicId}-${topicVariant.variantId}`}
+                    topicVariant={topicVariant}
+                    onRemove={onRemoveTopicVariant}
                   />
                 ))}
               </div>
@@ -199,7 +184,7 @@ export function SessionFolder({
         {/* Question count on left, Save and Clear on right */}
         <div className="flex items-stretch gap-3">
           {/* Question count input - bubble style, expanded */}
-          <div className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.07] transition-colors flex-1">
+          <div className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/[0.07] transition-colors flex-1 shadow-sm">
             <span className="text-white/60 text-sm whitespace-nowrap">#</span>
             <input
               type="number"
@@ -225,10 +210,10 @@ export function SessionFolder({
             }}
             disabled={presets.length === 0}
             className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap",
+              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
               presets.length === 0
-                ? "bg-white/[0.02] border border-white/5 text-white/30 cursor-not-allowed"
-                : "bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
+                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
+                : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
             )}
             title={presets.length === 0 ? "No saved presets" : "Load a saved preset"}
           >
@@ -239,12 +224,12 @@ export function SessionFolder({
           {/* Save and Clear buttons - grouped with text */}
           <button
             onClick={onSave}
-            disabled={selectedTopics.length === 0}
+            disabled={totalItems === 0}
             className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap",
-              selectedTopics.length === 0
-                ? "bg-white/[0.02] border border-white/5 text-white/30 cursor-not-allowed"
-                : "bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
+              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
+              totalItems === 0
+                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
+                : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
             )}
           >
             <Save className="h-5 w-5" strokeWidth={2} />
@@ -253,12 +238,12 @@ export function SessionFolder({
           
           <button
             onClick={onClear}
-            disabled={selectedTopics.length === 0}
+            disabled={totalItems === 0}
             className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap",
-              selectedTopics.length === 0
-                ? "bg-white/[0.02] border border-white/5 text-white/30 cursor-not-allowed"
-                : "bg-white/5 border border-white/10 text-red-400/80 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400 interaction-scale"
+              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
+              totalItems === 0
+                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
+                : "bg-white/5 text-red-400/80 hover:bg-red-500/10 hover:text-red-400 interaction-scale"
             )}
           >
             <Trash2 className="h-5 w-5" strokeWidth={2} />
@@ -270,11 +255,11 @@ export function SessionFolder({
         <button
           onClick={onStart}
           disabled={!canStart}
-          className={cn(
-            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold text-base uppercase tracking-wider transition-all duration-200 relative overflow-hidden group",
+            className={cn(
+            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold text-base uppercase tracking-wider transition-all duration-200 relative overflow-hidden group shadow-sm",
             !canStart
-              ? "bg-white/5 border border-white/10 text-white/30 cursor-not-allowed"
-              : "bg-primary/10 border-2 border-primary text-primary-light hover:bg-primary/20 hover:border-primary-light hover:text-white/95 hover:shadow-[0_4px_20px_rgba(74,140,111,0.3)] hover:scale-[1.02] active:scale-[0.98]"
+              ? "bg-white/5 text-white/30 cursor-not-allowed"
+              : "bg-primary/10 ring-2 ring-primary text-primary-light hover:bg-primary/20 hover:ring-primary-light hover:text-white/95 hover:shadow-[0_4px_20px_rgba(74,140,111,0.3)] hover:scale-[1.02] active:scale-[0.98]"
           )}
         >
           <Play className="h-5 w-5" fill="currentColor" strokeWidth={0} />
@@ -284,7 +269,7 @@ export function SessionFolder({
           )}
         </button>
 
-          {!canStart && selectedTopics.length === 0 && (
+          {!canStart && totalItems === 0 && (
             <div className="text-sm text-white/40 text-center">
               Add at least one topic to start
             </div>

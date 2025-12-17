@@ -1,0 +1,91 @@
+[
+  {
+    "id": "M6-Easy-ef6fe37bcb",
+    "schema_id": "M6",
+    "difficulty": "Easy",
+    "idea_plan": {
+      "schema_id": "M6",
+      "idea_summary": "Evaluate a finite sum where the summand is a fraction involving radicals in the denominator. The candidate must rationalise the denominator to transform the expression into a difference of terms, creating a telescoping series where all intermediate terms cancel out.\n",
+      "function_or_object_type": [
+        "algebraic series",
+        "radicals / surds"
+      ],
+      "constraints_used": [
+        "finite integer bounds"
+      ],
+      "what_is_asked": [
+        "calculate the exact value of the sum"
+      ],
+      "intended_wrong_paths": [
+        "algebraic sign errors during rationalisation leading to a sum that does not telescope",
+        "index/fencepost errors where the candidate retains the wrong boundary terms (e.g., n instead of n+1)",
+        "attempting to approximate the sum by calculating the first few terms"
+      ],
+      "difficulty_rationale": "The problem relies on a single, standard algebraic technique (rationalisation) that immediately simplifies the problem. It requires no complex problem-solving search, just the application of a known method to reveal structure.\n",
+      "mcq_viability": {
+        "viable": true,
+        "reason": "Common algebraic slips (sign errors) and boundary mistakes (keeping the first term vs. the last) result in clean, plausible wrong answers that look like the correct one."
+      },
+      "_raw_text": "```yaml\nschema_id: M6\nidea_summary: >\n  Evaluate a finite sum where the summand is a fraction involving radicals in the denominator. The candidate must rationalise the denominator to transform the expression into a difference of terms, creating a telescoping series where all intermediate terms cancel out.\nfunction_or_object_type:\n  - algebraic series\n  - radicals / surds\nconstraints_used:\n  - finite integer bounds\nwhat_is_asked:\n  - calculate the exact value of the sum\nintended_wrong_paths:\n  - algebraic sign errors during rationalisation leading to a sum that does not telescope\n  - index/fencepost errors where the candidate retains the wrong boundary terms (e.g., n instead of n+1)\n  - attempting to approximate the sum by calculating the first few terms\ndifficulty_rationale: >\n  The problem relies on a single, standard algebraic technique (rationalisation) that immediately simplifies the problem. It requires no complex problem-solving search, just the application of a known method to reveal structure.\nmcq_viability:\n  viable: yes\n  reason: >\n    Common algebraic slips (sign errors) and boundary mistakes (keeping the first term vs. the last) result in clean, plausible wrong answers that look like the correct one.\n```"
+    },
+    "question_package": {
+      "question": {
+        "stem": "What is the value of the sum $$ \\sum_{n=1}^{99} \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} $$\n",
+        "options": {
+          "A": "\\sqrt{99} - 1",
+          "B": 9,
+          "C": "\\sqrt{99}",
+          "D": 10,
+          "E": 11
+        },
+        "correct_option": "B"
+      },
+      "solution": {
+        "reasoning": "Rationalise the denominator of the general term: $$ \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} = \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} \\times \\frac{\\sqrt{n+1} - \\sqrt{n}}{\\sqrt{n+1} - \\sqrt{n}} = \\frac{\\sqrt{n+1} - \\sqrt{n}}{(n+1) - n} = \\sqrt{n+1} - \\sqrt{n} $$ The sum becomes a telescoping series: $$ \\sum_{n=1}^{99} (\\sqrt{n+1} - \\sqrt{n}) = (\\sqrt{2} - \\sqrt{1}) + (\\sqrt{3} - \\sqrt{2}) + \\dots + (\\sqrt{100} - \\sqrt{99}) $$ All intermediate terms cancel, leaving only the final positive term and the initial negative term: $$ \\sqrt{100} - \\sqrt{1} = 10 - 1 = 9 $$\n",
+        "key_insight": "Rationalising the denominator transforms the summand into a difference, creating a telescoping series where only the boundary terms survive.\n"
+      },
+      "distractor_map": {
+        "A": "Result of a \"fencepost\" error where the upper bound is taken as $\\sqrt{99}$ (using $n$ instead of $n+1$).",
+        "B": "Correct.",
+        "C": "Result of forgetting the lower bound term ($-1$) and using the wrong upper bound ($\\sqrt{99}$).",
+        "D": "Result of forgetting the lower bound term ($-1$) and only calculating the upper term ($\\sqrt{100}$).",
+        "E": "Result of an addition sign error in the final calculation ($\\sqrt{100} + \\sqrt{1}$)."
+      },
+      "_raw_text": "question:\n  stem: >\n    What is the value of the sum\n    $$ \\sum_{n=1}^{99} \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} $$\n  options:\n    A: \\sqrt{99} - 1\n    B: 9\n    C: \\sqrt{99}\n    D: 10\n    E: 11\n  correct_option: B\nsolution:\n  reasoning: >\n    Rationalise the denominator of the general term:\n    $$ \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} = \\frac{1}{\\sqrt{n} + \\sqrt{n+1}} \\times \\frac{\\sqrt{n+1} - \\sqrt{n}}{\\sqrt{n+1} - \\sqrt{n}} = \\frac{\\sqrt{n+1} - \\sqrt{n}}{(n+1) - n} = \\sqrt{n+1} - \\sqrt{n} $$\n    The sum becomes a telescoping series:\n    $$ \\sum_{n=1}^{99} (\\sqrt{n+1} - \\sqrt{n}) = (\\sqrt{2} - \\sqrt{1}) + (\\sqrt{3} - \\sqrt{2}) + \\dots + (\\sqrt{100} - \\sqrt{99}) $$\n    All intermediate terms cancel, leaving only the final positive term and the initial negative term:\n    $$ \\sqrt{100} - \\sqrt{1} = 10 - 1 = 9 $$\n  key_insight: >\n    Rationalising the denominator transforms the summand into a difference, creating a telescoping series where only the boundary terms survive.\ndistractor_map:\n  A: Result of a \"fencepost\" error where the upper bound is taken as $\\sqrt{99}$ (using $n$ instead of $n+1$).\n  B: Correct.\n  C: Result of forgetting the lower bound term ($-1$) and using the wrong upper bound ($\\sqrt{99}$).\n  D: Result of forgetting the lower bound term ($-1$) and only calculating the upper term ($\\sqrt{100}$).\n  E: Result of an addition sign error in the final calculation ($\\sqrt{100} + \\sqrt{1}$)."
+    },
+    "verifier_report": {
+      "verdict": "PASS",
+      "confidence": "high",
+      "notes": [
+        "The mathematical derivation is correct; the series telescopes to $\\sqrt{100} - \\sqrt{1} = 9$.",
+        "The question is standard for ESAT/ENGAA Mathematics 1, testing algebraic manipulation and series summation without a calculator.",
+        "Distractors are well-chosen, covering fencepost errors, sign errors, and forgetting the initial term.",
+        "Difficulty is appropriate for the time limit (under 2 minutes for a well-prepared candidate)."
+      ],
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The mathematical derivation is correct; the series telescopes to $\\sqrt{100} - \\sqrt{1} = 9$.\n  - The question is standard for ESAT/ENGAA Mathematics 1, testing algebraic manipulation and series summation without a calculator.\n  - Distractors are well-chosen, covering fencepost errors, sign errors, and forgetting the initial term.\n  - Difficulty is appropriate for the time limit (under 2 minutes for a well-prepared candidate)."
+    },
+    "style_report": {
+      "verdict": "PASS",
+      "scores": {
+        "authenticity": 10,
+        "one_idea_purity": 10,
+        "no_calculator": 10,
+        "elegance": 10,
+        "distractor_realism": 10,
+        "plausibility": 10
+      },
+      "summary": "This is a perfectly constructed question, testing a classic telescoping series problem. It is concise, requires no calculator, and features excellent distractors that target common errors.",
+      "_raw_text": "verdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This is a perfectly constructed question, testing a classic telescoping series problem. It is concise, requires no calculator, and features excellent distractors that target common errors."
+    },
+    "models": {
+      "designer": "gemini-3-pro-preview",
+      "implementer": "gemini-3-pro-preview",
+      "verifier": "gemini-3-pro-preview",
+      "style_judge": "gemini-2.5-flash"
+    },
+    "attempts": 1,
+    "created_at": "2025-12-18T01:33:01.595744",
+    "_run_id": "20251218_013053",
+    "_run_dir": "runs\\20251218_013053"
+  }
+]

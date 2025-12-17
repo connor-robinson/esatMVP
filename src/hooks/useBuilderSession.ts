@@ -5,7 +5,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import type { SessionPreset, BuilderSession, GeneratedQuestion, QuestionAttempt } from "@/types/core";
+import type { SessionPreset, BuilderSession, GeneratedQuestion, QuestionAttempt, TopicVariantSelection } from "@/types/core";
 import type { SessionPresetInsert } from "@/lib/supabase/types";
 import { generateMixedQuestions } from "@/lib/generators";
 import { generateId } from "@/lib/utils";
@@ -13,16 +13,57 @@ import { getTopic } from "@/config/topics";
 
 type ViewState = "builder" | "running" | "results";
 
-const mapPresetRow = (row: any): SessionPreset => ({
-  id: row.id,
-  name: row.name,
-  topics: row.topic_labels ?? row.topic_ids ?? [],
-  topicIds: row.topic_ids ?? [],
-  questionCount: row.question_count ?? 0,
-  durationMin: row.duration_min ?? 0,
-  topicLevels: (row.topic_levels as Record<string, number>) ?? {},
-  createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
-});
+const mapPresetRow = (row: any): SessionPreset => {
+  const topicLevelsData = row.topic_levels as any;
+  
+  // Convert stored data to variant selections array
+  let topicVariantSelections: TopicVariantSelection[] = [];
+  let topicLevels: Record<string, number> | undefined;
+  
+  if (topicLevelsData && typeof topicLevelsData === 'object') {
+    const entries = Object.entries(topicLevelsData);
+    
+    if (entries.length > 0) {
+      // Check if it's variants (string values) or levels (number values)
+      const isVariants = typeof entries[0][1] === 'string';
+      
+      if (isVariants) {
+        // Convert Record<string, string> to TopicVariantSelection[]
+        topicVariantSelections = entries.map(([topicId, variantId]) => ({
+          topicId,
+          variantId: variantId as string,
+        }));
+      } else {
+        // Legacy: convert levels to variants
+        topicLevels = topicLevelsData as Record<string, number>;
+        const topicIds = row.topic_ids ?? [];
+        topicVariantSelections = topicIds.map((topicId: string) => {
+          const topic = getTopic(topicId);
+          const level = topicLevels![topicId] || 1;
+          if (topic && topic.variants) {
+            const variant = topic.variants[level - 1] || topic.variants[0];
+            if (variant) {
+              return { topicId, variantId: variant.id };
+            }
+          }
+          return { topicId, variantId: 'default' };
+        }).filter(Boolean);
+      }
+    }
+  }
+  
+  return {
+    id: row.id,
+    name: row.name,
+    topics: row.topic_labels ?? row.topic_ids ?? [],
+    topicIds: row.topic_ids ?? [],
+    questionCount: row.question_count ?? 0,
+    durationMin: row.duration_min ?? 0,
+    topicVariantSelections,
+    topicLevels, // Legacy support
+    createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+  };
+};
 
 export function useBuilderSession() {
   const supabase = useSupabaseClient();
@@ -33,9 +74,8 @@ export function useBuilderSession() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   // Session configuration
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedTopicVariants, setSelectedTopicVariants] = useState<TopicVariantSelection[]>([]);
   const [questionCount, setQuestionCount] = useState(20);
-  const [topicLevels, setTopicLevels] = useState<Record<string, number>>({});
 
   const [presets, setPresets] = useState<SessionPreset[]>([]);
 
@@ -67,54 +107,101 @@ export function useBuilderSession() {
       });
   }, [authSession?.user, supabase]);
 
-  const canStart = selectedTopics.length > 0;
+  const canStart = selectedTopicVariants.length > 0;
   const currentQuestion = currentSession?.questions[currentQuestionIndex] || null;
   const isComplete = !!currentSession?.endedAt;
   const progress = currentSession?.questions.length
     ? currentQuestionIndex / currentSession.questions.length
     : 0;
 
-  const addTopic = useCallback((topicId: string) => {
-    setSelectedTopics((prev) => (prev.includes(topicId) ? prev : [...prev, topicId]));
+  // Parse topicVariantId (e.g., "addition-single-digit" or "addition")
+  const parseTopicVariantId = useCallback((topicVariantId: string): { topicId: string; variantId: string } | null => {
+    // Check if it's in format "topicId-variantId"
+    const parts = topicVariantId.split('-');
+    if (parts.length >= 2) {
+      // Try to find matching topic and variant
+      // This is a bit tricky because topic IDs themselves might contain hyphens
+      // So we try progressively shorter topic IDs
+      for (let i = 1; i < parts.length; i++) {
+        const possibleTopicId = parts.slice(0, i).join('-');
+        const possibleVariantId = parts.slice(i).join('-');
+        const topic = getTopic(possibleTopicId);
+        if (topic && topic.variants?.some(v => v.id === possibleVariantId)) {
+          return { topicId: possibleTopicId, variantId: possibleVariantId };
+        }
+      }
+    }
+    
+    // Fallback: treat as topicId only, use first variant
+    const topic = getTopic(topicVariantId);
+    if (topic) {
+      const variantId = topic.variants?.[0]?.id || 'default';
+      return { topicId: topicVariantId, variantId };
+    }
+    
+    return null;
   }, []);
 
-  const removeTopic = useCallback((topicId: string) => {
-    setSelectedTopics((prev) => prev.filter((id) => id !== topicId));
-    setTopicLevels((prev) => {
-      const { [topicId]: _, ...rest } = prev;
-      return rest;
+  const addTopic = useCallback((topicVariantId: string, topicId: string, variantId?: string) => {
+    const parsed = variantId 
+      ? { topicId, variantId }
+      : parseTopicVariantId(topicVariantId);
+    
+    if (!parsed) return;
+    
+    setSelectedTopicVariants((prev) => {
+      // Check if this exact topic-variant pair already exists
+      const exists = prev.some(
+        tv => tv.topicId === parsed.topicId && tv.variantId === parsed.variantId
+      );
+      if (exists) return prev;
+      
+      return [...prev, parsed];
     });
-  }, []);
+  }, [parseTopicVariantId]);
+
+  const removeTopicVariant = useCallback((topicVariantId: string) => {
+    const parsed = parseTopicVariantId(topicVariantId);
+    if (!parsed) return;
+    
+    setSelectedTopicVariants((prev) => 
+      prev.filter(
+        tv => !(tv.topicId === parsed.topicId && tv.variantId === parsed.variantId)
+      )
+    );
+  }, [parseTopicVariantId]);
 
   const clearTopics = useCallback(() => {
-    setSelectedTopics([]);
-    setTopicLevels({});
-  }, []);
-
-  const setTopicLevel = useCallback((topicId: string, levelValue: number) => {
-    setTopicLevels((prev) => ({ ...prev, [topicId]: levelValue }));
-  }, []);
-
-  const reorderTopics = useCallback((newOrder: string[]) => {
-    setSelectedTopics(newOrder);
+    setSelectedTopicVariants([]);
   }, []);
 
   const createPreset = useCallback(
     (name: string) => {
       if (!authSession?.user) return;
-      if (!name.trim() || selectedTopics.length === 0) return;
+      if (!name.trim() || selectedTopicVariants.length === 0) return;
 
       const presetId = generateId();
+      
+      // Get unique topic IDs
+      const uniqueTopicIds = Array.from(new Set(selectedTopicVariants.map(tv => tv.topicId)));
+      const topics = uniqueTopicIds.map(id => getTopic(id)?.name || id);
+      
       const preset: SessionPreset = {
         id: presetId,
         name: name.trim(),
-        topics: selectedTopics.map((id) => getTopic(id)?.name || id),
-        topicIds: [...selectedTopics],
+        topics,
+        topicIds: uniqueTopicIds,
         questionCount,
         durationMin: questionCount,
-        topicLevels: { ...topicLevels },
+        topicVariantSelections: [...selectedTopicVariants],
         createdAt: Date.now(),
       };
+
+      // Convert variant selections to a map for storage
+      const topicLevelsMap: Record<string, string> = {};
+      selectedTopicVariants.forEach(({ topicId, variantId }) => {
+        topicLevelsMap[topicId] = variantId;
+      });
 
       const presetData: SessionPresetInsert = {
         id: presetId,
@@ -124,7 +211,8 @@ export function useBuilderSession() {
         topic_labels: preset.topics,
         question_count: preset.questionCount,
         duration_min: preset.durationMin,
-        topic_levels: preset.topicLevels,
+        // Store variants in topic_levels as JSON (will migrate to topic_variants column later)
+        topic_levels: topicLevelsMap as any,
       };
       
       (supabase as any)
@@ -138,13 +226,30 @@ export function useBuilderSession() {
           setPresets((prev) => [preset, ...prev.filter((p) => p.id !== preset.id)]);
         });
     },
-    [authSession?.user, selectedTopics, questionCount, topicLevels, supabase],
+    [authSession?.user, selectedTopicVariants, questionCount, supabase],
   );
 
   const loadPreset = useCallback((preset: SessionPreset) => {
-    setSelectedTopics([...preset.topicIds]);
     setQuestionCount(preset.durationMin);
-    setTopicLevels({ ...preset.topicLevels });
+    if (preset.topicVariantSelections && preset.topicVariantSelections.length > 0) {
+      setSelectedTopicVariants([...preset.topicVariantSelections]);
+    } else if (preset.topicLevels) {
+      // Legacy: convert levels to variant selections
+      const converted: TopicVariantSelection[] = [];
+      preset.topicIds.forEach((topicId) => {
+        const topic = getTopic(topicId);
+        if (topic && topic.variants) {
+          const level = preset.topicLevels![topicId] || 1;
+          const variant = topic.variants[level - 1] || topic.variants[0];
+          if (variant) {
+            converted.push({ topicId, variantId: variant.id });
+          }
+        }
+      });
+      setSelectedTopicVariants(converted);
+    } else {
+      setSelectedTopicVariants([]);
+    }
   }, []);
 
   const removePreset = useCallback(
@@ -168,9 +273,27 @@ export function useBuilderSession() {
 
   const startSession = useCallback(() => {
     if (!authSession?.user) return;
-    if (selectedTopics.length === 0) return;
+    if (selectedTopicVariants.length === 0) return;
 
-    const questions = generateMixedQuestions(selectedTopics, questionCount, topicLevels);
+    // Convert variant selections to topic IDs and difficulty levels for generator
+    const topicIds = selectedTopicVariants.map(tv => tv.topicId);
+    const variantToLevelMap: Record<string, number> = {};
+    
+    selectedTopicVariants.forEach(({ topicId, variantId }) => {
+      const topic = getTopic(topicId);
+      if (topic && topic.variants) {
+        const variant = topic.variants.find(v => v.id === variantId);
+        if (variant) {
+          variantToLevelMap[topicId] = variant.difficulty;
+        } else {
+          variantToLevelMap[topicId] = 1;
+        }
+      } else {
+        variantToLevelMap[topicId] = 1;
+      }
+    });
+    
+    const questions = generateMixedQuestions(topicIds, questionCount, variantToLevelMap);
     const sessionId = generateId();
     const startedAt = Date.now();
 
@@ -197,9 +320,8 @@ export function useBuilderSession() {
         started_at: new Date(startedAt).toISOString(),
         attempts: 0,
         settings: {
-          selectedTopics,
+          selectedTopicVariants,
           questionCount,
-          topicLevels,
         },
       })
       .then(({ error }: { error: any }) => {
@@ -230,7 +352,7 @@ export function useBuilderSession() {
           }
         });
     }
-  }, [authSession?.user, questionCount, selectedTopics, supabase, topicLevels]);
+  }, [authSession?.user, questionCount, selectedTopicVariants, supabase]);
 
   const persistAttempt = useCallback(
     (sessionId: string, attempt: QuestionAttempt) => {
@@ -364,8 +486,21 @@ export function useBuilderSession() {
 
       if (!event.over || event.over.id !== "session-folder") return;
 
-      const topicId = String(event.active.id).replace("topic-", "");
-      addTopic(topicId);
+      const draggedId = String(event.active.id);
+      const topicVariantId = draggedId.replace("topic-", "");
+      
+      // Check if it's a topic ID (not a variant ID - variants have format "topicId-variantId")
+      const topic = getTopic(topicVariantId);
+      if (topic && topic.variants && topic.variants.length > 0) {
+        // It's a topic - add all variants
+        topic.variants.forEach(variant => {
+          const variantId = `${topicVariantId}-${variant.id}`;
+          addTopic(variantId, topicVariantId, variant.id);
+        });
+      } else {
+        // It's a variant - add it normally
+        addTopic(topicVariantId, "", undefined);
+      }
     },
     [addTopic],
   );
@@ -373,19 +508,16 @@ export function useBuilderSession() {
   return {
     view,
     activeId,
-    selectedTopics,
+    selectedTopicVariants,
     questionCount,
     setQuestionCount,
-    topicLevels,
-    setTopicLevel,
     presets,
     createPreset,
     loadPreset,
     removePreset,
     addTopic,
-    removeTopic,
+    removeTopicVariant,
     clearTopics,
-    reorderTopics,
     canStart,
     startSession,
     submitAnswer,

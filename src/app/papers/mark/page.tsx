@@ -692,6 +692,12 @@ export default function PapersMarkPage() {
         const entries = Object.entries(sectionAnalytics);
         if (entries.length === 0) return;
         
+        // Get exam year for TMUA handling
+        const examYear = qs?.[0]?.examYear as number | undefined;
+        const isNSAA = examName === 'NSAA';
+        const isTMUA = examName === 'TMUA';
+        const isENGAA = examName === 'ENGAA';
+        
         // Compute per section and decide table keys
         const needed: Record<string, { score: number | null; tableKey: string | null; label: string } > = {};
         for (const [section, data] of entries) {
@@ -701,12 +707,33 @@ export default function PapersMarkPage() {
           const convPartName = resolved.name;
           const scaled = hasConversion ? scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest') : null;
           const score = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
-          const { key: tableKey, label } = mapSectionToTable({ examName, sectionLetter: partLetterRaw, sectionName: match?.partName });
+          let { key: tableKey, label } = mapSectionToTable({ examName, sectionLetter: partLetterRaw, sectionName: match?.partName });
+          
+          // For TMUA, determine which table to use based on year
+          if (isTMUA && tableKey === 'tmua_paper') {
+            if (examYear && examYear <= 2023) {
+              tableKey = 'tmua_pre_change_cumulative_2023';
+            } else if (examYear && examYear >= 2024) {
+              tableKey = 'tmua_post_change_cumulative_2024_2025';
+            } else {
+              // Default to new table if year unknown
+              tableKey = 'tmua_post_change_cumulative_2024_2025';
+            }
+          }
+          
           needed[section] = { score, tableKey, label };
         }
         
+        // For TMUA <=2023, we also need the new table for reverse interpolation
+        const tmuaNeedsNewTable = isTMUA && examYear && examYear <= 2023;
+        const newTableKey = 'tmua_post_change_cumulative_2024_2025';
+        
         // Fetch unique percentile tables (for exams that have them)
         const uniqueKeys = Array.from(new Set(Object.values(needed).map(v => v.tableKey).filter(Boolean))) as string[];
+        if (tmuaNeedsNewTable && !uniqueKeys.includes(newTableKey)) {
+          uniqueKeys.push(newTableKey);
+        }
+        
         const keyToRows: Record<string, any[]> = {};
         await Promise.all(uniqueKeys.map(async (k) => {
           try {
@@ -717,7 +744,9 @@ export default function PapersMarkPage() {
           }
         }));
         
-        const out: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> = {};
+        const out: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }> = {};
+        const nsaaPercentiles: number[] = [];
+        
         for (const [section, info] of Object.entries(needed)) {
           // Always include the score
           if (!info.score) {
@@ -729,12 +758,40 @@ export default function PapersMarkPage() {
           if (info.tableKey && keyToRows[info.tableKey] && keyToRows[info.tableKey].length > 0) {
             const p = interpolatePercentile(keyToRows[info.tableKey], info.score);
             const clamped = Math.max(0, Math.min(100, p));
-            out[section] = { percentile: clamped, score: info.score, table: info.tableKey, label: info.label };
+            
+            // For TMUA <=2023, also calculate equivalent new score
+            if (isTMUA && examYear && examYear <= 2023 && keyToRows[newTableKey] && keyToRows[newTableKey].length > 0) {
+              const newEquivalentScore = interpolateScore(keyToRows[newTableKey], clamped);
+              out[section] = { 
+                percentile: clamped, 
+                score: info.score, 
+                table: info.tableKey, 
+                label: info.label,
+                oldPercentile: clamped,
+                newEquivalentScore: Number.isFinite(newEquivalentScore) ? Math.round(newEquivalentScore * 10) / 10 : null
+              };
+            } else {
+              out[section] = { percentile: clamped, score: info.score, table: info.tableKey, label: info.label };
+            }
+            
+            // Collect NSAA percentiles for averaging
+            if (isNSAA && Number.isFinite(clamped)) {
+              nsaaPercentiles.push(clamped);
+            }
           } else {
             // No percentile table available, but still show the score
             out[section] = { percentile: null, score: info.score, table: info.tableKey, label: info.label || `${examName} Score` };
           }
         }
+        
+        // Calculate NSAA averaged percentile
+        if (isNSAA && nsaaPercentiles.length > 0) {
+          const avg = nsaaPercentiles.reduce((sum, p) => sum + p, 0) / nsaaPercentiles.length;
+          setNsaaAveragedPercentile(Math.max(0, Math.min(100, avg)));
+        } else {
+          setNsaaAveragedPercentile(null);
+        }
+        
         setSectionPercentiles(out);
         setPercentileTables(keyToRows as any);
       } catch (e) {
