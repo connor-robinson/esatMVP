@@ -39,15 +39,31 @@ export async function requireRouteUser(request: Request) {
     return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
   }
   
-  const supabase = createRouteClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const supabase = createRouteClient();
+    if (!supabase) {
+      console.error("[auth] Failed to create Supabase client");
+      return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
+    }
 
-  if (!session?.user) {
-    return { session: null, supabase, user: null as null, error: "unauthorized" as const };
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError) {
+      console.error("[auth] Session error:", sessionError);
+      return { session: null, supabase, user: null as null, error: "unauthorized" as const };
+    }
+
+    if (!session?.user) {
+      return { session: null, supabase, user: null as null, error: "unauthorized" as const };
+    }
+
+    return { session, supabase, user: session.user };
+  } catch (error: any) {
+    console.error("[auth] requireRouteUser error:", error);
+    return { session: null, supabase: null as any, user: null as null, error: "unauthorized" as const };
   }
-
-  return { session, supabase, user: session.user };
 }
 

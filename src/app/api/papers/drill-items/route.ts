@@ -23,10 +23,13 @@ function toIso(value?: number | null) {
 }
 
 export async function POST(request: Request) {
-  const { session, supabase } = await requireRouteUser(request);
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const { session, supabase, error: authError } = await requireRouteUser(request);
+    
+    if (authError || !session?.user || !supabase) {
+      console.error("[drill-items] Auth error:", authError);
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
   const body = (await request.json()) as { items?: DrillItemPayload[] };
   const items = body?.items ?? [];
@@ -57,6 +60,13 @@ const rows = items.map((item) => ({
     return NextResponse.json({ error: "Failed to sync drill items" }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true });
+  } catch (error: any) {
+    console.error("[drill-items] Unexpected error:", error);
+    return NextResponse.json(
+      { error: error.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 

@@ -4,17 +4,27 @@ import {
 } from "@supabase/ssr";
 import type { Database } from "./types";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function getSupabaseEnv() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("[Supabase] Missing environment variables:", {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseAnonKey,
+      urlLength: supabaseUrl?.length || 0,
+      keyLength: supabaseAnonKey?.length || 0,
+    });
+    throw new Error(
+      `Missing Supabase environment variables. URL: ${supabaseUrl ? 'set' : 'missing'}, Key: ${supabaseAnonKey ? 'set' : 'missing'}`
+    );
+  }
+
+  return { supabaseUrl, supabaseAnonKey };
 }
 
 export function createServerClient() {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Missing Supabase environment variables");
-  }
+  const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv();
   
   // During build time, cookies() is not available, so we need to handle this gracefully
   try {
@@ -35,6 +45,7 @@ export function createServerClient() {
   } catch (error) {
     // If cookies() fails (e.g., during build), create a client without cookie handling
     // This will only work for read operations during build
+    console.warn("[Supabase] cookies() unavailable, using fallback client:", error);
     return createServerClientSSR<Database>(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll: () => [],
