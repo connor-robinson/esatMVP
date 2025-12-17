@@ -12,10 +12,21 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
-import type { Database } from "@/lib/supabase/types";
 
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type PaperSession = Database["public"]["Tables"]["paper_sessions"]["Row"];
+// Minimal shapes for the data we actually use on this page.
+// This avoids tight coupling to the generated Database types.
+type Profile = {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  role: string | null;
+  created_at: string | null;
+};
+
+type PaperSession = {
+  id: string;
+  created_at: string;
+};
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -29,12 +40,12 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (!session?.user) {
-      router.push("/login?redirectTo=/profile");
-      return;
-    }
-
     async function loadProfile() {
+      if (!session?.user) {
+        router.push("/login?redirectTo=/profile");
+        return;
+      }
+
       try {
         // Load profile
         const { data: profileData, error: profileError } = await supabase
@@ -57,10 +68,11 @@ export default function ProfilePage() {
           .order("created_at", { ascending: false });
 
         if (!sessionsError && sessionsData) {
-          const total = sessionsData.length;
+          const typedSessions = sessionsData as PaperSession[];
+          const total = typedSessions.length;
           const sevenDaysAgo = new Date();
           sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-          const recent = sessionsData.filter(
+          const recent = typedSessions.filter(
             (s) => new Date(s.created_at) >= sevenDaysAgo
           ).length;
 
