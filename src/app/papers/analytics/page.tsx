@@ -10,20 +10,21 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { PerformanceTrendChart } from "@/components/papers/PerformanceTrendChart";
+import { AnalyticsTrendChart } from "@/components/papers/AnalyticsTrendChart";
 import { MistakeChart } from "@/components/papers/MistakeChart";
 import { FileText } from "lucide-react";
 import type { PaperType, PaperSection } from "@/types/papers";
 import { 
   fetchUserSessions, 
   filterSessions, 
-  calculateTrendData,
+  calculateTrendDataWithMetadata,
   getAllMistakeTags,
   calculateSessionAnalytics 
 } from "@/lib/papers/analytics";
 import type { PaperSession } from "@/types/papers";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
+import { getPaperTypeColor } from "@/config/colors";
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
@@ -34,6 +35,8 @@ export default function PapersAnalyticsPage() {
   const [selectedPaper, setSelectedPaper] = useState<PaperType | "ALL">("ALL");
   const [selectedSection, setSelectedSection] = useState<PaperSection | "ALL">("ALL");
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "all">("all");
+  const [trendFilterMode, setTrendFilterMode] = useState<"all" | "paper" | "section">("all");
+  const [selectedTrendFilters, setSelectedTrendFilters] = useState<string[]>([]);
 
   // Fetch sessions on mount
   useEffect(() => {
@@ -58,10 +61,27 @@ export default function PapersAnalyticsPage() {
     });
   }, [sessions, selectedPaper, selectedSection, timeRange]);
 
-  // Calculate trend data for graph
-  const trendData = useMemo(() => {
-    return calculateTrendData(filteredSessions);
-  }, [filteredSessions]);
+  // Calculate trend data for graph with metadata
+  const trendDataWithMetadata = useMemo(() => {
+    return calculateTrendDataWithMetadata(sessions); // Use all sessions, not filtered
+  }, [sessions]);
+
+  // Get unique paper types and sections for filter buttons
+  const availablePaperTypes = useMemo(() => {
+    const types = new Set<PaperType>();
+    sessions.forEach(s => {
+      if (s.paperName) types.add(s.paperName);
+    });
+    return Array.from(types);
+  }, [sessions]);
+
+  const availableSections = useMemo(() => {
+    const sections = new Set<PaperSection>();
+    sessions.forEach(s => {
+      s.selectedSections?.forEach(sec => sections.add(sec));
+    });
+    return Array.from(sections);
+  }, [sessions]);
 
   // Calculate analytics
   const analytics = useMemo(() => {
@@ -128,83 +148,154 @@ export default function PapersAnalyticsPage() {
           description="Deep insights into your paper performance. Track progress, identify patterns, and optimize your preparation."
         />
 
-        {/* Filters */}
+        {/* Combined Filters and Trends Card */}
         <Card className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Paper Filter */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
-                Paper Type
-              </label>
-              <select
-                value={selectedPaper}
-                onChange={(e) => setSelectedPaper(e.target.value as PaperType | "ALL")}
-                className="w-full px-4 py-3 bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
-              >
-                <option value="ALL">All Papers</option>
-                <option value="ESAT">ESAT</option>
-                <option value="TMUA">TMUA</option>
-                <option value="NSAA">NSAA</option>
-                <option value="ENGAA">ENGAA</option>
-                <option value="PAT">PAT</option>
-              </select>
+          <div className="space-y-6">
+            {/* Compact Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pb-4 border-b border-white/10">
+              {/* Paper Filter */}
+              <div>
+                <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+                  Paper Type
+                </label>
+                <select
+                  value={selectedPaper}
+                  onChange={(e) => setSelectedPaper(e.target.value as PaperType | "ALL")}
+                  className="w-full px-3 py-2 text-sm bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
+                >
+                  <option value="ALL">All Papers</option>
+                  <option value="ESAT">ESAT</option>
+                  <option value="TMUA">TMUA</option>
+                  <option value="NSAA">NSAA</option>
+                  <option value="ENGAA">ENGAA</option>
+                  <option value="PAT">PAT</option>
+                </select>
+              </div>
+
+              {/* Section Filter */}
+              <div>
+                <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+                  Section
+                </label>
+                <select
+                  value={selectedSection}
+                  onChange={(e) => setSelectedSection(e.target.value as PaperSection | "ALL")}
+                  className="w-full px-3 py-2 text-sm bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
+                >
+                  <option value="ALL">All Sections</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Advanced Mathematics and Advanced Physics">Advanced Mathematics and Advanced Physics</option>
+                  <option value="Mathematics and Physics">Mathematics and Physics</option>
+                </select>
+              </div>
+
+              {/* Time Range Filter */}
+              <div>
+                <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+                  Time Range
+                </label>
+                <select
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value as "week" | "month" | "quarter" | "all")}
+                  className="w-full px-3 py-2 text-sm bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
+                >
+                  <option value="week">Last Week</option>
+                  <option value="month">Last Month</option>
+                  <option value="quarter">Last 3 Months</option>
+                  <option value="all">All Time</option>
+                </select>
+              </div>
             </div>
 
-            {/* Section Filter */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
-                Section
-              </label>
-              <select
-                value={selectedSection}
-                onChange={(e) => setSelectedSection(e.target.value as PaperSection | "ALL")}
-                className="w-full px-4 py-3 bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
-              >
-                <option value="ALL">All Sections</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="Advanced Mathematics and Advanced Physics">Advanced Mathematics and Advanced Physics</option>
-                <option value="Mathematics and Physics">Mathematics and Physics</option>
-              </select>
-            </div>
-
-            {/* Time Range Filter */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
-                Time Range
-              </label>
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value as "week" | "month" | "quarter" | "all")}
-                className="w-full px-4 py-3 bg-white/5 text-neutral-100 rounded-organic-md border border-white/10 focus:border-primary focus:shadow-glow-focus outline-none transition-all duration-fast ease-signature"
-              >
-                <option value="week">Last Week</option>
-                <option value="month">Last Month</option>
-                <option value="quarter">Last 3 Months</option>
-                <option value="all">All Time</option>
-              </select>
-            </div>
-          </div>
-        </Card>
-
-        {/* Trends Card - First Big Card */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Performance Trends</h2>
-              <p className="text-sm text-neutral-400">Your score percentage over time</p>
-            </div>
-            {trendData.length > 0 ? (
-              <PerformanceTrendChart dataPoints={trendData} />
-            ) : (
-              <div className="h-64 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
-                <div className="text-center text-neutral-500">
-                  <div className="text-sm">No trend data available for the selected filters</div>
+            {/* Trend Graph with Filter Buttons */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-neutral-100 mb-1">Performance Trends</h2>
+                  <p className="text-sm text-neutral-400">Your score percentage over time</p>
+                </div>
+                
+                {/* Filter Mode Buttons */}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={trendFilterMode === "all" ? "primary" : "secondary"}
+                    size="sm"
+                    onClick={() => {
+                      setTrendFilterMode("all");
+                      setSelectedTrendFilters([]);
+                    }}
+                  >
+                    All
+                  </Button>
+                  <Button
+                    variant={trendFilterMode === "paper" ? "primary" : "secondary"}
+                    size="sm"
+                    onClick={() => {
+                      setTrendFilterMode("paper");
+                      setSelectedTrendFilters([]);
+                    }}
+                  >
+                    By Paper
+                  </Button>
+                  <Button
+                    variant={trendFilterMode === "section" ? "primary" : "secondary"}
+                    size="sm"
+                    onClick={() => {
+                      setTrendFilterMode("section");
+                      setSelectedTrendFilters([]);
+                    }}
+                  >
+                    By Section
+                  </Button>
                 </div>
               </div>
-            )}
+
+              {/* Filter Selection Buttons */}
+              {trendFilterMode !== "all" && (
+                <div className="flex flex-wrap gap-2">
+                  {(trendFilterMode === "paper" ? availablePaperTypes : availableSections).map((item) => {
+                    const isSelected = selectedTrendFilters.includes(item);
+                    return (
+                      <button
+                        key={item}
+                        onClick={() => {
+                          setSelectedTrendFilters(prev => 
+                            isSelected 
+                              ? prev.filter(f => f !== item)
+                              : [...prev, item]
+                          );
+                        }}
+                        className={`px-3 py-1.5 text-xs rounded-organic-md border transition-all duration-fast ease-signature ${
+                          isSelected
+                            ? "bg-primary/20 border-primary text-primary"
+                            : "bg-white/5 border-white/10 text-neutral-300 hover:border-white/20"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Trend Chart */}
+              {trendDataWithMetadata.length > 0 ? (
+                <AnalyticsTrendChart
+                  allSessions={trendDataWithMetadata}
+                  filterMode={trendFilterMode}
+                  selectedFilters={selectedTrendFilters}
+                />
+              ) : (
+                <div className="h-64 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
+                  <div className="text-center text-neutral-500">
+                    <div className="text-sm">No trend data available</div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </Card>
 
@@ -254,27 +345,44 @@ export default function PapersAnalyticsPage() {
                     ? new Date(session.startedAt).toLocaleDateString()
                     : 'Unknown date';
                   const minutes = Math.round(session.timeLimitMinutes);
+                  
+                  // Extract year from variant if it contains a year, otherwise use variant as-is
+                  const yearMatch = session.paperVariant.match(/\d{4}/);
+                  const year = yearMatch ? yearMatch[0] : null;
+                  const variantWithoutYear = year 
+                    ? session.paperVariant.replace(/\s*\d{4}\s*/, '').trim()
+                    : session.paperVariant;
+                  
+                  // Main title: Paper name + year (e.g., "ENGAA 2020")
+                  const mainTitle = year 
+                    ? `${session.paperName} ${year}`
+                    : `${session.paperName} ${session.paperVariant}`;
+                  
+                  // Secondary: Section info (e.g., "Section 2")
+                  const sectionInfo = session.selectedSections && session.selectedSections.length > 0
+                    ? session.selectedSections.join(", ")
+                    : variantWithoutYear || session.sessionName;
+                  
+                  // Icon color based on paper type
+                  const iconColor = getPaperTypeColor(session.paperName);
 
                   return (
                     <div 
                       key={session.id} 
                       className="flex items-center justify-between p-4 bg-white/5 rounded-organic-md border border-white/10 hover:border-white/20 transition-colors"
                     >
-                      {/* Left: Icon */}
+                      {/* Left: Color-coded Icon */}
                       <div className="flex-shrink-0 mr-4">
-                        <FileText className="w-5 h-5 text-neutral-400" />
+                        <FileText className="w-5 h-5" style={{ color: iconColor }} />
                       </div>
 
                       {/* Middle: Session Info */}
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-neutral-100 truncate">
-                          {session.paperName} {session.paperVariant}
+                          {mainTitle}
                         </div>
-                        <div className="text-sm text-neutral-400 truncate">
-                          {date} • {session.sessionName}
-                          {session.selectedSections && session.selectedSections.length > 0 && (
-                            ` • ${session.selectedSections.join(", ")}`
-                          )}
+                        <div className="text-xs text-neutral-400 truncate mt-0.5">
+                          {sectionInfo}
                         </div>
                       </div>
 

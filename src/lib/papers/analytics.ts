@@ -231,6 +231,39 @@ export function calculateTrendData(
 }
 
 /**
+ * Calculate trend data with paper type and section information
+ * Returns array with paper type and section for filtering
+ */
+export function calculateTrendDataWithMetadata(
+  sessions: PaperSession[]
+): Array<{ date: number; percentage: number; paperType?: PaperType; section?: PaperSection }> {
+  const scoredSessions = sessions
+    .filter(s => s.score && s.startedAt)
+    .map(s => {
+      const result: {
+        date: number;
+        percentage: number;
+        paperType?: PaperType;
+        section?: PaperSection;
+      } = {
+        date: s.startedAt!,
+        percentage: s.score ? (s.score.correct / s.score.total) * 100 : 0,
+        paperType: s.paperName,
+      };
+      
+      // Use first section if available
+      if (s.selectedSections && s.selectedSections.length > 0) {
+        result.section = s.selectedSections[0];
+      }
+      
+      return result;
+    })
+    .sort((a, b) => a.date - b.date);
+
+  return scoredSessions;
+}
+
+/**
  * Get all mistake tags from sessions
  */
 export function getAllMistakeTags(sessions: PaperSession[]): MistakeTag[] {
