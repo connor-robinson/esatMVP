@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { AiGeneratedQuestionRow } from "@/lib/supabase/types";
 
 export async function GET() {
   try {
@@ -20,7 +21,7 @@ export async function GET() {
 
     // Count by status
     const byStatus: Record<string, number> = {};
-    statusData?.forEach((q) => {
+    (statusData as AiGeneratedQuestionRow[] | null)?.forEach((q) => {
       byStatus[q.status] = (byStatus[q.status] || 0) + 1;
     });
 
@@ -34,7 +35,7 @@ export async function GET() {
     }
 
     const bySchema: Record<string, number> = {};
-    schemaData?.forEach((q) => {
+    (schemaData as AiGeneratedQuestionRow[] | null)?.forEach((q) => {
       bySchema[q.schema_id] = (bySchema[q.schema_id] || 0) + 1;
     });
 
@@ -48,7 +49,7 @@ export async function GET() {
     }
 
     const byDifficulty: Record<string, number> = {};
-    difficultyData?.forEach((q) => {
+    (difficultyData as AiGeneratedQuestionRow[] | null)?.forEach((q) => {
       byDifficulty[q.difficulty] = (byDifficulty[q.difficulty] || 0) + 1;
     });
 

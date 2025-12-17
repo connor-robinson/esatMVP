@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { AiGeneratedQuestionUpdate } from "@/lib/supabase/types";
 
 export async function PATCH(
   request: Request,
@@ -36,18 +37,16 @@ export async function PATCH(
     }
 
     // Update question status
-    const updateData: any = {
+    const updateData: AiGeneratedQuestionUpdate = {
       status,
       reviewed_by: user.id,
       reviewed_at: new Date().toISOString(),
+      ...(review_notes !== undefined && { review_notes }),
     };
-
-    if (review_notes !== undefined) {
-      updateData.review_notes = review_notes;
-    }
 
     const { data, error } = await supabase
       .from("ai_generated_questions")
+      // @ts-ignore - Supabase type inference issue with table name
       .update(updateData)
       .eq("id", id)
       .select()

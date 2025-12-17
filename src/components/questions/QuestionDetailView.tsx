@@ -30,9 +30,9 @@ export function QuestionDetailView({ question }: QuestionDetailViewProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{question.schema_id}</Badge>
-          <Badge variant="outline">{question.difficulty}</Badge>
-          <Badge variant="outline">{question.status}</Badge>
+          <Badge variant="default">{question.schema_id}</Badge>
+          <Badge variant="default">{question.difficulty}</Badge>
+          <Badge variant="default">{question.status}</Badge>
         </div>
         <div className="text-sm text-neutral-400">
           {new Date(question.created_at).toLocaleString()}
@@ -118,8 +118,8 @@ export function QuestionDetailView({ question }: QuestionDetailViewProps) {
               <Badge
                 variant={
                   question.verifier_report.verdict === "PASS"
-                    ? "default"
-                    : "destructive"
+                    ? "success"
+                    : "error"
                 }
               >
                 {question.verifier_report.verdict}
@@ -157,8 +157,8 @@ export function QuestionDetailView({ question }: QuestionDetailViewProps) {
               <Badge
                 variant={
                   question.style_report.verdict === "PASS"
-                    ? "default"
-                    : "destructive"
+                    ? "success"
+                    : "error"
                 }
               >
                 {question.style_report.verdict}
@@ -171,7 +171,7 @@ export function QuestionDetailView({ question }: QuestionDetailViewProps) {
                   {Object.entries(question.style_report.scores).map(
                     ([key, value]) => (
                       <div key={key} className="text-sm">
-                        {key}: {value}/10
+                        {key}: {String(value)}/10
                       </div>
                     )
                   )}

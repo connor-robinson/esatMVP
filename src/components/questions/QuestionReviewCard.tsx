@@ -25,8 +25,8 @@ export function QuestionReviewCard({ question, onClick }: QuestionReviewCardProp
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant="outline">{question.schema_id}</Badge>
-          <Badge variant="outline">{question.difficulty}</Badge>
+          <Badge variant="default">{question.schema_id}</Badge>
+          <Badge variant="default">{question.difficulty}</Badge>
         </div>
         <span className="text-xs text-neutral-400">
           {new Date(question.created_at).toLocaleDateString()}

@@ -273,6 +273,59 @@ export type BuilderAttemptInsert = {
 };
 export type BuilderAttemptUpdate = Partial<BuilderAttemptRow>;
 
+// ai_generated_questions
+export type AiGeneratedQuestionRow = {
+  id: string;
+  generation_id: string;
+  schema_id: string;
+  difficulty: string;
+  status: string;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_notes: string | null;
+  question_stem: string;
+  options: Json;
+  correct_option: string;
+  solution_reasoning: string | null;
+  solution_key_insight: string | null;
+  distractor_map: Json | null;
+  idea_plan: Json | null;
+  verifier_report: Json | null;
+  style_report: Json | null;
+  models_used: Json | null;
+  generation_attempts: number;
+  token_usage: Json | null;
+  run_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+export type AiGeneratedQuestionInsert = {
+  id?: string;
+  generation_id: string;
+  schema_id: string;
+  difficulty: string;
+  status?: string;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  review_notes?: string | null;
+  question_stem: string;
+  options: Json;
+  correct_option: string;
+  solution_reasoning?: string | null;
+  solution_key_insight?: string | null;
+  distractor_map?: Json | null;
+  idea_plan?: Json | null;
+  verifier_report?: Json | null;
+  style_report?: Json | null;
+  models_used?: Json | null;
+  generation_attempts?: number;
+  token_usage?: Json | null;
+  run_id?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+export type AiGeneratedQuestionUpdate = Partial<AiGeneratedQuestionRow>;
+
 export type Database = {
   public: {
     Tables: {
@@ -320,6 +373,11 @@ export type Database = {
         Row: BuilderAttemptRow;
         Insert: BuilderAttemptInsert;
         Update: BuilderAttemptUpdate;
+      };
+      ai_generated_questions: {
+        Row: AiGeneratedQuestionRow;
+        Insert: AiGeneratedQuestionInsert;
+        Update: AiGeneratedQuestionUpdate;
       };
     };
     Views: {
