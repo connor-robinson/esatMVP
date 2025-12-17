@@ -4,89 +4,120 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
-import { cn } from "@/lib/utils";
-import type { PaperType, PaperSection } from "@/types/papers";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { PerformanceTrendChart } from "@/components/papers/PerformanceTrendChart";
+import { MistakeChart } from "@/components/papers/MistakeChart";
+import { FileText } from "lucide-react";
+import type { PaperType, PaperSection } from "@/types/papers";
+import { 
+  fetchUserSessions, 
+  filterSessions, 
+  calculateTrendData,
+  getAllMistakeTags,
+  calculateSessionAnalytics 
+} from "@/lib/papers/analytics";
+import type { PaperSession } from "@/types/papers";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 export default function PapersAnalyticsPage() {
+  const router = useRouter();
+  const session = useSupabaseSession();
+  const [sessions, setSessions] = useState<PaperSession[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   const [selectedPaper, setSelectedPaper] = useState<PaperType | "ALL">("ALL");
   const [selectedSection, setSelectedSection] = useState<PaperSection | "ALL">("ALL");
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "all">("all");
 
-  // Mock data - in real implementation, this would come from Supabase
-  const mockSessions = [
-    {
-      id: "1",
-      paperName: "ESAT" as PaperType,
-      paperVariant: "2024 Practice 1",
-      score: 85,
-      sections: ["Math", "Physics"] as PaperSection[],
-      date: new Date("2024-01-15"),
-      timeSpent: 72,
-      mistakes: ["Calc / algebra mistakes", "Understanding"]
-    },
-    {
-      id: "2", 
-      paperName: "ESAT" as PaperType,
-      paperVariant: "2024 Practice 2",
-      score: 78,
-      sections: ["Math", "Chemistry"] as PaperSection[],
-      date: new Date("2024-01-20"),
-      timeSpent: 75,
-      mistakes: ["Read the question wrong", "Formula recall"]
-    },
-    {
-      id: "3",
-      paperName: "TMUA" as PaperType,
-      paperVariant: "2024 Paper 1",
-      score: 92,
-      sections: [] as PaperSection[],
-      date: new Date("2024-01-25"),
-      timeSpent: 70,
-      mistakes: ["Calc / algebra mistakes"]
-    }
-  ];
-
-  const filteredSessions = useMemo(() => {
-    return mockSessions.filter(session => {
-      const paperMatch = selectedPaper === "ALL" || session.paperName === selectedPaper;
-      const sectionMatch = selectedSection === "ALL" || session.sections.includes(selectedSection);
-      
-      // Time range filtering would be implemented here
-      return paperMatch && sectionMatch;
-    });
-  }, [selectedPaper, selectedSection, timeRange]);
-
-  const averageScore = useMemo(() => {
-    if (filteredSessions.length === 0) return 0;
-    return Math.round(filteredSessions.reduce((sum, s) => sum + s.score, 0) / filteredSessions.length);
-  }, [filteredSessions]);
-
-  const sectionPerformance = useMemo(() => {
-    const sectionStats: Record<string, { total: number; correct: number; avgTime: number }> = {};
-    
-    filteredSessions.forEach(session => {
-      session.sections.forEach(section => {
-        if (!sectionStats[section]) {
-          sectionStats[section] = { total: 0, correct: 0, avgTime: 0 };
-        }
-        sectionStats[section].total += 1;
-        sectionStats[section].correct += session.score / 100;
-        sectionStats[section].avgTime += session.timeSpent;
+  // Fetch sessions on mount
+  useEffect(() => {
+    if (session?.user) {
+      fetchUserSessions().then(data => {
+        setSessions(data);
+        setLoading(false);
+      }).catch(() => {
+        setLoading(false);
       });
-    });
+    } else {
+      setLoading(false);
+    }
+  }, [session]);
 
-    return Object.entries(sectionStats).map(([section, stats]) => ({
-      section,
-      accuracy: Math.round((stats.correct / stats.total) * 100),
-      avgTime: Math.round(stats.avgTime / stats.total),
-      attempts: stats.total
-    }));
+  // Filter sessions based on selected filters
+  const filteredSessions = useMemo(() => {
+    return filterSessions(sessions, {
+      paperType: selectedPaper,
+      section: selectedSection,
+      timeRange,
+    });
+  }, [sessions, selectedPaper, selectedSection, timeRange]);
+
+  // Calculate trend data for graph
+  const trendData = useMemo(() => {
+    return calculateTrendData(filteredSessions);
   }, [filteredSessions]);
+
+  // Calculate analytics
+  const analytics = useMemo(() => {
+    return calculateSessionAnalytics(filteredSessions);
+  }, [filteredSessions]);
+
+  // Get all unique sections practiced
+  const sectionsPracticed = useMemo(() => {
+    const sections = new Set<PaperSection>();
+    filteredSessions.forEach(s => {
+      s.selectedSections?.forEach(sec => sections.add(sec));
+    });
+    return sections.size;
+  }, [filteredSessions]);
+
+  // Get all mistake tags from filtered sessions
+  const allMistakeTags = useMemo(() => {
+    const tags: string[] = [];
+    filteredSessions.forEach(s => {
+      tags.push(...s.mistakeTags.filter(t => t && t !== 'None'));
+    });
+    return tags as any[];
+  }, [filteredSessions]);
+
+  const { loadSessionFromDatabase } = usePaperSessionStore();
+
+  // Function to load session and navigate to mark page
+  const handleViewMarkPage = async (sessionId: string) => {
+    try {
+      await loadSessionFromDatabase(sessionId);
+      router.push('/papers/mark');
+    } catch (error) {
+      console.error('Failed to load session:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Container size="lg">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </Container>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <Container size="lg">
+        <PageHeader
+          title="Papers Analytics"
+          description="Please log in to view your paper analytics."
+        />
+      </Container>
+    );
+  }
 
   return (
     <Container size="lg">
@@ -158,177 +189,156 @@ export default function PapersAnalyticsPage() {
           </div>
         </Card>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">{averageScore}%</div>
-            <div className="text-sm text-neutral-400">Average Score</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-cyan-400 mb-2">{filteredSessions.length}</div>
-            <div className="text-sm text-neutral-400">Sessions Completed</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-amber-400 mb-2">
-              {Math.round(filteredSessions.reduce((sum, s) => sum + s.timeSpent, 0) / filteredSessions.length) || 0}
-            </div>
-            <div className="text-sm text-neutral-400">Avg Time (min)</div>
-          </Card>
-          <Card className="p-6 text-center">
-            <div className="text-3xl font-bold text-purple-400 mb-2">
-              {sectionPerformance.length}
-            </div>
-            <div className="text-sm text-neutral-400">Sections Practiced</div>
-          </Card>
-        </div>
-
-        {/* Score Trend Chart Placeholder */}
+        {/* Trends Card - First Big Card */}
         <Card className="p-6">
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Score Trend</h2>
-              <p className="text-sm text-neutral-400">Your performance over time</p>
+              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Performance Trends</h2>
+              <p className="text-sm text-neutral-400">Your score percentage over time</p>
             </div>
-            <div className="h-64 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
-              <div className="text-center text-neutral-500">
-                <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <div className="text-sm">Score trend chart will be implemented here</div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Section Performance */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Section Performance</h2>
-              <p className="text-sm text-neutral-400">Performance breakdown by section</p>
-            </div>
-            
-            {sectionPerformance.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sectionPerformance.map((section) => (
-                  <div key={section.section} className="p-4 bg-white/5 rounded-organic-md border border-white/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="font-medium text-neutral-100">{section.section}</div>
-                      <div className="text-sm text-neutral-400">{section.attempts} attempts</div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-neutral-400">Accuracy</span>
-                        <span className="font-medium text-neutral-200">{section.accuracy}%</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-neutral-400">Avg Time</span>
-                        <span className="font-medium text-neutral-200">{section.avgTime} min</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {trendData.length > 0 ? (
+              <PerformanceTrendChart dataPoints={trendData} />
             ) : (
-              <div className="text-center py-8 text-neutral-500">
-                <div className="text-sm">No section data available for the selected filters</div>
+              <div className="h-64 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
+                <div className="text-center text-neutral-500">
+                  <div className="text-sm">No trend data available for the selected filters</div>
+                </div>
               </div>
             )}
           </div>
         </Card>
 
-        {/* Mistake Analysis */}
+        {/* Stats Section - Smaller Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-primary mb-2">
+              {Math.round(analytics.averageScore)}%
+            </div>
+            <div className="text-sm text-neutral-400">Average Score</div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-cyan-400 mb-2">
+              {analytics.totalSessions}
+            </div>
+            <div className="text-sm text-neutral-400">Sessions Completed</div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-amber-400 mb-2">
+              {Math.round(analytics.averageTime)} min
+            </div>
+            <div className="text-sm text-neutral-400">Avg Time</div>
+          </Card>
+          <Card className="p-6 text-center">
+            <div className="text-3xl font-bold text-purple-400 mb-2">
+              {sectionsPracticed}
+            </div>
+            <div className="text-sm text-neutral-400">Sections Practiced</div>
+          </Card>
+        </div>
+
+        {/* History Section - Big Card */}
         <Card className="p-6">
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Mistake Patterns</h2>
-              <p className="text-sm text-neutral-400">Most common mistake types</p>
+              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Session History</h2>
+              <p className="text-sm text-neutral-400">Your past paper sessions</p>
             </div>
             
-            <div className="h-48 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
-              <div className="text-center text-neutral-500">
-                <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <div className="text-sm">Mistake pattern analysis will be implemented here</div>
+            {filteredSessions.length > 0 ? (
+              <div className="space-y-3">
+                {filteredSessions.map((session) => {
+                  const scorePercentage = session.score 
+                    ? Math.round((session.score.correct / session.score.total) * 100)
+                    : null;
+                  const date = session.startedAt 
+                    ? new Date(session.startedAt).toLocaleDateString()
+                    : 'Unknown date';
+                  const minutes = Math.round(session.timeLimitMinutes);
+
+                  return (
+                    <div 
+                      key={session.id} 
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-organic-md border border-white/10 hover:border-white/20 transition-colors"
+                    >
+                      {/* Left: Icon */}
+                      <div className="flex-shrink-0 mr-4">
+                        <FileText className="w-5 h-5 text-neutral-400" />
+                      </div>
+
+                      {/* Middle: Session Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-neutral-100 truncate">
+                          {session.paperName} {session.paperVariant}
+                        </div>
+                        <div className="text-sm text-neutral-400 truncate">
+                          {date} • {session.sessionName}
+                          {session.selectedSections && session.selectedSections.length > 0 && (
+                            ` • ${session.selectedSections.join(", ")}`
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right: Marks, Minutes, and Button */}
+                      <div className="flex items-center gap-4 ml-4">
+                        <div className="text-right">
+                          {scorePercentage !== null && (
+                            <div className="font-medium text-neutral-100">{scorePercentage}%</div>
+                          )}
+                          <div className="text-sm text-neutral-400">{minutes} min</div>
+                        </div>
+                        <Button
+                          onClick={() => handleViewMarkPage(session.id)}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          View Mark Page
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            ) : (
+              <div className="text-center py-8 text-neutral-500">
+                <div className="text-sm">No sessions found for the selected filters</div>
+              </div>
+            )}
           </div>
         </Card>
 
-        {/* Improvement Suggestions */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Improvement Suggestions</h2>
-              <p className="text-sm text-neutral-400">AI-powered recommendations based on your performance</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-primary/10 rounded-organic-md border border-primary/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium text-neutral-100 mb-1">Focus on Algebra</div>
-                    <div className="text-sm text-neutral-300">
-                      You've made calculation errors in 60% of recent sessions. Practice more algebra problems.
-                    </div>
-                  </div>
-                </div>
+        {/* Bottom Section - Half Page Split */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left: Mistake Patterns */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-100 mb-2">Mistake Patterns</h2>
+                <p className="text-sm text-neutral-400">Most common mistake types</p>
               </div>
-              
-              <div className="p-4 bg-amber-500/10 rounded-organic-md border border-amber-500/20">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="font-medium text-neutral-100 mb-1">Time Management</div>
-                    <div className="text-sm text-neutral-300">
-                      You're spending too much time on individual questions. Practice faster problem solving.
-                    </div>
-                  </div>
+              {allMistakeTags.length > 0 ? (
+                <MistakeChart mistakeTags={allMistakeTags} />
+              ) : (
+                <div className="text-center py-8 text-neutral-500">
+                  <div className="text-sm">No mistakes recorded yet</div>
                 </div>
-              </div>
+              )}
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        {/* Recent Sessions */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-lg font-semibold text-neutral-100 mb-2">Recent Sessions</h2>
-              <p className="text-sm text-neutral-400">Your latest practice sessions</p>
+          {/* Right: Section Performance (placeholder for now) */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-100 mb-2">Section Performance</h2>
+                <p className="text-sm text-neutral-400">Performance breakdown by section</p>
+              </div>
+              <div className="text-center py-8 text-neutral-500">
+                <div className="text-sm">Section performance details coming soon</div>
+              </div>
             </div>
-            
-            <div className="space-y-3">
-              {filteredSessions.slice(0, 5).map((session) => (
-                <div key={session.id} className="flex items-center justify-between p-4 bg-white/5 rounded-organic-md border border-white/10">
-                  <div>
-                    <div className="font-medium text-neutral-100">{session.paperName} {session.paperVariant}</div>
-                    <div className="text-sm text-neutral-400">
-                      {session.date.toLocaleDateString()} • {session.sections.join(", ") || "Full Paper"}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-neutral-100">{session.score}%</div>
-                    <div className="text-sm text-neutral-400">{session.timeSpent} min</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
     </Container>
   );
 }
-
-

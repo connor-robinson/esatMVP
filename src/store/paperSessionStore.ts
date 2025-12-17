@@ -86,6 +86,8 @@ interface PaperSessionState {
 
   schedulePersist: () => void;
   persistSessionToServer: (options?: { immediate?: boolean }) => Promise<void>;
+  
+  loadSessionFromDatabase: (sessionId: string) => Promise<void>;
 }
 
 const initialAnswer = (): Answer => ({
@@ -511,6 +513,94 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           set({ persistTimer: null });
         }, 800);
         set({ persistTimer: timer });
+      },
+
+      loadSessionFromDatabase: async (sessionIdToLoad: string) => {
+        try {
+          const response = await fetch(`/api/papers/sessions?id=${sessionIdToLoad}`);
+          if (!response.ok) {
+            throw new Error(`Failed to load session: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          const sessionData = data.session;
+          if (!sessionData) {
+            throw new Error('Session not found');
+          }
+
+          // Convert session data to store format
+          const paperId = sessionData.paper_id;
+          const questionRange = {
+            start: sessionData.question_start || 1,
+            end: sessionData.question_end || 1,
+          };
+          const totalQuestions = questionRange.end - questionRange.start + 1;
+
+          // Set basic session data
+          set({
+            sessionId: sessionData.id,
+            paperId: paperId,
+            paperName: sessionData.paper_name || '',
+            paperVariant: sessionData.paper_variant || '',
+            sessionName: sessionData.session_name || '',
+            timeLimitMinutes: sessionData.time_limit_minutes || 60,
+            questionRange: questionRange,
+            selectedSections: (sessionData.selected_sections as PaperSection[]) || [],
+            questionOrder: (sessionData.question_order as number[]) || Array.from({ length: totalQuestions }, (_, i) => i + 1),
+            currentQuestionIndex: 0,
+            startedAt: sessionData.started_at ? new Date(sessionData.started_at).getTime() : null,
+            endedAt: sessionData.ended_at ? new Date(sessionData.ended_at).getTime() : null,
+            deadline: sessionData.deadline_at ? new Date(sessionData.deadline_at).getTime() : null,
+            notes: sessionData.notes || '',
+            questions: [],
+            questionsLoading: false,
+            questionsError: null,
+            sessionPersistPromise: null,
+            persistTimer: null,
+          });
+
+          // Convert answers, perQuestionSec, flags, etc.
+          const answers = (sessionData.answers as any[]) || [];
+          const perQuestionSec = (sessionData.per_question_seconds as number[]) || [];
+          const correctFlags = (sessionData.correct_flags as (boolean | null)[]) || [];
+          const guessedFlags = (sessionData.guessed_flags as boolean[]) || [];
+          const mistakeTags = (sessionData.mistake_tags as MistakeTag[]) || [];
+
+          // Ensure arrays are the right length
+          const paddedAnswers = Array.from({ length: totalQuestions }, (_, i) => 
+            answers[i] || initialAnswer()
+          );
+          const paddedPerQuestionSec = Array.from({ length: totalQuestions }, (_, i) => 
+            perQuestionSec[i] || 0
+          );
+          const paddedCorrectFlags = Array.from({ length: totalQuestions }, (_, i) => 
+            correctFlags[i] ?? null
+          );
+          const paddedGuessedFlags = Array.from({ length: totalQuestions }, (_, i) => 
+            guessedFlags[i] || false
+          );
+          const paddedMistakeTags = Array.from({ length: totalQuestions }, (_, i) => 
+            (mistakeTags[i] || 'None') as MistakeTag
+          );
+
+          set({
+            answers: paddedAnswers,
+            perQuestionSec: paddedPerQuestionSec,
+            correctFlags: paddedCorrectFlags,
+            guessedFlags: paddedGuessedFlags,
+            mistakeTags: paddedMistakeTags,
+            visitedQuestions: Array.from({ length: totalQuestions }, () => false),
+            sectionStarts: {},
+          });
+
+          // Load questions if paperId is available
+          if (paperId) {
+            await get().loadQuestions(paperId);
+          }
+        } catch (error) {
+          console.error('[paperSessionStore] Failed to load session from database', error);
+          throw error;
+        }
       },
 
       persistSessionToServer: async ({ immediate = false } = {}) => {

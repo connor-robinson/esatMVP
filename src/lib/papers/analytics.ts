@@ -2,7 +2,8 @@
  * Analytics calculations for paper sessions
  */
 
-import type { PaperSession, PaperType, MistakeTag } from '@/types/papers';
+import type { PaperSession, PaperType, MistakeTag, PaperSection } from '@/types/papers';
+import type { PaperSessionRow } from '@/lib/supabase/types';
 
 export interface SessionAnalytics {
   totalSessions: number;
@@ -98,6 +99,150 @@ export function formatTime(seconds: number): string {
 export function calculateScorePercentage(correct: number, total: number): number {
   if (total === 0) return 0;
   return Math.round((correct / total) * 100);
+}
+
+/**
+ * Convert database PaperSessionRow to PaperSession format
+ */
+export function convertSessionRow(row: PaperSessionRow): PaperSession {
+  const score = row.score as { correct: number; total: number } | null;
+  const answers = (row.answers as any[]) || [];
+  const perQuestionSec = (row.per_question_seconds as number[]) || [];
+  const correctFlags = (row.correct_flags as (boolean | null)[]) || [];
+  const guessedFlags = (row.guessed_flags as boolean[]) || [];
+  const mistakeTags = (row.mistake_tags as MistakeTag[]) || [];
+
+  return {
+    id: row.id,
+    paperName: row.paper_name as PaperType,
+    paperVariant: row.paper_variant,
+    sessionName: row.session_name,
+    startedAt: row.started_at ? new Date(row.started_at).getTime() : Date.now(),
+    endedAt: row.ended_at ? new Date(row.ended_at).getTime() : undefined,
+    timeLimitMinutes: row.time_limit_minutes,
+    questionRange: {
+      start: row.question_start || 1,
+      end: row.question_end || 1,
+    },
+    selectedSections: (row.selected_sections as PaperSection[]) || [],
+    answers: answers.map((a: any) => ({
+      choice: a?.choice || null,
+      other: a?.other || '',
+      correctChoice: a?.correctChoice || null,
+      explanation: a?.explanation || '',
+      addToDrill: a?.addToDrill || false,
+    })),
+    perQuestionSec,
+    correctFlags,
+    guessedFlags,
+    mistakeTags,
+    score: score || undefined,
+    notes: row.notes || undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/**
+ * Fetch user's paper sessions from the API
+ */
+export async function fetchUserSessions(): Promise<PaperSession[]> {
+  try {
+    const response = await fetch('/api/papers/sessions', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sessions: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const sessions = (data.sessions || []) as PaperSessionRow[];
+    
+    return sessions.map(convertSessionRow);
+  } catch (error) {
+    console.error('[analytics] Failed to fetch sessions', error);
+    return [];
+  }
+}
+
+/**
+ * Filter sessions by paper type, section, and time range
+ */
+export function filterSessions(
+  sessions: PaperSession[],
+  options: {
+    paperType?: PaperType | 'ALL';
+    section?: PaperSection | 'ALL';
+    timeRange?: 'week' | 'month' | 'quarter' | 'all';
+  }
+): PaperSession[] {
+  let filtered = [...sessions];
+
+  // Filter by paper type
+  if (options.paperType && options.paperType !== 'ALL') {
+    filtered = filtered.filter(s => s.paperName === options.paperType);
+  }
+
+  // Filter by section
+  if (options.section && options.section !== 'ALL') {
+    filtered = filtered.filter(s => 
+      s.selectedSections?.includes(options.section as PaperSection) || false
+    );
+  }
+
+  // Filter by time range
+  if (options.timeRange && options.timeRange !== 'all') {
+    const now = Date.now();
+    const cutoffMap = {
+      week: 7 * 24 * 60 * 60 * 1000,
+      month: 30 * 24 * 60 * 60 * 1000,
+      quarter: 90 * 24 * 60 * 60 * 1000,
+    };
+    const cutoff = cutoffMap[options.timeRange];
+    filtered = filtered.filter(s => {
+      const sessionTime = s.startedAt || 0;
+      return (now - sessionTime) <= cutoff;
+    });
+  }
+
+  return filtered;
+}
+
+/**
+ * Calculate trend data for graph visualization
+ * Returns array of { date: number, percentage: number } sorted by date
+ */
+export function calculateTrendData(
+  sessions: PaperSession[]
+): Array<{ date: number; percentage: number }> {
+  const scoredSessions = sessions
+    .filter(s => s.score && s.startedAt)
+    .map(s => ({
+      date: s.startedAt!,
+      percentage: s.score ? (s.score.correct / s.score.total) * 100 : 0,
+    }))
+    .sort((a, b) => a.date - b.date);
+
+  return scoredSessions;
+}
+
+/**
+ * Get all mistake tags from sessions
+ */
+export function getAllMistakeTags(sessions: PaperSession[]): MistakeTag[] {
+  const allTags: MistakeTag[] = [];
+  sessions.forEach(session => {
+    session.mistakeTags.forEach(tag => {
+      if (tag && tag !== 'None' && !allTags.includes(tag)) {
+        allTags.push(tag);
+      }
+    });
+  });
+  return allTags;
 }
 
 
