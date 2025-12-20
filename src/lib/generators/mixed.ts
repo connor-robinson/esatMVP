@@ -3,10 +3,7 @@
  */
 
 import { GeneratedQuestion } from "@/types/core";
-import { generateAddition } from "./addition";
-import { generateMultiplication } from "./multiplication";
-import { generateFractions } from "./fractions";
-import { generateKinematics } from "./physics/kinematics";
+import { GENERATORS } from "./index";
 
 function cryptoRandomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return (crypto as any).randomUUID();
@@ -14,13 +11,6 @@ function cryptoRandomId(): string {
 }
 
 type TopicGenerator = (level: number, weights?: Record<string, number>) => GeneratedQuestion;
-
-const GENERATORS: Record<string, TopicGenerator> = {
-  addition: generateAddition,
-  multiplication: generateMultiplication,
-  fractions: generateFractions,
-  kinematics: generateKinematics,
-};
 
 /**
  * Generate a question for a specific topic
@@ -34,6 +24,7 @@ export function generateQuestionForTopic(
   
   if (!generator) {
     // Fallback for topics without generators yet
+    console.warn(`[generateQuestionForTopic] No generator found for topic: ${topicId}`);
     return {
       id: cryptoRandomId(),
       topicId,
@@ -43,11 +34,33 @@ export function generateQuestionForTopic(
     };
   }
   
-  const question = generator(level, weights);
-  return {
-    ...question,
-    topicId,
-  };
+  if (typeof generator !== 'function') {
+    console.error(`[generateQuestionForTopic] Generator for topic ${topicId} is not a function:`, typeof generator, generator);
+    return {
+      id: cryptoRandomId(),
+      topicId,
+      question: "Error: Invalid generator",
+      answer: "0",
+      difficulty: 1,
+    };
+  }
+  
+  try {
+    const question = generator(level, weights);
+    return {
+      ...question,
+      topicId,
+    };
+  } catch (error) {
+    console.error(`[generateQuestionForTopic] Error generating question for topic ${topicId}:`, error);
+    return {
+      id: cryptoRandomId(),
+      topicId,
+      question: "Error generating question",
+      answer: "0",
+      difficulty: 1,
+    };
+  }
 }
 
 /**

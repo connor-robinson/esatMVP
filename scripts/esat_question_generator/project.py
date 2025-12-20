@@ -30,6 +30,7 @@ Notes:
 from __future__ import annotations
 
 import os
+import sys
 import re
 import json
 import time
@@ -40,6 +41,18 @@ import threading
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Tuple, Callable
 from dotenv import load_dotenv
+
+# Configure UTF-8 encoding for Windows console
+if sys.platform == "win32":
+    try:
+        # Python 3.7+
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        # Fallback for older Python versions
+        import codecs
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 # GUI support
 try:
@@ -71,6 +84,7 @@ class ModelsConfig:
     implementer: str = "gemini-3-pro-preview"
     verifier: str = "gemini-3-pro-preview"
     style_judge: str = "gemini-2.5-flash"
+    tag_labeler: str = "gemini-2.5-flash"  # Default to same as style_judge
 
 
 @dataclass
@@ -82,6 +96,8 @@ class RunConfig:
     schema_weights: Optional[Dict[str, float]] = None  # optional weighting by schema_id
     out_dir: str = "runs"
     allow_schema_prefixes: Tuple[str, ...] = ("M", "P")  # choose both maths & physics by default
+    enable_tag_labeling: bool = True  # Enable curriculum tag labeling
+    curriculum_file_path: Optional[str] = None  # Path to curriculum JSON (default: curriculum/ESAT_CURRICULUM.json)
 
 
 # ---------- Utilities ----------
@@ -123,16 +139,28 @@ def safe_yaml_load(text: str) -> Any:
     except yaml.YAMLError as e:
         # Attach context about where parsing failed if available
         error_msg = str(e)
+        line_info = ""
         if hasattr(e, "problem_mark") and e.problem_mark:
             lines = cleaned.split("\n")
             line_num = e.problem_mark.line
+            col_num = e.problem_mark.column if hasattr(e.problem_mark, "column") else None
             if 0 <= line_num < len(lines):
-                error_msg += f"\nProblem at line {line_num + 1}: {lines[line_num]}"
+                line_info = f"\nProblem at line {line_num + 1}"
+                if col_num is not None:
+                    line_info += f", column {col_num + 1}"
+                line_info += f": {lines[line_num]}"
+                # Show context lines if available
+                if line_num > 0:
+                    line_info += f"\nPrevious line: {lines[line_num - 1]}"
+                if line_num < len(lines) - 1:
+                    line_info += f"\nNext line: {lines[line_num + 1]}"
+        
+        # Show a preview of the problematic YAML
+        preview = cleaned[:500] if len(cleaned) <= 500 else cleaned[:500] + "\n... (truncated)"
+        
         raise ValueError(
-            "YAML parsing error: "
-            + error_msg
-            + "\n\nFirst 1000 chars of input:\n"
-            + cleaned[:1000]
+            f"YAML parsing error: {error_msg}{line_info}\n\n"
+            f"YAML preview (first 500 chars):\n{preview}"
         )
 
 
@@ -143,12 +171,23 @@ def normalize_implementer_output(obj: Dict[str, Any]) -> Dict[str, Any]:
     Some models nest `solution` under `question.solution` instead of top-level.
     This function promotes it to the top-level `solution` key so downstream
     agents (Verifier, Style Judge) see the expected schema.
+    
+    Also handles distractor_map which may be nested under question or at top level.
     """
     q = obj.get("question")
     if isinstance(q, dict):
         # If solution is nested under question, promote it
         if "solution" in q and "solution" not in obj and isinstance(q["solution"], dict):
             obj["solution"] = q["solution"]
+        
+        # If distractor_map is nested under question, promote it
+        if "distractor_map" in q and "distractor_map" not in obj and isinstance(q["distractor_map"], dict):
+            obj["distractor_map"] = q["distractor_map"]
+    
+    # Ensure distractor_map exists (even if empty) - it's required by the prompt
+    if "distractor_map" not in obj:
+        obj["distractor_map"] = {}
+    
     return obj
 
 def dump_jsonl(path: str, obj: Dict[str, Any]) -> None:
@@ -158,26 +197,56 @@ def dump_jsonl(path: str, obj: Dict[str, Any]) -> None:
 
 # ---------- Schema parsing ----------
 
-SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P)\d+)\.\s*(.+?)\*\*\s*$", re.MULTILINE)
+# Updated regex to accept both numbered (M1, P3, B1, C1) and unnumbered (M., P., B., C.) formats
+SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P|B|C)(?:\d+|\.))\s+(.+?)\*\*\s*$", re.MULTILINE)
 
 def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P")) -> Dict[str, Dict[str, str]]:
     """
-    Parses Schemas.md into blocks keyed by schema_id (e.g., M1, P3).
+    Parses Schemas.md into blocks keyed by schema_id (e.g., M1, P3, or M_custom, P_custom).
+    Accepts both numbered format (## **M1. Title**) and unnumbered format (## **M. Title**).
+    For unnumbered schemas, generates schema_id as {prefix}_{sanitized_title}.
     Returns: { "M1": {"title": "...", "block": "## M1...."} , ... }
     """
     matches = list(SCHEMA_HEADER_RE.finditer(md))
     schemas: Dict[str, Dict[str, str]] = {}
+    unnumbered_counter = {}  # Track unnumbered schemas per prefix
+    
     for i, m in enumerate(matches):
-        schema_id = m.group(1).strip()
-        if not schema_id.startswith(allow_prefixes):
-            continue
+        schema_prefix_and_num = m.group(1).strip()
         title = m.group(2).strip()
+        
+        # Extract prefix (M, P, B, or C)
+        prefix = schema_prefix_and_num[0]
+        if prefix not in allow_prefixes:
+            continue
+        
+        # Determine schema_id
+        if schema_prefix_and_num.endswith('.'):
+            # Unnumbered format (M., P.) - generate ID from title
+            # Use a simple sanitization: lowercase, replace spaces with underscores, remove special chars
+            sanitized_title = re.sub(r'[^a-zA-Z0-9\s]', '', title).strip().lower()
+            sanitized_title = re.sub(r'\s+', '_', sanitized_title)[:30]  # Limit length
+            if not sanitized_title:
+                sanitized_title = "unnamed"
+            # Add counter to ensure uniqueness
+            if prefix not in unnumbered_counter:
+                unnumbered_counter[prefix] = {}
+            if sanitized_title not in unnumbered_counter[prefix]:
+                unnumbered_counter[prefix][sanitized_title] = 0
+            unnumbered_counter[prefix][sanitized_title] += 1
+            counter = unnumbered_counter[prefix][sanitized_title]
+            schema_id = f"{prefix}_{sanitized_title}" if counter == 1 else f"{prefix}_{sanitized_title}_{counter}"
+        else:
+            # Numbered format (M1, P3) - use as-is
+            schema_id = schema_prefix_and_num
+        
         start = m.start()
         end = matches[i+1].start() if i+1 < len(matches) else len(md)
         block = md[start:end].strip()
         schemas[schema_id] = {"title": title, "block": block}
+    
     if not schemas:
-        raise ValueError("No schemas parsed. Ensure Schemas.md uses headings like: ## **M1. Title** or ## **P1. Title**")
+        raise ValueError("No schemas parsed. Ensure Schemas.md uses headings like: ## **M1. Title** or ## **P1. Title** or ## **B1. Title** or ## **C1. Title** or ## **M. Title** or ## **P. Title**")
     return schemas
 
 
@@ -206,6 +275,11 @@ class LLMClient:
         last_error = None
         for attempt in range(max_retries):
             try:
+                # Log API call details (for debugging)
+                api_key_preview = f"{self.api_key[:8]}...{self.api_key[-4:]}" if len(self.api_key) > 12 else "***"
+                print(f"[DEBUG] LLMClient.generate - Model: {model}, Attempt: {attempt + 1}/{max_retries}")
+                print(f"[DEBUG] API Key preview: {api_key_preview}, Length: {len(self.api_key)}")
+                
                 # Gemini API: send system as instruction, user as contents
                 # The SDK supports `config={"system_instruction": ...}`.
                 resp = self.client.models.generate_content(
@@ -216,6 +290,7 @@ class LLMClient:
                         "temperature": temperature,
                     },
                 )
+                print(f"[DEBUG] ✓ API call successful for model {model}")
                 # Capture usage metadata if available
                 usage_info = {}
                 if hasattr(resp, 'usage_metadata'):
@@ -244,6 +319,21 @@ class LLMClient:
             except Exception as e:
                 last_error = e
                 error_str = str(e)
+                
+                # Detailed error logging
+                print(f"[DEBUG] ✗ API call failed for model {model}, attempt {attempt + 1}/{max_retries}")
+                print(f"[DEBUG] Error type: {type(e).__name__}")
+                print(f"[DEBUG] Error message: {error_str[:300]}")
+                
+                # Check for API key errors specifically
+                if "403" in error_str or "PERMISSION_DENIED" in error_str:
+                    api_key_preview = f"{self.api_key[:8]}...{self.api_key[-4:]}" if len(self.api_key) > 12 else "***"
+                    print(f"[DEBUG] ⚠ API Key Error Detected!")
+                    print(f"[DEBUG] API Key preview: {api_key_preview}, Length: {len(self.api_key)}")
+                    print(f"[DEBUG] Full error: {error_str}")
+                    # Don't retry on API key errors - they won't succeed
+                    raise
+                
                 # Check if it's a transient error that we should retry
                 is_transient = (
                     "503" in error_str or 
@@ -258,10 +348,12 @@ class LLMClient:
                 if is_transient and attempt < max_retries - 1:
                     # Exponential backoff: wait 2^attempt seconds
                     wait_time = 2 ** attempt
+                    print(f"[DEBUG] Transient error detected, retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                     continue
                 else:
                     # Not transient or out of retries, raise the error
+                    print(f"[DEBUG] Non-transient error or max retries reached, raising error")
                     raise
         
         # If we get here, all retries failed
@@ -277,6 +369,7 @@ class Prompts:
     verifier: str
     retry_controller: str
     style_checker: str
+    tag_labeler: str
 
 
 def load_prompts(base_dir: str) -> Prompts:
@@ -289,6 +382,7 @@ def load_prompts(base_dir: str) -> Prompts:
         verifier=read_text(p("3. Verifier", "Prompt.md")),
         retry_controller=read_text(p("4. retry controller", "Prompt.md")),
         style_checker=read_text(p("5. style checker", "Prompt.md")),
+        tag_labeler=read_text(p("6. Tag Labeler", "Prompt.md")),
     )
 
 
@@ -302,6 +396,42 @@ def choose_schema(schemas: Dict[str, Dict[str, str]], cfg: RunConfig) -> str:
         weights = [cfg.schema_weights.get(sid, 1.0) for sid in ids]
         return random.choices(ids, weights=weights, k=1)[0]
     return random.choice(ids)
+
+def get_schemas_sorted_by_category(schemas: Dict[str, Dict[str, str]], category_order: List[str] = None) -> List[Tuple[str, str]]:
+    """
+    Get schemas sorted by category and number.
+    
+    Args:
+        schemas: Dictionary of schemas
+        category_order: List of category prefixes in desired order (e.g., ["M", "P", "B", "C"])
+        
+    Returns:
+        List of tuples (schema_id, category) sorted by category and schema number
+    """
+    if category_order is None:
+        category_order = ["M", "P", "B", "C"]
+    
+    # Group schemas by category
+    by_category = {}
+    for schema_id in schemas.keys():
+        prefix = schema_id[0].upper()
+        if prefix in category_order:
+            if prefix not in by_category:
+                by_category[prefix] = []
+            by_category[prefix].append(schema_id)
+    
+    # Sort schemas within each category by number
+    for prefix in by_category:
+        by_category[prefix].sort(key=lambda sid: int(re.search(r'\d+', sid).group()) if re.search(r'\d+', sid) else 999)
+    
+    # Build sorted list
+    result = []
+    for prefix in category_order:
+        if prefix in by_category:
+            for schema_id in by_category[prefix]:
+                result.append((schema_id, prefix))
+    
+    return result
 
 def choose_difficulty(cfg: RunConfig) -> str:
     if not cfg.difficulty_weights:
@@ -353,6 +483,10 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     if "solution" not in obj:
         raise ValueError(f"Implementer output missing 'solution' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
+    # Validate distractor_map exists (it's required by the prompt)
+    if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
+        raise ValueError(f"Implementer output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
+    
     obj["_raw_text"] = txt
     return obj
 
@@ -374,6 +508,66 @@ def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
         raise ValueError(f"Style checker output invalid YAML/object. Raw output:\n{txt}")
+    obj["_raw_text"] = txt
+    return obj
+
+def tag_labeler_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], 
+                     schema_id: str, curriculum_parser) -> Dict[str, Any]:
+    """
+    Call the tag labeler AI to assign curriculum tags to a question.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        question_obj: Question package
+        schema_id: Schema ID (e.g., "M1", "P3")
+        curriculum_parser: CurriculumParser instance
+    
+    Returns:
+        Dictionary with primary_tag, secondary_tags, confidence scores, etc.
+    """
+    # Get available topics for this schema
+    available_topics = curriculum_parser.get_available_topics_for_schema(schema_id)
+    
+    # Format available topics for the AI
+    topics_text = yaml.safe_dump({
+        "available_topics": [
+            {
+                "code": topic["code"],
+                "title": topic["title"],
+                "paper": topic["paper_name"]
+            }
+            for topic in available_topics
+        ]
+    }, sort_keys=False)
+    
+    # Prepare user prompt
+    user = f"""Schema ID: {schema_id}
+
+Available curriculum topics for this schema:
+{topics_text}
+
+Question package (YAML):
+{yaml.safe_dump(question_obj, sort_keys=False)}
+
+Analyze the question and assign appropriate curriculum tags."""
+    
+    # Use tag_labeler model if available, otherwise fall back to style_judge
+    model = getattr(models, 'tag_labeler', None) or models.style_judge
+    txt = llm.generate(model=model, system_prompt=prompts.tag_labeler, user_prompt=user, temperature=0.3)
+    
+    try:
+        obj = safe_yaml_load(txt)
+    except Exception as e:
+        raise ValueError(f"Tag labeler output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+    
+    if not isinstance(obj, dict):
+        raise ValueError(f"Tag labeler output is not a dictionary. Got type: {type(obj)}\n\nRaw output:\n{txt[:500]}...")
+    
+    if "primary_tag" not in obj:
+        raise ValueError(f"Tag labeler output missing 'primary_tag' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
+    
     obj["_raw_text"] = txt
     return obj
 
@@ -412,6 +606,10 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
     if "solution" not in obj:
         raise ValueError(f"Implementer regen output missing 'solution' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
+    # Validate distractor_map exists (it's required by the prompt)
+    if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
+        raise ValueError(f"Implementer regen output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
+    
     obj["_raw_text"] = txt
     return obj
 
@@ -448,7 +646,8 @@ def normalize_options(question_obj: Dict[str, Any]) -> Dict[str, Any]:
     return question_obj
 
 def build_bank_item(idea_plan: Dict[str, Any], question_obj: Dict[str, Any], verifier_obj: Dict[str, Any], style_obj: Dict[str, Any],
-                    schema_id: str, difficulty: str, models: ModelsConfig, attempts: int, token_usage: Optional[Dict[str, int]] = None) -> Dict[str, Any]:
+                    schema_id: str, difficulty: str, models: ModelsConfig, attempts: int, token_usage: Optional[Dict[str, int]] = None,
+                    tags: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     question_obj = normalize_options(question_obj)
     stem = question_obj.get("question", {}).get("stem", "")
     fingerprint = sha1_short(f"{schema_id}|{difficulty}|{stem}")
@@ -471,10 +670,13 @@ def build_bank_item(idea_plan: Dict[str, Any], question_obj: Dict[str, Any], ver
     }
     if token_usage:
         item["token_usage"] = token_usage
+    if tags:
+        item["tags"] = tags
     return item
 
 def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig, 
-             callbacks: Optional[Dict[str, Callable]] = None) -> Dict[str, Any]:
+             callbacks: Optional[Dict[str, Callable]] = None,
+             forced_schema_id: Optional[str] = None) -> Dict[str, Any]:
     if callbacks is None:
         callbacks = {}
     if cfg.seed is not None:
@@ -487,6 +689,20 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     prompts = load_prompts(base_dir)
     schemas_md = read_text(os.path.join(base_dir, "1. Designer", "Schemas.md"))
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
+
+    # Load curriculum parser if tag labeling is enabled
+    curriculum_parser = None
+    if cfg.enable_tag_labeling:
+        try:
+            from curriculum_parser import CurriculumParser
+            curriculum_file = cfg.curriculum_file_path
+            if curriculum_file is None:
+                curriculum_file = os.path.join(base_dir, "curriculum", "ESAT_CURRICULUM.json")
+            curriculum_parser = CurriculumParser(curriculum_file)
+        except (ImportError, Exception) as e:
+            print(f"⚠ Warning: Could not load curriculum parser: {e}")
+            print("   Tag labeling will be disabled for this run.")
+            curriculum_parser = None
 
     llm = LLMClient(api_key=api_key)
 
@@ -510,7 +726,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     }
 
     # Generate one item per run_once; you can wrap to generate N items.
-    schema_id = choose_schema(schemas, cfg)
+    # Use forced_schema_id if provided (for systematic generation), otherwise choose randomly
+    if forced_schema_id and forced_schema_id in schemas:
+        schema_id = forced_schema_id
+    else:
+        schema_id = choose_schema(schemas, cfg)
     schema_block = schemas[schema_id]["block"]
     difficulty = choose_difficulty(cfg)
 
@@ -534,7 +754,40 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Designer", idea_plan)
             break
+        except ValueError as e:
+            # Check if this is a YAML parsing error
+            error_str = str(e)
+            is_yaml_error = "YAML" in error_str or "yaml" in error_str.lower()
+            
+            designer_err = error_str
+            if callbacks and "on_stage_error" in callbacks:
+                callbacks["on_stage_error"]("Designer", error_str)
+            
+            # Log with detailed YAML error info
+            log_entry = {
+                "stage": "designer",
+                "schema_id": schema_id,
+                "difficulty": difficulty,
+                "attempt": d_try + 1,
+                "error": designer_err,
+                "is_yaml_error": is_yaml_error,
+            }
+            dump_jsonl(paths["logs"], log_entry)
+            
+            # Print helpful error message
+            if is_yaml_error:
+                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1}: Invalid YAML detected")
+                print(f"   Error: {error_str[:200]}...")
+                if d_try < cfg.max_designer_retries:
+                    print(f"   → Retrying with new AI generation...")
+                else:
+                    print(f"   → Max retries reached. Giving up.")
+            else:
+                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1} failed: {error_str[:200]}...")
+                if d_try < cfg.max_designer_retries:
+                    print(f"   → Retrying...")
         except Exception as e:
+            # Other exceptions (not YAML-related)
             designer_err = str(e)
             if callbacks and "on_stage_error" in callbacks:
                 callbacks["on_stage_error"]("Designer", str(e))
@@ -544,7 +797,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": d_try + 1,
                 "error": designer_err,
+                "is_yaml_error": False,
             })
+            print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1} failed: {str(e)[:200]}...")
+            if d_try < cfg.max_designer_retries:
+                print(f"   → Retrying...")
     if idea_plan is None:
         stats["rejected"] += 1
         stats["by_schema"][schema_id]["rejected"] += 1
@@ -755,7 +1012,77 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     json.dump(stats, f, ensure_ascii=False, indent=2)
                 return {"run_dir": run_dir, "status": "rejected_style"}
 
-            # PASS both gates -> save
+            # PASS both gates -> Tag labeling (optional, non-blocking)
+            tags = None
+            if cfg.enable_tag_labeling and curriculum_parser:
+                try:
+                    if callbacks and "on_stage_start" in callbacks:
+                        callbacks["on_stage_start"]("Tag Labeler", "Assigning curriculum tags")
+                    
+                    tag_result = tag_labeler_call(llm, prompts, models, q_pkg, schema_id, curriculum_parser)
+                    
+                    # Extract tags from result
+                    primary_tag = tag_result.get("primary_tag", "")
+                    # Normalize to prefixed format if needed (future-proofing)
+                    if primary_tag and curriculum_parser:
+                        normalized_primary = curriculum_parser.normalize_topic_code(primary_tag)
+                        if normalized_primary:
+                            primary_tag = normalized_primary
+                    
+                    secondary_tags_list = tag_result.get("secondary_tags", [])
+                    secondary_tags = []
+                    for tag in secondary_tags_list:
+                        tag_code = tag.get("code", "") if isinstance(tag, dict) else str(tag)
+                        if tag_code:
+                            # Normalize to prefixed format if needed
+                            if curriculum_parser:
+                                normalized_tag = curriculum_parser.normalize_topic_code(tag_code)
+                                if normalized_tag:
+                                    tag_code = normalized_tag
+                            secondary_tags.append(tag_code)
+                    
+                    # Build confidence object
+                    confidence = {
+                        "primary": tag_result.get("primary_confidence", 0.0)
+                    }
+                    if secondary_tags_list:
+                        for i, tag in enumerate(secondary_tags_list):
+                            if isinstance(tag, dict):
+                                confidence[tag.get("code", "")] = tag.get("confidence", 0.0)
+                    
+                    tags = {
+                        "primary_tag": primary_tag,
+                        "secondary_tags": secondary_tags,
+                        "confidence": confidence,
+                        "labeled_at": datetime.datetime.now().isoformat(),
+                        "labeled_by": "ai_generation",
+                        "reasoning": tag_result.get("reasoning", "")
+                    }
+                    
+                    dump_jsonl(paths["logs"], {
+                        "stage": "tag_labeler",
+                        "schema_id": schema_id,
+                        "difficulty": difficulty,
+                        "attempt": attempt + 1,
+                        "tags": tags,
+                    })
+                    
+                    if callbacks and "on_stage_complete" in callbacks:
+                        callbacks["on_stage_complete"]("Tag Labeler", tag_result)
+                except Exception as e:
+                    # Tag labeling failures should not block question generation
+                    error_msg = str(e)
+                    print(f"⚠ Tag labeling failed (non-fatal): {error_msg[:200]}...")
+                    dump_jsonl(paths["logs"], {
+                        "stage": "tag_labeler",
+                        "schema_id": schema_id,
+                        "difficulty": difficulty,
+                        "attempt": attempt + 1,
+                        "error": error_msg,
+                    })
+                    if callbacks and "on_stage_error" in callbacks:
+                        callbacks["on_stage_error"]("Tag Labeler", error_msg)
+            
             # Get token usage from LLM client
             token_usage = llm.total_usage.copy() if llm.total_usage else None
             item = build_bank_item(
@@ -768,18 +1095,19 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 models=models,
                 attempts=attempt + 1,
                 token_usage=token_usage,
+                tags=tags,
             )
             # Add run_id to item
             item["_run_id"] = run_id
 
-            # Validate and fix MathJax formatting
+            # Validate and fix KaTeX formatting
             try:
-                from mathjax_validator import validate_question_package, fix_mathjax_formatting
+                from katex_validator import validate_question_package, fix_katex_formatting
                 is_valid, errors = validate_question_package(q_pkg)
                 if not is_valid:
-                    print(f"⚠ MathJax validation warnings: {errors}")
+                    print(f"⚠ KaTeX validation warnings: {errors}")
                     # Fix formatting issues
-                    q_pkg = fix_mathjax_formatting(q_pkg)
+                    q_pkg = fix_katex_formatting(q_pkg)
                     # Rebuild item with fixed question package
                     item = build_bank_item(
                         idea_plan=idea_plan,
@@ -793,11 +1121,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                         token_usage=token_usage,
                     )
             except ImportError:
-                # mathjax_validator not available, skip validation
+                # katex_validator not available, skip validation
                 pass
             except Exception as e:
-                print(f"⚠ MathJax validation error (non-fatal): {e}")
-            
+                print(f"⚠ KaTeX validation error (non-fatal): {e}")
+
             dump_jsonl(paths["accepted"], item)
             stats["accepted"] += 1
             stats["by_schema"][schema_id]["accepted"] += 1
@@ -809,64 +1137,67 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 from backup_manager import backup_question_from_pipeline
                 backup_path = backup_question_from_pipeline(item, base_dir, status="pending_review")
                 if backup_path:
-                    print(f"✓ Backed up question to: {backup_path}")
+                    try:
+                        print(f"✓ Backed up question to: {backup_path}")
+                    except UnicodeEncodeError:
+                        print(f"[OK] Backed up question to: {backup_path}")
             except ImportError:
                 print("⚠ Backup manager not available, skipping backup")
             except Exception as e:
                 print(f"⚠ Backup error (non-fatal): {e}")
             
-            # Sync to database
+            # Sync to database (silently - no console output)
+            # Only questions that pass verifier + style judge will be saved
             try:
                 from db_sync import sync_question_from_pipeline
-                db_id = sync_question_from_pipeline(item, base_dir, status="pending_review")
+                db_id = sync_question_from_pipeline(item, base_dir, status="approved")
                 if db_id:
                     item["_db_id"] = db_id
             except ImportError:
-                print("⚠ Database sync not available, skipping sync")
-            except Exception as e:
-                print(f"⚠ Database sync error (non-fatal): {e}")
+                pass  # Silent fail
+            except Exception:
+                pass  # Silent fail - errors logged in db_sync.py
             
-            # Save HTML file for easy viewing/sharing (optional, don't fail if it errors)
-            try:
-                # Import here to avoid circular dependency issues
-                import importlib.util
-                spec = importlib.util.spec_from_file_location("show_last_question", 
-                    os.path.join(base_dir, "show_last_question.py"))
-                if spec and spec.loader:
-                    show_module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(show_module)
-                    html_content = show_module.create_html_viewer(item)
-                    html_path = os.path.join(run_dir, f"{item['id']}.html")
-                    with open(html_path, 'w', encoding='utf-8') as f:
-                        f.write(html_content)
-            except Exception as e:
-                # Don't fail the pipeline if HTML generation fails
-                pass  # Silently skip HTML generation if it fails
+            # HTML generation disabled - questions are saved to database and shown in UI
+            # No need to generate HTML files or open previews
 
             if callbacks and "on_success" in callbacks:
                 callbacks["on_success"](item)
-            else:
-                # Print question to console if no GUI
-                print("\n" + "="*70)
-                print("✓ QUESTION SUCCESSFULLY GENERATED!")
-                print("="*70)
-                question = item.get("question_package", {}).get("question", {})
-                print(f"\nQuestion: {question.get('stem', 'N/A')}")
-                print(f"\nOptions:")
-                for opt, text in sorted(question.get("options", {}).items()):
-                    marker = " ✓ CORRECT" if opt == question.get("correct_option") else ""
-                    print(f"  {opt}: {text}{marker}")
-                print(f"\nCorrect Answer: {question.get('correct_option', 'N/A')}")
-                if token_usage:
-                    print(f"\nToken Usage:")
-                    print(f"  Prompt tokens: {token_usage.get('prompt_tokens', 0):,}")
-                    print(f"  Completion tokens: {token_usage.get('candidates_tokens', 0):,}")
-                    print(f"  Total tokens: {token_usage.get('total_tokens', 0):,}")
-                print(f"\nSaved to: {paths['accepted']}")
-                print("="*70 + "\n")
+            # Silent mode - no console output, questions saved to database
             
             return {"run_dir": run_dir, "status": "accepted", "item_id": item["id"], "item": item}
 
+        except ValueError as e:
+            # Check if this is a YAML parsing error
+            error_msg = str(e)
+            is_yaml_error = "YAML" in error_msg or "yaml" in error_msg.lower() or "parsing" in error_msg.lower()
+            
+            # Print error to console for debugging
+            if is_yaml_error:
+                print(f"\n⚠ Implementer attempt {attempt + 1}/{cfg.max_implementer_retries + 1}: Invalid YAML detected")
+                print(f"   Error: {error_msg[:300]}...")
+                if attempt < cfg.max_implementer_retries:
+                    print(f"   → Retrying with new AI generation...")
+                else:
+                    print(f"   → Max retries reached. Giving up.")
+            else:
+                print(f"\n⚠ Error at attempt {attempt + 1}: {error_msg[:300]}")
+                if "question" in error_msg.lower() or "solution" in error_msg.lower():
+                    print("  → Missing required fields in Implementer output")
+                if attempt < cfg.max_implementer_retries:
+                    print(f"  → Retrying... ({attempt + 1}/{cfg.max_implementer_retries})")
+            
+            dump_jsonl(paths["logs"], {
+                "stage": "pipeline_exception",
+                "schema_id": schema_id,
+                "difficulty": difficulty,
+                "attempt": attempt + 1,
+                "error": error_msg,
+                "is_yaml_error": is_yaml_error,
+            })
+            # Treat exceptions as fixable and try again if possible
+            if attempt < cfg.max_implementer_retries:
+                continue
         except Exception as e:
             error_msg = str(e)
             # Print error to console for debugging
@@ -882,6 +1213,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": attempt + 1,
                 "error": error_msg,
+                "is_yaml_error": False,
             })
             # Treat exceptions as fixable and try again if possible
             if attempt < cfg.max_implementer_retries:
@@ -926,13 +1258,22 @@ def run_many(n: int, base_dir: str, cfg: RunConfig, models: ModelsConfig) -> Non
             res = run_once(base_dir=base_dir, cfg=cfg, models=models)
             status = res.get("status", "unknown")
             if status == "accepted":
-                print(f"✓ [{i+1}/{n}] SUCCESS - Question ID: {res.get('item_id', 'N/A')}")
+                try:
+                    print(f"✓ [{i+1}/{n}] SUCCESS - Question ID: {res.get('item_id', 'N/A')}")
+                except UnicodeEncodeError:
+                    print(f"[OK] [{i+1}/{n}] SUCCESS - Question ID: {res.get('item_id', 'N/A')}")
             else:
-                print(f"✗ [{i+1}/{n}] FAILED - Status: {status}")
+                try:
+                    print(f"✗ [{i+1}/{n}] FAILED - Status: {status}")
+                except UnicodeEncodeError:
+                    print(f"[FAIL] [{i+1}/{n}] FAILED - Status: {status}")
                 if "run_dir" in res:
                     print(f"  Check logs: {res['run_dir']}")
         except Exception as e:
-            print(f"✗ [{i+1}/{n}] EXCEPTION: {str(e)[:200]}")
+            try:
+                print(f"✗ [{i+1}/{n}] EXCEPTION: {str(e)[:200]}")
+            except UnicodeEncodeError:
+                print(f"[ERROR] [{i+1}/{n}] EXCEPTION: {str(e)[:200]}")
             import traceback
             traceback.print_exc()
 
@@ -1296,7 +1637,10 @@ class PipelineGUI:
         question_text = f"QUESTION:\n{'='*60}\n\n{stem}\n\n"
         question_text += "OPTIONS:\n" + "="*60 + "\n"
         for opt, text in sorted(options.items()):
-            marker = " ✓ [CORRECT]" if opt == correct else ""
+            try:
+                marker = " ✓ [CORRECT]" if opt == correct else ""
+            except UnicodeEncodeError:
+                marker = " [CORRECT]" if opt == correct else ""
             question_text += f"\n{opt}: {text}{marker}"
         question_text += f"\n\n{'='*60}\nCorrect Answer: {correct}\n"
         

@@ -1,0 +1,2082 @@
+[
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 minutes\n \n \nSECTION 1 \n \n \nINSTRUCTIONS TO CANDIDATES \n \nPlease read these instructions carefully, but do not open this question paper until you are \ntold that you may do so. This paper is Section 1 of 2. \n \nA separate answer sheet is provided for this paper. Please check you have one. You also \nrequire a soft pencil and an eraser. \n \nPlease complete the answer sheet with your candidate number, centre number, date of birth, \nand name. \n \nAt the end of 60 minutes, your supervisor will collect this question paper and answer sheet \nbefore giving out Section 2. \n \nThis paper contains two parts, A and B, and you should attempt both parts. \n \nPart A \nMathematics and Physics (20 questions) \nPart B \nAdvanced Mathematics and Advanced Physics (20 questions) \n \nYou are strongly advised to divide your time equally between the two parts: 30 minutes on \nPart A and 30 minutes on Part B. The scores for Part A and Part B are reported separately. \n \nThis paper contains 40 multiple-choice questions. There are no penalties for incorrect \nresponses, only marks for correct answers, so you should attempt all 40 questions. Each \nquestion is worth one mark. \n \nFor each question, choose the one option you consider correct and record your choice on the \nseparate answer sheet. If you make a mistake, erase thoroughly and try again. \n \nYou must complete the answer sheet within the time limit. \n \nYou can use the question paper for rough working, but no extra paper is allowed. Only your \nresponses on the answer sheet will be marked. \n \nDictionaries and calculators are NOT permitted. \n \n \nPlease wait to be told you may begin before turning this page. \n \nThis question paper consists of 31 printed pages and 5 blank pages. \n \n \n\u00a9 Cambridge University Press & Assessment 2023\nPV4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART A Mathematics and Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nThe surface area of a solid sphere of radius R is equal to the total surface area of 10 solid \nclosed cylinders of radius r and height 4r. \n \nWhich of the following is an expression for R in terms of r ? \n \n(The surface area of a sphere of radius R is 4\u03c0R2.) \n \n \n \nA \nR = 5r \n \nB \nR = 12r \n \nC \nR = 2 5 r \n \nD \nR = 1\n10\n2\nr \n \nE \nR =",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 r \n \nF \nR = 3\n10\n2\nr \n \nG \nR =",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 r",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nA spaceship of mass 10 000 kg is moving at 2.0 m s\u20131 relative to a space station. \n \nThe spaceship is captured by a robotic arm attached to the space station and brought to rest by \na force of 1000 N. \n \nHow far will the spaceship move in its initial direction relative to the space station while the \nforce is being applied? \n \n(Assume that the acceleration of the space station is negligible.) \n \n \n \nA \n0.050 m \n \nB \n0.10 m \n \nC \n0.20 m \n \nD \n5.0 m \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 m \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nWhich of the following is a correct rearrangement of \n \ny = p \u2013 q\nr\ns\nx\n\u2212\n\u2212\n \n \nto make x the subject? \n \n \n \nA \nx = s \u2013 p\ny\nq\nr\n\u2212\n+\n \n \nB \nx = p\ny\nq\nr\n\u2212\n+\n \u2013 s \n \nC \nx = s \u2013 p\ny\nq\nr\n\u2212\n\u2212\n \n \nD \nx = p\ny\nq\nr\n\u2212\n\u2212\n \u2013 s \n \nE \nx = s \u2013 y\np\nq\nr\n\u2212\n\u2212\n \n \nF \nx = y\np\nq\nr\n\u2212\n\u2212\n \u2013 s",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \nA circuit is set up as shown. All three resistors are identical. \n \nWhen the switch is open, the reading on the ammeter is 1.0 A and the power transferred from \nthe battery is 1.0 W. \n \nA\n \n \n \nThe switch is now closed. \n \nWhat is the new reading on the ammeter and what is the new power transferred from the \nbattery? \n \n \n \n \n \nammeter reading / A \npower transferred / W \n \n \nA \n0.67 \n0.67 \n \n \nB \n0.67 \n1.3 \n \n \nC \n0.67 \n1.5 \n \n \nD \n0.67 \n2.0 \n \n \nE \n1.0 \n1.0 \n \n \nF \n1.0 \n1.5 \n \n \nG \n1.0 \n2.0 \n \n \nH \n1.0 \n3.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \nN\nY\nP\nZ\nW\nM\nX\n \n \n[diagram not to scale] \n \nWXYZ is a square of side length 1. \n \nWM : MX = 1 : 2 \n \nXN : NY = 3 : 1 \n \nYP : PZ = 4 : 1 \n \nWhat is the area of triangle MNP ? \n \n \n \nA \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB \n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nC \n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \nD \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \n \nE \n19",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 \n \nF \n23\n60",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \nA spring is initially unstretched. A force F is used to stretch the spring. The extension x and the \nenergy E stored in the stretched spring are measured for different values of F. \n \nThe graph shows how the energy E, in J, varies with the extension squared, x2, in cm2. \n \n \n0\n0\n25\n0.015\nE / J\nx 2 / cm2 \n \nWhat is the magnitude of F when the spring stores 0.015 J of energy? \n \n \n \nA \n0.30 N \n \nB \n0.60 N \n \nC \n1.2 N \n \nD \n1.5 N \n \nE \n2.4 N \n \nF \n3.0 N \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 N \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 N",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \nGiven that \nx\nx\n\u2212\n\u2212\n=\n3\n2\n2(\n2)\n(2\n3)\n27\n(81)\n9\n \n \nwhat is the value of x ? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \nB \n2.5 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nE \n7.5 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \n \nG \n10.5 \n \nH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \nA solid, cylindrical metal bar has a uniform cross-sectional area of 12 cm2 and a volume \nof 180 cm3. \n \nThe bar rests on a horizontal surface on one of its circular faces. \n \nThe pressure on the surface due to the bar is 0.45 N cm\u20132. \n \nWhat is the density of the metal, in g cm\u20133\n ? \n \n(gravitational field strength = 10 N kg\u20131) \n \n \n \nA \n2.5 g cm\u20133 \n \nB \n3.0 g cm\u20133 \n \nC \n3.75 g cm\u20133 \n \nD \n7.5 g cm\u20133 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 g cm\u20133 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 g cm\u20133",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \nLast year, the salary of the coach of a football club was 80% of the salary of the star player. \n \nAt the start of the new year, the coach received a 15% increase in salary and the star player \nreceived a 38% increase in salary. \n \nWhat percentage of the star player\u2019s new salary is the coach\u2019s new salary? \n \n \n \nA \n 46% \n \nB \n 57% \n \nC \n3\n5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 61,
+    "text": "61 % \n \nD \n2\n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 66,
+    "text": "66 % \n \nE \n 77% \n \nF \n1\n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 83,
+    "text": "83 %",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \nTwo samples of pure radioactive isotopes X and Y decay with half-lives of 2 days and 3 days, \nrespectively. \n \nBoth X and Y decay in a single step into different stable isotopes. \n \nInitially the number of atoms of X is twice the number of atoms of Y. \n \nAfter how many days are the expected numbers of atoms of X and Y equal to each other? \n \n \n \nA \nThe expected numbers of atoms of X and Y are never equal. \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 days \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 days \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 days \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 days \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 days",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \nAn athlete\u2019s training session consists of several complete repetitions of a three-part \nprogramme: \n \n1. Walk 100 m at an average speed of 6 km h\u20131 \n \n2. Jog 200 m at an average speed of 10 km h\u20131 \n \n3. Run 100 m at an average speed of 20 km h\u20131 \n \nWhat is the athlete\u2019s average speed for the complete training session, in km h\u20131? \n \n \n \nA \n7.2 \n \nB \n9.6 \n \nC \n11.5 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nE \n14.4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \nA large, flat, metal plate is coated on one side with a layer of thermally insulating material of the \nsame thickness a as the metal plate. \n \nThe uninsulated top surface of the metal plate is maintained at a constant temperature T1. \n \nThe bottom surface of the insulating material is maintained at a constant, lower temperature T2. \n \nThe system is in equilibrium. \n \nThe diagram shows this arrangement. \n \nmetal plate\ninsulating material\nT1\nT2\n \n \nWhich graph could show how the temperature varies with distance from the top surface of the \nmetal plate to the bottom surface of the insulating material? \n \n \n \n \nA \ntemperature\ndistance from top\nof metal plate\nT1\nT2\na\n2a\n0\nB \ntemperature T1\nT2\na\n2a\n0\ndistance from top\nof metal plate\n \n \n \n \n \n \nC \ntemperature T1\nT2\na\n2a\n0\ndistance from top\nof metal plate \nD \ntemperature T1\nT2\na\n2a\n0\ndistance from top\nof metal plate \n \n \n \n \n \n \nE \ntemperature T1\nT2\na\n2a\n0\ndistance from top\nof metal plate",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \nTwo objects X and Y are similar. \n \nThe surface area of object Y is double the surface area of object X. \n \nThe volume of object Y is 7 2 cm3 more than the volume of object X. \n \nWhat is the volume of object X, in cm3? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \u2013 7 2 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 + 7 2 \n \nC \n\u2212\n42",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 2\n17\n \n \nD \n+\n42",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 2\n17\n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 2\n3\n \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 2 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 +",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \nThe voltage output of a power station is stepped up using a transformer before the power is \ntransmitted to a distant town. The primary coil of this transformer has 300 turns and the \nsecondary coil has 1500 turns. \n \nIn the town, a step-down transformer reduces the voltage supplied by the transmission cables \nto 33 000 V for distribution within the town. The step-down transformer supplies a current of \n1500 A. \n \nThe current in the transmission cables is 450 A and both transformers are ideal and 100% \nefficient. \n \nWhat is the voltage output of the power station? \n \n(Assume that the resistance of the transmission cables is negligible.) \n \n \n \nA \n1980 V \n \nB \n6600 V \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 000 V \n \nD \n110 000 V \n \nE \n550 000 V",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \nThe equation \n \n\u00d7\n+\n\u00d7\n=\n\u00d7\n\u00d7\na\na\n\u2212\n\u239b\n\u239e\n\u239c\n\u239f\n\u239c\n\u239f\n\u239d\n\u23a0\n2\n4\n3\n9\n1\n10\n2\n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 10\n \n \nhas two solutions for a. \n \nWhat is the positive difference between these two solutions? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 5 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 5 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 5 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 5 \n \nF \n200 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \nA transverse wave with an amplitude of 3.0 cm travels along a stretched string. The wave has a \nfrequency of 12 Hz and a wavelength of 0.25 m. \n \nWhat is the average speed of a particle in the string as the string oscillates during a time \nof 2.0 s? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 cm s\u20131 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 72,
+    "text": "72 cm s\u20131 \n \nC \n125 cm s\u20131 \n \nD \n144 cm s\u20131 \n \nE \n300 cm s\u20131",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \nX and Y are the end-points of a line segment. \n \nPoint P has coordinates (\u2013 8, 5). \n \nP lies on the line segment XY such that XP : PY is 1 : 2 and \n\u23af\u23af\u2192\n\u239b\n\u239e\n= \u239c\n\u239f\n\u2212\n\u239d\n\u23a0\n4\n3\nXP\n \n \nA point Q is such that \n\u23af\u23af\u2192\n\u239b\u239e\n= \u239c\u239f\n\u239d\u23a0\n7\n6\nQY\n \n \nWhat are the coordinates of point Q ? \n \n \n \nA \n(7, 5) \n \nB \n(3, 8) \n \nC \n(1, \u201312) \n \nD \n(\u20133, \u201310) \n \nE \n(\u20137, \u20137) \n \nF \n(\u201311, \u2013 4)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \nA battery and two resistors X and Y are connected in series. \n \nX\nY\n \n \nThe power transferred by the battery is 6 W. \n \nThe resistance of X is 10 \u2126. \n \nThe voltage across Y is 4 V. \n \nWhat is the current in the circuit? \n \n \n \nA \n2\n5\n A \n \nB \n3\n5\n A \n \nC \n3\n4\n A \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 A \n \nE \n3\n10\n A \n \nF \n3\n5\n A",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \nFind the maximum value of \n \n2sin\n x \u00d7 3\u2013sin\n x \n \nwhere 0\u00b0 \u2264 x \u2264 360\u00b0 \n \n \n \nA \n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nC \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \nA diver at the bottom of a lake of depth d fills a syringe with an ideal gas and seals the nozzle. \nThe piston remains free to move. The volume of the gas in the syringe at the bottom of the lake \nis 90 cm3. \n \nAs the diver returns to the surface, the temperature of the gas does not change. At the surface \nof the lake the gas in the syringe is at atmospheric pressure and the volume of the gas is \n720 cm3. \n \nWhat is the volume of the gas in the syringe at a depth d\n2\n ? \n \n \n \nA \n160 cm3 \n \nB \n180 cm3 \n \nC \n206 cm3 \n \nD \n225 cm3 \n \nE \n288 cm3 \n \nF \n315 cm3 \n \nG \n360 cm3 \n \nH \n405 cm3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART B Advanced Mathematics and Advanced Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \nx2 \u2013 x \u2013 6 is a factor of x3 + a x2 + 2x + b, where a and b are real constants. \n \nWhat is the value of a + b ? \n \n \n \nA \n \u201339 \n \nB \n \u201321 \n \nC \n \u20133 \n \nD \n\u22123",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nE \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \nH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \nTwo pipes contain air at the same temperature and pressure. \n \nA stationary sound wave is formed in the first pipe, which is closed at one end and open at the \nother end. The lowest frequency of stationary sound wave that can be formed in this pipe is \n4000 Hz. \n \nThe second pipe has the same length as the first pipe, but is open at both ends. \n \nWhat is the lowest frequency of stationary sound wave that can be formed in the second pipe? \n \n \n \nA \n1000 Hz \n \nB \n2000 Hz \n \nC \n4000 Hz \n \nD \n8000 Hz \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 000 Hz",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \nAn arithmetic progression has first term a and common difference d. \n \nThe sum of the first 9 terms plus the sum of the first 10 terms is equal to the sum of \n the first 11 terms. \n \nWhich of the following is a correct expression for a in terms of d ? \n \n \n \nA \na = \nd\n\u221213\n4\n \n \nB \na = \nd\n\u221215\n4\n \n \nC \na = \nd\n\u221216\n3\n \n \nD \na = \nd\n\u221219\n3\n \n \nE \na = \u20137d \n \nF \na = \u20138d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \nA cannon ball of mass 2.6 kg is fired horizontally from a cannon on the top of a cliff at a speed \nof 90 m s\u20131. \n \nThe height of the cliff above the horizontal ground below is 45 m. \n \nWhat is the magnitude of the impulse that acts on the ball between leaving the cannon and \nreaching the ground? \n \n(gravitational field strength = 10 N kg\u20131; assume that air resistance is negligible) \n \n \n \nA \n8.7 N s \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 N s \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 52,
+    "text": "52 N s \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 78,
+    "text": "78 N s \n \nE \n117 N s \n \nF \n234 N s \n \nG \n900 N s",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \nThe first three terms of a convergent geometric progression are: \n \n2p, p \u2013 3, p \u2013 7 \n \nWhat is the sum to infinity of this progression? \n \n \n \nA \n \u201354 \n \nB \n \u201327 \n \nC \n\u2212\n1\n2\n13\n \n \nD \n\u20132 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nF \n1\n2\n13\n \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \n \nH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 54,
+    "text": "54",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \nA child on a sledge is travelling straight down a snow-covered slope at a constant speed \nof 15 m s\u20131. \n \nThe mass of the child and sledge together is 60 kg. \n \nThe angle of the slope to the horizontal is 30\u00b0. \n \nWhat is the rate at which thermal energy is being produced due to friction forces? \n \n(gravitational field strength = 10 N kg\u20131) \n \n \n \nA \n450 W \n \nB \n900 W \n \nC \n4500 W \n \nD \n4500",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 W \n \nE \n6750 W \n \nF \n9000 W \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 500 W \n \nH \n9000",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 W",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \nThe diagram shows a circle with centre O. \n \nO\n40\u00b0\n55\u00b0\nx\n \n \n[diagram not to scale] \n \nWhat is the value of x ? \n \n \n \nA \n40\u00b0 \n \nB \n50\u00b0 \n \nC \n55\u00b0 \n \nD \n70\u00b0 \n \nE \n75\u00b0 \n \nF \n80\u00b0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \nThe diagram shows a battery with no internal resistance and four identical resistors \nP, Q, R and S. \n \nResistor Q dissipates 4.0 W of power. \n \nP\nQ\nR\nS\n \n \n \nWhat is the total power supplied by the battery? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 W \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 W \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 W \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 W \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 W",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \nThe function \n f (x) =",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 x2 \u2013 6x + 4 \n \ncan be written in the form \n \nf (x) = p (x + q)2 + r \n \nwhere p, q and r are constants. \n \nWhat is the value of p (r \u2013 q)? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \u2013\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \u20137 2 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \u20133 2 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 2 \u2013 6 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 2 \u2013 12 \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 2 \u2013 18",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \nTwo identical, uniform, thin planks, each of mass 40 kg, are propped up against one another in \nequilibrium on a rough surface as shown. Each plank is at an angle of 30\u00b0 to the vertical. \n \n30\u00b0 30\u00b0\nP\n \n \n[diagram not to scale] \n \nWhat is the magnitude of the friction force at point P? \n \n(gravitational field strength = 10 N kg\u22121) \n \n \n \nA \n100 N \n \nB \n200\n3\n N \n \nC \n200 N \n \nD \n200 3 N \n \nE \n400\n3\n N \n \nF \n400 N \n \nG \n400 3 N",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \nWhich of the following is equal to \n \n(\n)\nd\nx\nx\n\u2212\n\u2212\n\u2212\n\u2212\n\u222b\n3\n5\n2\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 3\n5\n \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \nB \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nC \n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nE \n\u2212\n28",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 5\n3\n \n \nF \n\u2212\n28",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \nThree blocks P, Q and R are in contact on a horizontal surface as shown.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 N\nP\n4.0 kg\nQ\n2.0 kg\nR\n2.0 kg\n \n \nThe mass of P is 4.0 kg and the masses of Q and R are each 2.0 kg. \n \nA horizontal force of 20 N is applied to P so that all three blocks move together. \n \nThe friction force between P and the surface is 2.0 N, and the friction forces between Q and R \nand the surface are each 1.0 N. \n \nWhat is the magnitude of the force that R exerts on Q? \n \n \n \nA \n2.0 N \n \nB \n5.0 N \n \nC \n6.0 N \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 N \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 N \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 N \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 N",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \nA function f is defined by \n \nf (x) = a\nb\nx\nx\n+",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nwhere a and b are constants. \n \nIt is given that f \u2032(1) = 2 and f \u2033(\u20131) = \u20132 \n \nWhat is the value of a + b ? \n \n \n \nA \n \u20135 \n \nB \n \u2013 4 \n \nC \n\u22127",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nD \n \u20131 \n \nE \n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nG \n14",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nH \n 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \nAn object is released from rest at a height H above the ground and falls freely in a uniform \ngravitational field. At time t after being released, it has fallen a distance s and is at a height h \nabove the ground, travelling at speed v. \n \ns\nh\nH\n \n \nThe graph shows two quantities plotted. \n \n0\n0\nx\ny\n \n \nWhich of the rows show(s) a possible pair of quantities for the axes? \n \n(Assume that air resistance is negligible.) \n \n \n \n \ny-axis \nx-axis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nh \nt",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nkinetic energy \nh",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \ngravitational potential energy \ns \n \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 and 3 only \n \n \n \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \nFind the real value of x that satisfies \n \nlog3 ( x 2 + 3 x + 2) = 2 + log3 ( x 2 + 2x) \n \n \n \nA \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nB \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nC \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nD \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \nA 20 V battery of negligible internal resistance is connected in series with a 20 \u2126 resistor and a \ncylindrical conductor. The current in the circuit is 0.20 A. \n \nThe cylindrical conductor is now removed, melted and re-formed into a new cylinder. After the \ncylinder has cooled to its original temperature, its length is 4 times greater than that of the \noriginal cylinder. \n \nWhat is the resistance of the new cylinder? \n \n \n \nA \n5.0 \u2126 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \u2126 \n \nC \n320 \u2126 \n \nD \n400 \u2126 \n \nE \n1280 \u2126 \n \nF \n1600 \u2126",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \nWhat is the constant term in the simplified binomial expansion of \nx\nx\n\u239b\n\u239e\n+\n\u239c\n\u239f\n\u239d\n\u23a0\n8\n2\n4\n? \n \n \n \nA \n7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nB \n35",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nC \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \nD \n7\n256 \n \nE \n35\n1024 \n \nF \n1\n2048",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \nA sound wave can travel from a source at P to a detector at R directly or by reflecting at Q. \n \nThe angle between PR and PQ is 30\u00b0 and the distance from P to R is d as shown. \n \n30\u00b0\nreflector\nQ\nR\nP\nd\n \n \nThere is a phase difference of \u03c0 radians between the incident and reflected wave at Q. \n \nWaves that reach R via Q are in phase with waves that reach R directly from P. \n \nWhich expression gives the greatest wavelength of sound waves for which this is true? \n \n \n \nA \n2d\u239b\n\u239e\n\u2212\n\u239c\n\u239f\n\u239d\n\u23a0\n2\n1\n3\n \n \nB \nd\u239b\n\u239e\n\u2212\n\u239c\n\u239f\n\u239d\n\u23a0\n2\n1\n3\n \n \nC \nd(\n)\n\u2212\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD \nd\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nE \nd\n2\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \nGiven that \n \n x 2 + y 2 = 1 \n \nwhat is the greatest possible value of 2 x + 3y ? \n \n \n \nA \n7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 2\n2\n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 10\n10\n \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 13\n13",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \nTwo springs have spring constants of 200 N m\u20131 and 600 N m\u20131, respectively. \n \nThe springs are joined in series, end-to-end, and stretched so that their combined extension \n is 0.80 m. \n \nWhat is the total strain energy stored in the springs? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 48,
+    "text": "48 J \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 96,
+    "text": "96 J \n \nC \n112 J \n \nD \n120 J \n \nE \n240 J \n \nF \n256 J \n \nG \n512 J",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2023_ENGAA Section 1 2023 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2023\\ENGAA Section 1 2023 Past Paper.pdf",
+    "year": "2023",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  }
+]

@@ -122,7 +122,7 @@ export function LoadingPage({
         >
           <div>💡 Did you know?</div>
           <div className="italic">
-            "The fastest mental calculators can perform calculations 10x faster than typing on a calculator!"
+            &quot;The fastest mental calculators can perform calculations 10x faster than typing on a calculator!&quot;
           </div>
         </motion.div>
       </div>

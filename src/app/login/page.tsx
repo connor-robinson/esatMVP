@@ -106,7 +106,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <p className="text-sm text-white/50">
-              You can browse papers without signing in, but you'll need to sign in to save your sessions.
+              You can browse papers without signing in, but you&apos;ll need to sign in to save your sessions.
             </p>
           </div>
         </div>

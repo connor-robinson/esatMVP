@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M1-Medium-126939702f</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M1-Medium-126939702f<br>
+            <strong>Schema:</strong> M1<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:09:08.767835<br>
+            <strong>Token Usage:</strong> 16,331 total (8,394 prompt + 1,124 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                The cost of manufacturing a storage tank is proportional to its surface area. A spherical tank with a capacity of$V$costs$C$to manufacture.
+
+A second spherical tank has a capacity of$8V$.
+
+What is the cost to manufacture the second tank?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $2C$</div>
+                <div class="option"><strong>B:</strong> $2\sqrt{2}C$</div>
+                <div class="option correct"><strong>C:</strong> $4C$ ✓ CORRECT</div>
+                <div class="option"><strong>D:</strong> $8C$</div>
+                <div class="option"><strong>E:</strong> $16\sqrt{2}C$</div>
+                <div class="option"><strong>F:</strong> $64C$</div>
+
+            </div>
+            <p><strong>Correct Answer: C</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Let the radius of the first tank be$r_1$and the radius of the second tank be$r_2$.
+Capacity is equivalent to volume. For a sphere, volume$V \propto r^3$.
+The volume of the second tank is$8$times that of the first, so:$$\left( \frac{r_2}{r_1} \right)^3 = 8$$Taking the cube root, we find the ratio of the radii (the linear scale factor):$$\frac{r_2}{r_1} = 2$$Cost is proportional to surface area$A$. For a sphere,$A \propto r^2$.
+The ratio of the costs is therefore the square of the linear scale factor:$$\frac{\text{Cost}_2}{\text{Cost}_1} = \left( \frac{r_2}{r_1} \right)^2 = 2^2 = 4$$Thus, the new cost is$4C$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>For geometrically similar solids, if volume scales by a factor$k$, surface area scales by$k^{2/3}$.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrectly scales by the linear dimension factor ($8^{1/3} = 2$).</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Incorrectly assumes cost scales with the square root of capacity ($8^{1/2} = 2\sqrt{2}$).</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Correct answer ($8^{2/3} = 4$). [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Incorrectly assumes cost scales linearly with capacity ($8^1 = 8$).</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Incorrectly inverts the relationship, scaling by volume to the power of $3/2$ ($8^{3/2} = 16\sqrt{2}$).</div>
+                <div style="margin: 10px 0;"><strong>F:</strong> Incorrectly squares the volume scale factor ($8^2 = 64$).</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

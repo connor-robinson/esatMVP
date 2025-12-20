@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M4-Easy-3d1446e7f8</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M4-Easy-3d1446e7f8<br>
+            <strong>Schema:</strong> M4<br>
+            <strong>Difficulty:</strong> Easy<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T01:51:44.086208<br>
+            <strong>Token Usage:</strong> 20,443 total (8,688 prompt + 1,186 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                The line with equation$y = 2 - x$forms a triangle with the coordinate axes.
+A vertical line with equation$x = k$divides the area of this triangle into two equal parts.
+What is the value of$k$?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $\frac{2}{3}$</div>
+                <div class="option"><strong>B:</strong> $1$</div>
+                <div class="option correct"><strong>C:</strong> $2 - \sqrt{2}$ ✓ CORRECT</div>
+                <div class="option"><strong>D:</strong> $2 - \frac{1}{2}\sqrt{2}$</div>
+                <div class="option"><strong>E:</strong> $\sqrt{2}$</div>
+
+            </div>
+            <p><strong>Correct Answer: C</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>The line$y = 2 - x$intersects the axes at$(0,2)$and$(2,0)$. The region bounded by the axes and the line is a right-angled triangle with base length$2$and height$2$.
+The vertical line$x = k$divides this triangle into two regions: a trapezium to the left (from$x=0$to$x=k$) and a smaller triangle to the right (from$x=k$to$x=2$).
+Consider the smaller triangle on the right. Its vertices are$(k,0)$,$(2,0)$, and$(k, 2-k)$.
+This smaller triangle is similar to the original large triangle.
+We require the area of the smaller triangle to be half the area of the large triangle.
+For similar shapes, the ratio of areas is the square of the ratio of corresponding lengths (the linear scale factor$r$).$$r^2 = \frac{\text{Area}_{\text{small}}}{\text{Area}_{\text{large}}} = \frac{1}{2}$$$$r = \frac{1}{\sqrt{2}}$$The base of the large triangle has length$2$. The base of the small triangle has length$2 - k$.$$\frac{2 - k}{2} = \frac{1}{\sqrt{2}}$$$$2 - k = \frac{2}{\sqrt{2}} = \sqrt{2}$$$$k = 2 - \sqrt{2}$$Hence the correct answer is$2 - \sqrt{2}$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Working with the similar triangle at the &quot;tip&quot; is faster than integrating the trapezium area; area scales with the square of the linear dimension.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrectly identifies the centroid ($x=2/3$) as the dividing line.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Incorrectly assumes the area scales linearly with length (midpoint $x=1$).</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Correct. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Calculation error in the similarity ratio (forgetting to scale the base length by 2), solving $2-k = 1/\sqrt{2}$.</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Incorrectly applies the scale factor to the distance from the origin ($k = \sqrt{2}$) rather than the distance from the intercept.</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -12,6 +12,8 @@ interface QuestionReviewCardProps {
     difficulty: string;
     question_stem: string;
     correct_option: string;
+    primary_tag?: string | null;
+    secondary_tags?: string[] | null;
     created_at: string;
   };
   onClick: () => void;
@@ -24,9 +26,12 @@ export function QuestionReviewCard({ question, onClick }: QuestionReviewCardProp
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
+          {question.primary_tag && (
+            <Badge className="bg-blue-500">{question.primary_tag}</Badge>
+          )}
         </div>
         <span className="text-xs text-neutral-400">
           {new Date(question.created_at).toLocaleDateString()}

@@ -6,6 +6,18 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
+// Extend Window interface to include MathJax
+declare global {
+  interface Window {
+    MathJax?: {
+      typesetPromise?: (elements?: HTMLElement | HTMLElement[]) => Promise<void>;
+      startup?: {
+        document?: any;
+      };
+    };
+  }
+}
+
 /**
  * Wait for MathJax to be loaded and ready
  */
@@ -66,16 +78,53 @@ export async function typesetMath(element?: HTMLElement | null): Promise<void> {
   }
 
   try {
-    if (element) {
-      console.log('[MathJax] Typesetting element:', element);
-      await window.MathJax!.typesetPromise!([element]);
-    } else {
-      console.log('[MathJax] Typesetting entire page');
-      await window.MathJax!.typesetPromise!();
+    const MathJax = window.MathJax;
+    if (!MathJax?.typesetPromise) {
+      console.warn('[MathJax] MathJax not available');
+      return;
     }
-    console.log('[MathJax] Typesetting complete');
+    
+    // Clear previous MathJax rendering if typesetting specific element
+    if (element) {
+      // Remove existing MathJax elements
+      const mathElements = element.querySelectorAll('.MathJax, .MathJax_Display, script[type="math/tex"], script[type="math/tex; mode=display"]');
+      mathElements.forEach(el => el.remove());
+      
+      // Reset MathJax state for this element
+      if (MathJax.startup && MathJax.startup.document) {
+        const mathNodes = element.querySelectorAll('[class*="math"], [data-math]');
+        mathNodes.forEach(node => {
+          if ((node as any)._mjx) {
+            delete (node as any)._mjx;
+          }
+        });
+      }
+    }
+    
+    // Typeset
+    if (element) {
+      await MathJax.typesetPromise([element]);
+    } else {
+      await MathJax.typesetPromise();
+    }
   } catch (error) {
     console.error('[MathJax] Typesetting error:', error);
+    // Retry once after a short delay
+    setTimeout(async () => {
+      try {
+        const MathJax = window.MathJax;
+        if (!MathJax?.typesetPromise) {
+          return;
+        }
+        if (element) {
+          await MathJax.typesetPromise([element]);
+        } else {
+          await MathJax.typesetPromise();
+        }
+      } catch (retryError) {
+        console.error('[MathJax] Retry typesetting error:', retryError);
+      }
+    }, 300);
   }
 }
 

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P2-Hard-ec2190d72b</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P2-Hard-ec2190d72b<br>
+            <strong>Schema:</strong> P2<br>
+            <strong>Difficulty:</strong> Hard<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:03:31.239414<br>
+            <strong>Token Usage:</strong> 17,605 total (8,521 prompt + 1,159 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                A cylindrical resistor of fixed volume and length$L$dissipates power$P$when a potential difference$V$is applied across its ends.
+The resistor is reshaped to a length of$2L$.
+What is the power dissipated in the reshaped resistor when the same potential difference$V$is applied?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $4P$</div>
+                <div class="option"><strong>B:</strong> $2P$</div>
+                <div class="option"><strong>C:</strong> $P$</div>
+                <div class="option"><strong>D:</strong> $\frac{P}{2}$</div>
+                <div class="option correct"><strong>E:</strong> $\frac{P}{4}$ ✓ CORRECT</div>
+
+            </div>
+            <p><strong>Correct Answer: E</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>The resistance of the wire is given by$R = \frac{\rho L}{A}$.
+Since the volume of the resistor is fixed, we have$\text{Volume} = A \times L = \text{constant}$.
+Rearranging for area gives$A = \frac{\text{Volume}}{L}$.
+Substituting this into the resistance formula:$$R = \frac{\rho L}{(\text{Volume}/L)} = \frac{\rho L^2}{\text{Volume}}$$Thus, resistance is proportional to the square of the length ($R \propto L^2$).
+When the length doubles ($L \to 2L$), the resistance increases by a factor of$2^2 = 4$. So the new resistance is$4R$.
+The power dissipated is given by$P = \frac{V^2}{R}$. Since the potential difference$V$is constant, power is inversely proportional to resistance ($P \propto \frac{1}{R}$).
+Therefore, the new power is:$$P' = \frac{V^2}{4R} = \frac{1}{4} \left( \frac{V^2}{R} \right) = \frac{P}{4}$$Hence the correct answer is$\frac{P}{4}$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>For a wire of fixed volume, resistance scales with$L^2$, not$L$.
+</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{
+  "exam": "ESAT",
+  "source": "ESAT Content Specification (May 2024)",
+  "papers": [
+    {
+      "paper_id": "math1",
+      "paper_name": "Mathematics 1",
+      "topics": [
+        { "code": "M1", "title": "Units" },
+        { "code": "M2", "title": "Number" },
+        { "code": "M3", "title": "Ratio and proportion" },
+        { "code": "M4", "title": "Algebra" },
+        { "code": "M5", "title": "Geometry" },
+        { "code": "M6", "title": "Statistics" },
+        { "code": "M7", "title": "Probability" }
+      ]
+    },
+    {
+      "paper_id": "biology",
+      "paper_name": "Biology",
+      "topics": [
+        { "code": "B1", "title": "Cells" },
+        { "code": "B2", "title": "Movement across membranes" },
+        { "code": "B3", "title": "Cell division and sex determination" },
+        { "code": "B4", "title": "Inheritance" },
+        { "code": "B5", "title": "DNA" },
+        { "code": "B6", "title": "Gene technologies" },
+        { "code": "B7", "title": "Variation" },
+        { "code": "B8", "title": "Enzymes" },
+        { "code": "B9", "title": "Animal physiology" },
+        { "code": "B10", "title": "Ecosystems" },
+        { "code": "B11", "title": "Plant physiology" }
+      ]
+    },
+    {
+      "paper_id": "chemistry",
+      "paper_name": "Chemistry",
+      "topics": [
+        { "code": "C1", "title": "Atomic structure" },
+        { "code": "C2", "title": "The Periodic Table" },
+        { "code": "C3", "title": "Chemical reactions, formulae and equations" },
+        { "code": "C4", "title": "Quantitative chemistry" },
+        { "code": "C5", "title": "Oxidation, reduction and redox" },
+        { "code": "C6", "title": "Chemical bonding, structure and properties" },
+        { "code": "C7", "title": "Group chemistry" },
+        { "code": "C8", "title": "Separation techniques" },
+        { "code": "C9", "title": "Acids, bases and salts" },
+        { "code": "C10", "title": "Rates of reaction" },
+        { "code": "C11", "title": "Energetics" },
+        { "code": "C12", "title": "Electrolysis" },
+        { "code": "C13", "title": "Carbon/Organic chemistry" },
+        { "code": "C14", "title": "Metals" },
+        { "code": "C15", "title": "Kinetic/Particle theory" },
+        { "code": "C16", "title": "Chemical tests" },
+        { "code": "C17", "title": "Air and water" }
+      ]
+    },
+    {
+      "paper_id": "physics",
+      "paper_name": "Physics",
+      "topics": [
+        { "code": "P1", "title": "Electricity" },
+        { "code": "P2", "title": "Magnetism" },
+        { "code": "P3", "title": "Mechanics" },
+        { "code": "P4", "title": "Thermal physics" },
+        { "code": "P5", "title": "Matter" },
+        { "code": "P6", "title": "Waves" },
+        { "code": "P7", "title": "Radioactivity" }
+      ]
+    },
+    {
+      "paper_id": "math2",
+      "paper_name": "Mathematics 2",
+      "topics": [
+        { "code": "MM1", "title": "Algebra and functions" },
+        { "code": "MM2", "title": "Coordinate geometry" },
+        { "code": "MM3", "title": "Trigonometry" },
+        { "code": "MM4", "title": "Exponentials and logarithms" },
+        { "code": "MM5", "title": "Sequences and series" },
+        { "code": "MM6", "title": "Binomial expansion" },
+        { "code": "MM7", "title": "Differentiation and integration" }
+      ]
+    }
+  ]
+}
+
+
+

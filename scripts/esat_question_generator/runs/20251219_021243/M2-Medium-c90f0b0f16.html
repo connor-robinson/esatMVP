@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M2-Medium-c90f0b0f16</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M2-Medium-c90f0b0f16<br>
+            <strong>Schema:</strong> M2<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:14:55.457861<br>
+            <strong>Token Usage:</strong> 22,864 total (8,609 prompt + 1,177 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                What is the number of real solutions of the equation$$(x^2 - 4x)^2 + 3(x^2 - 4x) - 4 = 0$$
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> 0</div>
+                <div class="option"><strong>B:</strong> 1</div>
+                <div class="option"><strong>C:</strong> 2</div>
+                <div class="option correct"><strong>D:</strong> 3 ✓ CORRECT</div>
+                <div class="option"><strong>E:</strong> 4</div>
+
+            </div>
+            <p><strong>Correct Answer: D</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>We observe that the equation is a quadratic in terms of the expression$(x^2 - 4x)$. Let$u = x^2 - 4x$. The equation becomes:$$u^2 + 3u - 4 = 0$$Factoring this quadratic gives:$$(u + 4)(u - 1) = 0$$Thus, the possible values for$u$are$u = -4$and$u = 1$. We now solve for$x$in each case.
+Case 1:$x^2 - 4x = -4__MATH_BLOCK_2____MATH_BLOCK_3__This yields exactly one real solution,$x = 2$.
+Case 2:$x^2 - 4x = 1$$$x^2 - 4x - 1 = 0$$The discriminant of this quadratic is$\Delta = (-4)^2 - 4(1)(-1) = 16 + 4 = 20$. Since$\Delta > 0$, there are two distinct real solutions. Note that$x=2$is not a solution here ($2^2 - 8 - 1 \neq 0$), so these roots are distinct from the first case.
+Total number of real solutions =$1 + 2 = 3$.
+Hence the correct answer is 3.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>When an equation has a repeated algebraic structure, substituting a single variable for that structure often reveals a simpler underlying equation; however, you must check the range of the substitution to determine the number of real roots.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrect guess or assuming no real solutions due to the complexity.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Corresponds to finding only the integer solution ($x=2$) and missing the irrational ones, or solving $u=1$ incorrectly as having no solutions.</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Corresponds to finding the two values for $u$ ($-4$ and $1$) and reporting this count, or making a sign error in factoring $u$ that leads to one valid and one invalid case (total 2 $x$ roots).</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Correct. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Corresponds to assuming that every quadratic value for $u$ yields two real solutions for $x$ (ignoring the vertex case), or counting the multiplicity of the repeated root.</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

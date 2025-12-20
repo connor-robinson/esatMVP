@@ -210,10 +210,10 @@ export default function ProfilePage() {
                 </Card>
               </Link>
 
-              <Link href="/train/analytics">
+              <Link href="/skills/analytics">
                 <Card variant="flat" className="p-4 hover:bg-white/10 transition-colors duration-fast cursor-pointer">
                   <div className="space-y-2">
-                    <div className="font-medium text-neutral-100">Train Analytics</div>
+                    <div className="font-medium text-neutral-100">Skills Analytics</div>
                     <div className="text-sm text-neutral-400">
                       Track your training progress and performance
                     </div>

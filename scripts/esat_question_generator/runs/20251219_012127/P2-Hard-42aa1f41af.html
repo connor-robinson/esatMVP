@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P2-Hard-42aa1f41af</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P2-Hard-42aa1f41af<br>
+            <strong>Schema:</strong> P2<br>
+            <strong>Difficulty:</strong> Hard<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T01:22:49.194684<br>
+            <strong>Token Usage:</strong> 17,724 total (9,324 prompt + 1,357 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                A cylindrical fuse wire of length$L$and radius$r$is connected across a fixed potential difference$V$. The time taken for the wire to melt is$t$.
+A second wire is made from the same material, but all its linear dimensions are multiplied by a factor$k$. The same potential difference$V$is applied across the second wire.
+Assuming that all electrical energy is converted into internal energy of the wire and that heat loss to the surroundings is negligible, what is the time taken for the second wire to melt?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $t$</div>
+                <div class="option"><strong>B:</strong> $k t$</div>
+                <div class="option correct"><strong>C:</strong> $k^2 t$ ✓ CORRECT</div>
+                <div class="option"><strong>D:</strong> $k^3 t$</div>
+                <div class="option"><strong>E:</strong> $k^4 t$</div>
+
+            </div>
+            <p><strong>Correct Answer: C</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Let the original wire have length$L$and radius$r$. The new wire has length$L' = kL$and radius$r' = kr$.
+First, consider the mass of the wire, which determines the energy required to melt it. The volume is$Vol = \pi r^2 L$. The new volume is$Vol' = \pi (kr)^2 (kL) = k^3 (\pi r^2 L) = k^3 Vol$. Since the material is the same, the mass$m$, and hence the energy$E$required to melt the wire, scales by$k^3$:$$E' = k^3 E$$Next, consider the electrical resistance$R = \rho \frac{L}{A} = \rho \frac{L}{\pi r^2}$. The new resistance is:$$R' = \rho \frac{kL}{\pi (kr)^2} = \rho \frac{kL}{k^2 \pi r^2} = \frac{1}{k} R$$Now consider the power dissipated. Since the potential difference$V$is fixed, we use$P = \frac{V^2}{R}$. The new power is:$$P' = \frac{V^2}{R'} = \frac{V^2}{R/k} = k P$$Finally, the time taken is$t = \frac{E}{P}$. The new time is:$$t' = \frac{E'}{P'} = \frac{k^3 E}{k P} = k^2 \left( \frac{E}{P} \right) = k^2 t$$Hence the correct answer is$k^2 t$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Resistance scales as$L^{-1}$when all dimensions scale uniformly, while mass scales as$L^3$; with fixed voltage, power scales as$L^1$.
+</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

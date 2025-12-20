@@ -10,10 +10,11 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { isQuestionGenerationEnabled } from "@/lib/features";
 
-const trainNavItems = [
-  { href: "/train/drill", label: "Drill" },
-  { href: "/train/analytics", label: "Analytics" },
+const skillsNavItems = [
+  { href: "/skills/drill", label: "Drill" },
+  { href: "/skills/analytics", label: "Analytics" },
 ];
 
 const papersNavItems = [
@@ -30,20 +31,34 @@ export function Navbar() {
   const supabase = useSupabaseClient();
 
   const currentSection =
-    pathname.startsWith("/train") ? "train" : pathname.startsWith("/papers") ? "papers" : "home";
+    pathname.startsWith("/skills") ? "skills" 
+    : pathname.startsWith("/papers") ? "papers" 
+    : pathname.startsWith("/questions") ? "questions"
+    : "home";
 
-  const currentNavItems = currentSection === "train" ? trainNavItems : currentSection === "papers" ? papersNavItems : [];
+  const currentNavItems = currentSection === "skills" ? skillsNavItems : currentSection === "papers" ? papersNavItems : [];
 
   useEffect(() => {
     const allRoutes = [
       "/",
-      "/train",
-      "/train/drill",
-      "/train/analytics",
+      "/skills/drill",
+      "/skills/analytics",
       "/papers/plan",
       "/papers/drill",
       "/papers/analytics",
     ];
+
+    // Only prefetch questions/review on localhost
+    if (typeof window !== "undefined") {
+      const isLocalhost = 
+        window.location.hostname === "localhost" || 
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname === "[::1]";
+      
+      if (isLocalhost) {
+        allRoutes.push("/questions/review");
+      }
+    }
 
     allRoutes.forEach((route, index) => {
       setTimeout(() => router.prefetch(route), index * 5);
@@ -94,13 +109,13 @@ export function Navbar() {
 
             <div className="flex items-center space-x-3">
               <Link
-                href="/train"
+                href="/skills/drill"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  currentSection === "train" ? "text-primary" : "text-white/50 hover:text-white/80"
+                  currentSection === "skills" ? "text-primary" : "text-white/50 hover:text-white/80"
                 )}
               >
-                Train
+                Mental Maths
               </Link>
               <span className="text-sm text-white/30">/</span>
               <Link
@@ -110,18 +125,22 @@ export function Navbar() {
                   currentSection === "papers" ? "text-[#5B8D94]" : "text-white/50 hover:text-white/80"
                 )}
               >
-                Papers
+                Past Papers
               </Link>
-              <span className="text-sm text-white/30">/</span>
-              <Link
-                href="/"
-                className={cn(
-                  "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  pathname === "/" ? "text-white/90" : "text-white/50 hover:text-white/80"
-                )}
-              >
-                Overview
-              </Link>
+              {typeof window !== "undefined" && isQuestionGenerationEnabled() && (
+                <>
+                  <span className="text-sm text-white/30">/</span>
+                  <Link
+                    href="/questions"
+                    className={cn(
+                      "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
+                      pathname.startsWith("/questions") ? "text-white/90" : "text-white/50 hover:text-white/80"
+                    )}
+                  >
+                    Question Bank
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -145,7 +164,7 @@ export function Navbar() {
                         "px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wider transition-all duration-instant ease-signature will-change-transform",
                         "active:scale-[0.97]",
                         isActive
-                          ? currentSection === "train"
+                          ? currentSection === "skills"
                             ? "bg-primary/10 text-primary"
                             : "bg-[#5B8D94]/10 text-[#5B8D94]"
                           : "text-white/60 hover:text-white/90 hover:bg-white/5",

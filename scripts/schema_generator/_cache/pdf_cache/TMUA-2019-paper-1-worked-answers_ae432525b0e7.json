@@ -1,0 +1,582 @@
+[
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 10,
+    "text": "10 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n12\nQuestion 11 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n13\nQuestion 12 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n14\nQuestion 13 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n15\nQuestion 14 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n16\nQuestion 15 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n17\nQuestion 16 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n18\nQuestion 17 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n19\nQuestion 18 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n20\nQuestion 19 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n22\nQuestion 20 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .\n23\nc\u20ddUCLES\nPage 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 + 1 + 2 + 3 + \u00b7 \u00b7 \u00b7 + 79 + 80 = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u00d7 80 \u00d7 81\nusing the formula for the sum of the \ufb01rst n positive integers, 1\n2n(n+1). This gives 40\u00d781 = 3240,\nso the answer is E.\nc\u20ddUCLES\nPage 5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 10,
+    "text": "10 = 10\n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 = 102\u22121\nx3 =\np\n102\u22121 =\n\u0000102\u22121\u0001 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 = 102\u22121\u00d7 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 = 102\u22122\nAs this pattern continues, we will end up with x100 = 102\u221299, which is option C.\nc\u20ddUCLES\nPage 6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 64,
+    "text": "64 = 45",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 8,
+    "text": "8 and so the answer is E.\nc\u20ddUCLES\nPage 7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 8,
+    "text": "8 = 3\n4, so the\nanswer is F.\nAlternatively, completing the square, we have\n4q2 \u22126q + 6 = 4(q2 \u22123\n2q) + 6 = 4\n\u0000(q \u22123\n4)2 \u2212(3\n4)2\u0001\n+ 6\nso the minimum occurs when q = 3\n4, as before.\nc\u20ddUCLES\nPage 9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 (\u2212f(x)) dx. Let us sketch an example using just two intervals:\nx\ny\nx\ny\nThe original (blue) trapezia give an underestimate for the integral. The red trapezia give\nan underestimate for the area of the region, but since the integral is negative (the graph lies\nbelow the x-axis), the trapezium rule gives an overestimate for the integral (for example, it\nmay estimate \u22120.6 instead of the correct \u22120.65, and \u22120.6 > \u22120.65).\nHence the correct answer is E.\nc\u20ddUCLES\nPage 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 = p3, giving x\n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 = p, so x = p2 and thus y = p2 as well; the point of intersection thus lies\non the line y = x and the graph is symmetrical about this line.\nWe can now \ufb01nd the area between the curves by integrating the di\ufb00erence from x = 0 to x = p2:\narea =\nZ p2\n0\np\u221ax \u2212x2\np2 dx\n=\n\"\npx\n3\n2\n(3\n2) \u2212x3\n3p2\n#p2\n0\n= p.p3\n(3\n2) \u2212p6\n3p2 \u22120\n= 2\n3p4 \u22121\n3p4\n= 1\n3p4\nso the answer is D.\nc\u20ddUCLES\nPage 11",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 + x3\n3\n\u00150\n\u22121\n+\n\u0014x2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u2212x3\n3\n\u00153\n0\n= \u2212(\u22121",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u22121\n3) + ( 9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u22129)\n= 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 6,
+    "text": "6 \u22129\n2\n= \u221222\n6\n= \u221211\n3\nso the correct answer is F.\nc\u20ddUCLES\nPage 12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u221224\u03c0t + c\nSubstituting in V = 7 and t = 1 gives",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 7,
+    "text": "7 = 16\u03c0 \u221224\u03c0 + c\nso c = 8\u03c0 + 7. Then at t = 9, we have\nV = 16\u03c0 \u00d7 9\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u221224\u03c0 \u00d7 9 + 8\u03c0 + 7 = (16 \u00d7 27 \u221224 \u00d7 9 + 8)\u03c0 + 7 = 224\u03c0 + 7\nso the answer is option C.\nCommentary:\nThe \ufb01nal calculation can be simpli\ufb01ed somewhat by writing 16 \u00d7 27 =",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 16,
+    "text": "16 \u00d7 3 \u00d7 9 = 48 \u00d7 9, so the brackets become 24 \u00d7 9 + 8. Then 24 \u00d7 9 = 240 \u221224 = 216,\ngiving the \ufb01nal answer of 224\u03c0 + 7.\nc\u20ddUCLES\nPage 14",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 .\nWe also note that as \u22121 \u2264sin x \u22641, 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u2264u \u22642 for all real x (and u can take every value in this\ninterval).\nNow we can complete the square on the quadratic to understand its behaviour; we get\n(u \u22122)2 \u221222 + 17",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 = (u \u22122)2 + 1\n4\nThus the minimum value of the function occurs when u = 2, and for u in the interval 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 \u2264u \u22642,\nthe maximum value occurs when u = 1\n2. In this case, we get (\u22123\n2)2 + 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 = 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 = 5\n2, so the correct\nanswer is B.\nc\u20ddUCLES\nPage 15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 3,
+    "text": "3 and then adding to the \ufb01rst equation gives\n4S = 2\nso S = 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 and hence C = \u2212\n\u221a\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 .\nThe solutions to sin 2x = 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 for 0\u25e6\u2264x \u2264360\u25e6, or 0\u25e6\u22642x \u2264720\u25e6, are given by 2x = 30\u25e6, 150\u25e6,\n390\u25e6and 510\u25e6.\nThe solutions to cos 2x = \u2212\n\u221a\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 in the same range are given by 2x = 150\u25e6, 210\u25e6, 510\u25e6and 570\u25e6,\nso the values of 2x for which both are true are 150\u25e6and 510\u25e6.\nThus the solutions for x in this range are 75\u25e6and 255\u25e6, and their sum is 330\u25e6. Hence the correct\nanswer is option B.\nc\u20ddUCLES\nPage 16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 22,
+    "text": "22 .\nTherefore\n2u2\u22123u = 2\u22122\nso we require\nu2 \u22123u = \u22122.\nWe can rearrange this quadratic to give u2 \u22123u + 2 = 0, so (u \u22121)(u \u22122) = 0 giving u = 1 or\nu = 2. Thus 3x = 1 or 3x = 2, giving two possibilities: x = 0 or x = log3 2.\nThe question explicitly says \u201c\ufb01nd the real non-zero solution\u201d, so the correct answer is option A.\nc\u20ddUCLES\nPage 17",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 f(x) dx, which is the (signed) area under the graph of y = f(x) between x = 0 and\nx = 1 (taking signs into account, as usual: parts of the graph under the x-axis are counted as\nnegative areas). Likewise, let B =\nR 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 1,
+    "text": "1 f(x) dx, which is the (signed) area between x = 1 and\nx = 2.\nThe integral\nR 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 f(x+1) dx gives the (signed) area under the graph of y = f(x+1) between x = 0\nand x = 1. This graph is the graph of y = f(x) translated left by 1 unit, so this equals the area\nunder the original graph between x = 1 and x = 2, which is B. Hence B = 6.\nThe \ufb01rst equation gives 2A + 5B = 14, and as B = 6, we get A = \u22128.\nThe \ufb01nal integral\nR 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 f(x) dx is the (signed) area between x = 0 and x = 2, which is A + B =\n\u22128 + 6 = \u22122.\nHence the answer is C.\nc\u20ddUCLES\nPage 18",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 when 2\u03b8 = \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 6,
+    "text": "6 or 5\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 6,
+    "text": "6 , so for \u03b8 =\n\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 or 5\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 . Thinking about a sketch of the\ngraph of y = sin 2\u03b8, we see that sin 2\u03b8 \u22121",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 2,
+    "text": "2 is positive for \u03b8 between these values and negative\nelsewhere.\nFor the second factor, we have sin \u03b8 = cos \u03b8 when tan \u03b8 = 1, so \u03b8 = \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 . Thinking about the\ngraphs of y = sin \u03b8 and y = cos \u03b8, we see that sin \u03b8 \u2212cos \u03b8 is negative for \u03b8 < \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 and positive for\n\u03b8 > \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 . For consistency, we write \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 4,
+    "text": "4 = 3\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 in what follows.\nWe thus have the following table:",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 0,
+    "text": "0 \u2264\u03b8 < \u03c0\n12\n\u03b8 = \u03c0\n12\n\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 < \u03b8 < 3\u03c0\n12\n\u03b8 = 3\u03c0\n12\n3\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 < \u03b8 < 5\u03c0\n12\n\u03b8 = 5\u03c0\n12\n5\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 < \u03b8 \u2264\u03c0\nsin 2\u03b8 \u22121\n2\n\u2212\n0\n+\n+\n+\n0\n\u2212\nsin \u03b8 \u2212cos \u03b8\n\u2212\n\u2212\n\u2212\n0\n+\n+\n+\nproduct\n+\n0\n\u2212\n0\n+\n0\n\u2212\nThe lengths of the subintervals where the product is positive (or zero) is\n( \u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 \u22120) + (5\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 \u22123\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 ) = 3\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 12,
+    "text": "12 = \u03c0\n4\nThe whole interval has length \u03c0, so the fraction of the interval for which the inequality is satis\ufb01ed\nis 1\n4, and the answer is option C.\nc\u20ddUCLES\nPage 19",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "TMUA_Paper1_2019_TMUA-2019-paper-1-worked-answers",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\TMUA Paper 1\\TMUA 2019 Paper 1\\TMUA-2019-paper-1-worked-answers.pdf",
+    "year": "2019",
+    "exam": "TMUA",
+    "section": "Paper 1",
+    "qnum": 22,
+    "text": "22 + 4 \u00d7 3 \u00d7 16\n6\n= \u22122 \u00b1\n\u221a\n196\n6\n= \u22122 \u00b1 14\n6\n= 2 or \u22128\n3.\n(We could have found these roots by factorising, but that did not look particularly easy.) There-\nfore there are stationary points at x = 2 and x = \u22128\n3. We have f(2) = \u221216 \u2212k, but calculating\nf(\u22128\n3) by hand would be painful, so let us try to avoid doing so if we can!\nWe note that f(0) = 4 \u2212k, and that f(x) gets big as x gets big, so if there are exactly two roots\nwith positive x-coordinates, we need the graph to look something like this:\nx\ny\n(2, \u221216 \u2212k)\n(0, 4 \u2212k)\nIn particular, we require f(0) > 0, so we must have k < 4.\nIt must also be the case that the stationary point at x = 2 lies below the x-axis, so we need\n\u221216 \u2212k < 0, that is, \u221216 < k.\nOnce we have met these two conditions, it becomes clear that there are three distinct roots,\nexactly one of which has x < 0.\nTherefore, the complete range of values of k is given by\n\u221216 < k < 4, which is option E.\nc\u20ddUCLES\nPage 23",
+    "skipped_diagram": true
+  }
+]

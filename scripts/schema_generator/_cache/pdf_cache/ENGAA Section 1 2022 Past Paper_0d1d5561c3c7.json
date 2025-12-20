@@ -1,0 +1,2252 @@
+[
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 minutes \n \n \nSECTION 1 \n \n \nINSTRUCTIONS TO CANDIDATES \n \nPlease read these instructions carefully, but do not open this question paper until you are \ntold that you may do so. This paper is Section 1 of 2. \n \nA separate answer sheet is provided for this paper. Please check you have one. You also \nrequire a soft pencil and an eraser. \n \nPlease complete the answer sheet with your candidate number, centre number, date of birth, \nand name. \n \nAt the end of 60 minutes, your supervisor will collect this question paper and answer sheet \nbefore giving out Section 2. \n \nThis paper contains two parts, A and B, and you should attempt both parts. \n \nPart A \nMathematics and Physics (20 questions) \nPart B \nAdvanced Mathematics and Advanced Physics (20 questions) \n \nYou are strongly advised to divide your time equally between the two parts: 30 minutes on \nPart A and 30 minutes on Part B. The scores for Part A and Part B are reported separately. \n \nThis paper contains 40 multiple-choice questions. There are no penalties for incorrect \nresponses, only marks for correct answers, so you should attempt all 40 questions. Each \nquestion is worth one mark. \n \nFor each question, choose the one option you consider correct and record your choice on the \nseparate answer sheet. If you make a mistake, erase thoroughly and try again. \n \nYou must complete the answer sheet within the time limit. \n \nYou can use the question paper for rough working, but no extra paper is allowed. Only your \nresponses on the answer sheet will be marked. \n \nDictionaries and calculators are NOT permitted. \n \n \nPlease wait to be told you may begin before turning this page. \n \nThis question paper consists of 35 printed pages and 5 blank pages. \n \n \n\u00a9 Cambridge University Press & Assessment 2022 \nPV4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART A Mathematics and Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nWhich one of the following is a simplification of \n \nx z\ny\ny\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e7\n\uf0f7\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n2\n1\n2\n3\n3\n \n \n \n \nA \nxz\ny\n2\n4\n3\n \n \nB \nxz\ny\n2\n5\n3\n \n \nC \nx z\ny\n1\n2\n2\n5\n9\n \n \nD \nxz\ny\n2\n4\n9\n \n \nE \nxz\ny\n2\n5\n9\n \n \nF \nx z\ny\n5\n2\n2\n5\n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nThere is a constant current in a conducting wire. A charge of 20 C passes through the wire in \n1.5 minutes. \n \nAn 18 cm straight section of this wire lies in a uniform magnetic field. This section of wire is \nperpendicular to the direction of the field. The magnetic field strength is 0.15 T. \n \nWhat is the magnitude of the magnetic force on this section of wire? \n \n \n \nA \n0.0060 N \n \nB \n0.36 N \n \nC \n0.60 N \n \nD \n0.81 N \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 N \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 49,
+    "text": "49 N \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 81,
+    "text": "81 N \n \nH \n4900 N",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nFind the complete set of values of x that satisfy the inequality \n \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 (5 \u2013 x ) \u2013 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 (6 \u2013 x ) \u2013 x < 0 \n \n \n \nA \nx < 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB \nx > 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nC \nx < 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nD \nx > 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nE \nx < 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nF \nx > 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nG \nx < 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nH \nx > 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \nTwo identical resistors are connected in parallel to a 6.0 V battery. The two resistors dissipate a \ntotal power of 0.15 W. \n \nOne of these resistors is removed from the circuit and connected to a 12 V battery. \n \nHow much charge passes through this resistor in 6.0 minutes? \n \n \n \nA \n0.025 C \n \nB \n0.050 C \n \nC \n0.15 C \n \nD \n0.30 C \n \nE \n0.75 C \n \nF \n1.5 C \n \nG \n9.0 C \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 C",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \nRob keeps a record of what he earns each day. \n \nOn Monday, he earned 50% less than he earned on Sunday. \nOn Tuesday, he earned 20% more than he earned on Monday. \nOn Wednesday, he earned 30% less than he earned on Tuesday. \n \nOn Wednesday, he earned \u00a384. \n \nHow much did Rob earn on Sunday? \n \n \n \nA \n\u00a315.12 \n \nB \n\u00a335.28 \n \nC \n\u00a3117.60 \n \nD \n\u00a3200 \n \nE \n\u00a3210 \n \nF \n\u00a3300 \n \nG \n\u00a31200",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \nUltrasound is used to find a crack inside a cuboid block of metal. An ultrasound probe is held in \ncontact with the top surface of the metal block and perpendicular to the surface. A short pulse \nof ultrasound is sent into the metal block at time t = 0 ms and reflects from both the crack and \nthe bottom surface of the metal block. \n \n \ncrack\nmetal block\nultrasound probe\n \n \nThe times between the emission of the ultrasound pulse and the return of the reflections to the \nprobe, and the strengths of the reflected pulses, are measured. The results are shown on the \ngraph. \n \n \nstrength of \nreflected pulse\ntime / ms\n0\n0.1\n0.2\n0.3\n0\n \n \nThe speed of ultrasound in the metal is 5000 m s\u20131. \n \nWhat is the distance between the bottom surface of the metal block and the crack? \n \n \n \nA \n0.2 m \n \nB \n0.3 m \n \nC \n0.4 m \n \nD \n0.5 m \n \nE \n0.6 m \n \nF \n1.0 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \nWhich one of the following is a simplification of \n \nx\nx\nx\nx\nx\nx\nx\n\u2212\n\u2212\n+\n\u2212\n\u2212\n\u2212\n\u2212\n\u00f7\n2\n2\n2\n2\n5\n17\n12\n12\n25\n9\n6\n \n \n \n \nA \nx\nx\nx\nx\n\u2212\n+\n\u2212\n+\n(\n4)(\n2)\n(\n3)(\n4) \n \nB \nx\nx\nx\nx\n\u2212\n+\n\u2212\n+\n(\n3)(\n2)\n(5\n3)(\n3) \n \nC \nx\nx\nx\nx +\n\u2212\n+\n\u2212\n(\n4)(\n2)\n(5\n3)(\n4) \n \nD \nx\nx\nx\nx\n\u2212\n\u2212\n\u2212\n\u2212\n(\n4)(\n3)\n(5\n3)(\n6) \n \nE \nx\nx\n+\n+\n(\n2)\n(5\n3) \n \nF \nx\nx\nx\nx +\n+\n\u2212\n+\n(\n4)(\n6)\n(5\n3)(\n2) \n \nG \nx\nx\nx\nx\n\u2212\n+\n+\n+\n(\n3)(\n2)\n(5\n3)(\n3)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \nPower is supplied to an electric motor at 0.800 kW. \n \nThe motor has an efficiency of 60% and is switched on for half an hour. \n \nHow much energy is wasted during this time? \n \n \n \nA \n0.160 J \n \nB \n0.240 J \n \nC \n160 J \n \nD \n240 J \n \nE \n576 J \n \nF \n864 J \n \nG \n576 000 J \n \nH \n864 000 J",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \nA rectangle PQRS has length (2 x \u2013 1) cm and width ( x + 1) cm as shown on the diagram. \n \nA larger rectangle is made by adding 3 cm to both the length and the width of PQRS, as shown. \n \nThe larger rectangle has an area of 360 cm2. \n \n \nQ\nR\nS\nP\n(2 x \u2013 1) cm\n( x + 1) cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 cm\n \n \n [diagram not to scale] \n \nWhat is the ratio of PQ to PS ? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 : 2 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 : 7 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 : 8 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 : 11 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 : 17 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 : 31",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \nThe graph shows potential difference plotted against current for a filament lamp and a resistor. \n \n0.1\n0.2\n0.3\n0.4\n0\n0\n2\n4\n6\n8\n10\npotential difference / V\ncurrent / A \n \nThe lamp and the resistor are connected in parallel with each other to a 6.0 V power supply and \nthe current in the lamp, I, is recorded. \n \nIn a second circuit, the lamp and the resistor are now connected in series with each other to the \nsame power supply, and the current in the resistor is 0.18 A. The potential difference across the \nlamp, V, is recorded. \n \nWhat are the values of I in the first circuit and V in the second circuit? \n \n \n \n \n \nI / A \nV / V \n \n \n \nA \n0.25 \n1.6 \n \n \n \nB \n0.25 \n3.0 \n \n \n \nC \n0.25 \n4.4 \n \n \n \nD \n0.35 \n1.6 \n \n \n \nE \n0.35 \n3.0 \n \n \n \nF \n0.35 \n4.4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \nPQRS is a trapezium as shown. \n \n30\u00b0\nP\nS\nR\nQ",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 m\n \n \n[diagram not to scale] \n \ntan RSQ = 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nWhat is the length of PS, in metres? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 45,
+    "text": "45 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 65,
+    "text": "65 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 80,
+    "text": "80 \n \nD \n 120 \n \nE \n+ 40 3\n25\n3\n \n \nF \n+ 64 3\n40\n3\n \n \nG \n+\n25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 3 \n \nH \n+\n64",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \nA transverse wave on a string has a speed of 500 m s\u20131. \n \nThe horizontal distance between two points P and Q on the wave is 4.0 m, as shown in the \ndiagram. \n \n6.0 mm\nP\nX\nQ\n4.0 m\n \n \nAt time t = 0 ms, point X on the string is at its maximum displacement of 6.0 mm above \nequilibrium. \n \nWhat is the displacement of point X at time t = 7.0 ms? \n \n \n \nA \n6.0 mm above equilibrium \n \nB \nbetween 0 mm and 6.0 mm above equilibrium \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 mm \n \nD \nbetween 0 mm and 6.0 mm below equilibrium \n \nE \n6.0 mm below equilibrium",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \nA solid cylinder has radius r cm and height h cm. \n \nA cube has side length 3 r cm. \n \nThe total surface area of the cylinder is equal to four times the total surface area of the cube. \n \nWhich of the following is an expression for h in terms of r ? \n \n \n \nA \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n18\n2\n \n \nB \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n18\n1\n \n \nC \n \u03c0\nr\n27\n \n \nD \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n27\n1\n \n \nE \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n27\n1\n4\n \n \nF \n\u03c0\nr\n108 \n \nG \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n108\n1\n \n \nH \n \n\u03c0\nr\n\uf0e6\n\uf0f6\n\u2212\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n108\n1\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \nA piece of metal of mass 50 g is at thermal equilibrium in a hot liquid at temperature T. \n \nThe metal is removed from the liquid and immediately placed in 100 g of water that is at 20 \u00b0C. \n \nThe water is stirred and reaches a final temperature of 26 \u00b0C. \n \nmaterial \nspecific heat capacity / J kg\u20131\n \u00b0C\u20131 \nhot liquid \n2000 \nmetal \n350 \nwater \n4200 \n \nWhat is the temperature T of the hot liquid? \n \n(Assume that heat transfers to or from the surroundings are negligible.) \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \u00b0C \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 51,
+    "text": "51 \u00b0C \n \nC \n150 \u00b0C \n \nD \n170 \u00b0C \n \nE \n480 \u00b0C",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \nThe variables x and y are related by the equation: \n \nx = \ny\ny\n+\n\u2212\n\u2212\n3\n3\n2\n1\n5\n1\n2\n \n \nWhich of the following is a rearrangement to make y the subject? \n \n \n \nA \ny = \nx\nx \u2212\n\u2212\n3\n4\n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 48,
+    "text": "48 \n \nB \ny = \nx\nx \u2212\n\u2212\n3\n6\n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \nC \ny = \nx\nx\n\u2212\n\u2212\n3\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nD \ny = \nx\nx\n\u2212\n\u2212\n3\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nE \ny = \nx\nx\n\u2212\n\u2212\n3\n4\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nF \ny = \nx\nx\n\u2212\n\u2212\n3\n6\n2\n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \nA bar magnet is placed at position X close to one end of a coil and on the axis of the coil as \nshown. \n \nThe graph shows how the velocity of the magnet varies as it is then moved rapidly to position Y \nand back to position X. \n \nposition X\nposition Y\nvelocity away\nfrom coil\ntime\n0\n \n \nThe magnetic field of the bar magnet still affects the coil when the magnet is at position Y. \n \nWhich graph represents how the induced voltage in the coil changes as the magnet moves? \n \n \n \n \nA \ntime\ninduced\nvoltage\n0\n \nB \ntime\ninduced\nvoltage\n0\n \n \n \n \n \n \n \nC \ntime\n0\ninduced\nvoltage\n \nD \ntime\ninduced\nvoltage\n0\n \n \n \n \n \n \n \nE \ntime\n0\ninduced\nvoltage\n \nF \ntime\n0\ninduced\nvoltage",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \nThree different numbers are chosen at random from \n1,",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 ,",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 ,",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 ,",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 . \n \nWhat is the probability that the three numbers form the three sides of a right-angled triangle? \n \n \n \nA \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \n \nB \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nC \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nD \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nE \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nF \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nG \n4\n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \nA small slider of mass 30 g is at rest near the bottom of a frictionless slope and in contact with a \nlight uncompressed spring as shown. \n \nslider\nheight\nspring\n \n \n[diagram not to scale] \n \nThe spring is compressed by 5.0 cm and the slider remains in contact with it. \n \nThe spring is released and causes the slider to rise up the slope to a maximum vertical height \nof 20 cm. \n \nThe slider is replaced with one of mass 20 g. \n \nThe spring is now compressed by 15 cm, and the new slider remains in contact with it. \n \nTo what maximum vertical height does this new slider rise after it is released? \n \n(the spring obeys Hooke\u2019s law; assume that air resistance is negligible) \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 cm \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 cm \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 90,
+    "text": "90 cm \n \nD \n120 cm \n \nE \n180 cm \n \nF \n270 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \nThe point (\u2013 1, 5) is translated to the point (3, 2) by two successive translations. \n \nThe first translation is by the vector \n3\n4\np\np\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\u2212\n\uf0e8\n\uf0f8\n \n \nThe second translation is by the vector \nq\nq\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\u2212\n\uf0e8\n\uf0f8\n2\n \n \nWhat is the value of p + q ? \n \n \n \nA \n\u201314 \n \nB \n\u20137 \n \nC \n\u2013 5 \n \nD \n\u20131 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \nA tall, smooth cylinder contains air at atmospheric pressure of 1.00 \u00d7 105\n Pa. The density of the \nair in the cylinder is 1.20 kg m\u20133. \n \nA heavy piston is now placed in the top of the cylinder and allowed to fall slowly downwards, \ncompressing the air until the piston rests in equilibrium. \n \nThe mass of the piston is 50.0 kg and its cross-sectional area is 0.0200 m2. \n \nWhat is the density of the air in the cylinder when the piston rests in equilibrium? \n \n(gravitational field strength = 10 N kg\u20131; assume that the air behaves as an ideal gas and that \nthe temperature remains constant) \n \n \n \nA \n0.960 kg m\u20133 \n \nB \n1.20 kg m\u20133 \n \nC \n1.25 kg m\u20133 \n \nD \n1.28 kg m\u20133 \n \nE \n1.50 kg m\u20133 \n \nF \n4.80 kg m\u20133",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART B Advanced Mathematics and Advanced Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \nFind the value of \n \nd\nx\nx\nx\nx\n\u2212\n\uf0f2\n4\n2\n1\n2\n3\n \n \n \n \nA \n19",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB \n37",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nC \n53",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD \n73",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nE \n81",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nF \n87",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \nThe diagram represents a stationary wave in a medium. \n \n150 cm\n \n \nThe transverse waves that are creating the stationary wave travel at a speed of 300 m s\u20131 \nthrough the medium. \n \nWhat is the frequency of the transverse waves? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 75,
+    "text": "75 Hz \n \nB \n150 Hz \n \nC \n200 Hz \n \nD \n450 Hz \n \nE \n600 Hz \n \nF \n1200 Hz",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \nThe diagram shows a semicircle of radius 5 units and a triangle. \n \n0\n5\n10\n5\n(x, y)\nx\ny\n \n \nThe triangle has vertices at (0, 0), (10, 0) and ( x, y). \n \n( x, y) is a point on the arc of the semicircle. \n \nWhich of the following is an expression in terms of x for the area of this triangle? \n \n \n \nA \nx\nx\n\u2212\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 10\n \n \nB \nx\nx\n\u2212\n5\n10\n \n \nC \nx\nx\nx\n\u2212\n\u2212\n2\n5\n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 x \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 x \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 x(10 \u2013 x)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \nA stone is thrown vertically upwards from the surface of the Earth and reaches a maximum \nheight h. \n \nThe same stone is thrown vertically upwards from the surface of the Moon, with the same initial \nspeed. \n \nWhat is the maximum height reached by the stone thrown on the Moon? \n \n(gravitational field strength on the Earth = 10 N kg\u20131; gravitational field strength on the \nMoon = 1.6 N kg\u20131; air resistance may be ignored) \n \n \n \nA \n.\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 6 h \n \nB \n.\nh\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n2\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 6\n \n \nC \n.\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 2 h \n \nD \n.\nh\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n2\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 2\n \n \nE \n.\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 4 h \n \nF \n.\nh\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n2\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 4\n \n \nG \n.\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n20",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 6 h \n \nH \n.\nh\n\uf0e6\n\uf0f6\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n2\n20",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \nFour mathematically similar solids, W, X, Y and Z, have the following properties: \n \n\u2022 \nThe ratio of the lengths of W to the lengths of X is 1 : 2 \n \n\u2022 \nThe ratio of the surface area of X to the surface area of Y is 2 : 1 \n \n\u2022 \nThe ratio of the volume of Y to the volume of Z is 1 : 2 \n \nWhat is the order of the solids when arranged in increasing volume? \n \n \n \nA \nW Y X Z \n \nB \nW Y Z X \n \nC \nW Z Y X \n \nD \nY W X Z \n \nE \nY W Z X \n \nF \nY Z W X",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \nA ray of light is incident on a boundary between a vacuum and medium X at an angle \u03b8 as \nshown: \n \nreflected ray\nincident ray\nrefracted ray\nmedium X\nvacuum\n\u03b8\n \n \nThe incident ray is partially reflected and partially refracted. The angle between the reflected \nand refracted rays is 90\u00b0. \n \nWhat is the refractive index of medium X? \n \n \n \nA \nsin \u03b8 \n \nB \nsin\u03b8\n1\n \n \nC \ncos \u03b8 \n \nD \n \ncos\u03b8\n1\n \n \nE \ntan \u03b8 \n \nF \ntan\u03b8\n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \nWhich one of the following expressions is equal to \n \n(\n)\n(\n)\n+\n+\n2\n3\n2\n20\n1\n5\n \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \u2013 1 \n \nB \n\u2212\n5\n1\n2\n \n \nC \n(\n)\n\u2212",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 5 5\n1\n31\n \n \nD \n(\n)\n\u2212",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 5 5\n1\n31\n \n \nE \n\u2212\n+\n+\n\u2212\n22",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 10\n2\n \n \nF \n\u2212\n+\n+\n\u2212\n22",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 10\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \nAn electric train is travelling along a straight horizontal track. It passes a point Q on the track at \ntime t = 0. \n \nThe distance x that it then travels away from Q is given by the equation: \n \nx = at + bt 2 \n \nwhere a and b are constants. \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nThe speed of the train increases with time at a constant rate.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nThe resultant force acting on the train increases with time.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nThe rate at which energy is transferred to the train increases with time. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \nEvaluate \n \n=\nr\nr\nr\nr\n\u221e\n\uf0e6\n\uf0f6\n+\n+\n\uf0e7\n\uf0f7\n\uf0e8\n\uf0f8\n\uf0e5\n2\n1\n1\n1\n2\n3\n4\n \n \n \n \nA \n21",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \nB \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nC \n13",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nD \n157\n120 \n \nE \n11",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nF \n23",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \nA length of wire has resistance R. \n \nAnother length of wire is made from the same material. This wire is twice as long as the first \nwire and has half the diameter. \n \nBoth wires have circular cross-sections. \n \nThe two wires are connected in parallel. \n \nWhat is the total resistance of this combination? \n \n \n \nA \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 R \n \nB \n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 R \n \nC \n2R \n \nD \n3R \n \nE \n8R \n \nF \n9R",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \nWhat is the complete set of real values of x for which \n \n(\n)\nx\nx +\n2\n2\n4\n < 21 \n \n \n \nA \n\u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 < x <",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB \n\u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 < x <",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nC \nx < \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or x >",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD \nx < \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 or x >",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nE \n\u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 < x < \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 < x <",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nF \nx < \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 or \u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 < x <",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or x > \n7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \nAn empty bucket has a mass of 1.20 kg and an internal volume of 0.0150 m3. The bucket is \nused to lift water from a well. \n \nThe bucket is attached to a light, inextensible rope which winds onto a rotating cylinder of \nradius 0.200 m when a handle is turned. \n \nhandle\n0.600 m\n0.200 m\n \n \nTo lift a bucket completely full of water at constant speed, it is necessary to apply a force of \n250 N to the handle that acts along the tangent to the circle of radius 0.600 m, in which the \nhandle moves. \n \nThe energy required to lift the bucket is wasted energy. \n \nWhat is the efficiency of the system in lifting water from the well? \n \n(gravitational field strength = 10 N kg\u20131; density of water = 1000 kg m\u20133) \n \n \n \nA \n2.00% \n \nB \n2.16% \n \nC \n20.0% \n \nD \n21.6% \n \nE \n60.0%",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \nA sector of a circle has perimeter 24. \n \nFor what value of the radius does the sector have the maximum possible area? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 2 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 6 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 6 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \nA uniform metre ruler has a mass of 100 g and is 1.00 m long. \n \nA small object of mass 20 g is fixed at the 0 cm mark, and another small object of mass 80 g is \nfixed at the 100 cm mark. \n \nThe ruler is balanced on a pivot. \n \nWhen the ruler is balanced, what distance is the pivot from the 0 cm mark? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 cm \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 cm \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 cm \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 cm \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 65,
+    "text": "65 cm \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 75,
+    "text": "75 cm \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 80,
+    "text": "80 cm \n \nH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 85,
+    "text": "85 cm",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \nThe curve y = x 2 \u2013 x \u2013 6 intersects the x-axis at the points A and B, and has a minimum at the \npoint C. \n \nThe rectangle ABDE has two of its vertices at A and B. \n \nThe point C lies on the edge DE, between D and E. \n \nWhat is the area of the rectangle ABDE ? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nB \n6.25 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \n \nD \n31.25 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \n \nF \n36.75 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 42,
+    "text": "42 \n \nH \n43.75",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \nA circuit comprising two resistors and two batteries, with negligible internal resistance, is set up \nas shown in the diagram. The two junctions in the circuit are labelled X and Y. \n \nX\nY\n3.0 \u03a9\n1.0 \u03a9\n3.0 V\n6.0 V\n \n \nWhat are the magnitude and direction of the current in the 3.0 V battery? \n \n \n \n \nmagnitude of current / A \ndirection of current \n \n \n \nA \n1.0 \nfrom X to Y \n \n \n \nB \n2.0 \nfrom X to Y \n \n \n \nC \n2.25 \nfrom X to Y \n \n \n \nD \n6.0 \nfrom X to Y \n \n \n \nE \n1.0 \nfrom Y to X \n \n \n \nF \n2.0 \nfrom Y to X \n \n \n \nG \n2.25 \nfrom Y to X \n \n \n \nH \n6.0 \nfrom Y to X",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \nA straight line passes through the points (0, 2a) and (a, 0), where a is a positive constant. \n \nWhat is the perpendicular distance of the point P (a, 2a) from this line? \n \n \n \nA \na\n5\n2\n \n \nB \na\n5\n2\n \n \nC \na\n5\n5\n2\n \n \nD \na\n5\n5\n4\n \n \nE \na\n5\n10\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \nTwo isolated spheres have masses m and 2m. They are moving towards each other along the \nsame straight line with speeds 4v and v respectively as shown: \n \n4v\n2m\nm\nv\n \n \nThe spheres collide with each other and coalesce. \n \nWhat is the loss of kinetic energy during the collision? \n \n \n \nA \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 mv 2 \n \nB \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 mv 2 \n \nC \n25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 mv 2 \n \nD \n26",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 mv 2 \n \nE \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 mv 2 \n \nF \n79",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 mv 2 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 mv 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \nFind the sum of the real solutions to the equation \n \n(\n)\nx\nx\n+\n\u2212\n+\n=\n6\n2\n2\n12",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \n \n \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \nC \n+\n4\n2\n2\n2\n \n \n \n \n \nD \n+\n6\n2\n2\n2\n \n \n \n \n \nE \nlog\n+\n2\n1\n2\n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \n \n \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 + 2 log2 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \nA steel cable has mass 64 kg and cross-sectional area 2.0 \u00d7 10\u2212\n 4\n m2. \n \nThe Young modulus of steel is 2.0 \u00d7 1011\n Pa. \n \nWhen the cable lies on horizontal ground its length is 40 m. \n \nWhat is its extension when it is suspended freely from one end and hangs vertically? \n \n(gravitational field strength = 10 N kg\u22121; assume that the cable obeys Hooke\u2019s law) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 m \n \nB \n8.0 \u00d7 10\u22127\n m \n \nC \n8.0 \u00d7 10\u2212\n 6\n m \n \nD \n1.6 \u00d7 10\u22125\n m \n \nE \n3.2 \u00d7 10\u22125\n m \n \nF \n6.4 \u00d7 10\u22125\n m \n \nG \n3.2 \u00d7 10\u2212\n 4\n m \n \nH \n6.4 \u00d7 10\u2212\n 4\n m \n \n \n \nEND OF TEST",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2022_ENGAA Section 1 2022 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2022\\ENGAA Section 1 2022 Past Paper.pdf",
+    "year": "2022",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  }
+]

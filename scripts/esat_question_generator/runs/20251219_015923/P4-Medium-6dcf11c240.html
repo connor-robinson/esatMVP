@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P4-Medium-6dcf11c240</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P4-Medium-6dcf11c240<br>
+            <strong>Schema:</strong> P4<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:01:12.996945<br>
+            <strong>Token Usage:</strong> 19,242 total (8,306 prompt + 1,065 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                Five identical resistors, each of resistance$R$, are arranged in a bridge circuit. The circuit comprises two parallel branches connected across a DC supply of voltage$V$. Each branch consists of two resistors in series. A fifth identical resistor connects the point between the two resistors in the first branch to the point between the two resistors in the second branch. The total power dissipated by the circuit is$P$. The connecting resistor between the two branches is removed. Which expression gives the new total power dissipated?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $\frac{1}{2}P$</div>
+                <div class="option"><strong>B:</strong> $\frac{4}{5}P$</div>
+                <div class="option correct"><strong>C:</strong> $P$ ✓ CORRECT</div>
+                <div class="option"><strong>D:</strong> $\frac{5}{4}P$</div>
+                <div class="option"><strong>E:</strong> $2P$</div>
+
+            </div>
+            <p><strong>Correct Answer: C</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>The circuit is a Wheatstone bridge configuration. Let the resistors in the first branch be$R_1, R_2$and in the second branch be$R_3, R_4$. Since all five resistors are identical ($R$), the ratio of resistances in the two arms is equal:$$\frac{R_1}{R_2} = \frac{R}{R} = 1 \quad \text{and} \quad \frac{R_3}{R_4} = \frac{R}{R} = 1$$The bridge is therefore balanced. This implies that the electric potential at the midpoint of the first branch is equal to the potential at the midpoint of the second branch. Consequently, the potential difference across the central connecting resistor is zero, and no current flows through it. Since the central resistor carries no current, removing it does not change the equivalent resistance of the circuit or the current drawn from the source. Hence, the total power dissipated remains$P$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>In a symmetric bridge circuit (balanced Wheatstone bridge), no current flows through the cross-linking component, so its presence or absence does not affect the circuit&#x27;s total power.
+</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

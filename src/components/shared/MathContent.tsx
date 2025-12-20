@@ -1,12 +1,12 @@
 /**
- * MathContent component for rendering LaTeX with MathJax
+ * MathContent component for rendering LaTeX with KaTeX
  */
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { typesetMath, waitForMathJax } from "@/hooks/useMathJax";
+import { renderMathContent } from "@/hooks/useKaTeX";
 
 interface MathContentProps {
   content: string;
@@ -15,22 +15,29 @@ interface MathContentProps {
 
 export function MathContent({ content, className }: MathContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [renderedHtml, setRenderedHtml] = useState<string>("");
 
   useEffect(() => {
-    if (!content || !containerRef.current) {
-      console.log('[MathContent] No content or container ref');
+    if (!content) {
+      setRenderedHtml("");
       return;
     }
 
-    console.log('[MathContent] Content changed, waiting for MathJax...');
-    waitForMathJax().then((isReady) => {
-      if (isReady && containerRef.current) {
-        console.log('[MathContent] Typesetting math in container');
-        typesetMath(containerRef.current);
-      } else {
-        console.warn('[MathContent] MathJax not ready or no container ref');
-      }
-    });
+    // Render math content synchronously with KaTeX
+    try {
+      const html = renderMathContent(content);
+      setRenderedHtml(html);
+    } catch (error) {
+      console.error("[MathContent] Error rendering math:", error);
+      // Fallback: escape HTML and show raw content
+      const escaped = content
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+      setRenderedHtml(escaped);
+    }
   }, [content]);
 
   if (!content) {
@@ -41,8 +48,7 @@ export function MathContent({ content, className }: MathContentProps) {
     <div
       ref={containerRef}
       className={cn("math-content", className)}
-      dangerouslySetInnerHTML={{ __html: content }}
+      dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
   );
 }
-

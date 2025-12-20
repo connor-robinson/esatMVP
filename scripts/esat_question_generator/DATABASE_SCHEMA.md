@@ -60,7 +60,7 @@ CREATE TABLE ai_generated_questions (
 - **review_notes** (text, nullable): Optional notes from the reviewer explaining their decision
 
 #### Question Content
-- **question_stem** (text): The main question text, containing LaTeX math expressions using `$...$` (inline) and `$$...$$` (display) delimiters
+- **question_stem** (text): The main question text, containing KaTeX math expressions using `$...$` (inline) and `$$...$$` (display) delimiters
 - **options** (jsonb): Object mapping option letters to option text. Format:
   ```json
   {
@@ -133,6 +133,20 @@ CREATE TABLE ai_generated_questions (
   }
   ```
 
+#### Curriculum Tags
+- **primary_tag** (text, nullable): Primary curriculum topic code (e.g., "M1", "MM1", "P1")
+- **secondary_tags** (text[], nullable): Array of secondary curriculum topic codes
+- **tags_confidence** (jsonb, nullable): Confidence scores for each tag assignment
+  ```json
+  {
+    "primary": 0.95,
+    "M2": 0.75,
+    "M3": 0.60
+  }
+  ```
+- **tags_labeled_at** (timestamptz, nullable): When tags were assigned
+- **tags_labeled_by** (text, nullable): Source of tags: `ai_generation`, `batch_process`, or `manual_edit`
+
 #### Timestamps
 - **created_at** (timestamptz): When the question was generated (auto-set on insert)
 - **updated_at** (timestamptz): Last update timestamp (auto-updated on modification)
@@ -156,6 +170,12 @@ CREATE INDEX idx_ai_questions_created ON ai_generated_questions(created_at DESC)
 
 -- Composite index for common query patterns
 CREATE INDEX idx_ai_questions_status_created ON ai_generated_questions(status, created_at DESC);
+
+-- Index for filtering by primary tag
+CREATE INDEX idx_ai_questions_primary_tag ON ai_generated_questions(primary_tag);
+
+-- GIN index for array queries on secondary tags
+CREATE INDEX idx_ai_questions_secondary_tags ON ai_generated_questions USING GIN(secondary_tags);
 ```
 
 ### Row Level Security (RLS) Policies

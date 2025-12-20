@@ -34,7 +34,7 @@ export function SubjectCard({
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="h-full"
     >
-      <Link href={`/train/learn/${subject.id}`} className="h-full block">
+      <Link href={`/skills/learn/${subject.id}`} className="h-full block">
         <Card 
           className={cn(
             "p-6 cursor-pointer transition-all duration-300 hover:border-white/30 group h-full flex flex-col",

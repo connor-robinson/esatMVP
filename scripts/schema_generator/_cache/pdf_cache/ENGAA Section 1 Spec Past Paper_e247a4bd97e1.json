@@ -1,0 +1,1752 @@
+[
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 80,
+    "text": "80 minutes \n \nSECTION 1 \n \n \nINSTRUCTIONS TO CANDIDATES \n \nPlease read these instructions carefully, but do not open this question paper until you are told \nthat you may do so. This paper is Section 1 of 2. Your supervisor will collect this question paper and \nanswer sheet before giving out Section 2. \n \nThis paper contains two parts, A and B, and you should attempt both parts. \n \n \nPart A \nMathematics and Physics (28 questions) \n \nPart B \nAdvanced Mathematics and Advanced Physics (26 questions) \n \nThis paper contains 54 multiple choice questions. There are no penalties for incorrect responses, only \nmarks for correct answers, so you should attempt all 54 questions. Each question is worth one mark. \n \nQuestions ask you to show your choice between options. Choose the one option you consider correct \nand record your choice on the separate answer sheet. If you make a mistake, erase thoroughly and \ntry again. \n \nA separate answer sheet is provided for this paper. Please check you have one. You also require a \nsoft pencil and an eraser. \n \nPlease complete the answer sheet with your candidate number, centre number, date of birth, and \nname. \n \nYou can use the question paper for rough working, but no extra paper is allowed. Only your \nresponses on the answer sheet will be marked. \n \nDictionaries and calculators may NOT be used. \n \n \n \n \n \n \nPlease wait to be told you may begin before turning this page. \n \n \nThis paper consists of 33 printed pages and 5 blank pages \n \nPV1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART A Mathematics and Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nA square piece of metal has a semicircular piece cut out of it as shown. The area of the \nremaining metal is 100 cm2. \n \n \n \nWhich one of the following is a correct expression for the length of the side of the square in \ncentimetres? \n \n \n \nA \n\uf070\n\uf02d\n8\n2\n20\n \n \nB \n\uf070\n\uf02d\n4\n2\n10\n \n \nC \n\uf070\n\uf02b\n8\n2\n20\n \n \nD \n\uf070\n\uf02d\n8\n1\n10\n \n \nE \n\uf070\n\uf02d\n4\n1\n20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nShortly after opening her parachute, a free-fall parachutist of mass 60 kg (including equipment) \nexperiences the forces shown in the diagram. \n \n \n \nWhich line in the table gives the size and direction of the acceleration of the parachutist at this \ninstant? \n \n \n \n \nsize of acceleration / m s\u20132 \ndirection of acceleration \n \n \n \nA \n5.0 \ndownwards \n \n \n \nB \n10.0 \ndownwards \n \n \n \nC \n5.0 \nupwards \n \n \n \nD \n10.0 \nupwards \n \n \n \nE \n0.0 \n\u2014",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nIn a right-angled triangle PQR the hypotenuse is the side PR. \n \nThe length of side PQ is 20 cm and the ratio RQ:PQ is 1:2 \n \nWhat is the length of the perpendicular from the hypotenuse to the point Q? \n \n \n \nA \n8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 cm \n \nB \n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 cm \n \nC \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 cm \n \nD \n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 cm \n \nE \n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \nThe displacement / time graph shown represents a wave of wavelength 1.5 cm. \n \n \n \nWhat is the speed of the wave? \n \n \n \nA \n0.33 cm s\u20131\n \n \nB \n0.67 cm s\u20131\n \n \nC \n0.75 cm s\u20131\n \n \nD \n1.33 cm s\u20131\n \n \nE \n1.5 cm s\u20131\n \n \nF \n3.0 cm s\u20131",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \nA cube has sides of unit length. What is the length of a line joining a vertex to the midpoint of \none of the opposite faces (the dashed line in the diagram below)? \n \n \n \n \n \nA \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nC \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \nA point mass travelling at a constant speed has a momentum of 30 N s and a \nkinetic energy of 150 J. \n \nWhat is the mass of the object? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 kg \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 kg \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 kg \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 kg \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 kg \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 kg",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \nIf you look at a clock and the time is 9.45, what is the angle between the hour and the minute \nhands? \n \n \n \nA \n0\u00b0 \n \nB \n7.5\u00b0 \n \nC \n15\u00b0 \n \nD \n22.5\u00b0 \n \nE \n30\u00b0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \nWhich of the following is a correct unit of potential difference (voltage)? \n \n \n \nA \namp per ohm \n \nB \ncoulomb per joule \n \nC \njoule per second \n \nD \nnewton per coulomb \n \nE \nwatt per amp",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \nThe right-angled triangle shown has horizontal and vertical sides measuring (\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \uf02b\n) cm and \n(\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf02d\n) cm respectively. \n \n \n \nCalculate the area of the triangle. \n \n \n \nA \n(\n2\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \uf02b\n) cm2 \n \nB \n(\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \uf02d\n) cm2 \n \nC \n(\n2\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \uf02b\n) cm2 \n \nD \n(\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \uf02d\n) cm2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \nTwo radioactive sources X and Y have half-lives of 4.8 hours and 8.0 hours respectively. Both \ndecay directly to form only stable isotopes. \n \nThe activity of a sample of the source X is 320 Bq, and the activity of a sample of the source Y \nis 480 Bq. The two samples are now combined. \n \nWhat is the activity of the combination of X and Y 24 hours later? \n \n(An activity of 1 Bq is 1 decay per second.) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 Bq \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 Bq \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 55,
+    "text": "55 Bq \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 70,
+    "text": "70 Bq \n \nE \n100 Bq \n \nF \n140 Bq",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \nA solid sphere of radius r fits inside a hollow cylinder. The cylinder has the same internal \ndiameter and length as the diameter of the sphere. \n \nThe volume of a sphere is 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \uf070r",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 , where r is the radius of the sphere. \n \nWhat fraction of the space inside the cylinder is taken up by the sphere? \n \n \n \nA \n4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nC \n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nD \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nE \n4\n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \nA cyclist and a bike have a combined mass of 100 kg. The cyclist free-wheels (rolls without \npedalling) at a constant speed of 0.80 m s\u20131 down a slope where the cyclist descends 1.0 m for \neach 10 m travelled along the road, as shown in the diagram. \n \n \n \nCalculate the loss in gravitational potential energy as the cyclist loses 100 m in vertical height \nand hence calculate the total resistive force on the cyclist and bike. \n \n(gravitational field strength \uf03d 10 N kg\u20131) \n \n \n \n \nloss in gravitational \npotential energy / J \nresistive force / N \n \n \n \nA \n3200 \n101",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \n \n \n \nB \n3200 \n3.2 \n \n \n \nC \n3200 \n99",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \n \n \n \nD \n100 000 \n101\n1000 \n \n \n \n \nE \n100 000 \n100 \n \n \n \nF \n100 000 \n99\n1000",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \nWhich of the expressions below has the largest value for 0 < x < 1? \n \n \n \nA \nx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB \n2\nx \n \nC \n)\n(\nx\n\uf02b\n1\n1\n \n \nD \nx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nE \nx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \nA ball is thrown vertically upwards and leaves the thrower\u2019s hand with a speed of 12 m s\u20131. You \nmay assume that all of the initial kinetic energy of the ball has been converted into gravitational \npotential energy when the ball reaches its highest point. \n \nWhat is the height above the thrower\u2019s hand to which it rises? \n \n(gravitational field strength \uf03d 10 N kg\u20131) \n \n \n \n \nA \n7.2 m \n \nB \n14.4 m \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 m \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 m \n \nE \n120 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \nA shape is formed by drawing a triangle ABC inside the triangle ADE. \n \nBC is parallel to DE. \n \nAB \uf03d 4 cm \nBC \uf03d x cm \nDE \uf03d x \uf02b 3 cm DB \uf03d x \uf02d 4 cm \n \n \n \nCalculate the length of DE. \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 cm \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 cm \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 cm \n \nD \ncm\n7\n2\n4\n \n\uf02b\n \n \nE \ncm\n7\n2\n7\n \n\uf02b",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \nA lorry of mass m, and travelling initially at speed v along a horizontal road, is brought to rest by \nan average horizontal braking force F in time t. \n \nIgnoring any other resistive forces, what distance is travelled by the lorry during this time? \n \n(gravitational field strength \uf03d 10 N kg\u20131) \n \n \n \nA \nmg\nF \n \nB \nF\nmgv \n \nC \nF\nmv\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nD \ng\nv\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nE \nvt \n \nF \n2vt",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \nTwo variables are connected by the relation: P\n2\n1\nQ\n\uf0b5\n \nQ is increased by 40%. \n \nTo the nearest percent, describe the change in P in percentage terms. \n \n \n \nA \n29% decrease \n \nB \n44% decrease \n \nC \n49% decrease \n \nD \n51% decrease \n \nE \n80% decrease \n \n \n \n \nF \n96% decrease",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \nNuclide X\nN\nR\n is an unstable isotope which decays in two stages into nuclide Z as shown: \n \nZ\nY\n \nX\nP\nQ\nP\n2\nR\nN\nR\n\uf0ae\n\uf0ae\n\uf02d\n \n \nWhat are the values of P and Q? \n \n(Consider only alpha and beta decays.) \n \n \n \n \nP \nQ \n \n \n \nA \nN \uf02d 4 \nR \uf02b 1 \n \n \n \nB \nN \uf02d 4 \nR \uf02d 1 \n \n \n \nC \nN \uf02d 4 \nR \uf02d 2 \n \n \n \nD \nN \nR \uf02d 1 \n \n \n \nE \nN \nR \uf02d 2 \n \n \n \nF \nN \nR \uf02d 4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \nThree variables x, y and z are known to be related to each other in the following ways: \n \nx is directly proportional to the square of z. \ny is inversely proportional to the cube of z. \n \nWhich of the following correctly describes the relationship between x and y? \n \n \n \nA \nThe square of x is directly proportional to the cube of y. \n \nB \nThe square of x is inversely proportional to the cube of y. \n \nC \nThe cube of x is directly proportional to the square of y. \n \nD \nThe cube of x is inversely proportional to the square of y. \n \nE \nx is directly proportional to y 6.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \nA pulse of frequency 100 kHz is emitted from an ultrasound scanner, and is reflected from a \nfoetus 10 cm below the transmitter placed on the mother\u2019s abdomen. The speed of sound \nwithin the mother\u2019s body is 500 m s\u20131. \n \nHow long after its emission from the scanner does it take for the pulse to reach the receiver \nwhich is adjacent to the transmitter? \n \n \n \nA \n0.20 ms \n \nB \n0.40 ms \n \nC \n0.50 ms \n \nD \n0.80 ms \n \nE \n1.0 ms",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \nIn the triangle PQR shown below: \n \n \n \nX lies on PR \n \n\uf0d0QXR is 90\u00b0 \n \n6\n1\nPX\nQX \uf03d\n \n \n3\n2\nXR\nQX \uf03d\n \n \nM is the midpoint of PR. \n \nWhat is MX\nQX ? \n \n \n \nA \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB \n12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nC \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nD \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nE \n6\n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \nThe diagrams below show either velocity-time or distance-time graphs for four different objects, \nP, Q, R and S. \n \n \n \nWhich graph(s) show an object accelerating at 2.4 m s\u20132? \n \n \n \nA \nP only \n \nB \nQ only \n \nC \nR only \n \nD \nS only \n \nE \nP and Q only \n \nF \nQ and R only \n \nG \nP and S only",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \nSolve the inequality \nx\nx\n2\n8\n2\n\uf02d\n\uf0b3\n \n \n \n \nA \n4\n\uf0b3\nx\n \n \nB \n2\n\uf0a3\nx\n and \n4\n\uf02d\n\uf0b3\nx\n \n \nC \n2\n\uf02d\n\uf0b3\nx\n and \n4\n\uf0a3\nx\n \n \nD \n2\n\uf0b3\nx\n or \n4\n\uf02d\n\uf0a3\nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \nWhich one of the following statements about nuclear physics is true? \n \n \n \nA \nThe process of emission of a gamma ray from a nucleus is called nuclear fission. \n \nB \nThe half-life of a radioactive substance is half the time taken for its nuclei to decay. \n \nC \nThe number of neutrons in a nucleus is its atomic number (proton number) minus its mass \nnumber. \n \nD \nWhen a nucleus emits a beta particle, there is no change in the number of particles it \ncontains. \n \nE \nWhen a nucleus emits an alpha particle, one of its neutrons becomes a proton plus an \nelectron.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \nThe total surface area of a cylinder, measured in square centimetres, is numerically the same \nas its volume, measured in cubic centimetres. \n \nThe radius of the cylinder is r cm, the height is h cm. \n \nExpress h in terms of r. \n \n \n \nA \nh \uf03d \n2\n2\n\uf02d\nr\nr \n \nB \nh \uf03d \n2\n2\n\uf02b\nr\nr\n \n \nC \nh \uf03d \n2\n\uf02b\nr\n \n \nD \nh \uf03d \n2\n\uf02d\nr\n \n \nE \nh \uf03d \n)\n(\n2\n2\n\uf02d\nr\nr",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \nTwo resistors with resistance \n1\nR ohms and \n2\nR ohms are connected in series with a battery \nthat has a voltage V across its terminals. \n \nWhich formula gives the power dissipated by the resistor with resistance \n1\nR ohms? \n \n \n \nA \n2\n1\n1\nR\nR\nR\nV\n\uf02b\n \n \nB \n2\n1\n1\n2\nR\nR\nR\nV\n\uf02b\n \n \nC \n\uf028\n\uf029\n2\n2\n1\n1\nR\nR\nR\nV\n\uf02b\n \n \nD \n\uf028\n\uf029\n2\n2\n1\n1\n2\nR\nR\nR\nV\n\uf02b\n \n \nE \n\uf028\n\uf029\n2\n1\n2\n1\nR\nR\nR\nV\n\uf02b\n \n \nF \n\uf028\n\uf029\n2\n2\n1\n2\n1\n2\nR\nR\nR\nV\n\uf02b",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \nThe square PQRS is positioned so that its vertices are at the points with coordinates: \n(1, 1), ( \uf02d1, 1), ( \uf02d1, \uf02d1) and (1, \uf02d1). \n \nThe square is rotated clockwise through 90\u00b0 about the origin and then reflected \n in the line \n.x\ny \uf03d\n \n \nWhich transformation will return the square to its original orientation? \n \n \n \nA \nA reflection in the x-axis. \n \nB \nA reflection in the y-axis. \n \nC \nA reflection in the line \n\uf03d\ny\n.x\n\uf02d\n \n \nD \nA rotation of 90\u00b0 clockwise about the origin. \n \nE \nA rotation of 90\u00b0 anticlockwise about the origin.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \nA sound wave is produced by a loudspeaker cone, which creates pulses of pressure by moving \nback and forth between two points X and Y as shown in the diagram. \n \n \n \nThe distance between points X and Y is 5.0 mm and the loudspeaker produces pulses of high \npressure every 0.20 milliseconds. \n \n \nThe following statements about the sound wave produced are made: \n \n \n \nP \nIt has a speed of 25 m s\u20131. \n \n \nQ \nIt has an amplitude of 5.0 mm. \n \n \nR \nIt has a wavelength of 5.5 mm. \n \n \nS \nIt has a frequency of 5.0 kHz. \n \nWhich of these statements can be correctly deduced from the information given? \n \n \n \n \nA \nP only \n \nB \nS only \n \nC \nP and Q only \n \nD \nP and R only \n \nE \nQ and S only \n \nF \nR and S only \n \nG \nP, R and S only",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART E Advanced Mathematics and Advanced Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \nWhich one of the following is a simplification of \nx\nx\nx\n2\n4\n2\n2\n\uf02d\n\uf02d\n where x \uf0b9 2 and x \uf0b9 0? \n \n \n \nA \n2\n4\n\uf02d\n\uf02d\nx\nx\n \n \nB \nx\nx\n2\n\uf02d\n \n \nC \nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nD \nx\nx\n2\n\uf02b\n \n \nE \n1\n2\n\uf02b\n\uf02b\nx\nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \nA car and driver, of total mass 1000 kg, travel with uniform acceleration from rest along a \nhorizontal road. The car\u2019s engine produces a force of 3.0 kN. After a time of 5.0 s the car \nreaches a speed of 10 m s\u20131. Consider the resistive forces acting on the car to be constant. \n \nWhat is the acceleration of the car a m s\u20132 and what is the total of the resistive forces f kN acting \non the car? \n \n \n \nA \na = 2.0; f = 1.0 \n \nB \na = 2.0; f = 2.0 \n \nC \na = 2.0; f = 3.0 \n \nD \na = 3.0; f = 1.0 \n \nE \na = 3.0; f = 2.0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \nGiven that \n2\n3\n2\n\uf03d\nx\nx\nx\nc\nb\na\n, where \n,\n, b\na\n and c are positive real numbers, then x \uf03d \n \n \n \nA \n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n\uf02b\n\uf02b\nc\nb\na\n3\n2\n2\n10\nlog\n \n \nB \n)\n(\nlog\nlog\nc\nb\na\n3\n2\n2\n10\n10\n\uf02b\n\uf02b\n \n \nC \n)\n(\nlog\nc\nb\na\n3\n2\n2\n10\n\uf02b\n\uf02b\n \n \nD \nc\nb\na\n3\n2\n2\n\uf02b\n\uf02b\n \n \nE \n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6\n3\n2\n10\n2\nc\nab\nlog\n \n \nF \n)\n(\nlog\nlog\n3\n2\n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 2\nc\nab\n \n \nG \n)\n(\nlog\n3\n2\n10\n2\nc\nab\n \n \nH \n3\n2\n2\nc\nab",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \nParticle P has a fixed mass of 2 kg and particle Q has a fixed mass of 5 kg. \n \nThe two particles are moving in opposite directions along a straight line on a smooth plane. \n \nParticle P has a speed of 3 m s\u20131 and particle Q has a speed of r m s\u20131. \n \nThe particles collide directly. After the collision the direction of each particle is reversed. \n \nThe speed of P is now 1 m s\u20131 and the speed of Q is halved. \n \nWhat is the value of r ? \n \n \n \nA \n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nB \n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \n \nC \n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \nD \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nE \n5\n16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \nWhich one of the following numbers is largest in value? \n \n(All angles are given in radians.) \n \n \n \nA \n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\uf070\n4\n3\ntan\n \n \nB \n100\n10\nlog\n \n \nC \n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\uf070\n2\n10\nsin\n \n \nD \n10\n2\nlog\n \n \nE \n\uf028\n\uf029\n10\n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf02d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \nA parachutist falls from an aircraft and reaches a terminal velocity. After a while he opens his \nparachute and reaches a new (lower) terminal velocity. \n \nWhich graph shows how the total air resistance (drag) force acting on him and the parachute \nvaries with time during the fall? \n \n \n \nA \nB \n \n \n \n \n \n \nC \nD \n \n \n \n \n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \nThe sum of the roots of the equation \n0\n15\n2\n8\n22\n\uf03d\n\uf02b\n\uf0b4\n\uf02d\nx\nx\n is \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nC \n2\n2\n10\nlog\n \n \nD \n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6\n4\n15\n10\nlog\n \n \nE \n2\n15\n10\n10\nlog\nlog",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \nA car is accelerated from rest along a horizontal road by a constant thrust force produced by \nthe engine. The car eventually reaches a terminal velocity. \n \nThe graphs below show the variation with time of three quantities (X, Y and Z) for the car: \n \n \n \n \nWhich line in the table could correctly identify the quantities X, Y and Z? \n \n \n \n \n \nX \nY \nZ \n \n \nA \nacceleration \nair resistance (drag \nforce) \nkinetic energy \n \n \nB \nacceleration \nmass of car \nweight of car \n \n \nC \n(gravitational) potential \nenergy \nvelocity \nkinetic energy \n \n \nD \n(gravitational) potential \nenergy \nair resistance (drag \nforce) \nweight of car \n \n \nE \nresultant force \nmass of car \nkinetic energy \n \n \nF \nresultant force \nvelocity \nweight of car",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \nFor any real numbers \n,\n, b\na\n and c where a \uf0b3\n,b consider these three statements:",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \na\nb\n\uf02d\n\uf0b3\n\uf02d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nab\nb\na\n2\n2\n2\n\uf0b3\n\uf02b",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nbc\nac \uf0b3\n \n \nWhich of the above statements must be true? \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \nA heavy block of stone rests on a rough, horizontal surface. \n \nThe block is subject to a horizontal force that increases from zero at a constant rate. \n \nAssume that the coefficient of friction is greater than zero and that its value is independent of \nwhether or not the block is moving. \n \nWhat happens to the block of stone? \n \n(Assume air resistance is negligible.) \n \n \n \nA \nIt moves forwards immediately and accelerates forwards with a constant acceleration. \n \nB \nIt remains stationary at first and then accelerates forwards with a constant acceleration. \n \nC \nIt remains stationary at first and then accelerates forwards with an increasing acceleration. \n \nD \nIt moves forwards immediately with a constant velocity. \n \nE \nIt remains stationary at first and then moves forwards with a constant velocity.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \nThe sequence \nn\na is given by the rule: \n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf03d\na\n \n\uf028\n\uf029n\nn\nn\na\na\n1\n1\n\uf02d\n\uf02b\n\uf03d\n\uf02b\nfor\n1\n\uf0b3\nn\n \n \nWhat is \n\uf0e5\n\uf03d\n100\n1\nn\nn\na \n \n \n \nA \n150 \n \nB \n250 \n \nC \n\uf02d 4750 \n \nD \n5150 \n \nE \n\uf0f7\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e7\n\uf0e8\n\uf0e6\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n\uf02d\n100\n2\n1\n1\n4\n \n \nF \n\uf0f7\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e7\n\uf0e8\n\uf0e6\n\uf02d\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n1\n2\n3\n4\n100",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \nA white billiard ball of mass 0.20 kg is travelling horizontally at 3.0 m s\u20131 and hits a red billiard \nball of the same mass which is at rest. After the collision the white ball continues in the same \ndirection with a speed of 1.0 m s\u20131. \n \nWhat is the speed of the red ball immediately after the collision? \n \n \n \nA \n1.0 m s\u20131 \n \nB \n1.5 m s\u20131 \n \nC \n2.0 m s\u20131 \n \nD \n2.5 m s\u20131 \n \nE \n3.0 m s\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 41,
+    "text": "41 \nHow many real roots does the equation \n0\n10\n4\n4\n2\n3\n4\n\uf03d\n\uf02d\n\uf02b\n\uf02d\nx\nx\nx\n have? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 42,
+    "text": "42 \nA certain planet has no atmosphere. The planet has a gravitational field strength at its surface \nof gp N kg\u20131; this value is considered constant for this question. A rock is projected vertically \nupwards from the surface of the planet at an initial speed of 20 m s\u20131. The rock reaches a \nmaximum height h metres. \n \nWhich option shows a possible correct pair of values for gp and h? \n \n(Consider only gravitational forces.) \n \n \n \nA \ngp = 5.0 ; h = 4.0 \n \nB \ngp = 5.0 ; h = 40 \n \nC \ngp = 10 ; h = 2.0 \n \nD \ngp = 20 ; h = 1.0 \n \nE \ngp = 20 ; h = 20",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 43,
+    "text": "43 \nA box is a hollow pyramid. The base of the box is a square with sides 10 cm and all the slant \nedges of the box are 12 cm long. \n \n \n \nWhat is the angle made by the slant edge TP with the base PQRS? \n \n \n \nA \n12\n5\n2\n1\n\uf02d\nsin\n \n \nB \n12\n5\n1\n\uf02d\nsin\n \n \nC \n12\n2\n5\n1\n\uf02d\nsin\n \n \nD \n12\n5\n2\n1\n\uf02d\ncos\n \n \nE \n12\n5\n1\n\uf02d\ncos\n \n \nF \n12\n2\n5\n1\n\uf02d\ncos",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 44,
+    "text": "44 \nA ball is dropped from a height of 16 m on to a horizontal surface, and on each bounce loses \n50% of its kinetic energy. \n \nAfter which bounce will the maximum height of the rebound fall to less than 160 cm for the first \ntime? \n \n(Assume air resistance is negligible, and the only external force acting on the ball while not in \ncontact with the surface is gravity.) \n \n \n \nA \n4th \n \nB \n5th \n \nC \n6th \n \nD \n7th \n \nE \n8th",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 45,
+    "text": "45 \nThe variables x and y and the constants a and b are real and positive. The variables x and \ny are related. \n \nA graph of \ny\nlog\n against \nx\nlog\n is drawn. \n \nFor which one of the following relationships will this graph be a straight line? \n \n \n \nA \nx\na\ny \uf03d\n6\n \n \nB \nx\nab\ny \uf03d\n \n \nC \nbx\na\ny\n\uf02b\n\uf03d\n2\n \n \nD \nb\nax\ny \uf03d\n \n \nE \nb\nx\na\ny \uf03d",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 46,
+    "text": "46 \nA man of weight 600 N stands on a set of accurate weighing scales in a moving elevator (lift). \nThe reading on the scales is 480 N. \n \nWhich statement correctly describes the motion of the elevator? \n \n \n \nA \nThe elevator is moving downwards with constant speed. \n \nB \nThe elevator is moving downwards with decreasing speed. \n \nC \nThe elevator is moving upwards with increasing speed. \n \nD \nThe elevator is moving upwards with constant speed. \n \nE \nThe elevator is moving upwards with decreasing speed.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 47,
+    "text": "47 \nFor what values of the non-zero real number a does the quadratic equation \n \n\uf028\n\uf029\n2\n2\n2\n\uf03d\n\uf02d\n\uf02b\nx\na\nax\n \n \nhave distinct real roots? \n \n \n \nA \nall values of a \n \nB \n2\n\uf02d\n\uf03d\na\n \n \nC \n2\n\uf02d\n\uf03e\na\n \n \nD \n2\n\uf02d\n\uf0b9\na\n \n \nE \nno values of a",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 48,
+    "text": "48 \nThe track for a tram is straight and horizontal. A tram is travelling along the track at a velocity of \n12.0 m s\u20131 when the brakes are applied. Because of this, the tram decelerates to rest at a \nconstant rate of 1.50 m s\u20132. \n \nWhat is the distance travelled by the tram over the total time for which it is decelerating? \n \n \n \nA \n18.0 m \n \nB \n48.0 m \n \nC \n96.0 m \n \nD \n108 m \n \nE \n216 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 49,
+    "text": "49 \nA triangle is to be drawn with sides that are integer lengths in centimetres, and a total perimeter \nof 12 cm. \n \nHow many different (non-congruent) triangles can be drawn? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 \nA particle of weight 5 N is held in position by two light ropes. \n \nOne of the ropes makes an angle of 60\u00b0 with the upward vertical, the other is horizontal. \n \nWhat is the tension in the horizontal rope? \n \n \n \nA \nN\n3\n1.25\n \n \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 N \n \nC \nN\n3\n5\n \n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 N \n \nE \nN\n3\n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 51,
+    "text": "51 \nThe triangle PQR has a right angle at R. \n \nThe length of PQ is 4 cm, correct to the nearest centimetre. \n \nThe length of PR is 2 cm, correct to the nearest centimetre. \n \nFind the minimum possible length, in centimetres, of QR. \n \n \n \nA \n2\n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \uf02d\n \n \nB \n2\n1\n3\n2\n\uf02d\n \n \nC \n2\n1\n5\n2\n\uf02d\n \n \nD \n5\n2\n \n \nE \n3\n2\n \n \nF \n6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \n \n\u00a9 UCLES 2016 \n \n \n[Turn over",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 52,
+    "text": "52 \nThe graph shows the variation with time of the height through which a crane lifts a mass of",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 kg. \n \n \n \n \nWhat is the power output of the crane when the mass is at a height of 10 m? \n \n(gravitational field strength = 10 N kg\u20131, the effects of air resistance and friction are negligible) \n \n \n \nA \n0.1 W \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 W \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 W \n \nD \n100 W \n \nE \n400 W \n \nF \n4000 W",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 53,
+    "text": "53 \nThe angle x is measured in radians and is such that \n\uf070\n\uf0a3\n\uf0a3x\n0\n. \n \nThe total length of any intervals for which \n1\n1\n\uf0a3\n\uf0a3\n\uf02d\nx\ntan\n and \n5\n0\n2\n.\nsin\n\uf0b3\nx\n is \n \n \n \nA \n12\n\uf070 \n \nB \n6\n\uf070 \n \nC \n4\n\uf070 \n \nD \n3\n\uf070 \n \nE \n12\n5\uf070 \n \nF \n2\n\uf070 \n \n \n \n \nG \n6\n5\uf070",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 54,
+    "text": "54 \nA train consists of a powered engine travelling horizontally pulling two unpowered carriages. \n \n \n \n \n \nThe engine has a mass of 20 000 kg, and each carriage has a mass of 5000 kg. When the \nengine accelerates from rest it develops a thrust (driving force) of 15 000 N as shown. \n \nIgnoring resistive forces, what is the tension (pulling force) T in the light and inextensible \ncoupling between carriage 1 and carriage 2? \n \n \n \nA \n2500 N \n \nB \n3750 N \n \nC \n5000 N \n \nD \n7500 N \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 000 N \n \n \n \nEND OF TEST",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_UNK_ENGAA Section 1 Spec Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 Spec\\ENGAA Section 1 Spec Past Paper.pdf",
+    "year": null,
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \n \n\u00a9 UCLES 2016 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  }
+]

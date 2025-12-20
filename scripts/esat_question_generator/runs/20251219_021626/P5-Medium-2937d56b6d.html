@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P5-Medium-2937d56b6d</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P5-Medium-2937d56b6d<br>
+            <strong>Schema:</strong> P5<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:18:37.975189<br>
+            <strong>Token Usage:</strong> 24,070 total (9,721 prompt + 1,453 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                A particle is projected from a point$O$with speed$u$. The particle passes through a target point$P$located at a horizontal distance$d$and vertical height$h$from$O$.
+
+Which of the following expressions gives the minimum value of$u$required for the particle to reach$P$?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $\sqrt{g(d+h)}$</div>
+                <div class="option"><strong>B:</strong> $\sqrt{2g(d+h)}$</div>
+                <div class="option"><strong>C:</strong> $\sqrt{g\sqrt{d^2+h^2}}$</div>
+                <div class="option"><strong>D:</strong> $\sqrt{2g\sqrt{d^2+h^2}}$</div>
+                <div class="option"><strong>E:</strong> $\sqrt{g\left(d+\sqrt{d^2+h^2}\right)}$</div>
+                <div class="option correct"><strong>F:</strong> $\sqrt{g\left(h+\sqrt{d^2+h^2}\right)}$ ✓ CORRECT</div>
+
+            </div>
+            <p><strong>Correct Answer: F</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Rather than performing a full optimisation of the trajectory equation, we consider the physical requirements in two limiting geometric cases.
+
+**Case 1: The vertical limit ($d \to 0$).**
+If the horizontal distance is zero, the target is directly above$O$at height$h$. The particle must be projected vertically. Using$v^2 = u^2 - 2gh$with$v=0$at the peak, the minimum speed is:$$u = \sqrt{2gh}$$**Case 2: The horizontal limit ($h \to 0$).**
+If the vertical height is zero, the target is on the ground at distance$d$. This corresponds to the maximum horizontal range of a projectile, which is given by$R = u^2/g$. Setting$R=d$, the minimum speed is:$$u = \sqrt{gd}$$**Testing the options:**
+We substitute$d=0$and$h=0$into each expression:
+*   **A:**$d=0 \implies \sqrt{gh}$(Incorrect).
+*   **B:**$h=0 \implies \sqrt{2gd}$(Incorrect).
+*   **C:**$d=0 \implies \sqrt{gh}$(Incorrect).
+*   **D:**$h=0 \implies \sqrt{2gd}$(Incorrect).
+*   **E:**$d=0 \implies \sqrt{gh}$(Incorrect).
+*   **F:**
+    *   If$d=0$:$\sqrt{g(h+\sqrt{h^2})} = \sqrt{2gh}$(Correct).
+    *   If$h=0$:$\sqrt{g(0+\sqrt{d^2})} = \sqrt{gd}$(Correct).
+
+
+Hence the correct answer is F.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>The correct general formula must reduce to known standard results (vertical throw and maximum range) in the geometric limits.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Correct for the horizontal limit ($h=0$) but incorrect for the vertical limit ($d=0$).</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Correct for the vertical limit ($d=0$) but incorrect for the horizontal limit ($h=0$).</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Correct for the horizontal limit ($h=0$) but incorrect for the vertical limit ($d=0$).</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Correct for the vertical limit ($d=0$) but incorrect for the horizontal limit ($h=0$).</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Structurally similar to the correct answer (swapping $d$ and $h$), but fails both limiting checks.</div>
+                <div style="margin: 10px 0;"><strong>F:</strong> Correct. [CORRECT ANSWER]</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

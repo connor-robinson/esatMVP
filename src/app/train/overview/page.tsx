@@ -1,5 +1,5 @@
 /**
- * Redirect from old /train/overview to new homepage
+ * Redirect from /train/overview to homepage
  */
 
 "use client";
@@ -22,4 +22,3 @@ export default function TrainOverviewRedirect() {
     </div>
   );
 }
-

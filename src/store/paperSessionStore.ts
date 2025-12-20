@@ -238,23 +238,91 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               const totalQuestions = allQuestions.length;
               const sectionByQuestionId = new Map<number, string>();
 
+              // Build section mapping for all questions
               allQuestions.forEach((question, index) => {
-                const section = isTmuaPaper
-                  ? deriveTmuaSectionFromQuestion(question, index, totalQuestions)
-                  : mapPartToSection({ partLetter: (question as any).partLetter, partName: question.partName }, state.paperName as any);
+                let section: string;
+                if (isTmuaPaper) {
+                  // For TMUA, try mapPartToSection first, then fall back to deriveTmuaSectionFromQuestion
+                  const mappedSection = mapPartToSection(
+                    { partLetter: (question as any).partLetter || '', partName: question.partName || '' },
+                    'TMUA'
+                  );
+                  // If mapPartToSection returns a valid TMUA section, use it; otherwise use deriveTmuaSectionFromQuestion
+                  if (mappedSection === 'Paper 1' || mappedSection === 'Paper 2') {
+                    section = mappedSection;
+                  } else {
+                    section = deriveTmuaSectionFromQuestion(question, index, totalQuestions);
+                  }
+                } else {
+                  section = mapPartToSection({ partLetter: (question as any).partLetter, partName: question.partName }, state.paperName as any);
+                }
                 sectionByQuestionId.set(question.id, section);
               });
+
+              // Debug: Log section distribution
+              if (isTmuaPaper && state.selectedSections.length > 0) {
+                const sectionCounts = new Map<string, number>();
+                allQuestions.forEach(q => {
+                  const section = sectionByQuestionId.get(q.id) || 'Unknown';
+                  sectionCounts.set(section, (sectionCounts.get(section) || 0) + 1);
+                });
+                console.log('[loadQuestions] TMUA Section distribution:', Object.fromEntries(sectionCounts));
+                console.log('[loadQuestions] Selected sections:', state.selectedSections);
+              }
 
               // Filter questions by selected sections using systematic mapping
               let filteredQuestions = allQuestions;
               if (state.selectedSections.length > 0) {
                 console.log('Filtering questions by sections:', state.selectedSections);
+                console.log('Section types:', state.selectedSections.map(s => typeof s));
+                
+                // Normalize selected sections to strings for comparison
+                const normalizedSelectedSections = state.selectedSections.map(s => String(s).trim());
+                
                 filteredQuestions = allQuestions.filter(q => {
                   const section = sectionByQuestionId.get(q.id);
-                  return section ? state.selectedSections.includes(section as any) : false;
+                  if (!section) {
+                    console.warn(`[loadQuestions] Question ${q.questionNumber} has no section mapping`);
+                    return false;
+                  }
+                  
+                  const normalizedSection = String(section).trim();
+                  const isIncluded = normalizedSelectedSections.includes(normalizedSection);
+                  
+                  if (isTmuaPaper && !isIncluded) {
+                    // Debug: Log why questions are being excluded (only for first few to avoid spam)
+                    if (q.questionNumber <= 5 || (q.questionNumber > 20 && q.questionNumber <= 25)) {
+                      console.log(`[loadQuestions] Excluding question ${q.questionNumber}: section="${normalizedSection}", selectedSections=[${normalizedSelectedSections.join(', ')}]`);
+                    }
+                  }
+                  return isIncluded;
                 });
                 console.log('Filtered questions (systematic mapping):', filteredQuestions.length);
                 console.log('Sample mapped sections:', filteredQuestions.slice(0, 6).map(q => ({ n: q.questionNumber, part: (q as any).partLetter, name: q.partName, section: sectionByQuestionId.get(q.id) })));
+                
+                // Debug: Verify both sections are present in filtered results
+                if (isTmuaPaper) {
+                  const filteredSectionCounts = new Map<string, number>();
+                  filteredQuestions.forEach(q => {
+                    const section = sectionByQuestionId.get(q.id) || 'Unknown';
+                    filteredSectionCounts.set(section, (filteredSectionCounts.get(section) || 0) + 1);
+                  });
+                  console.log('[loadQuestions] Filtered section distribution:', Object.fromEntries(filteredSectionCounts));
+                  
+                  // Check if both Paper 1 and Paper 2 are in selected sections but only one appears in filtered
+                  const hasPaper1 = state.selectedSections.includes('Paper 1' as any);
+                  const hasPaper2 = state.selectedSections.includes('Paper 2' as any);
+                  const filteredHasPaper1 = filteredSectionCounts.has('Paper 1');
+                  const filteredHasPaper2 = filteredSectionCounts.has('Paper 2');
+                  
+                  if (hasPaper1 && hasPaper2 && (!filteredHasPaper1 || !filteredHasPaper2)) {
+                    console.error('[loadQuestions] ⚠️ BUG DETECTED: Both Paper 1 and Paper 2 selected, but filtered results missing one!', {
+                      selected: { hasPaper1, hasPaper2 },
+                      filtered: { hasPaper1: filteredHasPaper1, hasPaper2: filteredHasPaper2 },
+                      counts: Object.fromEntries(filteredSectionCounts)
+                    });
+                  }
+                }
               }
 
               // Apply TMUA 2017 Paper 1 footer trimming to question images

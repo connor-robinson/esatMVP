@@ -86,6 +86,7 @@ export function useBuilderSession() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastAttempt, setLastAttempt] = useState<QuestionAttempt | null>(null);
   const [attemptLog, setAttemptLog] = useState<QuestionAttempt[]>([]);
+  const [mode, setMode] = useState<"standard" | "mental-math">("standard");
 
   useEffect(() => {
     if (!authSession?.user) {
@@ -113,6 +114,9 @@ export function useBuilderSession() {
   const progress = currentSession?.questions.length
     ? currentQuestionIndex / currentSession.questions.length
     : 0;
+  
+  // Calculate correct count from attempt log
+  const correctCount = attemptLog.filter(attempt => attempt.isCorrect).length;
 
   // Parse topicVariantId (e.g., "addition-single-digit" or "addition")
   const parseTopicVariantId = useCallback((topicVariantId: string): { topicId: string; variantId: string } | null => {
@@ -272,8 +276,32 @@ export function useBuilderSession() {
   );
 
   const startSession = useCallback(() => {
-    if (!authSession?.user) return;
-    if (selectedTopicVariants.length === 0) return;
+    console.log("[startSession] Called", { 
+      hasUser: !!authSession?.user, 
+      topicVariants: selectedTopicVariants.length,
+      questionCount 
+    });
+    
+    if (selectedTopicVariants.length === 0) {
+      console.warn("[startSession] No topics selected, cannot start");
+      alert("Please add at least one topic to start a session.");
+      return;
+    }
+    
+    // Note: Allow starting session without auth for testing
+    // if (!authSession?.user) {
+    //   console.warn("[startSession] No user session, cannot start");
+    //   alert("Please log in to start a session.");
+    //   return;
+    // }
+
+    // Determine mode based on topics (use mental-math for arithmetic topics)
+    const isMentalMath = selectedTopicVariants.every(({ topicId }) => {
+      const topic = getTopic(topicId);
+      return topic?.category === "arithmetic";
+    });
+    setMode(isMentalMath ? "mental-math" : "standard");
+    console.log("[startSession] Mode set to:", isMentalMath ? "mental-math" : "standard");
 
     // Convert variant selections to topic IDs and difficulty levels for generator
     const topicIds = selectedTopicVariants.map(tv => tv.topicId);
@@ -283,7 +311,9 @@ export function useBuilderSession() {
       const topic = getTopic(topicId);
       if (topic && topic.variants) {
         const variant = topic.variants.find(v => v.id === variantId);
-        if (variant) {
+        if (variant && variant.config && typeof variant.config.level === 'number') {
+          variantToLevelMap[topicId] = variant.config.level;
+        } else if (variant && typeof variant.difficulty === 'number') {
           variantToLevelMap[topicId] = variant.difficulty;
         } else {
           variantToLevelMap[topicId] = 1;
@@ -294,6 +324,14 @@ export function useBuilderSession() {
     });
     
     const questions = generateMixedQuestions(topicIds, questionCount, variantToLevelMap);
+    console.log("[startSession] Generated questions:", questions.length);
+    
+    if (questions.length === 0) {
+      console.error("[startSession] No questions generated!");
+      alert("Failed to generate questions. Please try again.");
+      return;
+    }
+    
     const sessionId = generateId();
     const startedAt = Date.now();
 
@@ -304,6 +342,7 @@ export function useBuilderSession() {
       attempts: 0,
     };
 
+    console.log("[startSession] Setting session, view to running");
     setCurrentSession(session);
     setCurrentQuestionIndex(0);
     setQuestionStartTime(Date.now());
@@ -312,51 +351,57 @@ export function useBuilderSession() {
     setAttemptLog([]);
     setView("running");
 
-    (supabase as any)
-      .from("builder_sessions")
-      .insert({
-        id: sessionId,
-        user_id: authSession.user.id,
-        started_at: new Date(startedAt).toISOString(),
-        attempts: 0,
-        settings: {
-          selectedTopicVariants,
-          questionCount,
-        },
-      })
-      .then(({ error }: { error: any }) => {
-        if (error) {
-          console.error("[builder] failed to create session", error);
-        }
-      });
-
-    if (questions.length > 0) {
-      const rows = questions.map((q, index) => ({
-        session_id: sessionId,
-        user_id: authSession.user.id,
-        order_index: index,
-        question_id: q.id,
-        topic_id: q.topicId,
-        difficulty: q.difficulty,
-        prompt: q.question,
-        answer: String(q.answer),
-        payload: q,
-      }));
-
+    // Only save to database if user is logged in
+    if (authSession?.user) {
       (supabase as any)
-        .from("builder_session_questions")
-        .insert(rows)
+        .from("builder_sessions")
+        .insert({
+          id: sessionId,
+          user_id: authSession.user.id,
+          started_at: new Date(startedAt).toISOString(),
+          attempts: 0,
+          settings: {
+            selectedTopicVariants,
+            questionCount,
+          },
+        })
         .then(({ error }: { error: any }) => {
           if (error) {
-            console.error("[builder] failed to insert session questions", error);
+            console.error("[builder] failed to create session", error);
           }
         });
+
+      if (questions.length > 0) {
+        const rows = questions.map((q, index) => ({
+          session_id: sessionId,
+          user_id: authSession.user.id,
+          order_index: index,
+          question_id: q.id,
+          topic_id: q.topicId,
+          difficulty: q.difficulty,
+          prompt: q.question,
+          answer: String(q.answer),
+          payload: q,
+        }));
+
+        (supabase as any)
+          .from("builder_session_questions")
+          .insert(rows)
+          .then(({ error }: { error: any }) => {
+            if (error) {
+              console.error("[builder] failed to insert session questions", error);
+            }
+          });
+      }
     }
   }, [authSession?.user, questionCount, selectedTopicVariants, supabase]);
 
   const persistAttempt = useCallback(
     (sessionId: string, attempt: QuestionAttempt) => {
-      if (!authSession?.user) return;
+      if (!authSession?.user) {
+        console.log("[persistAttempt] Skipping - no user session");
+        return;
+      }
       (supabase as any).from("builder_attempts").insert({
         session_id: sessionId,
         user_id: authSession.user.id,
@@ -372,7 +417,10 @@ export function useBuilderSession() {
 
   const finalizeSession = useCallback(
     (sessionId: string, attempts: number) => {
-      if (!authSession?.user) return;
+      if (!authSession?.user) {
+        console.log("[finalizeSession] Skipping - no user session");
+        return;
+      }
       (supabase as any)
         .from("builder_sessions")
         .update({
@@ -395,7 +443,14 @@ export function useBuilderSession() {
       if (!currentSession || !currentQuestion) return;
 
       const timeTakenMs = Date.now() - questionStartTime;
-      const isCorrect = userAnswer.trim() === String(currentQuestion.answer).trim();
+      
+      // Use custom checker if provided, otherwise do simple string comparison
+      let isCorrect: boolean;
+      if (currentQuestion.checker) {
+        isCorrect = currentQuestion.checker(userAnswer.trim());
+      } else {
+        isCorrect = userAnswer.trim() === String(currentQuestion.answer).trim();
+      }
 
       const attempt: QuestionAttempt = {
         questionId: currentQuestion.id,
@@ -532,6 +587,8 @@ export function useBuilderSession() {
     showFeedback,
     lastAttempt,
     attemptLog,
+    correctCount,
+    mode,
     handleDragStart,
     handleDragEnd,
   };

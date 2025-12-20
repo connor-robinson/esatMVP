@@ -1,22 +1,22 @@
 /**
  * Fractions question generator
- * Simple fraction operations for sample topics
+ * Levels:
+ * 1 - Fraction addition with same denominators
+ * 2 - Fraction addition with different denominators
+ * 3 - Fraction multiplication
  */
 
 import { GeneratedQuestion } from "@/types/core";
-import { randomInt, generateId } from "@/lib/utils";
+import { generateId } from "@/lib/utils";
+import { pick, randomInt } from "./utils/random";
 
 export function generateFractions(
   level: number = 1,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  const operationType = randomInt(1, 2); // 1=addition, 2=multiplication
-  
-  if (operationType === 1) {
-    return generateFractionAddition();
-  } else {
-    return generateFractionMultiplication();
-  }
+  if (level === 1) return generateSameDenominator();
+  if (level === 2) return generateDifferentDenominators();
+  return generateFractionMultiplication();
 }
 
 function gcd(a: number, b: number): number {
@@ -33,7 +33,26 @@ function reduceFraction(num: number, den: number): [number, number] {
   return [num / g, den / g];
 }
 
-function generateFractionAddition(): GeneratedQuestion {
+function generateSameDenominator(): GeneratedQuestion {
+  const den = randomInt(2, 8);
+  const num1 = randomInt(1, den - 1);
+  const num2 = randomInt(1, den - 1);
+  
+  const answerNum = num1 + num2;
+  const [finalNum, finalDen] = reduceFraction(answerNum, den);
+  
+  const questionLatex = `Compute: $\\frac{${num1}}{${den}} + \\frac{${num2}}{${den}}$`;
+  
+  return {
+    id: generateId(),
+    topicId: "fractions",
+    question: questionLatex,
+    answer: finalDen === 1 ? String(finalNum) : `${finalNum}/${finalDen}`,
+    difficulty: 1,
+  };
+}
+
+function generateDifferentDenominators(): GeneratedQuestion {
   // Generate simple fractions with small denominators
   const den1 = randomInt(2, 6);
   const num1 = randomInt(1, den1 - 1);
@@ -50,10 +69,12 @@ function generateFractionAddition(): GeneratedQuestion {
   // Reduce to lowest terms
   const [finalNum, finalDen] = reduceFraction(answerNum, commonDen);
   
+  const questionLatex = `Compute: $\\frac{${num1}}{${den1}} + \\frac{${num2}}{${den2}}$`;
+
   return {
     id: generateId(),
-    topicId: "fractions", // Will be overridden by generateQuestionForTopic
-    question: `${num1}/${den1} + ${num2}/${den2}`,
+    topicId: "fractions",
+    question: questionLatex,
     answer: finalDen === 1 ? String(finalNum) : `${finalNum}/${finalDen}`,
     difficulty: 2,
   };
@@ -74,14 +95,13 @@ function generateFractionMultiplication(): GeneratedQuestion {
   // Reduce to lowest terms
   const [finalNum, finalDen] = reduceFraction(answerNum, answerDen);
   
+  const questionLatex = `Compute: $\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}}$`;
+
   return {
     id: generateId(),
-    topicId: "fractions", // Will be overridden by generateQuestionForTopic
-    question: `${num1}/${den1} × ${num2}/${den2}`,
+    topicId: "fractions",
+    question: questionLatex,
     answer: finalDen === 1 ? String(finalNum) : `${finalNum}/${finalDen}`,
-    difficulty: 2,
+    difficulty: 3,
   };
 }
-
-
-

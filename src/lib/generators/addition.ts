@@ -5,31 +5,29 @@
 import { GeneratedQuestion } from "@/types/core";
 import { randomInt, generateId } from "@/lib/utils";
 
+/**
+ * Levels are aligned with addition topic variants:
+ * 1 → Single digit
+ * 2 → Double digit (NO carrying)
+ * 3 → Double digit (WITH carrying)
+ * 4 → Mental math: adding 5, 10, 15, ...
+ * 5 → Three-number addition
+ */
 export function generateAddition(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  const ending5Weight = weights?.["ending5"] || 0;
-
   switch (level) {
-    case 1: // Single digit (0-9)
+    case 1:
       return generateSingleDigit();
-    
-    case 2: // Two digit numbers
-      return generateTwoDigit();
-    
-    case 3: // Three digit numbers
-      return generateThreeDigit();
-    
-    case 4: // Numbers ending in 5
-      if (ending5Weight > 0.8 || Math.random() < 0.7) {
-        return generateEnding5();
-      }
-      return generateTwoDigit();
-    
-    case 5: // Mental math shortcuts (mixed with some tricky ones)
-      return generateMentalMath();
-    
+    case 2:
+      return generateTwoDigitNoCarry();
+    case 3:
+      return generateTwoDigitWithCarry();
+    case 4:
+      return generateMentalAdd5();
+    case 5:
+      return generateThreeNumbers();
     default:
       return generateSingleDigit();
   }
@@ -41,91 +39,93 @@ function generateSingleDigit(): GeneratedQuestion {
   
   return {
     id: generateId(),
-    topicId: "addition", // Will be overridden by generateQuestionForTopic
-    question: `${a} + ${b}`,
+    topicId: "addition",
+    question: `$${a} + ${b}$`,
     answer: String(a + b),
     difficulty: 1,
   };
 }
 
-function generateTwoDigit(): GeneratedQuestion {
-  const a = randomInt(10, 99);
-  const b = randomInt(10, 99);
-  
+/**
+ * Generate two 2-digit numbers with NO carrying in any column.
+ * Both tens and ones digits are chosen so that a1 + b1 < 10.
+ */
+function generateTwoDigitNoCarry(): GeneratedQuestion {
+  // Ones digits that keep sum < 10 (0–9 but ensure sum < 10)
+  const aOnes = randomInt(0, 9);
+  const bOnesMax = 9 - aOnes;
+  const bOnes = randomInt(0, bOnesMax);
+
+  // Tens digits free (no carry between tens since ones sum < 10)
+  const aTens = randomInt(1, 9);
+  const bTens = randomInt(1, 9);
+
+  const a = aTens * 10 + aOnes;
+  const b = bTens * 10 + bOnes;
+
   return {
     id: generateId(),
-    topicId: "addition", // Will be overridden by generateQuestionForTopic
-    question: `${a} + ${b}`,
+    topicId: "addition",
+    question: `$${a} + ${b}$`,
     answer: String(a + b),
     difficulty: 2,
   };
 }
 
-function generateThreeDigit(): GeneratedQuestion {
-  const a = randomInt(100, 999);
-  const b = randomInt(100, 999);
-  
+/**
+ * Generate two 2-digit numbers WITH carrying in at least one column.
+ * We enforce a ones-digit carry to make the method practice clear.
+ */
+function generateTwoDigitWithCarry(): GeneratedQuestion {
+  // Ensure ones digits sum ≥ 10 but < 20
+  const aOnes = randomInt(3, 9);
+  const bOnesMin = 10 - aOnes;
+  const bOnes = randomInt(bOnesMin, 9);
+
+  const aTens = randomInt(1, 9);
+  const bTens = randomInt(1, 9);
+
+  const a = aTens * 10 + aOnes;
+  const b = bTens * 10 + bOnes;
+
   return {
     id: generateId(),
-    topicId: "addition", // Will be overridden by generateQuestionForTopic
-    question: `${a} + ${b}`,
+    topicId: "addition",
+    question: `$${a} + ${b}$`,
     answer: String(a + b),
     difficulty: 3,
   };
 }
 
-function generateEnding5(): GeneratedQuestion {
-  const a = randomInt(1, 19) * 10 + 5; // Numbers like 15, 25, 35...195
-  const b = randomInt(1, 19) * 10 + 5;
-  
+/**
+ * Mental math: adding 5, 10, 15, 20, ...
+ */
+function generateMentalAdd5(): GeneratedQuestion {
+  const base = randomInt(10, 99);
+  const offset = [5, 10, 15, 20][randomInt(0, 3)];
+
   return {
     id: generateId(),
-    topicId: "addition", // Will be overridden by generateQuestionForTopic
-    question: `${a} + ${b}`,
-    answer: String(a + b),
-    difficulty: 2,
+    topicId: "addition",
+    question: `$${base} + ${offset}$`,
+    answer: String(base + offset),
+    difficulty: 4,
   };
 }
 
-function generateMentalMath(): GeneratedQuestion {
-  const type = randomInt(1, 3);
-  
-  switch (type) {
-    case 1: {
-      // Numbers close to round numbers (e.g., 47 + 98)
-      const roundNum = randomInt(5, 15) * 10; // 50, 60, ..., 150
-      const nearRound = roundNum + randomInt(-2, 2);
-      const other = randomInt(20, 99);
-      return {
-        id: generateId(),
-        topicId: "addition", // Will be overridden by generateQuestionForTopic
-        question: `${other} + ${nearRound}`,
-        answer: String(other + nearRound),
-        difficulty: 3,
-      };
-    }
-    
-    case 2: {
-      // Complementary pairs (e.g., 156 + 44 = 200)
-      const roundTarget = randomInt(10, 20) * 10; // 100, 110, ..., 200
-      const a = randomInt(roundTarget - 50, roundTarget - 10);
-      const b = roundTarget - a;
-      return {
-        id: generateId(),
-        topicId: "addition", // Will be overridden by generateQuestionForTopic
-        question: `${a} + ${b}`,
-        answer: String(roundTarget),
-        difficulty: 3,
-      };
-    }
-    
-    default: {
-      // Mixed two-digit
-      return generateTwoDigit();
-    }
-  }
+/**
+ * Three-number addition (two- or three-digit numbers).
+ */
+function generateThreeNumbers(): GeneratedQuestion {
+  const a = randomInt(10, 99);
+  const b = randomInt(10, 99);
+  const c = randomInt(10, 99);
+
+  return {
+    id: generateId(),
+    topicId: "addition",
+    question: `$${a} + ${b} + ${c}$`,
+    answer: String(a + b + c),
+    difficulty: 5,
+  };
 }
-
-
-
-

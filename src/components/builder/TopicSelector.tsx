@@ -19,6 +19,44 @@ interface TopicSelectorProps {
   onAddTopic: (topicVariantId: string, topicId: string, variantId?: string) => void;
 }
 
+// High-level categories for UI grouping (max 8)
+type HighLevelCategory =
+  | "arithmetic"
+  | "algebra"
+  | "geometry"
+  | "number_theory"
+  | "shortcuts"
+  | "trigonometry"
+  | "physics"
+  | "other";
+
+// Map fine-grained TopicCategory → high-level category
+const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
+  arithmetic: "arithmetic",
+  algebra: "algebra",
+  geometry: "geometry",
+  number_theory: "number_theory",
+  shortcuts: "shortcuts",
+  patterns: "number_theory",
+  transform: "arithmetic",
+  test: "number_theory",
+  estimation: "arithmetic",
+  identities: "algebra",
+  trigonometry: "trigonometry",
+  mechanics: "physics",
+  optics: "physics",
+  electricity: "physics",
+  thermodynamics: "physics",
+  atomic_structure: "physics",
+  reactions: "other",
+  organic: "other",
+  analytical: "other",
+  cell_biology: "other",
+  genetics: "other",
+  evolution: "other",
+  ecology: "other",
+};
+
 function DraggableTopicHeader({
   topic,
   isExpanded,
@@ -126,11 +164,11 @@ function DraggableTopicHeader({
 
 export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedCategories, setExpandedCategories] = useState<Set<TopicCategory>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<HighLevelCategory>>(new Set());
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
 
   // Toggle category expansion
-  const toggleCategory = (category: TopicCategory) => {
+  const toggleCategory = (category: HighLevelCategory) => {
     setExpandedCategories(prev => {
       const next = new Set(prev);
       if (next.has(category)) {
@@ -155,20 +193,6 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
     });
   };
 
-  // Group topics by category
-  const topicsByCategory = useMemo(() => {
-    const grouped: Partial<Record<TopicCategory, Topic[]>> = {};
-    
-    topics.forEach((topic) => {
-      if (!grouped[topic.category]) {
-        grouped[topic.category] = [];
-      }
-      grouped[topic.category]!.push(topic);
-    });
-    
-    return grouped;
-  }, [topics]);
-
   // Filter topics by search query
   const filteredTopics = useMemo(() => {
     if (!searchQuery.trim()) return topics;
@@ -182,36 +206,28 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
   }, [topics, searchQuery]);
 
   const filteredByCategory = useMemo(() => {
-    const grouped: Partial<Record<TopicCategory, Topic[]>> = {};
+    const grouped: Partial<Record<HighLevelCategory, Topic[]>> = {};
     
     filteredTopics.forEach((topic) => {
-      if (!grouped[topic.category]) {
-        grouped[topic.category] = [];
+      const highLevel = CATEGORY_MAP[topic.category] ?? "other";
+      if (!grouped[highLevel]) {
+        grouped[highLevel] = [];
       }
-      grouped[topic.category]!.push(topic);
+      grouped[highLevel]!.push(topic);
     });
     
     return grouped;
   }, [filteredTopics]);
 
-  const categoryLabels: Record<TopicCategory, string> = {
+  const categoryLabels: Record<HighLevelCategory, string> = {
     arithmetic: "Arithmetic",
-    algebra: "Algebra",
-    geometry: "Geometry",
-    number_theory: "Number Theory",
+    algebra: "Algebra & Identities",
+    geometry: "Geometry & Shapes",
+    number_theory: "Number Theory & Patterns",
     shortcuts: "Shortcuts",
-    mechanics: "Mechanics",
-    optics: "Optics",
-    electricity: "Electricity",
-    thermodynamics: "Thermodynamics",
-    atomic_structure: "Atomic Structure",
-    reactions: "Reactions",
-    organic: "Organic",
-    analytical: "Analytical",
-    cell_biology: "Cell Biology",
-    genetics: "Genetics",
-    evolution: "Evolution",
-    ecology: "Ecology",
+    trigonometry: "Trigonometry",
+    physics: "Physics",
+    other: "Other",
   };
 
   return (
@@ -241,13 +257,14 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
       <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden pr-1 pb-4 scrollbar-thin">
         {Object.entries(filteredByCategory).map(([category, categoryTopics]) => {
           if (!categoryTopics || categoryTopics.length === 0) return null;
-          const isExpanded = expandedCategories.has(category as TopicCategory);
+          const highLevelCategory = category as HighLevelCategory;
+          const isExpanded = expandedCategories.has(highLevelCategory);
 
           return (
             <div key={category} className="rounded-xl bg-white/[0.02] shadow-sm">
               {/* Category Header - Clickable */}
               <button
-                onClick={() => toggleCategory(category as TopicCategory)}
+                onClick={() => toggleCategory(highLevelCategory)}
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors rounded-t-xl"
               >
                 <div className="flex items-center gap-2">
@@ -257,7 +274,7 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
                     <ChevronRight className="h-4 w-4 text-white/60" />
                   )}
                   <span className="text-sm font-semibold uppercase tracking-wider text-white/70">
-                    {categoryLabels[category as TopicCategory] || category}
+                    {categoryLabels[highLevelCategory] || category}
                   </span>
                 </div>
                 <span className="text-xs text-white/40">

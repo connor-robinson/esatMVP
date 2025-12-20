@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M2-Medium-bf3d2b026d</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M2-Medium-bf3d2b026d<br>
+            <strong>Schema:</strong> M2<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:12:35.553314<br>
+            <strong>Token Usage:</strong> 19,049 total (8,659 prompt + 1,202 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                The real number$x$satisfies$x > 1$and$$\frac{x^4 + 1}{x^2} = 27$$What is the value of$x - \frac{1}{x}$?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option correct"><strong>A:</strong> $5$ ✓ CORRECT</div>
+                <div class="option"><strong>B:</strong> $3\sqrt{3}$</div>
+                <div class="option"><strong>C:</strong> $\sqrt{29}$</div>
+                <div class="option"><strong>D:</strong> $25$</div>
+                <div class="option"><strong>E:</strong> $27$</div>
+                <div class="option"><strong>F:</strong> $29$</div>
+
+            </div>
+            <p><strong>Correct Answer: A</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>We rearrange the given equation by dividing the numerator by the denominator:$$\frac{x^4}{x^2} + \frac{1}{x^2} = 27 \implies x^2 + \frac{1}{x^2} = 27$$We seek the value of$x - \frac{1}{x}$. Consider the square of this expression:$$\left(x - \frac{1}{x}\right)^2 = x^2 - 2(x)\left(\frac{1}{x}\right) + \frac{1}{x^2}$$$$\left(x - \frac{1}{x}\right)^2 = \left(x^2 + \frac{1}{x^2}\right) - 2$$Substituting the value from the rearranged equation:$$\left(x - \frac{1}{x}\right)^2 = 27 - 2 = 25$$Taking the square root, we have two possible values:$5$or$-5$. Since$x > 1$, it follows that$\frac{1}{x} < 1$, and therefore$x - \frac{1}{x} > 0$.
+Hence the correct answer is$5$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Relate the sum of squares$x^2 + x^{-2}$to the square of the difference$(x - x^{-1})^2$using the identity$(a-b)^2 = a^2 + b^2 - 2ab$.
+</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

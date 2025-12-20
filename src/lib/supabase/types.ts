@@ -296,6 +296,11 @@ export type AiGeneratedQuestionRow = {
   generation_attempts: number;
   token_usage: Json | null;
   run_id: string | null;
+  primary_tag: string | null;
+  secondary_tags: string[] | null;
+  tags_confidence: Json | null;
+  tags_labeled_at: string | null;
+  tags_labeled_by: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -321,6 +326,11 @@ export type AiGeneratedQuestionInsert = {
   generation_attempts?: number;
   token_usage?: Json | null;
   run_id?: string | null;
+  primary_tag?: string | null;
+  secondary_tags?: string[] | null;
+  tags_confidence?: Json | null;
+  tags_labeled_at?: string | null;
+  tags_labeled_by?: string | null;
   created_at?: string;
   updated_at?: string;
 };

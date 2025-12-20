@@ -30,7 +30,7 @@ export function Progress({
   
   return (
     <div className={cn("relative", className)} {...props}>
-      <div className="h-2 w-full overflow-hidden rounded-organic-sm bg-white/10">
+      <div className="h-3 w-full overflow-hidden rounded-organic-sm bg-white/10">
         <div
           className={cn(
             "h-full transition-all duration-500 ease-signature rounded-organic-sm",

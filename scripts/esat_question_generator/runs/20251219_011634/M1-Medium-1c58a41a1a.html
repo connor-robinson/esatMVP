@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M1-Medium-1c58a41a1a</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M1-Medium-1c58a41a1a<br>
+            <strong>Schema:</strong> M1<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T01:17:47.324789<br>
+            <strong>Token Usage:</strong> 16,298 total (8,902 prompt + 1,230 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                Two cylinders,$P$and$Q$, have the same volume. The height of cylinder$Q$is twice the height of cylinder$P$.
+
+What is the ratio of the curved surface area of cylinder$Q$to the curved surface area of cylinder$P$?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $\frac{1}{2}$</div>
+                <div class="option"><strong>B:</strong> $\frac{\sqrt{2}}{2}$</div>
+                <div class="option"><strong>C:</strong> $1$</div>
+                <div class="option correct"><strong>D:</strong> $\sqrt{2}$ ✓ CORRECT</div>
+                <div class="option"><strong>E:</strong> $2$</div>
+                <div class="option"><strong>F:</strong> $4$</div>
+
+            </div>
+            <p><strong>Correct Answer: D</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Let$r_P, h_P$and$r_Q, h_Q$be the radii and heights of the cylinders respectively. The curved surface area is given by$A = 2\pi rh$and the volume by$V = \pi r^2 h$.
+
+We are given$h_Q = 2h_P$and$V_P = V_Q$. Equating the volumes:$$\pi r_P^2 h_P = \pi r_Q^2 h_Q$$Substituting$h_Q = 2h_P$:$$\pi r_P^2 h_P = \pi r_Q^2 (2h_P)$$Dividing both sides by$\pi h_P$:$$r_P^2 = 2r_Q^2 \implies r_Q = \frac{r_P}{\sqrt{2}}$$Now consider the ratio of the curved surface areas:$$\frac{A_Q}{A_P} = \frac{2\pi r_Q h_Q}{2\pi r_P h_P}$$Substitute$r_Q = \frac{r_P}{\sqrt{2}}$and$h_Q = 2h_P$:$$\frac{A_Q}{A_P} = \frac{ \left( \frac{r_P}{\sqrt{2}} \right) (2h_P) }{ r_P h_P } = \frac{2}{\sqrt{2}} = \sqrt{2}$$Hence the correct answer is$\sqrt{2}$.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Since$V \propto r^2 h$is constant,$r \propto h^{-1/2}$; substituting this into$A \propto rh$gives$A \propto h^{1/2}$.
+</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

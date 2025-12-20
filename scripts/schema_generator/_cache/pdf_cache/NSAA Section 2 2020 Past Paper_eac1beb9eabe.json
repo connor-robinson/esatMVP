@@ -1,0 +1,3892 @@
+[
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60 minutes\n \n \nSECTION 2 \n \n \nINSTRUCTIONS TO CANDIDATES \n \nPlease read these instructions carefully, but do not open this question paper until you are \ntold that you may do so. This paper is Section 2 of 2. \n \nA separate answer sheet is provided for this paper. Please check you have one. You also \nrequire a soft pencil and an eraser. \n \nPlease complete the answer sheet with your candidate number, centre number, date of birth, \nand name. \n \nThis paper contains three parts: X, Y and Z. \n \nAll candidates should complete only one part chosen from: \n \nPart X \nPhysics \nPart Y \nChemistry \nPart Z \nBiology \n \nEach part has 20 multiple-choice questions. There are no penalties for incorrect responses, only \nmarks for correct answers, so you should attempt all 20 questions in your chosen part. Each \nquestion is worth one mark. \n \nFor each question, choose the one option you consider correct and record your choice on the \nseparate answer sheet. If you make a mistake, erase thoroughly and try again. \n \nYou must complete the answer sheet within the time limit. \n \nYou can use the question paper for rough working, but no extra paper is allowed. Only your \nresponses on the answer sheet will be marked. \n \nA Periodic Table is included. \n \nDictionaries and calculators are NOT permitted. \n \n \n \n \nPlease wait to be told you may begin before turning this page. \n \nThis question paper consists of 67 printed pages and 5 blank pages. \nCopyright \u00a9 UCLES 2020 \nPV2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPaper content \nPeriodic Table ........................................................................................................................................ 5 \nPART X Physics ..................................................................................................................................... 7 \nPART Y Chemistry ............................................................................................................................... 29 \nPART Z Biology .................................................................................................................................... 51",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \nH\n1\nHe\n2\nLi\n3\nBe\n4\nsymbol \natomic number \nB\n5\nC\n6\nN\n7\nO\n8\nF\n9\nNe\n10\nNa\n11\nMg\n12\nAl \n13\nSi\n14\nP\n15\nS\n16\nCl\n17\nAr\n18\nK\n19\nCa\n20\nSc\n21\nTi\n22\nV\n23\nCr\n24\nMn\n25\nFe\n26\nCo\n27\nNi\n28\nCu\n29\nZn\n30\nGa\n31\nGe\n32\nAs\n33\nSe\n34\nBr\n35\nKr\n36\nRb\n37\nSr\n38\nY\n39\nZr\n40\nNb\n41\nMo\n42\nTc\n43\nRu\n44\nRh\n45\nPd\n46\nAg\n47\nCd\n48\nIn\n49\nSn\n50\nSb\n51\nTe\n52\nI\n53\nXe\n54\nCs\n55\nBa\n56\nLa\n57\nHf\n72\nTa\n73\nW\n74\nRe\n75\nOs\n76\nIr\n77\nPt\n78\nAu\n79\nHg\n80\nTl\n81\nPb\n82\nBi\n83\nPo\n84\n \nAt\n85\n \nRn\n86\n \nFr\n87\n \nRa\n88\n \nAc\n89\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nLanthanoids\n \nCe\n58\nPr\n59\nNd\n60\nPm\n61\nSm\n62\nEu\n63\nGd\n64\nTb\n65\nDy\n66\nHo\n67\nEr\n68\nTm\n69\nYb\n70\nLu\n71\nActinoids\n \nTh\n90\nPa\n91\nU\n92\nNp\n93\nPu\n94\nAm\n95\nCm\n96\nBk\n97\nCf\n98\nEs\n99\nFm\n100\nMd\n101\nNo\n102\nLr\n103\n \nRf\n104\nDb\n105\nSg\n106\nBh\n107\nHs\n108\nMt\n109\nDs\n110\nRg\n111\nCn\n112\nNh\n113\nFl\n114\nMc\n115\nLv\n116\nTs\n117\nOg\n118\nLanthanoids\n57-71\nActinoids\n89-103",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART X Physics",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nSpring P has spring constant 1.0\u0bd7N\u0bd7cm\u00ed1 and spring Q has spring constant 3.0\u0bd7N\u0bd7cm\u00ed1. \n \nThe two springs are connected in series. \n \nThe springs are stretched by 6.0\u0bd7cm in total. \n \nWhat is the extension of spring P? \n \n(The springs have negligible mass and obey Hooke\u2019s law.) \n \n \n \nA \n1.5 cm \n \nB \n2.0 cm \n \nC \n3.0 cm \n \nD \n4.0 cm \n \nE \n4.5 cm",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nA single strand of wire has a radius of 2.0 \u00d7 10\u2013\n 4\n m and length 15 m. The resistivity of the \nmaterial from which the wire is made is 4.8 \u00d7 10\u20137\n \u020d m. \n \nTwelve strands of this wire are connected in parallel to make a cable. \n \nWhat is the resistance of the cable? \n \n \n \nA \n2160\n\u03c0\n\u020d \n \nB \n180\n\u03c0 \u020d \n \nC \n15\n\u03c0 \u020d \n \nD \n\u03c0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15 \u020d \n \nE \n\u03c0\n180 \u020d \n \nF \n\u03c0\n2160 \u020d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nA ray of light is directed into a semicircular transparent block, entering at P. The direction of the \nray is adjusted until it strikes the centre of the flat face XY of the block at the critical angle and \nreflects to Q as shown. \n \n \nnormal\nair\nQ\nY\nX\nP\n60\u00b0\n60\u00b0\n30\u00b0\n30\u00b0\n \n \nThe length of XY is L. \n \nThe speed of light in air is c. \n \nWhat is the time taken by the light to travel from P to Q in the block? \n \n \n \nA \nc\n2\n3\nL\n \n \nB \nc\nL \n \nC \n3\n2\nc\nL \n \nD \nc\n3\nL\n \n \nE \nc\nL\n2\n \n \nF \n3\n4\nc\nL",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 11,
+    "text": "11",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \nA solid cube with sides of length 20 cm is made from material with density 2000 kg m\u20133. The \ncube is suspended, in equilibrium, from an initially unstretched spring, and this results in the \nspring gaining strain energy of 3.2 J. \n \nWhat is the spring constant of the spring? \n \n(gravitational field strength = 10 N kg\u20131; the spring obeys Hooke\u2019s law) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 N m\u20131 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 80,
+    "text": "80 N m\u20131 \n \nC \n400 N m\u20131 \n \nD \n800 N m\u20131 \n \nE \n4000 N m\u20131 \n \nF \n8000 N m\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \nA projectile is fired upwards from the ground at an angle of 60\u00b0 to the vertical at a speed of",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 m s\u20131. \n \nIt travels a horizontal distance d and lands with a downwards vertical component of velocity of \n4.0 m s\u20131 on ground that is height h above the starting point of the projectile. \n \nWhat are d and h ? \n \n(gravitational field strength = 10 N kg\u20131; assume that air resistance is negligible) \n \n \n \n \nd / m \nh / m \n \n \n \nA \n3\n0\n6.\n \n4.2 \n \n \n \nB \n3\n0\n6.\n \n5.8 \n \n \n \nC \n3\n10\n \u2013 4.0 \n4.2 \n \n \n \nD \n3\n10\n \u2013 4.0 \n14.2 \n \n \n \nE \n3\n10\n + 4.0 \n5.8 \n \n \n \nF \n3\n10\n + 4.0 \n14.2 \n \n \n \nG \n3\n14\n \n4.2 \n \n \n \nH \n3\n14\n \n5.8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 13,
+    "text": "13",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \nDiagram 1 shows the positions of nine equally spaced particles in a medium. \n \ndistance along medium / m\n0\n1\n2\n3\n4\n5\n6\n7\n8\n \n \nDiagram 1 \n \n \nDiagram 2 shows the positions of the same nine particles, at a particular time, while a \nlongitudinal wave is travelling through the medium. \n \ndistance along medium / m\n0\n1\n2\n3\n4\n5\n6\n7\n8\n \n \nDiagram 2 \n \n \nWhat is the amplitude of the wave? \n \n \n \nA \n0.4 m \n \nB \n0.5 m \n \nC \n0.6 m \n \nD \n0.7 m \n \nE \n2.0 m \n \nF \n4.0 m \n \nG \n6.0 m \n \nH \n8.0 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \nA spaceship with mass 8.0 \u00d7 104\n kg travels at constant velocity and has 1.0 \u00d7 1012\n J of kinetic \nenergy. \n \nAn external impulse of 8.0 \u00d7 107\n kg m s\u20131, lasting for 2.0 s, is applied to the spaceship acting in \nthe opposite direction to the motion of the spaceship. \n \nWhat is the average rate of loss of kinetic energy of the spaceship during the application of the \nimpulse? \n \n \n \nA \n9.5 \u00d7 1010\n W \n \nB \n1.8 \u00d7 1011\n W \n \nC \n2.2 \u00d7 1011\n W \n \nD \n3.2 \u00d7 1011\n W \n \nE \n3.6 \u00d7 1011\n W \n \nF \n7.2 \u00d7 1011\n W",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \nThe diagram shows a solid triangular prism. \n \n3x\nx\nx\nx\n \n \nThe sides of the triangular cross section of the prism are of length x. \n \nThe height of the prism is 3x. \n \nThe uniform density of the prism is \u0221. \n \nThe gravitational field strength is g. \n \nWhat is the minimum pressure the prism can exert when it rests on level ground? \n \n \n \nA \n3\u0221g \n \nB \n3\u0221gx \n \nC \n4\ng\n\u0221\n \n \nD \n4\nx\n\u0221g \n \nE \n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 g\n\u0221\n \n \nF \n4\n3\nx\n\u0221g",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 \nAn apple of mass ma is placed on a uniform metre rule with the centre of gravity of the apple at \nthe 10 cm mark. The rule is balanced on a pivot placed at the 35 cm mark. \n \nThe apple is replaced with an orange of mass mo. The rule now balances with the pivot at the",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 cm mark. \n \nWhat is the ratio \no\na\nm\nm ? \n \n \n \nA \n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nB \n5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \n \nC \n6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nD \n5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \nE \n4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nF \n5\n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 17,
+    "text": "17",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 \nA cyclist travels at a constant speed of 12 m s\u20131 on level ground. During this time the power \nneeded to maintain a constant speed is 900 W. The total weight of the cyclist and bicycle is \n850 N. \n \nThe cyclist now cycles up a slope at the same constant speed. The slope is at an angle of 30\u00b0 \nto the horizontal. \n \nWhat is the driving force on the bicycle as it travels up the slope? \n \n(Assume that the magnitude of the resistive forces is constant.) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 75,
+    "text": "75 N \n \nB \n 350 N \n \nC \n 500 N \n \nD \n(\n)\n75\n3\n425\n\u2212\nN \n \nE \n 775 N \n \nF \n(\n)\n75\n3\n425\n+\nN \n \nG \n 925 N",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 11,
+    "text": "11 \nThree identical resistors can be combined in four different arrangements. \n \nOne of the arrangements has a resistance of 18 \u020d. \n \nA different arrangement has a resistance of 8.0 \u020d. \n \nWhat are the resistances of the other two arrangements? \n \n(All three resistors contribute to the total resistance in all arrangements.) \n \n \n \nA \n2.0 \u020d and 4.0 \u020d \n \nB \n2.0 \u020d and 9.0 \u020d \n \nC \n4.0 \u020d and 12 \u020d \n \nD \n4.0 \u020d and 36 \u020d \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 36,
+    "text": "36 \u020d and 162 \u020d \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 81,
+    "text": "81 \u020d and 162 \u020d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 19,
+    "text": "19",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \nA 4.0 k\u020d fixed resistor is connected in series with a light dependent resistor (LDR) across a \n100 V dc power supply. \n \nThe current in the LDR is 5.0 mA. \n \nThe intensity of light falling on the LDR now decreases and the voltage across the fixed resistor \nchanges by 50%. \n \nWhat is the change in the resistance of the LDR as a result of the change in intensity? \n \n \n \nA \n8.0 k\u020d \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 k\u020d \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 k\u020d \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 k\u020d \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 32,
+    "text": "32 k\u020d \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 36,
+    "text": "36 k\u020d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 13,
+    "text": "13 \nAn elastic cord with spring constant k is fixed to two points P and Q on the diameter of a ring so \nthat the cord is taut but unstretched. The radius of the ring is r. \n \nP\nQ\ncord\n \n \nThe midpoint of the cord is then pulled and fixed to a point on the ring halfway between P \nand Q. \n \nWhat is the energy stored in the elastic cord? \n \n \n \nA \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 kr",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nB \n 2kr",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nC \n(\n)\n2\n1\n2\n2\n1\nkr\n\u2212\n \n \nD \n(\n)\n2\n1\n2\n2\nkr\n\u2212\n \n \nE \n(\n)\n2\n2\n2\n3\n2\n1\nkr\n\u2212\n \n \nF \n(\n)\n2\n2\n2\n3\n2\nkr\n\u2212",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14 \nAn object of mass M experiences a resultant force of magnitude F. The force acts in a single \nhorizontal direction with a magnitude that varies with time t according to \n \nF = X + Y t \n \nwhere X and Y are constants. \n \nThe object is at rest at t = 0. \n \nWhat is the magnitude of the momentum of the object at time t = T ? \n \n \n \nA \n(\n)\nT\nY\nX\nT\n3\n2\n+\n \n \nB \n(\n)\nT\nY\nX\nT\n+\n \n \nC \n(\n)\nT\nY\nX\nM\nT\n3\n2\n+\n \n \nD \n(\n)\nT\nY\nX\nM\nT\n+\n \n \nE \nT\nY\n2\n \n \nF \nT\nM\nY\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 22,
+    "text": "22",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15 \nA trolley of mass 3.0 kg is moving horizontally along a smooth track. Its displacement x from a \npoint at time t is given by the equation: \n \nx = 8 + 4t + 2t 2 \n \nwhere x is in metres and t is in seconds. \n \nHow much work is done on the trolley between times t = 0 and t = 5.0 s? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 J \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24 J \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 78,
+    "text": "78 J \n \nD \n270 J \n \nE \n840 J \n \nF \n864 J \n \nG \n936 J",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 23,
+    "text": "23",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nThe diagram shows a ray of light passing through three mediums, P, Q and R. The boundaries \nbetween the three mediums are parallel. \n \n \n45\u00b0\n\u03b8\nR\nQ\nP\n \n \n[diagram not to scale] \n \nThe ratio of the speed of light in medium P to the speed of light in medium Q is 2 :",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nThe ratio of the speed of light in medium Q to the speed of light in medium R is 3 :",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \nWhat is the value of sin \u0219 ? \n \n \n \nA \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nB \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \nC \n6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \nD \n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nE \n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15 \n \nF \n6\n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 17,
+    "text": "17 \nWater in a wide river flows at a constant speed of 0.50 m s\u22121. A swimmer swims around a \nsquare path of side 30 m marked out by 4 posts R, S, T and U which are fixed to the river bed, \nas shown. \n \nThe swimmer has a constant speed of 1.0 m s\u22121 relative to the water. \n \nriver",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 m\n0.50 m s\u20131\nS\nT\nU\nR\n \n \nHow long does it take for the swimmer to swim around the square path once? \n \n \n \nA \n(60 + 24",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 ) s \n \nB \n(60 + 40",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 ) s \n \nC \n(80 + 24",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 ) s \n \nD \n(80 + 40",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 ) s \n \nE \n120 s \n \nF \n140 s",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nThe stress in a steel cable increases with time and is then maintained at a constant value, as \nshown. The wire does not reach its limit of proportionality.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 \ntime\nstress / Pa\n8.0 \u00d7 108\n \n \nThe table shows properties of the steel used in the cable and the dimensions of the cable. \n \nlength / m \ncross-sectional area / m2 \nYoung modulus / Pa \n4.0 \n2.0 \u00d7 10\u22124 \n2.0 \u00d7 1011 \n \nHow much work was done to stretch the cable? \n \n \n \nA \n320 J \n \nB \n1.28 kJ \n \nC \n2.56 kJ \n \nD \n320 kJ \n \nE \n640 kJ \n \nF \n1.60 MJ \n \nG \n6.40 MJ",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 26,
+    "text": "26",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 19,
+    "text": "19 \nThe following graph shows how the displacement of an object travelling along a straight, \nhorizontal track varies with time. \n \ntime\ndisplacement\n0\n0\n \n \nWhich graph shows the velocity of this object against displacement? \n \n \n \nA \nvelocity\ndisplacement\n0\n0\nB \nvelocity\ndisplacement\n0\n0\n \n \n \n \n \n \nC \nvelocity\ndisplacement\n0\n0\nD \nvelocity\ndisplacement\n0\n0\n \n \n \n \n \n \nE \nvelocity\ndisplacement\n0\n0\nF \nvelocity\ndisplacement\n0\n0\n \nG \nvelocity\ndisplacement\n0\n0\nH \nvelocity\ndisplacement\n0\n0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 27,
+    "text": "27",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \nA cell has emf E and internal resistance r that varies with current I according to: \n \nr = kI 2 \n \nwhere k is a constant. \n \nA variable resistor is connected to the terminals of the cell. The resistance of the variable \nresistor is adjusted. \n \nWhich expression gives the resistance of the variable resistor, in terms of k and E, that causes \nmaximum power dissipation in it? \n \n \n \nA \n3\n1\n2\n2\n3\n\u00b8\u00b8\n\u00b9\n\u00b7\n\u00a8\u00a8\n\u00a9\n\u00a7 E\nk\n \n \nB \n3\n1\n2\n4\n3\n\u00b8\u00b8\n\u00b9\n\u00b7\n\u00a8\u00a8\n\u00a9\n\u00a7 E\nk\n \n \nC \n3\n1\n2\n9\n3\n\u00b8\u00b8\n\u00b9\n\u00b7\n\u00a8\u00a8\n\u00a9\n\u00a7 E\nk\n \n \nD \n3\n1\n2\n16\n3\n\u00b8\u00b8\n\u00b9\n\u00b7\n\u00a8\u00a8\n\u00a9\n\u00a7 E\nk\n \n \nE \n(\n)3\n1\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 E\nk\n \n \nF \n(\n)3\n1\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 E\nk\n \n \nG (\n)3\n1\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 E\nk\n \n \nH \n(\n)3\n1\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 E\nk",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 28,
+    "text": "28 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 29,
+    "text": "29 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART Y Chemistry",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21 \nThe table gives standard enthalpy change data measured at 25 \u00b0C. \n \nreaction \nstandard enthalpy change / kJ mol\u20131 \nH(g) + Br(g) \u013a HBr(g) \n\u2013 366 \nH(g) + Br(g) \u013a H+(g) + Br \u2013(g) \n+ 968 \nHBr(g) \u013a H+(aq) + Br \u2013(aq) \n\u2013 92 \n \n \nWhat is the standard enthalpy change for the following reaction at 25 \u00b0C? \n \nH+(g) + Br \u2013(g) \u013a H+(aq) + Br\u2013(aq) \n \n \n \nA \n\u2013 510 kJ mol\u20131 \n \nB \n+ 510 kJ mol\u20131 \n \nC \n\u2013 694 kJ mol\u20131 \n \nD \n+ 694 kJ mol\u20131 \n \nE \n\u20131242 kJ mol\u20131 \n \nF \n+1242 kJ mol\u20131 \n \nG \n\u20131426 kJ mol\u20131 \n \nH \n+1426 kJ mol\u20131",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 31,
+    "text": "31",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 22,
+    "text": "22 \nAlpha-linolenic acid is a polyunsaturated straight-chain carboxylic acid. \n \n0.001 mol of the acid reacts exactly with 15 cm3 of 0.2 mol dm\u20133 aqueous bromine. \n \nAlpha-linolenic acid contains 18 carbon atoms per molecule. \n \nWhich of the following is a formula for the acid? \n \n \n \nA \nC17H35COOH \n \nB \nC17H34COOH \n \nC \nC17H33COOH \n \nD \nC17H32COOH \n \nE \nC17H31COOH \n \nF \nC17H30COOH \n \nG \nC17H29COOH \n \nH \nC17H28COOH",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 32,
+    "text": "32",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 23,
+    "text": "23 \n25.0 g of compound X contains 9.75 g of potassium, 0.25 g of hydrogen and 12.0 g of oxygen. \n \nWhen heated strongly, compound X produces a gas that turns limewater cloudy. \n \nThe chemical formula of X is the same as its empirical formula. \n \nCompound X is the only product formed between substance Y and two further substances. One \nof these is the fourth most abundant gas in clean dry air, and the other changes the colour of \nanhydrous copper(II) sulfate from white to blue. \n \nWhich of the following could be the identity of substance Y? \n \n(Ar values: H = 1; C = 12; O = 16; K = 39) \n \n \n \nA \nK \n \nB \nK2CO3 \n \nC \nK2O3 \n \nD \nKHCO3 \n \nE \nCH3COOK",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 33,
+    "text": "33",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24 \nStrontium (Sr) is a Group 2 metal. \n \nStrontium hydride is an ionic compound made up of strontium and hydrogen only. \n \nWhen a small mass of strontium hydride is added to 180 g of water in an insulated container \nand stirred, the temperature of the water rises by 25 \u00b0C and hydrogen gas is given off. \n \nAssume that: \n \n \n\u2022 the standard enthalpy change of the reaction is \u2013 360 kJ mol\u00ed1 of strontium hydride. \n \n \n\u2022 the specific heat capacity of water (and the solution formed) is 4 J g\u00ed1\n \u00b0C\u00ed1. Ignore any \n \n change in mass of the water due to the reaction. \n \n \n\u2022 all heat is transferred to the water only. \n \n \n\u2022 all measurements are made at atmospheric pressure, with all reactants and products \n \n in their standard states. \n \n \n\u2022 one mole of a gas occupies 24 dm3 at room temperature and pressure. \n \nWhat is the maximum volume of hydrogen (measured at room temperature) that could be \nreleased? \n \n \n \nA \n1.20 dm3 \n \nB \n1.80 dm3 \n \nC \n2.40 dm3 \n \nD \n240 dm3 \n \nE \n480 dm3 \n \nF \n2400 dm3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 34,
+    "text": "34",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 25,
+    "text": "25 \nElement X forms the most soluble hydroxide of the hydroxides of the Group 2 elements in the \nrange Mg to Ba.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 50,
+    "text": "50 cm3 of a 0.2 mol dm\u20133 aqueous solution of an acid Y is exactly neutralised by 400 cm3 of a \n0.05 mol dm\u20133 aqueous solution of potassium hydroxide. \n \n100 cm3 of a 0.1 mol dm\u20133 aqueous solution of Y is titrated with an aqueous solution of the \nhydroxide of X until the acid is exactly neutralised. \n \nWhich statement about one product of the titration could be correct? \n \n \n \nA \n0.005 mol of barium chloride is formed. \n \nB \n0.05 mol of barium chloride is formed. \n \nC \n0.005 mol of magnesium chloride is formed. \n \nD \n0.05 mol of magnesium chloride is formed. \n \nE \n0.01 mol of barium sulfate is formed. \n \nF \n0.1 mol of barium sulfate is formed. \n \nG \n0.01 mol of magnesium sulfate is formed. \n \nH \n0.1 mol of magnesium sulfate is formed.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 35,
+    "text": "35",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 26,
+    "text": "26 \nIn the presence of a suitable catalyst, 30.0 cm3 of a 0.10 mol dm\u20133 aqueous solution of Na2C2O4 \nreacts exactly with 40.0 cm3 of a 0.15 mol dm\u20133 aqueous solution of Ce(SO4)2. \n \nThe only products of the reaction are another cerium salt, a different water-soluble salt and \ncarbon dioxide. \n \nWhat is the cerium ion formed by this reaction? \n \n \n \nA \nCe+ \n \nB \nCe2+ \n \nC \nCe3+ \n \nD \nCe4+ \n \nE \nCe5+",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 36,
+    "text": "36",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 27,
+    "text": "27 \nConsider all of the structural isomers of C4H9Br and the ways that they could react with \nhydroxide ions from aqueous sodium hydroxide. \n \nHow many different organic products (including all structural and E/Z isomers only) containing \nfour carbons could be made? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \n \nF \n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 37,
+    "text": "37",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 28,
+    "text": "28 \nIn which of the following conversions does the stated bond angle decrease?",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nhydrogen\u2013nitrogen\u2013hydrogen bond angle in the conversion from NH3 to NH4\n+",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nfluorine\u2013iodine\u2013fluorine bond angle in the conversion from IF4\n\u2013 to IF6\n+",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nchlorine\u2013aluminium\u2013chlorine bond angle in the conversion from AlCl 3 to AlCl 4\n\u2013 \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 38,
+    "text": "38",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 29,
+    "text": "29 \nEthanol combines with ethanoic acid to form ethyl ethanoate according to the following \nreaction. \n \nC2H5OH(l) + CH3COOH(l) \u0596\u0003 CH3COOC2H5(l) + H2O(l) \u01fbH = \u2013 6 kJ mol\u20131 at 25 \u00b0C \n \nA mixture of 9.2 g ethanol, 12 g ethanoic acid and 8.8 g ethyl ethanoate is allowed to react and \nreach equilibrium. \n \nThe resulting equilibrium mixture is found to contain 4.8 g ethanoic acid at 25 \u00b0C and Kc was \ncalculated. \n \nWhat will happen to the value of Kc when the temperature is increased from 25 \u00b0C to 45 \u00b0C? \n \n(Mr values: C2H5OH = 46; CH3COOH = 60; CH3COOC2H5 = 88; H2O = 18) \n \n \n \nA \nIt increases from an initial value of 0.242 \n \nB \nIt decreases from an initial value of 0.242 \n \nC \nIt increases from an initial value of 1.833 \n \nD \nIt decreases from an initial value of 1.833 \n \nE \nIt increases from an initial value of 2.750 \n \nF \nIt decreases from an initial value of 2.750 \n \nG \nIt increases from an initial value of 4.125 \n \nH \nIt decreases from an initial value of 4.125",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 39,
+    "text": "39",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 \nCompound Z is known to have percentage composition by mass C: 80.0%, H: 6.7%, O: 13.3%. \nThe mass spectrum of compound Z is given showing the mass-to-charge ratio (m / z) of the \nmolecular ion and its fragments. \n \n \n \n \n \n \n \nWhich of the following could be the structure of Z? \n \n(Ar values: C = 12; H = 1; O = 16) \n \n \n \n \nA \n \nB \n \n \n \n \n \n \n \nC \nD \n \n \n \n \n \n \n \nE \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 31,
+    "text": "31 \nThe time it takes the ion \n+\nH\n1\n1\n to travel through the flight tube in a time-of-flight mass \nspectrometer is t. \n \nHow long would it take the ion \n+\nH\n2\n1\n to travel through the same flight tube? \n \n \n \nA \nt\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n \nB \nt\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n \nC \nt\n2\n1\n \n \nD \nt\n3\n2\n \n \nE \nt\n2\n3\n \n \nF \nt",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 t \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 t",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 41,
+    "text": "41",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 32,
+    "text": "32 \nA paper coffee cup is lined with a thin layer of plastic to make it waterproof. This plastic makes \nup 5% of the mass of the cup and has the following molecular structure. \n \n \n \n960 dm3 of a gaseous hydrocarbon monomer (measured at room temperature and pressure) \nwas used to make a certain number of plastic-lined cups. \n \nIt is proposed that a more environmentally-friendly, biodegradable plastic, poly(lactic acid), \ncould be used instead in the same proportions by mass (5%). Assume that any polymerisation \nreaction has a 100% yield. \n \n \n \nWhat mass of lactic acid (Mr = 90) is required to make the same number of biodegradable \ncups? \n \n(Ar values: H = 1; C = 12; O = 16. Assume that one mole of a gas occupies 24 dm3 at room \ntemperature and pressure.) \n \n \n \nA \n896 g \n \nB \n1120 g \n \nC \n1200 g \n \nD \n1400 g \n \nE \n1500 g \n \nF \n3000 g \n \nG \n3600 g",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 42,
+    "text": "42",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 33,
+    "text": "33 \nIn which of the following pairs do both molecules possess permanent dipoles in the gaseous \nstate?",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nmethylamine (CH3NH2) and dichlorine monoxide (Cl 2O)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \ndifluoroethyne (C2F2) and sulfur hexafluoride",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nphosphorus trichloride and xenon tetrafluoride \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 43,
+    "text": "43",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 34,
+    "text": "34 \nAt high temperatures, carbon dioxide reacts partially with solid carbon and forms the following \nequilibrium. \n \nCO2(g) + C(s) \u0596 2CO(g) \n \nIn an experiment, 1.0 mol of carbon dioxide is placed in a flask of capacity V dm3 containing no \nair and an excess of carbon. It is then heated to a high temperature where an equilibrium \nbetween carbon dioxide and carbon monoxide is established. At this temperature, x mol of \ncarbon dioxide converts to carbon monoxide and the value of the equilibrium constant, Kc, is \n2.0 mol dm\u20133. \n \nAs it is a solid, carbon is not included in the equilibrium constant expression. \n \nWhat is the relationship between the value of x and V ? \n \n \n \nA \nx = \n16\n32\n2\nV\nV\nV\n+\n+\n\u2212\n \n \nB \nx = \n4\n8\n2\nV\nV\nV\n+\n+\n\u2212\n \n \nC \nx = \n4\n8\n4\n2\n2\nV\nV +\n+\n\u2212\n \n \nD \nx = \n2\n2\n4\n2\n2\nV\nV\nV\n\u2212\n+\n\u2212\n \n \nE \nx = \nV\nV\n4\n32\n4\n2\n\u2212\n+\n\u2212",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 44,
+    "text": "44",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 35,
+    "text": "35 \nA student carried out an experiment to find the mass of the active ingredient calcium carbonate \n(Mr = 100) in an indigestion tablet. The student crushed the tablet and placed it in a beaker. \n \nThe student added 20.0 cm3 of 2.00 mol dm\u20133 hydrochloric acid, an excess, to the tablet. When \nthe reaction was complete, the reaction mixture was all transferred to a volumetric flask and \ndeionised water added to make the solution up to 250 cm3. \n \n25.0 cm3 samples of the solution in the volumetric flask were titrated against 0.100 mol dm\u20133 \nsodium hydroxide solution. The mean titre was 26.40 cm3 of sodium hydroxide solution. \n \nAssuming that all other ingredients in the tablet are inert, what is the mass of calcium \ncarbonate in the tablet? \n \n \n \nA \n0.264 g \n \nB \n0.680 g \n \nC \n1.36 g \n \nD \n1.87 g \n \nE \n2.72 g",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 45,
+    "text": "45",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 36,
+    "text": "36 \nEllingham diagrams show how the quantity \u01fbG for a reaction varies over a range of \ntemperatures. \n \nThe \u01fbG values for different reactions can be combined using Hess\u2019s law. \n \nFor a reaction to be able to occur, the overall value of \u01fbG must be less than zero. \n \n \n \n \nUsing the Ellingham diagram shown, which one of the following statements is correct? \n \n \n \nA \nNickel can reduce tin(IV) oxide at 300 \u00b0C. \n \nB \nCarbon can reduce chromium(III) oxide at 1500 \u00b0C forming carbon dioxide and chromium. \n \nC \nChromium(III) oxide and nickel oxide will decompose to their elements at all the \ntemperatures shown. \n \nD \nChromium will react with steam at all the temperatures shown. \n \nE \nNickel oxide can be reduced by carbon at 300 \u00b0C forming carbon monoxide and nickel.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 46,
+    "text": "46",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 37,
+    "text": "37 \nSO3\n2\u2013(aq) ions can cause the reduction of VO3\n\u2013(aq) ions to VO2+(aq) in acidic solution. During \nthis process, the SO3\n2\u2013(aq) ions are oxidised to SO4\n2\u2013(aq) ions. \n \nWhat is the minimum volume of 1.00 mol dm\u20133 sulfuric acid required to provide sufficient \nhydrogen ions to allow Na2SO3(aq) to reduce 40.0 cm3 of 0.100 mol dm\u20133 VO3\n\u2013(aq) ions \ncompletely to VO2+(aq)? \n \n \n \nA \nno sulfuric acid is required \n \nB \n4.0 cm3 \n \nC \n6.0 cm3 \n \nD \n6.6 cm3 \n \nE \n8.0 cm3 \n \nF \n12.0 cm3 \n \nG \n13.2 cm3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 47,
+    "text": "47",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 38,
+    "text": "38 \nSodium chloride is an ionic compound which forms highly ordered crystals of ions when in the \nsolid state. This is called a lattice. \n \nA lattice can be thought of as a stack of layered planes of ions. \n \nIn the following diagrams, the shaded and non-shaded circles represent sodium and chloride \nions, respectively. \n \nWhich of the following is not a representation of a plane present in a sodium chloride lattice? \n \n \n \n \nA \n \nB \n \n \n \n \n \n \n \nC \n \nD \n \n \n \n \n \n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 48,
+    "text": "48",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 39,
+    "text": "39 \nWhen bromine reacts with (Z)-pent-2-ene, an intermediate called a bromonium ion forms. This \nis then attacked by the bromide ion to give the 2,3-dibromopentane addition product. \n \nThe mechanism is shown: \n \n \n \nIn a different reaction (E)-but-2-ene is reacted with bromine in an addition reaction. This \nreaction also occurs via a bromonium ion intermediate. \n \nWhich of the following structures show the final product of the reaction of (E)-but-2-ene with \nbromine? \n \nC\nC\nBr\nBr\nH3C\nCH3\nH\nH\nC\nC\nBr\nBr\nH3C\nH\nH\nCH3\nC\nC\nBr\nBr\nH3C\nH\nH\nCH3\nC\nC\nBr\nBr\nH3C\nCH3\nH\nH\n1\n2\n3\n4\n \n \n \n \nA \nstructures 1 and 2 only \n \nB \nstructures 1 and 3 only \n \nC \nstructures 1 and 4 only \n \nD \nstructures 2 and 3 only \n \nE \nstructures 2 and 4 only \n \nF \nstructures 3 and 4 only \n \nG \nstructures 1, 2, 3 and 4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 49,
+    "text": "49",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \nBoth oxygen and carbon monoxide bind reversibly to haemoglobin. \n \nFor the purposes of this question, assume that only one molecule of either oxygen or \ncarbon monoxide can bind to haemoglobin at any one time. \n \nWithin the human body, carbon monoxide is 200 times more effective than oxygen in binding to \nhaemoglobin available in human blood. The binding efficiency is the equilibrium constant for \nthis process and you may assume that the system is at equilibrium. \n \nThe effects of carboxy-haemoglobin in humans can typically be observed when it reaches 5% \nof the concentration of oxy-haemoglobin in their blood. \n \nAssume that oxygen and carbon monoxide have the same molar solubility in blood. \n \nWhat is the minimum proportion of carbon monoxide molecules in dry air, expressed as parts \nper million (ppm), that will result in a 5% ratio of carboxy-haemoglobin molecules to \noxy-haemoglobin molecules in blood? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 ppm \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21 ppm \n \nC \n52.5 ppm \n \nD \n210 ppm \n \nE \n1000 ppm \n \nF \n5250 ppm",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 50,
+    "text": "50 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nBLANK PAGE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 51,
+    "text": "51 \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nPART Z Biology",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 52,
+    "text": "52",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 41,
+    "text": "41 \nThe diagram shows the inheritance of a characteristic controlled by a single gene. Two \norganisms reproduce sexually and have four offspring, one offspring at a time. \n \nKey\ndominant allele\nrecessive allele\nT\n \n \nIndividual T goes on to have a single offspring with an unrelated individual who has a recessive \nphenotype. The offspring of T has a dominant phenotype. \n \nWhat is the ratio of dominant to recessive alleles for all of the individuals in this diagram, as \nwell as T\u2019s mate and their one offspring? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 : 5 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 : 3 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 : 1 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 : 7 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 : 1 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 : 3 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 : 1 \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 : 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 53,
+    "text": "53",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 42,
+    "text": "42 \nThe average healthy mature red blood cell contains 200 000 000 molecules of haemoglobin. \n \nIf a red blood cell is saturated with dissolved oxygen, each haemoglobin molecule carries a \ntotal of 4 molecules of oxygen. \n \nHaemoglobin molecules in red blood cells in the pulmonary artery are on average 65% \nsaturated with oxygen. \n \nHow many oxygen molecules are carried by the average red blood cell in the pulmonary artery, \nand is the level of oxygen saturation greater in the aorta or the pulmonary artery? \n \n \n \n \nnumber of oxygen molecules carried \nlevel of oxygen saturation \n \n \nA \n8.0 \u00d7 108 \naorta > pulmonary artery \n \n \nB \n8.0 \u00d7 108 \naorta < pulmonary artery \n \n \nC \n5.2 \u00d7 108 \naorta > pulmonary artery \n \n \nD \n5.2 \u00d7 108 \naorta < pulmonary artery \n \n \nE \n2.8 \u00d7 108 \naorta > pulmonary artery \n \n \nF \n2.8 \u00d7 108 \naorta < pulmonary artery \n \n \nG \n1.3 \u00d7 108 \naorta > pulmonary artery \n \n \nH \n1.3 \u00d7 108 \naorta < pulmonary artery",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 54,
+    "text": "54",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 43,
+    "text": "43 \nGraphs P and Q were plotted using data collected in an investigation into the effect of \ntemperature from 0 to 60 \u00b0C on an enzyme-controlled reaction. All other variables were \ncontrolled. \n \n \n \nWhich two rows correctly identify the variables plotted on the horizontal and vertical axes of \nthese graphs? \n \nrow \ngraph \nhorizontal axis \nvertical axis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nP \ntemperature \ntime taken for reaction",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nP \ntemperature \nrate of reaction",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nP \ntime taken for reaction \ntemperature",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \nP \ntime taken for reaction \nrate of reaction",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \nQ \ntemperature \ntime taken for reaction",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \nQ \ntemperature \nrate of reaction",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \nQ \ntime taken for reaction \ntemperature",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \nQ \ntime taken for reaction \nrate of reaction \n \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 6 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 7 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 5 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 6 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 and 5 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 and 8 \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 and 7 \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 and 8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 55,
+    "text": "55",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 44,
+    "text": "44 \nA recessive condition is found within a human population. There were 5000 births in this \npopulation within one year. Of these births, 8% had the condition and 32% were homozygous \ndominant. \n \nOne healthy cheek cell is analysed from each person born in this year. \n \nHow many recessive alleles and dominant alleles are present? \n \n(Assume that no new mutations occur.) \n \n \n \n \nrecessive alleles \ndominant alleles \n \n \n \nA \n400 \n1600 \n \n \n \nB \n400 \n4600 \n \n \n \nC \n3400 \n1600 \n \n \n \nD \n3400 \n4600 \n \n \n \nE \n3400 \n6200 \n \n \n \nF \n3800 \n1600 \n \n \n \nG \n3800 \n4600 \n \n \n \nH \n3800 \n6200",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 56,
+    "text": "56",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 45,
+    "text": "45 \nA study was carried out into the effect of liver protein Z on the risk of developing coronary heart \ndisease, which is often associated with high blood cholesterol. Z binds to another protein in the \nmembrane of liver cells that transports cholesterol from the blood into cells. This binding blocks \nthe function of the transport protein. \n \nBlood cholesterol levels were measured in three different groups of people. One group was a \ncontrol group and contained no mutations in the gene for Z. The second group all had the \nsame mutation in the gene (called mutation 1). This mutation occurs in the final section of the \ngene. A third group all had a different mutation in the gene (called mutation 2), but this was in \nthe first section of the gene. The results are shown in the graph. \n \nblood cholesterol concentration / mg dL\u20131\n0\n5\n10\n15\n20\n25\n30\n35\n0-25\n26-50\n51-75\n76-100\n101-125\n126-150\n151-175\n176-200\n201-225\n226-250\n251-275\n276-300\npercentage of people \nwithin each group\nKey\nmutation 2\nmutation 1\ncontrol\n \nWhich of the following can be correctly concluded from these results?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nChanges in the first section of protein Z stop it from binding to the cholesterol \ntransport protein.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nMutation 1 could result in an increase in the concentration of cholesterol inside liver \ncells.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nOf the three groups, people in the control group are least likely to develop coronary \nheart disease. \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 57,
+    "text": "57",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 46,
+    "text": "46 \nEqual-sized, rectangular blocks of a raw potato were cut and their mass measured. The blocks \nwere then placed in equal volumes of different concentrations of sucrose solutions for the same \nlength of time. All other variables were kept constant. \n \nAfter this time, the blocks were blotted on paper and then their masses were measured again. \nThe percentage change in mass of each block was calculated and the results are shown in the \ngraph. \n \n \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nIn 0.10 mol dm\u20133 sucrose solution, there was some movement of sucrose molecules \nby osmosis across the membrane out of the potato block.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nIf the initial mass of the block in 0.25 mol dm\u20133 sucrose solution is 1.800 g then its \nfinal mass will be 1.764 g.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nRepeating the experiment at a temperature that was 10 \u00b0C lower should not affect the \npoint at which the graph crosses the x-axis. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 58,
+    "text": "58",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 47,
+    "text": "47 \nThe table shows the sources of water lost in one particular day from a healthy human. \n \npercentage of the water that is lost \nsource",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nexhaled air",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \nfaeces",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \nsweat",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60 \nurine \n \nOn another day, the percentage of water lost in urine decreased by a sixth. \n \nThe percentage of water lost in exhaled air and in faeces remained the same. \n \nThe total volume of water lost was 2500 cm3 on both days. \n \nWhat is the percentage increase in the volume of sweat produced and the reason for the \ndecrease in the volume of urine? \n \n \n \n \npercentage increase in the \nvolume of sweat \nreason for the decrease in the \nvolume of urine \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 33,
+    "text": "33 \na decrease in ADH \n \n \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 33,
+    "text": "33 \nan increase in ADH \n \n \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 50,
+    "text": "50 \na decrease in ADH \n \n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 50,
+    "text": "50 \nan increase in ADH \n \n \n \nE \n150 \na decrease in ADH \n \n \n \nF \n150 \nan increase in ADH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 59,
+    "text": "59",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 48,
+    "text": "48 \nThe diagram shows the production of sperm cells in a healthy mammal. Cell P divides. One \ndaughter cell goes on to replace cell P, and the other daughter cell is called Q in the diagram. \n \nreplaces\ncell P\nmitosis\nP\nQ\nR\nS\nT\nU\nV\nW\n1st division\nof meiosis\n2nd division\nof meiosis\ndevelop into mature\nsperm cells\n \n \nEach mitotic cell cycle takes 14 hours. \n \nThe diploid number of chromosomes in this mammal is 68. \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nCell P is a type of stem cell.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nCells T, U, V and W each contain 23 chromosomes.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nIn 112 hours, 128 replacements of cell P are made. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 49,
+    "text": "49 \nIn the disease emphysema the walls of the alveoli break down so that several smaller alveoli \nfuse to form a single large alveolus. \n \nThe diagram shows a model of the effect of emphysema on spherical alveoli.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 healthy alveoli",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 alveolus from a \nperson with emphysema\nradius of each alveolus = x\nradius of alveolus = 2x\n \n \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nThe surface area-to-volume ratio of the four healthy alveoli is twice that of the single \nemphysema alveolus.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nFor the same concentration gradient, the rate of diffusion of oxygen into the blood \nfrom a single healthy alveolus will be greater than for a single emphysema alveolus.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nOxygen molecules will only move across the alveolus wall from the inside to the \noutside of an alveolus. \n \n \n(surface area of a sphere = \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 r\n\u03c0\n; volume of a sphere = \n3\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 r\n\u03c0\n, where r is the radius) \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 61,
+    "text": "61",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 50,
+    "text": "50 \nExperiments were carried out to investigate the rate at which products were formed by two \ndigestive enzymes, P and Q over a period of 30 minutes. \n \nP and Q have similar optimum conditions for function. Only the enzyme and its substrate were \nchanged between each reaction. \n \nThe results are shown in the graphs. \n \n \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nDuring the first 10 minutes, the rate of reaction (mg min\u20131) with enzyme P is double \nthe rate with enzyme Q.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nA possible explanation for the difference in the shape between the graphs is that the \nproduct of the reaction catalysed by P significantly alters the pH of the solution.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nThe percentage change in mass of product formed by enzyme Q is more than",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 times greater between 6.5 and 15 minutes than it is between 24 and 29 minutes. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 62,
+    "text": "62",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 51,
+    "text": "51 \nAn experiment was performed to investigate whether capillary action could account for the \nmovement of water from roots to leaves in a plant. \n \nThe diagram shows apparatus used to model this effect using narrow glass capillary tubing. \nThe inner diameter of the capillary tubing is 0.5 mm. \n \nheight of water recorded \nafter 2 minutes\nglass capillary tubing\nwater rises in capillary tubing\nbeaker of water\n \n \nThe initial height of the water in the tubing was recorded as 0.2 cm. After 2 minutes the height \nwas recorded as 1.8 cm. \n \nThe model assumes the rate of movement is constant. \n \nWhat is the rate of water movement in mm3\n min\u20131 and what vessel type transfers water from \nroots to leaves in a real plant? \n \n \n \n \nrate of water movement / mm3\n min\u20131 \nvessel type \n \n \n \nA \n0.5\u028c \nxylem \n \n \n \nB \n0.5\u028c \nphloem \n \n \n \nC \n\u028c \nxylem \n \n \n \nD \n\u028c \nphloem \n \n \n \nE \n2\u028c \nxylem \n \n \n \nF \n2\u028c \nphloem \n \n \n \nG \n4\u028c \nxylem \n \n \n \nH \n4\u028c \nphloem",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 63,
+    "text": "63",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 52,
+    "text": "52 \nTwo healthy human cells with no mutations were modelled as shown in the diagrams below. \nThe cells were not dividing. Both cells contain a single nucleus and are diploid. \n \nliver cell",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \u03bcm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \u03bcm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \u03bcm\nwhite blood cell\ndiameter = 6 \u03bcm\n \n \n[diagram not to scale] \n \n \nA study estimates that mitochondria account for 12% of the volume of both types of cells. \n \nUsing this estimate for all cells, which of the following is/are correct? \n \n(The volume of a sphere is given by 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \u028c r 3, where r is the radius. Use the value 3.14 for \u028c )",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nThe larger number of mitochondria in the liver cell will produce more lactic acid than \nthose in the white blood cell.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nThe liver cell is larger and so will contain a greater mass of nuclear DNA than the \nwhite blood cell.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nThe mitochondria in the white blood cell occupy 14 \u00b5m3 to the nearest whole number. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 64,
+    "text": "64",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 53,
+    "text": "53 \nBacterial cells were grown in a laboratory experiment and the number of cells was recorded at \nregular intervals. The bacteria in this experiment reproduced asexually using a form of cell \ndivision. The growth medium was sterilised before it was used and the vessel containing the \nbacterial cells was sealed so that no other cells could enter. \n \nThe graph shows the results of the experiment. \n \n \n \nWhich of the following statements is/are correct?",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nAfter 4 hours, assuming that the rate of growth continues on the same curve, the \npredicted number of cells in the experiment is 1920.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nDuring the 80 minutes after the start of the experiment there was a 400% increase in \nthe number of cells.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nThe growth curve is of the form y = 30k x \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 65,
+    "text": "65",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 54,
+    "text": "54 \nThree samples of cells were taken from the same healthy human: one sample from the blood, \none sample from a kidney, and one sample from a testis. \n \nEach sample contained five cells, three of one type and two of a different type. None of the \ncells were dividing. \n \nIn each sample, the mean number of chromosomes per cell was calculated. The results are \nshown in the table. \n \nsample \nmean number of chromosomes \nper cell",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n18.4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n32.2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n46.0 \n \nWhich row in the following table identifies the samples from the kidney and the testis? \n \n(Assume that no mutations occur in any of the cells in the samples.) \n \n \n \n \nkidney \ntestis \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \n \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \n \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n \n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n \n \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 66,
+    "text": "66",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 55,
+    "text": "55 \nThe graph shows the mean mass of DNA of a population of cells dividing at the same time, \nmeasured in femtograms (10\u201315\n g) per cell. \n \n0\n10\n20\n30\n40\ntime / hours\n0\n5\n10\n15\n20\n25\nmean mass of\nDNA per cell / fg\n \n \nWhich row in the table is correct? \n \n \n \n \ntype of cell division \ntaking place \nrate of DNA synthesis \nper cell between",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 and 17 hours / fg h\u20131 \nperiod that could be part \nof interphase \n \n \nA \nmeiosis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 to 17 hours \n \n \nB \nmeiosis \n0.5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 to 17 hours \n \n \nC \nmeiosis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 to 24 hours \n \n \nD \nmeiosis \n0.5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 to 24 hours \n \n \nE \nmitosis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 to 17 hours \n \n \nF \nmitosis \n0.5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 to 17 hours \n \n \nG \nmitosis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 to 24 hours \n \n \nH \nmitosis \n0.5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 to 24 hours",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 67,
+    "text": "67",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 56,
+    "text": "56 \nA plasmid contains genes Q and R. Gene Q codes for resistance to the antibiotic q. Gene R \ncodes for resistance to antibiotic r. \n \nThe plasmid was genetically engineered to contain the human gene P. This gene was inserted \ninto gene Q in the plasmid preventing gene Q from working. \n \nPLASMID\nsection of\ngene Q\nsection of\ngene Q\ngene P\ngene R\n \n \nA mixture of the original plasmid and the genetically-engineered plasmid were available to be \ntaken up by bacterial cells. The bacterial cells took up either the original plasmid, or the \ngenetically-engineered plasmid, or neither of the plasmids. \n \nAll these bacteria were allowed to grow and form colonies on agar plates in the absence of \nboth antibiotics.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 colonies formed. \n \nCells from each of the 40 colonies were grown on three agar plates with different contents. \n \nThe table shows the number of colonies that grew on each of the three plates. \n \ncontents of agar plate \nnumber of bacterial colonies able to \nsurvive on the agar plate \nno antibiotic",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \nantibiotic q only",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \nantibiotic r only",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24 \n \n \nWhat percentage of the original 40 bacteria now contain gene P? \n \n(Assume that no mutations occur.) \n \n \n \nA \n16% \n \nB \n20% \n \nC \n33% \n \nD \n40% \n \nE \n60% \n \nF \n80%",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 68,
+    "text": "68",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 57,
+    "text": "57 \nOne form of genetic variation within a population depends on the number of alleles per gene. \n \nFour populations of the same animal species each have the same gene in the same position \non a chromosome. \n \nEach population has a different number of alleles for this gene as shown in the table. \n \npopulation \nnumber of alleles for the same gene \nP",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nQ",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \nR",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \nS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \nAssume that in the heterozygous state, the genotype is the same whether an allele is inherited \nfrom the mother or the father. \n \nWhich of the following is/are correct for this gene? \n \n(Assume that no mutations occur in this gene.)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nThe theoretical number of different genotypes in population S is 6 more than in \npopulation R.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \ntheoretical number of different homozygous genotypes in population \nP \nQ \nR \nS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nIn populations P, Q and R, there are more different homozygous combinations than \nthere are different heterozygous combinations. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 69,
+    "text": "69",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 58,
+    "text": "58 \nThe diagram shows a cylinder with two compartments, X and Y, separated by a sliding partially \npermeable membrane which is impermeable to glucose. \n \nY\nX\nsliding \nmembrane\n \n \nCompartment X contains 100 mmol dm\u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 glucose solution and compartment Y contains \n200 mmol dm\u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 glucose solution. The initial volume of the solution in each of the two \ncompartments is the same, 10 cm3. \n \nAfter three hours, there is no further change in the volumes of X and Y. \n \nWhich of the following statements describe(s) the results of the experiment?",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nThe volume of Y increases during the first three hours.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nDuring the first three hours, the average rate of osmosis is 9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 cm3 per hour.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nDuring the first three hours, the average rate of change in glucose concentration in \ncompartment X is 50 mmol dm\u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 per hour. \n \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nG \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 70,
+    "text": "70",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 59,
+    "text": "59 \nA fertilised egg cell is spherical and has a volume of 0.12 \u00b5m3. \n \nIn the initial stages of development, the fertilised egg cell undergoes several rounds of \ncleavage. During cleavage, cells divide by mitosis but do not grow. Assume that when cells \nundergo cleavage, the daughter cells are spherical and are identical to each other. \n \nWhich of the following statements about the cells present after three rounds of cleavage is/are \ncorrect?",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nEach cell will contain 8\n1\n of the DNA present in the fertilised egg cell.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nThe volume of each cell will be 0.03 \u00b5m3.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nThe diameter of the cells is 50% of that of the fertilised egg cell. \n \n \n \n \nA \nnone of them \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 only \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 only \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 only \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 2 only \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 and 3 only \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 and 3 only \n \nH \n1, 2 and 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 71,
+    "text": "71",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60 \nThe genetic code is read in groups of three bases when coding for the synthesis of a protein. \nThe diagram shows the base triplets within DNA that correspond to specific amino acids. \n \nThe diagram is read from the inside out. For example, the base triplets CAT and CAC both \ncode for the amino acid histidine (His). \n \nGly\nPhe\nLeu\nSer\nTyr\nSTOP\nCys\nSTOP\nTrp\nLeu\nPro\nHis\nGln\nArg\nIle\nMet\nThr\nAsn\nLys\nSer\nArg\nVal\nAla\nAsp\nGlu\nG\nT\nA\nC\nA G T\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nT\nAG TCAG T C AG TCAG\nTCA\nG\nTC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nG\nT\nC\nA\nT\nC\nAG\nG\nC\n \n \n \nAssume that it is equally likely that mutations can change any base to any other base, and that \nthe probability of this resulting in a change in any particular base during one cell division is",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u00d7 10 \u2013\n 9. \n \nWhat is the probability that a triplet that codes for Met changes to code for Pro in one round of \ndivision? \n \n \n \nA \n9\n4\n \u00d7 10 \u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \n \nB \n9\n4\n \u00d7 10 \u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 \n \nC \n3\n2\n \u00d7 10 \u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \n \nD \n3\n2\n \u00d7 10 \u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \u00d7 10 \u2013",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \u00d7 10 \u2013\n 9",
+    "skipped_diagram": false
+  }
+]

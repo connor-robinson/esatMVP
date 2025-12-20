@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M6-Hard-988b75010a</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M6-Hard-988b75010a<br>
+            <strong>Schema:</strong> M6<br>
+            <strong>Difficulty:</strong> Hard<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:01:42.648878<br>
+            <strong>Token Usage:</strong> 25,272 total (9,419 prompt + 1,404 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                The function$f(x)$is defined by$$f(x) = \frac{5^x}{5^x + \sqrt{5}}$$What is the value of the following sum?$$S = \sum_{r=0}^{100} f\left(\frac{r}{100}\right)$$
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> 49.5</div>
+                <div class="option"><strong>B:</strong> 50</div>
+                <div class="option correct"><strong>C:</strong> 50.5 ✓ CORRECT</div>
+                <div class="option"><strong>D:</strong> 51</div>
+                <div class="option"><strong>E:</strong> 100</div>
+                <div class="option"><strong>F:</strong> 101</div>
+
+            </div>
+            <p><strong>Correct Answer: C</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>We examine the symmetry of the function by considering$f(x) + f(1-x)$.$$f(1-x) = \frac{5^{1-x}}{5^{1-x} + \sqrt{5}} = \frac{\frac{5}{5^x}}{\frac{5}{5^x} + \sqrt{5}}$$Multiplying the numerator and denominator by$5^x$:$$f(1-x) = \frac{5}{5 + \sqrt{5} \cdot 5^x} = \frac{5}{\sqrt{5}(\sqrt{5} + 5^x)} = \frac{\sqrt{5}}{5^x + \sqrt{5}}$$Adding this to$f(x)$:$$f(x) + f(1-x) = \frac{5^x}{5^x + \sqrt{5}} + \frac{\sqrt{5}}{5^x + \sqrt{5}} = \frac{5^x + \sqrt{5}}{5^x + \sqrt{5}} = 1$$The sum contains 101 terms corresponding to$r = 0, 1, \dots, 100$. We pair terms using the symmetry$x_r + x_{100-r} = \frac{r}{100} + \frac{100-r}{100} = 1$. The pairs are$(r=0, r=100), (r=1, r=99), \dots, (r=49, r=51)$. There are 50 such pairs, each summing to 1. The remaining middle term is at$r=50$, where$x = \frac{50}{100} = 0.5$:$$f(0.5) = \frac{5^{0.5}}{5^{0.5} + \sqrt{5}} = \frac{\sqrt{5}}{2\sqrt{5}} = 0.5$$Thus, the total sum is:$$S = (50 \times 1) + 0.5 = 50.5$$Hence the correct answer is 50.5.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>When summing a function over a symmetric interval, check if$f(x) + f(c-x)$is constant to pair terms efficiently.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrectly subtracts the middle term or miscounts pairs.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Corresponds to approximating the sum as an integral ($100 \times \int_0^1 f(x)dx = 50$) or neglecting the middle term.</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Correct. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Fencepost error; incorrectly counting 51 pairs or rounding up the middle term.</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Assumes the sum is simply the number of intervals ($N$) rather than pairs.</div>
+                <div style="margin: 10px 0;"><strong>F:</strong> Assumes the sum is the number of terms ($N+1$).</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,133 +1,107 @@
 /**
  * Multiplication question generator
+ * Levels:
+ * 1 - Single digit × single digit
+ * 2 - Multiplication tables (up to 10)
+ * 3 - Two digit × single digit
+ * 4 - Two digit × two digit
+ * 5 - Decimal multiplication
  */
 
 import { GeneratedQuestion } from "@/types/core";
-import { randomInt, generateId } from "@/lib/utils";
+import { generateId } from "@/lib/utils";
+import { pick, randomInt, randomDigit } from "./utils/random";
+import { createAnswerChecker } from "@/lib/answer-checker";
 
 export function generateMultiplication(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  const multiplyBy9 = weights?.["multiplyBy9"] || 0;
-  const multiplyBy8 = weights?.["multiplyBy8"] || 0;
-  const multiplyBy11 = weights?.["multiplyBy11"] || 0;
-  const multiplyBy5 = weights?.["multiplyBy5"] || 0;
-
-  switch (level) {
-    case 1: // Multiply by 9
-      if (multiplyBy9 > 0.5) {
-        return generateTimesNine();
-      }
-      return generateTimesNine();
-    
-    case 2: // Multiply by 8
-      if (multiplyBy8 > 0.5) {
-        return generateTimesEight();
-      }
-      return generateTimesEight();
-    
-    case 3: // Multiply by 11
-      if (multiplyBy11 > 0.5) {
-        return generateTimesEleven();
-      }
-      return generateTimesEleven();
-    
-    case 4: // Multiply by 5
-      if (multiplyBy5 > 0.5) {
-        return generateTimesFive();
-      }
-      return generateTimesFive();
-    
-    case 5: // Two digit × single digit
-      return generateTwoDigitBySingleDigit();
-    
-    case 6: // Mixed practice
-      return generateMixed();
-    
-    default:
-      return generateTimesNine();
-  }
+  if (level === 1) return generateSingleDigit();
+  if (level === 2) return generateTables();
+  if (level === 3) return generateTwoDigitBySingle();
+  if (level === 4) return generateTwoDigitByTwoDigit();
+  return generateDecimalMultiplication();
 }
 
-function generateTimesNine(): GeneratedQuestion {
-  const n = randomInt(2, 12);
+function generateSingleDigit(): GeneratedQuestion {
+  const d1 = randomDigit([1, 1, 2, 3, 4, 5, 6, 6, 7, 8]);
+  const d2 = randomDigit([1, 1, 2, 3, 4, 5, 6, 6, 7, 8]);
   
   return {
     id: generateId(),
-    topicId: "multiplication", // Will be overridden by generateQuestionForTopic
-    question: `9 × ${n}`,
-    answer: String(9 * n),
+    topicId: "multiplication",
+    question: `$${d1} \\times ${d2}$`,
+    answer: String(d1 * d2),
     difficulty: 1,
   };
 }
 
-function generateTimesEight(): GeneratedQuestion {
-  const n = randomInt(2, 12);
+function generateTables(): GeneratedQuestion {
+  const a = randomInt(1, 10);
+  const b = randomInt(1, 10);
   
   return {
     id: generateId(),
-    topicId: "multiplication", // Will be overridden by generateQuestionForTopic
-    question: `8 × ${n}`,
-    answer: String(8 * n),
+    topicId: "multiplication",
+    question: `$${a} \\times ${b}$`,
+    answer: String(a * b),
     difficulty: 2,
   };
 }
 
-function generateTimesEleven(): GeneratedQuestion {
-  const n = randomInt(10, 99);
-  
-  return {
-    id: generateId(),
-    topicId: "multiplication", // Will be overridden by generateQuestionForTopic
-    question: `11 × ${n}`,
-    answer: String(11 * n),
-    difficulty: 2,
-  };
-}
-
-function generateTimesFive(): GeneratedQuestion {
-  const n = randomInt(10, 50);
-  
-  return {
-    id: generateId(),
-    topicId: "multiplication", // Will be overridden by generateQuestionForTopic
-    question: `5 × ${n}`,
-    answer: String(5 * n),
-    difficulty: 1,
-  };
-}
-
-function generateTwoDigitBySingleDigit(): GeneratedQuestion {
+function generateTwoDigitBySingle(): GeneratedQuestion {
   const a = randomInt(10, 99);
   const b = randomInt(2, 9);
   
   return {
     id: generateId(),
-    topicId: "multiplication", // Will be overridden by generateQuestionForTopic
-    question: `${a} × ${b}`,
+    topicId: "multiplication",
+    question: `$${a} \\times ${b}$`,
     answer: String(a * b),
     difficulty: 3,
   };
 }
 
-function generateMixed(): GeneratedQuestion {
-  const type = randomInt(1, 5);
+function generateTwoDigitByTwoDigit(): GeneratedQuestion {
+  const a = randomInt(10, 99);
+  const b = randomInt(10, 99);
   
-  switch (type) {
-    case 1:
-      return generateTimesNine();
-    case 2:
-      return generateTimesEight();
-    case 3:
-      return generateTimesEleven();
-    case 4:
-      return generateTimesFive();
-    default:
-      return generateTwoDigitBySingleDigit();
-  }
+  return {
+    id: generateId(),
+    topicId: "multiplication",
+    question: `$${a} \\times ${b}$`,
+    answer: String(a * b),
+    difficulty: 4,
+  };
 }
 
+function generateDecimalMultiplication(): GeneratedQuestion {
+  const whole = randomInt(10, 99);
+  const tenth = randomInt(1, 9);
+  const digit = randomInt(2, 9);
+  const scaled = whole * 10 + tenth;
+  const decimalStr = `${whole}.${tenth}`;
+  const productScaled = scaled * digit;
+  const wholeAnswer = Math.floor(productScaled / 10);
+  const remainder = productScaled % 10;
+  const answer = remainder === 0 ? String(wholeAnswer) : `${wholeAnswer}.${remainder}`;
+  const precise = remainder === 0 ? `${wholeAnswer}.0` : answer;
+  const acceptable = Array.from(new Set([answer, precise]));
 
+  const checker = createAnswerChecker({
+    correctAnswer: answer,
+    acceptDecimals: true,
+    tolerance: 0.001,
+    acceptableAnswers: acceptable,
+  });
 
-
+  return {
+    id: generateId(),
+    topicId: "multiplication",
+    question: `$${decimalStr} \\times ${digit}$`,
+    answer,
+    difficulty: 5,
+    checker,
+  };
+}

@@ -69,21 +69,6 @@ export default function PapersMarkPage() {
   } = usePaperSessionStore();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Redirect if no active session
-  if (!sessionId) {
-    router.push("/papers/plan");
-    return null;
-  }
-  
-  const totalQuestions = getTotalQuestions();
-  const correctCount = getCorrectCount();
-  // Fixed width for the question label so the Part pill aligns across rows
-  const maxQuestionNumber = (questionRange.start + totalQuestions - 1);
-  const maxDigits = Math.max(1, String(maxQuestionNumber).length);
-  // Tighter widths so spacing to the Part pill is reduced while still fitting the longest label
-  const QUESTION_LABEL_WIDTH_PX = maxDigits >= 3 ? 36 : 28;
-  const questionNumbers = Array.from({ length: totalQuestions }, (_, i) => questionRange.start + i);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -102,7 +87,23 @@ export default function PapersMarkPage() {
   // Session notes saving UX
   const [sessionNoteStatus, setSessionNoteStatus] = useState<'idle' | 'typing' | 'saved'>('idle');
   const sessionNoteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+  // Section percentiles state - for all exams
+  const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }>>({});
+  const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
+  // NSAA: toggle to show individual subjects vs averaged
+  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
+  // NSAA: averaged percentile across all subjects
+  const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
+  
+  // Compute values needed for hooks (with safe defaults if no session)
+  const totalQuestions = sessionId ? getTotalQuestions() : 0;
+  const correctCount = sessionId ? getCorrectCount() : 0;
+  const maxQuestionNumber = sessionId && totalQuestions > 0 ? (questionRange.start + totalQuestions - 1) : 0;
+  const maxDigits = Math.max(1, String(maxQuestionNumber).length);
+  const QUESTION_LABEL_WIDTH_PX = maxDigits >= 3 ? 36 : 28;
+  const questionNumbers = sessionId && totalQuestions > 0 ? Array.from({ length: totalQuestions }, (_, i) => questionRange.start + i) : [];
+  
+  // All hooks must be called before any early returns
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -676,14 +677,6 @@ export default function PapersMarkPage() {
     return Math.round((weightedSum / totalWeight) * 10) / 10;
   }, [hasConversion, conversionRows, sectionAnalytics, examName]);
 
-  // Section percentiles state - for all exams
-  const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }>>({});
-  const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
-  // NSAA: toggle to show individual subjects vs averaged
-  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
-  // NSAA: averaged percentile across all subjects
-  const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
-
   useEffect(() => {
     // Calculate percentiles for all exams that have percentile tables
     (async () => {
@@ -872,6 +865,12 @@ export default function PapersMarkPage() {
     }
     return null;
   }, [selectedIndex]);
+  
+  // Redirect if no active session (after all hooks)
+  if (!sessionId) {
+    router.push("/papers/plan");
+    return null;
+  }
   
   return (
     <Container size="lg">

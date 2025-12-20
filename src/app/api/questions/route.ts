@@ -9,8 +9,13 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const schema = searchParams.get("schema");
     const difficulty = searchParams.get("difficulty");
+    const primaryTag = searchParams.get("primary_tag");
+    const secondaryTag = searchParams.get("secondary_tag");
 
     const supabase = createServerClient();
+    
+    // Debug logging
+    console.log("[API] Fetching questions:", { status, page, limit, schema, difficulty });
 
     // Build query
     let query = supabase
@@ -26,6 +31,12 @@ export async function GET(request: Request) {
     if (difficulty) {
       query = query.eq("difficulty", difficulty);
     }
+    if (primaryTag) {
+      query = query.eq("primary_tag", primaryTag);
+    }
+    if (secondaryTag) {
+      query = query.contains("secondary_tags", [secondaryTag]);
+    }
 
     // Apply pagination
     const from = (page - 1) * limit;
@@ -35,12 +46,19 @@ export async function GET(request: Request) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error("Error fetching questions:", error);
+      console.error("[API] Error fetching questions:", error);
+      console.error("[API] Error details:", JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: "Failed to fetch questions" },
+        { error: "Failed to fetch questions", details: error.message },
         { status: 500 }
       );
     }
+
+    console.log("[API] Questions fetched:", {
+      count: data?.length || 0,
+      total: count || 0,
+      status,
+    });
 
     return NextResponse.json({
       questions: data || [],

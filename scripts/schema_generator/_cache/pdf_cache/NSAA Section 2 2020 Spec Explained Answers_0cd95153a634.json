@@ -1,0 +1,972 @@
+[
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \n \nThe answer is option C. \n \nThis problem can be solved by considering the vertical and horizontal motion separately and using \nthe equations of motion, since the acceleration is constant. \n \nVertically: \n \n s = ut + 1\n2\n at2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 = 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 gt2 \n \n t2 = \n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \n t = 2\n\u0da55 s \n \n \nHorizontally: \n \ndistance = speed \u00d7 time \n \n6\u221a5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 = \n2\u221a5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 v \n \n v =",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \u00d7 6\u221a5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \u00d7 2\u221a5 \n \n v = 3 m s\u22121",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nThe answer is option A. \n \nThis problem can be solved by using V = IR and resistivity = resistance \u00d7 \ncross-sectional area\nlength\n, \u03c1 = \nRA\nl \n \nThe current in the resistor is given by: \n \nI = V\nR = \npd across resistor\nresistance of resistor = \n1.0\n1.0 \u00d7 103 = 1.0 \u00d7 10\u20133\n A \n \nThe wire and the resistor are connected in series so the current is the same in each of them. \n \nThe wire and the resistor act as a potential divider. The 1.2 V across the arrangement is shared \nbetween the wire and the resistor. \n \nThere is 1.0 V across the resistor so the pd across the wire is: \n \n(1.2 \u2013 1.0) = 0.20 V \n \nTherefore the resistance of the wire is given by: \n \nR = V\nI = \npd across wire\ncurrent in wire = \n0.2\n1.0 \u00d7 10\u20133 = 2.0 \u00d7 102\n \u03a9 \n \nThe resistivity is then: \n \n\u03c1 = \nRA\nl = \n\u0d6b2.0 \u00d7 102\u0d6f \u00d7 \u12400.020 \u00d7 10\u20136\u1241\n4.0\n = 1.0 \u00d7 10\u20136\n \u03a9 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \n \nThe answer is option A. \n \nThis problem can be solved by considering each set of resistors and the internal resistance \nseparately. \n \nThe combined resistance of the two 10\u2009\u03a9 resistors in parallel is given by: \n \n1\nRtotal\n = \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 \u03a9 + \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 \u03a9 = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \u03a9 \n \n Rtotal = 10 \u03a9 \u00d7 10 \u03a9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 \u03a9 + 10 \u03a9 \n \nRtotal = 5.0 \u03a9 \n \nThe total resistance in the circuit, not including the internal resistance of the battery, is: \n \n5.0\u2009\u03a9 + 3.0\u2009\u03a9 = 8.0\u2009\u03a9 \n \nThe total resistance in the circuit including the internal resistance of the battery is: \n \nemf\nI = 20 V\n2.0 A = 10 \u03a9 \n \nThe internal resistance of the battery is 10\u2009\u03a9 \u2212 8.0\u2009\u03a9 = 2.0\u2009\u03a9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \n \nThe answer is option C. \n \nThis problem can be solved by first considering one cable individually. \n \nCalculate the force applied by one of the cables by combining the equation for Young modulus: \n \nE = \u03c3\n\u03b5 \n \nand the equation defining stress: \n\u03c3 = F\nA \nto give: \n \n\u03c3 = \u03b5E = F\nA \n \nF = \u03b5EA \n \nF = 0.0025 \u00d7 2.0 \u00d7 1011 \u00d7 2.0 \u00d7 10\u2013 4 \n \nF = 1.0 \u00d7 105\n N \n \nThe four cables are connected in parallel so the total force on the boulder is 4.0 \u00d7 105\n N = 400 kN. \n \nThe boulder is moving at constant velocity so the resultant force is zero and the frictional force is \nequal to the total pulling force. Therefore the magnitude of the frictional force is also 400 kN. \n \nPower transfer is given by P = Fv = 400 000 N \u00d7 0.20 m s\u22121 = 80 000 W = 80 kW.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \n \nThe answer is option B. \n \nThis problem can be solved by considering the situation when the object is falling at an acceleration \nof 0.5g with velocity v0. \n \nWeight of object = mg \n \nDrag force acting on object F = kv0\nn \n \nResultant force on object downwards = mg \u2013 kv0\nn = ma = 0.5mg \n \n \nRearranging: \n \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 mg = kv0\nn \n \nk = mg\n2v0\nn \n \nNow consider the object falling at terminal speed vT: \n \nDrag force = weight, so: \n \nkvT\nn = mg \n \nmg\n2v0\nn vT\nn = mg \n \n2v0\nn = vT\nn \n \nRaising both sides to the power (1/n): \n2(1/n)\n v0 = vT",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \n \nThe answer is option E. \n \nThis problem can be solved by considering the ratio of the forces on and extensions of the springs. \n \nThe weight of each mass is 0.10\u2009kg \u00d7 10\u2009N\u2009kg\u22121 = 1.0\u2009N \n \nThe weight of the springs can be ignored because their masses are negligible. \n \nThe force on the upper spring is 2.0\u2009N, and the force on the lower spring is 1.0\u2009N. \n \nAs they are subjected to different forces, the two springs will have different extensions. \n \nForce, F, and extension, x, are related by F = kx and the spring constant, k, is the same for both \nsprings. \n \nTherefore, since the ratio of the forces on the upper and lower springs is 2 : 1, their extensions must \nalso be in the ratio 2 : 1 \n \nThe sum of the extensions of the two springs is 30.0\u2009cm \u2013 (2 \u00d7 12.0\u2009cm) = 6.0\u2009cm. \n \nSplitting this in the ratio 2 : 1 gives 4.0\u2009cm : 2.0\u2009cm for the extensions of the upper and lower springs \nrespectively. \n \nThe spring constant \ud835\udc58\ud835\udc58 can be calculated by considering either of the springs: \n \nUpper spring: \nLower spring: \n \n \n \nk = F\nx = \n2.0 N\n4.0 cm = 0.50 N cm\u20131 \nk = F\nx = \n1.0 N\n2.0 cm = 0.50 N cm\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \n \nThe answer is option H. \n \n \nThis problem can be solved by using trigonometry to find the angle \u03b8 (shown in the diagram) and \nthen using the law of refraction to find the refractive index n of the block. \n \n \n \n \n \nUsing Pythagoras, \n sin \u03b8 = \n2.5\n\u0da52.52 + 5.02 = \n2.5\n\u0da725",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 + 25\n = \n2.5\n\u0da7125\n4\n = \n2.5\n\u0da75 \u00d7 5 \u00d7 5\n4\n = \n2.5\n2.5 \u221a5 = \n1\n\u221a5 \n \n \n \nSince sin 60\u00ba = \u221a3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nn = \nsin 60\u00ba\nsin \u03b8 = \n\u221a3\n2\n\u0d57\n1\n\u221a5\n\u0d57\n = \u221a3\u221a5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 = \u221a15\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \n \nThe answer is option B. \n \nThis problem can be solved by considering the displacements of point mass. \n \nAssume that positive vector quantities are in the direction from P towards Q time t = 0. \n \nThe point of zero displacement is taken to be the position of P at time t = 0. \n \nAt time t, mass P has displacement \ns = 1\n2at2 \n \n= 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u00d7 6 \u00d7 t2 \n \n= 3t2 \n \nThe initial displacement of Q is +60\u2009m. \n \nAt time t, mass Q has displacement \n \ns = 60 + ut + 1\n2at2 \n \n= 60 + (\u201314t) + 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u00d7 2t2 \n \n= 60 \u2013 14t + t2 \n \n \nMasses P and Q meet when they have the same displacement at the same time, so \n \n3t2 = 60 \u2013 14t + t2 \n \n2t2 + 14t \u2013 60 = 0 \n \nt2 + 7t \u2013 30 = 0 \n \n(t \u2013 3)(t + 10) = 0 \n \n \nTherefore P and Q will meet when t \u2013 3 = 0, so t = 3.0\u2009s.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 \n \nThe answer is option A. \n \nThis problem can be solved using Kirchhoff\u2019s laws and solving the resulting simultaneous equations. \n \nLabel currents I1, I2 and I3 as shown in the diagram. \n \n \n \nUsing Kirchhoff\u2019s laws: \nI3 = I1 + I2 \n \n \n(1)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 = 40I1 + 40I3 \n \n(2)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 = 40I2 + 40I3 \n \n(3) \n \n \nFrom (1) I1 = I3 \u2212 I2, so substitute for I1 into (2):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 = 80I3 \u2212 40I2 \n \nAdd this to (3):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 = 120I3 \n \n \ngiving the ammeter reading I3 : \n \nI3 = 30\n120 = 0.25 A \n \nSubstitute for I3 into (3):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 = 40I2 + 10 \n \nI2 = 0 A \n \nThe voltmeter is therefore connected across a resistor that has no current, so the voltage across it is \nzero, and the voltmeter reading is 0 V.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \u00d7 30 \n2.0\n = 600 Pa \n \n \nTotal pressure exerted on the rock is P = P1 + P2 = 500 + 600 = 1100 Pa.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 11,
+    "text": "11 \n \nThe answer is option D. \n \nThe heat required to warm the copper container and that required to warm the water are calculated \nseparately using the expression Q = mc\u2206T \n \n \n \nCopper: \nQ1 = 500 \u00d7 0.4 \u00d7 60 = 12 000 J = 12 kJ \nWater: \nQ2 = 400 \u00d7 4 \u00d7 60 = 96 000 J = 96 kJ \nTotal heat transfer = Q1 + Q2 = 12 + 96 = 108 kJ \nThis is only 20% of the heat released by burning the methane. \nSo, total heat released from burning = 108 \u00d7 20\n100 = 540 kJ \nNumber of moles of methane burned to release this amount of heat = 900\n540 = 0.6 mol \nMass of methane = 0.6 \u00d7 16 = 9.60 g",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \n \nThe answer is option A. \n \n\u2206rH is the enthalpy of reaction and \u2206fH is the enthalpy of formation. \nDeduce reaction equation: \nHgC2N2O2 \u2192 Hg + N2 + 2CO \n\u2206rH = \u2013 606 kJ mol\u20131 \nDeduce equation for enthalpy of formation of mercury(II) fulminate: \nHg(l) + 2C(s) + N2(g) + O2(g) \u2192 HgC2N2O2(s) \n\u2206fH = + 386 kJ mol\u20131 \nDeduce equation for enthalpy of formation of carbon monoxide: \nC(s) + 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 O2(g) \u2192 CO(g) \n \n\u2206fH = x kJ mol\u20131 \nConstruct a Hess cycle:",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 x = (+ 386) + (\u2013 606) = \u2013 220 \nx = \u2013110 kJ mol\u20131",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 13,
+    "text": "13 \n \nThe answer is option B. \n \nThe hydrocarbon contains 14.3% by mass of H, so must contain 85.7% by mass of C. \nThe empirical formula of X is found by considering the ratio C : H which is \n12\n7\n85. :\n1\n3\n14.\n, cancelling to",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 : 1 by approximation. \nTherefore the empirical formula is CH2. \nThe mass spectrum shows the molecular ion peak at m / z = 84, so Mr = 84. \nThe molecular mass of cyclobutane (C4H8) is 56. This corresponds to the highest intensity peak, but \nthat does not correspond to the molecular ion. \nMolecular formula of X is therefore: C6H12 \nX does not react with bromine, so it is not an alkene. X cannot be hex-2-ene. \nX must be a cycloalkane with 6 C atoms, such as cyclohexane.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14 \n \nThe answer is option E. \n \nFrom the information provided in the question the formulae in the chemical equation can be \ndeduced to be: \n?SO3 + ?Cl 2 + ?SCl 2 \u2192 ?SOCl 2 \nBalancing: \n \nSO3 + Cl 2 + 2SCl 2 \u2192 3SOCl 2 \n \nNumber of moles Cl 2 gas \n= 24",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 = 12",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nMole ratio Cl 2 : SOCl 2 \n= 1 : 3 \nNumber of moles of SOCl 2 \n= 12\n1\n \u00d7 3 = 0.25 mol \nSOCl 2 is collected in water, where it reacts. It produces HCl, which will dissolve to form hydrochloric \nacid, and another gaseous product, which can be deduced to be sulfur dioxide: \nSOCl 2 + H2O \u2192 2HCl + SO2 \nMole ratio SOCl 2 : HCl \n= 1 : 2 \nNumber of moles of HCl \n= 0.25 \u00d7 2 = 0.50 mol \nConcentration of HCl \n= \nvolume\nmoles\n \nof\n \nnumber\n = \n\uf8f7\uf8f8\n\uf8f6\n\uf8ec\uf8ed\n\uf8eb\n1000\n200\n0.50\n = 2.50 mol dm\u20133",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15 \n \nThe answer is option A. \n \nThe oxidation state of silver in Tollens\u2019 reagent is +1, as NH3 is a neutral species and the nitrate \nanion has a charge of \u20131. \nIt acts as a reducing agent as shown by the half-equation: Ag+(aq) + e\u2013 \u2192 Ag(s) \nCombining this with the organic oxidation half-equation shows that the overall reaction has the \nstoichiometry: \n2Ag+(aq) + RCHO + H2O \u2192 2Ag(s) + RCOOH + 2H+ \nThe internal surface area of the beaker is the area of the circular base added to the curved sides. \nSurface area to be coated = \u03c0r2 + 2\u03c0rh = 25\u03c0 + 100\u03c0 = 125\u03c0 cm2 \nVolume of silver required = surface area \u00d7 thickness = 125\u03c0 cm2 \u00d7 0.01 cm = 1.25\u03c0 cm3 \nMass of silver required in g = volume \u00d7 density = 1.25\u03c0 cm3 \u00d7 10.5 g cm\u20133 \nNumber of moles of Ag(s) required = \n(Ag)\ng\n \nin\n \nmass\nr\nA\n = \n108\n1.25\n10.5\n\u03c0\n\u00d7\n\u00d7\n \nSo, the number of moles of aldehyde required = 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \u00d7\n108\n1.25\n10.5\n\u03c0\n\u00d7\n\u00d7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nThe answer is option C. \n \nThe reaction between hydrogen and oxygen can be written as: H2 + 2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 O2 \u2192 H2O \nThe bond enthalpy of O2 is not given: let it be x \nWhen using bond enthalpies, the overall enthalpy change is equal to the energy released in forming \nbonds minus the energy absorbed in breaking bonds. \n(All of the following calculations are in kJ mol\u20131) \nEnthalpy change in breaking H2 and O2 bonds \n= 436 + 2\nx \nEnthalpy change in forming two O \u2013 H bonds in H2O = \u2013 2 \u00d7 464 = \u2013928 \nEnthalpy change when hydrogen, H2 is burned \n= \u2013 492 + 2\nx \nEnthalpy change in breaking D2 and O2 bonds \n= 443 + 2\nx \nEnthalpy change in forming two O \u2013 D bonds in D2O = \u2013 2 \u00d7 471 = \u2013942 \nEnthalpy change when hydrogen, D2 is burned \n= \u2013 499 + 2\nx \nMore energy is released when D2 is burned. Statement 1 is not correct. \nFrom the information given: \n[H\n+][OH\n\u2013]\n[H2O]\n[D\n+][OD\n\u2013]\n[D2O]\n>\n \nTherefore, H2O dissociates more readily than D2O as the dissociation products are in the \nnumerators of the equilibrium constant expressions. This means that there will be a higher \nconcentration of H+ ions present in the H2O equilibrium than there will be D+ ions in the D2O \nequilibrium. Hence, H2O is more acidic. Statement 2 is correct. \nThe boiling points of simple molecular substances are dependent on the attraction between the \nmolecules, not the bond enthalpy. In these molecules the H \u2013 H, D \u2013 D, O \u2013 H and O \u2013 D bonds do not \nbreak during physical changes. Statement 3 is not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 17,
+    "text": "17 \n \nThe answer is option E. \n \nPutting the known coefficients into the equation: \nAs2O3(s) + 6Zn(s) + H+(aq) \u2192 6Zn2+(aq) + 2X(g) + H2O(l) \nSix zinc atoms each increase their oxidation state by 2 in being oxidised to zinc ions. This gives a \ntotal increase in oxidation state of 12. \nTo balance this, the two arsenics in As2O3 must collectively reduce their oxidation states by 12 (i.e. \neach arsenic in As2O3 must reduce its oxidation state by 6). \nThe oxidation state of arsenic in As2O3 is + 3 (because the oxidation state of the oxygen is \u2013 2). \nHence each of the two arsenics in X must have an oxidation state of \u2013 3. \nThe only possible arsenic-containing product in this reaction that gives arsenic an oxidation state \nof \u2013 3 is AsH3. \nThe balanced equation for the reaction is therefore: \nAs2O3(s) + 6Zn(s) + 12H+(aq) \u2192 6Zn2+(aq) + 2AsH3(g) + 3H2O(l) \nThe Mr of As2O3 is 198 and the Mr of AsH3 is 78. \nFrom the stoichiometry of the reaction, 198 g of As2O3 would produce 156 g of AsH3. \nHence, 1.98 g of As2O3 would produce 1.56 g of AsH3.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \n \nThe answer is option E. \n \nCompound P must have a C=C bond somewhere in its structure, and Q is a bromoalkane. \nAlcohols are formed when bromoalkanes undergo substitution reactions with aqueous sodium \nhydroxide. \nWhen completely oxidised by acidified potassium dichromate(VI), primary alcohols form carboxylic \nacids which do react with aqueous sodium carbonate. \nSecondary alcohols are oxidised to ketones which do not react with aqueous sodium carbonate and \ntertiary alcohols cannot be oxidised by acidified potassium dichromate(VI). Therefore R must be a \nsecondary alcohol. \nPent-1-ene is incorrect as it would form 2-bromopentane as the only major product with HBr, which \nwould then form pentan-2-ol. This would be dehydrated to form pent-2-ene as the other alkene, S. \nThis does have stereoisomers. \nPent-2-ene is incorrect as there would be two products in significant quantity formed in the reaction \nwith HBr: 2-bromopentane and 3-bromopentane (both formed from secondary carbocations). \nThe correct answer must therefore be one of the branched alkenes. If P were either \n2-methylbut-1-ene or 2-methylbut-2-ene, because the double bond is adjacent to the branch in the \nchain, a tertiary bromoalkane would be formed as the major product. After the substitution reaction, \nthis bromoalkane would become a tertiary alcohol, which cannot be oxidised by acidified potassium \ndichromate(VI). \n3-methylbut-1-ene must therefore be the correct answer. This alkene would firstly form \n2-bromo-3-methylbutane as the only major product with HBr and then 2-methylbutan-2-ol. This \nalcohol would be dehydrated to form 2-methylbut-2-ene as alkene S, which has two methyl groups \nattached to one end of the carbon double bond, and therefore does not have stereoisomers. \nH3C\nC\nC\nH\nOH\nH\nCH3\nCH3\nC\nC\nH\nCH3\nCH3\nCH3\nC\nC\nH\nC\nCH3\nH\nCH3\nH\nCH3\n+\nP\nS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 19,
+    "text": "19 \n \nThe answer is option G. \n \nBoth bromine and fluorine are in Group 17. F is more electronegative than Br and can form multiple \nbonds. \nBromine contributes 7 outer electrons to bonding, and the three F atoms contribute one further \nelectron each. So there are 10 outer electrons around the Br centre, i.e. 5 pairs of electron density. \nThe structure is therefore based on a trigonal bipyramid. As there are only three bonds, two of these \nregions of electron density are lone pairs. There are several possible shapes that could form \naccording to VSEPR, but only T-shaped would be faithful to the symmetry if only two bond lengths \nare equal and the third is not. \nBr\nF\nF\nF\n0.361\n0.241\n0.181\n0.181\n0.172\nBr\nF\nF\nF\n \nFinding a right-angled triangle using appropriate distances, and using the inverse sine function \n(sin\u20131), gives the bond angle as sin\u20131\n\uf8f7\uf8f8\n\uf8f6\n\uf8ec\uf8ed\n\uf8eb\n181\n0\n1805\n0\n.\n.\n (= 86\u00b0) \n0.1805\n0.181\nsin\u20131(0.1805/0.181)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \n \nThe answer is option C. \n \n \n \nCH3COOH \n+ \nCH3CH2OH \n\u21cc \nCH3COOCH2CH3 + \nH2O \nmass at the start \n120",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 92,
+    "text": "92",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nMr",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 46,
+    "text": "46",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 88,
+    "text": "88",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nnumber of moles at the \nstart",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nnumber of moles at \nequilibrium",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2013 x",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2013 x \nx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 + x \n \nThe equilibrium constant is: Kc = \n[CH3COOCH2CH3][H2O]\n[CH3COOH][CH3CH2OH] \nSubstituting in the number of moles: Kc = \n)\n2\n)(\n2\n(\n)\n1\n)(\n(\nx\nx\nx\nx\n\u2212\n\u2212\n+\n = 2 \nRearranging: \nx2 + x = 2(x2 \u2013 4x + 4) \nx2 + x = 2x2 \u2013 8x + 8 \n \n \n \n \nx2 \u2013 9x + 8 = 0 \nUsing the quadratic formula: x = \na\nac\nb\nb\n2\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2212\n\u00b1\n\u2212\n = \n2\n32\n9\n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2212\n\u00b1\n\u2212\n \nor by factorising: \n ( x \u2013 8)( x \u2013 1) = 0 \n x = 8 or 1 \nA value of 8 is impossible because that would require \u2018\u2013 6 mol\u2019 of reactants. \nAt equilibrium there would be just one mole of ester, which has a mass of 88 g.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21 \n \nThe answer is option E. \n \nStatement 1 is correct. From the equation: \n \n\u0d6d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \u2212 1\nR0\neffectiveness of the vaccine\u0d71 \u00d7 100 \n \nR0 is the average number of people who catch the disease from one infected person. If R0 \nincreases, then 1 \u2212 \n1\nR0 will also increase. If the effectiveness of the vaccine remains the same, then \nthe number of people who need to be vaccinated must increase to prevent the spread of disease. \n \nStatement 2 is correct:",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \u2013 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 = 2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 = 0.6\u0307 \n \n0.6666\n0.9 = 0.741, or just over 74% \n \n \nStatement 3 is not correct as whilst antibiotics can be effective against bacteria they are not \ncomponents of a vaccine.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 22,
+    "text": "22 \n \nThe answer is option A. \n \nThe percentage change in mass is: \n \nmass\ninitial\nmass\nin\nchange\n \u00d7 100 \n \nIn 0.6 mol dm\u20133 sugar solution, the potato piece reduces in mass from 3.93 g to 2.62 g. This is a \nchange of \u20131.31 g. The initial mass is 3.93 g. \n \nSo, the correct calculation is: \n \n93\n3\n31\n1\n.\n.\n\u2013\n \u00d7 100 = 33% decrease \n \nThe concentration of sugar solution that was most similar to the concentration of water molecules in \nthe cytoplasm will be the one which causes a minimum change in mass of the potato piece. This is \n0.2 mol dm\u20133.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 23,
+    "text": "23 \n \nThe answer is option E. \n \nUsing data from the bar chart, there are 42 mammals in the owl\u2019s diet of which 6 are mice: \n \n6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 42,
+    "text": "42 \u00d7 100 = 14.3% \n \nThe change in the population (r) can be calculated by adding together the births (b) and immigration \n(i), adding together the deaths (d ) and emigration (e), then subtracting the second figure from the \nfirst, as in the equation: \n \nr = (b + i) \u2013 (d + e) \n(242 + 11) \u2013 (207 + 21) = 25 \n \nHowever, this figure is for 2 weeks. The mean change per week is 25 \u00f7 2 = 12.5 \n \nAlthough this figure shows there is an increase in the mouse population, it is not possible to make a \njudgement on whether the owl\u2019s diet would be likely or unlikely to show an increase in mice, \nbecause there is no data available about what is happening to the populations of the other \norganisms in the owl\u2019s diet. The only sound conclusion is that there is insufficient evidence to know \nthe effect on the owl\u2019s diet.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24 \n \nThe answer is option E. \n \nThe clear circular area on each plate can be calculated using the formula: area = \u03c0r2 \nThe radius is obtained by dividing the diameter by 2. The diameter is shown in mm. \nThe radius for the clear area for plate Q is 10 mm, so the area is 100\u03c0 mm2. \nFor the agar plate the diameter is in cm so needs to be converted into mm by multiplying by 10. The \ndiameter is 10 cm so the radius is 5 cm, or 50 mm. The area of the plate is 50 \u00d7 50 \u00d7 \u03c0 = 2500\u03c0 mm2. \nTherefore the area of the pathogen is 2500\u03c0 \u2013 100\u03c0 = 2400\u03c0 mm2. \nThe most effective antibiotic is P as it has the largest clear area.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 25,
+    "text": "25 \n \nThe answer is option H. \n \nOf the 100 units of solar energy reaching the leaf, 50 units are the wrong wavelength, 5 units are \ntransmitted (pass) through the leaf without hitting a chloroplast and 5 units are reflected off the leaf. \nSo, 60% of the solar energy reaching the leaf is not absorbed by chloroplasts. Statement 1 is \ncorrect. \nThe total energy absorbed by the chloroplasts is 40 units, of which 9 units are used in production of \nglucose. \n9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \u00d7 100 = 22.5%. Statement 2 is correct. \nThe chloroplasts harness 9 units of energy and convert it into glucose. However, 3.7 units are lost \nby the mitochondria in respiration. The remainder (9 \u2013 3.7) is 5.3 units, which is the maximum \navailable to the primary consumer. Statement 3 is correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 26,
+    "text": "26 \n \nThe answer is option H. \n \nParents 1 and 2 have yellow fur but they have produced offspring with black fur so the yellow fur \nallele must be dominant. \n \nThe two individuals with black fur must each have two copies of the black fur allele as it is recessive. \nAll of the live individuals who have yellow fur (9 of them) must be heterozygous, as homozygous \ndominant individuals die before birth. This means that there are 9 more copies of the black fur allele \npresent. This is a total of 4 + 9 = 13 black fur alleles. \n \nA cross between 5 and 6 is a cross between two heterozygous individuals as they are both alive \nand have yellow fur. The expected ratio of phenotypes from this cross will be one homozygous \ndominant who will die before birth and so cannot be counted in the live offspring, two heterozygous \nyellow fur individuals, and one homozygous recessive individual with black fur. This gives a \nphenotype ratio of 2 : 1.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 27,
+    "text": "27 \n \nThe answer is option F. \n \nIn order to calculate the volume of water lost, we use the volume of the tubing, which is a cylinder: \nvolume of cylinder = \u03c0r2h \nFor P, this is \u03c0 \u00d7 0.32 \u00d7 90 = \u03c0 \u00d7 0.09 \u00d7 90 = 8.10\u03c0 \nFor Q, this is \u03c0 \u00d7 0.52 \u00d7 33 = \u03c0 \u00d7 0.25 \u00d7 33 = 8.25\u03c0 \nFor R, this is \u03c0 \u00d7 0.62 \u00d7 25 = \u03c0 \u00d7 0.36 \u00d7 25 = 9.00\u03c0 \nTherefore, the order from most to least is: R, Q, P. \nThe information provided does not specify anything about controlling variables, so it is possible that \nR was in a humid environment. However, the loss of water (transpiration) under these conditions is \nexpected to be very low, not the most water lost. \nThere is also no indication that the leaf area was the same in all three experiments, nor that other \nvariables were controlled. \nTherefore, it is only possible to say there is insufficient data to explain the results.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 28,
+    "text": "28 \n \nThe answer is option G. \n \nThe process of increasing the variation between the two groups of maize grains is not a natural one, \nbut carried out in an experiment artificially. Statement 1 is not correct. \n \nThe graph shows that the percentage oil content in the high oil content grains was 5% at the start of \nthe experiment. This increased to 14% after 50 generations. \n \nPercentage change is: \n \nchange in percentage oil content\noil content at start\n \u00d7 100% \n \n= \n(14 \u2013 5)\n5\n \u00d7 100% \n \n= 180% \n \nStatement 2 is correct. \n \nThe maize grains had a mean mass of 0.4 g. At the start of the experiment for the high oil content \ngrains, 5% of this mass was oil: \n \n5\n100 \u00d7 0.4 = 0.02 g \n \nAfter fifty generations, 14% of each grain was oil: \n \n14\n100 \u00d7 0.4 = 0.056 g \n \nThe difference is 0.056 \u2013 0.02 = 0.036 g \n \n \n \nStatement 3 is correct.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 29,
+    "text": "29 \n \nThe answer is option C. \n \nThe gaseous product of photosynthesis is oxygen. Statement 1 is not correct. \n \nAny of the points where the distance doubles can be used to test Statement 2. Several intervals \nshould be checked to confirm the relationship. \n \nBetween 10 cm and 50 cm, the relationship between the rate of gas production (photosynthesis) and \ndistance from the light source matches the inverse square relationship between distance from the \nlight source and light intensity, e.g. as the distance doubles (from 10 cm to 20 cm) the light intensity \nwill decrease to: \n \n\u0d6c1\nd\n 2\u0d70 = \u12401\n22\u1241 = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 of the original value \n \nThis matches the decrease in photosynthesis, which decreases by a factor of 4, from 80 to 20 \nbubbles. \n \nSimilarly, as the distance goes up from 10 cm to 40 cm the light intensity will decrease to \u12401\n42\u1241 = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nof the original value, again matching the decrease in photosynthesis, from 80 to 5 bubbles. \n \nTherefore, statement 2 is correct. \n \nAs the pondweed is moved closer than 10 cm to the light source, light intensity will be increasing but \nthe rate of photosynthesis does not increase. Therefore, some factor other than light intensity must \nbe rate limiting at 5 cm. Statement 3 is not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 \n \nThe answer is option E. \n \nStatement 1 is correct. \n \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 of the alleles are the dominant B allele, so the probabilities of each genotype are: \n \n \n \nB \u00be \nb \u00bc \nB \u00be \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nb \u00bc \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nFlour beetles with genotypes BB and Bb will have black eyes. \n \nThe proportion of black eye beetles will be: \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 + \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 + \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 = \n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \n \nTherefore the number of beetles with black eyes in the population is: \n15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \u00d7 1600 = 1500 \n \nStatement 2 is correct. The body cells each have two copies of chromosome 5, and this means they \nare diploid. \n \nStatement 3 is not correct. \n \nFor this population of beetles, using the probabilities in the table for Statement 1: \n \nhomozygous black eye (BB) = \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nheterozygous black eye (Bb) = \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 + \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nred eye (bb) = \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA Section 2 2020 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020 Spec\\NSAA Section 2 2020 Spec Explained Answers.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nTherefore the ratio of homozygous black eye beetles to heterozygous black eye beetles to red eye \nbeetles is 9 : 6 : 1",
+    "skipped_diagram": true
+  }
+]

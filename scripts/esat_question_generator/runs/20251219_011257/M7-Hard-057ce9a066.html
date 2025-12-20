@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: M7-Hard-057ce9a066</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> M7-Hard-057ce9a066<br>
+            <strong>Schema:</strong> M7<br>
+            <strong>Difficulty:</strong> Hard<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T01:14:28.979406<br>
+            <strong>Token Usage:</strong> 19,259 total (9,102 prompt + 1,297 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                The real variables$x$and$y$satisfy the equation$$x^2 + y^2 - 4x - 6y + 9 = 0$$What is the maximum possible value of$4x + 3y$?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> 17</div>
+                <div class="option"><strong>B:</strong> 23</div>
+                <div class="option"><strong>C:</strong> 25</div>
+                <div class="option correct"><strong>D:</strong> 27 ✓ CORRECT</div>
+                <div class="option"><strong>E:</strong> 31</div>
+
+            </div>
+            <p><strong>Correct Answer: D</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>First, we determine the geometric properties of the constraint by completing the square for both$x$and$y$:$$(x^2 - 4x) + (y^2 - 6y) + 9 = 0$$$$(x-2)^2 - 4 + (y-3)^2 - 9 + 9 = 0$$$$(x-2)^2 + (y-3)^2 = 4$$This represents a circle with centre$C(2, 3)$and radius$r = 2$.
+
+Let$k = 4x + 3y$. This equation describes a family of parallel lines with gradient$-\frac{4}{3}$. The maximum value of$k$corresponds to the line in this family that is tangent to the circle and farthest from the origin in the positive direction.
+
+For the line$4x + 3y - k = 0$to be tangent to the circle, the perpendicular distance from the centre$(2, 3)$to the line must equal the radius$r=2$.
+Using the perpendicular distance formula:$$\frac{|ax_0 + by_0 + c|}{\sqrt{a^2 + b^2}} = r$$$$\frac{|4(2) + 3(3) - k|}{\sqrt{4^2 + 3^2}} = 2$$$$\frac{|8 + 9 - k|}{\sqrt{25}} = 2$$$$\frac{|17 - k|}{5} = 2$$$$|17 - k| = 10$$This gives two possible values for$k$:$$17 - k = 10 \implies k = 7 \quad (\text{minimum})$$$$17 - k = -10 \implies k = 27 \quad (\text{maximum})$$Hence the correct answer is 27.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>To maximize a linear expression$ax+by$subject to a circular constraint, set the perpendicular distance from the circle&#x27;s centre to the line$ax+by=k$equal to the radius.
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> The value of the expression at the circle&#x27;s centre, $(2, 3)$.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> The value at the highest point of the circle, $(2, 5)$.</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> The value at the rightmost point of the circle, $(4, 3)$.</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Correct answer. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> The value at the corner of the bounding box, $(4, 5)$, assuming $x$ and $y$ are maximized independently.</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

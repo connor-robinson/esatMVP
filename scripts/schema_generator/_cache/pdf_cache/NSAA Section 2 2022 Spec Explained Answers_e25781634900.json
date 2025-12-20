@@ -1,0 +1,1622 @@
+[
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nPart X Physics",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nThe answer is option C. \n \nThis problem can be solved by considering the vertical and horizontal motion separately and \nusing the equations of motion, since the acceleration is constant. \n \nVertically: \n \n s = ut +\nat\n2\n1\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 = \nt\n2\n1\n2\ng\n \n \nt2 = 4\n5\n \n \n t = 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 s \n \n \nHorizontally: \n \ndistance = speed \u00d7 time \n \n=\nv",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5\n5\n5\n \n \n v = \n\u00d7\n\u00d7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 6 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 2 5 \n \n v = 3 m s\u22121",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nThe answer is option A. \n \nThis problem can be solved by using V = IR and \n \nresistivity = resistance \u00d7 \n-\ncross sectional area\nlength\n, \u03c1 = l\nRA \n \nThe current in the resistor is given by: \n \nI = V\nR = \npd across resistor\nresistance of resistor = \n.\n. \u00d7\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 0 10\n = 1.0 \u00d7 10\u20133 A \n \nThe wire and the resistor are connected in series so the current is the same in each of them. \n \nThe wire and the resistor act as a potential divider. The 1.2 V across the arrangement is shared \nbetween the wire and the resistor. \n \nThere is 1.0 V across the resistor so the pd across the wire is: \n \n(1.2 \u2013 1.0) = 0.20 V \n \nTherefore the resistance of the wire is given by: \n \nR = V\nI = pd across wire\ncurrent in wire = \n.\n. \u00d7\n\u22123",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 0 10\n = 2.0 \u00d7 102 \u2126 \n \nThe resistivity is then: \n \n\u03c1 = l\nRA = (\n) (\n)\n. \u00d7\n\u00d7\n.\n\u00d7\n.\n\u2212\n2\n6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 020 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 0\n = 1.0 \u00d7 10\u20136 \u2126 m",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 3,
+    "text": "3 \nThe answer is option A. \n \nThis problem can be solved by considering each set of resistors and the internal resistance \nseparately. \n \nThe combined resistance of the two 10\u2009\u2126 resistors in parallel is given by: \n \n=\n+\n=\n\u2126\n\u2126\n\u2126\ntotal\n1\n1\n1\n1\n10\n10\n5\nR\n \n \n\u00d7\n+\n=\n\u2126\n\u2126\n\u2126\n\u2126\ntotal\n10\n10\n10\n10\nR\n \n \n= . \u2126\ntotal",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 0\nR\n \n \nThe total resistance in the circuit, not including the internal resistance of the battery, is: \n \n5.0\u2009\u2126 + 3.0\u2009\u2126 = 8.0\u2009\u2126 \n \nThe total resistance in the circuit including the internal resistance of the battery is: \n \n=\n=\n.\n\u2126\nemf\n20V\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0A\nI\n \n \nThe internal resistance of the battery is 10\u2009\u2126 \u2212 8.0\u2009\u2126 = 2.0\u2009\u2126",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 \nThe answer is option C. \n \nThis problem can be solved by first considering one cable individually. \n \nCalculate the force applied by one of the cables by combining the equation for Young modulus: \n \n= \u03c3\n\u03b5\nE\n \n \nand the equation defining stress: \n=\n\u03c3\nF\nA \nto give: \n \n=\n=\n\u03c3\n\u03b5\nF\nE\nA \n \n= \u03b5\nF\nEA \n \n=\n.\n\u00d7\n. \u00d7\n\u00d7\n. \u00d7\n\u2212\n11\n4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 0025",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0 10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0 10\nF\n \n \n= . \u00d7\n5",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 0 10 N\nF\n \n \nThe four cables are connected in parallel so the total force on the boulder is \n \n4.0 \u00d7 105\n N = 400 kN \n \nThe boulder is moving at constant velocity so the resultant force is zero and the frictional force \nis equal to the total pulling force. Therefore the magnitude of the frictional force is also 400 kN. \n \nPower transfer is given by P = Fv = 400 000 N \u00d7 0.20 m s\u22121 = 80 000 W = 80 kW.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \nThe answer is option B. \n \nThis problem can be solved by considering the situation when the object is falling at an \nacceleration of 0.5g with velocity v0. \n \nWeight of object = mg \n \nDrag force acting on object F = kv0\nn \n \nResultant force on object downwards = mg \u2013 kv0\nn = ma = 0.5mg \n \n \nRearranging: \n \n1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 mg = kv0\nn \n \nk = \nn\nm\nv0\n2\ng \n \nNow consider the object falling at terminal speed vT: \n \nDrag force = weight, so: \n \nkvT\nn = mg \n \nn\nm\nv0\n2\ng\n vT\nn = mg \n \n2v0\nn = vT\nn \n \nRaising both sides to the power (1/n): \n \n2(1/n)\n v0 = vT",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 6,
+    "text": "6 \nThe answer is option E. \n \nThis problem can be solved by considering the ratio of the forces on and extensions of the \nsprings. \n \nThe weight of each mass is 0.10\u2009kg \u00d7 10\u2009N\u2009kg\u22121 = 1.0\u2009N \n \nThe weight of the springs can be ignored because their masses are negligible. \n \nThe force on the upper spring is 2.0\u2009N, and the force on the lower spring is 1.0\u2009N. \n \nAs they are subjected to different forces, the two springs will have different extensions. \n \nForce, F, and extension, x, are related by F = kx and the spring constant, k, is the same for \nboth springs. \n \nTherefore, since the ratio of the forces on the upper and lower springs is 2 : 1, their extensions \nmust also be in the ratio 2 : 1 \n \nThe sum of the extensions of the two springs is 30.0\u2009cm \u2013 (2 \u00d7 12.0\u2009cm) = 6.0\u2009cm. \n \nSplitting this in the ratio 2 : 1 gives 4.0\u2009cm : 2.0\u2009cm for the extensions of the upper and lower \nsprings respectively. \n \nThe spring constant k can be calculated by considering either of the springs: \n \nUpper spring: \n \n \n \nLower spring: \n \nk = x\nF\n = \n.\n.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0N",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 0cm\n = 0.50 N cm\u20131 \n \nk = x\nF\n = \n.\n.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 0N",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0cm\n = 0.50 N cm\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 7,
+    "text": "7 \nThe answer is option H. \n \nThis problem can be solved by using trigonometry to find the angle \u03b8 (shown in the diagram) \nand then using the law of refraction to find the refractive index n of the block. \n \n5.0 cm\n2.5 cm\n60\u00b0\n\u03b8\n \n \n \nUsing Pythagoras, \nsin \u03b8 = \n.\n.\n+ .\n2\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 0\n = \n.\n+",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5\n25\n25\n4\n = \n.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5\n125\n4\n = \n.\n\u00d7 \u00d7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 5 5\n4\n = \n.\n.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 5 5\n = 1\n5\n \n \n \nSince sin 60\u00ba = \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \nn = sin\nsin\n\u00b0\n60\n\u03b8\n = \n\u239b\n\u239e\n\u239c\n\u239f\n\u239d\n\u23a0\n\u239b\n\u239e\n\u239c\n\u239f\n\u239d\n\u23a0\n3\n2\n1\n5\n = \n3\n5\n2\n = \n15\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 \nThe answer is option B. \n \nThis problem can be solved by considering the displacements of point mass. \n \nAssume that positive vector quantities are in the direction from P towards Q time t = 0. \n \nThe point of zero displacement is taken to be the position of P at time t = 0. \n \nAt time t, mass P has displacement \n \ns = \nat\n2\n1\n2\n \n \n= 1\n2\n \u00d7 6 \u00d7 t2 \n \n= 3t2 \n \nThe initial displacement of Q is +60\u2009m. \n \nAt time t, mass Q has displacement \n \ns = 60 + ut + \nat\n2\n1\n2\n \n \n= 60 + (\u201314t) + 1\n2\n \u00d7 2t2 \n \n= 60 \u2013 14t + t2 \n \nMasses P and Q meet when they have the same displacement at the same time, so \n \n3t2 = 60 \u2013 14t + t2 \n \n2t2 + 14t \u2013 60 = 0 \n \nt2 + 7t \u2013 30 = 0 \n \n(t \u2013 3)(t + 10) = 0 \n \nTherefore P and Q will meet when t \u2013 3 = 0, so t = 3.0\u2009s.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 \nThe answer is option A. \n \nThis problem can be solved using Kirchhoff\u2019s laws and solving the resulting simultaneous \nequations. \n \nLabel currents I1, I2 and I3 as shown in the diagram. \n \nA\nV",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 V",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 V",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \u2126",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \u2126",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 40,
+    "text": "40 \u2126\nI 1\nI 2\nI 3\n \n \nUsing Kirchhoff\u2019s laws: \nI3 = I1 + I2 \n \n \n(1)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 = 40I1 + 40I3 \n \n(2)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 = 40I2 + 40I3 \n \n(3) \n \n \nFrom (1) I1 = I3 \u2013 I2, so substitute for I1 into (2):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 = 80I3 \u2013 40I2 \n \nAdd this to (3):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 = 120I3 \n \ngiving the ammeter reading I3: \n \nI3 = 30\n120\n = 0.25 A \n \nSubstitute for I3 into (3):",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 = 40I2 + 10 \n \nI2 = 0 A \n \nThe voltmeter is therefore connected across a resistor that has no current, so the voltage \nacross it is zero, and the voltmeter reading is 0 V.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 11,
+    "text": "11",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 \nThe answer is option E. \n \nThis problem can be solved by considering both the hydrostatic pressure and the pressure due \nto the force of the water falling. \n \nThe water falls 45 m. Its velocity just before hitting the rock can be calculated from conservation \nof energy: \n \nchange in kinetic energy = change in gravitational potential energy \n \n \nmv\n2\n1\n2\n = mgh \n \n v = \nh\n2g\n \n \n = \n\u00d7\n\u00d7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 45,
+    "text": "45 \n \n = \n900 \n \n = 30 m s\u20131 \n \nThe pressure on the rock surface arises from two things. Firstly, the hydrostatic pressure from \nwater resting on the surface, and secondly the pressure exerted on the surface as the water \nstops, equal to its rate of change of momentum divided by the area of the rock. \n \nhydrostatic pressure P1 = \u03c1gh = 1000 \u00d7 10 \u00d7 0.050 = 500 Pa \n \n \npressure P2 = F\nA\n = \n(\n)\nmv\nt\n\u2206\n\u2206\nA\n = \n.\n\u00d7\n40\n30",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 0\n = 600 Pa \n \n \nTotal pressure exerted on the rock is P = P1 + P2 = 500 + 600 = 1100 Pa.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \nPart Y Chemistry",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 11,
+    "text": "11 \nThe answer is option D. \n \nThe heat required to warm the copper container and that required to warm the water are \ncalculated separately using the expression Q = mc\u2206T \n \n \n \n \n \nCopper: \nQ1 = 500 \u00d7 0.4 \u00d7 60 = 12 000 J = 12 kJ \n \nWater: \nQ2 = 400 \u00d7 4 \u00d7 60 = 96 000 J = 96 kJ \n \nTotal heat transfer = Q1 + Q2 = 12 + 96 = 108 kJ \n \nThis is only 20% of the heat released by burning the methane. \n \nSo, total heat released from burning = 108 \u00d7 100\n20\n = 540 kJ \n \nNumber of moles of methane burned to release this amount of heat = 540\n900\n = 0.6 mol \n \nMass of methane = 0.6 \u00d7 16 = 9.60 g",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 13,
+    "text": "13",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \nThe answer is option A. \n \n\u2206rH is the enthalpy of reaction and \u2206fH is the enthalpy of formation. \n \nDeduce reaction equation: \nHgC2N2O2 \u2192 Hg + N2 + 2CO \n\u2206rH = \u2013 606 kJ mol\u20131 \n \nDeduce equation for enthalpy of formation of mercury(II) fulminate: \n \nHg(l) + 2C(s) + N2(g) + O2(g) \u2192 HgC2N2O2(s) \n\u2206fH = + 386 kJ mol\u20131 \n \nDeduce equation for enthalpy of formation of carbon monoxide: \n \nC(s) + 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 O2(g) \u2192 CO(g) \n \n\u2206fH = x kJ mol\u20131 \n \nConstruct a Hess cycle: \nHg(l) + N2(g) + 2CO(g)\nHgC2N2O2(s)\n\u2013 606\nHg(l) + N2(g) + 2C(s) + 2O2(g)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 x\n+ 386",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 x = (+ 386) + (\u2013 606) = \u2013 220 \n \nx = \u2013110 kJ mol\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 13,
+    "text": "13 \nThe answer is option B. \n \nThe hydrocarbon contains 14.3% by mass of H, so must contain 85.7% by mass of C. \n \nThe empirical formula of X is found by considering the ratio C : H which is \n.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 85,
+    "text": "85 7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 :\n.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14 3\n1\n, \ncancelling to 2 : 1 by approximation. \n \nTherefore the empirical formula is CH2. \n \nThe mass spectrum shows the molecular ion peak at m / z = 84, so Mr = 84. \n \nThe molecular mass of cyclobutane (C4H8) is 56. This corresponds to the highest intensity \npeak, but that does not correspond to the molecular ion. \n \nMolecular formula of X is therefore: C6H12 \n \nX does not react with bromine, so it is not an alkene. X cannot be hex-2-ene. \n \nX must be a cycloalkane with 6 C atoms, such as cyclohexane.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 14,
+    "text": "14 \nThe answer is option E. \n \nFrom the information provided in the question the formulae in the chemical equation can be \ndeduced to be: \n \n?SO3 + ?Cl 2 + ?SCl 2 \u2192 ?SOCl 2 \n \n \nBalancing: \n \n SO3 + Cl 2 + 2SCl 2 \u2192 3SOCl 2 \n \nNumber of moles Cl 2 gas \n= 2\n24\n = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \n \nMole ratio Cl 2 : SOCl 2 \n= 1 : 3 \n \nNumber of moles of SOCl 2 \n= 1\n12\n \u00d7 3 = 0.25 mol \n \nSOCl 2 is collected in water, where it reacts. It produces HCl, which will dissolve to form \nhydrochloric acid, and another gaseous product, which can be deduced to be sulfur dioxide: \n \nSOCl 2 + H2O \u2192 2HCl + SO2 \n \nMole ratio SOCl 2 : HCl \n= 1 : 2 \n \nNumber of moles of HCl \n= 0.25 \u00d7 2 = 0.50 mol \n \nConcentration of HCl \n= number of moles\nvolume\n = \n.\n\u239b\n\u239e\n\u239c\n\u239f\n\u239d\n\u23a0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 50\n200\n1000\n = 2.50 mol dm\u20133",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 15,
+    "text": "15 \nThe answer is option A. \n \nThe oxidation state of silver in Tollens\u2019 reagent is +1, as NH3 is a neutral species and the \nnitrate anion has a charge of \u20131. \n \nIt acts as a reducing agent as shown by the half-equation: Ag+(aq) + e\u2013 \u2192 Ag(s) \n \nCombining this with the organic oxidation half-equation shows that the overall reaction has the \nstoichiometry: \n \n2Ag+(aq) + RCHO + H2O \u2192 2Ag(s) + RCOOH + 2H+ \n \nThe internal surface area of the beaker is the area of the circular base added to the curved \nsides. \n \nSurface area to be coated = \u03c0r2 + 2\u03c0rh = 25\u03c0 + 100\u03c0 = 125\u03c0 cm2 \n \nVolume of silver required = surface area \u00d7 thickness = 125\u03c0 cm2 \u00d7 0.01 cm = 1.25\u03c0 cm3 \n \nMass of silver required in g = volume \u00d7 density = 1.25\u03c0 cm3 \u00d7 10.5 g cm\u20133 \n \nNumber of moles of Ag(s) required = \n(\n)\nr\nmass in g\n\u0391g\nA\n = \n.\n.\n\u00d7\n\u00d7\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 5 1 25\n108\n \n \nSo, the number of moles of aldehyde required = 1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u00d7 \n.\n.\n\u00d7\n\u00d7\u03c0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 5 1 25\n108",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 17,
+    "text": "17",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nThe answer is option B. \n \nHess\u2019s Law can be used to solve this by creating a Hess Cycle. \n \nThe equation for the enthalpy change of formation of ethanol can be set up at the top of the \ncycle. This enthalpy change is known. \n \nThe enthalpy change of vaporisation of ethanol should be included, as by definition the bond \nenthalpy data is for gaseous covalent bonds. \n \nThe gaseous atoms are included such that bond enthalpy (BE) data and atomisation of carbon \ndata can be utilised and the cycle completed: \n \n2C(s) + 3H2(g) + \u00bdO2(g)\n2C(g) + 6H(g) + O(g)\nCH3CH2OH(l)\nCH3CH2OH(g)\n\u2206fH\u00b0(CH3CH2OH)\n\u2206vapH\u00b0(CH3CH2OH)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u00d7 \u2206atH\u00b0(C(s))\n+ 3 \u00d7 BE(H\u2013H)\n+ \u00bd \u00d7 BE(O=O)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \u00d7 BE(C\u2013H)\n+ 1 \u00d7 BE(C\u2013C)\n+ 1 \u00d7 BE(C\u2013O)\n+ 1 \u00d7 BE(O\u2013H)\n \n \n\u2206fH\u00b0(CH3CH2OH(l)) \n= \n[2(\u2206atH\u00b0(C(s)) + 3(BE(H \u2013 H)) + 0.5(BE(O=O))] \n \n \n \n \n \n\u2013 [5(BE(C \u2013 H)) + BE(C \u2013 C) + BE(C \u2013 O) + BE(O \u2013 H)] \n \n \n \n \n \n\u2013 [\u2206vapH\u00b0(CH3CH2OH(l))] \n \n \n \n\u2013 277 = \n[2987] \u2013 [5(BE(C \u2013 H)) + 1167] \u2013 [39] \n \n \n5(BE(C \u2013 H)) = \n+277 + 2987 \u2013 1167 \u2013 39 \n \n \n \n \n= \n+2058 \n \n \nBE(C \u2013 H) \n= \n5\n2058\n+\n \n \n \n \n \n \n= \n+412 kJ mol\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 17,
+    "text": "17 \nThe answer is option E. \n \nPutting the known coefficients into the equation: \n \nAs2O3(s) + 6Zn(s) + H+(aq) \u2192 6Zn2+(aq) + 2X(g) + H2O(l) \n \nSix zinc atoms each increase their oxidation state by 2 in being oxidised to zinc ions. This gives \na total increase in oxidation state of 12. \n \nTo balance this, the two arsenics in As2O3 must collectively reduce their oxidation states by 12 \n(i.e. each arsenic in As2O3 must reduce its oxidation state by 6). \n \nThe oxidation state of arsenic in As2O3 is + 3 (because the oxidation state of the oxygen is \u2013 2). \nHence each of the two arsenics in X must have an oxidation state of \u2013 3. \n \nThe only possible arsenic-containing product in this reaction that gives arsenic an oxidation \nstate of \u2013 3 is AsH3. \n \nThe balanced equation for the reaction is therefore: \n \nAs2O3(s) + 6Zn(s) + 12H+(aq) \u2192 6Zn2+(aq) + 2AsH3(g) + 3H2O(l) \n \nThe Mr of As2O3 is 198 and the Mr of AsH3 is 78. \n \nFrom the stoichiometry of the reaction, 198 g of As2O3 would produce 156 g of AsH3. \n \nHence, 1.98 g of As2O3 would produce 1.56 g of AsH3.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 19,
+    "text": "19",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nThe answer is option E. \n \nCompound P must have a C=C bond somewhere in its structure, and Q is a bromoalkane. \n \nAlcohols are formed when bromoalkanes undergo substitution reactions with aqueous sodium \nhydroxide. \n \nWhen completely oxidised by acidified potassium dichromate(VI), primary alcohols form \ncarboxylic acids which do react with aqueous sodium carbonate. \n \nSecondary alcohols are oxidised to ketones which do not react with aqueous sodium carbonate \nand tertiary alcohols cannot be oxidised by acidified potassium dichromate(VI). Therefore R \nmust be a secondary alcohol. \n \nPent-1-ene is incorrect as it would form 2-bromopentane as the only major product with HBr, \nwhich would then form pentan-2-ol. This would be dehydrated to form pent-2-ene as the other \nalkene, S. This does have stereoisomers. \n \nPent-2-ene is incorrect as there would be two products in significant quantity formed in the \nreaction with HBr: 2-bromopentane and 3-bromopentane (both formed from secondary \ncarbocations). \n \nThe correct answer must therefore be one of the branched alkenes. If P were either \n2-methylbut-1-ene or 2-methylbut-2-ene, because the double bond is adjacent to the branch in \nthe chain, a tertiary bromoalkane would be formed as the major product. After the substitution \nreaction, this bromoalkane would become a tertiary alcohol, which cannot be oxidised by \nacidified potassium dichromate(VI). \n \n3-methylbut-1-ene must therefore be the correct answer. This alkene would firstly form \n2-bromo-3-methylbutane as the only major product with HBr and then 2-methylbutan-2-ol. This \nalcohol would be dehydrated to form 2-methylbut-2-ene as alkene S, which has two methyl \ngroups attached to one end of the carbon double bond, and therefore does not have \nstereoisomers.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 19,
+    "text": "19 \nThe answer is option G. \n \nBoth bromine and fluorine are in Group 17. F is more electronegative than Br and can form \nmultiple bonds. \n \nBromine contributes 7 outer electrons to bonding, and the three F atoms contribute one further \nelectron each. So there are 10 outer electrons around the Br centre, i.e. 5 pairs of electron \ndensity. \n \nThe structure is therefore based on a trigonal bipyramid. As there are only three bonds, two of \nthese regions of electron density are lone pairs. There are several possible shapes that could \nform according to VSEPR, but only T-shaped would be faithful to the symmetry if only two bond \nlengths are equal and the third is not. \n \nBr\nF\nF\nF\n0.361\n0.241\n0.181\n0.181\n0.172\nBr\nF\nF\nF\n \n \nFinding a right-angled triangle using appropriate distances, and using the inverse sine function \n(sin\u20131), gives the bond angle as sin\u20131\n.\n.\n\u239b\n\u239e\n\u239c\n\u239f\n\u239d\n\u23a0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 1805",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 181\n (= 86\u00b0)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 20,
+    "text": "20 \nThe answer is option C. \n \n \nCH3COOH \n+ \nCH3CH2OH\n\u21cc \nCH3COOCH2CH3 + \nH2O \nmass at the start \n120",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 92,
+    "text": "92",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nMr",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 60,
+    "text": "60",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 46,
+    "text": "46",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 88,
+    "text": "88",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 18,
+    "text": "18 \nnumber of moles at \nthe start",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 \nnumber of moles at \nequilibrium",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2013 x",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \u2013 x \nx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 1,
+    "text": "1 + x \n \nThe equilibrium constant is: Kc = [\n][\n]\n[\n][\n]\n3\n2\n3\n2\n3\n3\n2\nCH COOCH CH\nH O\nCH COOH CH CH OH \n \nSubstituting in the number of moles: Kc = \n( )(\n)\n(\n)(\n)\n\u2013\n\u2013\nx\nx\nx\nx\n+\n1\n2\n2\n = 2 \n \nRearranging: \nx2 + x = 2(x2 \u2013 4x + 4) \n \n \n \n \nx2 + x = 2x2 \u2013 8x + 8 \n \n \n \n \n \nx2 \u2013 9x + 8 = 0 \n \nUsing the quadratic formula: x = \u2013\n\u2013\nb\nb\nac\na\n\u00b1\n2\n4\n2\n = \u2013\n\u2013\n\u00b1\n2\n9\n9\n32\n2\n \n \nor by factorising: \n( x \u2013 8)( x \u2013 1) = 0 \n \n \n \n \nx = 8 or 1 \n \nA value of 8 is impossible because that would require \u2018\u2013 6 mol\u2019 of reactants. \n \nAt equilibrium there would be just one mole of ester, which has a mass of 88 g.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 22,
+    "text": "22 \nParty Z Biology",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21 \nThe answer is option E. \n \nIn the notation of a fatty acid, given in the question, the second value refers to the number of \ncarbon\u2013carbon double bonds. If a fatty acid has any of these bonds in the hydrocarbon chain it \nis unsaturated. The question shows that linoleic acid has two carbon\u2013carbon double bonds and \nis therefore the most unsaturated fatty acid. Statement A is incorrect. \n \nIn the formation of a triglyceride, an atom of hydrogen is lost in the condensation reaction that \nforms the ester bond which attaches each fatty acid to the glycerol. This will leave 35 hydrogen \natoms in the stearic acid component. Statement B is incorrect. \n \nAll fatty acids have a carboxyl group but in the formation of a triglyceride part of the group is \nlost in the condensation reaction that forms the ester bond. Statement C is incorrect. \n \nThe carbon\u2013carbon double bonds in unsaturated fatty acids cause the chains to be kinked and \nnot straight. As oleic and linoleic acids are both unsaturated, the hydrocarbon chains will not be \nin parallel. Statement D is incorrect. \n \nIn a triglyceride, there will be one oxygen atom in each ester bond plus 3 oxygen atoms \nattached by a double bond to the first carbon in each of the hydrocarbon chains as shown in \nthe diagram: \n \n \n \nThis will give a total of 6 oxygen atoms in the triglyceride. The formula for a molecule of \nglucose is C6H12O6. Statement E is correct.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 23,
+    "text": "23",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 22,
+    "text": "22 \nThe answer is option C. \n \nCardiac output is calculated by the equation: \n \ncardiac output = heart rate \u00d7 stroke volume \n \nThe stroke volume is given in the stem of the question, 70 cm3. There are 6 beats in 5 seconds \nshown on the ECG which needs to be multiplied by 12 to give the heart rate per minute. \nCardiac output is:",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 72,
+    "text": "72 \u00d7 70 = 5040 cm3 per minute \n \nTherefore, statement 1 is not correct. \n \nA normal ECG: \n \n0\n1\n2\n3\n4\n5\nP\nQ\nS\nR\nT\ntime / s \n \nAbnormal ECG from person with known cardiac condition: \n \n0\n1\n2\n3\n4\n5\nP\nQ\nS\nR\nT\ntime / s \n \nIn the normal ECG the P wave is next to the QRS complex. In the abnormal ECG there is a \nshort gap between the P wave and the QRS complex. The P wave represents atrial systole as \nthe electrical activity spreads over the atria. The QRS complex represents ventricular systole \nas the electrical activity spreads over the ventricles. In the normal cardiac cycle ventricular \nsystole follows immediately after atrial systole, as seen in the normal ECG. In the abnormal \nECG the gap between P and QRS indicates that electrical conduction does not follow as \nquickly as it should. Statement 2 is correct. \n \nP represents atrial systole, not atrial diastole. Statement 3 is not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 23,
+    "text": "23 \nThe answer is option F. \n \nWhen the water potential of the cell sap and solution surrounding it are equal, the length of the \nplant tissue should remain the same. The initial length of plant tissue divided by the final length \nof plant tissue should be equal to 1. The cell sap and the salt solution have the same water \npotential at a salt solution concentration of 0.4 mol dm\u20133. \n \nAt a salt solution concentration of 0.1 mol dm\u20133 the length of the plant tissue can be calculated:",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 \u00f7 0.97 = \n\u00d7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 5,
+    "text": "5 100\n97\n = 5.15 \n \nTherefore the plant tissue increased by 0.15 cm which is equal to 1.5 mm.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 24,
+    "text": "24 \nThe answer is option E. \n \nUsing data from the bar chart, there are 42 mammals in the owl\u2019s diet of which 6 are mice: \n \n6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 42,
+    "text": "42 \u00d7 100 = 14.3% \n \nThe change in the population (r) can be calculated by adding together the births (b) and \nimmigration (i), adding together the deaths (d ) and emigration (e), then subtracting the second \nfigure from the first, as in the equation: \n \n(\n)\n(\n)\nr\nb\ni\nd\ne\n=\n+\n\u2212\n+\n \n(242 + 11) \u2013 (207 + 21) = 25 \n \nHowever, this figure is for 2 weeks. The mean change per week is 25 \u00f7 2 = 12.5 \n \nAlthough this figure shows there is an increase in the mouse population, it is not possible to \nmake a judgement on whether the owl\u2019s diet would be likely or unlikely to show an increase in \nmice, because there is no data available about what is happening to the populations of the \nother organisms in the owl\u2019s diet. The only sound conclusion is that there is insufficient \nevidence to know the effect on the owl\u2019s diet.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 26,
+    "text": "26",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 25,
+    "text": "25 \nThe answer is option A. \n \nCell X is a haploid cell with 7 chromosomes in prophase II of meiosis. This means the cell has \nalready been through prophase I, metaphase I, anaphase I and telophase I since the end of \ninterphase. Statement 1 is not correct. \n \nAll of the cells contain a similar total mass of DNA. Cell X and Cell Z both have a chromosome \nnumber of 7, which means that meiosis I has happened. In these cells, each chromosome has \ntwo chromatids so there is a total of 14 chromatids in each cell. Cell Y has 14 chromosomes, \nbut these have not duplicated yet so there are also 14 chromatids present in this cell. \nStatement 2 is not correct. \n \nThere are only 7 chromosomes in Cell Z, therefore it is a haploid cell and not in mitosis. \nStatement 3 is not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 27,
+    "text": "27",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 26,
+    "text": "26 \nThe answer is option B. \n \nA mature sieve tube element is made up of many adjacent cells fusing together with holes \nappearing in adjacent cell walls. These cell walls contain the structural polysaccharide \ncellulose. The mature element also has cytoplasm which contains mitochondria. \n \nOne way to work out the diameter of the cross-sectional area is: \n \n\u03c0\n54\n6\n = 9\u03c0 \n \n9\u03c0 = \u03c0r 2 \n \n\u03c0\n\u03c0\n9\n = r 2 \n \nr 2 = 9 \n \nr =",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 = 3 \n \nd = 2r = 6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 28,
+    "text": "28",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 27,
+    "text": "27 \nThe answer is option F. \n \nIn order to calculate the volume of water lost, we use the volume of the tubing, which is a \ncylinder: \n \nvolume of cylinder = r h\n\u03c0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 2,
+    "text": "2 \n \nFor P, this is \n.\n.\n.\n\u00d7\n\u00d7\n=\n\u00d7\n\u00d7\n=\n\u03c0\n\u03c0\n\u03c0\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 3\n90",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 09 90",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 10\n \n \nFor Q, this is \n.\n.\n.\n\u00d7\n\u00d7\n=\n\u00d7\n\u00d7\n=\n\u03c0\n\u03c0\n\u03c0\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 5\n33",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 25 33",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 8,
+    "text": "8 25\n \n \nFor R, this is \n.\n.\n.\n\u00d7\n\u00d7\n=\n\u00d7\n\u00d7\n=\n\u03c0\n\u03c0\n\u03c0\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 6\n25",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 0,
+    "text": "0 36\n25",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 9,
+    "text": "9 00\n \n \nTherefore, the order from most to least is: R, Q, P. \n \nThe information provided does not specify anything about controlling variables, so it is possible \nthat R was in a humid environment. However, the loss of water (transpiration) under these \nconditions is expected to be very low, not the most water lost. \n \nThere is also no indication that the leaf area was the same in all three experiments, nor that \nother variables were controlled. \n \nTherefore, it is only possible to say there is insufficient data to explain the results.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 29,
+    "text": "29",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 28,
+    "text": "28 \nThe answer is option G. \n \nThe process of increasing the variation between the two groups of maize grains is not a natural \none, but carried out in an experiment artificially. Statement 1 is not correct. \n \nThe graph shows that the percentage oil content in the high oil content grains was 5% at the \nstart of the experiment. This increased to 14% after 50 generations. \n \nPercentage change is: \n \nchange in percentage oil content\noil content at start\n \u00d7 100% \n \n= (\n)\n\u2212\n14\n5\n5\n \u00d7 100% \n \n \n= 180% \n \nStatement 2 is correct. \n \nThe maize grains had a mean mass of 0.4 g. At the start of the experiment for the high oil \ncontent grains, 5% of this mass was oil: \n \n5\n100 \u00d7 0.4 = 0.02 g \n \nAfter fifty generations, 14% of each grain was oil: \n \n14\n100\n \u00d7 0.4 = 0.056 g \n \nThe difference is 0.056 \u2013 0.02 = 0.036 g \n \nStatement 3 is correct.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 29,
+    "text": "29 \nThe answer is option C. \n \nThe gaseous product of photosynthesis is oxygen. Statement 1 is not correct. \n \nAny of the points where the distance doubles can be used to test Statement 2. Several \nintervals should be checked to confirm the relationship. \n \nBetween 10 cm and 50 cm, the relationship between the rate of gas production \n(photosynthesis) and distance from the light source matches the inverse square relationship \nbetween distance from the light source and light intensity, e.g. as the distance doubles (from",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 10,
+    "text": "10 cm to 20 cm) the light intensity will decrease to: \n \nd\n\u239b\n\u239e\n\u239b\n\u239e\n=\n=\n\u239c\n\u239f\n\u239c\n\u239f\n\u239d\n\u23a0\n\u239d\n\u23a0\n2\n2\n1\n1\n1\n4\n2\n of the original value \n \nThis matches the decrease in photosynthesis, which decreases by a factor of 4, from 80 to 20 \nbubbles. \n \nSimilarly, as the distance goes up from 10 cm to 40 cm the light intensity will decrease to \n\u239b\n\u239e=\n\u239c\n\u239f\n\u239d\n\u23a0\n2\n1\n1\n16\n4\n of the original value, again matching the decrease in photosynthesis, from 80 to 5 \nbubbles. \n \nTherefore, statement 2 is correct. \n \nAs the pondweed is moved closer than 10 cm to the light source, light intensity will be \nincreasing but the rate of photosynthesis does not increase. Therefore, some factor other than \nlight intensity must be rate limiting at 5 cm. Statement 3 is not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 31,
+    "text": "31",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 30,
+    "text": "30 \nThe answer is option E. \n \nStatement 1 is correct. \n \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 4,
+    "text": "4 of the alleles are the dominant B allele, so the probabilities of each genotype are \n \n \nB \u00be \nb \u00bc \nB \u00be \n9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \nb \u00bc \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nFlour beetles with genotypes BB and Bb will have black eyes. \n \nThe proportion of black eye beetles will be: \n+\n+\n=\n9\n3\n3\n15\n16\n16\n16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \n \nTherefore the number of beetles with black eyes in the population is: 15",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \u00d7 1600 = 1500 \n \nStatement 2 is correct. The body cells each have two copies of chromosome 5, and this means \nthey are diploid. \n \nStatement 3 is not correct. \n \nFor this population of beetles, using the probabilities in the table for Statement 1: \n \nhomozygous black eye (BB) = 9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nheterozygous black eye (Bb) = \n+\n3\n3\n16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nred eye (bb) = 1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section2_2022_NSAA Section 2 2022 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022 Spec\\NSAA Section 2 2022 Spec Explained Answers.pdf",
+    "year": "2022",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 16,
+    "text": "16 \n \nTherefore the ratio of homozygous black eye beetles to heterozygous black eye beetles to red \neye beetles is 9 : 6 : 1",
+    "skipped_diagram": true
+  }
+]

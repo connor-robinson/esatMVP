@@ -163,7 +163,7 @@ export function TopicsOverviewSection({
       {filteredTopics.length === 0 && (
         <div className="text-center py-12 text-white/40">
           <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
-          <p>No topics found matching "{searchQuery}"</p>
+          <p>No topics found matching &quot;{searchQuery}&quot;</p>
         </div>
       )}
           </motion.div>

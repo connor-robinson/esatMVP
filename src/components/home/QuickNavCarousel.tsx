@@ -11,7 +11,7 @@ const PAGES = [
   {
     name: "Drill",
     description: "Practice Sessions",
-    href: "/train/drill",
+    href: "/skills/drill",
   },
   {
     name: "Papers",

@@ -45,7 +45,7 @@ export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
   if (chartData.total === 0) {
     return (
       <div className={`p-6 text-center ${className}`}>
-        <div className="text-sm text-neutral-500">No mistakes yet — scroll down to "Mistake Analysis & Drill Setup" to tag mistakes and build your drill.</div>
+        <div className="text-sm text-neutral-500">No mistakes yet — scroll down to &quot;Mistake Analysis & Drill Setup&quot; to tag mistakes and build your drill.</div>
       </div>
     );
   }

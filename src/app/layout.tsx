@@ -9,8 +9,8 @@ import { LoadingProvider } from "@/components/shared/LoadingProvider";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ServiceWorkerProvider } from "@/components/shared/ServiceWorkerProvider";
 import { BuildBadge } from "@/components/shared/BuildBadge";
-import { PerformanceMonitor } from "@/components/shared/PerformanceMonitor";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { KaTeXLoader } from "@/components/shared/KaTeXLoader";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -74,6 +74,7 @@ export default async function RootLayout({
                 <QuicklinkProvider>
                   <ServiceWorkerProvider />
                   <BackgroundPrefetcher />
+                  <KaTeXLoader />
                   <Navbar />
                   <main className="min-h-full">
                     <Suspense
@@ -87,7 +88,6 @@ export default async function RootLayout({
                     </Suspense>
                   </main>
                   <BuildBadge />
-                  <PerformanceMonitor />
                 </QuicklinkProvider>
               </LoadingProvider>
             </ThemeProvider>

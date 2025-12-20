@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P4-Medium-a123c3287c</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P4-Medium-a123c3287c<br>
+            <strong>Schema:</strong> P4<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T01:19:43.279584<br>
+            <strong>Token Usage:</strong> 19,605 total (8,824 prompt + 1,210 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                Three identical resistors are connected in a circuit with a DC power supply. One resistor is connected in series with a parallel combination of the other two.
+What fraction of the total power supplied by the source is dissipated by the parallel combination?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $\frac{1}{9}$</div>
+                <div class="option"><strong>B:</strong> $\frac{1}{6}$</div>
+                <div class="option"><strong>C:</strong> $\frac{1}{4}$</div>
+                <div class="option correct"><strong>D:</strong> $\frac{1}{3}$ ✓ CORRECT</div>
+                <div class="option"><strong>E:</strong> $\frac{1}{2}$</div>
+                <div class="option"><strong>F:</strong> $\frac{2}{3}$</div>
+
+            </div>
+            <p><strong>Correct Answer: D</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>Let the resistance of each resistor be$R$.
+The circuit consists of a single resistor ($R_1$) in series with a parallel pair ($R_2$and$R_3$).
+First, we find the equivalent resistance of the parallel combination ($R_p$):$$R_p = \left( \frac{1}{R} + \frac{1}{R} \right)^{-1} = \frac{R}{2}$$The total resistance of the circuit ($R_{total}$) is the sum of the series resistor and the parallel combination:$$R_{total} = R + \frac{R}{2} = \frac{3R}{2}$$Since the single resistor and the parallel combination are in series, the total source current$I$flows through both blocks. Using the power formula$P = I^2 R$, we can compare the power dissipated by the parallel combination ($P_p$) to the total power ($P_{total}$):$$P_p = I^2 R_p = I^2 \left( \frac{R}{2} \right)$$$$P_{total} = I^2 R_{total} = I^2 \left( \frac{3R}{2} \right)$$The fraction of the total power is:$$\frac{P_p}{P_{total}} = \frac{I^2 (R/2)}{I^2 (3R/2)} = \frac{1/2}{3/2} = \frac{1}{3}$$Hence the correct answer is D.
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>For components connected in series, current is common, so power dissipated is directly proportional to resistance ($P \propto R$).
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrectly assumes power is proportional to voltage squared ($P \propto V^2$) without accounting for resistance, calculating $(1/3)^2 = 1/9$.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> The fraction of total power dissipated by a single resistor within the parallel pair ($1/6$).</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> A common arithmetic error or incorrect scaling of the resistance ratio.</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Correct answer. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>E:</strong> Incorrectly assumes power splits equally between the two main blocks (series resistor vs parallel pair).</div>
+                <div style="margin: 10px 0;"><strong>F:</strong> Incorrectly assumes power distributes equally among all three resistors (2 in parallel implies 2/3), or calculates the fraction dissipated by the series resistor ($2/3$).</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

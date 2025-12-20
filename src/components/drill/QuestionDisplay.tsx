@@ -7,6 +7,7 @@
 import { motion } from "framer-motion";
 import { GeneratedQuestion } from "@/types/core";
 import { cn } from "@/lib/utils";
+import { MathContent } from "@/components/shared/MathContent";
 
 interface QuestionDisplayProps {
   question: GeneratedQuestion;
@@ -37,7 +38,7 @@ export function QuestionDisplay({
       
       {/* Question text */}
       <div className="text-5xl md:text-6xl font-mono font-bold text-white/90 tracking-tight">
-        {question.question}
+        <MathContent content={question.question} />
       </div>
       
       {/* Hint for difficulty */}
@@ -48,7 +49,7 @@ export function QuestionDisplay({
           transition={{ delay: 0.3 }}
           className="mt-4 text-sm text-primary"
         >
-          💡 There's a shortcut for this one!
+          💡 There&apos;s a shortcut for this one!
         </motion.div>
       )}
     </motion.div>

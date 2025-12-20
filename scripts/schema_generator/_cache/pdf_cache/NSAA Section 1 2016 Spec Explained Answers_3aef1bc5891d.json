@@ -1,0 +1,1922 @@
+[
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \n\u00a9 UCLES 2016 \nMATHEMATICS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nThe answer is option A. \n \nWe can write: \n \narea of shape \uf03d area of square \uf02darea of semi-circle. \n \nIf we let the length of one side of the square be 2x, so that the radius of the semi-circle is x, then this \nbecomes: \n \n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n\uf070\n\uf02d\n\uf03d\n\uf070\n\uf02d\n\uf03d\n2\n4\n2\n1\n4\n100\n2\n2\n2\nx\nx\nx\n \n \nRearranging: \n \n\uf070\n\uf02d\n\uf03d\n\uf070\n\uf02d\n\uf03d\n8\n2\n10\n8\n200\nx\n \n \nSo the length of one side of the square is \n\uf070\n\uf02d\n\uf03d\n8\n2\n20\n2x",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nThe answer is option E. \n \nLet \nx\nRQ \uf03d\n \n \nR\nQ\nP\nT\nx\n0\n20\n \n \nWe know RQ : PQ is 1 : 2 so we can deduce \n10\n\uf03d\nx\n \n \nBy Pythagoras\u2019 Theorem, we have \n5\n10\n\uf03d\nPR\n \n \nWe notice triangles PQT and PRQ are similar: \n \nQ\nT\nP\n20\nP\nQ\nR\n0\n20\n10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 5\n0\n \n \nSo we can write: \n5\n10\n20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \uf03d\nQT\n \n \nGiving: \n5\n4\n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \uf03d\n\uf03d\nQT",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nThe answer is option A. \n \n \n \nS\n1\nQ\n1\nM\nP\nR\n1\n \n \n \nIn triangle PQR, the angle at R is a right angle so we can use Pythagoras\u2019 Theorem to find PQ: \n \nP\nR\nQ\n1\n1\n \n \n2\n1\n1\n2\n2\n2\n\uf03d\n\uf02b\n\uf03d\nPQ\n \n \n \nGiving \n2\n\uf03d\nPQ\n \nQM is half of PQ so \n2\n2\n\uf03d\nQM",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \n\u00a9 UCLES 2016 \nNow looking at triangle MQS: \n \n \n1\nS\nQ\nM\n2\n2\n \n \nThe angle at Q is a right angle so we can use Pythagoras\u2019 Theorem: \n2\n3\n1\n4\n2\n1\n2\n2\n2\n2\n2\n\uf03d\n\uf02b\n\uf03d\n\uf02b\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n\uf03d\nMS\n \nGiving \n2\n3\n\uf03d\nMS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nThe answer is option D. \n \nWhen the minute hand is pointing to the 9 [indicating 45 minutes past the hour], the hour hand will \nhave moved three-quarters of the angle between the 9 and the 10 on the clock dial. The angle \nbetween the 9 and the 10 is 30 degrees so the hour hand will have moved three-quarters of 30 \ndegrees, or 22.5 degrees. The angle between the hands is, therefore, 22.5\u00b0.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nThe answer is option B. \n \nTo answer this we shall use: \narea of triangle \uf03d 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b4 base \uf0b4 height \nThis gives: \n \n area \n\uf028\n\uf029\uf028\n\uf029\n2\n2\n2\n4\n2\n1\n\uf02d\n\uf02b\n\uf03d\n\uf028\n\uf029\n\uf028\n\uf029\n2\n3\n2\n2\n6\n2\n1\n2\n2\n2\n2\n2\n4\n8\n2\n1\n\uf02d\n\uf03d\n\uf02d\n\uf03d\n\uf02d\n\uf02b\n\uf02d\n\uf03d",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nThe answer is option D. \n \nAs the cylinder has the same internal diameter as the sphere, it has the same radius, r. As the length \nof the cylinder is the same as the diameter of the sphere, it has length 2r. So we can write: \n \nVolume of the sphere \uf03d\n3\n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 r\n\uf070\n \n \n \nVolume of cylinder \uf03d base area \uf0b4 height \uf03d \n3\n2\n2\n2\nr\nr\nr\n\uf070\n\uf03d\n\uf0b4\n\uf070\n \n \nThis then allows us to calculate the fraction of the space in the cylinder taken up by the sphere: \n \n3\n2\n2\n3\n4\n3\n3\n\uf03d\n\uf070\n\uf070\nr\nr",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \nThe answer is option A. \n \nFor \n1\n0\n\uf03c\n\uf03cx\n, we have: \n \n1\n0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf03c\n\uf03cx\n \n \n1\n0\n\uf03c\n\uf03c\nx\n \n \nand also: \n \nx\n1\n1\uf03c\n \n \nx\nx\n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf03c\n \n \nx\nx\n1\n1\n1\n\uf03c\n\uf02b\n \n \nso x",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 has the largest value in \n1\n0\n\uf03c\n\uf03cx",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nThe answer is option C. \n \nUsing the fact that triangle ABC is similar to triangle ADE [they have the same angles], we can write: \n \nDE\nBC\nAD\nAB \uf03d\n \n \nThis gives: \n \n3\n4\n\uf02b\n\uf03dx\nx\nx\n \n \nFrom which we get: \n \n\uf028\n\uf029\n2\n3\n4\nx\nx\n\uf03d\n\uf02b\n \n \nRearranging: \n \n0\n12\n4\n2\n\uf03d\n\uf02d\n\uf02dx\nx\n \n \nFactorising: \n \n\uf028\n\uf029\uf028\n\uf029\n0\n2\n6\n\uf03d\n\uf02b\n\uf02d\nx\nx\n \n \nGiving \n6\n\uf03d\nx\n [as we cannot have a negative value for x as it represents a length]. \n \nAnd so \n9\n3\n6\n3\n\uf03d\n\uf02b\n\uf03d\n\uf02b\n\uf03dx\nDE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \n \nThe answer is option C. \n \n2\n1\nQ\nP \uf0b5\n so \n2\nQ\nk\nP \uf03d\n for some k \n \nWe can use multiplying factors to work out how each symbol changes; for instance, as Q increases by \n40% its new value is 1.4Q \n \nFor this question, we have: \n \nQ\nQnew\n4\n1.\n\uf03d\n \n \nGiving: \n \nP\nQ\nk\nQ\nk\nPnew\n96\n1\n1\n96\n1\n4\n1\n2\n2\n.\n.\n)\n.\n(\n\uf03d\n\uf03d\n\uf03d\n \n \nWe then notice: \n \n2\n1\n96\n1\n1\n\uf0bb\n.\n and \n2\n1\n96\n1\n1\n\uf03e\n.\n \n \nso \nnew\nP\n is a little over 50% of P and so we can deduce that P has decreased by a little under 50%.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nThe answer is option D. \n \nWe are given: \n2\nz\nx \uf0b5\n and \n3\n1\nz\ny \uf0b5\n which allows us to write: \n2\nkz\nx \uf03d\n and \n3\nz\nc\ny \uf03d\n \n \nWe want to eliminate z so we need both expressions to have the same power of z in them: \n \n6\n3\n3\nz\nk\nx \uf03d\n and \n6\n2\n2\nz\nc\ny\n\uf03d\n \n \nEliminating z and ignoring the constants gives: \n \n2\n3\n1\ny\nx \uf0b5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \n \nThe answer is option C. \n \nTo make the question easier to answer, we can let QX \uf03d 2 \n \nWe then find, using the given ratios, that PX \uf03d12 and XR \uf03d3 and so PR \uf03d15 \n \nAs M is the midpoint of PR then PM \uf03d7.5 and so MX \uf03d4.5 \n \nWe can then calculate the ratio asked for: \n \n9\n4\n5\n4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf03d\n\uf03d\n.\nMX\nQX",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nThe answer is option D. \n \nx\nx\n2\n8\n2\n\uf02d\n\uf0b3\n \n \nRearranging: \n \n0\n8\n2\n2\n\uf0b3\n\uf02d\n\uf02bx\nx\n \n \nFactorising: \n \n0\n2\n4\n\uf0b3\n\uf02d\n\uf02b\n)\n)(\n(\nx\nx\n \n \nGiving: \n \n4\n\uf02d\n\uf0a3\nx\n or \n2\n\uf0b3\nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \n \nThe answer is option A. \n \nWe are told: \n \nsurface area of cylinder \uf03d volume of cylinder \n \nWe can write this as follows: \n \nh\nr\nrh\nr\n2\n\uf070\n\uf03d\n\uf070\n\uf02b\n\uf070\n2\n2\n2\n \n \nRearranging: \n \nh\nrh\nr\n2\n2\n\uf02d\n\uf03d\n \n \n)\n(\n2\n2\n\uf02d\n\uf03d\nr\nh\nr\n \n \nGiving: \n \nh\nr\nr \uf03d\n\uf02d2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \n \nThe answer is option D. \n \nWe require: \n8\n2\n6\n\uf03c\n\uf03c\nn\n \n \nWhich gives, on squaring: \n64\n4\n36\n\uf03c\n\uf03cn\n or \n16\n9\n\uf03c\n\uf03cn\n \n \nThis is satisfied when \n\uf03d\nn\n10,11,12,13,14,15, i.e. there are 6 integers.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \n \nThe answer is option B. \n \nQ\nP\nR\nS\nQ\nP\nR\nS\nQ\nP\nR\nS\nrotate clockwise\nreflect\nin y = x\nreflect\nin y-axis",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \nThe answer is option C. \n \nWe can let the length of a side of the large square be 3 to help us find the area scale factor. \n \nFirst we use Pythagoras\u2019 theorem to find the length of one side of the first inscribed square: \n \nLength of side of inscribed square \uf03d\n5\n2\n1\n2\n2\n\uf03d\n\uf02b\n \n \nThis allows us to work out the area scale factor using: \n \nArea of main square \uf03d 9 \n \nArea of inscribed square \uf03d 5 \n \nArea scale factor \uf03d 9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nTherefore the area of the fourth square [the third inscribed square] as a fraction of the area of the first \nsquare must be: \n \n729\n125\n9\n5\n3\n\uf03d\n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \n \nThe answer is option C. \n \nWe can use multiplying factors to work out how each symbol changes; for instance, as x increases by \n50% its new value is 1.5x \n \nAfter the percentage changes the expression becomes: \n \n\uf028\n\uf029\nQ\nP\nz\ny\nx\n2\n8\n0\n5\n1\n5\n1\n2\n.\n.\n.\n\uf02b\n \n \nThis simplifies: \n \n\uf028\n\uf029\n\uf028\n\uf029\n\uf028\n\uf029\nQ\nP\nz\ny\nx\nQ\nP\nz\ny\nx\nQ\nP\nz\ny\nx\n2\n2\n2\n2\n2\n9\n0\n2\n8\n0\n5\n1\n2\n8\n0\n5\n1\n\uf02b\n\uf03d\n\uf02b\n\uf0b4\n\uf0b4\n\uf03d\n\uf02b\n.\n.\n.\n.\n.\n \n \ngiving a 10% decrease in the value of M.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \n \nThe answer is option B. \n \nProb of scoring \n\uf03d\n12\n(Prob of scoring 6 on fair dice) \uf0b4 (Prob of scoring 6 on biased dice) \n \nAs the question tells us that the Prob of scoring \n18\n1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \uf03d\n \n \nWe can write: \n\uf0b4\n6\n1\n(Prob of scoring 6 on biased dice) \n18\n1\n\uf03d\n \n \nSo: (Prob of scoring 6 on biased dice) \n3\n1\n\uf03d\n \n \nAs the probability of scoring a 1 or 2 or 3 or 4 or 5 is the same on the biased dice, we can deduce \nthat: \n \n(Prob of scoring 1 on the biased dice)\n15\n2\n3\n2\n5\n1\n\uf03d\n\uf0b4\n\uf03d\n \n \nAnd so this gives: \n \nProb of scoring 2 \uf03d (Prob of scoring 1 on fair dice)\uf0b4(Prob of scoring 1 on biased dice) \n \nor \n \nProb of scoring 2 \uf03d\n45\n1\n15\n2\n6\n1\n\uf03d\n\uf0b4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \n \n\u00a9 UCLES 2016 \nPHYSICS",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \n \nThe answer is option C. \n \nThe forces on the parachutist are 600 N downwards and 900 N upwards. \n \nThese cause a resultant force on the parachutist of 900 N \uf02d 600 N \uf03d 300 N upwards. \n \nacceleration \uf03d resultant force / mass \uf03d 300 / 60 \uf03d 5.0 m s\u20132 upwards.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \nThe answer is option C. \n \nFrom the graph, period T \uf03d 2.0 s \n \nf \uf03d\n\uf03d\n\uf03d\n0\n2\n1\n1\n.\nT\n 0.50 Hz \n \nv \uf03d f \uf06c \uf03d 0.50 \uf0b4 1.5 \uf03d 0.75 cm s\u20131",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \nThe answer is option B. \n \nmomentum p \uf03dmv and kinetic energy KE \uf03d\n2\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv \n \nrearranging: \n \nv\nm\np\n\uf03d\n and so KE\nm\np2\n2\n1\n\uf03d\n \n \ntherefore: \n \nm\n\uf03d\n\uf03d\n\uf03d\n300\n900\n2\n2\nKE\np\n3.0 kg \n \n[Finally, it is good practice to verify this answer by substituting it back into the kinetic energy equation: \n \nkinetic energy \uf03d\n2\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv\n\uf03d2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b4 3 \uf0b4 102 \uf03d 150 J, which is correct.]",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \n \nThe answer is option E. \n \nLooking at each option in turn: \n \nA \nV \uf03d IR so volts are amp \uf0b4 ohm not amp per ohm. \n \nB \nThe volt is defined as a joule per coulomb. \n \n \nTherefore (coulomb per joule) \uf03d 1 / volt. This is not equal to the volt. \n \nC \nThe joule per second is the watt. \n \n \nThis is not equal to the volt. \n \nD \nSince the volt is defined as a joule per coulomb it is worth expressing the newton as a joule \nper metre. \n \n \nTherefore newton per coulomb \uf03d (joule per metre) per coulomb \uf03d (joule per coulomb) per \nmetre \uf03d volt per metre. This is not equal to the volt. \n \nE \nP \uf03d IV, therefore \nI\nP\nV \uf03d\n so volts are watt per amp.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \n \nThe answer is option D. \n \nConsider each source in turn. \n \nSource X: 24 hours is 5 half-lives (24 / 4.8 \uf03d 5). So, in 24 hours the activity of source X will halve 5 \ntimes, from 320 to 160 to 80 to 40 to 20 to 10. After 24 hours the activity of X will have fallen to 10 Bq. \n \nSource Y: 24 hours is 3 half-lives (24 / 8 \uf03d 3). So, in 24 hours the activity of Y will halve 3 times, from \n480 to 240 to 120 to 60. After 24 hours the activity of Y will have fallen to 60 Bq. \n \nThe combined count rate after 24 hours is therefore 10 \uf02b 60 \uf03d 70 Bq.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \n \nThe answer is option B. \n \nSince air resistance is negligible, all of the initial GPE is transferred to KE so mgh \uf03d\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv \n \nRearranging the equation, we obtain: h \uf03d \ng\nv\n2\n2\n \uf03d 400 / 20 \uf03d 20 m \n \n(Notice that m cancels so the result is independent of the mass of the falling body.)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n \nThe answer is option E. \n \nAs the cyclist loses 100 m of height, he loses gravitational potential energy \n\uf03d mgh \n\uf03d 100 \uf0b4 10 \uf0b4 100 \n\uf03d 100 000 J \n \nThe cyclist is descending the slope at a constant speed, which means that all of this potential energy \nbecomes heat as work is done on the cyclist by the resistive forces. \n \nTherefore, work done by resistive forces \uf03d 100 000 J \n \ndistance travelled along the slope whilst descending 100 m height \uf03d 100 \uf0b4 10 \uf03d 1000 m \n \nTherefore, resistive force \uf03d work done / distance \uf03d 100 000 / 1000 \uf03d 100 N \n \nAlternatively, since the cyclist is moving at a constant velocity he must be in equilibrium. Therefore the \ndrag force must be equal and opposite to the component of weight acting down the slope (mg sin \uf071 ). \nIn this case, sin \uf071 \uf03d 10 / 100 \uf03d 0.1 so the drag force is 0.1mg \uf03d 0.1\uf0b4100\uf0b410 \uf03d 100 N.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \n \nThe answer is option D. \n \nWork done by the motor in lifting the load through 5.0 m \uf03d mgh \uf03d 3.0 \uf0b4 10 \uf0b4 5.0 \uf03d 150 J \n \nTherefore, output power of motor \uf03d work done / time taken \uf03d 150 / 1.5 \uf03d 100 W \n \nMotor is 100% efficient so the electrical input power to the motor is also 100 W \n \nTherefore, average current in motor \uf03d power / voltage \uf03d 100 / 25 \uf03d 4.0 A \n \nAlternatively, since the process is 100% efficient, the power output of the motor (P \uf03d IV ) will equal \nthe power used to lift the mass (P \uf03d mgh / t). \n \nEquating and rearranging we have: IV \uf03d mgh / t so I \uf03d mgh / Vt \uf03d (3\uf0b410\uf0b45) / (25\uf0b41.5) \uf03d 4.0 A",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \n \nThe answer is option A. \n \nLet the mass of the ball in kg be m. (Its value is not needed to do the question.) \n \nkinetic energy at the point of release \uf03d\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv\n\uf03d2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b4 m \uf0b4 12 2 \uf03d2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b4 144 \uf0b4 m \uf03d 72m joules \n \nAt the highest point, all of this kinetic energy has turned into gravitational potential energy \n \nTherefore, at the highest point, gravitational potential energy \uf03d 72m joules \n \nThis is also equal to mgh, where h is the height reached. \n \nTherefore, 10mh \uf03d 72m. Notice that m cancels out here (as expected), leaving 10h \uf03d 72 \n \nTherefore, height reached h \uf03d 72 / 10 \uf03d 7.2 metres \n \nAlternatively, since all of the initial KE \n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv\n is transferred to GPE (mgh) at the top of the motion: \n \nmgh \uf03d\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv , so h \uf03d v 2\n / 2g \uf03d 12 2\n / 20 \uf03d 7.2 m",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \n \nThe answer is option C. \n \nkinetic energy of lorry \uf03d\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv \n \nAs the lorry is moving along a horizontal road, the resistive forces need to absorb this energy and no \nmore. Work done by resistive forces in stopping the lorry is therefore \n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv \n \ndistance travelled by lorry while stopping \uf03d work done / stopping force \uf03d \n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6\n2\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv\n / F \uf03d mv 2\n / 2F",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \n \nThe answer is option B. \n \nAn alpha particle consists of two protons and two neutrons so alpha emission results in the reduction \nof atomic number (bottom) by 2 and the reduction of nucleon number (top) by 4. \n \nA beta-minus particle is an electron emitted when a neutron in the nucleus changes into a proton. \nThis increases atomic number (bottom) by 1 but has no effect on nucleon number (since both protons \nand neutrons are nucleons). \n \nThe decay from X to Y involves the atomic number going down by 2 (from R to R \uf02d 2). This means \nthat this stage must be alpha decay, and therefore that the mass number must drop by 4. The mass \nnumber of Y must therefore be N \uf02d 4, and this is the value of P. \n \nThe decay from Y to Z involves the mass number remaining the same (P in both cases). This means \nthat this stage must be beta decay, and therefore that the atomic number of Z must be one higher \nthan that of Y. As the atomic number of Y is R \uf02d 2, the atomic number of Z must be \n(R \uf02d 2) \uf02b1 \uf03d R \uf02d 1, and this is the value of Q.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \n \nThe answer is option B. \n \nThis question is simply a straightforward application of speed \uf03d distance / time, and the frequency of \nthe pulse is irrelevant. \n \ndistance travelled by pulse from transmitter to foetus and back again to receiver \uf03d 2\uf0b410 \n\uf03d 20 cm \n\uf03d 0.20 m \n \nTherefore, time taken \uf03d distance / speed \uf03d 0.20 / 500 \uf03d 0.0004 s \uf03d 0.40 ms",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \n \nThe answer is option B. \n \nBoth graphs P and Q show an object accelerating with constant acceleration. The value of that \nacceleration is the gradient of the velocity-time graph. \n \nGraph P: Gradient \uf03d 10 / 24, which is not 2.4 m s\u20132. (You don\u2019t need to evaluate 10 / 24 to see that.) \n \nGraph Q: Gradient \uf03d (58 \uf02d10) / 20 = 48 / 20 \uf03d 2.4 m s\u20132. So graph Q is correct. \n \nGraphs R and S are both distance-time graphs which are straight lines, signifying constant speed. \nConstant speed means zero acceleration, and so neither of these graphs shows an acceleration of \n2.4 m s\u20132. \n \nThe correct answer is therefore that graph Q only shows an acceleration of 2.4 m s\u20132.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \nThe answer is option D. \n \nThis question is all about the significance of the gradient of a straight\u2013line graph. The gradient of the \ngraph shown is 20 / 100 \uf03d 0.20 in the units of the y-axis divided by the units of the x-axis. \n \nA \nAs F \uf03dma, and therefore a \uf03dF / m, a graph of acceleration against force will give a straight line \nwith a gradient of 1 / m. If m \uf03d 5 kg then 1 / m \uf03d 1 / 5 \uf03d 0.2 kg\u20131. Graphical representation \ncorrect. \n \nB \nAs V \uf03dIR, and therefore I \uf03dV / R, a graph of current against voltage will give a straight line with \na gradient of 1 / R. If R \uf03d 5 \uf057 then 1 / R \uf03d 1 / 5 \uf03d 0.2 \uf057\u20131. Graphical representation correct. \n \nC \nAs KE \uf03d\n,\n2\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mv\n a graph of KE against speed squared will give a straight line with a gradient \nof \n.\nm\n2\n1\n If m \uf03d 0.4 kg then \nm\n2\n1\n\uf03d 0.2 kg. Graphical representation correct. \n \nD \nAs v \uf03df \uf06c, and therefore \uf06c\uf03dv / f, a graph would need to be plotted of wavelength against",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 / frequency to get a straight line. A graph of wavelength against frequency will not give a \nstraight line. Graphical representation therefore not correct. \n \nE \nAs W \uf03dFd, a graph of work done against distance moved will give a straight line with a \ngradient of F. If F \uf03d 0.2 N then the graphical representation is correct.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \n \nThe answer is option D. \n \nConsider each statement in turn: \n \nA \nGamma emission is a form of naturally occurring radioactive decay. It is not the same process \nas nuclear fission. Statement not correct. \n \nB \nThe half-life of a substance is the time for half the amount of substance remaining at any \nmoment to decay. A substance will never fully decay, and so \u2018half the time taken to decay\u2019 has \nno meaning. Statement not correct. \n \nC \nThe number of neutrons is the mass number minus the atomic number. Statement C has this \nthe wrong way round. Statement not correct. \n \nD \nWhen a nucleus emits a beta particle, a neutron turns into a proton (and an electron is \nemitted). The nucleus therefore contains the same number of particles as before, it\u2019s just that \none of them has changed into a different particle. Statement correct. \n \nE \nA neutron becoming a proton and emitting an electron is beta decay, not alpha decay. \nStatement not correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \n \nThe answer is option D. \n \nTotal resistance of circuit \uf03d sum of separate resistances \uf03d R1 \uf02b R2 \n \nCurrent in circuit is therefore I \uf03d \ntotal\nR\nV\n \n \n\uf03d\uf028\n\uf029\n2\n1\nR\nR\nV\n\uf02b\n \n \nThis current is the same in both resistors. \n \nVoltage across R1 is therefore V \uf03d IR1 \n \n \uf03d\uf028\n\uf029\n1\n2\n1\nR\nR\nR\nV\n\uf0b4\n\uf02b\n \n \n \uf03d\uf028\n\uf029\n2\n1\n1\nR\nR\nVR\n\uf02b\n \n \nTherefore power dissipated in R1 is P \uf03d VI \n \n\uf03d\uf028\n\uf029\n\uf028\n\uf029\n2\n1\n2\n1\n1\nR\nR\nV\nR\nR\nVR\n\uf02b\n\uf0b4\n\uf02b\n \n \n\uf03d\n\uf028\n\uf0292\n2\n1\n1\n2\nR\nR\nR\nV\n\uf02b\n \n \nAlternatively, a solution can be reached more quickly by considering dimensions: the power \ndissipated by a resistor is given by (voltage across resistor)2\n / (resistance). The only option with a \nvoltage-squared divided by a resistance is D.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \n \nThe answer is option D. \n \nThe distance travelled is the area under the graph, but you also need to match the units. The speeds \non the graph are in m s\u20131 but the times are in minutes. For the area under the graph to represent \ndistance in metres, the times therefore need to be converted to seconds. This can be done all in one \ngo by multiplying by 60 at the end. \n \nNow consider the areas under each section of the graph. \n \n0\u20131 minutes: Area \uf03d (16 \uf02b20) / 2 \uf0b4 1 \uf03d 18 (m s\u20131) min \n \n1\u20134 minutes: Area \uf03d 20 \uf0b4 3 \uf03d 60 (m s\u20131) min \n \n4\u20135 minutes: Area \uf03d (20 \uf02b10) / 2 \uf0b4 1 \uf03d 15 (m s\u20131) min \n \n5\u20136 minutes: Area \uf0bb (10 \uf02b2) / 2 \uf0b4 1 \uf03d 6 (m s\u20131) min \n \n6\u20137 minutes: Area \uf0bb (2 \uf02b0) / 2 \uf0b4 1 \uf03d 1 (m s\u20131) min \n \n(Note there are various ways of approximating the areas under the last two curved sections of the \ngraph. For instance, another way could be to consider 5\u20136 minutes as being a trapezium from 10 \ndown to 5 m s\u20131, effectively importing the last section into the preceding one, and then ignoring the 6\u20137 \nminute section. Each method of approximation will produce a slightly different estimate; one such \nmethod is shown. All estimates will, however, be within a reasonable range of the key). \n \nAdding these together, total area \uf0bb 18 \uf02b60 \uf02b15 \uf02b6 \uf02b1 \uf03d 100 (m s\u20131) min \n \nAt this point it is now convenient to deal with the necessary unit conversion by multiplying by 60, to \ngive a total area \uf0bb 100 \uf0b4 60 \uf03d 6000 m \uf03d 6.00 km. \n \n(Note the technique of waiting until the end to multiply by 60 both saves time and avoids dealing with \nlarge numbers along the way. It is perfectly legitimate to multiply each time by 60 before working out \neach individual area, but this will make the numbers more awkward to work with and will result in the \nquestion taking a lot longer to do.)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \n \nThe answer is option B. \n \nConsider each statement in turn: \n \nP \nWe have no information about the wavelength of the sound waves produced, and nor do we \nknow how far the waves travel in a given time. It is therefore not possible to deduce the speed \nfrom the information given. Statement P cannot be deduced. \n \nQ \nThe maximum distance of oscillation from compression to rarefaction is 5.0 mm, but the \namplitude of the wave is from the equilibrium position to the maxima. The amplitude is \ntherefore half of this (2.5 mm) and statement Q is incorrect. \n \nR \nWe cannot deduce the wavelength from the information given, and hence cannot deduce \nstatement R. \n \nS \nThe period of the pulses produced is 0.2 ms \uf03d 0.0002 s. This means the frequency of the \nwave is 1 / period \uf03d 1 / 0.0002 \uf03d 5000 Hz. Statement S therefore can be correctly deduced \nfrom the information given. \n \nThe correct answer is that statement S only can be correctly deduced.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \n \n\u00a9 UCLES 2016 \nCHEMISTRY",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \n \nThe answer is option E. \n \nThe pH scale is a measure of the acidity or alkalinity of an aqueous solution. \n \nAll indicators in the mixture experience a pH of 5.0. \n \nMethyl orange (colour change at 4.0) will be yellow at pH 5.0. \n \nBromothymol blue (colour changes at 6.5) will be yellow at pH of 5.0. \n \nPhenolphthalein (colour changes at 9.0) will be colourless at pH of 5.0. \n \nIn order: yellow \uf02b yellow \uf02b colourless \uf03d yellow.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \n \nThe answer is option A. \n \nAqueous sodium chloride contains two cations (Na+ and H+) and two anions (Cl\u2013 and OH\u2013). \n \nThe positive electrode (anode) attracts anions and the negative electrode (cathode) attracts cations. \n \nWhen two ions are attracted to an electrode, only one can be discharged as atoms. This is called \npreferential discharge. \n \nIn this case: \n \n \nchlorine is discharged in preference to oxygen at the positive electrode (anode); \n \nhydrogen is discharged in preference to sodium at the negative electrode (cathode).",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \n \nThe answer is option A. \n \nAssessment of each option: \n \nA: The high melting and boiling points, together with non-conductivity in the solid and molten states, \n indicates a giant covalent structure. \n \nB: The high melting and boiling points indicate a giant structure. No conductivity when solid but \n having conductivity when molten is typical of a giant ionic structure. \n \nC: Despite the relatively low melting and boiling points, the fact that it conducts electricity when solid \n and molten means that it is a giant metallic structure. \n \nD: With low melting and boiling points, no electrical conductivity and being a liquid at room \n temperature and pressure, the substance is typical of a simple molecular structure. \n \nE: Despite the very low melting point, the good conductivity when solid and molten indicates a \n metallic structure. In fact, E is mercury.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \nThe answer is option A. \n \nThe reaction is stated to go to completion. \n \nAt the start of the reaction there is a concentration of A of 1.2 mol dm\u20133. The equation gives the ratio of \nA : Z as 2 : 1. This means that for every unit of A that is reacted, only 0.5 as much Z is produced. \n \nIn a complete reaction, all of A will be used up and the final concentration of Z will be 0.6 mol dm\u20133, so \ngraph 1 must be correct. \n \nAs the chemical A is reacted, Z is produced. Graph 2 shows that an equilibrium state has been \nreached with the concentration of A being twice that of Z; this is incorrect. \n \nGraph 3 shows that an equilibrium state has been reached with equal concentrations of A and Z; this \nis incorrect.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 41,
+    "text": "41 \n \nThe answer is option B. \n \nOne method for solving the problem would be as follows: \n \nThe oxide ion has a charge of \n2\n\uf02d\n, O2\u2013. \n \nA compound formed from Fe3+ and O2\u2013 ions must have the formula Fe2O3. \n \nA compound formed from Fe2+ and O2\u2013 ions must have the formula FeO. \n \nA 1 : 1 mixture of these compounds would give a compound of formula Fe3O4 (Fe2O3 \uf02b FeO). \n \nSo the molar ratio Fe3+\n : Fe2+ must be 2 : 1, making Fe2+ 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 of the iron ion total.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 42,
+    "text": "42 \n \nThe answer is option E. \n \nMass number \uf03d number of protons \uf02b number of neutrons \uf03d 40 \n \nAtomic number \uf03d number of protons \uf03d 20 \n \nNumber of protons \uf03d 20, so number of electrons \uf03d 20 to balance charge. \n \nNumber of neutrons \uf03d 40 \uf02d 20 \uf03d 20 \n \nUsing the above information and applying it to each statement: \n \n1: Incorrect. The relative mass of the nucleus is 40. \n \n2: Incorrect. A total of 20 electrons would give an electronic configuration of 2,8,8,2. The incomplete \n outer shell containing two electrons indicates that is in Group 2. Group 2 elements are not noble \n gases, they are alkaline earth metals. \n \n3: Incorrect. Group 2 elements form 2+ ions by loss of the outer two electrons. \n \n4: Correct. \n \n5: Incorrect. Group 2 elements are metals.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 43,
+    "text": "43 \n \nThe answer is option E. \n \nBond breaking is an endothermic process, whilst bond making is an exothermic process. \n \nThe reaction is exothermic overall, which means that more energy is released when bonds are made \nthan is needed for bonds to be broken. \n \nThe bonds to be broken are on the left of the equation \uf028\nN\n1\uf0b4\n\u2261\nH\n3\nand\nN\n\uf0b4\n\u2500\n\uf029\nH and those made are \non the right of the equation \uf028\nN\n3\n2\n\uf0b4\n\uf0b4\n\u2500\n\uf029\nH . This means that the 6 N \u2500 H bond energies must be \ngreater than the N2 and 3 \uf0b4 H2 bond energies in total. \n \nLooking at the number of bonds from the mole ratios in the equation (1 : 3 : 2), the inequality \ny\nx\nz\n3\n6\n\uf02b\n\uf03e\n is satisfied.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 44,
+    "text": "44 \n \nThe answer is option C. \n \nEquations 2 and 3 are correct. \n \n(Construction of half-equations is another valid solution method with the same conclusion.) \n \nOxidising agents accept electrons. Reducing agents lose (or donate) electrons. \n \nLooking at each equation for the first reactant in the equation in turn: \n \n1: Mg is transformed into Mg2+. Electrons are being lost and so Mg is a reducing agent. \n \n2: The oxidation state of chromium in the first compound is +6 and it is transformed into Cr3+. \n Electrons are being accepted and so Cr2O7\n2\u2013 is an oxidising agent. \n \n3: Cu2+ is transformed into Cu+. Electrons are being accepted and so Cu2+ is a oxidising agent. \n \n4: The oxidation state of sulfur in the first compound is +4 and it is transformed into a compound \n where it is +6. Electrons are being lost and so the first compound is a reducing agent.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 45,
+    "text": "45 \n \nThe answer is option D.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 mole of H2O has a mass of (2\uf0b41) \uf02b16 \uf03d 18 g \n \nThe volume of 1 mole of a gas at room temperature and pressure is 24 dm3 \n \n6.00 g of H2O is 18",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \uf03d3\n1\n mol, and therefore occupies a volume of 3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \uf03d 8 dm3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 dm3 \uf03d 8000 cm3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 46,
+    "text": "46 \n \nThe answer is option E. \n \nThere are several methods that will give the correct answer, of which one is shown below: \n \n \nI \nO \nnumber of moles: \n127\n63.5 \uf03d 0.5 \n16\n20.0 \uf03d 1.25 \nratio ( \uf0b80.5)",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n2.5 \nsmallest whole number ratio (\uf0b42)",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nTherefore the empirical formula is I2O5.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 47,
+    "text": "47 \n \nThe answer is option C. \n \nElectronic configurations of atoms can be used to identify the position of an element in the Periodic \nTable. The number of electrons in the outer shell determines the group. The number of shells \ndetermines in which period the element is. \n \nA: 2,4 Group 14, where non-metals are at the top of the group and metals are at the bottom \n \nB: 2,6 Group 16, a non-metal \n \nC: 2,7 Group 17, a non-metal \n \nD: 2,8,1 Group 1, a metal \n \nE: 2,8,6 Group 16, a non-metal \n \nF: 2,8,7 Group 17, a non-metal \n \nOnly D can be eliminated. Non-metals react to gain electrons and acquire the configurations of noble \ngases. \n \nThe fewer the electrons to gain, the more reactive the element. This narrows the choice down to C \nand F, as both atoms only need to gain one electron. \n \nC is the smaller atom (two shells) so there is more attraction between the nucleus and the electron to \nbe gained, compared with F. C will therefore be more reactive. The element is fluorine.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 48,
+    "text": "48 \n \nThe answer is option C. \n \nThis question is about identifying which possible isotopes can give rise to CH2BrCl with Mr \uf03d 128, and \nthe proportion of these isotopes that exist, to identify which isotope combinations give Mr \uf03d 128 and \nthose that do not. \n \nThe combined total mass of bromine and chlorine (removing CH2) must total 128 \uf02d14 \uf03d 114 \n \nThe only combination of isotopes with this total mass is 79Br combined with 35Cl. As these are the \nisotopes with lowest mass for each element, any other possibilities would result in a higher Mr for the \ncompound. \n \nThe fraction occurring is directly related to probability. We want the probability that Br \uf03d79Br AND \nCl \uf03d35Cl, in CH2BrCl and these events are independent of each other. \n \n35Cl is three times as common as 37Cl, and the question states that there are only two isotopes to be \nconsidered (3 : 1), so the relative frequency of 35Cl is 4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 , and for 37Cl it is 4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 . We can treat these as \nprobabilities. \n \nFor bromine, the relative frequency of 79Br is 2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 , and it is the same for 81Br. \n \nHence P (79Br AND 35Cl) \uf03d P (Br \uf03d79Br) \uf0b4 P (Cl \uf03d35Cl) \uf03d\n4\n3\n2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b4\n\uf03d8",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 49,
+    "text": "49 \n \nThe answer is option A. \n \nWhen using a fractionating column, the flask is at the bottom and is heated. The temperature is \nhighest at the bottom of the column and lowest at the top. \n \nThe hexane has the lowest boiling point and so will evaporate first in the flask and will rise to the top \nof the column first (68 \u00b0C). The liquid mixture in the flask must be boiling so the temperature must be \nat least 68 \u00b0C, but less than 98 \u00b0C, so that only the hexane is vapourised.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 \n \nThe answer is option D. \n \nIn this question, stage 1 can be ignored. \n \nIn stage 2, the stoichiometry of the equation shows that 1 mole of C will produce 2 moles of CO.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 g of C (Ar 12) is 1 mole \n \nMr of CO is 12 \uf02b16 \uf03d 28, so 2 moles of CO is 28\uf0b42 \uf03d 56 g \n \nIn stage 3, the stoichiometry of the equation shows that 3 moles of CO will produce 3 moles of CO2, \ni.e. a 1 : 1 molar ratio.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 56,
+    "text": "56 g (2 moles) of CO will make 2 moles CO2 \n \nMr of CO2 is 12 \uf02b(16\uf0b42) \uf03d 44, so 2 moles of CO2 is 44\uf0b42 \uf03d 88 g",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 51,
+    "text": "51 \n \nThe answer is option E. \n \nA: False. There is a different number of molecules on the two sides of the equation so altering the \n pressure will shift the equilibrium position. \n \nB: False. The reaction is exothermic and so increasing the temperature will move the equilibrium \n position to the left. \n \nC: False. Chemical equilibrium is dynamic so reactants are constantly changing to products and \n products are constantly changing back to reactants. \n \nD: False. A catalyst increases the rate at which equilibrium is reached but does not shift the position \n of equilibrium. \n \nE: Correct. Until equilibrium is reached, the forward reaction will be faster than the backward reaction.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 52,
+    "text": "52 \n \nThe answer is option E. \n \nThe chemical equation for the reaction is: NaOH \uf02b HCl \uf0ae NaCl \uf02b H2O \n \nMolar ratio is 1 NaOH : 1 HCl \n \nNumber of moles of HCl \uf03d \n1000\ncm\nin\nvol.\n3\n \uf0b4 conc. \uf03d 1000\n50.0 \uf0b4 0.5 \uf03d 0.025 \n \nTherefore, the number of moles of NaOH is also 0.025 \n \nAr of NaOH is 23 \uf02b 1 \uf02b 16 \uf03d 40, so 1 mole of NaOH has a mass of 40 g \n \nIn the question, the number of moles of NaOH present \uf03d 0.025 \uf0b4 40 \uf03d 1.0 g \n \nPercentage purity \uf03d 1.20\n1.0 \uf0b4 100 \uf03d 83.3%",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 53,
+    "text": "53 \n \nThe answer is option C. \n \nVarious approaches can be used to calculate the correct answer, of which one is shown below. \n \nNumber of moles H2SO4 used \uf03d 1000\n5\n12.\n \uf0b4 2.0 \uf03d 0.025 \n \nMolar ratio in the reaction is 2 XOH : 1 H2SO4 \n \nSo, the number of moles of XOH present \uf03d 0.025 \uf0b4 2 \uf03d 0.05 \n \nNumber of moles \uf03d \nr\ng\n \nin\n \nmass\nM\n, so 0.05 \uf03d \nr\n2.8\nM \n \nRearranging, Mr \uf03d \n05\n0\n8\n2\n.\n.\n \uf03d \n05\n0\n28\n.\n \uf03d 56 \n \nMr of XOH \uf03d Ar (X) \uf02b 16 \uf02b 1 \uf03d 56 \n \nAr (X) \uf03d 39",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 54,
+    "text": "54 \n \nThe answer is option D. \n \nThe number of moles of each element on each side of the equation is: \n \n \nH \nN \nO \nleft-hand side \nr \nr \n3r \nright-hand side \n2s",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf02b t",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \uf02b s \uf02b 2t \n \nThese numbers must balance for each element: \n \nFor H, r \uf03d 2s \n \nFor N, r \uf03d 2 \uf02b t \n \nFor O, 3r \uf03d 6 \uf02b s \uf02b 2t \n \nSubstituting r \uf03d 2s into 3r \uf03d 6 \uf02b s \uf02b 2t, we get 3 \uf0b4 (2 \uf02b t ) \uf03d 6 \uf02b s \uf02b 2t \n \nRearranging: 6 \uf02b 3t \uf03d 6 \uf02b s \uf02b 2t, therefore t \uf03d s \n \nMoles of H and N are equal (r ), so 2s \uf03d 2 \uf02b t \n \nSubstituting t \uf03d s into this, we get 2s \uf03d 2 \uf02b s and therefore s \uf03d 2 \n \nIt follows that t \uf03d 2 and r \uf03d 4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \n \n\u00a9 UCLES 2016 \nBIOLOGY",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 55,
+    "text": "55 \n \nThe answer is option D. \n \nStatement 1 is incorrect as gamete formation occurs due to meiosis. Both statement 2 and statement",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 are also incorrect. However, they are common misconceptions held by students. Growth of an \norganism such as a human occurs by mitosis as the number of cells increases. The size of a cell does \nnot increase due to mitosis. Mitosis results in the production of new cells which can be used to \nreplace damaged cells in tissues such as muscles and organs such as skin. However, mitosis cannot \nrepair cells, so statement 3 is incorrect. \n \nTherefore the only correct statement is statement 4 \u2013 replacement of skin cells.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 56,
+    "text": "56 \n \nThe answer is option D. \n \nAs oxygen is being supplied and used, aerobic respiration is occurring in these muscle cells. \nHowever, as the oxygen demand between 0 and 11 minutes is greater than the supply, as shown by \nthe higher position of the oxygen demand line on the graph, the muscle cells are also carrying out \nanaerobic respiration.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 57,
+    "text": "57 \n \nThe answer is option F. \n \nCompetition for limiting resources can occur both within a species (intraspecific \u2013 statement 1) and \nbetween species (interspecific \u2013 statement 2). Likewise, natural selection can lead to evolution due to \nindividuals with advantageous adaptations being more likely to survive and pass on their alleles, thus \npassing on the advantageous adaptations to their offspring (statement 3). For a species that \ncompetes less well, natural selection may lead to extinction (statement 4). Therefore all four \nstatements are correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 58,
+    "text": "58 \n \nThe answer is option D. \n \nThe main factors affecting the rate of photosynthesis are light intensity, temperature and carbon \ndioxide concentration. Any change in the level of a factor will affect the rate of reaction and the \nprocess will be limited by the factor which is in the shortest supply. \n \nIn the case of temperature, the rate of reaction will increase until the optimum temperature for the \nenzymes controlling the reaction is reached, as long as the other factors are present in sufficient \namounts. Therefore statement 1 is correct. After this point the enzymes start to become denatured \nand no longer work, so statement 2 is correct. An increase in temperature produces an increase in \nkinetic energy and, up to a temperature of 22 \u00b0C the rate of photosynthesis also increases. However \ntemperature does not increase the rate across the whole of the range studied as after the optimum \ntemperature has been reached, the rate of photosynthesis decreases. Therefore statement 3 is \nincorrect.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 59,
+    "text": "59 \n \nThe answer is option F. \n \nStatement 1 is incorrect as at position 21 there are three chromosomes rather than two. As such, this \nis an example of a chromosome mutation and leads to Down\u2019s syndrome. Statement 2 is correct as \nthe 23rd pair of chromosomes are the sex chromosomes and as they are XY this means the cell has \nbeen donated by a male. White blood cells are diploid body cells and so they contain two copies of \neach chromosome with two sex chromosomes as shown in the karyogram, so statement 3 is also \ncorrect.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 \n \nThe answer is option F. \n \nBone marrow stem cells will divide by mitosis, rather than meiosis, to produce genetically identical \noffspring, so statement 1 is incorrect. Human stem cells, including bone marrow stem cells, are diploid \nand so contain 46 chromosomes (statement 2 is correct). Stem cells of the bone marrow are able to \ndifferentiate into white blood cells so statement 3 is also correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 61,
+    "text": "61 \n \nThe answer is option C. \n \nThe frequency of occurrence is the proportion of quadrats containing at least one individual of a given \nspecies. \n \nIn this study there are 25 daisies, occurring in a total of 10 quadrats. \n \nIn order to calculate the frequency of occurrence you need to divide the total number of quadrats in \nwhich the species (daisy) occurs (which is 10) by the total number of quadrats (in this case 25). \n \nThis equals 0.40.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 62,
+    "text": "62 \n \nThe answer is option F. \n \nThe two females with attached ear lobes are homozygous recessive. The female in the first \ngeneration must be heterozygous, as she has the dominant phenotype, but must have inherited the \nrecessive allele from her mother (who is homozygous recessive). The male parent, the male in the \nfirst generation, and the people in the second generation who have unattached ear lobes could be \neither heterozygous or homozygous dominant. So the maximum possible number of heterozygous \nindividuals is 7.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 63,
+    "text": "63 \n \nThe answer is option A. \n \nA change from 0.12 mol dm\u20133 to 0.084 mol dm\u20133 gives an increase in percentage haemolysis (read \ngraph from right to left) from 2% up to 72%, which is an increase of 70%. The increase is due to the \nuptake of water through osmosis into the cells, which occurs as a result of the reduction in the \nconcentration of the NaCl solution.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 64,
+    "text": "64 \n \nThe answer is option H. \n \nA positive phototropic response is shown by shoots when they grow towards a source of light. \n \nIn the diagram, three of the shoots have shown phototropism but the shoot without a tip has not \nresponded, although it was uncovered. Statement 1 is therefore incorrect. \n \nThe diagram shows that when the shoot tip is covered by an opaque cap, or if the whole shoot is \nplaced in an opaque box, there is no phototropic response. However, both the shoot with its tip \ncovered by a transparent cap, and the shoot with its base covered by an opaque sheath, do show \ngrowth towards the light. Statement 2 is therefore incorrect. \n \nStatement 3 is also incorrect \u2013 the shoot enclosed in an opaque box has grown taller.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 65,
+    "text": "65 \n \nThe answer is option D. \n \nIn order to interpret this data correctly you need to ensure that you understand what is represented by \nthe graph. \n \nThe x-axis shows the years studied from 1959 to 2008. \n \nThe left-hand vertical axis represents the number of wolves, with a range from 0 to just over 50. \n \nThe right-hand vertical axis represents the number of moose, with a range from 0 to just under 2500. \n \nTrend 1 is quickly determined to be incorrect, since from 1959 to 1965, overall both the wolf and \nmoose populations are increasing. Additionally, with no knowledge of what has happened before \n1959 it cannot be said that there has been an increase in the wolf population as there was an earlier \nincrease in moose population. \n \nTrend 2 is correct. You need to remember that the two vertical scales are different. Reading from the \ngraph, the maximum wolf population is 50, whilst the minimum moose population is about 400. \n \nTrend 3 is incorrect. Whilst the point plotted for wolves is higher than that for moose in 1965, you \nneed to remember that the two vertical scales are different. There are about 30 wolves but there are \nabout 750 moose. \n \nTrend 4 is correct. When wolf populations are low on the graph, such as from 1968 to 1973 and from \n1982 to 1995, there is a corresponding increase in the size of the moose population. \n \nThis means that trend 4 must be correct, so you only need to identify which of trend 2 or trend 3 is \ncorrect.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 66,
+    "text": "66 \n \nThe answer is option G. \n \nThe ratio of X : A in columns 1 and 2 is 0.5 : 1 which makes the flies male, irrespective of the presence \nor absence of the Y chromosome. The ratio of X : A in columns 3, 4 and 5 is 1 : 1 which makes the \nflies female, irrespective of the presence or absence of the Y chromosome.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 67,
+    "text": "67 \n \nThe answer is option H. \n \nProcess 1 is photosynthesis and therefore should not feature in any answers. For carbon to be \nincorporated into animals and decomposers, digestion of carbon-rich compounds must initially occur \n(processes 2 and 3). Respiration can release carbon into the air as CO2 which is illustrated by process \n4.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 68,
+    "text": "68 \n \nThe answer is option B. \n \nThe y-axis represents the variable being measured as the enzyme-catalysed reaction progresses with \ntime. The only variable which increases with the progress of the reaction will be the enzyme-substrate \ncomplexes which will then decrease as the substrate is broken down so fewer complexes can form.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 69,
+    "text": "69 \n \nThe answer is option B. \n \nIn order to genetically modify bacteria to produce human insulin you need to cut out the DNA coding \nfor human insulin from a normal, healthy human\u2019s DNA. A special enzyme is used to cut the DNA. \nTherefore statement 1 is correct. \n \nThis DNA is then inserted into the DNA of a bacterium. Bacteria do not have a nucleus, so statement",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 is incorrect. \n \nThe modified bacteria have to be cultured. This means that they are grown in a fermenter so that \nlarge numbers of bacteria are produced. Therefore statement 3 is correct. \n \nThe bacteria are used to produce human insulin, which is extracted from them and purified. This \ninsulin is then used to treat diabetics. Therefore, statement 4 is incorrect, since bacteria are not \ninjected into humans with diabetes.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 70,
+    "text": "70 \n \nThe answer is option E. \n \nMutations are random changes in the DNA sequence of an organism. If this occurs within the \nsequence of a gene that codes for a protein then it can change the bases in the triplet sequence of \nthat gene and may alter the amino acids that they code for (statement 1). If the mutation occurs within \nan enzyme that is part of an essential cell process, like respiration, then the cell may no longer be \nable to function correctly and may die (statement 3). \n \nSome mutations do produce positive changes in cells that could be beneficial to the organism. If they \ntake place in a cheek cell instead of a gamete however, they will not be passed on to any offspring of \nthe organism so statement 2 is incorrect.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 71,
+    "text": "71 \n \nThe answer is option D. \n \nUsing the information in the question, as the condition is caused by at least one allele it must be a \ndominant allele (statement 1). Therefore a person with the condition can be heterozygous or \nhomozygous. For U to show the condition she must have received the allele for this condition from \none of her parents and this would be T as he shows the condition (statement 2). In this case U would \nbe heterozygous. Although U\u2019s mother does not show the condition a mutation could occur in the egg \nthat is fertilised by T\u2019s sperm (statement 3). In this case U would be homozygous for the condition.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 72,
+    "text": "72 \n \nThe answer is option F. \n \nStarch is found in plant cells, not animal cells such as a liver cell, so statement 1 is incorrect. Within \nthe liver cell\u2019s DNA there would be one pair of sex chromosomes. If the cell was from a male these \nwould be XY and in a female these would be XX. In either case there is at least one X chromosome, \nso statement 2 is correct. An adult liver cell is a diploid body cell so it will contain the same genes as \nall other diploid body cells, including the gene for amylase, so statement 3 is correct.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \n \n\u00a9 UCLES 2016 \nADVANCED MATHEMATICS AND ADVANCED PHYSICS",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 73,
+    "text": "73 \n \nThe answer is option F. \n \nTake logs of each side and separate out the left-hand side: \n \n2\n3\n2\n10\n10\n10\n10\nlog\nlog\nlog\nlog\n\uf03d\n\uf02b\n\uf02b\nc\nx\nb\nx\na\nx\n \n \n\uf028\n\uf029\n2\n3\n2\n10\n10\n10\n10\nlog\nlog\nlog\nlog\n\uf03d\n\uf02b\n\uf02b\nc\nb\na\nx\n \n \n\uf028\n\uf029\n,2\n10\n3\n2\n10\nlog\nlog\n\uf03d\nc\nab\nx\n so \n\uf028\n\uf029\n3\n2\n10",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 2\nc\nab\nx\nlog\nlog\n\uf03d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 74,
+    "text": "74 \n \nThe answer is option C. \n \nLet the positive direction be the direction of initial motion of particle P. \n \nmomentum of particle P before the collision \uf03d\uf02b(2\uf0b43) \uf03d\uf02b6 kg m s\u20131 \n \nmomentum of particle Q before the collision \uf03d\uf02d5\uf0b4r \n \nTherefore, total momentum of the particles before the collision \uf03d 6 \uf02d5 r \n \nmomentum of particle P after the collision \uf03d\uf02d(2\uf0b41) \uf03d\uf02d2 kg m s\u20131 \n \nmomentum of particle Q after the collision \uf03d\uf02b(5\uf0b40.5 r ) \uf03d\uf02b2.5 r \n \nTherefore, total momentum of the particles after the collision \uf03d 2.5 r \uf02d2 \n \nTherefore, because momentum is conserved in the collision: \n \n(6 \uf02d5 r ) \uf03d (2.5 r \uf02d2) \n \nRearranging: \n \n(6 \uf02b2) \uf03d (2.5 r \uf02b5 r )",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \uf03d7.5 r",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \uf03d15 r \n \nr \uf03d15\n16",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 75,
+    "text": "75 \n \nThe answer is option D. \n \nA: \n1\n4\n3\n\uf02d\n\uf03d\n\uf0f7\uf0f8\n\uf0f6\n\uf0e7\uf0e8\n\uf0e6\n\uf070\ntan\n \n \nB: \n2\n100\n10\n\uf03d\nlog\n \n \nC: \n1\n10\n\uf0a3\nx\nsin\n for any x; in this case, it equals 1 \n \nD: \n3\n8\n10\n2\n2\n\uf03d\n\uf03elog\nlog\n \n \nE: \n1\n1\n2\n0\n\uf03c\n\uf02d\n\uf03c\n (as \n2\n2\n1\n\uf03c\n\uf03c\n), so raising it to the power of 10 still gives a number less than 1 \n \nSo the largest of the five numbers is D: \n10\n2\nlog",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 76,
+    "text": "76 \n \nThe answer is option A. \n \nWhen travelling at terminal velocity, the force of air resistance (drag) on the parachutist will be equal \nand opposite to his weight. This is true when travelling at a high terminal velocity before opening the \nparachute and when travelling at a lower terminal velocity after opening the parachute. Terminal \nvelocity means zero acceleration which means zero resultant force. \n \nDuring the act of opening the parachute there is a rapid deceleration which means that momentarily \nthere must be a resultant upwards force acting on the parachutist. During that instant there must \ntherefore be an air resistance force which is much greater than the weight. \n \nThe correct graph is therefore one that shows the same air resistance force, in the same direction, \nthroughout apart from during the moment of opening the parachute. And during that moment there \nmust be a much larger air resistance force, again all in the same direction. The only graph that shows \nall this is graph A. \n \nB and D are incorrect because they show the air resistance force changing direction, which it cannot \ndo. It will always be upwards. C and D are incorrect because they show different air resistance forces \nat terminal velocity before and after opening the parachute.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 77,
+    "text": "77 \n \nThe answer is option E. \n \nLet \n,",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 x\ny \uf03d\n then \n.\n0\n15\n8\n2\n\uf03d\n\uf02b\n\uf02dy\ny\n Solve to give \n3\n\uf03d\ny\n or 5 \n \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf03d\nx\n implies that \n2\n3\n10\n10\nlog\nlog\n\uf03d\nx\n. Similarly, the other solution is \n2\n5\n10\n10\nlog\nlog\n \n \nSum of roots \n2\n15\n2\n5\n3\n10\n10\n10\n10\n10\nlog\nlog\nlog\nlog\nlog\n\uf03d\n\uf02b\n\uf03d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 78,
+    "text": "78 \n \nThe answer is option C. \n \nThe friction acting on the block cannot exceed the applied force. At first the friction cancels the \napplied force and the block is stationary. When the friction reaches its maximum magnitude, the net \nforce is zero but as the applied force continues to increase, the block moves. The net force is \nincreasing as the applied force increases and so the block accelerates with an increasing \nacceleration. \n \nOnly the options where the block remains stationary at first can be possible. In two of these cases, \nonce the block moves, it moves with either constant velocity (zero acceleration) or with constant \nacceleration. \n \nThe correct statement is: It remains stationary at first and then accelerates forwards with an \nincreasing acceleration.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 79,
+    "text": "79 \n \nThe answer is option E. \n \nStatement 1 subtracts \nb\na \uf02b\n from both sides. \n \nStatement 2 can be written as \uf028\n\uf029\n0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \uf0b3\n\uf02db\na\n. This is always true. \n \nStatement 3 can be false if c is negative, for example \n,2\n\uf03d\na\n,1\n\uf03d\nb\n1\n\uf02d\n\uf03d\nc",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 41,
+    "text": "41 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 80,
+    "text": "80 \n \nThe answer is option C. \n \nUse the conservation of momentum to calculate the speed of the second ball. \n \nmomentum before \uf03d 0.2\uf0b43.0 \uf03d 0.6 kg m s\u20131 \n \nLet the speed of the second ball after the collision be v ms\u20131 \n \ntotal momentum after collision \uf03d (0.2\uf0b41.0) \uf02b(0.2v ) kg m s\u20131 \n \ntotal momentum after collision \uf03d total momentum before collision \n \n(0.2\uf0b41.0) \uf02b(0.2v ) \uf03d 0.6 kg m s\u20131 \n \n0.2v \uf03d 0.6 \uf02d0.2 \uf03d 0.4 \n \nv \uf03d\n2\n0\n4\n0\n.\n.\n\uf03d 2.0 m s\u20131",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 81,
+    "text": "81 \n \nThe answer is option A. \n \nThe sequence begins \n,2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf03d\na\n\uf028\n\uf029\n,1\n1\n2\n2\n\uf03d\n\uf02d\n\uf02b\n\uf03d\na\n\uf028\n\uf029\n,2\n1\n1\n2\n2\n3\n\uf03d\n\uf02d\n\uf02b\n\uf03d\n\uf03d\na\n,1",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \uf03d\na\n etc. \n \nSo the sum of the first 100 terms is \n\uf02b\n\uf02b\n\uf02b\n\uf02b\n1\n2\n1\n2\n\u2026 \n150\n1\n50\n2\n50\n\uf03d\n\uf0b4\n\uf02b\n\uf0b4\n\uf03d",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 42,
+    "text": "42 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 82,
+    "text": "82 \n \nThe answer is option A. \n \nInitial potential energy of the ball \uf03d mgh \uf03d 16mg \n \nKinetic energy just before first bounce is therefore 16mg \n \nKinetic energy just after first bounce \uf03d2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b416mg \n \nTherefore height of rebound after first bounce \uf03d2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \uf0b416 \uf03d 8 m \n \nThe height of rebound halves each time. \n \nSo height of rebound after second bounce \uf03d 4 m \n \nSo height of rebound after third bounce \uf03d 2 m \n \nSo height of rebound after fourth bounce \uf03d 1 m \uf03d 100 cm \n \nIt is after the fourth bounce, therefore, that the height of rebound first falls below 160 cm, so the 4th \nbounce is the correct answer.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 83,
+    "text": "83 \n \nThe answer is option C. \n \nTo determine how many roots the equation has, we can investigate how many times the graph of \n10\n4\n4\n2\n3\n4\n\uf02d\n\uf02b\n\uf02d\n\uf03d\nx\nx\nx\ny\n intersects the x-axis. To help us do this we can find where the graph has \nturning points: \n \nDifferentiating gives: \n0\n8\n12\n4\n2\n3\n\uf03d\n\uf02b\n\uf02d\nx\nx\nx\n \n \nSolving this: \n\uf028\n\uf029\n\uf028\n\uf029\uf028\n\uf029\n0\n2\n1\n4\n2\n3\n4\n2\n\uf03d\n\uf02d\n\uf02d\n\uf03d\n\uf02b\n\uf02d\nx\nx\nx\nx\nx\nx\n \n \nGiving x \uf03d0, 1, 2 \n \nThe coordinates of the turning points are: (0, \uf02d10), (1, \uf02d9), (2, \uf02d10). \n \nFrom this, and knowing the general shapes of quartics, we can deduce that the curve will intersect the \nx-axis at two distinct places and so the original quartic must have two distinct real roots.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 43,
+    "text": "43 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 84,
+    "text": "84 \n \nThe answer is option E. \n \nThe fact that the reading on the scales has decreased means that the normal contact force acting on \nthe man has decreased. As his weight is now greater than the normal contact force there is a \nresultant force acting on the man which is downwards. This in turn means that the man has a \ndownwards acceleration. This could mean either that he is moving upwards but slowing down or \nmoving downwards and speeding up. The first of these is the one to appear in the options, and the \ncorrect answer is that the elevator is moving upwards with decreasing speed.",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 85,
+    "text": "85 \n \nThe answer is option D. \n \nThe answer is \nb\nax\ny \uf03d\n \n \nWe can see this by taking logs of the equation and comparing it with the standard equation of a line, \nc\nmX\nY\n\uf02b\n\uf03d\n \n \nTaking logs gives: \n \nx\nb\na\ny\nlog\nlog\nlog\n\uf02b\n\uf03d\n \n \nComparing with \n,c\nmX\nY\n\uf02b\n\uf03d\n we can see that plotting \ny\nlog\n on the Y-axis and \nx\nlog\n on the X-axis \nwould give us a straight line with a gradient of b and a Y-intercept of \na\nlog",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 86,
+    "text": "86 \n \nThe answer is option B. \n \nThe deceleration to rest is constant and so the average velocity is \uf028\n\uf029\n\uf0fa\uf0fb\n\uf0f9\n\uf0ea\uf0eb\n\uf0e9\n\uf02b\n2\n0\n0\n12.\n m s\u20131 \uf03d6.0 m s\u20131. \n \nSecondly, acceleration \uf03d \ntaken\n \ntime\nchange\nvelocity \n, so: \n \ntime taken \uf03d\non\naccelerati\nchange\nvelocity \n\uf03d\n5\n1\n0\n12\n.\n.\n\uf03d8.0 s to come to rest. \n \nIn 8.0 s at an average velocity of 6.0 m s\u20131 along a straight, horizontal track, the tram travels a distance \nof (6.0\uf0b48.0) m. This gives an answer of 48.0 m. \n \nAlternatively, using \nas\nu\nv\n2\n2\n2\n\uf02b\n\uf03d\n \n \nRe-arranging: \n \n\uf028\n\uf029\nm\n0\n48\n3\n144\n5\n1\n2\n12\n0\n2\n2\n2\n2\n2\n.\n.\n\uf03d\n\uf02d\n\uf02d\n\uf03d\n\uf02d\n\uf0b4\n\uf02d\n\uf03d\n\uf02d\n\uf03d\na\nu\nv\ns",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 44,
+    "text": "44 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 87,
+    "text": "87 \n \nThe answer is option D. \n \nFor real distinct roots the discriminant condition gives: \n \n\uf028\n\uf029\n\uf028\n\uf029\n2\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 2\n\uf02d\n\uf03e\n\uf02d\na\na\n or \uf028\n\uf029\n\uf028\n\uf029\n0\n2\n4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 2\n\uf03e\n\uf02d\n\uf02d\n\uf02d\na\na\n \n \n0\n4\n4\n2\n\uf03e\n\uf02b\n\uf02ba\na\n \n \n\uf028\n\uf029\n0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 2 \uf03e\n\uf02b\na\n \n \nThis is true for all values of a except \n2\n\uf02d",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 88,
+    "text": "88 \n \nThe answer is option C. \n \nYou will find it helpful to draw a force diagram to help you to visualise the information given in this \nquestion: \n \n60\u00b0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 N\nT\n \n \nT is the tension in the diagonal rope. \n \nBy resolving forces in the vertical direction: \n \nT cos 60\u00b0 \uf03d5 \n \nand resolving forces in the horizontal direction: \n \ntension in horizontal rope \uf03dT sin 60\u00b0 \n \nSince cos 60\u00b0 is 0.5, we can see that 0.5T \uf03d5, and so T \uf03d10 \n \nThis means the tension in the horizontal rope \uf03d10sin 60\u00b0 \uf03d10\uf0b4\n\uf0f7\n\uf0f8\n\uf0f6\n\uf0e7\n\uf0e8\n\uf0e6\n2\n3\n\uf03d\n3\n5",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 45,
+    "text": "45 \n \n\u00a9 UCLES 2016",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 89,
+    "text": "89 \n \nThe answer is option B. \n \n1\n1\n\uf0a3\n\uf0a3\n\uf02d\nx\ntan\n is satisfied when \n4\n0\n\uf070\n\uf0a3\n\uf0a3x\n and \n\uf070\n\uf0a3\n\uf0a3\n\uf070\nx\n4\n3\n \n5\n0\n2\n.\nsin\n\uf0b3\nx\n is satisfied when \n6\n5\n2\n6\n\uf070\n\uf0a3\n\uf0a3\n\uf070\nx\n so \n12\n5\n12\n\uf070\n\uf0a3\n\uf0a3\n\uf070\nx\n \nSo both are satisfied together when \n4\n12\n\uf070\n\uf0a3\n\uf0a3\n\uf070\nx\n \nThe length of the interval \n6\n\uf070\n\uf03d",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "NSAA_Section1_2016_NSAA Section 1 2016 Spec Explained Answe",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016 Spec\\NSAA Section 1 2016 Spec Explained Answers.pdf",
+    "year": "2016",
+    "exam": "NSAA",
+    "section": "Section 1",
+    "qnum": 90,
+    "text": "90 \n \nThe answer is option A. \n \nFirst, consider the whole train: \n \nmass of train \uf03d 20 000 \uf02b5000 \uf02b5000 \uf03d 30 000 kg \n \nThe only horizontal force acting on the train is the 15 000 N thrust force from the engine, so this is also \nthe resultant force acting on the train. \n \nAcceleration of train is therefore: \n \nresultant force / mass \uf03d \n000\n30\n000\n15\n \uf03d 0.50 m s\u20132 \n \nNow consider carriage 2. Carriage 2 is, in common with the rest of the train, accelerating at 0.50 m s\u20132 \n \nThe only horizontal force acting on carriage 2 is the tension T in its coupling with carriage 1. \n \nTherefore, T \uf03d mass\uf0b4acceleration \uf03d 5000\uf0b40.50 \uf03d 2500 N",
+    "skipped_diagram": true
+  }
+]

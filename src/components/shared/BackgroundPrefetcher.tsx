@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { useBackgroundPrefetch } from "@/hooks/useBackgroundPrefetch";
 import { useAggressivePrefetch } from "@/hooks/useAggressivePrefetch";
 
-const CRITICAL_ROUTES = ["/", "/train/analytics", "/train/drill"];
+const CRITICAL_ROUTES = ["/", "/skills/analytics", "/skills/drill"];
 
 const SECONDARY_ROUTES = [
   "/papers/analytics",

@@ -154,14 +154,14 @@ Linking words: so, hence, therefore, thus, as a result, it follows that.
 Always end with "Hence the correct answer is …".
 Structure
 
-Math formatting (CRITICAL for MathJax compatibility):
+Math formatting (CRITICAL for KaTeX compatibility):
 - Inline math: Use $...$ (single dollar signs) for math within sentences
   Example: "The value of $x$ is $2$."
 - Displayed math: Use $$...$$ (double dollar signs) for equations on their own line
   Example: "What is the value of $$ \sum_{n=1}^{10} n $$?"
 - NEVER mix delimiters: Do not use \( \) or \[ \] - only use $ and $$
 - Ensure all LaTeX is properly escaped and valid
-- Test that your output will render correctly in MathJax
+- Test that your output will render correctly in KaTeX
 
 
 ##**Key insight:**
@@ -248,7 +248,41 @@ You must **not**:
 
 Return your response **only** in the following YAML format:
 
-`question:   stem: >     (Concise ESAT / ENGAA-style question stem)    options:     A: ...     B: ...     C: ...     D: ...     # include E–H only if there are genuine additional wrong-path distractors     E: ...     F: ...     G: ...     H: ...    correct_option: <A–H>  solution:   reasoning: >     (Short, exact solution explaining only the correct reasoning)    key_insight: >     (One sentence capturing the core idea)  distractor_map:   A: (brief description of the wrong reasoning)   B: (brief description of the wrong reasoning)   C: (brief description of the wrong reasoning)   D: (brief description of the wrong reasoning)   E: ...   F: ...   G: ...   H: ...`
+**CRITICAL: ALL fields below are REQUIRED. Do not omit any field, especially `distractor_map`.**
+
+```yaml
+question:
+  stem: >
+    (Concise ESAT / ENGAA-style question stem)
+  options:
+    A: ...
+    B: ...
+    C: ...
+    D: ...
+    # include E–H only if there are genuine additional wrong-path distractors
+    E: ...
+    F: ...
+    G: ...
+    H: ...
+  correct_option: <A–H>
+solution:
+  reasoning: >
+    (Short, exact solution explaining only the correct reasoning)
+  key_insight: >
+    (One sentence capturing the core idea)
+distractor_map:
+  A: (brief description of the wrong reasoning for option A)
+  B: (brief description of the wrong reasoning for option B)
+  C: (brief description of the wrong reasoning for option C)
+  D: (brief description of the wrong reasoning for option D)
+  # Include E–H only if those options exist
+  E: ...
+  F: ...
+  G: ...
+  H: ...
+```
+
+**IMPORTANT:** The `distractor_map` field is MANDATORY and must include an entry for EVERY incorrect option (A–H) that you include in the question. Each entry should briefly describe the wrong reasoning path that would lead a student to select that option.
 
 ---
 

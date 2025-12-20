@@ -35,16 +35,17 @@ function SortableVariantChip({
   onRemove: (topicVariantId: string) => void;
 }) {
   const topic = getTopic(topicVariant.topicId);
+  const topicVariantId = `${topicVariant.topicId}-${topicVariant.variantId}`;
+  
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: topicVariantId,
+  });
+  
   if (!topic) return null;
 
   const variant = topic.variants?.find(v => v.id === topicVariant.variantId);
   const variantName = variant?.name || topicVariant.variantId;
   const displayText = `${topic.name}: ${variantName}`;
-  const topicVariantId = `${topicVariant.topicId}-${topicVariant.variantId}`;
-
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: topicVariantId,
-  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -251,22 +252,19 @@ export function SessionFolder({
           </button>
         </div>
 
-        {/* Start button - modern ghost style with green outline */}
+        {/* Start button - minimalistic style, no border */}
         <button
           onClick={onStart}
           disabled={!canStart}
-            className={cn(
-            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold text-base uppercase tracking-wider transition-all duration-200 relative overflow-hidden group shadow-sm",
+          className={cn(
+            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-semibold text-base transition-all duration-fast ease-signature",
             !canStart
               ? "bg-white/5 text-white/30 cursor-not-allowed"
-              : "bg-primary/10 ring-2 ring-primary text-primary-light hover:bg-primary/20 hover:ring-primary-light hover:text-white/95 hover:shadow-[0_4px_20px_rgba(74,140,111,0.3)] hover:scale-[1.02] active:scale-[0.98]"
+              : "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary-light interaction-scale"
           )}
         >
-          <Play className="h-5 w-5" fill="currentColor" strokeWidth={0} />
+          <Play className="h-5 w-5" strokeWidth={2} />
           <span>Start Session</span>
-          {canStart && (
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent group-hover:translate-x-full transition-transform duration-700 -translate-x-full" />
-          )}
         </button>
 
           {!canStart && totalItems === 0 && (

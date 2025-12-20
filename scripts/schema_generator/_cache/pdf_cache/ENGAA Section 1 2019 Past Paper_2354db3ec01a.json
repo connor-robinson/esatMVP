@@ -1,0 +1,1462 @@
+[
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 minutes\n \n \nSECTION 1 \n \n \nINSTRUCTIONS TO CANDIDATES \n \nPlease read these instructions carefully, but do not open this question paper until you are \ntold that you may do so. This paper is Section 1 of 2. \n \nA separate answer sheet is provided for this paper. Please check you have one. You also \nrequire a soft pencil and an eraser. \n \nPlease complete the answer sheet with your candidate number, centre number, date of birth, \nand name. \n \nAt the end of 60 minutes, your supervisor will collect this question paper and answer sheet \nbefore giving out Section 2. \n \nThis paper contains two parts, A and B, and you should attempt both parts. \n \nPart A \nMathematics and Physics (20 questions) \nPart B \nAdvanced Mathematics and Advanced Physics (20 questions) \n \nThis paper contains 40 multiple-choice questions. There are no penalties for incorrect \nresponses, only marks for correct answers, so you should attempt all 40 questions. Each \nquestion is worth one mark. \n \nFor each question, choose the one option you consider correct and record your choice on the \nseparate answer sheet. If you make a mistake, erase thoroughly and try again. \n \nYou must complete the answer sheet within the time limit. \n \nYou can use the question paper for rough working, but no extra paper is allowed. Only your \nresponses on the answer sheet will be marked. \n \nDictionaries and calculators are NOT permitted. \n \n \n \n \n \nPlease wait to be told you may begin before turning this page. \n \nThis question paper consists of 33 printed pages and 3 blank pages. \nCopyright \u00a9 UCLES 2019 \nPV2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \nEvaluate \n \n(\n)\n(\n)\n2\n2\n3\n7\n3\n7\n\u2212\n\u2212\n+\n \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 0,
+    "text": "0 \n \nB \n7\n2\n \n \nC \n7\n4\n \n \nD \n21\n2\n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nF \n21\n4\n \n \nG \n 20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \nThe current\u2013voltage graph for a diode is shown. \n \nvoltage / V\n1.4\n1.2\n1.0\n0.8\n0.6\n0.4\n0.2\n0\n\u20130.2\n\u20130.4\n\u20130.6\ncurrent / mA\n10\n12\n14\n16\n8\n6\n4\n2\n0\n \n \nThe diode is connected in series with a resistor and a 6.0 V battery. The current in the circuit is \n8.0 mA. \n \nWhat is the resistance of the resistor? \n \n(Assume that the battery has negligible resistance.) \n \n \n \nA \n0.15 \u2126 \n \nB \n0.60 \u2126 \n \nC \n0.75 \u2126 \n \nD \n4.8 \u2126 \n \nE \n150 \u2126 \n \nF \n600 \u2126 \n \nG \n750 \u2126",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \nThe equation gives y in terms of x : \n \n2\n2\n1\n4\n3\n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\u2212\n\u2212\n=\nx\ny\n \n \nWhich one of the following is a rearrangement for x in terms of y ? \n \n \n \nA \n4\n3\n2\n2\ny\nx\n\u2212\n\u00b1\n\u2212\n=\n \n \nB \n3\n4\n2\n2\ny\nx\n\u2212\n\u00b1\n\u2212\n=\n \n \nC \n4\n3\n1\ny\nx\n\u2212\n\u00b1\n=\n \n \nD \n4\n3\n2\n1\ny\nx\n\u2212\n\u00b1\n=\n \n \nE \n4\n3\n2\n2\ny\nx\n\u2212\n\u00b1\n=\n \n \nF \n3\n4\n2\n2\ny\nx\n\u2212\n\u00b1\n=\n \n \nG \n4\n3\n2\n2\ny\nx\n+\n\u00b1\n=",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \nTwo electromagnetic waves P and Q travel in a vacuum and the ratio of their wavelengths is: \n \n=\nQ\nof\nwavelength\nP\nof\nwavelength\n1.0 \u00d7 108 \n \nWhich row in the table shows the ratio of their speeds, the ratio of their frequencies, and \nidentifies the possible natures of P and Q? \n \n \n \nQ\n \nP\n \nof\n \nspeed\nof\n \nspeed\n \nQ\n \nP\n \nof\n \nfrequency\nof\n \nfrequency\n \nnature of P \nnature of Q \n \nA \n1.0 \n1.0 \u00d7 10\u2013\n 8\nmicrowave \nX-ray \n \nB \n1.0 \n1.0 \u00d7 10\u2013",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \nmicrowave \nradio wave \n \nC \n1.0 \n1.0 \u00d7 108 \ninfrared \nultraviolet \n \nD \n1.0 \n1.0 \u00d7 108 \nvisible light \ninfrared \n \nE \n1.0 \u00d7 108 \n1.0 \ngamma \nX-ray \n \nF \n1.0 \u00d7 108 \n1.0 \ngamma \ninfrared \n \n \n \n \n \n \n \nG \n1.0 \u00d7 108 \n1.0 \u00d7 1016 \ninfrared \nradio wave \n \n \n \n \n \n \n \nH \n1.0 \u00d7 108 \n1.0 \u00d7 1016 \nvisible light \nultraviolet",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \nThe resistance to the motion of a car is directly proportional to the square of the speed of the \ncar. \n \nThe car increases its speed by 20%. \n \nWhat is the percentage increase in the resistance to the motion of the car? \n \n \n \nA \n20% \n \nB \n24% \n \nC \n44% \n \nD \n120% \n \nE \n224% \n \nF \n240% \n \nG \n400%",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \nA water-tight cylinder with a thin, freely moving piston contains 2.0 \u00d7 10\u20133\n m3 of trapped air at \natmospheric pressure of 1.0 \u00d7 105\n Pa. \n \nWhen the cylinder is submerged in water of constant density 1000 kg m\u20133, the volume of air in \nthe cylinder decreases to 4.0 \u00d7 10\u2013\n 4\n m3. \n \nThe piston is at a depth h below the surface of the water and the water surface is open to the \natmosphere. \n \nWhat is the depth h ? \n \n(gravitational field strength = 10 N kg\u20131; assume that the temperature of the air remains constant \nand that air is an ideal gas) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 m \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 m \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 m \n \nD \n400 m \n \nE \n500 m \n \nF \n600 m",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 \nThe equation of a curve is y = px2 + qx where p and q are constants. \n \nThe curve passes through the points (2, 6) and (4, \u2013 4). \n \nWhat is the value of q \u2013 p ? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \n \nF \n16",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \nThe secondary coil of an ideal, 100% efficient transformer is connected to a resistor by cables \nof total resistance 1500 \u2126. The current in the primary coil is 4.0 A. There are 240 turns in the \nprimary coil and 4800 turns in the secondary coil. \n \nWhat is the power produced as heat in the cables? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 60,
+    "text": "60 W \n \nB \n300 W \n \nC \n6000 W \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 000 W \n \nE \n120 000 W \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 600 000 W",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9 \nWhich of the following is a simplification of \n \n)\n(\n)\n(\n1\n2\n3\n1\n3\n4\n2\n2\n\u2212\n\u2212\n+\n\u2212\nx\nx\nx\nx\nx\n \n \n \n \nA \n)\n)(\n(\n1\n1\n3\n1\n7\n8\n12\n2\n3\n\u2212\n\u2212\n\u2212\n\u2212\n\u2212\nx\nx\nx\nx\nx\nx\n \n \nB \n)\n(\n1\n1\n4\n4\n2\n+\n\u2212\n+\nx\nx\nx\nx\n \n \nC \n)\n(\n1\n1\n4\n4\n2\n+\n+\n+\nx\nx\nx\nx\n \n \nD \n)\n(\n1\n1\n4\n4\n2\n\u2212\n\u2212\n\u2212\nx\nx\nx\nx\n \n \nE \n)\n(\n1\n1\n4\n4\n2\n\u2212\n+\n\u2212\nx\nx\nx\nx\n \n \nF \n)\n)(\n(\n1\n1\n3\n1\n8\n12\n2\n3\n\u2212\n\u2212\n+\n\u2212\n\u2212\nx\nx\nx\nx\nx\nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \nTwo tanks of water are connected by a solid cylindrical copper bar of length l and diameter d. \n \nThe bar is insulated. \n \nOne tank contains water at 90 \u00b0C and the other tank contains water at temperature \u03b8. \n \nsolid cylindrical bar\nwater at temperature \u03b8\nwater at 90 \u00b0C\nl\nd\ninsulation\n \n \nFor which of the following conditions is thermal energy conducted along the bar at the \nlowest rate? \n \n \n \n \nl / m \nd / cm \n\u03b8 / \u00b0C \n \n \nA \n0.40 \n4.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n \nB \n0.40 \n4.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \n \nC \n0.40 \n8.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n \nD \n0.40 \n8.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \n \nE \n0.80 \n4.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n \nF \n0.80 \n4.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \n \nG \n0.80 \n8.0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n \n \nH \n0.80 \n8.0 \n40",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \nThe ball for a garden game is a solid sphere of volume 192 cm3. \n \nFor the children\u2019s version of the game the ball is a solid sphere made of the same material, but \nthe radius is reduced by 25%. \n \nWhat is the volume, in cm3, of the children\u2019s ball? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 48,
+    "text": "48 \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 81,
+    "text": "81 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 96,
+    "text": "96 \n \nD \n108 \n \nE \n144",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \nThe radioactive isotope X becomes the stable isotope Y after a succession of decays involving \nonly the emission of alpha and beta (\u03b2\u2013) particles. \n \nDuring the decay of one nucleus from X to Y, a total of seven particles are emitted. It is known \nthat more of these particles are alpha particles than beta particles. \n \nThe atomic number of X is Z and the mass number of X is A. \n \nWhich row in the table could give the atomic number and the mass number of Y? \n \n \n \n \natomic number of Y \nmass number of Y \n \n \n \nA \nZ \u2013 2 \nA \u2013 12 \n \n \n \nB \nZ \u2013 5 \nA \u2013 8 \n \n \n \nC \nZ \u2013 8 \nA \u2013 20 \n \n \n \nD \nZ \u2013 10 \nA \u2013 24 \n \n \n \nE \nZ \u2013 11 \nA \u2013 16",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \nThe diagram shows a right-angled triangle, with sides of length x + 4, 2x + 2 and 3x, all in cm. \n \nx + 4",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 x",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 2,
+    "text": "2 x + 2\n \n \n[diagram not to scale] \n \nWhat is the area, in cm2, of the triangle? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 54,
+    "text": "54 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 70,
+    "text": "70",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 14,
+    "text": "14 \nThe kinetic energy of an object of mass 4.0 kg, travelling in a straight line, increases from",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 J to 200 J in 3.0 seconds due to a constant resultant force. \n \nWhat is the value of this resultant force? \n \n \n \nA \n2.0 N \n \nB \n4.0 N \n \nC \n8.0 N \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 N \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 N \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 56,
+    "text": "56 N",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \nPR and QS are the diagonals of a rhombus PQRS. \n \nPR = (3x + 2) cm \n \nQS = (8 \u2013 2x) cm \n \nThe area of PQRS is 11 cm2. \n \nWhat is the difference, in cm, between the two possible lengths of PR ? \n \n \n \nA \n3\n2\n2\n \n \nB \n2\n1\n4\n \n \nC \n3\n1\n5\n \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nE \n 14",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 16,
+    "text": "16 \nIn the following circuit, all five resistors have the same resistance. \n \nV\n \n \nThe reading on the voltmeter is 1.0 V. \n \nWhat is the voltage across the battery? \n \n \n \nA \n4.0 V \n \nB \n5.0 V \n \nC \n6.0 V \n \nD \n7.0 V \n \nE \n8.0 V \n \nF \n9.0 V \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 V",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 17,
+    "text": "17 \nQ\nS\nP\nR\nT",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 cm",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 cm\n \n \n[diagram not to scale] \n \nThe diagram shows two congruent right-angled triangles PQR and TSR with right angles at Q \nand S, respectively. \n \nPQ = TS = 3 cm \n \nQR = SR = 4 cm \n \nPRT is a straight line. \n \nWhat is the length, in cm, of QS ? \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nB \n2\n3\n \n \nC \n 5.2 \n \nD \n2\n4\n \n \nE \n 6.4 \n \nF \n 8.2 \n \nG \n 10",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 18,
+    "text": "18 \nA block is designed with a cylindrical channel to accommodate a hot-water pipe. The block is \n100 cm long and it has a square cross-section of side 22.0 cm with a cylindrical hole in the \nmiddle, as shown in the diagram: \n \n \n \n[diagram not to scale] \n \nThe diameter of the cylindrical hole is 14.0 cm and the density of the material from which the \nblock is made is 0.100 g cm\u20133. \n \nWhat is the mass of the block? \n \n(take \u03c0 to be \n7",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 ) \n \n \n \nA \n1.32 kg \n \nB \n3.30 kg \n \nC \n13.2 kg \n \nD \n33.0 kg \n \nE \n132 kg \n \nF \n330 kg \n \nG \n1320 kg \n \nH \n3300 kg",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 19,
+    "text": "19 \nh",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 cm\n \n \n[diagram not to scale] \n \nA solid pyramid has a square base of side length 12 cm and a vertical height of h cm. \n \nThe volume of the pyramid, in cm3, is equal to the total surface area of the pyramid, in cm2. \n \nWhat is the value of h ? \n \n(volume of pyramid = 3\n1\n \u00d7 area of base \u00d7 vertical height) \n \n \n \nA \n35",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 72,
+    "text": "72 \n \nB \n3\n2\n \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 6,
+    "text": "6 \n \nD \n23\n144 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 \n \nF \n21\n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \nA sample initially contains equal numbers of atoms of a radioactive isotope X and a stable \nisotope Y. \n \nIsotope X has a half-life of 3 years and decays in a single stage to the stable isotope Y. \n \nWhat is the ratio \n \nnumber of atoms of X : number of atoms of Y \n \nin the sample 6 years later? \n \n \n \nA \nThe sample contains only isotope Y. \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 : 7 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 : 4 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 : 3 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7 : 4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \nFind the area of the shape bounded by the four lines: \n \n \n \n \n2y + x = 4 \n \n \n \n \n x = \u2013 6 \n \n \n \n \n x = 0 \n \n \n \n \n y = 0 \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 4,
+    "text": "4 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 12,
+    "text": "12 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 21,
+    "text": "21 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 \nA hydroelectric power station uses the water in a reservoir to power the generators. The water \nfalls through a vertical height of 150 m to the turbines which power the generators. \n \nThe efficiency of the power station is 90% and the output power of the power station is \n1800 MW. \n \nThe gravitational field strength is 10 N kg\u20131 and the density of water is 1000 kg m\u20133. \n \nWhat volume of water passes through the turbines in one minute? \n \n \n \nA \n6.48 \u00d7 104\n m3 \n \nB \n7.20 \u00d7 104\n m3 \n \nC \n8.00 \u00d7 104\n m3 \n \nD \n6.48 \u00d7 107\n m3 \n \nE \n7.20 \u00d7 107\n m3 \n \nF \n8.00 \u00d7 107\n m3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 23,
+    "text": "23 \nThe curve \n \ny = x3 + px2 + qx + r \n \nhas a local maximum when x = \u20131 and a local minimum when x = 3 \n \nWhat is the value of p ? \n \n \n \nA \n\u2013 9 \n \nB \n\u2013 3 \n \nC \n\u2013 1 \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 9,
+    "text": "9",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 24,
+    "text": "24 \nA car P of mass 1000 kg is travelling north at 30 m s\u20131 along a straight, horizontal road when it \nhits another car Q which is directly ahead of P and travelling in the same direction. Car Q has a \nmass of 500 kg and is travelling at 20 m s\u20131. \n \nThe collision lasts for 0.20 s and immediately after the collision car Q is moving north at",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 m s\u20131. \n \nWhat is the speed of P immediately after the collision and what is the size of the average \nresultant force that acts on Q during the collision? \n \n(Assume that no external forces act on the cars during the collision.) \n \n \n \n \nspeed of P / m s\u20131 \naverage force on Q / N \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 000 \n \n \n \nB",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 000 \n \n \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n100 000 \n \n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 \n125 000 \n \n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 000 \n \n \n \nF",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 000 \n \n \n \nG",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n100 000 \n \n \n \nH",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \n125 000",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 \nWhen simplified, \n(\n)\n3\n2\n1\n1\n\u2212\n is written in the form \n2\nb\na +\n where a and b are integers. \n \nWhat is the value of b ? \n \n \n \nA \n\u2013 7 \n \nB \n\u2013 5 \n \nC \n\u2013 1 \n \nD",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nE",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 7,
+    "text": "7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 26,
+    "text": "26 \nA metal wire of length 0.50 m has a uniform cross-sectional area of 4.0 \u00d7 10\u20137\n m2. \n \nThere is a current of 4.0 A in the wire. \n \nWhat is the potential difference across the ends of the wire? \n \n(resistivity of the metal = 1.6 \u00d7 10\u20137\n \u2126 m) \n \n \n \nA \n0.05 V \n \nB \n0.20 V \n \nC \n0.80 V \n \nD \n3.2 V \n \nE \n5.0 V \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 20,
+    "text": "20 V",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 27,
+    "text": "27 \nIt is given that \n \n \n \n \n \n7cos x + tan x sin x = 5 \n \nwhere 0\u00b0 < x < 90\u00b0 \n \nWhat are the possible values of tan x ? \n \n \n \nA \n 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 or 3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB \n3",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 or \n2\n2\n1\n \n \nC \n2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or \n3\n2\n2\n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or \n2\n2\n \n \nE",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 or 2",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 28,
+    "text": "28 \nA uniform square trap door of side 0.80 m and mass 14 kg has a smooth hinge at one edge and \nis held open at an angle of 30\u00b0 to the horizontal. It is supported by a single rigid rod placed so \nthat it meets the surface of the trap door at 90\u00b0 at a distance 0.10 m from the top edge of the \ntrap door, as shown. \n \nhinge\ntrap door\nsupporting rod\n30\u00b0\n0.80 m\n0.10 m\n \n \nWhat is the normal contact force exerted on the trap door by the rod? \n \n(gravitational field strength = 10 N kg\u22121) \n \n \n \nA",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 N \n \nB \nN\n3\n35\n \n \nC \nN\n3\n40\n \n \nD",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 80,
+    "text": "80 N \n \nE \nN\n3\n80\n \n \nF \nN\n3\n3\n280",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 29,
+    "text": "29 \nAn equilateral triangle of side 8 cm is drawn so that its vertices lie on the circumference of a \ncircle, as shown in the diagram.",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 8,
+    "text": "8 cm\n \n \nWhat is the total of the three areas shaded in the diagram, in cm2\n ? \n \n \n \nA \n(\n)\n3\n2\n8\n\u2212\n\u03c0\n \n \nB \n(\n)\n3\n24\n\u2212\n\u03c0\n \n \nC \n(\n)\n3\n4\n48\n\u2212\n\u03c0\n \n \nD \n(\n)\n3\n3\n6\n4\n3\n16\n\u2212\n\u2212\n\u03c0\n \n \nE \n(\n)\n3\n3\n4\n3\n16\n\u2212\n\u03c0",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 \nTwo small loudspeakers are placed side by side 30 cm apart. \n \nThey are connected to the same signal generator so that they emit sound of frequency 400 Hz \nin phase with one another. \n \nThe sounds both reach a microphone placed 40 cm directly in front of one of the two \nloudspeakers as shown. \n \nmicrophone",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 cm",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 30,
+    "text": "30 cm\n \n \n \nWhat is the phase difference between waves from the loudspeakers as they arrive at the \nmicrophone? \n \n(speed of sound = 320 m s\u20131) \n \n \n \nA \n30\u00b0 \n \nB \n36\u00b0 \n \nC \n45\u00b0 \n \nD \n60\u00b0 \n \nE \n72\u00b0 \n \nF \n90\u00b0 \n \nG \n120\u00b0",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 31,
+    "text": "31 \nWhich one of the following is the real solution of the equation \n \n0\n2\n5\n5\n3\n1\n2\n=\n\u2212\n\u2212\n\u00d7\n+\nx\nx\n \n \n \n \nA \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n3\n1\n5\nlog\nx\n \n \nB \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n5\n2\n5\nlog\nx\n \n \nC \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n5\n3\n5\nlog\nx\n \n \nD \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n3\n2\n5\nlog\nx\n \n \nE \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n3\n5\n5\nlog\nx\n \n \nF \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n=\n2\n5\n5\nlog\nx",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 32,
+    "text": "32 \nAn astronaut on the Moon throws a ball vertically upwards. The ball has a mass of 2.0 g and is \nthrown upwards at 80 m s\u20131. \n \nWhat is the maximum height gained by the ball? \n \n(gravitational field strength close to the Moon\u2019s surface = 1.6 N kg\u20131) \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 25,
+    "text": "25 m \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 50,
+    "text": "50 m \n \nC \n320 m \n \nD \n2000 m \n \nE \n3200 m \n \nF \n4000 m",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 33,
+    "text": "33 \nFor a particular function f (x), it is given that: \n \n( ) x\nx\nf\nd\n\u2013\u222b\n2\n22\n + \n( ) x\nx\nf\nd\n\u222b\n4\n2\n = 4 \n \nand also: \n \n( ) x\nx\nf\nd\n\u2013\u222b\n2\n25\n \u2013 \n( ) x\nx\nf\nd\n\u2013\u222b\n4\n2\n = 7 \n \nFind the value of \n( ) x\nx\nf\nd\n\u222b\n4\n2\n \n \n \n \nA \n3",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 1,
+    "text": "1 \n \nB \n7",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \n \nC \n6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 11,
+    "text": "11 \n \nD \n6",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 13,
+    "text": "13 \n \nE \n3\n13",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 34,
+    "text": "34 \nA student has one 300 \u2126 resistor and another resistor of resistance R. \n \nThe student plots a graph of current I against potential difference V for the 300 \u2126 resistor and \nthen for both resistors connected in parallel. \n \nV / V\n10\nI / mA\n20\n30\n0\n0\n1\n2\n3\n4\n5\n6\n \n \nWhat is the resistance R ? \n \n \n \nA \n3.3 \u2126 \n \nB \n5.0 \u2126 \n \nC",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 10,
+    "text": "10 \u2126 \n \nD \n100 \u2126 \n \nE \n200 \u2126 \n \nF \n600 \u2126 \n \nG \n1000 \u2126",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 35,
+    "text": "35 \nGiven that \n \n \n \n \n \nf (x) = \n(\n)\n\u222b\n+\nx\nt\nt\n0\n7\n2\n3\nd \n \nwhat is the coefficient of x 4 in the expansion of f (x) in powers of x ? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 70,
+    "text": "70 \n \nB \n 162 \n \nC \n4\n2835 \n \nD \n 3024 \n \nE \n 5670 \n \nF",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 120 \n \nG",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 22,
+    "text": "22 680",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 36,
+    "text": "36 \nA light, vertical, copper wire of length 2.4 m and uniform cross-sectional area 2.0 \u00d7 10\u2013\n 6\n m2 \nsupports a load of mass 4.0 kg. \n \nThe Young modulus of copper is 1.2 \u00d7 1011\n Pa. \n \nWhat is the strain energy in the wire? \n \n(gravitational field strength = 10 N kg\u20131; assume that the wire obeys Hooke\u2019s law and that the \ncross-sectional area remains constant) \n \n \n \nA \n8.0 \u00d7 10\u20135\n J \n \nB \n1.7 \u00d7 10\u2013\n 4\n J \n \nC \n4.0 \u00d7 10\u2013\n 4\n J \n \nD \n8.0 \u00d7 10\u20133\n J \n \nE \n4.0 \u00d7 10\u20132\n J \n \nF \n1.6 \u00d7 10\u20132\n J",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 37,
+    "text": "37 \nThe three internal angles in a triangle are \u03b1, \u03b2 and \u03b8 , and",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 3,
+    "text": "3 tan \u03b1 \u2013 2 sin \u03b2 = 2",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 5,
+    "text": "5 tan \u03b1 + 6 sin \u03b2 = 8 \n \nWhat is the value of \u03b8 in degrees? \n \n \n \nA",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 15,
+    "text": "15 \n \nB",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 45,
+    "text": "45 \n \nC",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 75,
+    "text": "75 \n \nD \n105 \n \nE \n135",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 38,
+    "text": "38 \nLight travelling in a transparent liquid strikes the surface from below. The angle between the \nsurface of the liquid and the direction of travel of the light is \u03b1. \n \nThe light then travels along the surface between the liquid and the air as shown in the diagram. \n \n\u03b1\n \n \nNow, light travelling in air strikes the surface from above so that the angle between the surface \nand the direction of travel of this light is also \u03b1. \n \nAfter the light strikes the surface from above, the angle between the surface and the direction \nof travel of the refracted light is \u03b2. \n \nWhich expression gives \u03b2 ? \n \n(all angles are in degrees) \n \n \n \nA \ncos \u03b2 = cos2\n \u03b1 \n \nB \ncos \u03b2 = cos \u03b1 sin\u20131\n \n\u239f\u23a0\n\u239e\n\u239c\u239d\n\u239b\n\u03b1\n1\n \n \nC \nsin \u03b2 = sin2\n \u03b1 \n \nD \n\u03b2 = 90 \u2013 (90 \u2013 \u03b1)2 \n \nE \n\u03b2 = 0 \n \nF \n\u03b2 = \u03b1",
+    "skipped_diagram": true
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 39,
+    "text": "39 \nFind the complete set of values of x for which \n \nx3 \u2013 2x2 \u2013 7x \u2013 4 > 0 \n \n \n \nA \nx < \u2013 1 \n \nB \nx > \u2013 1 \n \nC \n\u2013 1 < x < 4 \n \nD \nx < \u2013 1 or x > 4 \n \nE \nx < 4 \n \nF \nx > 4",
+    "skipped_diagram": false
+  },
+  {
+    "paper_id": "ENGAA_Section1_2019_ENGAA Section 1 2019 Past Paper",
+    "pdf_path": "c:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\ENGAA Section 1\\ENGAA Section 1 2019\\ENGAA Section 1 2019 Past Paper.pdf",
+    "year": "2019",
+    "exam": "ENGAA",
+    "section": "Section 1",
+    "qnum": 40,
+    "text": "40 \nThe velocity\u2013time graph is for an 80 kg person in a lift that is moving vertically upwards. \n \nvelocity / m s\u20131\ntime / s\n2.0\n5.0\n0.0\n0.0\n10.0\n20.0\n25.0\nX\n \n \nWhat is the magnitude of the contact force between the person and the lift floor at the time \ncorresponding to X? \n \n(gravitational field strength = 10 N kg\u20131) \n \n \n \nA \n640 N \n \nB \n768 N \n \nC \n800 N \n \nD \n832 N \n \nE \n960 N \n \n \n \nEND OF TEST",
+    "skipped_diagram": true
+  }
+]

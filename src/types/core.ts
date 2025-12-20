@@ -10,6 +10,12 @@ export type TopicCategory =
   | "geometry"
   | "number_theory"
   | "shortcuts"
+  | "patterns"
+  | "transform"
+  | "test"
+  | "estimation"
+  | "identities"
+  | "trigonometry"
   | "mechanics"
   | "optics"
   | "electricity"
@@ -199,6 +205,12 @@ export interface GeneratedQuestion {
   topicId: string;
   difficulty: number;
   timeLimit?: number;
+  /** Custom answer checker function */
+  checker?: (userAnswer: string) => boolean;
+  /** Explanation shown when answer is revealed */
+  explanation?: string;
+  /** List of acceptable alternative answers */
+  acceptableAnswers?: string[];
   /** When generators produce numeric answers with units (physics) */
   numericAnswer?: {
     value: number; // canonical value in base unit

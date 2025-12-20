@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ESAT Question: P3-Medium-a6e11b2656</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']],
+                processEscapes: true,
+                processEnvironments: true
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .metadata {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .question {
+            background: #fff9e6;
+            padding: 20px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .options {
+            background: #e8f5e9;
+            padding: 20px;
+            border-left: 4px solid #4caf50;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .option {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        .option.correct {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            font-weight: bold;
+        }
+        .solution {
+            background: #e3f2fd;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESAT Question Generator</h1>
+        
+        <div class="metadata">
+            <strong>Question ID:</strong> P3-Medium-a6e11b2656<br>
+            <strong>Schema:</strong> P3<br>
+            <strong>Difficulty:</strong> Medium<br>
+            <strong>Attempts:</strong> 1<br>
+            <strong>Created:</strong> 2025-12-19T02:10:54.057675<br>
+            <strong>Token Usage:</strong> 27,945 total (8,570 prompt + 1,154 completion)<br>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">QUESTION</div>
+            <div class="question">
+                A particle of mass$m$moves along the$x$-axis. Its kinetic energy$E_k$varies with displacement$x$according to the equation:$$E_k = 6x^2 - 2x^3$$for the interval$0 \le x \le 2$.
+At which position$x$is the magnitude of the net force acting on the particle at its maximum?
+
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">OPTIONS</div>
+            <div class="options">
+                <div class="option"><strong>A:</strong> $x = 0.5$</div>
+                <div class="option correct"><strong>B:</strong> $x = 1.0$ ✓ CORRECT</div>
+                <div class="option"><strong>C:</strong> $x = 1.5$</div>
+                <div class="option"><strong>D:</strong> $x = 2.0$</div>
+
+            </div>
+            <p><strong>Correct Answer: B</strong></p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOLUTION</div>
+            <div class="solution">
+                <div><strong>Reasoning:</strong><br><br>The Work-Energy theorem states that the net work done is the change in kinetic energy. In differential form, the net force$F$is the gradient of the kinetic energy with respect to position:$$F = \frac{dE_k}{dx}$$Differentiating the given expression for$E_k$:$$F = \frac{d}{dx}(6x^2 - 2x^3) = 12x - 6x^2$$We seek the position where the magnitude of the force is maximum. The function$F(x) = 12x - 6x^2$describes a parabola opening downwards. The maximum value occurs at the vertex. We find the stationary point of$F$by differentiating it:$$\frac{dF}{dx} = 12 - 12x$$Setting$\frac{dF}{dx} = 0$gives:$$12(1 - x) = 0 \implies x = 1$$Checking the values at the boundaries and the vertex: - At$x=0$,$F = 0$. - At$x=1$,$F = 12(1) - 6(1)^2 = 6$. - At$x=2$,$F = 12(2) - 6(4) = 0$.
+Thus, the maximum magnitude of the force occurs at$x = 1.0$.
+(Note: This position corresponds to the inflection point of the$E_k$graph, where the slope is steepest.)
+</div>
+                <div style='margin-top: 15px;'><strong>Key Insight:</strong><br><br>Net force is the gradient of the kinetic energy graph ($F = \frac{dE_k}{dx}$), so the maximum force occurs at the steepest point of the curve (the inflection point).
+</div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">DISTRACTOR ANALYSIS</div>
+            <div style="background: #fff3e0; padding: 20px; border-left: 4px solid #ff9800; border-radius: 5px;">
+                <div style="margin: 10px 0;"><strong>A:</strong> Incorrect calculation or guessing a midpoint of the rising section.</div>
+                <div style="margin: 10px 0;"><strong>B:</strong> Correct. [CORRECT ANSWER]</div>
+                <div style="margin: 10px 0;"><strong>C:</strong> Incorrect calculation or guessing a point on the falling slope of the force curve.</div>
+                <div style="margin: 10px 0;"><strong>D:</strong> Selects the position of maximum Kinetic Energy (where slope and Force are zero).</div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

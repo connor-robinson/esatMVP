@@ -1,0 +1,14 @@
+# Requirements for Question Review Tkinter Application
+
+# Core dependencies
+supabase>=2.0.0
+python-dotenv>=1.0.0
+
+# Math rendering (matplotlib for rendering math expressions to images)
+matplotlib>=3.5.0
+Pillow>=9.0.0
+
+# Optional: For HTML-based math rendering (not currently used, kept for reference)
+# tkinterweb>=3.1.0
+
+

@@ -1,0 +1,13 @@
+{
+  "run_id": "20251219_021626",
+  "accepted": 1,
+  "rejected": 0,
+  "by_schema": {
+    "P5": {
+      "attempted": 1,
+      "accepted": 1,
+      "rejected": 0
+    }
+  },
+  "failures": {}
+}

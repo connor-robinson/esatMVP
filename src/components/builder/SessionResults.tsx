@@ -83,7 +83,7 @@ export function SessionResults({ session, attempts, onBackToBuilder }: SessionRe
               Session Complete! 🎉
             </h1>
             <p className="text-white/60">
-              Here's how you performed
+              Here&apos;s how you performed
             </p>
           </motion.div>
         </div>
