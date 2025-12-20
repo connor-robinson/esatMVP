@@ -416,26 +416,46 @@ export function useBuilderSession() {
   );
 
   const finalizeSession = useCallback(
-    (sessionId: string, attempts: number) => {
+    async (sessionId: string, attempts: number) => {
       if (!authSession?.user) {
         console.log("[finalizeSession] Skipping - no user session");
         return;
       }
-      (supabase as any)
+      
+      // Update builder_sessions table
+      const { error: updateError } = await (supabase as any)
         .from("builder_sessions")
         .update({
           ended_at: new Date().toISOString(),
           attempts,
         })
         .eq("id", sessionId)
-        .eq("user_id", authSession.user.id)
-        .then(({ error }: { error: any }) => {
-          if (error) {
-            console.error("[builder] failed to finalize session", error);
-          }
-        });
+        .eq("user_id", authSession.user.id);
+
+      if (updateError) {
+        console.error("[builder] failed to finalize session", updateError);
+        return;
+      }
+
+      // Save comprehensive analytics data
+      const { saveSessionAnalytics } = await import("@/lib/analytics/session-saver");
+      
+      // Prepare question topics data
+      const questionTopics = currentSession?.questions.map(q => ({
+        topicId: q.topicId,
+        variantId: q.variantId,
+      })) || [];
+
+      await saveSessionAnalytics(supabase, {
+        sessionId,
+        userId: authSession.user.id,
+        attempts: attemptLog,
+        questionTopics,
+        startedAt: currentSession?.startedAt || Date.now(),
+        endedAt: Date.now(),
+      });
     },
-    [authSession?.user, supabase],
+    [authSession?.user, supabase, currentSession, attemptLog],
   );
 
   const submitAnswer = useCallback(

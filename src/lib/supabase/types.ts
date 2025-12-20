@@ -336,6 +336,29 @@ export type AiGeneratedQuestionInsert = {
 };
 export type AiGeneratedQuestionUpdate = Partial<AiGeneratedQuestionRow>;
 
+// user_daily_metrics
+export type UserDailyMetricRow = {
+  id: number;
+  user_id: string;
+  metric_date: string;
+  total_questions: number;
+  correct_answers: number;
+  total_time_ms: number;
+  sessions_count: number;
+  created_at: string;
+  updated_at: string;
+};
+export type UserDailyMetricInsert = {
+  id?: number;
+  user_id: string;
+  metric_date: string;
+  total_questions?: number;
+  correct_answers?: number;
+  total_time_ms?: number;
+  sessions_count?: number;
+};
+export type UserDailyMetricUpdate = Partial<UserDailyMetricRow>;
+
 export type Database = {
   public: {
     Tables: {
@@ -388,6 +411,11 @@ export type Database = {
         Row: AiGeneratedQuestionRow;
         Insert: AiGeneratedQuestionInsert;
         Update: AiGeneratedQuestionUpdate;
+      };
+      user_daily_metrics: {
+        Row: UserDailyMetricRow;
+        Insert: UserDailyMetricInsert;
+        Update: UserDailyMetricUpdate;
       };
     };
     Views: {

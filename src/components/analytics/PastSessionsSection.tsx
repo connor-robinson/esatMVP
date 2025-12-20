@@ -65,7 +65,7 @@ export function PastSessionsSection({
       {/* Section Header */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex-1">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/80">
             {sortBy === "recent" ? "Recent Sessions" : "Top Sessions"}
           </h2>
           <p className="text-sm text-white/40 mt-1">

@@ -441,6 +441,7 @@ def choose_difficulty(cfg: RunConfig) -> str:
     return random.choices(diffs, weights=weights, k=1)[0]
 
 def designer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, schema_block: str, schema_id: str, difficulty: str) -> Dict[str, Any]:
+    subject_prompts = get_subject_prompts(prompts, schema_id)
     user = f"""You will receive a schema and a target difficulty.
 
 Schema:
@@ -449,7 +450,7 @@ Schema:
 Target difficulty: {difficulty}
 
 Return exactly one idea plan in the required YAML format."""
-    txt = llm.generate(model=models.designer, system_prompt=prompts.designer, user_prompt=user, temperature=0.7)
+    txt = llm.generate(model=models.designer, system_prompt=subject_prompts.designer, user_prompt=user, temperature=0.7)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "schema_id" not in obj:
         raise ValueError(f"Designer output invalid YAML/object. Raw output:\n{txt}")

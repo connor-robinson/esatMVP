@@ -30,10 +30,10 @@ export function PerformanceChartsSection({
         className="w-full flex items-center justify-between mb-4 group"
       >
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/70 text-left group-hover:text-white/90 transition-colors">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/80 text-left group-hover:text-white/95 transition-colors">
             Performance Trends
           </h2>
-          <p className="text-sm font-semibold uppercase tracking-wider text-white/70 mt-1 text-left">
+          <p className="text-sm text-white/40 mt-1 text-left">
             Track your accuracy and speed progression over time
           </p>
         </div>

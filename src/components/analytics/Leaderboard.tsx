@@ -64,7 +64,7 @@ export function Leaderboard({
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <span className="text-xl">🏆</span>
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+          <h3 className="text-base font-bold uppercase tracking-wider text-white/80">
             {title}
           </h3>
         </div>

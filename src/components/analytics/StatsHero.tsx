@@ -59,7 +59,7 @@ export function StatsHero({
         className="w-full flex items-center justify-between mb-4 group"
       >
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-white/70 text-left group-hover:text-white/90 transition-colors">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/80 text-left group-hover:text-white/95 transition-colors">
             Quick Overview
           </h2>
           <p className="text-sm text-white/40 mt-1 text-left">Your performance at a glance</p>
@@ -139,7 +139,7 @@ export function StatsHero({
           {/* Topic Performance */}
           {(strongest || weakest) && (
             <div className="mt-6 pt-6 border-t border-white/10">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70 mb-4">Topic Performance</h3>
+              <h3 className="text-base font-bold uppercase tracking-wider text-white/80 mb-4">Topic Performance</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Strongest Topic */}
                 {strongest && strongest.topicId && strongest.topicName && typeof strongest.accuracy === 'number' && (

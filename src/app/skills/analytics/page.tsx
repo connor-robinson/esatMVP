@@ -145,11 +145,19 @@ async function fetchDailyMetrics(
 async function fetchLeaderboard(
   supabase: SupabaseClient<Database>,
   userId: string,
+  topicId?: string,
 ): Promise<LeaderboardEntry[]> {
-  const { data, error } = await supabase
+  // Build query
+  let query = supabase
     .from("topic_progress")
-    .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms")
-    .limit(500);
+    .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms");
+
+  // Filter by topic if specified
+  if (topicId && topicId !== "all") {
+    query = query.eq("topic_id", topicId);
+  }
+
+  const { data, error } = await query.limit(500);
 
   if (error) {
     console.error("[analytics] failed to load leaderboard base", error);
@@ -178,30 +186,32 @@ async function fetchLeaderboard(
     grouped.set(row.user_id, entry);
   });
 
-  return Array.from(grouped.values()).map((entry) => {
-    const avgTime = entry.topics ? entry.avgTime / entry.topics : 0;
-    const totalTime = entry.attempted * avgTime;
-    return {
-      userId: entry.userId,
-      username: entry.userId === userId ? "You" : entry.userId.slice(0, 8),
-      score: calculateLeaderboardScore({
+  return Array.from(grouped.values())
+    .map((entry) => {
+      const avgTime = entry.topics ? entry.avgTime / entry.topics : 0;
+      const totalTime = entry.attempted * avgTime;
+      return {
         userId: entry.userId,
-        totalQuestions: entry.attempted,
-        correctAnswers: entry.correct,
-        totalTime: totalTime,
-        sessionCount: entry.topics,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastPracticeDate: null,
-        topicStats: {},
-        createdAt: new Date(),
-      }),
-      questionsAnswered: entry.attempted,
-      accuracy: entry.attempted ? (entry.correct / entry.attempted) * 100 : 0,
-      avgSpeed: avgTime,
-      rank: 0,
-    };
-  });
+        username: entry.userId === userId ? "You" : entry.userId.slice(0, 8),
+        score: calculateLeaderboardScore({
+          userId: entry.userId,
+          totalQuestions: entry.attempted,
+          correctAnswers: entry.correct,
+          totalTime: totalTime,
+          sessionCount: entry.topics,
+          currentStreak: 0,
+          longestStreak: 0,
+          lastPracticeDate: null,
+          topicStats: {},
+          createdAt: new Date(),
+        }),
+        questionsAnswered: entry.attempted,
+        accuracy: entry.attempted ? (entry.correct / entry.attempted) * 100 : 0,
+        avgSpeed: avgTime,
+        rank: 0,
+      };
+    })
+    .filter((entry) => entry.questionsAnswered > 0); // Only show users with activity
 }
 
 export default function AnalyticsPage() {
@@ -216,6 +226,7 @@ export default function AnalyticsPage() {
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
 
+  // Load user stats and initial data
   useEffect(() => {
     if (!session?.user) {
       setUserStats(null);
@@ -226,7 +237,7 @@ export default function AnalyticsPage() {
     }
 
     fetchTopicProgress(supabase, session.user.id).then((stats) => {
-    setUserStats(stats);
+      setUserStats(stats);
       if (stats) {
         setPreviousStats({
           ...stats,
@@ -237,14 +248,22 @@ export default function AnalyticsPage() {
         });
       }
     });
+  }, [session?.user, supabase]);
 
-    fetchLeaderboard(supabase, session.user.id).then((entries) => {
+  // Load leaderboard (reacts to topic changes)
+  useEffect(() => {
+    if (!session?.user) {
+      setLeaderboardData([]);
+      return;
+    }
+
+    fetchLeaderboard(supabase, session.user.id, selectedTopic).then((entries) => {
       const sorted = entries
         .sort((a, b) => b.score - a.score)
         .map((entry, index) => ({ ...entry, rank: index + 1 }));
       setLeaderboardData(sorted);
     });
-  }, [session?.user, supabase]);
+  }, [session?.user, supabase, selectedTopic]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -280,22 +299,6 @@ export default function AnalyticsPage() {
 
   return (
     <Container size="lg" className="py-10 space-y-8">
-      <AnimatePresence mode="wait">
-        <motion.header
-          key="header"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="space-y-3"
-        >
-          <h1 className="text-3xl font-semibold text-white/90">Your Analytics</h1>
-          <p className="text-white/60">
-            Track your personal progress, compare against the community, and spot new opportunities to improve.
-          </p>
-        </motion.header>
-      </AnimatePresence>
-
       <Suspense fallback={<div className="h-12 bg-white/5 rounded-lg animate-pulse" />}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <ViewToggle value={view} onChange={setView} />
