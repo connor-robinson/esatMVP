@@ -35,10 +35,19 @@ export function createServerClient() {
           return cookieStore.get(name)?.value;
         },
         set(name: string, value: string, options?: any) {
-          cookieStore.set(name, value, options);
+          try {
+            cookieStore.set(name, value, options);
+          } catch (error) {
+            // Cookie setting failed - this can happen in Server Components during initial render
+            // The session will still be read-only which is fine for most use cases
+          }
         },
         remove(name: string, options?: any) {
-          cookieStore.delete(name);
+          try {
+            cookieStore.delete(name);
+          } catch (error) {
+            // Cookie deletion failed - this is non-critical
+          }
         },
       },
     });
