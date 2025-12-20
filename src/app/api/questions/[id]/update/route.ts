@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { AiGeneratedQuestionUpdate } from "@/lib/supabase/types";
 import { normalizeMathSpacing } from "@/lib/utils/mathSpacing";
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }

@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { AiGeneratedQuestionUpdate } from "@/lib/supabase/types";
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }

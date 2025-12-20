@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { AiGeneratedQuestionRow } from "@/lib/supabase/types";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const supabase = createServerClient();
