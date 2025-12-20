@@ -6,18 +6,6 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
-// Extend Window interface to include MathJax
-declare global {
-  interface Window {
-    MathJax?: {
-      typesetPromise?: (elements?: HTMLElement | HTMLElement[]) => Promise<void>;
-      startup?: {
-        document?: any;
-      };
-    };
-  }
-}
-
 /**
  * Wait for MathJax to be loaded and ready
  */
