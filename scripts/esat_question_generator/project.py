@@ -530,26 +530,31 @@ def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_
     obj["_raw_text"] = txt
     return obj
 
-def tag_labeler_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], 
-                     schema_id: str, curriculum_parser) -> Dict[str, Any]:
+def classifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], 
+                    schema_id: str, curriculum_parser) -> Dict[str, Any]:
     """
-    Call the tag labeler AI to assign curriculum tags to a question.
+    Call the classifier AI to assign curriculum tags to a question.
+    
+    For Math: Returns paper (Math 1/Math 2) + tags from that paper
+    For P/B/C: Returns tags only
     
     Args:
         llm: LLM client
         prompts: Prompts object
         models: Models config
         question_obj: Question package
-        schema_id: Schema ID (e.g., "M1", "P3")
+        schema_id: Schema ID (e.g., "M1", "P3", "B1", "C1")
         curriculum_parser: CurriculumParser instance
     
     Returns:
-        Dictionary with primary_tag, secondary_tags, confidence scores, etc.
+        Dictionary with primary_tag, secondary_tags, confidence scores, and paper (for Math only)
     """
-    # Get available topics for this schema
+    subject_prompts = get_subject_prompts(prompts, schema_id)
+    
+    # Get available topics (NO SCHEMA ID - as per new requirement)
     available_topics = curriculum_parser.get_available_topics_for_schema(schema_id)
     
-    # Format available topics for the AI
+    # Format topics
     topics_text = yaml.safe_dump({
         "available_topics": [
             {
@@ -561,10 +566,8 @@ def tag_labeler_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, que
         ]
     }, sort_keys=False)
     
-    # Prepare user prompt
-    user = f"""Schema ID: {schema_id}
-
-Available curriculum topics for this schema:
+    # User prompt WITHOUT schema_id
+    user = f"""Available curriculum topics:
 {topics_text}
 
 Question package (YAML):
@@ -572,23 +575,38 @@ Question package (YAML):
 
 Analyze the question and assign appropriate curriculum tags."""
     
-    # Use tag_labeler model if available, otherwise fall back to style_judge
-    model = getattr(models, 'tag_labeler', None) or models.style_judge
-    txt = llm.generate(model=model, system_prompt=prompts.tag_labeler, user_prompt=user, temperature=0.3)
+    model = getattr(models, 'classifier', None) or models.style_judge
+    txt = llm.generate(
+        model=model,
+        system_prompt=subject_prompts.classifier,  # Subject-specific
+        user_prompt=user,
+        temperature=0.3
+    )
     
-    try:
-        obj = safe_yaml_load(txt)
-    except Exception as e:
-        raise ValueError(f"Tag labeler output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+    obj = safe_yaml_load(txt)
     
-    if not isinstance(obj, dict):
-        raise ValueError(f"Tag labeler output is not a dictionary. Got type: {type(obj)}\n\nRaw output:\n{txt[:500]}...")
-    
-    if "primary_tag" not in obj:
-        raise ValueError(f"Tag labeler output missing 'primary_tag' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
+    # Validate output based on subject
+    prefix = schema_id[0].upper()
+    if prefix == 'M':
+        # Math requires 'paper' field
+        if "paper" not in obj:
+            raise ValueError(f"Math classifier missing 'paper' field")
+        if "primary_tag" not in obj:
+            raise ValueError(f"Classifier missing 'primary_tag' field")
+    else:
+        # P/B/C only need primary_tag
+        if "primary_tag" not in obj:
+            raise ValueError(f"Classifier missing 'primary_tag' field")
     
     obj["_raw_text"] = txt
     return obj
+
+
+# Alias for backward compatibility
+def tag_labeler_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], 
+                     schema_id: str, curriculum_parser) -> Dict[str, Any]:
+    """Backward compatibility alias for classifier_call."""
+    return classifier_call(llm, prompts, models, question_obj, schema_id, curriculum_parser)
 
 def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
                            idea_plan: Dict[str, Any],
