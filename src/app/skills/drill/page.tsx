@@ -87,18 +87,19 @@ export default function BuilderPage() {
             <div className="space-y-6">
               <div>
                 <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
-                  <SessionFolder
-                    selectedTopicVariants={builder.selectedTopicVariants}
-                    questionCount={builder.questionCount}
-                    onQuestionCountChange={builder.setQuestionCount}
-                    onRemoveTopicVariant={builder.removeTopicVariant}
-                    onClear={builder.clearTopics}
-                    onSave={handleSavePreset}
-                    onStart={builder.startSession}
-                    canStart={builder.canStart}
-                    presets={builder.presets}
-                    onLoadPreset={builder.loadPreset}
-                  />
+                <SessionFolder
+                  selectedTopicVariants={builder.selectedTopicVariants}
+                  questionCount={builder.questionCount}
+                  onQuestionCountChange={builder.setQuestionCount}
+                  onRemoveTopicVariant={builder.removeTopicVariant}
+                  onRemoveAllTopicVariants={builder.removeAllTopicVariants}
+                  onClear={builder.clearTopics}
+                  onSave={handleSavePreset}
+                  onStart={builder.startSession}
+                  canStart={builder.canStart}
+                  presets={builder.presets}
+                  onLoadPreset={builder.loadPreset}
+                />
                 </Suspense>
               </div>
 

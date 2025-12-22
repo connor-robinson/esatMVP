@@ -165,6 +165,28 @@ export function useBuilderSession() {
     });
   }, [parseTopicVariantId]);
 
+  // Add all variants of a topic at once
+  const addTopicWithAllVariants = useCallback((topicId: string) => {
+    const topic = getTopic(topicId);
+    if (!topic || !topic.variants || topic.variants.length === 0) return;
+    
+    setSelectedTopicVariants((prev) => {
+      const newVariants: TopicVariantSelection[] = [];
+      
+      topic.variants?.forEach((variant) => {
+        // Check if this variant is already added
+        const exists = prev.some(
+          tv => tv.topicId === topicId && tv.variantId === variant.id
+        );
+        if (!exists) {
+          newVariants.push({ topicId, variantId: variant.id });
+        }
+      });
+      
+      return [...prev, ...newVariants];
+    });
+  }, []);
+
   const removeTopicVariant = useCallback((topicVariantId: string) => {
     const parsed = parseTopicVariantId(topicVariantId);
     if (!parsed) return;
@@ -175,6 +197,13 @@ export function useBuilderSession() {
       )
     );
   }, [parseTopicVariantId]);
+
+  // Remove all variants of a specific topic
+  const removeAllTopicVariants = useCallback((topicId: string) => {
+    setSelectedTopicVariants((prev) => 
+      prev.filter(tv => tv.topicId !== topicId)
+    );
+  }, []);
 
   const clearTopics = useCallback(() => {
     setSelectedTopicVariants([]);
@@ -601,7 +630,9 @@ export function useBuilderSession() {
     loadPreset,
     removePreset,
     addTopic,
+    addTopicWithAllVariants,
     removeTopicVariant,
+    removeAllTopicVariants,
     clearTopics,
     canStart,
     startSession,

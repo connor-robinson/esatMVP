@@ -4,10 +4,11 @@
 
 "use client";
 
+import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { X, Play, Save, Trash2, Clock, GripVertical, FolderDown } from "lucide-react";
+import { X, Play, Save, Trash2, Clock, GripVertical, FolderDown, ChevronDown, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";
@@ -19,6 +20,7 @@ interface SessionFolderProps {
   questionCount: number;
   onQuestionCountChange: (count: number) => void;
   onRemoveTopicVariant: (topicVariantId: string) => void; // Remove by "topicId-variantId" or "topicId"
+  onRemoveAllTopicVariants?: (topicId: string) => void; // Remove all variants of a topic
   onClear: () => void;
   onSave: () => void;
   onStart: () => void;
@@ -27,6 +29,81 @@ interface SessionFolderProps {
   onLoadPreset?: (preset: SessionPreset) => void;
 }
 
+// Grouped topic chip for topics with multiple variants
+function GroupedTopicChip({
+  topicId,
+  variants,
+  onRemoveVariant,
+  onRemoveAll,
+}: {
+  topicId: string;
+  variants: TopicVariantSelection[];
+  onRemoveVariant: (topicVariantId: string) => void;
+  onRemoveAll?: (topicId: string) => void;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const topic = getTopic(topicId);
+  
+  if (!topic) return null;
+
+  const variantCount = variants.length;
+  const allVariantsCount = topic.variants?.length || 0;
+  const hasAllVariants = variantCount === allVariantsCount;
+
+  return (
+    <div className="space-y-1">
+      {/* Parent topic header */}
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-white/90 transition-colors shadow-sm border border-primary/20">
+        {/* Expand/collapse button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors flex-shrink-0"
+          aria-label={isExpanded ? "Collapse" : "Expand"}
+          type="button"
+        >
+          {isExpanded ? (
+            <ChevronDown size={18} strokeWidth={2} />
+          ) : (
+            <ChevronRight size={18} strokeWidth={2} />
+          )}
+        </button>
+
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+          <span className="truncate font-semibold text-base">{topic.name}</span>
+          <span className="truncate text-xs text-white/40">
+            {variantCount} of {allVariantsCount} variants
+          </span>
+        </div>
+
+        {/* Remove all button */}
+        <button
+          onClick={() => onRemoveAll?.(topicId)}
+          className="p-1 rounded-lg hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all flex-shrink-0"
+          aria-label={`Remove all ${topic.name} variants`}
+          type="button"
+          title="Remove all variants"
+        >
+          <X size={18} strokeWidth={2} />
+        </button>
+      </div>
+
+      {/* Variants list - collapsible */}
+      {isExpanded && (
+        <div className="pl-8 space-y-1">
+          {variants.map((variant) => (
+            <SortableVariantChip
+              key={`${variant.topicId}-${variant.variantId}`}
+              topicVariant={variant}
+              onRemove={onRemoveVariant}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Single variant chip
 function SortableVariantChip({ 
   topicVariant,
   onRemove 
@@ -45,7 +122,7 @@ function SortableVariantChip({
 
   const variant = topic.variants?.find(v => v.id === topicVariant.variantId);
   const variantName = variant?.name || topicVariant.variantId;
-  const displayText = `${topic.name}: ${variantName}`;
+  const displayText = `${variantName}`;
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -61,33 +138,30 @@ function SortableVariantChip({
         isDragging && "opacity-30"
       )}
     >
-      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 text-white/90 hover:bg-white/[0.07] transition-colors shadow-sm">
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors shadow-sm">
         {/* Drag handle */}
         <button
-          className="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 hover:text-white cursor-grab active:cursor-grabbing transition-colors flex-shrink-0"
+          className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/70 cursor-grab active:cursor-grabbing transition-colors flex-shrink-0"
           {...attributes}
           {...listeners}
           aria-label={`Drag ${displayText}`}
           type="button"
         >
-          <GripVertical size={18} strokeWidth={2} />
+          <GripVertical size={14} strokeWidth={2} />
         </button>
 
         <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-          <span className="truncate font-semibold text-base">{displayText}</span>
-          {topic.description && (
-            <span className="truncate text-xs text-white/40">{topic.description}</span>
-          )}
+          <span className="truncate font-medium text-sm">{displayText}</span>
         </div>
 
         {/* Remove button */}
         <button
           onClick={() => onRemove(topicVariantId)}
-          className="p-1 rounded-lg hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all flex-shrink-0"
+          className="p-0.5 rounded hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-all flex-shrink-0"
           aria-label={`Remove ${displayText}`}
           type="button"
         >
-          <X size={18} strokeWidth={2} />
+          <X size={14} strokeWidth={2} />
         </button>
       </div>
     </div>
@@ -118,6 +192,7 @@ export function SessionFolder({
   questionCount,
   onQuestionCountChange,
   onRemoveTopicVariant,
+  onRemoveAllTopicVariants,
   onClear,
   onSave,
   onStart,
@@ -131,6 +206,15 @@ export function SessionFolder({
 
   const totalItems = selectedTopicVariants.length;
   
+  // Group variants by topic
+  const groupedByTopic = selectedTopicVariants.reduce((acc, tv) => {
+    if (!acc[tv.topicId]) {
+      acc[tv.topicId] = [];
+    }
+    acc[tv.topicId].push(tv);
+    return acc;
+  }, {} as Record<string, TopicVariantSelection[]>);
+
   // Generate sortable IDs for each variant
   const sortableIds = selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`);
 
@@ -168,13 +252,29 @@ export function SessionFolder({
           ) : (
             <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
               <div className="flex flex-col gap-3 pb-12">
-                {selectedTopicVariants.map((topicVariant) => (
-                  <SortableVariantChip
-                    key={`${topicVariant.topicId}-${topicVariant.variantId}`}
-                    topicVariant={topicVariant}
-                    onRemove={onRemoveTopicVariant}
-                  />
-                ))}
+                {Object.entries(groupedByTopic).map(([topicId, variants]) => {
+                  // If topic has multiple variants, show as grouped
+                  if (variants.length > 1) {
+                    return (
+                      <GroupedTopicChip
+                        key={topicId}
+                        topicId={topicId}
+                        variants={variants}
+                        onRemoveVariant={onRemoveTopicVariant}
+                        onRemoveAll={onRemoveAllTopicVariants}
+                      />
+                    );
+                  } else {
+                    // Single variant, show as regular chip
+                    return (
+                      <SortableVariantChip
+                        key={`${variants[0].topicId}-${variants[0].variantId}`}
+                        topicVariant={variants[0]}
+                        onRemove={onRemoveTopicVariant}
+                      />
+                    );
+                  }
+                })}
               </div>
             </SortableContext>
           )}

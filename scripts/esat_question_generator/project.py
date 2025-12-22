@@ -619,6 +619,27 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
         raise ValueError(f"Implementer output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
+    # NEW: Validate distractor_map has content (not empty)
+    distractor_map = obj.get("distractor_map", {})
+    num_options = len(obj.get("question", {}).get("options", {}))
+    
+    if len(distractor_map) == 0:
+        raise ValueError(
+            f"Implementer output has EMPTY distractor_map. This is not allowed!\n"
+            f"The distractor_map must explain the reasoning error for each wrong option.\n"
+            f"Question has {num_options} options but distractor_map is empty: {distractor_map}\n\n"
+            f"Raw output:\n{txt[:500]}..."
+        )
+    
+    if len(distractor_map) < 3:
+        raise ValueError(
+            f"Implementer output has insufficient distractor_map entries.\n"
+            f"Got {len(distractor_map)} entries, need at least 3 (for options A, B, C, D minimum).\n"
+            f"Distractor map: {distractor_map}\n"
+            f"Available option keys: {list(obj.get('question', {}).get('options', {}).keys())}\n\n"
+            f"Raw output:\n{txt[:500]}..."
+        )
+    
     obj["_raw_text"] = txt
     return obj
 
@@ -783,6 +804,26 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
     # Validate distractor_map exists (it's required by the prompt)
     if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
         raise ValueError(f"Implementer regen output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
+    
+    # NEW: Validate distractor_map has content (not empty)
+    distractor_map = obj.get("distractor_map", {})
+    num_options = len(obj.get("question", {}).get("options", {}))
+    
+    if len(distractor_map) == 0:
+        raise ValueError(
+            f"Implementer regen output has EMPTY distractor_map. This is not allowed!\n"
+            f"The distractor_map must explain the reasoning error for each wrong option.\n"
+            f"Question has {num_options} options but distractor_map is empty: {distractor_map}\n\n"
+            f"Raw output:\n{txt[:500]}..."
+        )
+    
+    if len(distractor_map) < 3:
+        raise ValueError(
+            f"Implementer regen output has insufficient distractor_map entries.\n"
+            f"Got {len(distractor_map)} entries, need at least 3.\n"
+            f"Distractor map: {distractor_map}\n\n"
+            f"Raw output:\n{txt[:500]}..."
+        )
     
     obj["_raw_text"] = txt
     return obj

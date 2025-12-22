@@ -296,6 +296,7 @@ export type AiGeneratedQuestionRow = {
   generation_attempts: number;
   token_usage: Json | null;
   run_id: string | null;
+  paper: string | null;
   primary_tag: string | null;
   secondary_tags: string[] | null;
   tags_confidence: Json | null;
@@ -326,6 +327,7 @@ export type AiGeneratedQuestionInsert = {
   generation_attempts?: number;
   token_usage?: Json | null;
   run_id?: string | null;
+  paper?: string | null;
   primary_tag?: string | null;
   secondary_tags?: string[] | null;
   tags_confidence?: Json | null;
@@ -375,6 +377,30 @@ export type UserDailyMetricInsert = {
   sessions_count?: number;
 };
 export type UserDailyMetricUpdate = Partial<UserDailyMetricRow>;
+
+// question_bank_attempts
+export type QuestionBankAttemptRow = {
+  id: string;
+  user_id: string;
+  question_id: string;
+  user_answer: string;
+  is_correct: boolean;
+  time_spent_ms: number | null;
+  viewed_solution: boolean;
+  attempted_at: string;
+  created_at: string;
+};
+export type QuestionBankAttemptInsert = {
+  id?: string;
+  user_id: string;
+  question_id: string;
+  user_answer: string;
+  is_correct: boolean;
+  time_spent_ms?: number | null;
+  viewed_solution?: boolean;
+  attempted_at?: string;
+};
+export type QuestionBankAttemptUpdate = Partial<QuestionBankAttemptRow>;
 
 export type Database = {
   public: {
@@ -438,6 +464,11 @@ export type Database = {
         Row: UserDailyMetricRow;
         Insert: UserDailyMetricInsert;
         Update: UserDailyMetricUpdate;
+      };
+      question_bank_attempts: {
+        Row: QuestionBankAttemptRow;
+        Insert: QuestionBankAttemptInsert;
+        Update: QuestionBankAttemptUpdate;
       };
     };
     Views: {

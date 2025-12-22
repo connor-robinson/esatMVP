@@ -306,10 +306,17 @@ class DatabaseSync:
                 return None
                 
         except Exception as e:
-            # Only log actual errors, not every failure
+            # Only log actual errors, not expected ones
             error_str = str(e)
-            if "23514" not in error_str and "check constraint" not in error_str.lower():
-                # Not a constraint violation - log it
+            
+            # Ignore expected errors:
+            # 23505 = duplicate key (question already exists - this is fine!)
+            # 23514 = check constraint violation
+            if "23505" in error_str:
+                # Duplicate key - question already exists, this is fine
+                return None
+            elif "23514" not in error_str and "check constraint" not in error_str.lower():
+                # Not a known constraint violation - log it
                 print(f"[DB_SYNC] Error syncing {question_item.get('id')}: {error_str[:200]}")
             return None
     
