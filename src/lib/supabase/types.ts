@@ -336,6 +336,23 @@ export type AiGeneratedQuestionInsert = {
 };
 export type AiGeneratedQuestionUpdate = Partial<AiGeneratedQuestionRow>;
 
+// user_profiles
+export type UserProfileRow = {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  created_at: string;
+  updated_at: string;
+};
+export type UserProfileInsert = {
+  id: string;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  bio?: string | null;
+};
+export type UserProfileUpdate = Partial<UserProfileRow>;
+
 // user_daily_metrics
 export type UserDailyMetricRow = {
   id: number;

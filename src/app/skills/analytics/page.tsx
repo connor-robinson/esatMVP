@@ -142,15 +142,72 @@ async function fetchDailyMetrics(
   }));
 }
 
+async function fetchPreviousPeriodStats(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  days: number,
+): Promise<UserStats | null> {
+  // Get date ranges
+  const today = new Date();
+  const currentPeriodStart = new Date(today);
+  currentPeriodStart.setDate(currentPeriodStart.getDate() - days);
+  
+  const previousPeriodStart = new Date(currentPeriodStart);
+  previousPeriodStart.setDate(previousPeriodStart.getDate() - days);
+  const previousPeriodEnd = new Date(currentPeriodStart);
+  previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
+
+  const { data, error } = await supabase
+    .from("user_daily_metrics")
+    .select("total_questions, correct_answers, total_time_ms, sessions_count")
+    .eq("user_id", userId)
+    .gte("metric_date", previousPeriodStart.toISOString().split("T")[0])
+    .lte("metric_date", previousPeriodEnd.toISOString().split("T")[0]);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  const aggregated = data.reduce(
+    (acc, row: any) => ({
+      totalQuestions: acc.totalQuestions + row.total_questions,
+      correctAnswers: acc.correctAnswers + row.correct_answers,
+      totalTime: acc.totalTime + row.total_time_ms,
+      sessionCount: acc.sessionCount + row.sessions_count,
+    }),
+    { totalQuestions: 0, correctAnswers: 0, totalTime: 0, sessionCount: 0 }
+  );
+
+  return {
+    userId,
+    totalQuestions: aggregated.totalQuestions,
+    correctAnswers: aggregated.correctAnswers,
+    totalTime: aggregated.totalTime,
+    sessionCount: aggregated.sessionCount,
+    currentStreak: 0,
+    longestStreak: 0,
+    lastPracticeDate: null,
+    topicStats: {},
+    createdAt: new Date(),
+  };
+}
+
 async function fetchLeaderboard(
   supabase: SupabaseClient<Database>,
   userId: string,
   topicId?: string,
 ): Promise<LeaderboardEntry[]> {
-  // Build query
+  // Build query with profile join
   let query = supabase
     .from("topic_progress")
-    .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms");
+    .select(`
+      user_id, 
+      topic_id, 
+      questions_correct, 
+      questions_attempted, 
+      average_time_ms,
+      user_profiles!inner(display_name)
+    `);
 
   // Filter by topic if specified
   if (topicId && topicId !== "all") {
@@ -166,12 +223,14 @@ async function fetchLeaderboard(
 
   const grouped = new Map<
     string,
-    { userId: string; correct: number; attempted: number; avgTime: number; topics: number }
+    { userId: string; displayName: string; correct: number; attempted: number; avgTime: number; topics: number }
   >();
 
-  (data as TopicProgressRow[])?.forEach((row) => {
+  (data as any[])?.forEach((row) => {
+    const displayName = row.user_profiles?.display_name || "Anonymous User";
     const entry = grouped.get(row.user_id) ?? {
       userId: row.user_id,
+      displayName: row.user_id === userId ? "You" : displayName,
       correct: 0,
       attempted: 0,
       avgTime: 0,
@@ -192,7 +251,7 @@ async function fetchLeaderboard(
       const totalTime = entry.attempted * avgTime;
       return {
         userId: entry.userId,
-        username: entry.userId === userId ? "You" : entry.userId.slice(0, 8),
+        username: entry.displayName,
         score: calculateLeaderboardScore({
           userId: entry.userId,
           totalQuestions: entry.attempted,
@@ -236,17 +295,12 @@ export default function AnalyticsPage() {
       return;
     }
 
-    fetchTopicProgress(supabase, session.user.id).then((stats) => {
+    Promise.all([
+      fetchTopicProgress(supabase, session.user.id),
+      fetchPreviousPeriodStats(supabase, session.user.id, 30)
+    ]).then(([stats, prevStats]) => {
       setUserStats(stats);
-      if (stats) {
-        setPreviousStats({
-          ...stats,
-          totalQuestions: Math.floor(stats.totalQuestions * 0.8),
-          correctAnswers: Math.floor(stats.correctAnswers * 0.75),
-          totalTime: Math.floor(stats.totalTime * 0.9),
-          sessionCount: Math.floor(stats.sessionCount * 0.7),
-        });
-      }
+      setPreviousStats(prevStats);
     });
   }, [session?.user, supabase]);
 

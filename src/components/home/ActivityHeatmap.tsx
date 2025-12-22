@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { CalendarIcon, TargetIcon, FireIcon, ChartIcon, TrophyIcon } from "@/components/icons";
+import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 
 const DAYS_PAST = 180;
 const DAYS_FUTURE = 365;
@@ -23,22 +24,50 @@ interface DayData {
 }
 
 export function ActivityHeatmap() {
+  const session = useSupabaseSession();
+  const supabase = useSupabaseClient();
   const [calendarData, setCalendarData] = useState<DayData[]>([]);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 50 });
+  const [isLoading, setIsLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const momentumRef = useRef<number>(0);
   const animationRef = useRef<number | null>(null);
 
-  const generateCalendarData = () => {
+  const generateCalendarData = async () => {
     const data: DayData[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Create a map to store metrics by date
+    const metricsMap = new Map<string, number>();
+
+    // Fetch real data from Supabase if user is logged in
+    if (session?.user) {
+      const startDate = new Date(today);
+      startDate.setDate(startDate.getDate() - DAYS_PAST);
+
+      const { data: metrics, error } = await supabase
+        .from("user_daily_metrics")
+        .select("metric_date, total_questions")
+        .eq("user_id", session.user.id)
+        .gte("metric_date", startDate.toISOString().split("T")[0])
+        .lte("metric_date", today.toISOString().split("T")[0]);
+
+      if (!error && metrics) {
+        metrics.forEach((metric: any) => {
+          metricsMap.set(metric.metric_date, metric.total_questions);
+        });
+      }
+    }
+
+    // Generate past days with real data
     for (let i = DAYS_PAST; i > 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const questions = Math.random() > 0.3 ? Math.floor(Math.random() * 50) + 5 : 0;
+      const dateStr = date.toISOString().split("T")[0];
+      const questions = metricsMap.get(dateStr) || 0;
+
       data.push({
         date,
         questions,
@@ -47,13 +76,17 @@ export function ActivityHeatmap() {
       });
     }
 
+    // Today
+    const todayStr = today.toISOString().split("T")[0];
+    const todayQuestions = metricsMap.get(todayStr) || 0;
     data.push({
       date: new Date(today),
-      questions: Math.floor(Math.random() * 40) + 10,
+      questions: todayQuestions,
       isToday: true,
       isFuture: false,
     });
 
+    // Future dates for exam planning
     const examDates = [
       { daysAhead: 15, name: "ESAT" },
       { daysAhead: 45, name: "TMUA" },
@@ -91,10 +124,16 @@ export function ActivityHeatmap() {
   };
 
   useEffect(() => {
-    const data = generateCalendarData();
-    setCalendarData(data);
-    setCurrentStreak(calculateStreak(data));
-  }, []);
+    const loadData = async () => {
+      setIsLoading(true);
+      const data = await generateCalendarData();
+      setCalendarData(data);
+      setCurrentStreak(calculateStreak(data));
+      setIsLoading(false);
+    };
+    
+    loadData();
+  }, [session?.user]);
 
   useEffect(() => {
     if (calendarData.length === 0 || !scrollRef.current) return;
@@ -242,7 +281,6 @@ export function ActivityHeatmap() {
     .reduce((sum, day) => sum + day.questions, 0);
   const daysActive = calendarData.filter((day) => !day.isFuture && day.questions > 0).length;
   const avgPerDay = daysActive > 0 ? Math.round(totalQuestions / daysActive) : 0;
-  const accuracy = Math.floor(Math.random() * 15) + 85;
 
   const nearestExam = calendarData.find((d) => d.examDate);
   const daysUntilExam = nearestExam

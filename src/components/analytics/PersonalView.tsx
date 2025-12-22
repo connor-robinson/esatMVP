@@ -9,7 +9,6 @@ import { StatsHero } from "./StatsHero";
 import { PerformanceChartsSection } from "./PerformanceChartsSection";
 import { PastSessionsSection } from "./PastSessionsSection";
 import { TopicsOverviewSection } from "./TopicsOverviewSection";
-import { generateMockSessions } from "@/lib/analytics";
 import {
   TimeRange,
   UserStats,
@@ -46,7 +45,8 @@ export function PersonalView({
   speedTrend,
   questionsTrend,
 }: PersonalViewProps) {
-  const sessions = useMemo(() => generateMockSessions(20), []);
+  // TODO: Fetch real session history from builder_sessions
+  const sessions = useMemo(() => [], []);
   const [scrollToTopicId, setScrollToTopicId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
