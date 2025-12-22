@@ -465,8 +465,12 @@ Return exactly one idea plan in the required YAML format."""
     return obj
 
 def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, idea_plan: Dict[str, Any]) -> Dict[str, Any]:
+    # Get subject from idea_plan's schema_id
+    schema_id = idea_plan.get("schema_id", "M1")
+    subject_prompts = get_subject_prompts(prompts, schema_id)
+    
     user = "Designer idea plan (YAML):\n" + yaml.safe_dump(idea_plan, sort_keys=False)
-    txt = llm.generate(model=models.implementer, system_prompt=prompts.implementer, user_prompt=user, temperature=0.6)
+    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts.implementer, user_prompt=user, temperature=0.6)
     try:
         obj = safe_yaml_load(txt)
     except Exception as e:
@@ -491,8 +495,16 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     obj["_raw_text"] = txt
     return obj
 
-def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any]) -> Dict[str, Any]:
-    user = "Question package to verify (YAML):\n" + yaml.safe_dump(question_obj, sort_keys=False)
+def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str) -> Dict[str, Any]:
+    subject = get_subject_from_schema(schema_id)
+    
+    # Add subject tag to question_obj
+    question_with_subject = {
+        "subject": subject,
+        **question_obj
+    }
+    
+    user = "Question package to verify (YAML):\n" + yaml.safe_dump(question_with_subject, sort_keys=False)
     txt = llm.generate(model=models.verifier, system_prompt=prompts.verifier, user_prompt=user, temperature=0.2)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
@@ -500,10 +512,16 @@ def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, questi
     obj["_raw_text"] = txt
     return obj
 
-def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], verifier_obj: Optional[Dict[str, Any]]=None) -> Dict[str, Any]:
-    payload = {"question": question_obj}
+def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str, verifier_obj: Optional[Dict[str, Any]]=None) -> Dict[str, Any]:
+    subject = get_subject_from_schema(schema_id)
+    
+    payload = {
+        "subject": subject,
+        "question": question_obj
+    }
     if verifier_obj:
         payload["verifier_report"] = verifier_obj
+    
     user = "Package to style-check (YAML):\n" + yaml.safe_dump(payload, sort_keys=False)
     txt = llm.generate(model=models.style_judge, system_prompt=prompts.style_checker, user_prompt=user, temperature=0.3)
     obj = safe_yaml_load(txt)

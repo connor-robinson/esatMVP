@@ -440,10 +440,10 @@ export function useBuilderSession() {
       // Save comprehensive analytics data
       const { saveSessionAnalytics } = await import("@/lib/analytics/session-saver");
       
-      // Prepare question topics data
+      // Prepare question topics data (variantId is optional, not all questions have it)
       const questionTopics = currentSession?.questions.map(q => ({
         topicId: q.topicId,
-        variantId: q.variantId,
+        variantId: undefined, // GeneratedQuestion doesn't track variantId
       })) || [];
 
       await saveSessionAnalytics(supabase, {
