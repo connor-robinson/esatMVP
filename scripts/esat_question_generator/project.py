@@ -613,6 +613,10 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
                            previous_attempt: Dict[str, Any],
                            verifier_report: Dict[str, Any],
                            style_report: Optional[Dict[str, Any]]=None) -> Dict[str, Any]:
+    # Get subject from idea_plan's schema_id
+    schema_id = idea_plan.get("schema_id", "M1")
+    subject_prompts = get_subject_prompts(prompts, schema_id)
+    
     user = (
         prompts.retry_controller.strip()
         + "\n\nidea_plan:\n"
@@ -625,7 +629,7 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
     if style_report:
         user += "\nstyle_report:\n" + yaml.safe_dump(style_report, sort_keys=False)
 
-    txt = llm.generate(model=models.implementer, system_prompt=prompts.implementer, user_prompt=user, temperature=0.6)
+    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts.implementer, user_prompt=user, temperature=0.6)
     try:
         obj = safe_yaml_load(txt)
     except Exception as e:
