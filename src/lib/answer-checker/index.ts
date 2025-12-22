@@ -13,5 +13,7 @@ export {
   fractionsEqual,
   decimalsEqual,
 } from "./utils";
+export { evaluateExpression, expressionsEqual } from "./math-eval";
 export type { ParsedFraction, ParsedDecimal } from "./types";
+
 

@@ -10,6 +10,7 @@ import type { SessionPresetInsert } from "@/lib/supabase/types";
 import { generateMixedQuestions } from "@/lib/generators";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
+import { expressionsEqual } from "@/lib/answer-checker";
 
 type ViewState = "builder" | "running" | "results";
 
@@ -464,12 +465,21 @@ export function useBuilderSession() {
 
       const timeTakenMs = Date.now() - questionStartTime;
       
-      // Use custom checker if provided, otherwise do simple string comparison
+      // Use custom checker if provided, otherwise use mathematical equivalence checking
       let isCorrect: boolean;
       if (currentQuestion.checker) {
         isCorrect = currentQuestion.checker(userAnswer.trim());
       } else {
-        isCorrect = userAnswer.trim() === String(currentQuestion.answer).trim();
+        const userTrimmed = userAnswer.trim();
+        const correctTrimmed = String(currentQuestion.answer).trim();
+        
+        // First try exact string match
+        if (userTrimmed === correctTrimmed) {
+          isCorrect = true;
+        } else {
+          // Try mathematical equivalence (handles 2 = 2^1, 4 = 2^2, etc.)
+          isCorrect = expressionsEqual(userTrimmed, correctTrimmed, 0.001);
+        }
       }
 
       const attempt: QuestionAttempt = {

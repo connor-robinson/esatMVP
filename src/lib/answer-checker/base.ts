@@ -12,6 +12,7 @@ import {
   simplifyUserAnswer,
 } from "./utils";
 import { reduceFraction } from "@/lib/generators/utils/math";
+import { evaluateExpression, expressionsEqual } from "./math-eval";
 
 /**
  * Create an answer checker function
@@ -64,6 +65,12 @@ export function createAnswerChecker(config: AnswerCheckerConfig): (userAnswer: s
 
     // Exact string match (after normalization)
     if (simplifyUserAnswer(correctStr) === simplified) {
+      return true;
+    }
+
+    // Try evaluating as mathematical expressions
+    // This handles cases like 2^1 = 2, 2^2 = 4, etc.
+    if (expressionsEqual(simplified, correctStr, tolerance)) {
       return true;
     }
 
@@ -123,4 +130,5 @@ export function matchAnswer(
   });
   return checker(userAnswer);
 }
+
 
