@@ -321,12 +321,7 @@ export function ActivityHeatmap() {
           </div>
         </div>
 
-        <div className="inline-flex items-center justify-center px-3 py-1.5 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm text-white/80 scale-95 opacity-80 hover:opacity-100 hover:scale-[1.25] transition-all duration-300 relative group z-10">
-          <div className="text-center leading-tight">
-            <div className="text-xs font-semibold text-white/95">{accuracy}%</div>
-            <div className="text-[9px] text-white/40 uppercase tracking-wide">Accuracy</div>
-          </div>
-        </div>
+        {/* Accuracy stat removed - will be added when we fetch from builder_attempts */}
       </div>
 
       <div className="relative overflow-visible">

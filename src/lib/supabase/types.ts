@@ -429,6 +429,11 @@ export type Database = {
         Insert: AiGeneratedQuestionInsert;
         Update: AiGeneratedQuestionUpdate;
       };
+      user_profiles: {
+        Row: UserProfileRow;
+        Insert: UserProfileInsert;
+        Update: UserProfileUpdate;
+      };
       user_daily_metrics: {
         Row: UserDailyMetricRow;
         Insert: UserDailyMetricInsert;

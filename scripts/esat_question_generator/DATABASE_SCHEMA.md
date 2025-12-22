@@ -134,8 +134,9 @@ CREATE TABLE ai_generated_questions (
   ```
 
 #### Curriculum Tags
-- **primary_tag** (text, nullable): Primary curriculum topic code (e.g., "M1", "MM1", "P1")
-- **secondary_tags** (text[], nullable): Array of secondary curriculum topic codes
+- **paper** (text, nullable): For mathematics questions only - indicates whether question belongs to "Math 1" or "Math 2" paper. NULL for physics/biology/chemistry questions.
+- **primary_tag** (text, nullable): Primary curriculum topic code (e.g., "M1-M1", "M2-MM1", "P-P1", "biology-B1", "chemistry-C1")
+- **secondary_tags** (text[], nullable): Array of secondary curriculum topic codes (same format as primary_tag)
 - **tags_confidence** (jsonb, nullable): Confidence scores for each tag assignment
   ```json
   {

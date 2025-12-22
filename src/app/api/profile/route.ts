@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 import type { UserProfileInsert, UserProfileUpdate } from "@/lib/supabase/types";
 
 export async function GET() {
-  const supabase = await createServerClient();
+  const supabase = createServerClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
@@ -30,7 +30,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createServerClient();
+  const supabase = createServerClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
@@ -57,6 +57,7 @@ export async function POST(request: Request) {
 
     const { data: profile, error } = await supabase
       .from("user_profiles")
+      // @ts-ignore - Type inference issue with user_profiles Update type
       .update(update)
       .eq("id", user.id)
       .select()
@@ -79,6 +80,7 @@ export async function POST(request: Request) {
 
     const { data: profile, error } = await supabase
       .from("user_profiles")
+      // @ts-ignore - Type inference issue with user_profiles Insert type
       .insert(insert)
       .select()
       .single();
@@ -93,7 +95,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const supabase = await createServerClient();
+  const supabase = createServerClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
@@ -111,6 +113,7 @@ export async function PATCH(request: Request) {
 
   const { data: profile, error } = await supabase
     .from("user_profiles")
+    // @ts-ignore - Type inference issue with user_profiles Update type
     .update(update)
     .eq("id", user.id)
     .select()

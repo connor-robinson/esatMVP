@@ -1,30 +1,44 @@
 #!/usr/bin/env python3
 """
-ESAT / ENGAA Question Generator Pipeline (v1)
+ESAT / ENGAA Question Generator Pipeline (v2 - Subject-Specific)
 
 Implements:
-Schema -> Designer -> Implementer -> Verifier -> Style Judge -> Save
+Schema -> Designer -> Implementer -> Verifier -> Style Judge -> Classifier -> Save
 with Retry Controller (max retries on fixable failures).
 
 Directory layout expected (relative to this script):
 esat_question_generator/
-├── 1. Designer/
-│   ├── Prompt.md
-│   └── Schemas.md
-├── 2. Implementer/
-│   └── Prompt.md
-├── 3. Verifier/
-│   └── Prompt.md
-├── 4. retry controller/
-│   └── Prompt.md
-└── 5. style checker/
-    └── Prompt.md
+├── by_subject_prompts/
+│   ├── Biology/
+│   │   ├── Biology Classifier.md
+│   │   ├── Biology Designer.md
+│   │   └── Biology Implementer.md
+│   ├── Chemistry/
+│   │   ├── Chemistry Classifier.md
+│   │   ├── Chemistry Designer.md
+│   │   └── Chemistry Implementer.md
+│   ├── Maths/
+│   │   ├── Math Classifier.md
+│   │   ├── Math Designer.md
+│   │   └── Math Implementer.md
+│   ├── Physics/
+│   │   ├── Physics Classifier.md
+│   │   ├── Physics Designer.md
+│   │   └── Physics Implementer.md
+│   ├── Retry_controller.md (universal)
+│   ├── Verifier.md (universal with subject-specific sections)
+│   ├── Style_checker.md (universal with subject-specific sections)
+│   └── ESAT curriculum.md (curriculum data)
+└── old_prompt_structure/
+    └── 1. Designer/
+        └── Schemas.md (universal schemas for all subjects)
 
 Notes:
 - This script is interface-free. It writes JSONL logs/output files under runs/<timestamp>/.
 - Requires a Gemini API key in .env.local file: GEMINI_API_KEY
 - Uses Google GenAI Python SDK: `google-genai` (recommended) or falls back to REST stub.
 - Loads environment variables from .env.local using python-dotenv
+- Math questions get classified into Math 1 or Math 2 papers by the classifier
 """
 
 from __future__ import annotations
@@ -84,7 +98,7 @@ class ModelsConfig:
     implementer: str = "gemini-3-pro-preview"
     verifier: str = "gemini-3-pro-preview"
     style_judge: str = "gemini-2.5-flash"
-    tag_labeler: str = "gemini-2.5-flash"  # Default to same as style_judge
+    classifier: str = "gemini-2.5-flash"  # NEW: For curriculum tag classification
 
 
 @dataclass
@@ -193,6 +207,82 @@ def normalize_implementer_output(obj: Dict[str, Any]) -> Dict[str, Any]:
 def dump_jsonl(path: str, obj: Dict[str, Any]) -> None:
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(obj, ensure_ascii=False) + "\n")
+
+
+# ---------- Subject-specific helper functions ----------
+
+def get_subject_from_schema(schema_id: str) -> str:
+    """Map schema_id prefix to subject name."""
+    prefix = schema_id[0].upper()
+    mapping = {
+        'M': 'mathematics',
+        'P': 'physics',
+        'B': 'biology',
+        'C': 'chemistry'
+    }
+    return mapping.get(prefix, 'mathematics')
+
+
+def filter_prompt_by_subject(prompt_text: str, subject: str) -> str:
+    """
+    Extract only the relevant subject-specific section from universal prompts.
+    
+    For Verifier and Style_checker, these prompts have sections like:
+    ### If `subject: mathematics`
+    ...
+    ### If `subject: physics`
+    ...
+    
+    This function:
+    1. Parses the markdown to find subject-specific sections
+    2. Extracts ONLY the relevant subject section
+    3. Returns the filtered prompt with subject-specific instructions inline
+    """
+    lines = prompt_text.split('\n')
+    filtered_lines = []
+    in_subject_section = False
+    current_subject = None
+    capture = True  # Always capture lines not in if blocks
+    
+    for line in lines:
+        # Check if this is a subject-specific header
+        if line.strip().startswith('### If `subject:'):
+            # Extract subject name from header
+            match = re.search(r'subject:\s*(\w+)', line)
+            if match:
+                current_subject = match.group(1).strip()
+                if current_subject == subject:
+                    # This is our subject section - capture following lines
+                    in_subject_section = True
+                    capture = True
+                else:
+                    # This is a different subject section - skip
+                    in_subject_section = True
+                    capture = False
+                continue  # Don't include the header itself
+            
+        # Check if we're exiting a subject section (next ### header or ## header)
+        elif line.strip().startswith('##') and in_subject_section:
+            in_subject_section = False
+            current_subject = None
+            capture = True
+            
+        # Add line if we're capturing
+        if capture:
+            filtered_lines.append(line)
+    
+    return '\n'.join(filtered_lines)
+
+
+def get_subject_prompts(prompts: 'Prompts', schema_id: str) -> Dict[str, str]:
+    """Get subject-specific prompts based on schema_id."""
+    subject = get_subject_from_schema(schema_id)
+    
+    return {
+        'designer': prompts.designer[subject],
+        'implementer': prompts.implementer[subject],
+        'classifier': prompts.classifier[subject]
+    }
 
 
 # ---------- Schema parsing ----------
@@ -364,25 +454,63 @@ class LLMClient:
 
 @dataclass
 class Prompts:
-    designer: str
-    implementer: str
-    verifier: str
+    # Subject-specific prompts (dict mapping subject -> prompt text)
+    designer: Dict[str, str]
+    implementer: Dict[str, str]
+    classifier: Dict[str, str]
+    
+    # Universal prompts (single string, contains all subject sections)
     retry_controller: str
-    style_checker: str
-    tag_labeler: str
+    verifier: str  # Contains if statements for all subjects
+    style_checker: str  # Contains if statements for all subjects
 
 
 def load_prompts(base_dir: str) -> Prompts:
-    def p(*parts: str) -> str:
-        return os.path.join(base_dir, *parts)
-
+    """Load prompts from new by_subject_prompts structure."""
+    prompt_dir = os.path.join(base_dir, "by_subject_prompts")
+    
+    # Load subject-specific prompts
+    subjects = {
+        'mathematics': 'Maths',
+        'physics': 'Physics',
+        'biology': 'Biology',
+        'chemistry': 'Chemistry'
+    }
+    
+    designers = {}
+    implementers = {}
+    classifiers = {}
+    
+    for subject_key, folder_name in subjects.items():
+        subject_path = os.path.join(prompt_dir, folder_name)
+        
+        # Find and load Designer file (e.g., "Math Designer.md", "Biology Designer.md")
+        designer_files = [f for f in os.listdir(subject_path) if 'Designer' in f and f.endswith('.md')]
+        if designer_files:
+            designers[subject_key] = read_text(os.path.join(subject_path, designer_files[0]))
+        
+        # Find and load Implementer file
+        impl_files = [f for f in os.listdir(subject_path) if 'Implementer' in f and f.endswith('.md')]
+        if impl_files:
+            implementers[subject_key] = read_text(os.path.join(subject_path, impl_files[0]))
+        
+        # Find and load Classifier file
+        class_files = [f for f in os.listdir(subject_path) if 'Classifier' in f and f.endswith('.md')]
+        if class_files:
+            classifiers[subject_key] = read_text(os.path.join(subject_path, class_files[0]))
+    
+    # Load universal prompts (contain all subject sections)
+    retry_controller = read_text(os.path.join(prompt_dir, "Retry_controller.md"))
+    verifier = read_text(os.path.join(prompt_dir, "Verifier.md"))
+    style_checker = read_text(os.path.join(prompt_dir, "Style_checker.md"))
+    
     return Prompts(
-        designer=read_text(p("1. Designer", "Prompt.md")),
-        implementer=read_text(p("2. Implementer", "Prompt.md")),
-        verifier=read_text(p("3. Verifier", "Prompt.md")),
-        retry_controller=read_text(p("4. retry controller", "Prompt.md")),
-        style_checker=read_text(p("5. style checker", "Prompt.md")),
-        tag_labeler=read_text(p("6. Tag Labeler", "Prompt.md")),
+        designer=designers,
+        implementer=implementers,
+        classifier=classifiers,
+        retry_controller=retry_controller,
+        verifier=verifier,
+        style_checker=style_checker
     )
 
 
@@ -450,7 +578,7 @@ Schema:
 Target difficulty: {difficulty}
 
 Return exactly one idea plan in the required YAML format."""
-    txt = llm.generate(model=models.designer, system_prompt=subject_prompts.designer, user_prompt=user, temperature=0.7)
+    txt = llm.generate(model=models.designer, system_prompt=subject_prompts['designer'], user_prompt=user, temperature=0.7)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "schema_id" not in obj:
         raise ValueError(f"Designer output invalid YAML/object. Raw output:\n{txt}")
@@ -470,7 +598,7 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     subject_prompts = get_subject_prompts(prompts, schema_id)
     
     user = "Designer idea plan (YAML):\n" + yaml.safe_dump(idea_plan, sort_keys=False)
-    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts.implementer, user_prompt=user, temperature=0.6)
+    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     try:
         obj = safe_yaml_load(txt)
     except Exception as e:
@@ -504,8 +632,11 @@ def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, questi
         **question_obj
     }
     
+    # Filter verifier prompt to include only relevant subject instructions
+    filtered_prompt = filter_prompt_by_subject(prompts.verifier, subject)
+    
     user = "Question package to verify (YAML):\n" + yaml.safe_dump(question_with_subject, sort_keys=False)
-    txt = llm.generate(model=models.verifier, system_prompt=prompts.verifier, user_prompt=user, temperature=0.2)
+    txt = llm.generate(model=models.verifier, system_prompt=filtered_prompt, user_prompt=user, temperature=0.2)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
         raise ValueError(f"Verifier output invalid YAML/object. Raw output:\n{txt}")
@@ -522,8 +653,11 @@ def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_
     if verifier_obj:
         payload["verifier_report"] = verifier_obj
     
+    # Filter style checker prompt to include only relevant subject instructions
+    filtered_prompt = filter_prompt_by_subject(prompts.style_checker, subject)
+    
     user = "Package to style-check (YAML):\n" + yaml.safe_dump(payload, sort_keys=False)
-    txt = llm.generate(model=models.style_judge, system_prompt=prompts.style_checker, user_prompt=user, temperature=0.3)
+    txt = llm.generate(model=models.style_judge, system_prompt=filtered_prompt, user_prompt=user, temperature=0.3)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
         raise ValueError(f"Style checker output invalid YAML/object. Raw output:\n{txt}")
@@ -578,7 +712,7 @@ Analyze the question and assign appropriate curriculum tags."""
     model = getattr(models, 'classifier', None) or models.style_judge
     txt = llm.generate(
         model=model,
-        system_prompt=subject_prompts.classifier,  # Subject-specific
+        system_prompt=subject_prompts['classifier'],  # Subject-specific
         user_prompt=user,
         temperature=0.3
     )
@@ -629,7 +763,7 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
     if style_report:
         user += "\nstyle_report:\n" + yaml.safe_dump(style_report, sort_keys=False)
 
-    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts.implementer, user_prompt=user, temperature=0.6)
+    txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     try:
         obj = safe_yaml_load(txt)
     except Exception as e:
@@ -728,7 +862,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         raise SystemExit("Missing GEMINI_API_KEY environment variable.")
 
     prompts = load_prompts(base_dir)
-    schemas_md = read_text(os.path.join(base_dir, "1. Designer", "Schemas.md"))
+    schemas_md = read_text(os.path.join(base_dir, "old_prompt_structure", "1. Designer", "Schemas.md"))
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
 
     # Load curriculum parser if tag labeling is enabled
@@ -895,7 +1029,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
 
             if callbacks and "on_stage_start" in callbacks:
                 callbacks["on_stage_start"]("Verifier", "Verifying question correctness")
-            verifier_report = verifier_call(llm, prompts, models, q_pkg)
+            verifier_report = verifier_call(llm, prompts, models, q_pkg, schema_id)
             v_verdict = extract_verdict(verifier_report)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Verifier", verifier_report)
@@ -977,7 +1111,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             # Style Judge
             if callbacks and "on_stage_start" in callbacks:
                 callbacks["on_stage_start"]("Style Judge", "Checking exam authenticity")
-            style_report = style_call(llm, prompts, models, q_pkg, verifier_obj=verifier_report)
+            style_report = style_call(llm, prompts, models, q_pkg, schema_id, verifier_obj=verifier_report)
             s_verdict = extract_verdict(style_report)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Style Judge", style_report)
@@ -1099,6 +1233,10 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                         "labeled_by": "ai_generation",
                         "reasoning": tag_result.get("reasoning", "")
                     }
+                    
+                    # NEW: Add paper field for Math questions
+                    if "paper" in tag_result:
+                        tags["paper"] = tag_result["paper"]
                     
                     dump_jsonl(paths["logs"], {
                         "stage": "tag_labeler",

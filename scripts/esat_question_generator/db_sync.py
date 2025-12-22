@@ -251,6 +251,9 @@ class DatabaseSync:
             tags_labeled_at = tags_data.get("labeled_at") if tags_data else None
             tags_labeled_by = tags_data.get("labeled_by") if tags_data else None
             
+            # NEW: Extract paper field (Math 1 / Math 2) for math questions
+            paper = tags_data.get("paper") if tags_data else None
+            
             # Prepare database record
             db_record = {
                 "generation_id": question_item.get("id", ""),
@@ -287,6 +290,8 @@ class DatabaseSync:
                 db_record["tags_labeled_at"] = tags_labeled_at
             if tags_labeled_by:
                 db_record["tags_labeled_by"] = tags_labeled_by
+            if paper:  # NEW: Add paper field for Math questions
+                db_record["paper"] = paper
             
             # Insert into database (silently)
             result = self.client.table("ai_generated_questions").insert(db_record).execute()

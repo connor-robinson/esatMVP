@@ -19,9 +19,9 @@ class CurriculumParser:
             curriculum_file_path: Path to ESAT_CURRICULUM.json. If None, uses default location.
         """
         if curriculum_file_path is None:
-            # Default to curriculum/ESAT_CURRICULUM.json relative to this file
+            # Default to by_subject_prompts/ESAT curriculum.md relative to this file
             base_dir = Path(__file__).parent
-            curriculum_file_path = base_dir / "curriculum" / "ESAT_CURRICULUM.json"
+            curriculum_file_path = base_dir / "by_subject_prompts" / "ESAT curriculum.md"
         
         self.curriculum_file_path = Path(curriculum_file_path)
         self.curriculum_data = self._load_curriculum()
