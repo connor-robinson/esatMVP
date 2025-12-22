@@ -10,7 +10,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { isQuestionGenerationEnabled } from "@/lib/features";
+import { UserIcon, LogInIcon } from "@/components/icons";
 
 const skillsNavItems = [
   { href: "/skills/drill", label: "Drill" },
@@ -46,19 +46,8 @@ export function Navbar() {
       "/papers/plan",
       "/papers/drill",
       "/papers/analytics",
+      "/questions",
     ];
-
-    // Only prefetch questions/review on localhost
-    if (typeof window !== "undefined") {
-      const isLocalhost = 
-        window.location.hostname === "localhost" || 
-        window.location.hostname === "127.0.0.1" ||
-        window.location.hostname === "[::1]";
-      
-      if (isLocalhost) {
-        allRoutes.push("/questions/review");
-      }
-    }
 
     allRoutes.forEach((route, index) => {
       setTimeout(() => router.prefetch(route), index * 5);
@@ -89,12 +78,6 @@ export function Navbar() {
     const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/plan";
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
-
-  const handleLogout = useCallback(async () => {
-    setActivePress(null);
-    await supabase.auth.signOut();
-    router.push("/login");
-  }, [router, supabase]);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
@@ -127,20 +110,16 @@ export function Navbar() {
               >
                 Past Papers
               </Link>
-              {typeof window !== "undefined" && isQuestionGenerationEnabled() && (
-                <>
-                  <span className="text-sm text-white/30">/</span>
-                  <Link
-                    href="/questions"
-                    className={cn(
-                      "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                      pathname.startsWith("/questions") ? "text-white/90" : "text-white/50 hover:text-white/80"
-                    )}
-                  >
-                    Question Bank
-                  </Link>
-                </>
-              )}
+              <span className="text-sm text-white/30">/</span>
+              <Link
+                href="/questions"
+                className={cn(
+                  "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
+                  pathname.startsWith("/questions") ? "text-white/90" : "text-white/50 hover:text-white/80"
+                )}
+              >
+                Question Bank
+              </Link>
             </div>
           </div>
 
@@ -181,32 +160,49 @@ export function Navbar() {
               </div>
             )}
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               {session?.user ? (
-                <>
-                  <Link
-                    href="/profile"
+                <Link
+                  href="/profile"
+                  className={cn(
+                    "relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale",
+                    pathname === "/profile"
+                      ? "bg-primary/10"
+                      : "hover:bg-white/5"
+                  )}
+                >
+                  <UserIcon 
+                    size="md" 
                     className={cn(
-                      "hidden md:inline px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wider transition-all duration-fast ease-signature",
-                      pathname === "/profile"
-                        ? "bg-primary/10 text-primary"
-                        : "text-white/60 hover:text-white/90 hover:bg-white/5"
+                      pathname === "/profile" ? "text-primary" : "text-white/70 hover:text-white/90"
                     )}
-                  >
-                    Profile
-                  </Link>
-                  <span className="hidden lg:inline text-sm text-white/50">|</span>
-                  <span className="hidden md:inline text-sm text-white/70">
-                    {session.user.email}
-                  </span>
-                  <Button variant="secondary" size="sm" onClick={handleLogout}>
-                    Sign out
-                  </Button>
-                </>
+                  />
+                  {/* Checkmark badge indicator */}
+                  <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center">
+                    <svg 
+                      viewBox="0 0 12 12" 
+                      fill="none" 
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-2.5 h-2.5"
+                    >
+                      <path 
+                        d="M2.5 6L5 8.5L9.5 3.5" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="text-neutral-900"
+                      />
+                    </svg>
+                  </div>
+                </Link>
               ) : (
-                <Button variant="primary" size="sm" className="uppercase tracking-wide">
-                  <Link href={loginHref}>Sign in</Link>
-                </Button>
+                <Link
+                  href={loginHref}
+                  className="p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale"
+                >
+                  <LogInIcon size="md" className="text-white/70 hover:text-white/90" />
+                </Link>
               )}
             </div>
           </div>

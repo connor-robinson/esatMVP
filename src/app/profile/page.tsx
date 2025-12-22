@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -38,6 +38,15 @@ export default function ProfilePage() {
     totalSessions: 0,
     recentSessions: 0,
   });
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push("/login");
+    } catch (error) {
+      console.error("[profile] Error signing out:", error);
+    }
+  }, [router, supabase]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -220,6 +229,34 @@ export default function ProfilePage() {
                   </div>
                 </Card>
               </Link>
+            </div>
+          </div>
+        </Card>
+
+        {/* Account Actions */}
+        <Card className="p-6">
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold text-neutral-100 mb-4 uppercase tracking-wider">
+                Account Actions
+              </h2>
+            </div>
+            
+            <div className="flex items-start justify-between p-4 bg-white/5 rounded-lg border border-white/10">
+              <div className="space-y-1">
+                <div className="font-medium text-neutral-100">Sign Out</div>
+                <div className="text-sm text-neutral-400">
+                  Sign out of your account on this device
+                </div>
+              </div>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={handleLogout}
+                className="uppercase tracking-wide"
+              >
+                Sign Out
+              </Button>
             </div>
           </div>
         </Card>

@@ -6,3 +6,5 @@ export { ChartIcon } from "./library/Chart";
 export { TargetIcon } from "./library/Target";
 export { TrophyIcon } from "./library/Trophy";
 export { FireIcon } from "./library/Fire";
+export { UserIcon } from "./library/User";
+export { LogInIcon } from "./library/LogIn";

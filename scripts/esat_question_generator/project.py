@@ -29,9 +29,8 @@ esat_question_generator/
 │   ├── Verifier.md (universal with subject-specific sections)
 │   ├── Style_checker.md (universal with subject-specific sections)
 │   └── ESAT curriculum.md (curriculum data)
-└── old_prompt_structure/
-    └── 1. Designer/
-        └── Schemas.md (universal schemas for all subjects)
+├── Schemas.md (universal schemas for all subjects: M1-M109, P1-P98, C1-C78, B1-B45)
+└── old_prompt_structure/ (archived - not used in v2)
 
 Notes:
 - This script is interface-free. It writes JSONL logs/output files under runs/<timestamp>/.
@@ -288,7 +287,7 @@ def get_subject_prompts(prompts: 'Prompts', schema_id: str) -> Dict[str, str]:
 # ---------- Schema parsing ----------
 
 # Updated regex to accept both numbered (M1, P3, B1, C1) and unnumbered (M., P., B., C.) formats
-SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P|B|C)(?:\d+|\.))\s+(.+?)\*\*\s*$", re.MULTILINE)
+SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P|B|C)\d+)\.?\s+(.+?)\*\*\s*$", re.MULTILINE)
 
 def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P")) -> Dict[str, Dict[str, str]]:
     """
@@ -862,7 +861,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         raise SystemExit("Missing GEMINI_API_KEY environment variable.")
 
     prompts = load_prompts(base_dir)
-    schemas_md = read_text(os.path.join(base_dir, "old_prompt_structure", "1. Designer", "Schemas.md"))
+    schemas_md = read_text(os.path.join(base_dir, "Schemas.md"))
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
 
     # Load curriculum parser if tag labeling is enabled
