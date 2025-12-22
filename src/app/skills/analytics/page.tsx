@@ -13,6 +13,7 @@ import type {
   UserStats,
   PerformanceDataPoint,
   LeaderboardEntry,
+  SessionSummary,
 } from "@/types/analytics";
 import { calculateLeaderboardScore, calculateTrend, generateInsights, getTopicExtremes } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -192,6 +193,100 @@ async function fetchPreviousPeriodStats(
   };
 }
 
+async function fetchRecentSessions(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  limit: number = 20
+): Promise<SessionSummary[]> {
+  const { data, error } = await supabase
+    .from("builder_sessions")
+    .select(`
+      id,
+      started_at,
+      ended_at,
+      attempts,
+      builder_session_questions(question_id, topic_id)
+    `)
+    .eq("user_id", userId)
+    .not("ended_at", "is", null)
+    .order("ended_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("[fetchRecentSessions] Error fetching sessions:", error);
+    return [];
+  }
+
+  if (!data || data.length === 0) {
+    return [];
+  }
+
+  // Get all attempts for these sessions
+  const sessionIds = data.map(s => s.id);
+  const { data: attemptsData, error: attemptsError } = await supabase
+    .from("builder_attempts")
+    .select("session_id, is_correct, time_spent_ms")
+    .in("session_id", sessionIds);
+
+  if (attemptsError) {
+    console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
+  }
+
+  // Group attempts by session
+  const attemptsBySession = new Map<string, any[]>();
+  if (attemptsData) {
+    attemptsData.forEach(attempt => {
+      const sessionAttempts = attemptsBySession.get(attempt.session_id) || [];
+      sessionAttempts.push(attempt);
+      attemptsBySession.set(attempt.session_id, sessionAttempts);
+    });
+  }
+
+  // Map to SessionSummary format
+  return data.map((session, index) => {
+    const questions = (session.builder_session_questions as any[]) || [];
+    const attempts = attemptsBySession.get(session.id) || [];
+    
+    const correctAnswers = attempts.filter(a => a.is_correct).length;
+    const totalQuestions = attempts.length;
+    const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+    const totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
+    const avgSpeed = totalQuestions > 0 ? totalTime / totalQuestions : 0;
+
+    // Get unique topics
+    const topicIds = [...new Set(questions.map((q: any) => q.topic_id).filter(Boolean))];
+    const topicNames = topicIds.map(topicId => {
+      const topic = AVAILABLE_TOPICS.find(t => t.id === topicId);
+      return topic?.name || topicId;
+    });
+
+    return {
+      id: session.id,
+      timestamp: new Date(session.ended_at!),
+      topicIds,
+      topicNames,
+      score: calculateLeaderboardScore({
+        userId,
+        totalQuestions,
+        correctAnswers,
+        totalTime,
+        sessionCount: 1,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastPracticeDate: null,
+        topicStats: {},
+        createdAt: new Date(),
+      }),
+      accuracy,
+      avgSpeed,
+      totalQuestions,
+      correctAnswers,
+      totalTime,
+      isLatest: index === 0,
+    };
+  });
+}
+
 async function fetchLeaderboard(
   supabase: SupabaseClient<Database>,
   userId: string,
@@ -284,6 +379,7 @@ export default function AnalyticsPage() {
   const [previousStats, setPreviousStats] = useState<UserStats | null>(null);
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [sessions, setSessions] = useState<SessionSummary[]>([]);
 
   // Load user stats and initial data
   useEffect(() => {
@@ -292,15 +388,18 @@ export default function AnalyticsPage() {
       setPreviousStats(null);
       setPerformanceData([]);
       setLeaderboardData([]);
+      setSessions([]);
       return;
     }
 
     Promise.all([
       fetchTopicProgress(supabase, session.user.id),
-      fetchPreviousPeriodStats(supabase, session.user.id, 30)
-    ]).then(([stats, prevStats]) => {
+      fetchPreviousPeriodStats(supabase, session.user.id, 30),
+      fetchRecentSessions(supabase, session.user.id, 20)
+    ]).then(([stats, prevStats, sessionData]) => {
       setUserStats(stats);
       setPreviousStats(prevStats);
+      setSessions(sessionData);
     });
   }, [session?.user, supabase]);
 
@@ -387,6 +486,7 @@ export default function AnalyticsPage() {
               accuracyTrend={accuracyTrend}
               speedTrend={speedTrend}
               questionsTrend={questionsTrend}
+              sessions={sessions}
             />
           ) : (
             <div className="h-96 bg-white/5 rounded-lg border border-dashed border-white/10 flex items-center justify-center">

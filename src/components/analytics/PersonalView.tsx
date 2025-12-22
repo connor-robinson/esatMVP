@@ -14,6 +14,7 @@ import {
   UserStats,
   PerformanceDataPoint,
   TrendData,
+  SessionSummary,
 } from "@/types/analytics";
 
 interface PersonalViewProps {
@@ -29,6 +30,7 @@ interface PersonalViewProps {
   accuracyTrend: TrendData;
   speedTrend: TrendData;
   questionsTrend: TrendData;
+  sessions: SessionSummary[];
 }
 
 export function PersonalView({
@@ -44,9 +46,8 @@ export function PersonalView({
   accuracyTrend,
   speedTrend,
   questionsTrend,
+  sessions,
 }: PersonalViewProps) {
-  // TODO: Fetch real session history from builder_sessions
-  const sessions = useMemo(() => [], []);
   const [scrollToTopicId, setScrollToTopicId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
