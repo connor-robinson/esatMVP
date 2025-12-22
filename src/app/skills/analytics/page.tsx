@@ -222,7 +222,7 @@ async function fetchRecentSessions(
   }
 
   // Get all attempts for these sessions
-  const sessionIds = data.map(s => s.id);
+  const sessionIds = (data as any[]).map((s: any) => s.id);
   const { data: attemptsData, error: attemptsError } = await supabase
     .from("builder_attempts")
     .select("session_id, is_correct, time_spent_ms")
@@ -235,7 +235,7 @@ async function fetchRecentSessions(
   // Group attempts by session
   const attemptsBySession = new Map<string, any[]>();
   if (attemptsData) {
-    attemptsData.forEach(attempt => {
+    attemptsData.forEach((attempt: any) => {
       const sessionAttempts = attemptsBySession.get(attempt.session_id) || [];
       sessionAttempts.push(attempt);
       attemptsBySession.set(attempt.session_id, sessionAttempts);
@@ -243,7 +243,7 @@ async function fetchRecentSessions(
   }
 
   // Map to SessionSummary format
-  return data.map((session, index) => {
+  return (data as any[]).map((session: any, index: number) => {
     const questions = (session.builder_session_questions as any[]) || [];
     const attempts = attemptsBySession.get(session.id) || [];
     
