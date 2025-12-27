@@ -29,8 +29,12 @@ export function QuestionReviewCard({ question, onClick }: QuestionReviewCardProp
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
-          {question.primary_tag && (
+          {question.primary_tag ? (
             <Badge className="bg-blue-500">{question.primary_tag}</Badge>
+          ) : (
+            <Badge variant="default" className="text-neutral-400 border-neutral-600">
+              No tag
+            </Badge>
           )}
         </div>
         <span className="text-xs text-neutral-400">

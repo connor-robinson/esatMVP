@@ -37,12 +37,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert the attempt
+    console.log('[Attempt API] Saving attempt:', {
+      userId: session.user.id,
+      questionId: question_id,
+      userAnswer: user_answer,
+      isCorrect: is_correct,
+      timeSpentMs: time_spent_ms
+    });
+    
     const { data: attempt, error: insertError } = await supabase
       .from('question_bank_attempts')
       .insert({
         user_id: session.user.id,
         question_id,
-        user_answer,
+        user_answer: user_answer,
         is_correct,
         time_spent_ms: time_spent_ms || null,
         viewed_solution: viewed_solution || false,
@@ -52,12 +60,29 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('[Attempt API] Error inserting attempt:', insertError);
+      console.error('[Attempt API] Error inserting attempt:', {
+        error: insertError,
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint,
+        userId: session.user.id,
+        questionId: question_id
+      });
       return NextResponse.json(
-        { error: 'Failed to save attempt' },
+        { 
+          error: 'Failed to save attempt',
+          details: insertError.message || 'Unknown error'
+        },
         { status: 500 }
       );
     }
+
+    console.log('[Attempt API] Successfully saved attempt:', {
+      attemptId: attempt ? (attempt as any).id : null,
+      questionId: question_id,
+      userId: session.user.id
+    });
 
     // Fetch updated stats for today
     const today = new Date().toISOString().split('T')[0];
