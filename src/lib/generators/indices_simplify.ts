@@ -67,3 +67,12 @@ export function generateIndicesSimplify(
   };
 }
 
+
+
+
+
+
+
+
+
+

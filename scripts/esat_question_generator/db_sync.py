@@ -199,7 +199,7 @@ class DatabaseSync:
             self.client = None
             self.enabled = False
     
-    def sync_question(self, question_item: Dict[str, Any], status: str = "approved") -> Optional[str]:
+    def sync_question(self, question_item: Dict[str, Any], status: str = "pending_review") -> Optional[str]:
         """
         Sync a question to the database.
         
@@ -208,7 +208,7 @@ class DatabaseSync:
         
         Args:
             question_item: Question item from pipeline (from build_bank_item)
-            status: Status to assign (default: approved, but will only save if verifier+style pass)
+            status: Status to assign (default: pending_review, but will only save if verifier+style pass)
             
         Returns:
             Database ID if successful, None otherwise (if question doesn't pass checks)
@@ -228,8 +228,7 @@ class DatabaseSync:
                 # Don't save questions that don't pass both checks
                 return None
             
-            # Status is always "approved" for saved questions
-            status = "approved"
+            # Use the status parameter passed in (defaults to pending_review for new questions)
             
             # Extract question data
             question_pkg = question_item.get("question_package", {})
@@ -398,7 +397,7 @@ class DatabaseSync:
 
 
 def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
-                               status: str = "approved") -> Optional[str]:
+                               status: str = "pending_review") -> Optional[str]:
     """
     Convenience function to sync a question from the pipeline.
     
@@ -407,7 +406,7 @@ def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
     Args:
         question_item: Question item from pipeline (from build_bank_item)
         base_dir: Base directory (not used, kept for compatibility)
-        status: Status to assign (default: approved, but only saved if verifier+style pass)
+        status: Status to assign (default: pending_review, but only saved if verifier+style pass)
         
     Returns:
         Database ID if successful, None otherwise (if question doesn't pass checks)

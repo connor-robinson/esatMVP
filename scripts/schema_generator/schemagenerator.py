@@ -44,10 +44,12 @@ import time
 import math
 import glob
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import tempfile
 import shutil
 import random
+import uuid
 try:
     import numpy as np
     NUMPY_AVAILABLE = True
@@ -71,13 +73,29 @@ from tkinter import ttk, messagebox, filedialog
 # Config
 # ----------------------------
 
-PROJECT_ROOT_DEFAULT = Path(r"c:\Users\anson\Desktop\nocalcMVP2_real")
-PAPERS_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "schema_generator" / "papers"
-SCHEMAS_MD_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "esat_question_generator" / "1. Designer" / "Schemas.md"
-TMUA_SCHEMAS_MD_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "esat_question_generator" / "1. Designer" / "Schemas_TMUA.md"
+# Mode: "ESAT" (default) indexes ENGAA/NSAA/ESAT, "TMUA" indexes TMUA only
+MODE = os.getenv("SCHEMA_MODE", "ESAT")  # "ESAT" or "TMUA"
 
-CACHE_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "schema_generator" / "_cache"
-LOG_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "schema_generator" / "_logs"
+# Portable project root (derived from script location, overridable via env var)
+PROJECT_ROOT_DEFAULT = Path(__file__).resolve().parent.parent.parent
+
+# Default papers directory (can be overridden via env var or UI)
+PAPERS_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "schema_generator" / "papers"
+
+# Central schemas directory (replaces legacy "1. Designer" folder)
+SCHEMAS_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "esat_question_generator" / "schemas"
+
+# Select schemas file based on MODE
+if MODE == "TMUA":
+    SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+else:  # ESAT mode
+    SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_ESAT.md"
+
+TMUA_SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+
+# Cache + logs now live alongside schemas for easier reasoning about one "schemas" area
+CACHE_DIR_DEFAULT = SCHEMAS_DIR_DEFAULT / "_cache"
+LOG_DIR_DEFAULT = SCHEMAS_DIR_DEFAULT / "_logs"
 
 CACHE_DIR_DEFAULT.mkdir(parents=True, exist_ok=True)
 LOG_DIR_DEFAULT.mkdir(parents=True, exist_ok=True)
@@ -100,6 +118,11 @@ DIAGRAM_KEYWORDS = [
 ]
 # If a page contains drawings/images, we treat it as "likely diagram page"
 DRAWING_COUNT_THRESHOLD = 10
+
+# Full automation configuration
+MAX_QUESTIONS_PER_SCHEMA = 5  # Maximum questions per schema before creating new one
+CONFIDENCE_THRESHOLD = 7.5  # fit_score threshold (0-10) - below this creates new schema
+PARALLEL_WORKERS = 5  # Number of parallel Gemini API workers
 
 
 # ----------------------------
@@ -129,9 +152,30 @@ class Candidate:
     title: str
     prefix: str  # M, P, B, C (Maths/Physics/Biology/Chemistry) or R (TMUA Paper 2 Reasoning)
     core_move: str
-    evidence: List[str]  # e.g. ["ENGAA_S1_2021_Q11", ...]
+    evidence: List[str]  # e.g. ["ENGAA_S1_2021_Q11", ...] - Now requires 3-8 items
     collision_guess: List[str]  # existing schema IDs
     confidence: float  # 0..1
+    exemplar_justifications: Optional[Dict[str, str]] = None  # qid -> one-line reason
+
+@dataclass
+class ReasoningFingerprint:
+    """Structured reasoning pattern extracted from a question."""
+    object_type: str  # "function", "geometry", "reaction", etc.
+    constraint_types: List[str]  # ["value at point", "conservation", etc.]
+    asked_type: str  # "compute value", "compare", "count solutions", etc.
+    dominant_move: str  # One sentence describing the key reasoning step
+    wrong_path_family: List[str]  # Common wrong approaches (2-4 bullets)
+
+@dataclass
+class PDFExtractionStats:
+    """Statistics for PDF extraction quality tracking."""
+    pdf_path: str
+    status: str  # "SUCCESS" | "FAILED_TEXT_EXTRACTION"
+    total_chars: int
+    question_count: int
+    median_question_length: int
+    failure_reason: Optional[str]
+    extracted_at: str
 
 @dataclass
 class SimilarityHit:
@@ -187,7 +231,8 @@ def normalize_spaces(s: str) -> str:
 # Schema library parser
 # ----------------------------
 
-SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*(([MPBCR])\d+)\.\s*(.+?)\*\*\s*$", re.MULTILINE)
+# Support both sequential (M1) and unique (M_a1b2c3d4) formats
+SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*(([MPBCR])(?:\d+|_[a-f0-9]{8}))\.\s*(.+?)\*\*\s*$", re.MULTILINE)
 SCHEMA_HEADER_RE_LENIENT = re.compile(r"^##\s+\*\*([MPBCR])\.\s*(.+?)\*\*\s*$", re.MULTILINE)  # For M./P./B./C./R. without number
 SCHEMA_HEADER_RE_PLACEHOLDER = re.compile(r"^##\s+\*\*\{ID\}\.\s*(.+?)\*\*\s*$", re.MULTILINE)  # For {ID}. placeholder
 
@@ -206,14 +251,16 @@ def parse_schema_summaries(schemas_md: str) -> List[SchemaSummary]:
             i += 1
             continue
 
+        # group(1) = full ID like "M12", group(2) = prefix letter, group(3) = title
         schema_id = m.group(1)
-        title = m.group(2).strip()
+        title = m.group(3).strip()
         core_move = ""
 
         # scan forward for "**Core thinking move**" then next non-empty line
         j = i + 1
         while j < len(lines):
-            if lines[j].strip().lower() == "**core thinking move**":
+            low = lines[j].strip().lower()
+            if low == "**core thinking move**" or low.startswith("**core move"):
                 # core move is usually on the next line, maybe blank then text
                 k = j + 1
                 while k < len(lines) and not lines[k].strip():
@@ -233,15 +280,109 @@ def parse_schema_summaries(schemas_md: str) -> List[SchemaSummary]:
 
 
 def get_next_schema_id(summaries: List[SchemaSummary], prefix: str) -> str:
+    """Legacy function for sequential IDs. Use generate_unique_schema_id() for new schemas."""
     nums = []
     for s in summaries:
         if s.schema_id.startswith(prefix):
             try:
+                # Handle both M1 and M_uuid formats
+                if "_" in s.schema_id:
+                    # Skip unique IDs, only count sequential
+                    continue
                 nums.append(int(s.schema_id[1:]))
             except ValueError:
                 pass
     n = max(nums) + 1 if nums else 1
     return f"{prefix}{n}"
+
+
+def normalize_prefix(prefix: str) -> str:
+    """
+    Normalize prefix to a single letter (M, P, B, C, R).
+    Handles multi-prefix formats like "M|P|B|C" by taking the first valid prefix.
+    """
+    # Remove any pipe characters and take first letter
+    normalized = prefix.replace("|", "").replace("&", "").strip()
+    if normalized:
+        first_char = normalized[0].upper()
+        if first_char in ("M", "P", "B", "C", "R"):
+            return first_char
+    # Fallback to M if invalid
+    return "M"
+
+
+def generate_unique_schema_id(prefix: str) -> str:
+    """
+    Generate a unique schema ID that never conflicts, even with parallel processing.
+    Format: {PREFIX}_{8-char-uuid} (e.g., M_a1b2c3d4)
+    Prefix is normalized to single letter (M, P, B, C, R).
+    """
+    normalized_prefix = normalize_prefix(prefix)
+    unique_suffix = uuid.uuid4().hex[:8]
+    return f"{normalized_prefix}_{unique_suffix}"
+
+
+def clean_schema_markdown(md: str, unique_id: str, title: str) -> str:
+    """
+    Clean ALL placeholders from schema markdown before writing to file.
+    Replaces:
+    - {ID} or {{ID}} with unique_id
+    - {{TITLE}} or {TITLE} with title
+    - {question_id_1}, {question_id_2}, etc. with empty string
+    - {justification_1}, {justification_2}, etc. with empty string
+    - {example_question_id_2}, etc. with empty string
+    - Any sequential IDs (M1, M12, etc.) with unique_id
+    - Multi-prefix IDs (M|P|B|C_xxx) normalized to single prefix
+    """
+    lines = md.splitlines()
+    
+    # Process header line FIRST - this is critical
+    if lines and lines[0].startswith("## **"):
+        # Extract title from header (handle any format: M1, M., {ID}, M|P|B|C_xxx, etc.)
+        title_match = re.search(r"^##\s+\*\*.*?\.\s*(.+?)\*\*\s*$", lines[0])
+        if title_match:
+            extracted_title = title_match.group(1).strip()
+            # Clean title of placeholders
+            cleaned_title = extracted_title.replace("{{TITLE}}", title).replace("{TITLE}", title)
+            # If title is still a placeholder or empty, use the provided title
+            if cleaned_title in ("{{TITLE}}", "{TITLE}", "") or not cleaned_title.strip():
+                cleaned_title = title
+            # ALWAYS use unique_id in header, regardless of what was there
+            lines[0] = f"## **{unique_id}. {cleaned_title}**"
+        else:
+            # No title found, use provided title
+            lines[0] = f"## **{unique_id}. {title}**"
+    
+    # Process all other lines - replace placeholders
+    cleaned_lines = []
+    for line in lines:
+        # Replace {ID} and {{ID}} placeholders
+        line = line.replace("{ID}", unique_id).replace("{{ID}}", unique_id)
+        
+        # Replace {{TITLE}} and {TITLE} placeholders
+        line = line.replace("{{TITLE}}", title).replace("{TITLE}", title)
+        
+        # Replace question ID placeholders (e.g., {question_id_1}, {example_question_id_2})
+        line = re.sub(r"\{[^}]*question[^}]*id[^}]*\}", "", line)
+        line = re.sub(r"\{[^}]*example[^}]*\}", "", line)
+        
+        # Replace justification placeholders (e.g., {justification_1}, {justification_2})
+        line = re.sub(r"\{[^}]*justification[^}]*\}", "", line)
+        
+        # Remove empty exemplar question lines (lines with just backticks or empty)
+        stripped = line.strip()
+        if stripped.startswith("- `") and (stripped == "- ``:" or stripped == "- ``" or ": ``" in stripped or stripped.endswith(": ")):
+            continue  # Skip empty exemplar lines
+        
+        cleaned_lines.append(line)
+    
+    result = "\n".join(cleaned_lines)
+    
+    # Ensure proper ending
+    if not result.endswith("\n"):
+        result += "\n"
+    
+    return result
 
 
 # ----------------------------
@@ -260,7 +401,8 @@ def parse_schema_block(markdown: str) -> Dict:
         "core_move": "",
         "seen_context": [],
         "wrong_paths": [],
-        "notes": []
+        "notes": [],
+        "exemplar_questions": []  # List of (question_id, justification) tuples
     }
     
     i = 0
@@ -294,8 +436,9 @@ def parse_schema_block(markdown: str) -> Dict:
     while i < len(lines):
         line = lines[i].strip()
         
-        # Check for core thinking move
-        if line.lower() == "**core thinking move**" or line.lower().startswith("**core thinking move"):
+        # Check for core move (supports both old "Core thinking move" and new "Core move" headings)
+        low = line.lower()
+        if low == "**core thinking move**" or low.startswith("**core thinking move") or low.startswith("**core move"):
             # Next non-empty line is core_move
             j = i + 1
             while j < len(lines) and not lines[j].strip():
@@ -318,12 +461,32 @@ def parse_schema_block(markdown: str) -> Dict:
             current_section = "notes"
             i += 1
             continue
+        elif "exemplar questions" in line.lower():
+            current_section = "exemplar_questions"
+            i += 1
+            continue
         
         # Check for bullets
         if line.startswith("- ") and current_section:
             bullet_text = line[2:].strip()
             if bullet_text:
-                result[current_section].append(bullet_text)
+                if current_section == "exemplar_questions":
+                    # Parse exemplar question format: `question_id`: justification
+                    # Handle both with and without backticks
+                    if "`" in bullet_text:
+                        # Format: - `question_id`: justification
+                        parts = bullet_text.split("`")
+                        if len(parts) >= 3:
+                            qid = parts[1].strip()
+                            justification = parts[2].strip().lstrip(":").strip()
+                            result["exemplar_questions"].append((qid, justification))
+                    else:
+                        # Format: - question_id: justification (fallback)
+                        if ":" in bullet_text:
+                            qid, justification = bullet_text.split(":", 1)
+                            result["exemplar_questions"].append((qid.strip(), justification.strip()))
+                else:
+                    result[current_section].append(bullet_text)
         
         # Stop at next schema or separator
         if line.startswith("##") or line.strip() == "---":
@@ -340,17 +503,18 @@ def parse_schema_block(markdown: str) -> Dict:
 def validate_schema_block(markdown: str, auto_fix: bool = True) -> Tuple[bool, List[str], Optional[str]]:
     """
     Validate a schema block. Returns (is_valid, list_of_errors, fixed_markdown).
-    Accepts: M1/P2/B3/C4 (with number), M./P./B./C. (without number), or {ID} (placeholder).
+    Accepts: M1/P2/B3/C4 (sequential), M_a1b2c3d4 (unique), M./P./B./C. (without number), or {ID} (placeholder).
     """
     errors = []
     parsed = parse_schema_block(markdown)
     fixed_markdown = None
     
-    # Check header format - accept M1/P2/B3/C4/R5, M./P./B./C./R., or {ID} placeholder
+    # Check header format - accept M1/P2/B3/C4/R5, M_a1b2c3d4 (unique), M./P./B./C./R., or {ID} placeholder
     if not parsed["schema_id"]:
         errors.append(
             "Missing or invalid schema header "
             "(expected: ## **M\\d+|P\\d+|B\\d+|C\\d+|R\\d+. Title** or "
+            "## **M_[a-f0-9]{8}. Title** (unique) or "
             "## **M. Title** / **P. Title** / **B. Title** / **C. Title** / **R. Title** or "
             "## **{ID}. Title**)"
         )
@@ -648,21 +812,290 @@ def map_evidence_to_papers(candidate: Candidate, index: List[QuestionItem]) -> D
 
 
 def check_recurrence(candidate: Candidate, index: List[QuestionItem]) -> Tuple[bool, Dict]:
-    """Check if candidate evidence spans multiple papers."""
+    """
+    Check if candidate evidence spans multiple papers.
+    Returns (passes, details) where details includes:
+    - pdf_count: number of distinct PDFs
+    - pdf_list: list of PDF names
+    - evidence_distribution: dict of pdf -> question count
+    """
     mapping = map_evidence_to_papers(candidate, index)
     distinct_pdfs = len(mapping)
     total_questions = len(candidate.evidence)
     
+    # Build evidence distribution
+    evidence_distribution = {}
+    pdf_list = []
+    for pdf_path, qids in mapping.items():
+        pdf_name = Path(pdf_path).name
+        pdf_list.append(pdf_name)
+        evidence_distribution[pdf_name] = len(qids)
+    
     stats = {
-        "distinct_pdfs": distinct_pdfs,
+        "pdf_count": distinct_pdfs,
+        "distinct_pdfs": distinct_pdfs,  # Keep for backward compatibility
         "total_questions": total_questions,
-        "pdfs": list(mapping.keys())
+        "pdfs": list(mapping.keys()),  # Full paths
+        "pdf_list": pdf_list,  # Just names
+        "evidence_distribution": evidence_distribution
     }
     
     # Require: >=2 distinct PDFs OR (>=3 questions AND >=2 PDFs preferred)
     satisfied = distinct_pdfs >= 2 or (total_questions >= 3 and distinct_pdfs >= 2)
     
     return satisfied, stats
+
+
+def validate_prefix_against_content(candidate: Candidate, index: List[QuestionItem]) -> Tuple[bool, str]:
+    """
+    Check if prefix matches question content.
+    Returns (is_valid, warning_message)
+    
+    For ESAT mode:
+    - M = Math keywords (algebra, calculus, geometry, equation, function, derivative, integral)
+    - P = Physics keywords (force, energy, motion, velocity, acceleration, momentum, field)
+    - B = Biology keywords (cell, enzyme, DNA, protein, gene, organism, tissue)
+    - C = Chemistry keywords (reaction, bond, molecule, atom, compound, element, ion)
+    
+    For TMUA mode:
+    - M = Paper 1 evidence
+    - R = Paper 2 evidence
+    """
+    # Get evidence questions
+    evidence_questions = []
+    for qid in candidate.evidence:
+        for q in index:
+            q_id = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
+            if q_id == qid:
+                evidence_questions.append(q)
+                break
+    
+    if not evidence_questions:
+        return True, ""  # Can't validate without questions
+    
+    # Combine all question text
+    all_text = " ".join(q.text.lower() for q in evidence_questions)
+    
+    if MODE == "TMUA":
+        # For TMUA, check paper type matches prefix
+        paper_types = set()
+        for q in evidence_questions:
+            if q.section:
+                if "paper 1" in q.section.lower():
+                    paper_types.add("M")
+                elif "paper 2" in q.section.lower():
+                    paper_types.add("R")
+        
+        if paper_types and candidate.prefix not in paper_types:
+            expected = "/".join(sorted(paper_types))
+            return False, f"Prefix '{candidate.prefix}' doesn't match evidence paper type (expected {expected})"
+    
+    elif MODE == "ESAT":
+        # For ESAT, check subject keywords
+        keyword_counts = {
+            "M": ["algebra", "calculus", "geometry", "equation", "function", "derivative", "integral", 
+                  "polynomial", "trigonometric", "logarithm", "exponential", "matrix", "vector"],
+            "P": ["force", "energy", "motion", "velocity", "acceleration", "momentum", "field", 
+                  "mass", "charge", "current", "voltage", "wave", "frequency", "particle"],
+            "B": ["cell", "enzyme", "dna", "protein", "gene", "organism", "tissue", "membrane", 
+                  "mitochondria", "chloroplast", "photosynthesis", "respiration", "evolution"],
+            "C": ["reaction", "bond", "molecule", "atom", "compound", "element", "ion", 
+                  "electron", "oxidation", "reduction", "acid", "base", "catalyst", "equilibrium"]
+        }
+        
+        # Count keyword matches for each subject
+        subject_scores = {}
+        for subject, keywords in keyword_counts.items():
+            count = sum(1 for kw in keywords if kw in all_text)
+            subject_scores[subject] = count
+        
+        # Find dominant subject
+        if subject_scores:
+            max_score = max(subject_scores.values())
+            if max_score > 0:
+                dominant_subjects = [s for s, score in subject_scores.items() if score == max_score]
+                
+                if candidate.prefix not in dominant_subjects:
+                    expected = "/".join(sorted(dominant_subjects))
+                    return False, f"Prefix '{candidate.prefix}' may not match content (found more {expected} keywords)"
+    
+    return True, ""
+
+
+def extract_reasoning_fingerprint(question: QuestionItem, gemini: 'Gemini') -> Optional[ReasoningFingerprint]:
+    """
+    Use Gemini to extract structured reasoning fingerprint from question.
+    Returns None if extraction fails.
+    """
+    prompt = f"""Analyze this exam question and extract its reasoning structure.
+
+Question text:
+{question.text[:1000]}
+
+Extract and return ONLY valid JSON with this structure:
+{{
+  "object_type": "function|geometry|reaction|experiment|etc",
+  "constraint_types": ["value at point", "conservation", "stoichiometry", "etc"],
+  "asked_type": "compute value|compare|count solutions|identify|infer|etc",
+  "dominant_move": "One sentence describing the key reasoning step",
+  "wrong_path_family": ["Common wrong approach 1", "Common wrong approach 2"]
+}}
+
+Focus on the REASONING PATTERN, not the topic.
+"""
+    
+    try:
+        resp = gemini.generate_json(prompt)
+        if resp and isinstance(resp, dict):
+            return ReasoningFingerprint(
+                object_type=str(resp.get("object_type", "unknown")),
+                constraint_types=list(resp.get("constraint_types", [])),
+                asked_type=str(resp.get("asked_type", "unknown")),
+                dominant_move=str(resp.get("dominant_move", "")),
+                wrong_path_family=list(resp.get("wrong_path_family", []))
+            )
+    except Exception as e:
+        print(f"[WARN] Failed to extract reasoning fingerprint: {e}")
+    
+    return None
+
+
+def compute_schema_fit_score(
+    question: QuestionItem,
+    schema: SchemaSummary,
+    question_fingerprint: Optional[ReasoningFingerprint],
+    schema_exemplars: List[QuestionItem],
+    gemini: 'Gemini'
+) -> Tuple[float, Dict[str, float]]:
+    """
+    Compute fit score (0-10) with breakdown.
+    
+    Rubric (0-2 points each):
+    1. Core move match
+    2. Same decision point
+    3. Same error family
+    4. Same answer form
+    5. Solution compressibility
+    
+    Returns (total_score, rubric_breakdown)
+    """
+    rubric = {
+        "core_move_match": 0.0,
+        "decision_point": 0.0,
+        "error_family": 0.0,
+        "answer_form": 0.0,
+        "compressibility": 0.0
+    }
+    
+    # If no fingerprint, use simpler text-based scoring
+    if not question_fingerprint or not schema_exemplars:
+        # Fallback: simple text similarity
+        q_text = question.text.lower()
+        schema_text = f"{schema.title} {schema.core_move}".lower()
+        
+        # Basic keyword overlap
+        q_words = set(q_text.split())
+        s_words = set(schema_text.split())
+        overlap = len(q_words & s_words) / max(len(q_words), 1)
+        
+        # Distribute score evenly
+        base_score = min(overlap * 10, 2.0)
+        for key in rubric:
+            rubric[key] = base_score / 5
+        
+        return sum(rubric.values()), rubric
+    
+    # Use LLM to score fit
+    exemplar_texts = "\n\n".join([f"Exemplar {i+1}: {ex.text[:300]}..." 
+                                   for i, ex in enumerate(schema_exemplars[:3])])
+    
+    prompt = f"""Score how well this question fits the schema pattern (0-2 points each category):
+
+Schema: {schema.title}
+Core move: {schema.core_move}
+
+Question fingerprint:
+- Object type: {question_fingerprint.object_type}
+- Constraints: {', '.join(question_fingerprint.constraint_types)}
+- Asked: {question_fingerprint.asked_type}
+- Dominant move: {question_fingerprint.dominant_move}
+
+Exemplar questions from schema:
+{exemplar_texts}
+
+Score these aspects (0-2 each):
+1. core_move_match: Does question use same dominant reasoning move?
+2. decision_point: Same critical decision point where weaker candidates branch wrong?
+3. error_family: Same types of wrong approaches?
+4. answer_form: Same output type (value/count/comparison/etc)?
+5. compressibility: Once seen, is solution short and clean like exemplars?
+
+Return ONLY valid JSON:
+{{
+  "core_move_match": 0.0-2.0,
+  "decision_point": 0.0-2.0,
+  "error_family": 0.0-2.0,
+  "answer_form": 0.0-2.0,
+  "compressibility": 0.0-2.0
+}}
+"""
+    
+    try:
+        resp = gemini.generate_json(prompt)
+        if resp and isinstance(resp, dict):
+            for key in rubric:
+                if key in resp:
+                    rubric[key] = float(resp[key])
+    except Exception as e:
+        print(f"[WARN] Failed to compute fit score: {e}")
+    
+    total = sum(rubric.values())
+    return total, rubric
+
+
+def match_question_to_schemas(
+    question: QuestionItem,
+    existing_schemas: List[SchemaSummary],
+    schema_exemplars: Dict[str, List[QuestionItem]],
+    gemini: 'Gemini',
+    top_k: int = 5
+) -> List[Tuple[str, float, str]]:
+    """
+    Match question to existing schemas.
+    
+    Returns list of (schema_id, fit_score, decision) where decision is:
+    - "attach" (score 8-10)
+    - "split_candidate" (score 5-7)
+    - "new_schema" (score 0-4)
+    """
+    if not existing_schemas:
+        return []
+    
+    # Extract reasoning fingerprint for question
+    question_fingerprint = extract_reasoning_fingerprint(question, gemini)
+    
+    # Score against all schemas
+    results = []
+    for schema in existing_schemas[:top_k]:  # Limit to top K for performance
+        exemplars = schema_exemplars.get(schema.schema_id, [])
+        score, rubric = compute_schema_fit_score(
+            question, schema, question_fingerprint, exemplars, gemini
+        )
+        
+        # Determine decision based on score
+        if score >= 8.0:
+            decision = "attach"
+        elif score >= 5.0:
+            decision = "split_candidate"
+        else:
+            decision = "new_schema"
+        
+        results.append((schema.schema_id, score, decision))
+    
+    # Sort by score descending
+    results.sort(key=lambda x: x[1], reverse=True)
+    
+    return results[:top_k]
 
 
 # ----------------------------
@@ -771,6 +1204,26 @@ def question_contains_diagram_keywords(text: str) -> bool:
     return any(k in t for k in DIAGRAM_KEYWORDS)
 
 
+def compute_diagram_likelihood(qtext: str, page_has_images: bool) -> float:
+    """
+    Returns 0.0-1.0 score indicating likelihood question depends on diagram.
+    >0.5 = likely diagram-dependent, should skip
+    
+    Scoring:
+    - Diagram keywords in text: +0.6
+    - Page has images: +0.2 (weak evidence)
+    """
+    score = 0.0
+    
+    if question_contains_diagram_keywords(qtext):
+        score += 0.6
+    
+    if page_has_images:
+        score += 0.2  # Weak evidence - page might have unrelated images
+    
+    return score
+
+
 def infer_exam_section_from_path(pdf_path: Path) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
     Very lightweight inference from directory names like:
@@ -781,8 +1234,9 @@ def infer_exam_section_from_path(pdf_path: Path) -> Tuple[Optional[str], Optiona
     section = None
     year = None
 
-    # exam
-    for ex in ["engaa", "nsaa", "tmua"]:
+    # exam - check NSAA before ENGAA to prioritize NSAA detection
+    # (though they shouldn't both appear in the same path)
+    for ex in ["nsaa", "engaa", "tmua"]:
         if any(ex in p for p in parts):
             exam = ex.upper()
             break
@@ -811,7 +1265,44 @@ def infer_exam_section_from_path(pdf_path: Path) -> Tuple[Optional[str], Optiona
     return exam, section, year
 
 
-def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, bool]] = None) -> List[QuestionItem]:
+def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[bool, str]:
+    """
+    Validate extracted questions meet quality thresholds.
+    Returns (is_valid, failure_reason)
+    
+    Failure conditions (conservative thresholds):
+    - Total non-whitespace chars < 500
+    - Zero questions detected
+    - Median question length < 40 chars
+    - No option letters (A/B/C/D) found anywhere
+    """
+    if not items:
+        return False, "No questions detected"
+    
+    # Calculate total non-whitespace characters
+    total_chars = sum(len(q.text.replace(" ", "").replace("\n", "").replace("\t", "")) for q in items)
+    if total_chars < 500:
+        return False, f"Insufficient text content ({total_chars} chars < 500 threshold)"
+    
+    # Calculate median question length
+    question_lengths = [len(q.text.strip()) for q in items]
+    question_lengths.sort()
+    median_length = question_lengths[len(question_lengths) // 2] if question_lengths else 0
+    
+    if median_length < 40:
+        return False, f"Questions too short (median {median_length} chars < 40 threshold)"
+    
+    # Check for option letters (A/B/C/D) in at least some questions
+    all_text = " ".join(q.text for q in items)
+    has_options = bool(re.search(r'[A-D]\)|[A-D]\.|\(A\)|\(B\)|\(C\)|\(D\)', all_text))
+    
+    if not has_options:
+        return False, "No option letters (A/B/C/D) found - likely not a question paper"
+    
+    return True, ""
+
+
+def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, bool]] = None) -> Tuple[List[QuestionItem], PDFExtractionStats]:
     """
     Best-effort question extraction:
     - Reads page text
@@ -870,13 +1361,25 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
             end_idx = starts[si + 1][0] if si + 1 < len(starts) else len(lines)
             block_lines = [f"{qnum} {first_line_rest}"] + lines[start_idx + 1:end_idx]
             qtext = normalize_spaces("\n".join(block_lines))
+            
+            # Sanity filter: skip questions that are too short or malformed
+            if len(qtext.strip()) < 40:
+                # Too short - likely extraction error
+                continue
+            
+            if not re.search(r'[A-D]\)|[A-D]\.|\(A\)|\(B\)', qtext):
+                # No option letters - might not be a multiple choice question
+                # (Allow it through but note this in logs if needed)
+                pass
 
-            # Diagram rule: check override first, then keywords/page heuristic
+            # Diagram detection: check override first, then use likelihood score
             if qnum in overrides:
                 # override True = force include (i.e. not skipped)
                 skipped = not overrides[qnum]
             else:
-                skipped = page_has_diagram or question_contains_diagram_keywords(qtext)
+                # Use per-question diagram likelihood score
+                diagram_score = compute_diagram_likelihood(qtext, page_has_diagram)
+                skipped = diagram_score > 0.5
 
             item = QuestionItem(
                 paper_id=paper_id,
@@ -891,7 +1394,53 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
             items.append(item)
 
     doc.close()
-    return items
+    
+    # Validate extraction and create stats
+    is_valid, failure_reason = validate_pdf_extraction(items, pdf_path)
+    
+    # Calculate stats
+    question_lengths = [len(q.text.strip()) for q in items] if items else [0]
+    question_lengths.sort()
+    median_length = question_lengths[len(question_lengths) // 2] if question_lengths else 0
+    total_chars = sum(len(q.text.replace(" ", "").replace("\n", "").replace("\t", "")) for q in items)
+    
+    stats = PDFExtractionStats(
+        pdf_path=str(pdf_path),
+        status="SUCCESS" if is_valid else "FAILED_TEXT_EXTRACTION",
+        total_chars=total_chars,
+        question_count=len(items),
+        median_question_length=median_length,
+        failure_reason=failure_reason if not is_valid else None,
+        extracted_at=now_iso()
+    )
+    
+    return items, stats
+
+
+def save_extraction_report(stats: List[PDFExtractionStats], total_scanned: int) -> None:
+    """Save extraction report to _logs/extraction_report.json"""
+    report_path = LOG_DIR_DEFAULT / "extraction_report.json"
+    
+    success_count = sum(1 for s in stats if s.status == "SUCCESS")
+    failed_count = sum(1 for s in stats if s.status == "FAILED_TEXT_EXTRACTION")
+    
+    report = {
+        "created_at": now_iso(),
+        "mode": MODE,
+        "thresholds": {
+            "min_chars": 500,
+            "min_question_length": 40
+        },
+        "summary": {
+            "scanned": total_scanned,
+            "success": success_count,
+            "failed": failed_count
+        },
+        "per_pdf": [asdict(s) for s in stats]
+    }
+    
+    safe_write_text(report_path, json.dumps(report, indent=2))
+    print(f"[INFO] Extraction report saved to {report_path}")
 
 
 def build_or_load_index(papers_dir: Path, force_rebuild: bool = False, 
@@ -905,27 +1454,77 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     # Load diagram overrides
     overrides_map = load_diagram_overrides()
     
+    # Debug: Log current mode and papers directory
+    print(f"[INDEX] Mode: {MODE}, Papers dir: {papers_dir}, Exists: {papers_dir.exists()}")
+    
     # Load aggregated index if exists and not forcing rebuild
     if INDEX_JSON.exists() and not force_rebuild:
         data = json.loads(safe_read_text(INDEX_JSON))
         items = [QuestionItem(**x) for x in data]
-        # Only include TMUA questions
-        items = [q for q in items if q.exam == "TMUA"]
+        print(f"[INDEX] Loaded {len(items)} questions from cache")
+        
+        # Debug: Show exam distribution before filtering
+        exam_counts = {}
+        for q in items:
+            exam = q.exam or "None"
+            exam_counts[exam] = exam_counts.get(exam, 0) + 1
+        print(f"[INDEX] Exam distribution before filtering: {exam_counts}")
+        
+        # Filter based on MODE
+        before_count = len(items)
+        if MODE == "TMUA":
+            items = [q for q in items if q.exam == "TMUA"]
+        elif MODE == "ESAT":
+            items = [q for q in items if q.exam != "TMUA"]  # Includes None values
+        
+        print(f"[INDEX] After filtering: {before_count} -> {len(items)} questions")
         return items
 
+    # Discover PDFs
     pdfs = [Path(p) for p in glob.glob(str(papers_dir / "**" / "*.pdf"), recursive=True)]
+    print(f"[INDEX] Found {len(pdfs)} PDFs before filtering")
 
-    # Only include TMUA papers (filter out everything else)
-    pdfs = [p for p in pdfs if "tmua" in str(p).lower()]
+    # Filter PDFs based on MODE
+    if MODE == "TMUA":
+        # Only include TMUA papers
+        before_count = len(pdfs)
+        pdfs = [p for p in pdfs if "tmua" in str(p).lower()]
+        print(f"[INDEX] TMUA filter: {before_count} -> {len(pdfs)} PDFs")
+    elif MODE == "ESAT":
+        # Exclude TMUA, keep ENGAA/NSAA/ESAT
+        before_count = len(pdfs)
+        pdfs = [p for p in pdfs if "tmua" not in str(p).lower()]
+        print(f"[INDEX] ESAT filter: {before_count} -> {len(pdfs)} PDFs")
 
-    # Filter out answer keys/conversion tables unless include_non_papers is True
+    # Filter out "Spec" folders (specifications/specimen papers)
+    before_count = len(pdfs)
+    pdfs = [p for p in pdfs if " spec" not in str(p).lower() and not str(p).lower().endswith(" spec.pdf")]
+    if before_count > len(pdfs):
+        print(f"[INDEX] Spec filter: {before_count} -> {len(pdfs)} PDFs (excluded Spec folders)")
+
+    # Filter to only include "Past Paper" files (exclude answer keys, conversion tables, etc.)
     if not include_non_papers:
-        pdfs = [p for p in pdfs if not any(
-            keyword in p.name for keyword in ["Answer Key", "Conversion Table", "Official Solutions"]
-        )]
+        before_count = len(pdfs)
+        # Only include files with "Past Paper" in the filename
+        pdfs = [p for p in pdfs if "past paper" in p.name.lower()]
+        if before_count > len(pdfs):
+            print(f"[INDEX] Past Paper filter: {before_count} -> {len(pdfs)} PDFs (only Past Papers included)")
+        
+        # Additional safety: exclude common non-paper keywords (in case some slip through)
+        exclude_keywords = ["answer key", "answers", "mark scheme", "conversion table", 
+                          "official solutions", "data sheet", "worked", "specimen"]
+        before_count = len(pdfs)
+        pdfs = [p for p in pdfs if not any(k in p.name.lower() for k in exclude_keywords)]
+        if before_count > len(pdfs):
+            print(f"[INDEX] Additional safety filter: {before_count} -> {len(pdfs)} PDFs")
+    
+    if len(pdfs) == 0:
+        print(f"[WARN] No PDFs found! Check papers directory: {papers_dir}")
+        return []
     
     total_pdfs = len(pdfs)
     all_items: List[QuestionItem] = []
+    extraction_stats: List[PDFExtractionStats] = []
 
     for i, pdf in enumerate(pdfs, 1):
         try:
@@ -941,23 +1540,102 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
                 # Load from cache
                 cached_data = json.loads(safe_read_text(cache_file))
                 items = [QuestionItem(**x) for x in cached_data]
+                # Create stats for cached item (mark as success if it was cached)
+                stats = PDFExtractionStats(
+                    pdf_path=str(pdf),
+                    status="SUCCESS",
+                    total_chars=sum(len(q.text.replace(" ", "").replace("\n", "").replace("\t", "")) for q in items),
+                    question_count=len(items),
+                    median_question_length=0,  # Not recalculated for cached
+                    failure_reason=None,
+                    extracted_at=now_iso()
+                )
             else:
                 # Extract and cache
                 pdf_overrides = overrides_map.get(str(pdf), {})
-                items = extract_questions_from_pdf(pdf, pdf_overrides)
-                # Save to per-PDF cache
-                safe_write_text(cache_file, json.dumps([asdict(x) for x in items], indent=2))
+                items, stats = extract_questions_from_pdf(pdf, pdf_overrides)
+                # Only cache if extraction was successful
+                if stats.status == "SUCCESS":
+                    # Save to per-PDF cache
+                    safe_write_text(cache_file, json.dumps([asdict(x) for x in items], indent=2))
             
-            # Only include TMUA questions (filter out everything else)
-            items = [q for q in items if q.exam == "TMUA"]
+            # Track extraction stats
+            extraction_stats.append(stats)
+            
+            # Skip failed PDFs (don't add to index)
+            if stats.status == "FAILED_TEXT_EXTRACTION":
+                print(f"[SKIP] {pdf.name}: {stats.failure_reason}")
+                if progress_callback:
+                    progress_callback(i, total_pdfs, f"{pdf.name} (SKIPPED: {stats.failure_reason})")
+                continue
+            
+            # Debug: Show exam detection for this PDF
+            if items:
+                exam_counts = {}
+                for q in items:
+                    exam = q.exam or "None"
+                    exam_counts[exam] = exam_counts.get(exam, 0) + 1
+                print(f"[INDEX] {pdf.name}: {len(items)} questions, exams: {exam_counts}")
+            
+            # Filter based on MODE
+            before_filter = len(items)
+            if MODE == "TMUA":
+                items = [q for q in items if q.exam == "TMUA"]
+            elif MODE == "ESAT":
+                items = [q for q in items if q.exam != "TMUA"]  # Includes None values
+            
+            if before_filter > len(items):
+                print(f"[INDEX] {pdf.name}: Filtered {before_filter} -> {len(items)} questions (mode={MODE})")
+            
             all_items.extend(items)
         except Exception as e:
             print(f"[WARN] Failed to parse {pdf}: {e}")
+            # Track failed extraction
+            extraction_stats.append(PDFExtractionStats(
+                pdf_path=str(pdf),
+                status="FAILED_TEXT_EXTRACTION",
+                total_chars=0,
+                question_count=0,
+                median_question_length=0,
+                failure_reason=f"Exception: {str(e)}",
+                extracted_at=now_iso()
+            ))
             if progress_callback:
                 progress_callback(i, total_pdfs, f"{pdf.name} (ERROR: {e})")
 
     # Save aggregated cache
     safe_write_text(INDEX_JSON, json.dumps([asdict(x) for x in all_items], indent=2))
+    
+    # Save extraction report
+    save_extraction_report(extraction_stats, total_pdfs)
+    
+    # Final summary
+    print(f"[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
+    if len(all_items) == 0:
+        print(f"[WARN] No questions indexed! Possible causes:")
+        print(f"  - No PDFs found in {papers_dir}")
+        print(f"  - All PDFs failed extraction (check extraction report)")
+        print(f"  - All questions filtered out by mode={MODE}")
+        if total_pdfs > 0:
+            print(f"  - {total_pdfs} PDFs were found but produced 0 questions")
+            # Show exam distribution from extraction stats
+            exam_counts = {}
+            for stat in extraction_stats:
+                if stat.status == "SUCCESS":
+                    # Try to infer exam from PDF path
+                    exam, _, _ = infer_exam_section_from_path(Path(stat.pdf_path))
+                    exam = exam or "None"
+                    exam_counts[exam] = exam_counts.get(exam, 0) + 1
+            if exam_counts:
+                print(f"  - Exam detection from PDF paths: {exam_counts}")
+    else:
+        # Show exam distribution
+        exam_counts = {}
+        for q in all_items:
+            exam = q.exam or "None"
+            exam_counts[exam] = exam_counts.get(exam, 0) + 1
+        print(f"[INDEX] Final exam distribution: {exam_counts}")
+    
     return all_items
 
 
@@ -1082,8 +1760,22 @@ class Gemini:
 
 
 # ----------------------------
-# Prompts
+# Prompts - Load from external markdown files
 # ----------------------------
+
+PROMPT_DIR = Path(__file__).parent / "prompts"
+CANDIDATE_PROMPT_PATH = PROMPT_DIR / "Schema_Candidate_Prompt.md"
+FULL_PROMPT_PATH = PROMPT_DIR / "Schema_Full_Prompt.md"
+COMPRESS_PROMPT_PATH = PROMPT_DIR / "Schema_Compress_Prompt.md"
+SPLIT_PROMPT_PATH = PROMPT_DIR / "Schema_Split_Prompt.md"
+ENRICH_PROMPT_PATH = PROMPT_DIR / "Schema_Enrich_Prompt.md"
+
+def load_prompt_template(path: Path) -> str:
+    """Load a prompt template from a markdown file."""
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt template not found: {path}")
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 def prompt_candidates(
     questions: List[QuestionItem],
@@ -1096,13 +1788,15 @@ def prompt_candidates(
     and still it must not invent diagram-based patterns.
     """
 
+    # Load the template
+    template = load_prompt_template(CANDIDATE_PROMPT_PATH)
+
     # Existing schema summaries (short)
     existing = "\n".join(
         [f"- {s.schema_id}: {s.title} | {s.core_move}".strip() for s in schema_summaries]
     )
 
     # Evidence corpus: short question IDs + text
-    # Keep this short-ish: you can increase batch size later.
     corpus_lines = []
     for q in questions:
         qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
@@ -1139,51 +1833,21 @@ Do not default to only M and P schemas - actively look for biology/chemistry thi
         exam_type = "ESAT/ENGAA/NSAA"
         prefix_json = '"M" | "P" | "B" | "C"'
 
-    return f"""
-You are helping build a compact schema library for {exam_type}-style questions.
-
-A "schema" is a THINKING PATTERN, not a topic.
-You must propose CANDIDATES only (title + core move + evidence), not full schema blocks.
-
-{prefix_instructions}
-
-Hard constraints:
-- IGNORE any question that involves a diagram, graph, sketch, or figure.
-- Do NOT create diagram-dependent schemas.
-- Candidate title: 3–8 words, not topic-named (avoid "Integration", "Transformers", etc.).
-- Candidate core_move: exactly ONE sentence, actionable ("Infer...", "Exploit...", "Constrain...").
-- Evidence must cite question IDs from the corpus below. Do not hallucinate.
-- If a candidate overlaps strongly with existing schemas, list the overlapping schema IDs in collision_guess.
-- Prefer reusable patterns that could appear across multiple papers.
-- Ensure a diverse mix of prefixes when the corpus contains questions from multiple subjects.
-
-Existing schemas:
-{existing}
-
-Corpus (questions without diagrams only):
-{corpus}
-
-Return ONLY valid JSON with this structure:
-{{
-  "candidates": [
-    {{
-      "candidate_id": "C1",
-      "prefix": {prefix_json},
-      "title": "...",
-      "core_move": "...",
-      "evidence": ["<qid>", "..."],
-      "collision_guess": ["M3", "P5"],
-      "confidence": 0.0
-    }}
-  ]
-}}
-
-Produce exactly {n_candidates} candidates if possible. If not possible, produce fewer.
-Ensure you generate B and C schemas when biology/chemistry questions are present in the corpus.
-"""
+    # Replace placeholders in template
+    return template.format(
+        exam_type=exam_type,
+        prefix_instructions=prefix_instructions,
+        existing=existing,
+        corpus=corpus,
+        prefix_json=prefix_json,
+        n_candidates=n_candidates
+    )
 
 
 def prompt_full_schema(candidate: Candidate, enforce_max4: bool = True) -> str:
+    # Load the template
+    template = load_prompt_template(FULL_PROMPT_PATH)
+    
     limit_text = ""
     if enforce_max4:
         limit_text = """
@@ -1224,128 +1888,57 @@ Include a clear note in the "Notes for generation" section indicating this:
 - For Paper 2 (R): "- From TMUA Paper 2 (Mathematical Reasoning)"
 Keep it concise and as the last bullet point if possible.
 """
-
-    return f"""
-You are writing a single schema block for {"Schemas_TMUA.md" if is_tmua else "Schemas.md"}.
-
-Candidate:
-- Prefix: {candidate.prefix}  ({prefix_desc})
-- Title: {candidate.title}
-- Core move: {candidate.core_move}
-- Evidence question IDs: {candidate.evidence}
-{tmua_note}
-
-Write the schema in EXACT markdown format:
-
-## **{candidate.prefix}. {candidate.title}**
-
-**Core thinking move**
-{candidate.core_move}
-
-**Seen in / context**
-- ...
-- ...
-- ...
-
-**Possible wrong paths**
-- ...
-- ...
-- ...
-
-**Notes for generation**
-- ...
-- ...
-
----
-
-{limit_text}
-
-Important:
-- This must describe a thinking pattern, not a syllabus topic.
-- Keep bullets short and general.
-- Do not mention diagrams/graphs/figures.
-- For biology (B) and chemistry (C) schemas: focus on reasoning patterns, not just factual recall.
-- Biology schemas should capture patterns like: interpreting experimental data, applying biological principles, reasoning about cellular processes, etc.
-- Chemistry schemas should capture patterns like: predicting reaction outcomes, applying bonding principles, reasoning about equilibria, etc.
-Return ONLY the markdown block (no commentary).
-"""
+    
+    schema_file = "Schemas_TMUA.md" if is_tmua else "Schemas.md"
+    
+    # Build exemplar list text with backticks format
+    exemplar_text = ""
+    if candidate.exemplar_justifications:
+        exemplar_lines = []
+        for qid, justification in candidate.exemplar_justifications.items():
+            exemplar_lines.append(f"- `{qid}`: {justification}")
+        exemplar_text = "\n".join(exemplar_lines)
+    else:
+        # Fallback: just list evidence IDs with backticks
+        exemplar_text = "\n".join(f"- `{qid}`: Exemplifies pattern" for qid in candidate.evidence[:8])
+    
+    # Replace placeholders in template
+    return template.replace("{schema_file}", schema_file) \
+                   .replace("{candidate.prefix}", candidate.prefix) \
+                   .replace("{prefix_desc}", prefix_desc) \
+                   .replace("{candidate.title}", candidate.title) \
+                   .replace("{candidate.core_move}", candidate.core_move) \
+                   .replace("{candidate.evidence}", str(candidate.evidence)) \
+                   .replace("{exemplar_text}", exemplar_text) \
+                   .replace("{tmua_note}", tmua_note) \
+                   .replace("{limit_text}", limit_text)
 
 
 def prompt_compress_schema(schema_markdown: str) -> str:
     """Prompt for compressing a schema to enforce bullet limits."""
-    return f"""
-Rewrite this schema block to enforce:
-- Maximum 4 bullets per section (Seen in/context, Possible wrong paths, Notes)
-- Preserve all meaning and thinking patterns
-- Keep exact markdown format
-- Do not add new content, only compress existing bullets
-- Keep the header format exactly as is (if it has {{ID}}, keep {{ID}}; if it has M. or P., keep that; if it has M1/P2, keep that)
-
-Schema to compress:
-{schema_markdown}
-
-Return ONLY the compressed markdown block (no commentary).
-"""
+    template = load_prompt_template(COMPRESS_PROMPT_PATH)
+    return template.replace("{schema_markdown}", schema_markdown)
 
 
 def prompt_split_candidate(candidate: Candidate) -> str:
     """Prompt for splitting a candidate into two."""
-    return f"""
-Split this candidate into TWO distinct candidates:
-- Each should be a separate thinking pattern
-- Both should have same JSON structure as the original
-- Provide evidence question IDs for each
-- Use candidate_id "C1" and "C2" for the two new candidates
-
-Original candidate:
-{json.dumps(asdict(candidate), indent=2)}
-
-Return ONLY valid JSON with this structure:
-{{
-  "candidates": [
-    {{
-      "candidate_id": "C1",
-      "prefix": "M" | "P",
-      "title": "...",
-      "core_move": "...",
-      "evidence": ["<qid>", "..."],
-      "collision_guess": [],
-      "confidence": 0.0
-    }},
-    {{
-      "candidate_id": "C2",
-      ...
-    }}
-  ]
-}}
-"""
+    template = load_prompt_template(SPLIT_PROMPT_PATH)
+    return template.replace("{candidate.title}", candidate.title) \
+                   .replace("{candidate.core_move}", candidate.core_move) \
+                   .replace("{candidate.evidence}", str(candidate.evidence)) \
+                   .replace("{candidate.prefix}", candidate.prefix)
 
 
 def prompt_enrich_bullet(candidate: Candidate, target_schema_id: str, section: str, 
                          existing_bullet: str) -> str:
     """Prompt for generating a replacement bullet."""
-    return f"""
-Generate ONE replacement bullet for an existing schema.
-
-Target schema: {target_schema_id}
-Section: {section}
-Existing bullet to replace: {existing_bullet}
-
-Candidate evidence:
-{json.dumps(candidate.evidence, indent=2)}
-
-Candidate title: {candidate.title}
-Candidate core move: {candidate.core_move}
-
-Generate a single bullet point that:
-- Is general and reusable (not specific to the candidate's evidence)
-- Describes a thinking pattern, not a topic
-- Does not mention diagrams/graphs/figures
-- Fits naturally in the "{section}" section
-- Is concise (one line, no more than 20 words)
-
-Return ONLY the bullet text (starting with "- "), no other commentary.
-"""
+    template = load_prompt_template(ENRICH_PROMPT_PATH)
+    return template.replace("{target_schema_id}", target_schema_id) \
+                   .replace("{section}", section) \
+                   .replace("{existing_bullet}", existing_bullet) \
+                   .replace("{candidate.title}", candidate.title) \
+                   .replace("{candidate.core_move}", candidate.core_move) \
+                   .replace("{candidate.evidence}", str(candidate.evidence))
 
 
 # ----------------------------
@@ -1444,6 +2037,36 @@ class App(tk.Tk):
 
     # UI layout
     def _build_ui(self):
+        # MODE selection frame (at very top)
+        mode_frame = ttk.LabelFrame(self, text="Mode", padding=5)
+        mode_frame.pack(fill="x", padx=10, pady=(5, 0))
+        
+        self.mode_var = tk.StringVar(value=MODE)
+        
+        def on_mode_change():
+            """Update global MODE when UI toggle changes."""
+            global MODE
+            new_mode = self.mode_var.get()
+            if new_mode != MODE:
+                MODE = new_mode
+                print(f"[MODE] Changed to {MODE}")
+                # Update schemas file path based on mode
+                if MODE == "TMUA":
+                    self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
+                else:
+                    self.schemas_md_path = SCHEMAS_MD_DEFAULT
+                # Reload schemas with new path
+                self._load_schemas()
+                self._load_embeddings()
+                self._load_meta()
+        
+        ttk.Radiobutton(mode_frame, text="ESAT (ENGAA/NSAA/ESAT)", 
+                        variable=self.mode_var, value="ESAT",
+                        command=on_mode_change).pack(side="left", padx=5)
+        ttk.Radiobutton(mode_frame, text="TMUA", 
+                        variable=self.mode_var, value="TMUA",
+                        command=on_mode_change).pack(side="left", padx=5)
+        
         # Top row: Main actions and filters
         top = ttk.Frame(self)
         top.pack(fill="x", padx=10, pady=(8, 4))
@@ -1452,8 +2075,105 @@ class App(tk.Tk):
         ttk.Checkbutton(top, text="Force rebuild index", variable=self.force_rebuild_var).pack(side="left")
 
         ttk.Button(top, text="Index PDFs", command=self.on_index).pack(side="left", padx=6)
+        ttk.Button(top, text="View Extraction Report", command=self.on_view_extraction_report).pack(side="left", padx=6)
         ttk.Button(top, text="Generate candidates (batch)", command=self.on_generate).pack(side="left", padx=6)
+        ttk.Button(top, text="Process All Questions", command=self.on_process_all_questions).pack(side="left", padx=6)
         ttk.Button(top, text="Reload Schemas.md", command=self._load_schemas).pack(side="left", padx=6)
+        
+        def on_wipe_data():
+            """Wipe all schema data after confirmation."""
+            if messagebox.askyesno("Wipe Schema Data", 
+                "This will DELETE all schemas and cache files:\n\n"
+                "- Schemas_ESAT.md (cleared)\n"
+                "- All JSON cache files (deleted)\n\n"
+                "This cannot be undone!\n\n"
+                "Continue?"):
+                wiped = self._wipe_schema_data()
+                messagebox.showinfo("Wipe Complete", 
+                    f"Wiped {len(wiped)} files:\n" + "\n".join(f"- {f}" for f in wiped))
+        
+        wipe_btn = tk.Button(top, text="Wipe All Data", command=on_wipe_data, 
+                            fg="red", bg="white")
+        wipe_btn.pack(side="left", padx=6)
+        
+        def on_renumber_schemas():
+            """Renumber all schemas from unique IDs to sequential IDs."""
+            if not self.schemas_md_path.exists():
+                messagebox.showinfo("No Schemas", "No schemas file found. Create some schemas first.")
+                return
+            
+            # Get current schemas to show preview
+            md = safe_read_text(self.schemas_md_path)
+            summaries = parse_schema_summaries(md)
+            
+            # Count unique IDs that need renumbering
+            unique_ids = [s for s in summaries if "_" in s.schema_id]
+            sequential_ids = [s for s in summaries if re.match(r"^[MPBCR]\d+$", s.schema_id)]
+            
+            if not unique_ids:
+                messagebox.showinfo("Already Renumbered", "All schemas already have sequential IDs (M1, M2, etc.).")
+                return
+            
+            # Group by prefix for preview
+            by_prefix = {}
+            for s in unique_ids:
+                prefix = s.schema_id[0]
+                by_prefix.setdefault(prefix, []).append(s.schema_id)
+            
+            preview_lines = []
+            for prefix in sorted(by_prefix.keys()):
+                preview_lines.append(f"{prefix}: {len(by_prefix[prefix])} schemas")
+            
+            preview = "\n".join(preview_lines)
+            
+            if not messagebox.askyesno("Renumber Schemas", 
+                f"This will renumber {len(unique_ids)} schemas from unique IDs to sequential IDs.\n\n"
+                f"Preview:\n{preview}\n\n"
+                f"All references in cache files will be updated.\n"
+                f"A backup will be created before renumbering.\n\n"
+                f"Continue?"):
+                return
+            
+            def work():
+                self._set_status("Renumbering schemas...")
+                try:
+                    id_mapping = self._renumber_all_schemas()
+                    
+                    if id_mapping:
+                        # Show summary
+                        by_prefix_new = {}
+                        for old_id, new_id in id_mapping.items():
+                            prefix = new_id[0]
+                            by_prefix_new.setdefault(prefix, []).append((old_id, new_id))
+                        
+                        summary_lines = []
+                        for prefix in sorted(by_prefix_new.keys()):
+                            pairs = by_prefix_new[prefix]
+                            summary_lines.append(f"{prefix}: {len(pairs)} schemas")
+                            # Show first few examples
+                            for old_id, new_id in pairs[:3]:
+                                summary_lines.append(f"  {old_id} → {new_id}")
+                            if len(pairs) > 3:
+                                summary_lines.append(f"  ... and {len(pairs) - 3} more")
+                        
+                        summary = "\n".join(summary_lines)
+                        self.after(0, lambda: messagebox.showinfo("Renumbering Complete", 
+                            f"Successfully renumbered {len(id_mapping)} schemas:\n\n{summary}"))
+                        self.after(0, lambda: self._set_status(f"Renumbered {len(id_mapping)} schemas."))
+                    else:
+                        self.after(0, lambda: messagebox.showinfo("No Changes", "No schemas needed renumbering."))
+                        self.after(0, lambda: self._set_status("No renumbering needed."))
+                except Exception as e:
+                    error_msg = str(e)
+                    self.after(0, lambda: messagebox.showerror("Renumbering Failed", 
+                        f"Failed to renumber schemas:\n{error_msg}"))
+                    self.after(0, lambda: self._set_status(f"Renumbering failed: {error_msg}"))
+            
+            threading.Thread(target=work, daemon=True).start()
+        
+        renumber_btn = tk.Button(top, text="Renumber Schemas", command=on_renumber_schemas,
+                                fg="blue", bg="white")
+        renumber_btn.pack(side="left", padx=6)
 
         ttk.Label(top, text="Batch filter:").pack(side="left", padx=(10, 2))
         self.batch_filter = ttk.Entry(top, width=30)
@@ -1527,8 +2247,9 @@ class App(tk.Tk):
         # Feature B: Additional decision buttons
         btn_row2 = ttk.Frame(left)
         btn_row2.pack(fill="x", pady=4)
-        ttk.Button(btn_row2, text="Merge", command=self.on_merge).pack(side="left")
-        ttk.Button(btn_row2, text="Enrich", command=self.on_enrich_show).pack(side="left", padx=4)
+        # Merge/Enrich removed - keeping Split only
+        # ttk.Button(btn_row2, text="Merge", command=self.on_merge).pack(side="left")
+        # ttk.Button(btn_row2, text="Enrich", command=self.on_enrich_show).pack(side="left", padx=4)
         ttk.Button(btn_row2, text="Split", command=self.on_split).pack(side="left", padx=4)
 
         # Middle: candidate detail
@@ -1549,51 +2270,30 @@ class App(tk.Tk):
 
         ttk.Label(right, text="Generated schema preview (editable)").pack(anchor="w", pady=(10, 0))
         
-        # Feature A: Compress button
+        # Compress button removed (keeping validation status)
         preview_controls = ttk.Frame(right)
         preview_controls.pack(fill="x", pady=(0, 4))
-        ttk.Button(preview_controls, text="Compress preview", command=self.on_compress_preview).pack(side="left")
+        # ttk.Button(preview_controls, text="Compress preview", command=self.on_compress_preview).pack(side="left")
         self.validation_status = ttk.Label(preview_controls, text="", foreground="red")
         self.validation_status.pack(side="left", padx=10)
         
         self.schema_preview = tk.Text(right, wrap="word", height=15)
         self.schema_preview.pack(fill="both", expand=True)
         
-        # Feature B: Enrich controls (initially hidden)
-        enrich_frame = ttk.LabelFrame(right, text="Enrich existing schema")
-        enrich_frame.pack(fill="x", pady=(10, 0))
+        # Feature B: Enrich controls - REMOVED (keeping code commented for reference)
+        # enrich_frame = ttk.LabelFrame(right, text="Enrich existing schema")
+        # enrich_frame.pack(fill="x", pady=(10, 0))
+        # ... (enrich UI code commented out)
         
-        enrich_row1 = ttk.Frame(enrich_frame)
-        enrich_row1.pack(fill="x", padx=5, pady=2)
-        ttk.Label(enrich_row1, text="Target schema:").pack(side="left")
-        self.enrich_schema_var = tk.StringVar(value="")
-        self.enrich_schema_combo = ttk.Combobox(enrich_row1, textvariable=self.enrich_schema_var, width=15, state="readonly")
-        self.enrich_schema_combo.pack(side="left", padx=5)
-        
-        ttk.Label(enrich_row1, text="Section:").pack(side="left", padx=(10, 0))
-        self.enrich_section_var = tk.StringVar(value="Seen in / context")
-        self.enrich_section_combo = ttk.Combobox(enrich_row1, textvariable=self.enrich_section_var, 
-                                                  values=["Seen in / context", "Possible wrong paths", "Notes for generation"],
-                                                  width=20, state="readonly")
-        self.enrich_section_combo.pack(side="left", padx=5)
-        self.enrich_section_combo.bind("<<ComboboxSelected>>", lambda e: self._update_enrich_bullet_combo())
-        self.enrich_schema_combo.bind("<<ComboboxSelected>>", lambda e: self._update_enrich_bullet_combo())
-        
-        enrich_row2 = ttk.Frame(enrich_frame)
-        enrich_row2.pack(fill="x", padx=5, pady=2)
-        ttk.Label(enrich_row2, text="Bullet index:").pack(side="left")
-        self.enrich_bullet_var = tk.StringVar(value="1")
-        self.enrich_bullet_combo = ttk.Combobox(enrich_row2, textvariable=self.enrich_bullet_var, width=10, state="readonly")
-        self.enrich_bullet_combo.pack(side="left", padx=5)
-        
-        ttk.Button(enrich_row2, text="Generate replacement", command=self.on_generate_replacement).pack(side="left", padx=5)
-        ttk.Button(enrich_row2, text="Apply replacement", command=self.on_apply_enrich).pack(side="left", padx=5)
-        
-        self.enrich_replacement_text = tk.Text(enrich_frame, height=3, wrap="word")
-        self.enrich_replacement_text.pack(fill="x", padx=5, pady=2)
-        
-        self.enrich_frame = enrich_frame
-        self.enrich_frame.pack_forget()  # Hide initially
+        # Initialize enrich variables to None to avoid errors
+        self.enrich_schema_var = None
+        self.enrich_schema_combo = None
+        self.enrich_section_var = None
+        self.enrich_section_combo = None
+        self.enrich_bullet_var = None
+        self.enrich_bullet_combo = None
+        self.enrich_replacement_text = None
+        self.enrich_frame = None
 
         bottom = ttk.Frame(self)
         bottom.pack(fill="x", padx=10, pady=6, side="bottom")
@@ -1644,10 +2344,26 @@ class App(tk.Tk):
     def _load_meta(self):
         """Load schemas meta and initialize if needed."""
         self.schemas_meta = load_schemas_meta()
-        # Initialize missing entries
+        # Initialize missing entries and ensure unique_id/created_at fields exist
         for s in self.schema_summaries:
             if s.schema_id not in self.schemas_meta:
-                self.schemas_meta[s.schema_id] = {"edits_count": 0, "locked": False}
+                self.schemas_meta[s.schema_id] = {"edits_count": 0, "locked": False, "evidence": []}
+            
+            # Ensure unique_id and created_at exist for backward compatibility
+            meta = self.schemas_meta[s.schema_id]
+            if "unique_id" not in meta:
+                # If schema_id is already unique format, use it; otherwise generate one
+                if "_" in s.schema_id:
+                    meta["unique_id"] = s.schema_id
+                else:
+                    # Sequential ID - generate unique ID for tracking
+                    prefix = s.schema_id[0]
+                    meta["unique_id"] = generate_unique_schema_id(prefix)
+            if "created_at" not in meta:
+                meta["created_at"] = now_iso()  # Use current time as fallback
+            if "evidence" not in meta:
+                meta["evidence"] = []
+        
         save_schemas_meta(self.schemas_meta)
         # Update papers progress in case schemas/index changed
         self._update_paper_progress()
@@ -1667,6 +2383,228 @@ class App(tk.Tk):
         """Handle app closing - save used questions."""
         self._save_used_questions()
         self.destroy()
+    
+    def _wipe_schema_data(self):
+        """Wipe all schema-related files for a fresh start."""
+        files_to_wipe = [
+            SCHEMAS_MD_DEFAULT,  # Schemas_ESAT.md
+            SCHEMA_EMBEDDINGS_JSON,
+            SCHEMA_COVERAGE_JSON,
+            SCHEMAS_META_JSON,
+            USED_QUESTIONS_JSON,
+        ]
+        
+        wiped = []
+        for file_path in files_to_wipe:
+            if file_path.exists():
+                if file_path.suffix == '.md':
+                    # Clear markdown file but keep structure
+                    file_path.write_text("# ESAT Schemas\n\n", encoding="utf-8")
+                else:
+                    # Delete JSON files
+                    file_path.unlink()
+                wiped.append(file_path.name)
+        
+        # Clear candidates and decisions logs (optional - archive instead)
+        if CANDIDATES_JSONL.exists():
+            CANDIDATES_JSONL.write_text("", encoding="utf-8")
+            wiped.append(CANDIDATES_JSONL.name)
+        if DECISIONS_JSONL.exists():
+            DECISIONS_JSONL.write_text("", encoding="utf-8")
+            wiped.append(DECISIONS_JSONL.name)
+        
+        # Reload empty state
+        self._load_schemas()
+        self._load_embeddings()
+        self._load_meta()
+        self.used_question_ids.clear()
+        self._save_used_questions()
+        
+        return wiped
+    
+    def _renumber_all_schemas(self) -> Dict[str, str]:
+        """
+        Renumber all schemas from unique IDs (M_uuid) to sequential IDs (M1, M2, etc.).
+        Updates markdown file and all JSON cache files.
+        Returns mapping {old_id: new_id} for reference.
+        """
+        if not self.schemas_md_path.exists():
+            return {}
+        
+        # Read current schemas
+        md = safe_read_text(self.schemas_md_path)
+        summaries = parse_schema_summaries(md)
+        
+        # Group schemas by prefix - only renumber unique IDs (M_uuid), keep sequential (M1) as-is
+        schemas_by_prefix: Dict[str, List[Tuple[str, str, str, int]]] = {}  # prefix -> [(id, title, created_at, file_order)]
+        sequential_schemas: Dict[str, str] = {}  # schema_id -> prefix (for tracking)
+        
+        # Also track file order as fallback for sorting
+        file_order = 0
+        for s in summaries:
+            # Extract prefix
+            if s.schema_id.startswith(("M", "P", "B", "C", "R")):
+                prefix = s.schema_id[0]
+                # Check if it's a unique ID (has underscore) or sequential (M1, M2, etc.)
+                is_unique = "_" in s.schema_id
+                is_sequential = re.match(r"^[MPBCR]\d+$", s.schema_id)
+                
+                if is_unique:
+                    # Only renumber unique IDs
+                    meta = self.schemas_meta.get(s.schema_id, {})
+                    created_at = meta.get("created_at", "1970-01-01T00:00:00")  # Default to old date if missing
+                    schemas_by_prefix.setdefault(prefix, []).append((s.schema_id, s.title, created_at, file_order))
+                elif is_sequential:
+                    # Track sequential schemas - they won't be renumbered but we need to account for them
+                    sequential_schemas[s.schema_id] = prefix
+                
+                file_order += 1
+        
+        # Sort by creation time (oldest first), then by file order as tiebreaker
+        for prefix in schemas_by_prefix:
+            schemas_by_prefix[prefix].sort(key=lambda x: (x[2], x[3]))
+        
+        # Create mapping: old_id -> new_id
+        # Need to account for existing sequential schemas when assigning new numbers
+        id_mapping: Dict[str, str] = {}
+        for prefix in sorted(schemas_by_prefix.keys()):
+            schemas = schemas_by_prefix[prefix]
+            
+            # Find highest existing sequential number for this prefix
+            max_seq = 0
+            for seq_id in sequential_schemas:
+                if sequential_schemas[seq_id] == prefix:
+                    try:
+                        num = int(seq_id[1:])
+                        max_seq = max(max_seq, num)
+                    except ValueError:
+                        pass
+            
+            # Assign sequential IDs starting after existing ones
+            for i, (old_id, title, _, _) in enumerate(schemas, 1):
+                new_id = f"{prefix}{max_seq + i}"
+                id_mapping[old_id] = new_id
+        
+        if not id_mapping:
+            return {}
+        
+        # Backup files before renumbering
+        backup_dir = self.schemas_md_path.parent / "_backups"
+        backup_dir.mkdir(exist_ok=True)
+        timestamp = now_iso().replace(":", "-")
+        
+        # Backup markdown
+        backup_md = backup_dir / f"Schemas_ESAT_backup_{timestamp}.md"
+        if self.schemas_md_path.exists():
+            shutil.copy2(self.schemas_md_path, backup_md)
+        
+        # Update markdown file
+        new_md = md
+        for old_id, new_id in id_mapping.items():
+            # Replace schema headers (## **M_a1b2c3d4. Title** → ## **M1. Title**)
+            pattern = rf"##\s+\*\*{re.escape(old_id)}\.\s*"
+            replacement = f"## **{new_id}. "
+            new_md = re.sub(pattern, replacement, new_md)
+            
+            # Also replace any other references to the schema ID in the markdown
+            # (e.g., in notes sections mentioning "see schema M_a1b2c3d4")
+            # Only replace if it matches the schema ID pattern (prefix + underscore + hex)
+            # This avoids replacing question IDs or other text
+            if "_" in old_id and len(old_id) > 2:
+                # Pattern: word boundary, schema ID, word boundary (or period/comma/space)
+                schema_id_pattern = rf"(?<![a-zA-Z0-9_]){re.escape(old_id)}(?![a-zA-Z0-9_])"
+                new_md = re.sub(schema_id_pattern, new_id, new_md)
+        
+        # Write updated markdown
+        temp_file = self.schemas_md_path.with_suffix('.tmp')
+        safe_write_text(temp_file, new_md)
+        shutil.move(str(temp_file), str(self.schemas_md_path))
+        
+        # Update schemas_meta.json
+        new_meta = {}
+        for old_id, new_id in id_mapping.items():
+            if old_id in self.schemas_meta:
+                meta = self.schemas_meta[old_id].copy()
+                meta["unique_id"] = old_id  # Preserve original unique ID
+                meta["renumbered_at"] = now_iso()
+                new_meta[new_id] = meta
+        
+        # Add any schemas that weren't renumbered (already sequential)
+        for schema_id, meta in self.schemas_meta.items():
+            if schema_id not in id_mapping and schema_id not in new_meta:
+                # Check if it's already sequential format
+                if re.match(r"^[MPBCR]\d+$", schema_id):
+                    new_meta[schema_id] = meta
+        
+        self.schemas_meta = new_meta
+        save_schemas_meta(self.schemas_meta)
+        
+        # Update schema_embeddings.json
+        if SCHEMA_EMBEDDINGS_JSON.exists():
+            embeddings = load_embeddings()
+            new_embeddings = {}
+            for old_id, new_id in id_mapping.items():
+                if old_id in embeddings:
+                    new_embeddings[new_id] = embeddings[old_id]
+            # Keep embeddings for schemas that weren't renumbered
+            for schema_id, embedding in embeddings.items():
+                if schema_id not in id_mapping and schema_id not in new_embeddings:
+                    if re.match(r"^[MPBCR]\d+$", schema_id):
+                        new_embeddings[schema_id] = embedding
+            save_embeddings(new_embeddings)
+        
+        # Update schema_coverage.json
+        if SCHEMA_COVERAGE_JSON.exists():
+            coverage = load_schema_coverage()
+            new_coverage = {}
+            for old_id, new_id in id_mapping.items():
+                if old_id in coverage:
+                    new_coverage[new_id] = coverage[old_id]
+            # Keep coverage for schemas that weren't renumbered
+            for schema_id, cov in coverage.items():
+                if schema_id not in id_mapping and schema_id not in new_coverage:
+                    if re.match(r"^[MPBCR]\d+$", schema_id):
+                        new_coverage[schema_id] = cov
+            save_schema_coverage(new_coverage)
+        
+        # Update DECISIONS_JSONL (optional, for history)
+        if DECISIONS_JSONL.exists():
+            decisions_lines = safe_read_text(DECISIONS_JSONL).strip().split("\n")
+            updated_lines = []
+            for line in decisions_lines:
+                if line.strip():
+                    try:
+                        decision = json.loads(line)
+                        # Update assigned_schema_id if present
+                        if "assigned_schema_id" in decision:
+                            old_id = decision["assigned_schema_id"]
+                            if old_id in id_mapping:
+                                decision["assigned_schema_id"] = id_mapping[old_id]
+                        # Update schema_id in candidate if present
+                        if "candidate" in decision and isinstance(decision["candidate"], dict):
+                            if "collision_guess" in decision["candidate"]:
+                                updated_guesses = []
+                                for guess_id in decision["candidate"]["collision_guess"]:
+                                    updated_guesses.append(id_mapping.get(guess_id, guess_id))
+                                decision["candidate"]["collision_guess"] = updated_guesses
+                        updated_lines.append(json.dumps(decision))
+                    except json.JSONDecodeError:
+                        updated_lines.append(line)  # Keep malformed lines as-is
+            
+            # Backup decisions log
+            backup_decisions = backup_dir / f"decisions_backup_{timestamp}.jsonl"
+            if DECISIONS_JSONL.exists():
+                shutil.copy2(DECISIONS_JSONL, backup_decisions)
+            
+            # Write updated decisions
+            safe_write_text(DECISIONS_JSONL, "\n".join(updated_lines) + "\n")
+        
+        # Reload everything
+        self._load_schemas()
+        self._load_embeddings()
+        self._load_meta()
+        
+        return id_mapping
     
     def _compute_missing_embeddings(self):
         """Compute embeddings for schemas that don't have them."""
@@ -1758,6 +2696,17 @@ class App(tk.Tk):
     
     def _update_enrich_controls(self):
         """Update enrich UI controls based on selected candidate."""
+        # Enrich UI has been removed; controls are left as None.
+        # Guard against calls when widgets don't exist.
+        if (
+            self.enrich_schema_combo is None
+            or self.enrich_schema_var is None
+            or self.enrich_section_var is None
+            or self.enrich_bullet_combo is None
+            or self.enrich_bullet_var is None
+        ):
+            return
+
         c = self._selected_candidate()
         if not c:
             return
@@ -1774,6 +2723,15 @@ class App(tk.Tk):
     
     def _update_enrich_bullet_combo(self):
         """Update bullet index combo based on selected schema and section."""
+        # If enrich UI is not present, do nothing.
+        if (
+            self.enrich_schema_var is None
+            or self.enrich_section_var is None
+            or self.enrich_bullet_combo is None
+            or self.enrich_bullet_var is None
+        ):
+            return
+
         schema_id = self.enrich_schema_var.get()
         section = self.enrich_section_var.get()
         
@@ -1840,10 +2798,484 @@ class App(tk.Tk):
             # Clean up stale question IDs and update progress after (re)indexing
             self.after(0, self._cleanup_stale_used_questions)
             self.after(0, self._update_paper_progress)
+            
+            if total == 0:
+                # Show warning dialog with helpful information
+                msg = f"No questions indexed!\n\n"
+                msg += f"Mode: {MODE}\n"
+                msg += f"Papers directory: {self.papers_dir}\n"
+                msg += f"Directory exists: {self.papers_dir.exists()}\n\n"
+                msg += "Check the console output for detailed debugging information.\n"
+                msg += "You may need to:\n"
+                msg += "1. Check that PDFs exist in the papers directory\n"
+                msg += "2. Try 'Force rebuild index' checkbox\n"
+                msg += "3. Check the extraction report for failed PDFs"
+                self.after(0, lambda: messagebox.showwarning("No Questions Indexed", msg))
+            
             exam_type = "TMUA" if self.index and any(q.exam == "TMUA" for q in self.index) else "ENGAA/NSAA"
             self._set_status(f"Indexed {total} question blocks ({exam_type}). Diagram-free kept: {kept}. Cache: {INDEX_JSON}")
 
         threading.Thread(target=work, daemon=True).start()
+
+    def on_view_extraction_report(self):
+        """Display extraction report in a popup window."""
+        report_path = LOG_DIR_DEFAULT / "extraction_report.json"
+        
+        if not report_path.exists():
+            messagebox.showinfo("No Report", "No extraction report found. Run 'Index PDFs' first.")
+            return
+        
+        try:
+            with open(report_path, 'r', encoding='utf-8') as f:
+                report = json.load(f)
+            
+            # Create popup window
+            win = tk.Toplevel(self)
+            win.title("PDF Extraction Report")
+            win.geometry("800x600")
+            
+            # Summary at top
+            summary_frame = ttk.Frame(win)
+            summary_frame.pack(fill="x", padx=10, pady=10)
+            
+            summary = report.get("summary", {})
+            ttk.Label(summary_frame, text=f"Mode: {report.get('mode', 'N/A')}", 
+                     font=("TkDefaultFont", 10, "bold")).pack(anchor="w")
+            ttk.Label(summary_frame, text=f"Created: {report.get('created_at', 'N/A')}").pack(anchor="w")
+            ttk.Label(summary_frame, text=f"Scanned: {summary.get('scanned', 0)} PDFs").pack(anchor="w")
+            ttk.Label(summary_frame, text=f"Success: {summary.get('success', 0)} PDFs", 
+                     foreground="green").pack(anchor="w")
+            ttk.Label(summary_frame, text=f"Failed: {summary.get('failed', 0)} PDFs", 
+                     foreground="red").pack(anchor="w")
+            
+            # Detailed list
+            ttk.Label(win, text="Per-PDF Details:").pack(anchor="w", padx=10)
+            
+            text = tk.Text(win, wrap="word")
+            text.pack(fill="both", expand=True, padx=10, pady=5)
+            
+            per_pdf = report.get("per_pdf", [])
+            for pdf_stat in per_pdf:
+                status = pdf_stat.get("status", "UNKNOWN")
+                pdf_name = Path(pdf_stat.get("pdf_path", "")).name
+                
+                if status == "SUCCESS":
+                    text.insert(tk.END, f"✓ {pdf_name}\n", "success")
+                    text.insert(tk.END, f"  Questions: {pdf_stat.get('question_count', 0)}, "
+                                       f"Chars: {pdf_stat.get('total_chars', 0)}\n\n")
+                else:
+                    text.insert(tk.END, f"✗ {pdf_name}\n", "failed")
+                    text.insert(tk.END, f"  Reason: {pdf_stat.get('failure_reason', 'Unknown')}\n\n", "failed")
+            
+            text.tag_config("success", foreground="green")
+            text.tag_config("failed", foreground="red")
+            text.config(state="disabled")
+            
+            # Close button
+            ttk.Button(win, text="Close", command=win.destroy).pack(pady=5)
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load extraction report: {e}")
+
+    def on_process_all_questions(self):
+        """
+        Fully automated processing of all questions.
+        Decision logic:
+        1. If schema has ≥5 questions → Create new schema
+        2. Else if fit_score ≤ 7.5 → Create new schema
+        3. Else → Attach to existing schema
+        
+        All decisions are executed immediately (no waiting room).
+        """
+        if not self.index:
+            messagebox.showinfo("Index first", "Click 'Index PDFs' first.")
+            return
+        
+        # Get filter settings
+        filt = self.batch_filter.get().strip().lower()
+        
+        # Select questions to process
+        pool = self.index
+        if filt:
+            pool = [q for q in pool if filt in q.pdf_path.lower()]
+        
+        # Only diagram-free
+        pool = [q for q in pool if not q.skipped_diagram]
+        
+        if len(pool) < 1:
+            messagebox.showwarning("No questions", "No diagram-free questions matched the filter.")
+            return
+        
+        # Filter out already used questions
+        unused_pool = [q for q in pool if f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "") not in self.used_question_ids]
+        
+        if len(unused_pool) < 1:
+            if messagebox.askyesno("Reset tracking?", 
+                f"All questions have been processed. Reset tracking and reprocess?"):
+                self.used_question_ids.clear()
+                self._save_used_questions()
+                unused_pool = pool
+            else:
+                messagebox.showinfo("Done", "All questions have been processed.")
+                return
+        
+        # Confirm before starting
+        if not messagebox.askyesno("Process All Questions (Fully Automated)", 
+            f"This will process {len(unused_pool)} questions with FULL AUTOMATION.\n\n"
+            f"Decision logic:\n"
+            f"- Schema has ≥{MAX_QUESTIONS_PER_SCHEMA} questions → New schema\n"
+            f"- Fit score ≤ {CONFIDENCE_THRESHOLD} → New schema\n"
+            f"- Otherwise → Attach to best matching schema\n\n"
+            f"All schemas are created/updated immediately.\n"
+            f"Using {PARALLEL_WORKERS} parallel workers.\n\n"
+            f"Continue?"):
+            return
+        
+        def process_single_question(question: QuestionItem) -> Dict[str, Any]:
+            """Process a single question and return result stats."""
+            result = {
+                "question_id": "",
+                "action": "error",
+                "schema_id": None,
+                "error": None
+            }
+            
+            try:
+                qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+                result["question_id"] = qid
+                
+                # Mark as used immediately
+                self.used_question_ids.add(qid)
+                self._save_used_questions()
+                
+                # CRITICAL: Reload schemas to see latest state (including schemas created by other threads)
+                # This ensures each question sees the full history, even schemas created in this session
+                self._load_schemas()
+                self._load_meta()
+                
+                # If no schemas exist, create first one
+                if not self.schema_summaries:
+                    schema_id = self._auto_accept_new_schema(question)
+                    if schema_id:
+                        result["action"] = "new_schema"
+                        result["schema_id"] = schema_id
+                    else:
+                        result["action"] = "error"
+                        result["error"] = "Failed to create first schema"
+                    return result
+                
+                # Extract reasoning fingerprint
+                fingerprint = extract_reasoning_fingerprint(question, self.gemini)
+                
+                # Match against all schemas
+                matches = match_question_to_schemas(
+                    question=question,
+                    existing_schemas=self.schema_summaries,
+                    schema_exemplars={s.schema_id: self._get_exemplar_questions_for_schema(s.schema_id) 
+                                    for s in self.schema_summaries},
+                    gemini=self.gemini,
+                    top_k=5
+                )
+                
+                if matches:
+                    best_schema_id, best_score, _ = matches[0]
+                    
+                    # Check question count for best matching schema
+                    question_count = self._get_question_count_for_schema(best_schema_id)
+                    
+                    # Decision logic:
+                    # 1. If schema has ≥5 questions → Create new schema
+                    # 2. Else if fit_score ≤ 7.5 → Create new schema
+                    # 3. Else → Attach to existing schema
+                    
+                    if question_count >= MAX_QUESTIONS_PER_SCHEMA:
+                        # Schema is full, create new one
+                        schema_id = self._auto_accept_new_schema(question)
+                        if schema_id:
+                            result["action"] = "new_schema"
+                            result["schema_id"] = schema_id
+                        else:
+                            result["action"] = "error"
+                            result["error"] = "Failed to create new schema (schema full)"
+                    elif best_score <= CONFIDENCE_THRESHOLD:
+                        # Low confidence, create new schema
+                        schema_id = self._auto_accept_new_schema(question)
+                        if schema_id:
+                            result["action"] = "new_schema"
+                            result["schema_id"] = schema_id
+                        else:
+                            result["action"] = "error"
+                            result["error"] = "Failed to create new schema (low confidence)"
+                    else:
+                        # High confidence, attach to existing schema
+                        self._auto_attach_question_to_schema(question, best_schema_id, best_score)
+                        # Reload schemas so subsequent questions see the update
+                        self._load_schemas()
+                        self._load_meta()
+                        result["action"] = "attached"
+                        result["schema_id"] = best_schema_id
+                else:
+                    # No matches, create new schema
+                    schema_id = self._auto_accept_new_schema(question)
+                    if schema_id:
+                        result["action"] = "new_schema"
+                        result["schema_id"] = schema_id
+                    else:
+                        result["action"] = "error"
+                        result["error"] = "Failed to create new schema (no matches)"
+                
+            except Exception as e:
+                result["action"] = "error"
+                result["error"] = str(e)
+            
+            return result
+        
+        def work():
+            self._set_status(f"Processing {len(unused_pool)} questions with {PARALLEL_WORKERS} workers...")
+            
+            stats = {
+                "total": len(unused_pool),
+                "processed": 0,
+                "attached": 0,
+                "new_schemas": 0,
+                "errors": 0
+            }
+            
+            # Process questions in parallel
+            with ThreadPoolExecutor(max_workers=PARALLEL_WORKERS) as executor:
+                # Submit all tasks
+                future_to_question = {executor.submit(process_single_question, q): q for q in unused_pool}
+                
+                # Process results as they complete
+                for future in as_completed(future_to_question):
+                    try:
+                        result = future.result()
+                        stats["processed"] += 1
+                        
+                        if result["action"] == "attached":
+                            stats["attached"] += 1
+                        elif result["action"] == "new_schema":
+                            stats["new_schemas"] += 1
+                        else:
+                            stats["errors"] += 1
+                            print(f"[ERROR] Question {result['question_id']}: {result.get('error', 'Unknown error')}")
+                        
+                        # Update status periodically
+                        if stats["processed"] % 10 == 0:
+                            self.after(0, lambda: self._set_status(
+                                f"Processed {stats['processed']}/{stats['total']} "
+                                f"(Attached: {stats['attached']}, New: {stats['new_schemas']}, Errors: {stats['errors']})"
+                            ))
+                    except Exception as e:
+                        stats["errors"] += 1
+                        stats["processed"] += 1
+                        print(f"[ERROR] Failed to process question: {e}")
+            
+            # Final reload
+            self.after(0, self._load_schemas)
+            self.after(0, self._load_embeddings)
+            self.after(0, self._load_meta)
+            
+            # Show summary
+            summary = (f"Processed {stats['processed']}/{stats['total']} questions:\n\n"
+                      f"✓ Attached to schemas: {stats['attached']}\n"
+                      f"+ New schemas created: {stats['new_schemas']}\n"
+                      f"✗ Errors: {stats['errors']}\n\n"
+                      f"All schemas have been updated immediately.")
+            
+            self.after(0, lambda: messagebox.showinfo("Processing Complete", summary))
+            self.after(0, lambda: self._set_status(
+                f"Done. {stats['attached']} attached, {stats['new_schemas']} new schemas, {stats['errors']} errors."
+            ))
+        
+        threading.Thread(target=work, daemon=True).start()
+    
+    def _create_candidate_from_question(self, question: QuestionItem, 
+                                       similar_to: Optional[str] = None,
+                                       fit_score: Optional[float] = None) -> Optional[Candidate]:
+        """Create a schema candidate from a single question."""
+        try:
+            # Generate candidate using Gemini
+            prompt = f"""Analyze this exam question and propose a schema candidate.
+
+Question:
+{question.text[:1000]}
+
+Create a schema that captures the REASONING PATTERN (not the topic).
+
+Return ONLY valid JSON:
+{{
+  "candidate_id": "C1",
+  "prefix": "M|P|B|C",
+  "title": "3-8 word title describing the pattern",
+  "core_move": "One sentence describing the key reasoning step",
+  "evidence": ["{question.exam}_{question.section}_{question.year}_Q{question.qnum}"],
+  "exemplar_justifications": {{
+    "{question.exam}_{question.section}_{question.year}_Q{question.qnum}": "Why this exemplifies the pattern"
+  }},
+  "collision_guess": [],
+  "confidence": 0.8
+}}
+"""
+            
+            data = self.gemini.generate_json(prompt)
+            # Normalise response shape: Gemini may return a dict, a list, or a wrapper with "candidates"
+            if isinstance(data, list):
+                data = data[0] if data else None
+            elif isinstance(data, dict) and "candidates" in data and isinstance(data["candidates"], list):
+                data = data["candidates"][0] if data["candidates"] else None
+
+            if data and isinstance(data, dict):
+                qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+                
+                candidate = Candidate(
+                    candidate_id=data.get("candidate_id", f"C{len(self.candidates)+1}"),
+                    title=data.get("title", "").strip(),
+                    prefix=data.get("prefix", "M").strip().upper(),
+                    core_move=data.get("core_move", "").strip(),
+                    evidence=[qid],
+                    collision_guess=data.get("collision_guess", []),
+                    confidence=float(data.get("confidence", 0.5)),
+                    exemplar_justifications={qid: data.get("exemplar_justifications", {}).get(qid, "Exemplifies pattern")}
+                )
+                
+                if similar_to:
+                    candidate.collision_guess = [similar_to]
+                
+                return candidate
+        except Exception as e:
+            print(f"[ERROR] Failed to create candidate from question: {e}")
+        
+        return None
+    
+    def _auto_attach_question_to_schema(self, question: QuestionItem, schema_id: str, fit_score: float):
+        """Auto-attach a question as exemplar to an existing schema."""
+        qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+        
+        # Add to schema metadata
+        if schema_id not in self.schemas_meta:
+            self.schemas_meta[schema_id] = {"evidence": [], "edit_count": 0}
+        
+        if "evidence" not in self.schemas_meta[schema_id]:
+            self.schemas_meta[schema_id]["evidence"] = []
+        
+        if qid not in self.schemas_meta[schema_id]["evidence"]:
+            self.schemas_meta[schema_id]["evidence"].append(qid)
+            self._save_meta()
+            
+            # Update markdown file with new exemplar question
+            justification = f"Exemplifies pattern (fit score: {fit_score:.1f})"
+            self._update_schema_exemplars_in_file(schema_id, qid, justification)
+        
+        # Log the attachment
+        append_text(DECISIONS_JSONL, json.dumps({
+            "ts": now_iso(),
+            "decision": "auto_attach",
+            "question_id": qid,
+            "schema_id": schema_id,
+            "fit_score": fit_score
+        }) + "\n")
+        
+        print(f"[AUTO-ATTACH] {qid} → {schema_id} (score: {fit_score:.1f})")
+    
+    def _auto_accept_new_schema(self, question: QuestionItem) -> Optional[str]:
+        """
+        Automatically create and accept a new schema from a question.
+        Returns the assigned schema_id if successful, None otherwise.
+        """
+        try:
+            # Create candidate from question
+            candidate = self._create_candidate_from_question(question)
+            if not candidate:
+                return None
+            
+            # Generate full schema block
+            prompt = prompt_full_schema(candidate, enforce_max4=True)
+            md_response = self.gemini.generate_text(prompt, temperature=0.4, max_tokens=2000)
+            
+            if not md_response or not md_response.strip():
+                print(f"[ERROR] Failed to generate schema for question")
+                return None
+            
+            # Validate schema
+            is_valid, errors, fixed_md = validate_schema_block(md_response, auto_fix=True)
+            if fixed_md:
+                md_response = fixed_md
+            
+            if not is_valid:
+                print(f"[ERROR] Schema validation failed: {errors}")
+                return None
+            
+            # Assign unique schema ID (no conflicts even with parallel processing)
+            # Normalize prefix to single letter (M, P, B, C, R)
+            normalized_prefix = normalize_prefix(candidate.prefix)
+            new_id = generate_unique_schema_id(normalized_prefix)
+            
+            # Clean ALL placeholders from the markdown
+            md_response = clean_schema_markdown(md_response, new_id, candidate.title)
+            
+            # Ensure separator at end
+            if not md_response.rstrip().endswith("---"):
+                md_response = md_response.rstrip() + "\n\n---\n"
+            
+            # Atomic write to file
+            temp_file = self.schemas_md_path.with_suffix('.tmp')
+            try:
+                current_content = safe_read_text(self.schemas_md_path)
+                new_content = current_content.rstrip() + "\n\n" + md_response + "\n"
+                safe_write_text(temp_file, new_content)
+                shutil.move(str(temp_file), str(self.schemas_md_path))
+            except Exception as e:
+                print(f"[ERROR] Failed to write schema to file: {e}")
+                if temp_file.exists():
+                    temp_file.unlink()
+                return None
+            
+            # Update metadata
+            if new_id not in self.schemas_meta:
+                self.schemas_meta[new_id] = {
+                    "edits_count": 0, 
+                    "locked": False, 
+                    "evidence": [],
+                    "unique_id": new_id,  # Store original unique ID
+                    "created_at": now_iso()  # Timestamp for sorting during renumbering
+                }
+            
+            # Add question to evidence
+            qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+            if "evidence" not in self.schemas_meta[new_id]:
+                self.schemas_meta[new_id]["evidence"] = []
+            if qid not in self.schemas_meta[new_id]["evidence"]:
+                self.schemas_meta[new_id]["evidence"].append(qid)
+            
+            self.schemas_meta[new_id]["has_tmua_evidence"] = has_tmua_evidence(candidate)
+            save_schemas_meta(self.schemas_meta)
+            
+            # Update coverage stats
+            update_schema_coverage(new_id, candidate, self.index)
+            
+            # Log success
+            append_text(DECISIONS_JSONL, json.dumps({
+                "ts": now_iso(),
+                "decision": "auto_accept_new",
+                "assigned_schema_id": new_id,
+                "candidate": asdict(candidate),
+                "question_id": qid,
+                "has_tmua_evidence": has_tmua_evidence(candidate),
+            }) + "\n")
+            
+            print(f"[AUTO-ACCEPT] Created new schema {new_id} from question {qid}")
+            
+            # Reload schemas so subsequent questions see the new schema
+            self._load_schemas()
+            self._load_embeddings()
+            self._load_meta()
+            
+            return new_id
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to auto-accept new schema: {e}")
+            return None
 
     # Candidate generation
     def on_generate(self):
@@ -1929,6 +3361,7 @@ class App(tk.Tk):
                         evidence=list(obj.get("evidence", [])),
                         collision_guess=list(obj.get("collision_guess", [])),
                         confidence=float(obj.get("confidence", 0.0)),
+                        exemplar_justifications=obj.get("exemplar_justifications", {}),
                     ))
                 except Exception:
                     continue
@@ -1990,8 +3423,13 @@ class App(tk.Tk):
 
         threading.Thread(target=work, daemon=True).start()
 
-    def _compute_similarity_hits(self):
-        """Compute similarity hits using embeddings + fuzzy."""
+    def _compute_similarity_hits(self, use_llm_scoring: bool = True):
+        """
+        Compute similarity hits using improved strategy:
+        1. Fast comparison against ALL schemas (embeddings + fuzzy)
+        2. Get top 5
+        3. Use LLM to score fit for top 5 (if use_llm_scoring=True)
+        """
         self.sim_hits.clear()
         
         # Compute candidate embeddings
@@ -2004,14 +3442,190 @@ class App(tk.Tk):
         
         # Compute similarities
         for c in self.candidates:
-            hits = []
+            # Step 1: Fast comparison against ALL schemas
+            fast_hits = []
             cand_emb = candidate_embeddings.get(c.candidate_id)
             for s in self.schema_summaries:
                 existing_emb = self.schema_embeddings.get(s.schema_id)
                 score = schema_similarity(c.title, c.core_move, s, cand_emb, existing_emb)
-                hits.append(SimilarityHit(schema_id=s.schema_id, score=score, title=s.title))
-            hits.sort(key=lambda x: x.score, reverse=True)
-            self.sim_hits[c.candidate_id] = hits[:5]
+                fast_hits.append((s, score))
+            
+            # Step 2: Get top 5
+            fast_hits.sort(key=lambda x: x[1], reverse=True)
+            top_5 = fast_hits[:5]
+            
+            # Step 3: Use LLM to score fit for top 5 (optional, more expensive)
+            if use_llm_scoring and self.schema_summaries:
+                detailed_hits = []
+                for schema, fast_score in top_5:
+                    # Get exemplars for this schema (from evidence in metadata)
+                    exemplar_questions = self._get_exemplar_questions_for_schema(schema.schema_id)
+                    
+                    # Create a pseudo-question from candidate for scoring
+                    pseudo_question = QuestionItem(
+                        paper_id="candidate",
+                        pdf_path="",
+                        year=None,
+                        exam=None,
+                        section=None,
+                        qnum=0,
+                        text=f"{c.title}\n\n{c.core_move}",
+                        skipped_diagram=False
+                    )
+                    
+                    # Extract reasoning fingerprint from candidate
+                    fingerprint = extract_reasoning_fingerprint(pseudo_question, self.gemini)
+                    
+                    # Use LLM to compute detailed fit score
+                    fit_score, rubric = compute_schema_fit_score(
+                        question=pseudo_question,
+                        schema=schema,
+                        question_fingerprint=fingerprint,
+                        schema_exemplars=exemplar_questions[:3],  # Use top 3 exemplars
+                        gemini=self.gemini
+                    )
+                    
+                    # Combine fast score and LLM score (weighted: 30% fast, 70% LLM)
+                    combined_score = (fast_score * 0.3) + (fit_score * 10 * 0.7)
+                    
+                    detailed_hits.append(SimilarityHit(
+                        schema_id=schema.schema_id,
+                        score=combined_score,
+                        title=f"{schema.title} [LLM:{fit_score:.1f}]"
+                    ))
+                
+                detailed_hits.sort(key=lambda x: x.score, reverse=True)
+                self.sim_hits[c.candidate_id] = detailed_hits
+            else:
+                # Fallback: just use fast scores
+                hits = [SimilarityHit(schema_id=s.schema_id, score=score, title=s.title) 
+                        for s, score in top_5]
+                self.sim_hits[c.candidate_id] = hits
+    
+    def _get_exemplar_questions_for_schema(self, schema_id: str) -> List[QuestionItem]:
+        """Get exemplar questions for a schema from the index."""
+        exemplars = []
+        
+        # Try to get evidence from schema metadata
+        schema_meta = self.schemas_meta.get(schema_id, {})
+        evidence_ids = schema_meta.get("evidence", [])
+        
+        # If no evidence in metadata, return empty
+        if not evidence_ids:
+            return exemplars
+        
+        # Find questions in index that match evidence IDs
+        for qid in evidence_ids[:8]:  # Max 8 exemplars
+            for q in self.index:
+                q_id = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
+                if q_id == qid:
+                    exemplars.append(q)
+                    break
+        
+        return exemplars
+    
+    def _get_question_count_for_schema(self, schema_id: str) -> int:
+        """Get current number of questions attached to a schema."""
+        schema_meta = self.schemas_meta.get(schema_id, {})
+        evidence_ids = schema_meta.get("evidence", [])
+        return len(evidence_ids) if evidence_ids else 0
+    
+    def _get_question_text_by_id(self, question_id: str) -> Optional[QuestionItem]:
+        """Retrieve full question text from index given question ID."""
+        for q in self.index:
+            q_id = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
+            if q_id == question_id:
+                return q
+        return None
+    
+    def _update_schema_exemplars_in_file(self, schema_id: str, question_id: str, justification: str):
+        """Update schema markdown file to add a new exemplar question."""
+        if not self.schemas_md_path.exists():
+            return
+        
+        md = safe_read_text(self.schemas_md_path)
+        lines = md.splitlines()
+        
+        # Find the schema block
+        schema_start = None
+        schema_end = None
+        exemplar_section_start = None
+        exemplar_section_end = None
+        
+        for i, line in enumerate(lines):
+            # Find schema header
+            if SCHEMA_HEADER_RE.match(line.strip()):
+                matched_id = SCHEMA_HEADER_RE.match(line.strip()).group(1)
+                if matched_id == schema_id:
+                    schema_start = i
+                elif schema_start is not None:
+                    # Found next schema, this is our end
+                    schema_end = i
+                    break
+                continue
+            
+            # Find exemplar questions section
+            if schema_start is not None and "exemplar questions" in line.lower():
+                exemplar_section_start = i
+                # Find end of exemplar section (next section or blank line before ---)
+                j = i + 1
+                while j < len(lines):
+                    if lines[j].strip().startswith("**") or lines[j].strip() == "---" or (lines[j].startswith("##") and SCHEMA_HEADER_RE.match(lines[j].strip())):
+                        exemplar_section_end = j
+                        break
+                    if not lines[j].strip().startswith("- ") and lines[j].strip():
+                        # Non-bullet line, end of exemplar section
+                        exemplar_section_end = j
+                        break
+                    j += 1
+                if exemplar_section_end is None:
+                    exemplar_section_end = j
+                continue
+            
+            # Find end of schema (separator)
+            if schema_start is not None and i > schema_start:
+                if line.strip() == "---":
+                    schema_end = i
+                    break
+        
+        if schema_start is None:
+            print(f"[WARN] Schema {schema_id} not found in file")
+            return
+        
+        if schema_end is None:
+            schema_end = len(lines)
+        
+        # If exemplar section exists, add to it; otherwise create it
+        new_exemplar_line = f"- `{question_id}`: {justification}"
+        
+        if exemplar_section_start is not None:
+            # Insert after last exemplar item (before end of section)
+            insert_pos = exemplar_section_end if exemplar_section_end else exemplar_section_start + 1
+            lines.insert(insert_pos, new_exemplar_line)
+        else:
+            # Create exemplar section before the end
+            # Find where to insert (after "Notes for generation" section)
+            insert_pos = schema_end
+            for i in range(schema_start, schema_end):
+                if "notes for generation" in lines[i].lower():
+                    # Find end of notes section
+                    j = i + 1
+                    while j < schema_end and (lines[j].strip().startswith("- ") or not lines[j].strip()):
+                        j += 1
+                    insert_pos = j
+                    break
+            
+            # Insert exemplar section
+            lines.insert(insert_pos, "**Exemplar questions:**")
+            lines.insert(insert_pos + 1, new_exemplar_line)
+            if insert_pos + 2 < len(lines) and lines[insert_pos + 2].strip() != "":
+                lines.insert(insert_pos + 2, "")  # Blank line if needed
+        
+        # Write back
+        new_md = "\n".join(lines)
+        if not new_md.endswith("\n"):
+            new_md += "\n"
+        safe_write_text(self.schemas_md_path, new_md)
     
     def _auto_ignore_high_similarity(self) -> int:
         """Auto-ignore candidates with similarity > threshold, prefix-specific.
@@ -2297,22 +3911,13 @@ class App(tk.Tk):
                             initial_content = "# Schemas\n\n"
                         self.schemas_md_path.write_text(initial_content, encoding="utf-8")
                     
-                    # Assign schema ID
-                    schemas_md = safe_read_text(self.schemas_md_path)
-                    summaries = parse_schema_summaries(schemas_md)
-                    new_id = get_next_schema_id(summaries, c.prefix)
+                    # Assign unique schema ID (no conflicts even with parallel processing)
+                    # Normalize prefix to single letter (M, P, B, C, R)
+                    normalized_prefix = normalize_prefix(c.prefix)
+                    new_id = generate_unique_schema_id(normalized_prefix)
                     
-                    # Replace {ID} placeholder
-                    preview_lines = md.splitlines()
-                    if preview_lines and preview_lines[0].startswith("## **"):
-                        if "{ID}" in preview_lines[0]:
-                            preview_lines[0] = preview_lines[0].replace("{ID}", new_id)
-                        else:
-                            preview_lines[0] = re.sub(r"^##\s+\*\*.*?\.\s*(.+?)\*\*\s*$", 
-                                                     rf"## **{new_id}. \1**", preview_lines[0])
-                    md = "\n".join(preview_lines).strip()
-                    if not md.endswith("\n"):
-                        md += "\n"
+                    # Clean ALL placeholders from the markdown
+                    md = clean_schema_markdown(md, new_id, c.title)
                     
                     # Atomic write
                     temp_file = self.schemas_md_path.with_suffix('.tmp')
@@ -2343,7 +3948,13 @@ class App(tk.Tk):
                     
                     # Update meta
                     if new_id not in self.schemas_meta:
-                        self.schemas_meta[new_id] = {"edits_count": 0, "locked": False}
+                        self.schemas_meta[new_id] = {
+                            "edits_count": 0, 
+                            "locked": False,
+                            "evidence": [],
+                            "unique_id": new_id,  # Store original unique ID
+                            "created_at": now_iso()  # Timestamp for sorting during renumbering
+                        }
                     # Track if schema has TMUA evidence
                     self.schemas_meta[new_id]["has_tmua_evidence"] = has_tmua_evidence(c)
                     save_schemas_meta(self.schemas_meta)
@@ -2464,27 +4075,13 @@ class App(tk.Tk):
             if not messagebox.askyesno("Likely merge", f"Top similarity is {top_hit.schema_id} at {top_hit.score:.0f}.\nStill append as NEW?"):
                 return
 
-        # Assign real schema ID and append
-        md = safe_read_text(self.schemas_md_path)
-        summaries = parse_schema_summaries(md)
-        new_id = get_next_schema_id(summaries, c.prefix)
+        # Assign unique schema ID (no conflicts even with parallel processing)
+        # Normalize prefix to single letter (M, P, B, C, R)
+        normalized_prefix = normalize_prefix(c.prefix)
+        new_id = generate_unique_schema_id(normalized_prefix)
 
-        # Replace {ID} placeholder if present, otherwise rewrite header line.
-        # Expect first header like: ## **{ID}. Title** or ## **M. Title** or ## **P. Title**
-        preview_lines = preview.splitlines()
-        if preview_lines:
-            if preview_lines[0].startswith("## **"):
-                # Try to replace {ID} placeholder first
-                if "{ID}" in preview_lines[0]:
-                    preview_lines[0] = preview_lines[0].replace("{ID}", new_id)
-                # Otherwise try regex replacement
-                else:
-                    preview_lines[0] = re.sub(r"^##\s+\*\*.*?\.\s*(.+?)\*\*\s*$", rf"## **{new_id}. \1**", preview_lines[0])
-            else:
-                preview_lines.insert(0, f"## **{new_id}. {c.title}**")
-        preview = "\n".join(preview_lines).strip()
-        if not preview.endswith("\n"):
-            preview += "\n"
+        # Clean ALL placeholders from the markdown
+        preview = clean_schema_markdown(preview, new_id, c.title)
 
         # Atomic write
         temp_file = self.schemas_md_path.with_suffix('.tmp')
@@ -2501,7 +4098,13 @@ class App(tk.Tk):
 
         # Update meta
         if new_id not in self.schemas_meta:
-            self.schemas_meta[new_id] = {"edits_count": 0, "locked": False}
+            self.schemas_meta[new_id] = {
+                "edits_count": 0, 
+                "locked": False,
+                "evidence": [],
+                "unique_id": new_id,  # Store original unique ID
+                "created_at": now_iso()  # Timestamp for sorting during renumbering
+            }
         # Track if schema has TMUA evidence
         self.schemas_meta[new_id]["has_tmua_evidence"] = has_tmua_evidence(c)
         save_schemas_meta(self.schemas_meta)
@@ -2580,6 +4183,7 @@ class App(tk.Tk):
                             evidence=list(obj.get("evidence", [])),
                             collision_guess=list(obj.get("collision_guess", [])),
                             confidence=float(obj.get("confidence", 0.0)),
+                            exemplar_justifications=obj.get("exemplar_justifications", {}),
                         )
                         new_candidates.append(new_c)
                     except Exception:
@@ -2906,4 +4510,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
 

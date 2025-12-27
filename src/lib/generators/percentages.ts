@@ -103,3 +103,12 @@ function generateIncreaseDecrease(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+

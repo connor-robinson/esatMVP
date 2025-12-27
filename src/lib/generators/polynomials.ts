@@ -98,3 +98,12 @@ function generateFactorCommon(): GeneratedQuestion {
   };
 }
 
+
+
+
+
+
+
+
+
+

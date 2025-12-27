@@ -260,6 +260,42 @@ export default function PapersPlanPage() {
   const [availableSections, setAvailableSections] = useState<PaperSection[]>([]);
   const [partInfoMapping, setPartInfoMapping] = useState<Record<PaperSection, { partLetter: string; partName: string }>>({} as Record<PaperSection, { partLetter: string; partName: string }>);
   
+  // Pre-fill from URL parameters (from roadmap)
+  useEffect(() => {
+    const examNameParam = searchParams.get('examName');
+    const examYearParam = searchParams.get('examYear');
+    const paperNameParam = searchParams.get('paperName');
+    const examTypeParam = searchParams.get('examType');
+    const sectionsParam = searchParams.get('sections');
+    const questionStartParam = searchParams.get('questionStart');
+    const questionEndParam = searchParams.get('questionEnd');
+    const questionFilterParam = searchParams.get('questionFilter');
+
+    if (examNameParam && examYearParam && paperNameParam && examTypeParam) {
+      // Convert exam name to paper type
+      const paperType = examNameToPaperType(examNameParam as ExamName);
+      if (paperType) {
+        setSelectedPaper(paperType);
+        setSelectedYear(parseInt(examYearParam));
+        setSelectedPaperName(paperNameParam);
+        setSelectedExamType(examTypeParam as ExamType);
+        
+        // Set sections if provided
+        if (sectionsParam) {
+          const sections = sectionsParam.split(',').filter(Boolean) as PaperSection[];
+          setSelectedSections(sections);
+        }
+
+        // Note: question filtering will be handled when starting the session
+        // Store question filter in a ref or state if needed
+        if (questionStartParam && questionEndParam) {
+          // This will be used when calculating question range
+          // We'll handle this in the start session logic
+        }
+      }
+    }
+  }, [searchParams]);
+
   // Load available sections when exam type is selected
   useEffect(() => {
     console.log('=== DEBUG SECTION LOADING TRIGGER ===');
@@ -549,8 +585,22 @@ export default function PapersPlanPage() {
   const sessionSettings = useMemo(() => {
     if (!selectedPaper || !selectedYear || !selectedPaperName || !selectedExamType) return null;
     
+    // Check for question filter from URL params (roadmap)
+    const questionStartParam = searchParams.get('questionStart');
+    const questionEndParam = searchParams.get('questionEnd');
+    const questionFilterParam = searchParams.get('questionFilter');
+    
     // Use actual question count from database, fallback to defaults
-    const totalQuestions = actualQuestionCount || 20;
+    let totalQuestions = actualQuestionCount || 20;
+    let questionStart = 1;
+    let questionEnd = totalQuestions;
+    
+    // If question filter is provided, use it
+    if (questionStartParam && questionEndParam) {
+      questionStart = parseInt(questionStartParam);
+      questionEnd = parseInt(questionEndParam);
+      totalQuestions = questionEnd - questionStart + 1;
+    }
     
     // Calculate time based on exam type
     let calculatedTime: number;
@@ -565,10 +615,11 @@ export default function PapersPlanPage() {
     return {
       totalQuestions,
       totalTime: userHasEditedTime ? (customTimeLimit || calculatedTime) : calculatedTime,
-      questionStart: 1,
-      questionEnd: totalQuestions
+      questionStart,
+      questionEnd,
+      questionFilter: questionFilterParam ? questionFilterParam.split(',').map(Number) : undefined,
     };
-  }, [selectedPaper, selectedYear, selectedPaperName, selectedExamType, selectedSections, customTimeLimit, actualQuestionCount, userHasEditedTime]);
+  }, [selectedPaper, selectedYear, selectedPaperName, selectedExamType, selectedSections, customTimeLimit, actualQuestionCount, userHasEditedTime, searchParams]);
   
   // Wizard handlers
   const handlePaperTypeSelect = (paperType: PaperType) => {

@@ -88,3 +88,12 @@ COMMENT ON TABLE user_profiles IS 'User profile information including display na
 COMMENT ON COLUMN user_profiles.display_name IS 'Public display name shown in leaderboards and social features';
 COMMENT ON COLUMN user_profiles.avatar_url IS 'URL to user avatar image';
 
+
+
+
+
+
+
+
+
+

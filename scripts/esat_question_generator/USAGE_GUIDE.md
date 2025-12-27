@@ -67,3 +67,12 @@ The app has 4 main sections:
 - Changes are saved immediately when you click "Save"
 - The app keeps math formatting (spaces around `$` and `$$` delimiters)
 
+
+
+
+
+
+
+
+
+

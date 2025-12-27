@@ -331,3 +331,12 @@ COMMENT ON TABLE drill_session_attempts IS 'Attempts within drill sessions';
 COMMENT ON TABLE topic_progress IS 'Aggregated progress statistics per topic per user';
 COMMENT ON TABLE session_presets IS 'Saved session configurations for quick access';
 
+
+
+
+
+
+
+
+
+

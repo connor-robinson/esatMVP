@@ -201,3 +201,12 @@
 - **Total unique modes**: 41 (excluding duplicates and flash_timer tool)
 - **Modes with duplicates across categories**: 7 (diff_speed, integrate_speed, friendly_frac_decimals, simplify_fraction, binomial_expand, tri_special, trig_inverse_recall, trig_recall_basic)
 - **Question generation method**: All modes use programmatic generation via switch statement in App.jsx, with random number generation, pattern selection, and mathematical computation
+
+
+
+
+
+
+
+
+

@@ -122,3 +122,12 @@ export function generateFactoriseQuadratic(
   };
 }
 
+
+
+
+
+
+
+
+
+

@@ -228,6 +228,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               console.log('Current state paperId:', state.paperId);
               console.log('Current state paperName:', state.paperName);
               
+              // IMPORTANT: getQuestions() only returns REAL exam questions from past papers
+              // It queries the 'questions' table, NOT 'ai_generated_questions'
+              // No fake or simulated questions are used here
               const { getQuestions } = await import('@/lib/supabase/questions');
               const allQuestions = await getQuestions(paperId);
               console.log('Loaded all questions count:', allQuestions.length);
@@ -270,8 +273,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 console.log('[loadQuestions] Selected sections:', state.selectedSections);
               }
 
-              // Filter questions by selected sections using systematic mapping
+              // Filter questions by question range first (if specified)
               let filteredQuestions = allQuestions;
+              if (state.questionRange.start > 1 || state.questionRange.end < allQuestions.length) {
+                console.log('Filtering questions by range:', state.questionRange);
+                filteredQuestions = allQuestions.filter(q => 
+                  q.questionNumber >= state.questionRange.start && 
+                  q.questionNumber <= state.questionRange.end
+                );
+                console.log('Filtered by range:', filteredQuestions.length);
+              }
+              
+              // Then filter by selected sections using systematic mapping
               if (state.selectedSections.length > 0) {
                 console.log('Filtering questions by sections:', state.selectedSections);
                 console.log('Section types:', state.selectedSections.map(s => typeof s));

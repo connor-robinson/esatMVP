@@ -93,3 +93,12 @@ function generateLongDivision(): GeneratedQuestion {
     difficulty: 5,
   };
 }
+
+
+
+
+
+
+
+
+

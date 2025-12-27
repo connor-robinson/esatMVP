@@ -123,3 +123,12 @@ function getDivisorExplanation(n: number): string {
   
   return `${n} has factors other than 1 and itself.`;
 }
+
+
+
+
+
+
+
+
+

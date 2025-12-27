@@ -500,7 +500,12 @@ export function SimplifiedQuestionDetailView({
                 <Badge className="bg-blue-500">{question.primary_tag}</Badge>
               </div>
             ) : (
-              <div className="text-sm text-neutral-500">No primary tag assigned</div>
+              <div className="text-sm text-neutral-500">
+                ⚠️ No primary tag assigned
+                {question.tags_labeled_by && (
+                  <span className="ml-2 text-xs">(Labeled by: {question.tags_labeled_by})</span>
+                )}
+              </div>
             )}
             {question.secondary_tags && question.secondary_tags.length > 0 ? (
               <div>

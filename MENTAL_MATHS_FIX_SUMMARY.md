@@ -98,3 +98,12 @@ Potential additions if needed:
 - Support for common mathematical constants (`π`, `e`)
 - Support for basic functions (`sin`, `cos`, `log`, etc.)
 
+
+
+
+
+
+
+
+
+

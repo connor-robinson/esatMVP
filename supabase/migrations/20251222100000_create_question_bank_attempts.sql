@@ -104,3 +104,11 @@ COMMENT ON COLUMN question_bank_attempts.question_id IS 'References ai_generated
 COMMENT ON COLUMN question_bank_attempts.user_answer IS 'The option letter the user selected (A-H)';
 COMMENT ON COLUMN question_bank_attempts.viewed_solution IS 'Whether the user viewed the solution after answering';
 
+
+
+
+
+
+
+
+

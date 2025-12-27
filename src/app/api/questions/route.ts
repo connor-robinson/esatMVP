@@ -62,6 +62,19 @@ export async function GET(request: Request) {
       status,
     });
 
+    // Debug: Log tag information for first few questions
+    if (data && data.length > 0) {
+      const sampleQuestions = data.slice(0, 3);
+      console.log("[API] Sample question tags:", sampleQuestions.map((q: any) => ({
+        id: q.id,
+        schema_id: q.schema_id,
+        primary_tag: q.primary_tag,
+        secondary_tags: q.secondary_tags,
+        paper: q.paper,
+        tags_labeled_by: q.tags_labeled_by,
+      })));
+    }
+
     return NextResponse.json({
       questions: data || [],
       pagination: {

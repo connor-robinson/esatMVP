@@ -124,3 +124,12 @@ The following environment variables are available in `.env.local` (root director
 
 5. **Schema Format**: Based on the database schema, schemas appear to use IDs like `M1`, `M2`, etc. for Mathematics and `P1`, `P2`, etc. for Physics. The `SCHEMA_PREFIXES` environment variable may contain relevant configuration.
 
+
+
+
+
+
+
+
+
+

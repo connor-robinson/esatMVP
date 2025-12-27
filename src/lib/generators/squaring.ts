@@ -81,3 +81,12 @@ function generateTwoDigit(): GeneratedQuestion {
     difficulty: 3,
   };
 }
+
+
+
+
+
+
+
+
+

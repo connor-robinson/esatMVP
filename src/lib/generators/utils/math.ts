@@ -172,3 +172,12 @@ export function nCk(n: number, k: number): number {
   return Math.round(result);
 }
 
+
+
+
+
+
+
+
+
+

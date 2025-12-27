@@ -18,6 +18,7 @@ const skillsNavItems = [
 ];
 
 const papersNavItems = [
+  { href: "/papers/roadmap", label: "Roadmap" },
   { href: "/papers/plan", label: "Plan" },
   { href: "/papers/drill", label: "Drill" },
   { href: "/papers/analytics", label: "Analytics" },
@@ -43,6 +44,7 @@ export function Navbar() {
       "/",
       "/skills/drill",
       "/skills/analytics",
+      "/papers/roadmap",
       "/papers/plan",
       "/papers/drill",
       "/papers/analytics",

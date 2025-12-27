@@ -139,3 +139,12 @@ function generateFractionalExponents(): GeneratedQuestion {
     checker,
   };
 }
+
+
+
+
+
+
+
+
+

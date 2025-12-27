@@ -36,3 +36,12 @@ export function generateCommonMultiples(
     difficulty: level,
   };
 }
+
+
+
+
+
+
+
+
+

@@ -21,10 +21,18 @@ export function SolutionView({
   isCorrect,
   autoShow = false,
 }: SolutionViewProps) {
-  const [isExpanded, setIsExpanded] = useState(autoShow && !isCorrect);
+  // Auto-expand for wrong answers, collapsed for correct (but can be expanded)
+  const [isExpanded, setIsExpanded] = useState(autoShow ? !isCorrect : false);
 
+  // Always show the solution view if there's any content
   if (!solution_reasoning && !solution_key_insight) {
-    return null;
+    return (
+      <Card className="bg-white/5 p-6">
+        <p className="text-sm text-white/60 text-center">
+          No solution available for this question.
+        </p>
+      </Card>
+    );
   }
 
   return (

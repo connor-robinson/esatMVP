@@ -103,3 +103,12 @@ function generateThreeDigit(): GeneratedQuestion {
     difficulty: 5,
   };
 }
+
+
+
+
+
+
+
+
+

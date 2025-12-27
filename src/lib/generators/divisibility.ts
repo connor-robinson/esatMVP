@@ -270,3 +270,12 @@ function generateRule11(): GeneratedQuestion {
     explanation: explainDivisibility(N, d),
   };
 }
+
+
+
+
+
+
+
+
+

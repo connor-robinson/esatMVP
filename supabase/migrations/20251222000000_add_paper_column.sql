@@ -15,3 +15,12 @@ CREATE INDEX idx_ai_questions_paper ON ai_generated_questions(paper);
 COMMENT ON COLUMN ai_generated_questions.paper IS 
   'For mathematics questions only: indicates whether question belongs to Math 1 or Math 2 paper. NULL for non-math questions.';
 
+
+
+
+
+
+
+
+
+

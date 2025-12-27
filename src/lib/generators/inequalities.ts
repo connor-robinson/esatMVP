@@ -42,3 +42,12 @@ export function generateInequalities(
   };
 }
 
+
+
+
+
+
+
+
+
+

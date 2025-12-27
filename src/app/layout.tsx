@@ -60,6 +60,9 @@ export default async function RootLayout({
         />
 
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"

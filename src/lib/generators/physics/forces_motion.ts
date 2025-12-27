@@ -143,3 +143,12 @@ function generateEnergy(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+

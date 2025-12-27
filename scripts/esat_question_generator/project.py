@@ -286,8 +286,8 @@ def get_subject_prompts(prompts: 'Prompts', schema_id: str) -> Dict[str, str]:
 
 # ---------- Schema parsing ----------
 
-# Updated regex to accept both numbered (M1, P3, B1, C1) and unnumbered (M., P., B., C.) formats
-SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P|B|C)\d+)\.?\s+(.+?)\*\*\s*$", re.MULTILINE)
+# Updated regex to accept numbered (M1, P3), unique (M_a1b2c3d4), and unnumbered (M., P.) formats
+SCHEMA_HEADER_RE = re.compile(r"^##\s+\*\*((?:M|P|B|C)(?:\d+|_[a-f0-9]{8}))\.?\s+(.+?)\*\*\s*$", re.MULTILINE)
 
 def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P")) -> Dict[str, Dict[str, str]]:
     """
@@ -325,6 +325,9 @@ def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P
             unnumbered_counter[prefix][sanitized_title] += 1
             counter = unnumbered_counter[prefix][sanitized_title]
             schema_id = f"{prefix}_{sanitized_title}" if counter == 1 else f"{prefix}_{sanitized_title}_{counter}"
+        elif '_' in schema_prefix_and_num:
+            # Unique ID format (M_a1b2c3d4) - use as-is
+            schema_id = schema_prefix_and_num
         else:
             # Numbered format (M1, P3) - use as-is
             schema_id = schema_prefix_and_num
@@ -747,10 +750,45 @@ Analyze the question and assign appropriate curriculum tags."""
             raise ValueError(f"Math classifier missing 'paper' field")
         if "primary_tag" not in obj:
             raise ValueError(f"Classifier missing 'primary_tag' field")
+        
+        # CRITICAL: Validate that Math classifier didn't assign Chemistry/Biology/Physics tags
+        primary_tag = obj.get("primary_tag", "")
+        if primary_tag and not (primary_tag.startswith("M1-") or primary_tag.startswith("M2-")):
+            # Check if it's a chemistry/biology/physics tag
+            if primary_tag.startswith("chemistry-") or primary_tag.startswith("biology-") or primary_tag.startswith("P-"):
+                raise ValueError(f"Math schema {schema_id} classified with wrong subject tag: {primary_tag}. "
+                               f"This indicates the question is actually {primary_tag.split('-')[0]}, not mathematics. "
+                               f"Use a {primary_tag.split('-')[0].upper()[0]} schema instead.")
     else:
         # P/B/C only need primary_tag
         if "primary_tag" not in obj:
             raise ValueError(f"Classifier missing 'primary_tag' field")
+        
+        # CRITICAL: Validate that non-Math classifier assigned correct subject tag
+        primary_tag = obj.get("primary_tag", "")
+        expected_prefix = {
+            'P': 'P-',
+            'B': 'biology-',
+            'C': 'chemistry-'
+        }.get(prefix, '')
+        
+        if primary_tag and expected_prefix:
+            if not primary_tag.startswith(expected_prefix):
+                # Check if it's a Math tag (wrong subject)
+                if primary_tag.startswith("M1-") or primary_tag.startswith("M2-"):
+                    raise ValueError(f"{prefix} schema {schema_id} classified with Math tag: {primary_tag}. "
+                                   f"This indicates the question is actually mathematics, not {get_subject_from_schema(schema_id)}. "
+                                   f"Use an M schema instead.")
+                # Check if it's a different non-Math subject
+                elif primary_tag.startswith("P-") and prefix != 'P':
+                    raise ValueError(f"{prefix} schema {schema_id} classified with Physics tag: {primary_tag}. "
+                                   f"Use a P schema instead.")
+                elif primary_tag.startswith("chemistry-") and prefix != 'C':
+                    raise ValueError(f"{prefix} schema {schema_id} classified with Chemistry tag: {primary_tag}. "
+                                   f"Use a C schema instead.")
+                elif primary_tag.startswith("biology-") and prefix != 'B':
+                    raise ValueError(f"{prefix} schema {schema_id} classified with Biology tag: {primary_tag}. "
+                                   f"Use a B schema instead.")
     
     obj["_raw_text"] = txt
     return obj
@@ -891,7 +929,8 @@ def build_bank_item(idea_plan: Dict[str, Any], question_obj: Dict[str, Any], ver
 
 def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig, 
              callbacks: Optional[Dict[str, Callable]] = None,
-             forced_schema_id: Optional[str] = None) -> Dict[str, Any]:
+             forced_schema_id: Optional[str] = None,
+             curriculum_parser=None) -> Dict[str, Any]:
     if callbacks is None:
         callbacks = {}
     if cfg.seed is not None:
@@ -905,9 +944,8 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     schemas_md = read_text(os.path.join(base_dir, "Schemas.md"))
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
 
-    # Load curriculum parser if tag labeling is enabled
-    curriculum_parser = None
-    if cfg.enable_tag_labeling:
+    # Load curriculum parser if tag labeling is enabled and not already provided
+    if curriculum_parser is None and cfg.enable_tag_labeling:
         try:
             from curriculum_parser import CurriculumParser
             curriculum_file = cfg.curriculum_file_path
@@ -1236,8 +1274,29 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     
                     tag_result = tag_labeler_call(llm, prompts, models, q_pkg, schema_id, curriculum_parser)
                     
-                    # Extract tags from result
+                    # CRITICAL: Validate schema_id matches the classified subject
+                    schema_prefix = schema_id[0].upper()
                     primary_tag = tag_result.get("primary_tag", "")
+                    
+                    # Check if classifier assigned a tag that doesn't match the schema prefix
+                    if primary_tag:
+                        # Validate that Chemistry schemas get chemistry- tags, not Math tags
+                        if schema_prefix == 'C':
+                            if primary_tag.startswith("M1-") or primary_tag.startswith("M2-"):
+                                print(f"⚠️  ERROR: Chemistry schema {schema_id} was classified as Math: {primary_tag}")
+                                print(f"   This question should use an M schema, not a C schema.")
+                                raise ValueError(f"Schema mismatch: Chemistry schema {schema_id} got Math tag {primary_tag}. "
+                                               f"Question is actually mathematics - use an M schema instead.")
+                            elif not primary_tag.startswith("chemistry-"):
+                                print(f"⚠️  WARNING: Chemistry schema {schema_id} got unexpected tag: {primary_tag}")
+                        elif schema_prefix == 'M':
+                            # Math schemas should get M1- or M2- tags, not chemistry- tags
+                            if primary_tag.startswith("chemistry-"):
+                                print(f"⚠️  ERROR: Math schema {schema_id} was classified as Chemistry: {primary_tag}")
+                                print(f"   This question should use a C schema, not an M schema.")
+                                raise ValueError(f"Schema mismatch: Math schema {schema_id} got Chemistry tag {primary_tag}. "
+                                               f"Question is actually chemistry - use a C schema instead.")
+                    
                     # Normalize to prefixed format if needed (future-proofing)
                     if primary_tag and curriculum_parser:
                         normalized_primary = curriculum_parser.normalize_topic_code(primary_tag)

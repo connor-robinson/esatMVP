@@ -130,3 +130,12 @@ The metadata would show:
 - Paper type labels are automatically added to the "Notes for generation" section
 - You can filter or search for TMUA schemas using any of the methods above
 - To switch back to ENGAA/NSAA, you'll need to modify the filtering code
+
+
+
+
+
+
+
+
+

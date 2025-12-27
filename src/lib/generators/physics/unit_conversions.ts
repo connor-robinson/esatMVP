@@ -104,3 +104,12 @@ function generatePhysics(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+

@@ -93,3 +93,12 @@ function generateMultiplication(): GeneratedQuestion {
     difficulty: 3,
   };
 }
+
+
+
+
+
+
+
+
+

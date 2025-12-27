@@ -263,3 +263,12 @@ For issues or questions:
 3. Verify Docker Desktop is running
 4. Ensure all migrations applied successfully
 
+
+
+
+
+
+
+
+
+

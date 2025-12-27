@@ -127,12 +127,24 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
   }
 }
 
-// Get all questions for a paper
+/**
+ * Get all questions for a paper
+ * 
+ * IMPORTANT: This function ONLY returns REAL exam questions from past papers.
+ * - Questions come from the 'questions' table (uploaded from PDF past papers)
+ * - Does NOT include AI-generated questions (those are in 'ai_generated_questions' table)
+ * - Does NOT include fake/simulated questions (those are only documentation examples)
+ * 
+ * @param paperId - The ID of the paper to get questions for
+ * @returns Array of real exam questions from past papers
+ */
 export async function getQuestions(paperId: number) {
   try {
     console.log('=== DEBUG getQuestions ===');
     console.log('paperId:', paperId);
     
+    // CRITICAL: Only query 'questions' table - these are real past paper questions
+    // Do NOT query 'ai_generated_questions' - those are simulated/AI-generated
     const { data, error } = await supabase
       .from('questions')
       .select('*')

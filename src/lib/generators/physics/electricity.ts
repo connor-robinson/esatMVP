@@ -164,3 +164,12 @@ function generateElectricFields(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+

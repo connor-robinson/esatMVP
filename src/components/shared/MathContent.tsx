@@ -29,13 +29,14 @@ export function MathContent({ content, className }: MathContentProps) {
       setRenderedHtml(html);
     } catch (error) {
       console.error("[MathContent] Error rendering math:", error);
-      // Fallback: escape HTML and show raw content
+      // Fallback: escape HTML and show raw content, preserving newlines
       const escaped = content
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+        .replace(/'/g, "&#39;")
+        .replace(/\n/g, "<br>");
       setRenderedHtml(escaped);
     }
   }, [content]);
@@ -48,6 +49,7 @@ export function MathContent({ content, className }: MathContentProps) {
     <div
       ref={containerRef}
       className={cn("math-content", className)}
+      style={{ whiteSpace: "pre-wrap" }}
       dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
   );

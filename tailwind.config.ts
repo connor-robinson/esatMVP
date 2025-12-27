@@ -58,6 +58,7 @@ const config: Config = {
         sans: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
         heading: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Consolas", "monospace"],
+        serif: ["Garamond", "EB Garamond", "Georgia", "serif"],
       },
       fontSize: {
         xs: ["0.71rem", { lineHeight: "1.4" }],

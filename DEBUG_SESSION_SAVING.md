@@ -223,3 +223,12 @@ Based on what you find, let me know:
 4. Do the sessions have ended_at filled in?
 5. Do topic_progress and user_daily_metrics have any rows?
 
+
+
+
+
+
+
+
+
+

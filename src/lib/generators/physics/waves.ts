@@ -197,3 +197,12 @@ function generateFrequencyPeriod(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+

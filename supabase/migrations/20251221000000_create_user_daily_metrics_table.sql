@@ -71,3 +71,12 @@ COMMENT ON COLUMN user_daily_metrics.correct_answers IS 'Total correct answers o
 COMMENT ON COLUMN user_daily_metrics.total_time_ms IS 'Total time spent on questions in milliseconds';
 COMMENT ON COLUMN user_daily_metrics.sessions_count IS 'Number of sessions completed on this date';
 
+
+
+
+
+
+
+
+
+

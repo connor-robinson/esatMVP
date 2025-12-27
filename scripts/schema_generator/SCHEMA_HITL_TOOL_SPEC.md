@@ -294,3 +294,12 @@ Schemas in `Schemas.md` follow this format:
 - **Similarity**: RapidFuzz (current), embeddings (planned)
 - **Environment**: Python 3.12, `python-dotenv` for `.env.local`
 
+
+
+
+
+
+
+
+
+

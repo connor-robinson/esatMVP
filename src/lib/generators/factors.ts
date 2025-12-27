@@ -166,3 +166,12 @@ function generateGCFLCM(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
+
+
+
+
