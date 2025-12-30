@@ -881,6 +881,168 @@ def is_fixable(severity: str) -> bool:
 def is_structural(severity: str) -> bool:
     return severity == "structural_flaw"
 
+
+# ---------- KaTeX Validation and Fixing ----------
+
+def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tuple[bool, List[Dict[str, Any]]]:
+    """
+    Validate KaTeX formatting in all math fields of a question object.
+    
+    Args:
+        question_obj: Question package dictionary
+        schema_id: Schema ID to determine if chemistry extension is needed
+        
+    Returns:
+        Tuple of (is_valid, list_of_errors) where each error is a dict with:
+        - field: field name (e.g., "question.stem", "solution.reasoning")
+        - errors: list of error strings
+    """
+    try:
+        from katex_validator import validate_katex_formatting
+    except ImportError:
+        # KaTeX validator not available, skip validation
+        return True, []
+    
+    all_errors = []
+    
+    # Determine if chemistry extension is needed
+    is_chemistry = schema_id.startswith("C") or schema_id.startswith("B")
+    
+    # Validate question stem
+    question = question_obj.get("question", {})
+    if isinstance(question, dict):
+        stem = question.get("stem", "")
+        if stem:
+            is_valid, errors = validate_katex_formatting(stem, skip_render_test=False)
+            if not is_valid:
+                all_errors.append({
+                    "field": "question.stem",
+                    "errors": errors
+                })
+        
+        # Validate options
+        options = question.get("options", {})
+        if isinstance(options, dict):
+            for opt_key, opt_text in options.items():
+                if opt_text:
+                    is_valid, errors = validate_katex_formatting(str(opt_text), skip_render_test=False)
+                    if not is_valid:
+                        all_errors.append({
+                            "field": f"question.options.{opt_key}",
+                            "errors": errors
+                        })
+    
+    # Validate solution
+    solution = question_obj.get("solution", {})
+    if isinstance(solution, dict):
+        reasoning = solution.get("reasoning", "")
+        if reasoning:
+            is_valid, errors = validate_katex_formatting(reasoning, skip_render_test=False)
+            if not is_valid:
+                all_errors.append({
+                    "field": "solution.reasoning",
+                    "errors": errors
+                })
+        
+        key_insight = solution.get("key_insight", "")
+        if key_insight:
+            is_valid, errors = validate_katex_formatting(key_insight, skip_render_test=False)
+            if not is_valid:
+                all_errors.append({
+                    "field": "solution.key_insight",
+                    "errors": errors
+                })
+    
+    # Validate distractor_map
+    distractor_map = question_obj.get("distractor_map", {})
+    if isinstance(distractor_map, dict):
+        for opt_key, distractor_text in distractor_map.items():
+            if distractor_text:
+                is_valid, errors = validate_katex_formatting(str(distractor_text), skip_render_test=False)
+                if not is_valid:
+                    all_errors.append({
+                        "field": f"distractor_map.{opt_key}",
+                        "errors": errors
+                    })
+    
+    return len(all_errors) == 0, all_errors
+
+
+def fix_katex_issues(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
+                    question_obj: Dict[str, Any], katex_errors: List[Dict[str, Any]],
+                    schema_id: str, attempt: int, base_dir: str) -> Dict[str, Any]:
+    """
+    Fix KaTeX formatting issues in a question object by prompting the LLM.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        question_obj: Original question object with KaTeX errors
+        katex_errors: List of error dicts from validate_question_katex
+        schema_id: Schema ID for subject-specific handling
+        attempt: Current attempt number (for logging)
+        base_dir: Base directory for loading prompts
+        
+    Returns:
+        Fixed question object
+    """
+    # Load KaTeX fixer prompt
+    prompt_dir = os.path.join(base_dir, "by_subject_prompts")
+    katex_fixer_prompt = read_text(os.path.join(prompt_dir, "KaTeX_Fixer.md"))
+    
+    # Format error report
+    error_report = "KaTeX Validation Errors:\n"
+    for error_info in katex_errors:
+        field = error_info["field"]
+        errors = error_info["errors"]
+        error_report += f"\nField: {field}\n"
+        for err in errors:
+            error_report += f"  - {err}\n"
+    
+    # Build user prompt
+    user_prompt = (
+        "Original question package (YAML):\n"
+        + yaml.safe_dump(question_obj, sort_keys=False)
+        + "\n\n"
+        + error_report
+        + "\n\n"
+        + "Please fix ONLY the KaTeX formatting errors listed above. "
+        + "Do NOT change any mathematical content, logic, or structure. "
+        + "Return the complete fixed question package in YAML format."
+    )
+    
+    # Call LLM with lower temperature for precision
+    txt = llm.generate(
+        model=models.implementer,
+        system_prompt=katex_fixer_prompt,
+        user_prompt=user_prompt,
+        temperature=0.3  # Lower temperature for precise formatting fixes
+    )
+    
+    try:
+        fixed_obj = safe_yaml_load(txt)
+    except Exception as e:
+        raise ValueError(f"KaTeX fixer output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+    
+    # Normalize output (same as implementer)
+    fixed_obj = normalize_implementer_output(fixed_obj)
+    
+    # Validate structure
+    if not isinstance(fixed_obj, dict):
+        raise ValueError(f"KaTeX fixer output is not a dictionary. Got type: {type(fixed_obj)}")
+    
+    if "question" not in fixed_obj:
+        raise ValueError(f"KaTeX fixer output missing 'question' field")
+    
+    if "solution" not in fixed_obj:
+        raise ValueError(f"KaTeX fixer output missing 'solution' field")
+    
+    fixed_obj["_raw_text"] = txt
+    fixed_obj["_katex_fix_attempt"] = attempt
+    
+    return fixed_obj
+
 def normalize_options(question_obj: Dict[str, Any]) -> Dict[str, Any]:
     """
     Ensures options dict only contains non-empty A-H keys.
@@ -1265,7 +1427,83 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     json.dump(stats, f, ensure_ascii=False, indent=2)
                 return {"run_dir": run_dir, "status": "rejected_style"}
 
-            # PASS both gates -> Tag labeling (optional, non-blocking)
+            # PASS both gates -> KaTeX Validation (with retry logic)
+            katex_validation_passed = False
+            katex_attempt = 0
+            max_katex_attempts = 3
+            
+            while not katex_validation_passed and katex_attempt < max_katex_attempts:
+                if callbacks and "on_stage_start" in callbacks:
+                    callbacks["on_stage_start"]("KaTeX Validator", f"Validating KaTeX formatting (Attempt {katex_attempt + 1}/{max_katex_attempts})")
+                
+                is_valid, katex_errors = validate_question_katex(q_pkg, schema_id)
+                
+                if is_valid:
+                    katex_validation_passed = True
+                    if callbacks and "on_stage_complete" in callbacks:
+                        callbacks["on_stage_complete"]("KaTeX Validator", "KaTeX validation passed")
+                else:
+                    katex_attempt += 1
+                    if katex_attempt < max_katex_attempts:
+                        # Try to fix KaTeX issues
+                        if callbacks and "on_stage_progress" in callbacks:
+                            error_summary = f"{len(katex_errors)} field(s) with errors"
+                            callbacks["on_stage_progress"]("KaTeX Validator", f"Fixing KaTeX errors: {error_summary}")
+                        
+                        try:
+                            q_pkg = fix_katex_issues(llm, prompts, models, q_pkg, katex_errors, schema_id, katex_attempt, base_dir)
+                            if callbacks and "on_stage_progress" in callbacks:
+                                callbacks["on_stage_progress"]("KaTeX Validator", "Retrying validation after fix")
+                        except Exception as e:
+                            # Fix attempt failed, log and continue to next attempt or reject
+                            error_str = str(e)
+                            dump_jsonl(paths["logs"], {
+                                "stage": "katex_fixer",
+                                "schema_id": schema_id,
+                                "difficulty": difficulty,
+                                "attempt": katex_attempt,
+                                "error": error_str,
+                                "katex_errors": katex_errors
+                            })
+                            if callbacks and "on_stage_error" in callbacks:
+                                callbacks["on_stage_error"]("KaTeX Fixer", error_str)
+                    else:
+                        # Max attempts reached, reject question
+                        if callbacks and "on_stage_error" in callbacks:
+                            error_summary = f"KaTeX validation failed after {max_katex_attempts} attempts"
+                            callbacks["on_stage_error"]("KaTeX Validator", error_summary)
+                        
+                        rejected_item = {
+                            "schema_id": schema_id,
+                            "difficulty": difficulty,
+                            "attempt": attempt + 1,
+                            "stage": "katex_validation",
+                            "katex_errors": katex_errors,
+                            "verifier_report": verifier_report,
+                            "style_report": style_report,
+                            "idea_plan": idea_plan,
+                            "question_package": q_pkg,
+                            "created_at": datetime.datetime.now().isoformat(),
+                            "run_id": run_id,
+                        }
+                        dump_jsonl(paths["rejected"], rejected_item)
+                        # Backup rejected question
+                        try:
+                            from backup_manager import backup_question_from_pipeline
+                            backup_question_from_pipeline(rejected_item, base_dir, status="rejected")
+                        except (ImportError, Exception):
+                            pass
+                        stats["rejected"] += 1
+                        stats["by_schema"][schema_id]["rejected"] += 1
+                        with open(paths["stats"], "w", encoding="utf-8") as f:
+                            json.dump(stats, f, ensure_ascii=False, indent=2)
+                        return {"run_dir": run_dir, "status": "rejected_katex_validation"}
+            
+            if not katex_validation_passed:
+                # Should not reach here, but safety check
+                return {"run_dir": run_dir, "status": "rejected_katex_validation"}
+            
+            # PASS KaTeX validation -> Tag labeling (optional, non-blocking)
             tags = None
             if cfg.enable_tag_labeling and curriculum_parser:
                 try:

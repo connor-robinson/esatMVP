@@ -60,9 +60,9 @@ export function SolutionModal({
       />
 
       {/* Modal Content */}
-      <div className="relative bg-neutral-900 rounded-organic-lg w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10">
+      <div className="relative bg-neutral-900 rounded-organic-lg w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/[0.02]">
+        <div className="flex items-center justify-between p-6 bg-white/[0.02]">
           <div className="flex items-center gap-3">
             <div className={cn(
               "w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm",
@@ -87,15 +87,15 @@ export function SolutionModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           
           {/* Correct Answer Display */}
-          <div className="p-4 rounded-organic-md bg-primary/5 border border-primary/20">
+          <div className="p-4 rounded-organic-md bg-primary/10">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary text-neutral-900 flex items-center justify-center font-bold text-sm">
                 {correct_option}
               </div>
-              <div className="flex-1">
+              <div className="flex-1" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '1.75rem' }}>
                 <MathContent
                   content={options[correct_option]}
-                  className="text-base text-white/90"
+                  className="text-white/90"
                 />
               </div>
             </div>
@@ -116,10 +116,10 @@ export function SolutionModal({
                   </button>
                 )}
               </div>
-              <div className="p-5 rounded-organic-md bg-white/5 border border-white/10">
+              <div className="p-6 rounded-organic-md bg-white/5" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '1.75rem' }}>
                 <MathContent
                   content={solution_key_insight}
-                  className="text-base text-white/85 leading-relaxed"
+                  className="text-white/85"
                 />
               </div>
             </div>
@@ -136,10 +136,10 @@ export function SolutionModal({
                     <div
                       key={letter}
                       className={cn(
-                        "p-4 rounded-organic-md border transition-colors relative group",
+                        "p-4 rounded-organic-md transition-colors relative group",
                         letter === selectedAnswer 
-                          ? "bg-error/[0.03] border-error/30" 
-                          : "bg-white/[0.02] border-white/5"
+                          ? "bg-error/10" 
+                          : "bg-white/5"
                       )}
                     >
                       {onEditDistractor && (
@@ -153,19 +153,18 @@ export function SolutionModal({
                       )}
                       <div className="flex items-start gap-4">
                         <div className={cn(
-                          "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm border",
+                          "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm",
                           letter === selectedAnswer
-                            ? "bg-error/20 text-error border-error/30"
-                            : "bg-white/5 text-white/40 border-white/10"
+                            ? "bg-error/20 text-error"
+                            : "bg-white/10 text-white/40"
                         )}>
                           {letter}
                         </div>
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
+                        <div className="flex-1 space-y-3" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                          <div className="flex items-center gap-2" style={{ fontSize: '1.125rem', lineHeight: '1.75rem' }}>
                             <MathContent
                               content={options[letter]}
                               className={cn(
-                                "text-sm",
                                 letter === selectedAnswer ? "text-white/80" : "text-white/50"
                               )}
                             />
@@ -176,10 +175,10 @@ export function SolutionModal({
                             )}
                           </div>
                           {distractor_map[letter] && (
-                            <div className="pl-3 border-l-2 border-white/10">
+                            <div className="pl-3" style={{ fontSize: '1.125rem', lineHeight: '1.75rem' }}>
                               <MathContent
                                 content={distractor_map[letter]}
-                                className="text-sm text-white/70 leading-relaxed"
+                                className="text-white/70"
                               />
                             </div>
                           )}
@@ -206,10 +205,10 @@ export function SolutionModal({
                   </button>
                 )}
               </div>
-              <div className="p-5 rounded-organic-md bg-white/[0.02] border border-white/10">
+              <div className="p-6 rounded-organic-md bg-white/5" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '1.75rem' }}>
                 <MathContent
                   content={solution_reasoning}
-                  className="text-base text-white/80 leading-relaxed"
+                  className="text-white/80"
                 />
               </div>
             </div>
@@ -217,7 +216,7 @@ export function SolutionModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/10 bg-white/[0.02] flex justify-end">
+        <div className="p-4 bg-white/[0.02] flex justify-end">
           <button
             onClick={onClose}
             className="px-6 py-2 bg-primary text-neutral-900 rounded-lg font-semibold hover:bg-primary-hover transition-all text-sm"

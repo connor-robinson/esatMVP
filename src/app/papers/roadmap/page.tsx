@@ -17,13 +17,14 @@ import {
   getStageCompletionCount,
   getStageCompletion,
 } from "@/lib/papers/roadmapCompletion";
-import { HorizontalTimeline } from "@/components/papers/roadmap/HorizontalTimeline";
-import { StageDetailsPanel } from "@/components/papers/roadmap/StageDetailsPanel";
+import { RoadmapList } from "@/components/papers/roadmap/RoadmapList";
+import { StageDetailsModal } from "@/components/papers/roadmap/StageDetailsModal";
 import { getSectionForRoadmapPart } from "@/lib/papers/roadmapConfig";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { getPaper, getQuestions } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { PaperSection } from "@/types/papers";
+import type { RoadmapPart } from "@/lib/papers/roadmapConfig";
 
 export default function PapersRoadmapPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function PapersRoadmapPage() {
   >(new Map());
   const [loading, setLoading] = useState(true);
   const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(null);
-  const [selectedStageIndex, setSelectedStageIndex] = useState<number | null>(null);
+  const [selectedStageForModal, setSelectedStageForModal] = useState<RoadmapStage | null>(null);
 
   // Load completion data
   useEffect(() => {
@@ -104,9 +105,7 @@ export default function PapersRoadmapPage() {
         
         // Default to first stage if nothing found
         const finalCurrentIndex = currentIndex ?? 0;
-        // Batch state updates to avoid multiple renders
         setCurrentStageIndex(finalCurrentIndex);
-        setSelectedStageIndex(finalCurrentIndex); // Default selected to current stage
       } catch (error) {
         console.error("[roadmap] Error loading completion data:", error);
       } finally {
@@ -117,18 +116,24 @@ export default function PapersRoadmapPage() {
     loadCompletionData();
   }, [session?.user?.id, stages]);
 
-  // Handle node click
-  const handleNodeClick = useCallback((index: number) => {
-    setSelectedStageIndex(index);
+
+  // Handle node click - open modal
+  const handleNodeClick = useCallback((stage: RoadmapStage) => {
+    setSelectedStageForModal(stage);
   }, []);
 
-  // Handle direct stage start - start practice with all parts in stage
+  // Handle stage start with selected parts
   const handleStartStage = useCallback(
-    async (stage: RoadmapStage) => {
+    async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
       try {
-        // Group parts by paper (paperName + examType combination)
-        const partsByPaper = new Map<string, typeof stage.parts>();
-        stage.parts.forEach(part => {
+        if (selectedParts.length === 0) {
+          console.error("[roadmap] No parts selected");
+          return;
+        }
+
+        // Group selected parts by paper (paperName + examType combination)
+        const partsByPaper = new Map<string, typeof selectedParts>();
+        selectedParts.forEach(part => {
           const paperKey = `${part.paperName}-${part.examType}`;
           if (!partsByPaper.has(paperKey)) {
             partsByPaper.set(paperKey, []);
@@ -147,7 +152,7 @@ export default function PapersRoadmapPage() {
           }
         }
         
-        const primaryParts = partsByPaper.get(primaryPaperKey) || stage.parts;
+        const primaryParts = partsByPaper.get(primaryPaperKey) || selectedParts;
         const firstPart = primaryParts[0];
         
         const paper = await getPaper(stage.examName, stage.year, firstPart.paperName, firstPart.examType);
@@ -157,9 +162,9 @@ export default function PapersRoadmapPage() {
           return;
         }
 
-        // Collect all sections from all parts (even if from different papers)
+        // Collect sections from selected parts only
         const allSections = new Set<PaperSection>();
-        stage.parts.forEach(part => {
+        primaryParts.forEach(part => {
           const section = getSectionForRoadmapPart(part, stage.examName);
           allSections.add(section);
         });
@@ -167,8 +172,7 @@ export default function PapersRoadmapPage() {
         // Get all questions for the primary paper
         const allQuestions = await getQuestions(paper.id);
         
-        // Filter questions to match parts from the primary paper only
-        // (Since we can only use one paper per session)
+        // Filter questions to match selected parts from the primary paper only
         const matchingQuestions = allQuestions.filter(q => {
           return primaryParts.some(part => {
             // Check if question matches this part
@@ -229,6 +233,42 @@ export default function PapersRoadmapPage() {
     [router, startSession, loadQuestions]
   );
 
+  // Refresh completion data
+  const refreshCompletionData = useCallback(async () => {
+    try {
+      const completionMap = new Map<
+        string,
+        { completed: number; total: number; parts: Map<string, boolean> }
+      >();
+
+      if (session?.user?.id) {
+        for (const stage of stages) {
+          const count = await getStageCompletionCount(session.user.id, stage);
+          const parts = await getStageCompletion(session.user.id, stage);
+
+          completionMap.set(stage.id, {
+            completed: count.completed,
+            total: count.total,
+            parts,
+          });
+        }
+      } else {
+        // If no user, set all to 0 completion
+        for (const stage of stages) {
+          completionMap.set(stage.id, {
+            completed: 0,
+            total: stage.parts.length,
+            parts: new Map(),
+          });
+        }
+      }
+
+      setCompletionData(completionMap);
+    } catch (error) {
+      console.error("[roadmap] Error refreshing completion data:", error);
+    }
+  }, [session?.user?.id, stages]);
+
   if (loading) {
     return (
       <Container>
@@ -257,45 +297,32 @@ export default function PapersRoadmapPage() {
     };
   });
 
-  // Get selected stage data - ensure valid index
-  const selectedIndex = selectedStageIndex !== null && selectedStageIndex >= 0 && selectedStageIndex < timelineNodes.length
-    ? selectedStageIndex
-    : currentStageIndex !== null && currentStageIndex >= 0 && currentStageIndex < timelineNodes.length
-      ? currentStageIndex
-      : 0;
-  const selectedStageData = timelineNodes[selectedIndex] || null;
-
   return (
     <Container>
       <PageHeader title="Practice Roadmap" />
 
-      {/* Horizontal Timeline Roadmap */}
+      {/* Vertical List Roadmap */}
       <div className="py-8">
-        {/* Timeline */}
-        <HorizontalTimeline 
-          nodes={timelineNodes.map(({ stage, isCompleted, isUnlocked, isCurrent }) => ({
-            stage,
-            isCompleted,
-            isUnlocked,
-            isCurrent,
-          }))}
-          currentIndex={currentStageIndex ?? 0}
-          selectedIndex={selectedIndex}
+        <RoadmapList
+          nodes={timelineNodes}
+          completionData={completionData}
           onNodeClick={handleNodeClick}
+          onStartSession={handleStartStage}
         />
-
-        {/* Details Panel - shows selected stage */}
-        {selectedStageData && (
-          <StageDetailsPanel
-            stage={selectedStageData.stage}
-            completedCount={selectedStageData.completedCount}
-            totalCount={selectedStageData.totalCount}
-            isUnlocked={selectedStageData.isUnlocked}
-            partCompletions={completionData.get(selectedStageData.stage.id)?.parts || new Map()}
-            onStartStage={() => handleStartStage(selectedStageData.stage)}
-          />
-        )}
       </div>
+
+      {/* Stage Details Modal */}
+      {selectedStageForModal && (
+        <StageDetailsModal
+          isOpen={selectedStageForModal !== null}
+          onClose={() => setSelectedStageForModal(null)}
+          stage={selectedStageForModal}
+          userId={session?.user?.id || null}
+          completionData={completionData.get(selectedStageForModal.id)?.parts || new Map()}
+          onStartSession={handleStartStage}
+          onCompletionUpdate={refreshCompletionData}
+        />
+      )}
     </Container>
   );
 }

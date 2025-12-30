@@ -1,0 +1,190 @@
+[
+  {
+    "id": "c0a2ed19-e598-43c3-95ed-9078eaae6dec",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:06:27.598+00:00",
+    "ended_at": "2025-12-22T14:07:15.137+00:00",
+    "attempts": 20,
+    "settings": {
+      "questionCount": 20,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "single-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:06:28.314202+00:00",
+    "updated_at": "2025-12-22T14:07:15.434347+00:00"
+  },
+  {
+    "id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:08:01.053+00:00",
+    "ended_at": "2025-12-22T14:08:11.781+00:00",
+    "attempts": 11,
+    "settings": {
+      "questionCount": 10,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "single-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:08:01.233007+00:00",
+    "updated_at": "2025-12-22T14:08:12.069104+00:00"
+  },
+  {
+    "id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:08:15.008+00:00",
+    "ended_at": "2025-12-22T14:08:25.122+00:00",
+    "attempts": 10,
+    "settings": {
+      "questionCount": 10,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "single-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:08:15.186291+00:00",
+    "updated_at": "2025-12-22T14:08:25.403369+00:00"
+  },
+  {
+    "id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:08:27.205+00:00",
+    "ended_at": "2025-12-22T14:08:37.056+00:00",
+    "attempts": 10,
+    "settings": {
+      "questionCount": 10,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "single-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:08:27.373172+00:00",
+    "updated_at": "2025-12-22T14:08:37.335254+00:00"
+  },
+  {
+    "id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:15:12.46+00:00",
+    "ended_at": null,
+    "attempts": 0,
+    "settings": {
+      "questionCount": 20,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "double-no-carry"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:15:12.618383+00:00",
+    "updated_at": "2025-12-22T14:15:12.618383+00:00"
+  },
+  {
+    "id": "e08e0989-5199-4174-948c-854e9a5b7c28",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:15:19.294+00:00",
+    "ended_at": "2025-12-22T14:15:42.676+00:00",
+    "attempts": 10,
+    "settings": {
+      "questionCount": 10,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "double-no-carry"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:15:19.45642+00:00",
+    "updated_at": "2025-12-22T14:15:42.957839+00:00"
+  },
+  {
+    "id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:15:53.606+00:00",
+    "ended_at": "2025-12-22T14:16:52.361+00:00",
+    "attempts": 15,
+    "settings": {
+      "questionCount": 10,
+      "selectedTopicVariants": [
+        {
+          "topicId": "linearEquations",
+          "variantId": "one-two-step"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:15:53.798068+00:00",
+    "updated_at": "2025-12-22T14:16:53.257481+00:00"
+  },
+  {
+    "id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:17:23.156+00:00",
+    "ended_at": null,
+    "attempts": 0,
+    "settings": {
+      "questionCount": 20,
+      "selectedTopicVariants": [
+        {
+          "topicId": "addition",
+          "variantId": "single-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:17:23.352838+00:00",
+    "updated_at": "2025-12-22T14:17:23.352838+00:00"
+  },
+  {
+    "id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:17:30.579+00:00",
+    "ended_at": null,
+    "attempts": 0,
+    "settings": {
+      "questionCount": 20,
+      "selectedTopicVariants": [
+        {
+          "topicId": "squaring",
+          "variantId": "ending-in-5"
+        },
+        {
+          "topicId": "squaring",
+          "variantId": "near-round"
+        },
+        {
+          "topicId": "squaring",
+          "variantId": "two-digit"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:17:30.746921+00:00",
+    "updated_at": "2025-12-22T14:17:30.746921+00:00"
+  },
+  {
+    "id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "started_at": "2025-12-22T14:17:55.549+00:00",
+    "ended_at": "2025-12-22T14:32:17.111+00:00",
+    "attempts": 27,
+    "settings": {
+      "questionCount": 20,
+      "selectedTopicVariants": [
+        {
+          "topicId": "indices_simplify",
+          "variantId": "same-base"
+        }
+      ]
+    },
+    "created_at": "2025-12-22T14:17:55.768092+00:00",
+    "updated_at": "2025-12-22T14:32:18.207675+00:00"
+  }
+]

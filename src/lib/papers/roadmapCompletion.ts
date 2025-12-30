@@ -168,4 +168,72 @@ export async function getStageCompletionCount(
   };
 }
 
+/**
+ * Mark a part as completed by creating a minimal session record
+ * This allows users to manually mark papers/sections they've done outside the app
+ */
+export async function markPartAsCompleted(
+  userId: string,
+  examName: ExamName,
+  year: number,
+  part: RoadmapPart
+): Promise<boolean> {
+  try {
+    const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
+    const section = getSectionForRoadmapPart(part, examName);
+    
+    // Check if already completed
+    const alreadyCompleted = await isPartCompleted(userId, examName, year, part);
+    if (alreadyCompleted) {
+      return true; // Already marked as done
+    }
+
+    // Create minimal session record via API
+    const sessionId = crypto.randomUUID();
+    const now = new Date().toISOString();
+    
+    const response = await fetch('/api/papers/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: sessionId,
+        paperName: examName,
+        paperVariant: paperVariant,
+        sessionName: `Manual: ${examName} ${year} ${part.paperName} ${part.partLetter}`,
+        questionRange: {
+          start: 1,
+          end: 1, // Minimal range
+        },
+        selectedSections: [section],
+        timeLimitMinutes: 0,
+        startedAt: Date.now(),
+        endedAt: Date.now(), // Mark as completed immediately
+        deadlineAt: Date.now(),
+        questionOrder: [],
+        perQuestionSec: [],
+        answers: [],
+        correctFlags: [],
+        guessedFlags: [],
+        mistakeTags: [],
+        notes: null,
+        score: null,
+        pinnedInsights: null,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('[roadmapCompletion] Error marking part as completed:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[roadmapCompletion] Error in markPartAsCompleted:', error);
+    return false;
+  }
+}
+
 

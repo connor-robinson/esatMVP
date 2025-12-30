@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-12-30T08:30:19.683Z",
+  "supabaseUrl": "https://bcbttpsokwoapjypwwwq.supabase.co",
+  "tables": [
+    {
+      "table": "paper_sessions",
+      "count": 8
+    },
+    {
+      "table": "drill_items",
+      "count": 0
+    },
+    {
+      "table": "drill_sessions",
+      "count": 0
+    },
+    {
+      "table": "drill_session_attempts",
+      "count": 0
+    },
+    {
+      "table": "topic_progress",
+      "count": 3
+    },
+    {
+      "table": "session_presets",
+      "count": 0
+    },
+    {
+      "table": "builder_sessions",
+      "count": 10
+    },
+    {
+      "table": "builder_session_questions",
+      "count": 120
+    },
+    {
+      "table": "builder_attempts",
+      "count": 0
+    },
+    {
+      "table": "ai_generated_questions",
+      "count": 672
+    },
+    {
+      "table": "user_profiles",
+      "count": 0
+    },
+    {
+      "table": "user_daily_metrics",
+      "count": 0
+    }
+  ],
+  "totalRecords": 813
+}

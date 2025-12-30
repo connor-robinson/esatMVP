@@ -9,14 +9,16 @@ import { useState, useEffect } from "react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { QuestionCard } from "@/components/questionBank/QuestionCard";
-import { SolutionModal } from "@/components/questionBank/SolutionModal";
-import { FilterPanel } from "@/components/questionBank/FilterPanel";
+import { FilterPopup } from "@/components/questionBank/FilterPopup";
 import { EditModal } from "@/components/questionBank/EditModal";
 import { ReviewButton } from "@/components/questionBank/ReviewButton";
+import { MathContent } from "@/components/shared/MathContent";
+import { SolutionModal } from "@/components/questionBank/SolutionModal";
 import { useQuestionBank } from "@/hooks/useQuestionBank";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
-import { ArrowRight, RotateCw, BookOpen } from "lucide-react";
+import { ArrowRight, RotateCw, BookOpen, X, Settings, Clock, Pencil, Eye, AlertCircle, Filter } from "lucide-react";
 import type { QuestionBankQuestion } from "@/types/questionBank";
+import { cn, formatTime } from "@/lib/utils";
 
 export default function QuestionBankPage() {
   const {
@@ -36,9 +38,15 @@ export default function QuestionBankPage() {
     updateCurrentQuestion,
   } = useQuestionBank();
 
-  const [showFilters, setShowFilters] = useState(true);
-  const [showSolutionModal, setShowSolutionModal] = useState(false);
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [curriculum, setCurriculum] = useState<any>(null);
+  const [sessionMode, setSessionMode] = useState(false);
+  const [sessionQuestions, setSessionQuestions] = useState<QuestionBankQuestion[]>([]);
+  const [sessionCurrentIndex, setSessionCurrentIndex] = useState(0);
+  const [timerStartTime, setTimerStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [answerRevealed, setAnswerRevealed] = useState(false);
+  const [showDetailedExplanation, setShowDetailedExplanation] = useState(false);
   
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -56,6 +64,33 @@ export default function QuestionBankPage() {
       .then(data => setCurriculum(data))
       .catch(err => console.error('Error fetching curriculum:', err));
   }, []);
+
+  // Reset answer revealed state when question changes
+  useEffect(() => {
+    setAnswerRevealed(false);
+    setShowDetailedExplanation(false);
+  }, [currentQuestion?.id]);
+
+  // Timer effect - count up timer
+  useEffect(() => {
+    if (timerStartTime === null) {
+      setTimerStartTime(Date.now());
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setElapsedTime(Date.now() - timerStartTime);
+    }, 100); // Update every 100ms for smooth display
+
+    return () => clearInterval(interval);
+  }, [timerStartTime]);
+
+  // Reset timer function
+  const resetTimer = () => {
+    const newStartTime = Date.now();
+    setTimerStartTime(newStartTime);
+    setElapsedTime(0);
+  };
 
   // Edit handlers
   const handleEditQuestionStem = () => {
@@ -191,30 +226,267 @@ export default function QuestionBankPage() {
     return topic ? topic.title : tagCode;
   };
 
+  // Helper to get active filters as display items
+  const getActiveFilters = () => {
+    const activeFilters: Array<{ label: string; value: string; type: string; onRemove: () => void }> = [];
+    
+    // Handle subject (can be array or single value)
+    const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
+    subjects.forEach((subject) => {
+      activeFilters.push({
+        label: subject,
+        value: subject,
+        type: 'subject',
+        onRemove: () => {
+          const newSubjects = subjects.filter(s => s !== subject);
+          setFilters({ ...filters, subject: newSubjects.length > 0 ? newSubjects : 'All' });
+        },
+      });
+    });
+    
+    // Handle difficulty (can be array or single value)
+    const difficulties = Array.isArray(filters.difficulty) ? filters.difficulty : (filters.difficulty !== 'All' ? [filters.difficulty] : []);
+    difficulties.forEach((difficulty) => {
+      activeFilters.push({
+        label: difficulty,
+        value: difficulty,
+        type: 'difficulty',
+        onRemove: () => {
+          const newDifficulties = difficulties.filter(d => d !== difficulty);
+          setFilters({ ...filters, difficulty: newDifficulties.length > 0 ? newDifficulties : 'All' });
+        },
+      });
+    });
+    
+    if (filters.attemptedStatus !== 'Mix') {
+      activeFilters.push({
+        label: filters.attemptedStatus,
+        value: filters.attemptedStatus,
+        type: 'attemptedStatus',
+        onRemove: () => setFilters({ ...filters, attemptedStatus: 'Mix' }),
+      });
+    }
+    
+    // Handle attempt result (can be array or single value)
+    const attemptResults = Array.isArray(filters.attemptResult) ? filters.attemptResult : (filters.attemptResult ? [filters.attemptResult] : []);
+    attemptResults.forEach((result) => {
+      activeFilters.push({
+        label: result,
+        value: result,
+        type: 'attemptResult',
+        onRemove: () => {
+          const newResults = attemptResults.filter(r => r !== result);
+          setFilters({ ...filters, attemptResult: newResults.length > 0 ? newResults : [] });
+        },
+      });
+    });
+    
+    if (filters.searchTag) {
+      activeFilters.push({
+        label: filters.searchTag,
+        value: filters.searchTag,
+        type: 'topic',
+        onRemove: () => setFilters({ ...filters, searchTag: '' }),
+      });
+    }
+    
+    return activeFilters;
+  };
+
+  // Get filter color based on type
+  const getFilterColor = (type: string, value: string) => {
+    if (type === 'subject') {
+      const subjectColors: Record<string, string> = {
+        'Math 1': 'bg-[#406166]/20 text-[#5da8f0]',
+        'Math 2': 'bg-[#406166]/20 text-[#5da8f0]',
+        'Physics': 'bg-[#2f2835]/30 text-[#a78bfa]',
+        'Chemistry': 'bg-[#854952]/20 text-[#ef7d7d]',
+        'Biology': 'bg-[#506141]/20 text-[#85BC82]',
+      };
+      return subjectColors[value] || 'bg-white/10 text-white/70';
+    }
+    if (type === 'difficulty') {
+      if (value === 'Easy') return 'bg-[#506141]/20 text-[#85BC82]';
+      if (value === 'Medium') return 'bg-[#967139]/20 text-[#b8a066]';
+      if (value === 'Hard') return 'bg-[#854952]/20 text-[#ef7d7d]';
+      return 'bg-white/10 text-white/70';
+    }
+    if (type === 'attemptedStatus') {
+      if (value === 'New' || value === 'Attempted') return 'bg-white/20 text-white/70';
+      if (value === 'Mix') return 'bg-white/10 text-white/60';
+      return 'bg-white/10 text-white/70';
+    }
+    if (type === 'attemptResult') {
+      return 'bg-white/20 text-white/70';
+    }
+    if (type === 'topic') {
+      return 'bg-white/10 text-white/70';
+    }
+    return 'bg-white/10 text-white/70';
+  };
+
+  const handleStartSession = async (config: { count: number; topics: string[]; difficulties: string[] }) => {
+    // Build query params for session
+    const params = new URLSearchParams();
+    // Handle subject (can be array or single value)
+    const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
+    if (subjects.length > 0) {
+      // For multiple subjects, we'll need to fetch separately or use OR logic
+      // For now, use the first subject or fetch all and filter client-side
+      if (subjects.length === 1) {
+        params.append('subject', subjects[0]);
+      }
+    }
+    if (config.difficulties.length > 0) {
+      // If multiple difficulties, we need to fetch them separately or use a different approach
+      // For now, if multiple are selected, we'll fetch all and filter client-side
+      if (config.difficulties.length === 1) {
+        params.append('difficulty', config.difficulties[0]);
+      }
+    }
+    if (config.topics.length > 0) {
+      params.append('tags', config.topics.join(','));
+    }
+    // Fetch more questions than needed to account for filtering
+    params.append('limit', (config.count * 2).toString());
+    params.append('random', 'true');
+
+    try {
+      const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch session questions');
+      
+      const data = await response.json();
+      if (data.questions && data.questions.length > 0) {
+        // Filter by difficulties if multiple were selected
+        let filteredQuestions = data.questions;
+        if (config.difficulties.length > 1) {
+          filteredQuestions = data.questions.filter((q: QuestionBankQuestion) => 
+            config.difficulties.includes(q.difficulty)
+          );
+        }
+        
+        // Take only the requested count
+        const sessionQs = filteredQuestions.slice(0, config.count);
+        
+        if (sessionQs.length > 0) {
+          setSessionQuestions(sessionQs);
+          setSessionCurrentIndex(0);
+          setSessionMode(true);
+          // Update current question to first session question
+          updateCurrentQuestion(sessionQs[0]);
+        } else {
+          alert('No questions found matching your criteria. Please try different filters.');
+        }
+      } else {
+        alert('No questions found matching your criteria. Please try different filters.');
+      }
+    } catch (err) {
+      console.error('Failed to start session:', err);
+      alert('Failed to start session. Please try again.');
+    }
+  };
+
+  // Handle next question in session mode
+  const handleNextQuestionInSession = async () => {
+    if (sessionMode && sessionQuestions.length > 0) {
+      const nextIndex = sessionCurrentIndex + 1;
+      if (nextIndex < sessionQuestions.length) {
+        setSessionCurrentIndex(nextIndex);
+        updateCurrentQuestion(sessionQuestions[nextIndex]);
+      } else {
+        // Session complete
+        setSessionMode(false);
+        setSessionQuestions([]);
+        setSessionCurrentIndex(0);
+        // Return to normal mode
+        await nextQuestion();
+      }
+    } else {
+      await nextQuestion();
+    }
+  };
+
+
   return (
     <div className="min-h-[calc(100vh-3.5rem)] py-8">
       <Container size="lg">
         <div className="space-y-6">
-          {/* Filter Panel - Collapsible */}
-          {showFilters ? (
-            <div className="bg-white/5 p-6 rounded-organic-lg backdrop-blur-sm">
-              <FilterPanel 
-                filters={filters} 
-                onFilterChange={setFilters}
-                onToggleFilters={() => setShowFilters(false)}
-                showToggle={true}
-              />
-            </div>
-          ) : (
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowFilters(true)}
-                className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-organic-md text-sm text-white/70 transition-all duration-fast"
-              >
-                Show Filters
-              </button>
+          {/* Session Progress Indicator */}
+          {sessionMode && sessionQuestions.length > 0 && (
+            <div className="bg-primary/10 rounded-organic-md p-4 border border-primary/20">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-primary">Session Mode</span>
+                <span className="text-xs text-white/60">
+                  Question {sessionCurrentIndex + 1} of {sessionQuestions.length}
+                </span>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300 ease-signature"
+                  style={{ width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%` }}
+                />
+              </div>
             </div>
           )}
+
+          {/* Active Filters Row */}
+          <div className="flex items-center justify-between gap-4 flex-wrap px-6 py-3 rounded-organic-md bg-white/[0.02]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm font-medium text-white/50 font-mono">Active Filters:</span>
+                {(() => {
+                  const activeFilters = getActiveFilters();
+                  if (activeFilters.length === 0) {
+                    return <span className="text-xs text-white/40 italic">No filters active</span>;
+                  }
+                  
+                  // Group filters by type
+                  const groupedFilters: Record<string, typeof activeFilters> = {};
+                  activeFilters.forEach(filter => {
+                    if (!groupedFilters[filter.type]) {
+                      groupedFilters[filter.type] = [];
+                    }
+                    groupedFilters[filter.type].push(filter);
+                  });
+                  
+                  // Display groups with "/" within groups, spacing between groups
+                  return (
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {Object.entries(groupedFilters).map(([type, filters], groupIndex) => (
+                        <div key={type} className="flex items-center">
+                          {filters.map((filter, index) => (
+                            <span key={`${filter.type}-${filter.value}`} className="flex items-center">
+                              <button
+                                onClick={filter.onRemove}
+                                className={cn(
+                                  "group relative px-3 py-1.5 rounded-organic-md text-xs font-mono transition-all duration-fast ease-signature cursor-pointer",
+                                  "hover:line-through",
+                                  getFilterColor(filter.type, filter.value)
+                                )}
+                                aria-label={`Remove ${filter.label} filter`}
+                              >
+                                <span>{filter.label}</span>
+                              </button>
+                              {index < filters.length - 1 && (
+                                <span className="text-white/40 px-2">/</span>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+            </div>
+            
+            {/* Filter button - top right */}
+            <button
+              onClick={() => setShowFilterPopup(true)}
+              className="p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
+              title="Filters & Settings"
+            >
+              <Filter className="w-4 h-4" />
+            </button>
+          </div>
 
           {/* Loading State */}
           {isLoading && (
@@ -225,8 +497,11 @@ export default function QuestionBankPage() {
 
           {/* Error State */}
           {error && !isLoading && (
-            <div className="bg-error/10 border border-error/20 rounded-organic-lg p-6 text-center">
-              <p className="text-error mb-4">{error}</p>
+            <div className="bg-interview/10 rounded-organic-lg p-6 text-center">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <AlertCircle className="w-5 h-5 text-interview" />
+                <p className="text-interview font-mono text-sm">{error}</p>
+              </div>
               <Button onClick={nextQuestion} variant="secondary">
                 <RotateCw className="w-4 h-4 mr-2" />
                 Try Again
@@ -237,68 +512,6 @@ export default function QuestionBankPage() {
           {/* Question Display */}
           {currentQuestion && !isLoading && (
             <div className="space-y-6">
-              {/* Question metadata pills */}
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* Review Status Pill */}
-                {currentQuestion.status === 'pending_review' && (
-                  <span className="px-3 py-1.5 rounded-full bg-error/20 border border-error/30 text-xs text-error font-bold uppercase">
-                    Pending Review
-                  </span>
-                )}
-                {currentQuestion.status === 'needs_revision' && (
-                  <span className="px-3 py-1.5 rounded-full bg-error/20 border border-error/30 text-xs text-error font-bold uppercase">
-                    Needs Revision
-                  </span>
-                )}
-                {currentQuestion.status === 'approved' && (
-                  <span className="px-3 py-1.5 rounded-full bg-green-500/20 border border-green-500/30 text-xs text-green-400 font-bold uppercase">
-                    Approved
-                  </span>
-                )}
-                {currentQuestion.status === 'rejected' && (
-                  <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs text-white/40 font-bold uppercase">
-                    Rejected
-                  </span>
-                )}
-                
-                {/* New/Attempted Status Pill */}
-                {hasBeenAttempted ? (
-                  <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs text-primary font-medium">
-                    Attempted
-                  </span>
-                ) : (
-                  <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs text-white/70 font-medium">
-                    New
-                  </span>
-                )}
-                
-                <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60">
-                  {currentQuestion.difficulty}
-                </span>
-
-                <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/60 font-mono">
-                  {currentQuestion.schema_id}
-                </span>
-
-                {currentQuestion.paper && (
-                  <span className="px-3 py-1.5 rounded-full bg-secondary/20 border border-secondary/30 text-xs text-secondary font-medium">
-                    {currentQuestion.paper}
-                  </span>
-                )}
-
-                {currentQuestion.primary_tag && (
-                  <span className="px-3 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-xs text-primary">
-                    {getTopicTitle(currentQuestion.primary_tag)}
-                  </span>
-                )}
-
-                {currentQuestion.secondary_tags && currentQuestion.secondary_tags.map((tag) => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/40">
-                    {getTopicTitle(tag)}
-                  </span>
-                ))}
-              </div>
-
               <QuestionCard
                 question={currentQuestion}
                 onAnswerSubmit={submitAnswer}
@@ -308,47 +521,59 @@ export default function QuestionBankPage() {
                 isCorrect={isCorrect}
                 onEditQuestionStem={handleEditQuestionStem}
                 onEditOption={handleEditOption}
+                answerRevealed={answerRevealed}
+                onRevealAnswer={() => setAnswerRevealed(true)}
+                allowRetry={isAnswered && !isCorrect && !answerRevealed}
+                getTopicTitle={getTopicTitle}
+                elapsedTime={elapsedTime}
+                onResetTimer={resetTimer}
               />
 
-              {/* View Solution and Next Question Buttons */}
-              {isAnswered && (
+              {/* Action Buttons - shown after answer is revealed or correct */}
+              {(answerRevealed || (isAnswered && isCorrect)) && (
                 <div className="flex justify-center gap-4">
                   <Button
-                    onClick={() => setShowSolutionModal(true)}
+                    onClick={handleNextQuestionInSession}
+                    variant="primary"
+                    size="lg"
+                    className="min-w-[200px]"
+                  >
+                    {sessionMode && sessionCurrentIndex < sessionQuestions.length - 1
+                      ? `Next Question (${sessionCurrentIndex + 1}/${sessionQuestions.length})`
+                      : sessionMode
+                      ? 'Finish Session'
+                      : 'Next Question'}
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                  <Button
+                    onClick={() => setShowDetailedExplanation(true)}
                     variant="secondary"
                     size="lg"
                     className="min-w-[200px]"
                   >
                     <BookOpen className="w-5 h-5 mr-2" />
-                    View Solution
-                  </Button>
-                  <Button
-                    onClick={nextQuestion}
-                    variant="primary"
-                    size="lg"
-                    className="min-w-[200px]"
-                  >
-                    Next Question
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    View Detailed Explanation
                   </Button>
                 </div>
               )}
 
-              {/* Solution Modal */}
-              <SolutionModal
-                isOpen={showSolutionModal}
-                onClose={() => setShowSolutionModal(false)}
-                solution_reasoning={currentQuestion.solution_reasoning}
-                solution_key_insight={currentQuestion.solution_key_insight}
-                distractor_map={currentQuestion.distractor_map}
-                correct_option={currentQuestion.correct_option}
-                options={currentQuestion.options}
-                isCorrect={isCorrect ?? false}
-                selectedAnswer={selectedAnswer}
-                onEditKeyInsight={handleEditKeyInsight}
-                onEditReasoning={handleEditReasoning}
-                onEditDistractor={handleEditDistractor}
-              />
+              {/* Detailed Explanation Modal */}
+              {currentQuestion && (
+                <SolutionModal
+                  isOpen={showDetailedExplanation}
+                  onClose={() => setShowDetailedExplanation(false)}
+                  solution_reasoning={currentQuestion.solution_reasoning}
+                  solution_key_insight={currentQuestion.solution_key_insight}
+                  distractor_map={currentQuestion.distractor_map}
+                  correct_option={currentQuestion.correct_option}
+                  options={currentQuestion.options}
+                  isCorrect={isCorrect ?? false}
+                  selectedAnswer={selectedAnswer}
+                  onEditKeyInsight={handleEditKeyInsight}
+                  onEditReasoning={handleEditReasoning}
+                  onEditDistractor={handleEditDistractor}
+                />
+              )}
 
               {/* Edit Modal */}
               <EditModal
@@ -371,6 +596,15 @@ export default function QuestionBankPage() {
               )}
             </div>
           )}
+
+          {/* Filter Popup */}
+          <FilterPopup
+            isOpen={showFilterPopup}
+            onClose={() => setShowFilterPopup(false)}
+            filters={filters}
+            onFilterChange={setFilters}
+            onStartSession={handleStartSession}
+          />
         </div>
       </Container>
     </div>

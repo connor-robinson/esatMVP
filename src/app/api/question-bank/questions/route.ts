@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import type { SubjectFilter, DifficultyFilter, ReviewStatusFilter, AttemptedFilter } from '@/types/questionBank';
+import type { SubjectFilter, DifficultyFilter, AttemptResultFilter, AttemptedFilter } from '@/types/questionBank';
 
 /**
  * GET /api/question-bank/questions
@@ -12,10 +12,13 @@ export async function GET(request: NextRequest) {
     const supabase = createServerClient();
     const { searchParams } = new URL(request.url);
 
-    // Get filter parameters
-    const subject = searchParams.get('subject') as SubjectFilter | null;
-    const difficulty = searchParams.get('difficulty') as DifficultyFilter | null;
-    const reviewStatus = searchParams.get('reviewStatus') as ReviewStatusFilter | null;
+    // Get filter parameters - support comma-separated values for multi-select
+    const subjectParam = searchParams.get('subject');
+    const subjects = subjectParam ? subjectParam.split(',').filter(s => s && s !== 'All') as SubjectFilter[] : [];
+    const difficultyParam = searchParams.get('difficulty');
+    const difficulties = difficultyParam ? difficultyParam.split(',').filter(d => d && d !== 'All') as DifficultyFilter[] : [];
+    const attemptResultParam = searchParams.get('attemptResult');
+    const attemptResults = attemptResultParam ? attemptResultParam.split(',') as AttemptResultFilter[] : [];
     const attemptedStatus = searchParams.get('attemptedStatus') as AttemptedFilter | null;
     const tags = searchParams.get('tags') || '';
     const limit = parseInt(searchParams.get('limit') || '20', 10);
@@ -45,42 +48,54 @@ export async function GET(request: NextRequest) {
       .from('ai_generated_questions')
       .select('*');
     
-    // Apply review status filter
-    if (reviewStatus && reviewStatus !== 'All') {
-      if (reviewStatus === 'Pending Review') {
-        query = query.eq('status', 'pending_review');
-      } else if (reviewStatus === 'Approved') {
-        query = query.eq('status', 'approved');
-      } else if (reviewStatus === 'Needs Revision') {
-        query = query.eq('status', 'needs_revision');
-      }
-    }
+    // Note: attemptResult filtering will be applied after fetching attempts
 
-    // Apply subject filter
-    if (subject && subject !== 'All') {
-      console.log('[Question Bank API] Incoming subject filter:', subject);
+    // Apply subject filter (OR logic for multiple subjects)
+    if (subjects.length > 0) {
+      console.log('[Question Bank API] Incoming subject filters:', subjects);
       
-      if (subject === 'Math 1') {
-        // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
-        query = query.or('paper.eq.Math 1,primary_tag.ilike.M1-%,schema_id.eq.M1');
-      } else if (subject === 'Math 2') {
-        // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
-        query = query.or('paper.eq.Math 2,primary_tag.ilike.M2-%,schema_id.in.(M2,M3,M4,M5)');
-      } else if (subject === 'Physics') {
-        // Physics: schema_id starts with P OR primary_tag starts with P-
-        query = query.or('schema_id.ilike.P%,primary_tag.ilike.P-%');
-      } else if (subject === 'Chemistry') {
-        // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
-        query = query.or('schema_id.ilike.C%,primary_tag.ilike.chemistry-%');
-      } else if (subject === 'Biology') {
-        // Biology: schema_id starts with B OR primary_tag starts with biology-
-        query = query.or('schema_id.ilike.B%,primary_tag.ilike.biology-%');
+      const subjectConditions: string[] = [];
+      subjects.forEach(subject => {
+        if (subject === 'Math 1') {
+          // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
+          subjectConditions.push('paper.eq.Math 1');
+          subjectConditions.push('primary_tag.ilike.M1-%');
+          subjectConditions.push('schema_id.eq.M1');
+        } else if (subject === 'Math 2') {
+          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
+          subjectConditions.push('paper.eq.Math 2');
+          subjectConditions.push('primary_tag.ilike.M2-%');
+          subjectConditions.push('schema_id.in.(M2,M3,M4,M5)');
+        } else if (subject === 'Physics') {
+          // Physics: schema_id starts with P OR primary_tag starts with P-
+          subjectConditions.push('schema_id.ilike.P%');
+          subjectConditions.push('primary_tag.ilike.P-%');
+        } else if (subject === 'Chemistry') {
+          // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
+          subjectConditions.push('schema_id.ilike.C%');
+          subjectConditions.push('primary_tag.ilike.chemistry-%');
+        } else if (subject === 'Biology') {
+          // Biology: schema_id starts with B OR primary_tag starts with biology-
+          subjectConditions.push('schema_id.ilike.B%');
+          subjectConditions.push('primary_tag.ilike.biology-%');
+        }
+      });
+      
+      if (subjectConditions.length > 0) {
+        // Use OR to combine all subject conditions
+        query = query.or(subjectConditions.join(','));
       }
     }
 
-    // Apply difficulty filter
-    if (difficulty && difficulty !== 'All') {
-      query = query.eq('difficulty', difficulty);
+    // Apply difficulty filter (OR logic for multiple difficulties)
+    if (difficulties.length > 0) {
+      if (difficulties.length === 1) {
+        query = query.eq('difficulty', difficulties[0]);
+      } else {
+        // Multiple difficulties: use OR logic
+        const difficultyConditions = difficulties.map(d => `difficulty.eq.${d}`).join(',');
+        query = query.or(difficultyConditions);
+      }
     }
 
     // Apply tag filter (search in primary_tag and secondary_tags)
@@ -91,29 +106,58 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Apply attempted status filter (server-side)
-    // Note: We'll fetch attempted IDs first, then apply the filter
+    // Apply attempted status and attempt result filter (server-side)
+    // Note: We'll fetch attempted question data first, then apply the filters
     let attemptedQuestionIds: string[] = [];
-    if (attemptedStatus && attemptedStatus !== 'Mix' && userId) {
+    let incorrectQuestionIds: string[] = [];
+    let correctQuestionIds: string[] = [];
+    
+    // Fetch user attempts if needed (for attemptedStatus or attemptResult filtering)
+    if ((attemptedStatus && attemptedStatus !== 'Mix' && userId) || (attemptResults.length > 0 && userId)) {
       try {
-        // Fetch ALL attempted question IDs (no limit) to ensure complete filtering
-        const { data: attempts, error: attemptsError, count } = await supabase
+        // Fetch ALL attempts with correct/incorrect status
+        const { data: attempts, error: attemptsError } = await supabase
           .from('question_bank_attempts')
-          .select('question_id', { count: 'exact' })
+          .select('question_id, is_correct')
           .eq('user_id', userId);
         
         if (attemptsError) {
-          console.error('[Question Bank API] Error fetching attempted question IDs:', attemptsError);
+          console.error('[Question Bank API] Error fetching attempts:', attemptsError);
           // Continue without attempted filter if there's an error
         } else if (attempts) {
           // Get unique question IDs (user might have multiple attempts on same question)
           attemptedQuestionIds = [...new Set(attempts.map((a: any) => a.question_id))];
+          
+          // Separate correct and incorrect questions
+          // For each question, check if user has ever gotten it correct
+          const questionResults = new Map<string, { hasCorrect: boolean; hasIncorrect: boolean }>();
+          attempts.forEach((a: any) => {
+            const existing = questionResults.get(a.question_id) || { hasCorrect: false, hasIncorrect: false };
+            if (a.is_correct) {
+              existing.hasCorrect = true;
+            } else {
+              existing.hasIncorrect = true;
+            }
+            questionResults.set(a.question_id, existing);
+          });
+          
+          // Questions that have at least one incorrect attempt
+          incorrectQuestionIds = Array.from(questionResults.entries())
+            .filter(([_, result]) => result.hasIncorrect)
+            .map(([id, _]) => id);
+          
+          // Questions that have at least one correct attempt
+          correctQuestionIds = Array.from(questionResults.entries())
+            .filter(([_, result]) => result.hasCorrect)
+            .map(([id, _]) => id);
+          
           console.log(`[Question Bank API] Found ${attempts.length} total attempts, ${attemptedQuestionIds.length} unique questions attempted by user ${userId}`);
+          console.log(`[Question Bank API] Incorrect: ${incorrectQuestionIds.length}, Correct: ${correctQuestionIds.length}`);
         } else {
           console.log(`[Question Bank API] No attempts found for user ${userId}`);
         }
       } catch (err) {
-        console.error('[Question Bank API] Unexpected error fetching attempted IDs:', err);
+        console.error('[Question Bank API] Unexpected error fetching attempts:', err);
         // Continue without attempted filter if there's an error
       }
     }
@@ -146,10 +190,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Apply attempted status filter after fetching (since Supabase has limitations with complex NOT IN queries)
+    // Apply attempted status and attempt result filters after fetching
     let filteredQuestions = allQuestions || [];
     const beforeFilterCount = filteredQuestions.length;
     
+    // Apply attemptedStatus filter first
     if (attemptedStatus && attemptedStatus !== 'Mix' && userId) {
       console.log(`[Question Bank API] Filtering by attemptedStatus: ${attemptedStatus}`, {
         userId,
@@ -160,27 +205,13 @@ export async function GET(request: NextRequest) {
       if (attemptedStatus === 'New') {
         // Exclude questions the user has attempted
         const attemptedSet = new Set(attemptedQuestionIds);
-        let excludedCount = 0;
-        const excludedSample: string[] = [];
         filteredQuestions = filteredQuestions.filter(
-          (q: any) => {
-            const isAttempted = attemptedSet.has(q.id);
-            if (isAttempted) {
-              excludedCount++;
-              if (excludedSample.length < 5) {
-                excludedSample.push(q.id);
-              }
-            }
-            return !isAttempted;
-          }
+          (q: any) => !attemptedSet.has(q.id)
         );
-        console.log(`[Question Bank API] After "New" filter: ${filteredQuestions.length} questions (excluded ${excludedCount} attempted)`, {
-          excludedSample: excludedSample.length > 0 ? excludedSample : undefined
-        });
+        console.log(`[Question Bank API] After "New" filter: ${filteredQuestions.length} questions`);
       } else if (attemptedStatus === 'Attempted') {
         // Only include questions the user has attempted
         if (attemptedQuestionIds.length === 0) {
-          // User has no attempts, return empty result
           console.log(`[Question Bank API] User has no attempts, returning empty result`);
           return NextResponse.json({
             questions: [],
@@ -191,10 +222,36 @@ export async function GET(request: NextRequest) {
         filteredQuestions = filteredQuestions.filter(
           (q: any) => attemptedSet.has(q.id)
         );
-        console.log(`[Question Bank API] After "Attempted" filter: ${filteredQuestions.length} questions (from ${beforeFilterCount} total, ${attemptedQuestionIds.length} attempted)`);
+        console.log(`[Question Bank API] After "Attempted" filter: ${filteredQuestions.length} questions`);
       }
-    } else {
-      console.log(`[Question Bank API] No attempted status filter applied (attemptedStatus: ${attemptedStatus}, userId: ${userId})`);
+    }
+    
+    // Apply attemptResult filter
+    if (attemptResults.length > 0 && userId) {
+      const beforeAttemptResultCount = filteredQuestions.length;
+      const attemptedSet = new Set(attemptedQuestionIds);
+      const incorrectSet = new Set(incorrectQuestionIds);
+      
+      const resultFilters: ((q: any) => boolean)[] = [];
+      
+      attemptResults.forEach(result => {
+        if (result === 'Unseen') {
+          resultFilters.push((q: any) => !attemptedSet.has(q.id));
+        } else if (result === 'Mixed Results') {
+          resultFilters.push((q: any) => attemptedSet.has(q.id));
+        } else if (result === 'Incorrect Before') {
+          resultFilters.push((q: any) => incorrectSet.has(q.id));
+        }
+      });
+      
+      // Apply OR logic: question matches if it matches any of the selected result filters
+      if (resultFilters.length > 0) {
+        filteredQuestions = filteredQuestions.filter((q: any) => 
+          resultFilters.some(filter => filter(q))
+        );
+      }
+      
+      console.log(`[Question Bank API] After attemptResult filter (${attemptResults.join(', ')}): ${filteredQuestions.length} questions (from ${beforeAttemptResultCount})`);
     }
 
     // Apply pagination after filtering
@@ -202,13 +259,13 @@ export async function GET(request: NextRequest) {
     const count = filteredQuestions.length;
 
     console.log(`[Question Bank API] Final result: ${filteredQuestions.length} questions after all filtering`, {
-      subject,
-      difficulty,
-      reviewStatus,
+      subjects: subjects.length > 0 ? subjects : 'All',
+      difficulties: difficulties.length > 0 ? difficulties : 'All',
+      attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
       attemptedStatus,
       tags,
       fetchedFromDB: allQuestions?.length || 0,
-      afterAttemptedFilter: filteredQuestions.length,
+      afterFilters: filteredQuestions.length,
       attemptedIdsCount: attemptedQuestionIds.length
     });
     
@@ -230,7 +287,7 @@ export async function GET(request: NextRequest) {
         primary_tag: sample.primary_tag
       });
     } else {
-      console.warn(`[Question Bank API] NO QUESTIONS FOUND for subject: ${subject}, attemptedStatus: ${attemptedStatus}. Check if questions match the filters.`);
+      console.warn(`[Question Bank API] NO QUESTIONS FOUND for subjects: ${subjects.length > 0 ? subjects.join(', ') : 'All'}, difficulties: ${difficulties.length > 0 ? difficulties.join(', ') : 'All'}, attemptResults: ${attemptResults.length > 0 ? attemptResults.join(', ') : 'None'}, attemptedStatus: ${attemptedStatus}. Check if questions match the filters.`);
     }
 
     // Parse options and distractor_map JSONB to proper format

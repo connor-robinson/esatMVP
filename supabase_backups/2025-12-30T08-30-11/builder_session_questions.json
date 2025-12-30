@@ -1,0 +1,2282 @@
+[
+  {
+    "id": 21,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "f02a24d4-d683-4c5b-9ac9-129e6897d789",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$0 + 7$",
+    "answer": "7",
+    "payload": {
+      "id": "f02a24d4-d683-4c5b-9ac9-129e6897d789",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$0 + 7$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 22,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "6ce61503-035c-46ad-b776-4393022ea1e3",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$4 + 1$",
+    "answer": "5",
+    "payload": {
+      "id": "6ce61503-035c-46ad-b776-4393022ea1e3",
+      "answer": "5",
+      "topicId": "addition",
+      "question": "$4 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 23,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "c1ca19ef-1e6c-4a4b-afe8-26ae39c7d8f1",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$9 + 0$",
+    "answer": "9",
+    "payload": {
+      "id": "c1ca19ef-1e6c-4a4b-afe8-26ae39c7d8f1",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$9 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 24,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "95e69b8a-0c2a-4215-a8bd-313f55293b7a",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 3$",
+    "answer": "9",
+    "payload": {
+      "id": "95e69b8a-0c2a-4215-a8bd-313f55293b7a",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$6 + 3$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 25,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "d07f8c55-318c-4d67-b9dd-e82cc2b79a45",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$0 + 9$",
+    "answer": "9",
+    "payload": {
+      "id": "d07f8c55-318c-4d67-b9dd-e82cc2b79a45",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$0 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 26,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "a806aac0-5845-47de-b297-60112d6f0277",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 9$",
+    "answer": "11",
+    "payload": {
+      "id": "a806aac0-5845-47de-b297-60112d6f0277",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$2 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 27,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "f16e1b84-cdb4-4b78-b7d9-5d1ecf2a8217",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$0 + 7$",
+    "answer": "7",
+    "payload": {
+      "id": "f16e1b84-cdb4-4b78-b7d9-5d1ecf2a8217",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$0 + 7$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 28,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "9a82dc73-793c-4bc3-896e-5d3fdd43938d",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 8$",
+    "answer": "15",
+    "payload": {
+      "id": "9a82dc73-793c-4bc3-896e-5d3fdd43938d",
+      "answer": "15",
+      "topicId": "addition",
+      "question": "$7 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 29,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "2d02ceae-2576-4be1-8041-a7dfef5f1e7c",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$5 + 1$",
+    "answer": "6",
+    "payload": {
+      "id": "2d02ceae-2576-4be1-8041-a7dfef5f1e7c",
+      "answer": "6",
+      "topicId": "addition",
+      "question": "$5 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 30,
+    "session_id": "6d1bb63d-0582-4a14-aaec-68e7a4edd9c1",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "643c0fa5-4fc0-431a-bb33-9d562bb8ece0",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 1$",
+    "answer": "7",
+    "payload": {
+      "id": "643c0fa5-4fc0-431a-bb33-9d562bb8ece0",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$6 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 31,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "e32c2b55-5729-4425-8697-7290d9d9fd25",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 0$",
+    "answer": "6",
+    "payload": {
+      "id": "e32c2b55-5729-4425-8697-7290d9d9fd25",
+      "answer": "6",
+      "topicId": "addition",
+      "question": "$6 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 32,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "22c34f23-27c5-46c7-810f-5c2dcb2ed8a3",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 9$",
+    "answer": "15",
+    "payload": {
+      "id": "22c34f23-27c5-46c7-810f-5c2dcb2ed8a3",
+      "answer": "15",
+      "topicId": "addition",
+      "question": "$6 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 33,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "4d575dd9-56b2-4341-b3c9-ce04126d9640",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$3 + 1$",
+    "answer": "4",
+    "payload": {
+      "id": "4d575dd9-56b2-4341-b3c9-ce04126d9640",
+      "answer": "4",
+      "topicId": "addition",
+      "question": "$3 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 34,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "4e79f270-f42c-4353-954b-e241943a2248",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 0$",
+    "answer": "7",
+    "payload": {
+      "id": "4e79f270-f42c-4353-954b-e241943a2248",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$7 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 35,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "dd555c7c-42cf-4a76-9063-8975a4bb4819",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 8$",
+    "answer": "10",
+    "payload": {
+      "id": "dd555c7c-42cf-4a76-9063-8975a4bb4819",
+      "answer": "10",
+      "topicId": "addition",
+      "question": "$2 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 36,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "d2626a51-7edd-41f9-8380-5ef3f77238d9",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 9$",
+    "answer": "11",
+    "payload": {
+      "id": "d2626a51-7edd-41f9-8380-5ef3f77238d9",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$2 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 37,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "1437de27-28dc-4fd3-8087-8a703832ba08",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$9 + 6$",
+    "answer": "15",
+    "payload": {
+      "id": "1437de27-28dc-4fd3-8087-8a703832ba08",
+      "answer": "15",
+      "topicId": "addition",
+      "question": "$9 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 38,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "a90be351-df0c-4438-abb0-fde9fb479150",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$1 + 6$",
+    "answer": "7",
+    "payload": {
+      "id": "a90be351-df0c-4438-abb0-fde9fb479150",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$1 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 39,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "34e8ea56-cb18-4809-b409-dd515ae390ce",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$8 + 8$",
+    "answer": "16",
+    "payload": {
+      "id": "34e8ea56-cb18-4809-b409-dd515ae390ce",
+      "answer": "16",
+      "topicId": "addition",
+      "question": "$8 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 40,
+    "session_id": "97eaab49-08e6-4549-a096-0a9f4c214bfa",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "c307f935-0a7b-4435-a1f8-f04d3350ee56",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 9$",
+    "answer": "11",
+    "payload": {
+      "id": "c307f935-0a7b-4435-a1f8-f04d3350ee56",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$2 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 41,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "fa537762-895d-4c73-bf11-3503ec84b8b9",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 4$",
+    "answer": "11",
+    "payload": {
+      "id": "fa537762-895d-4c73-bf11-3503ec84b8b9",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$7 + 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 42,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "dd03b387-f365-483e-b8cd-2f177c09fe3b",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$0 + 4$",
+    "answer": "4",
+    "payload": {
+      "id": "dd03b387-f365-483e-b8cd-2f177c09fe3b",
+      "answer": "4",
+      "topicId": "addition",
+      "question": "$0 + 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 43,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "ffb3b58c-17db-42e1-b693-5463ee13eee5",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$1 + 6$",
+    "answer": "7",
+    "payload": {
+      "id": "ffb3b58c-17db-42e1-b693-5463ee13eee5",
+      "answer": "7",
+      "topicId": "addition",
+      "question": "$1 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 44,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "e061bc0a-289e-428c-afdc-92a6d3f77279",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$3 + 3$",
+    "answer": "6",
+    "payload": {
+      "id": "e061bc0a-289e-428c-afdc-92a6d3f77279",
+      "answer": "6",
+      "topicId": "addition",
+      "question": "$3 + 3$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 45,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "65db0330-0bfb-415b-beca-9dd6b4ee1db2",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$5 + 7$",
+    "answer": "12",
+    "payload": {
+      "id": "65db0330-0bfb-415b-beca-9dd6b4ee1db2",
+      "answer": "12",
+      "topicId": "addition",
+      "question": "$5 + 7$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 46,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "b5da78f1-b2a6-4b9b-9cc8-dd33fdcbbb08",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$8 + 3$",
+    "answer": "11",
+    "payload": {
+      "id": "b5da78f1-b2a6-4b9b-9cc8-dd33fdcbbb08",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$8 + 3$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 47,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "5e2f0976-ee51-4558-afb6-1256bea25c3c",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 8$",
+    "answer": "10",
+    "payload": {
+      "id": "5e2f0976-ee51-4558-afb6-1256bea25c3c",
+      "answer": "10",
+      "topicId": "addition",
+      "question": "$2 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 48,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "28ece2b4-c673-4def-bdc9-47de06ce3746",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$3 + 1$",
+    "answer": "4",
+    "payload": {
+      "id": "28ece2b4-c673-4def-bdc9-47de06ce3746",
+      "answer": "4",
+      "topicId": "addition",
+      "question": "$3 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 49,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "45b4e953-3c91-439b-9c4f-69e00913ace3",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$9 + 0$",
+    "answer": "9",
+    "payload": {
+      "id": "45b4e953-3c91-439b-9c4f-69e00913ace3",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$9 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 50,
+    "session_id": "66efcc59-639f-4e9a-b826-ae52b28a529d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "391dc4f0-d7e7-4f06-a05e-1c39cefed928",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 5$",
+    "answer": "11",
+    "payload": {
+      "id": "391dc4f0-d7e7-4f06-a05e-1c39cefed928",
+      "answer": "11",
+      "topicId": "addition",
+      "question": "$6 + 5$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 51,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "5433ff54-9725-4582-a08a-8e8eb336b063",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$83 + 75$",
+    "answer": "158",
+    "payload": {
+      "id": "5433ff54-9725-4582-a08a-8e8eb336b063",
+      "answer": "158",
+      "topicId": "addition",
+      "question": "$83 + 75$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 52,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "47edbd7d-e919-4351-9529-f33387f7f0f2",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$10 + 26$",
+    "answer": "36",
+    "payload": {
+      "id": "47edbd7d-e919-4351-9529-f33387f7f0f2",
+      "answer": "36",
+      "topicId": "addition",
+      "question": "$10 + 26$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 53,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "055acb11-8218-452e-9afe-bc4b40f5e05b",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$61 + 54$",
+    "answer": "115",
+    "payload": {
+      "id": "055acb11-8218-452e-9afe-bc4b40f5e05b",
+      "answer": "115",
+      "topicId": "addition",
+      "question": "$61 + 54$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 54,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "3b204ea5-7754-43ef-89b1-98532836e016",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$89 + 30$",
+    "answer": "119",
+    "payload": {
+      "id": "3b204ea5-7754-43ef-89b1-98532836e016",
+      "answer": "119",
+      "topicId": "addition",
+      "question": "$89 + 30$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 55,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "d38d945d-4aa3-400a-a259-5905e55687e3",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$97 + 32$",
+    "answer": "129",
+    "payload": {
+      "id": "d38d945d-4aa3-400a-a259-5905e55687e3",
+      "answer": "129",
+      "topicId": "addition",
+      "question": "$97 + 32$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 56,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "c74e79e7-52c7-489f-824b-5769855b9717",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$88 + 31$",
+    "answer": "119",
+    "payload": {
+      "id": "c74e79e7-52c7-489f-824b-5769855b9717",
+      "answer": "119",
+      "topicId": "addition",
+      "question": "$88 + 31$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 57,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "2a68e9dc-d2d5-485d-89b0-1cfbaac95ffe",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$12 + 44$",
+    "answer": "56",
+    "payload": {
+      "id": "2a68e9dc-d2d5-485d-89b0-1cfbaac95ffe",
+      "answer": "56",
+      "topicId": "addition",
+      "question": "$12 + 44$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 58,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "2c3c70b7-07cd-4be1-afef-be6d80ecfe10",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$91 + 56$",
+    "answer": "147",
+    "payload": {
+      "id": "2c3c70b7-07cd-4be1-afef-be6d80ecfe10",
+      "answer": "147",
+      "topicId": "addition",
+      "question": "$91 + 56$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 59,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "c55ef867-d6b5-4382-a83d-428ea00c09dc",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$50 + 78$",
+    "answer": "128",
+    "payload": {
+      "id": "c55ef867-d6b5-4382-a83d-428ea00c09dc",
+      "answer": "128",
+      "topicId": "addition",
+      "question": "$50 + 78$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 60,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "f0b35a43-5c5f-434c-822a-7a037a2cd6ad",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$32 + 36$",
+    "answer": "68",
+    "payload": {
+      "id": "f0b35a43-5c5f-434c-822a-7a037a2cd6ad",
+      "answer": "68",
+      "topicId": "addition",
+      "question": "$32 + 36$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 61,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 10,
+    "question_id": "8afaa897-09e6-49ef-8026-52f7b5a920ba",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$41 + 83$",
+    "answer": "124",
+    "payload": {
+      "id": "8afaa897-09e6-49ef-8026-52f7b5a920ba",
+      "answer": "124",
+      "topicId": "addition",
+      "question": "$41 + 83$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 62,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 11,
+    "question_id": "a0880e97-8f61-4f26-90a9-b6e856298098",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$27 + 62$",
+    "answer": "89",
+    "payload": {
+      "id": "a0880e97-8f61-4f26-90a9-b6e856298098",
+      "answer": "89",
+      "topicId": "addition",
+      "question": "$27 + 62$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 63,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 12,
+    "question_id": "816e8591-e979-42b0-ada3-9b5aa6916e8f",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$62 + 10$",
+    "answer": "72",
+    "payload": {
+      "id": "816e8591-e979-42b0-ada3-9b5aa6916e8f",
+      "answer": "72",
+      "topicId": "addition",
+      "question": "$62 + 10$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 64,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 13,
+    "question_id": "0281aa87-e583-45c0-8345-1e29bf345fb2",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$98 + 71$",
+    "answer": "169",
+    "payload": {
+      "id": "0281aa87-e583-45c0-8345-1e29bf345fb2",
+      "answer": "169",
+      "topicId": "addition",
+      "question": "$98 + 71$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 65,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 14,
+    "question_id": "8934fce2-7ea5-4961-b482-8e212c89b07d",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$64 + 73$",
+    "answer": "137",
+    "payload": {
+      "id": "8934fce2-7ea5-4961-b482-8e212c89b07d",
+      "answer": "137",
+      "topicId": "addition",
+      "question": "$64 + 73$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 66,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 15,
+    "question_id": "1614745a-5995-4f2e-a491-e5f3bf43e124",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$79 + 70$",
+    "answer": "149",
+    "payload": {
+      "id": "1614745a-5995-4f2e-a491-e5f3bf43e124",
+      "answer": "149",
+      "topicId": "addition",
+      "question": "$79 + 70$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 67,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 16,
+    "question_id": "dbbe636e-4d6d-41fe-b80e-216da488b2ca",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$74 + 63$",
+    "answer": "137",
+    "payload": {
+      "id": "dbbe636e-4d6d-41fe-b80e-216da488b2ca",
+      "answer": "137",
+      "topicId": "addition",
+      "question": "$74 + 63$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 68,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 17,
+    "question_id": "f03b3383-94bb-4c96-96e4-85d6d9a94ba2",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$49 + 90$",
+    "answer": "139",
+    "payload": {
+      "id": "f03b3383-94bb-4c96-96e4-85d6d9a94ba2",
+      "answer": "139",
+      "topicId": "addition",
+      "question": "$49 + 90$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 69,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 18,
+    "question_id": "0eff99f6-f612-4300-b853-d76e54deae85",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$90 + 31$",
+    "answer": "121",
+    "payload": {
+      "id": "0eff99f6-f612-4300-b853-d76e54deae85",
+      "answer": "121",
+      "topicId": "addition",
+      "question": "$90 + 31$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 70,
+    "session_id": "ff15160b-b0d1-42da-be28-f82a0a7a772d",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 19,
+    "question_id": "528b20e2-6ef7-425c-a87e-12d32bce65f0",
+    "topic_id": "addition",
+    "difficulty": 2,
+    "prompt": "$97 + 10$",
+    "answer": "107",
+    "payload": {
+      "id": "528b20e2-6ef7-425c-a87e-12d32bce65f0",
+      "answer": "107",
+      "topicId": "addition",
+      "question": "$97 + 10$",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 81,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "d94872d7-b5e6-4af4-9ddd-089259c119b9",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$x + 6 = -2$",
+    "answer": "-8",
+    "payload": {
+      "id": "d94872d7-b5e6-4af4-9ddd-089259c119b9",
+      "answer": "-8",
+      "topicId": "linearEquations",
+      "question": "$x + 6 = -2$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 82,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "643212d8-a330-46bd-a132-e5c6adf4c777",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$-5x + 10 = -5$",
+    "answer": "3",
+    "payload": {
+      "id": "643212d8-a330-46bd-a132-e5c6adf4c777",
+      "answer": "3",
+      "topicId": "linearEquations",
+      "question": "$-5x + 10 = -5$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 83,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "16ca05c7-a2cd-4229-8da9-9d958f5bded0",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$3x = -33$",
+    "answer": "-11",
+    "payload": {
+      "id": "16ca05c7-a2cd-4229-8da9-9d958f5bded0",
+      "answer": "-11",
+      "topicId": "linearEquations",
+      "question": "$3x = -33$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 84,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "5543a62a-7de3-4a48-bcc9-5d36549acad4",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$x - 7 = 3$",
+    "answer": "10",
+    "payload": {
+      "id": "5543a62a-7de3-4a48-bcc9-5d36549acad4",
+      "answer": "10",
+      "topicId": "linearEquations",
+      "question": "$x - 7 = 3$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 85,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "c1af521f-18db-422f-bef8-82113d45b153",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$x - 12 = -9$",
+    "answer": "3",
+    "payload": {
+      "id": "c1af521f-18db-422f-bef8-82113d45b153",
+      "answer": "3",
+      "topicId": "linearEquations",
+      "question": "$x - 12 = -9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 86,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "b6a647e7-1cf7-4e51-add3-7c08e190b898",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$3x = 21$",
+    "answer": "7",
+    "payload": {
+      "id": "b6a647e7-1cf7-4e51-add3-7c08e190b898",
+      "answer": "7",
+      "topicId": "linearEquations",
+      "question": "$3x = 21$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 87,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "534b6efd-39e0-43d9-b3ed-1b289fa9ac0f",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$-3x - 5 = 31$",
+    "answer": "-12",
+    "payload": {
+      "id": "534b6efd-39e0-43d9-b3ed-1b289fa9ac0f",
+      "answer": "-12",
+      "topicId": "linearEquations",
+      "question": "$-3x - 5 = 31$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 88,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "b4bcdbb5-dc03-4ddf-85d8-0b283c553179",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$6x - 2 = 4$",
+    "answer": "1",
+    "payload": {
+      "id": "b4bcdbb5-dc03-4ddf-85d8-0b283c553179",
+      "answer": "1",
+      "topicId": "linearEquations",
+      "question": "$6x - 2 = 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 89,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "9c672d7c-0ad4-44d7-8700-44eddec31af0",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$-7x - 5 = -89$",
+    "answer": "12",
+    "payload": {
+      "id": "9c672d7c-0ad4-44d7-8700-44eddec31af0",
+      "answer": "12",
+      "topicId": "linearEquations",
+      "question": "$-7x - 5 = -89$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 90,
+    "session_id": "af3b80cb-91e5-4dbe-afdf-3b39e4c2a6e9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "984d0240-0650-4a38-af26-3700ae47371d",
+    "topic_id": "linearEquations",
+    "difficulty": 1,
+    "prompt": "$-4x = 40$",
+    "answer": "-10",
+    "payload": {
+      "id": "984d0240-0650-4a38-af26-3700ae47371d",
+      "answer": "-10",
+      "topicId": "linearEquations",
+      "question": "$-4x = 40$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 91,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "864fdc6b-9e04-4202-8a03-4015ff07283d",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 4$",
+    "answer": "6",
+    "payload": {
+      "id": "864fdc6b-9e04-4202-8a03-4015ff07283d",
+      "answer": "6",
+      "topicId": "addition",
+      "question": "$2 + 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 92,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "84af708b-a936-40b7-afb6-e7a4df5d24fa",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$9 + 0$",
+    "answer": "9",
+    "payload": {
+      "id": "84af708b-a936-40b7-afb6-e7a4df5d24fa",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$9 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 93,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "8abde691-c2ea-4612-99de-5524ba812dc2",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 8$",
+    "answer": "14",
+    "payload": {
+      "id": "8abde691-c2ea-4612-99de-5524ba812dc2",
+      "answer": "14",
+      "topicId": "addition",
+      "question": "$6 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 94,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "6b6460bd-8107-484d-9484-f036b76623fe",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 8$",
+    "answer": "15",
+    "payload": {
+      "id": "6b6460bd-8107-484d-9484-f036b76623fe",
+      "answer": "15",
+      "topicId": "addition",
+      "question": "$7 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 95,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "7c70ddd9-33c2-4a7d-b693-582178d187be",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$4 + 4$",
+    "answer": "8",
+    "payload": {
+      "id": "7c70ddd9-33c2-4a7d-b693-582178d187be",
+      "answer": "8",
+      "topicId": "addition",
+      "question": "$4 + 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 96,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "2e8660ca-f86d-4829-9ea8-3c23f97f1476",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$6 + 3$",
+    "answer": "9",
+    "payload": {
+      "id": "2e8660ca-f86d-4829-9ea8-3c23f97f1476",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$6 + 3$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 97,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "a8f95d50-1658-43d9-aa3d-36a3047c4f56",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$0 + 9$",
+    "answer": "9",
+    "payload": {
+      "id": "a8f95d50-1658-43d9-aa3d-36a3047c4f56",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$0 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 98,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "bacff93c-b4de-419c-93a4-85803d112512",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$8 + 0$",
+    "answer": "8",
+    "payload": {
+      "id": "bacff93c-b4de-419c-93a4-85803d112512",
+      "answer": "8",
+      "topicId": "addition",
+      "question": "$8 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 99,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "e1b112b3-faeb-49b9-897c-ee2e42347b7f",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 8$",
+    "answer": "15",
+    "payload": {
+      "id": "e1b112b3-faeb-49b9-897c-ee2e42347b7f",
+      "answer": "15",
+      "topicId": "addition",
+      "question": "$7 + 8$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 100,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "ec80c13a-5c03-45fd-aca7-9834e1309329",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 9$",
+    "answer": "16",
+    "payload": {
+      "id": "ec80c13a-5c03-45fd-aca7-9834e1309329",
+      "answer": "16",
+      "topicId": "addition",
+      "question": "$7 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 101,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 10,
+    "question_id": "a63d2d66-380d-4b72-80d0-7998107323a8",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$4 + 4$",
+    "answer": "8",
+    "payload": {
+      "id": "a63d2d66-380d-4b72-80d0-7998107323a8",
+      "answer": "8",
+      "topicId": "addition",
+      "question": "$4 + 4$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 102,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 11,
+    "question_id": "cba7563b-3c1f-4a7b-8ed9-f725e33cdeb6",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$3 + 6$",
+    "answer": "9",
+    "payload": {
+      "id": "cba7563b-3c1f-4a7b-8ed9-f725e33cdeb6",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$3 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 103,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 12,
+    "question_id": "8149bc22-5143-4bf2-9b84-65669666637b",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$8 + 9$",
+    "answer": "17",
+    "payload": {
+      "id": "8149bc22-5143-4bf2-9b84-65669666637b",
+      "answer": "17",
+      "topicId": "addition",
+      "question": "$8 + 9$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 104,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 13,
+    "question_id": "6cbd21ca-4c0d-4637-a3a5-6ec0ba6a68ab",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$4 + 5$",
+    "answer": "9",
+    "payload": {
+      "id": "6cbd21ca-4c0d-4637-a3a5-6ec0ba6a68ab",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$4 + 5$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 105,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 14,
+    "question_id": "3d5c94f4-a3c4-48db-bfb3-de4aaffdd41d",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$5 + 7$",
+    "answer": "12",
+    "payload": {
+      "id": "3d5c94f4-a3c4-48db-bfb3-de4aaffdd41d",
+      "answer": "12",
+      "topicId": "addition",
+      "question": "$5 + 7$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 106,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 15,
+    "question_id": "87ab5fe9-29e7-4e03-b989-cd90976a0509",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$3 + 6$",
+    "answer": "9",
+    "payload": {
+      "id": "87ab5fe9-29e7-4e03-b989-cd90976a0509",
+      "answer": "9",
+      "topicId": "addition",
+      "question": "$3 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 107,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 16,
+    "question_id": "678b44e1-1e01-4610-a26c-b5f9b00967f1",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$8 + 6$",
+    "answer": "14",
+    "payload": {
+      "id": "678b44e1-1e01-4610-a26c-b5f9b00967f1",
+      "answer": "14",
+      "topicId": "addition",
+      "question": "$8 + 6$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 108,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 17,
+    "question_id": "590f3cdc-41a3-48d2-9faa-085e327032db",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 1$",
+    "answer": "8",
+    "payload": {
+      "id": "590f3cdc-41a3-48d2-9faa-085e327032db",
+      "answer": "8",
+      "topicId": "addition",
+      "question": "$7 + 1$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 109,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 18,
+    "question_id": "a8556290-2917-437e-bdfe-addde119155f",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$2 + 0$",
+    "answer": "2",
+    "payload": {
+      "id": "a8556290-2917-437e-bdfe-addde119155f",
+      "answer": "2",
+      "topicId": "addition",
+      "question": "$2 + 0$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 110,
+    "session_id": "11b25c45-5771-4c89-993a-cd291d0b9115",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 19,
+    "question_id": "85d743da-34c4-450d-afea-fd1eddaf539d",
+    "topic_id": "addition",
+    "difficulty": 1,
+    "prompt": "$7 + 5$",
+    "answer": "12",
+    "payload": {
+      "id": "85d743da-34c4-450d-afea-fd1eddaf539d",
+      "answer": "12",
+      "topicId": "addition",
+      "question": "$7 + 5$",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 111,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "6e0dbd0c-1d76-4c18-8e0f-bb2325108ae4",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $66^2$",
+    "answer": "4356",
+    "payload": {
+      "id": "6e0dbd0c-1d76-4c18-8e0f-bb2325108ae4",
+      "answer": "4356",
+      "topicId": "squaring",
+      "question": "Calculate: $66^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 112,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "8a8203cf-d4a7-4b84-b2f1-4a6f2901a50b",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $29^2$",
+    "answer": "841",
+    "payload": {
+      "id": "8a8203cf-d4a7-4b84-b2f1-4a6f2901a50b",
+      "answer": "841",
+      "topicId": "squaring",
+      "question": "Calculate: $29^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 113,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "315c7996-94c0-4679-a54a-d83e759537d7",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $49^2$",
+    "answer": "2401",
+    "payload": {
+      "id": "315c7996-94c0-4679-a54a-d83e759537d7",
+      "answer": "2401",
+      "topicId": "squaring",
+      "question": "Calculate: $49^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 114,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "aa6bfbf6-e45f-40e4-bfb8-139865c65584",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $54^2$",
+    "answer": "2916",
+    "payload": {
+      "id": "aa6bfbf6-e45f-40e4-bfb8-139865c65584",
+      "answer": "2916",
+      "topicId": "squaring",
+      "question": "Calculate: $54^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 115,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "d1030384-e73c-417c-bf38-6d199905e0c7",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $79^2$",
+    "answer": "6241",
+    "payload": {
+      "id": "d1030384-e73c-417c-bf38-6d199905e0c7",
+      "answer": "6241",
+      "topicId": "squaring",
+      "question": "Calculate: $79^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 116,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "c16c0a40-495f-45d7-a646-2c8c1cd38cd6",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $37^2$",
+    "answer": "1369",
+    "payload": {
+      "id": "c16c0a40-495f-45d7-a646-2c8c1cd38cd6",
+      "answer": "1369",
+      "topicId": "squaring",
+      "question": "Calculate: $37^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 117,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "eb329c9c-7917-4b2c-97ae-fbc863e18f55",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $96^2$",
+    "answer": "9216",
+    "payload": {
+      "id": "eb329c9c-7917-4b2c-97ae-fbc863e18f55",
+      "answer": "9216",
+      "topicId": "squaring",
+      "question": "Calculate: $96^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 118,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "c471b4ae-f5ee-4277-a094-50addc30e037",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $87^2$",
+    "answer": "7569",
+    "payload": {
+      "id": "c471b4ae-f5ee-4277-a094-50addc30e037",
+      "answer": "7569",
+      "topicId": "squaring",
+      "question": "Calculate: $87^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 119,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "238ebafd-5a29-455a-a708-9a1f147b7849",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $44^2$",
+    "answer": "1936",
+    "payload": {
+      "id": "238ebafd-5a29-455a-a708-9a1f147b7849",
+      "answer": "1936",
+      "topicId": "squaring",
+      "question": "Calculate: $44^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 120,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "cb97ac87-7c47-4273-9989-5a6890bf7f58",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $86^2$",
+    "answer": "7396",
+    "payload": {
+      "id": "cb97ac87-7c47-4273-9989-5a6890bf7f58",
+      "answer": "7396",
+      "topicId": "squaring",
+      "question": "Calculate: $86^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 121,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 10,
+    "question_id": "600c5739-25df-490d-aa86-0c9d009cc709",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $68^2$",
+    "answer": "4624",
+    "payload": {
+      "id": "600c5739-25df-490d-aa86-0c9d009cc709",
+      "answer": "4624",
+      "topicId": "squaring",
+      "question": "Calculate: $68^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 122,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 11,
+    "question_id": "aa978825-04b4-489d-bc61-10430aeab109",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $92^2$",
+    "answer": "8464",
+    "payload": {
+      "id": "aa978825-04b4-489d-bc61-10430aeab109",
+      "answer": "8464",
+      "topicId": "squaring",
+      "question": "Calculate: $92^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 123,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 12,
+    "question_id": "ae346456-2d3c-4d4f-9d87-81216dc3d9f1",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $49^2$",
+    "answer": "2401",
+    "payload": {
+      "id": "ae346456-2d3c-4d4f-9d87-81216dc3d9f1",
+      "answer": "2401",
+      "topicId": "squaring",
+      "question": "Calculate: $49^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 124,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 13,
+    "question_id": "b420272c-815f-49ec-bc91-cbec3e17e6bd",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $77^2$",
+    "answer": "5929",
+    "payload": {
+      "id": "b420272c-815f-49ec-bc91-cbec3e17e6bd",
+      "answer": "5929",
+      "topicId": "squaring",
+      "question": "Calculate: $77^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 125,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 14,
+    "question_id": "0fa45de5-b922-41cf-9145-704123ef91b1",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $87^2$",
+    "answer": "7569",
+    "payload": {
+      "id": "0fa45de5-b922-41cf-9145-704123ef91b1",
+      "answer": "7569",
+      "topicId": "squaring",
+      "question": "Calculate: $87^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 126,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 15,
+    "question_id": "c307eee6-2feb-4636-93b2-0b9ef47b43b1",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $51^2$",
+    "answer": "2601",
+    "payload": {
+      "id": "c307eee6-2feb-4636-93b2-0b9ef47b43b1",
+      "answer": "2601",
+      "topicId": "squaring",
+      "question": "Calculate: $51^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 127,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 16,
+    "question_id": "38de3c56-284e-4a47-a39d-1c698bcfb498",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $81^2$",
+    "answer": "6561",
+    "payload": {
+      "id": "38de3c56-284e-4a47-a39d-1c698bcfb498",
+      "answer": "6561",
+      "topicId": "squaring",
+      "question": "Calculate: $81^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 128,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 17,
+    "question_id": "4e123103-d49e-4cd9-b826-092ff1ec8532",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $58^2$",
+    "answer": "3364",
+    "payload": {
+      "id": "4e123103-d49e-4cd9-b826-092ff1ec8532",
+      "answer": "3364",
+      "topicId": "squaring",
+      "question": "Calculate: $58^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 129,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 18,
+    "question_id": "3187936b-db74-499b-9237-66898db9b973",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $11^2$",
+    "answer": "121",
+    "payload": {
+      "id": "3187936b-db74-499b-9237-66898db9b973",
+      "answer": "121",
+      "topicId": "squaring",
+      "question": "Calculate: $11^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 130,
+    "session_id": "099e41ca-9bf0-4a31-b14f-aee535c1a92b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 19,
+    "question_id": "3b667942-5604-4cbd-8786-f3f321a0c2d2",
+    "topic_id": "squaring",
+    "difficulty": 3,
+    "prompt": "Calculate: $39^2$",
+    "answer": "1521",
+    "payload": {
+      "id": "3b667942-5604-4cbd-8786-f3f321a0c2d2",
+      "answer": "1521",
+      "topicId": "squaring",
+      "question": "Calculate: $39^2$",
+      "difficulty": 3
+    }
+  },
+  {
+    "id": 131,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 0,
+    "question_id": "a9b783a3-0c7c-4660-9d60-e1894c5ae7b6",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $3^{3} \\times 3^{-3} \\times 3^{8}$",
+    "answer": "3^8",
+    "payload": {
+      "id": "a9b783a3-0c7c-4660-9d60-e1894c5ae7b6",
+      "answer": "3^8",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $3^{3} \\times 3^{-3} \\times 3^{8}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "3^8",
+        "6561",
+        "3**8",
+        "3^8"
+      ]
+    }
+  },
+  {
+    "id": 132,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 1,
+    "question_id": "9b4a91a7-208f-421e-ac9c-77a33662a289",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $10^{-6} \\times 10^{6}$",
+    "answer": "1",
+    "payload": {
+      "id": "9b4a91a7-208f-421e-ac9c-77a33662a289",
+      "answer": "1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $10^{-6} \\times 10^{6}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    }
+  },
+  {
+    "id": 133,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 2,
+    "question_id": "1b768edb-bdc5-4983-826d-2cc850d1445b",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{2^{-1}}{2^{-2}}$",
+    "answer": "2^1",
+    "payload": {
+      "id": "1b768edb-bdc5-4983-826d-2cc850d1445b",
+      "answer": "2^1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{2^{-1}}{2^{-2}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "2^1",
+        "2",
+        "2**1",
+        "2^1"
+      ]
+    }
+  },
+  {
+    "id": 134,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 3,
+    "question_id": "9170b5de-827b-40b6-b3d1-01116e76b163",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{2^{-6} \\times 2^{1}}{2^{6}}$",
+    "answer": "1/2^11",
+    "payload": {
+      "id": "9170b5de-827b-40b6-b3d1-01116e76b163",
+      "answer": "1/2^11",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{2^{-6} \\times 2^{1}}{2^{6}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/2^11",
+        "0.00048828125",
+        "1/2**11",
+        "1/2^11"
+      ]
+    }
+  },
+  {
+    "id": 135,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 4,
+    "question_id": "8202f167-562a-4176-a411-4f8916c42a51",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $10^{1} \\times 10^{-6} \\times 10^{-2} \\times 10^{5}$",
+    "answer": "1/10^2",
+    "payload": {
+      "id": "8202f167-562a-4176-a411-4f8916c42a51",
+      "answer": "1/10^2",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $10^{1} \\times 10^{-6} \\times 10^{-2} \\times 10^{5}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/10^2",
+        "0.01",
+        "1/10**2",
+        "1/10^2"
+      ]
+    }
+  },
+  {
+    "id": 136,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 5,
+    "question_id": "fc1c8a99-6dd7-4dc9-b0bf-a77b733cf9e9",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{5^{-2}}{5^{6}}$",
+    "answer": "1/5^8",
+    "payload": {
+      "id": "fc1c8a99-6dd7-4dc9-b0bf-a77b733cf9e9",
+      "answer": "1/5^8",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{5^{-2}}{5^{6}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/5^8",
+        "0.00000256",
+        "1/5**8",
+        "1/5^8"
+      ]
+    }
+  },
+  {
+    "id": 137,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 6,
+    "question_id": "2f0ae08e-6428-4981-a42c-afcb42ea6ab0",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{10^{-1} \\times 10^{7}}{10^{2}}$",
+    "answer": "10^4",
+    "payload": {
+      "id": "2f0ae08e-6428-4981-a42c-afcb42ea6ab0",
+      "answer": "10^4",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{10^{-1} \\times 10^{7}}{10^{2}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "10^4",
+        "10000",
+        "10**4",
+        "10^4"
+      ]
+    }
+  },
+  {
+    "id": 138,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 7,
+    "question_id": "11b34512-54a8-42bc-a7f8-caecffea40ba",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $2^{1} \\times 2^{6}$",
+    "answer": "2^7",
+    "payload": {
+      "id": "11b34512-54a8-42bc-a7f8-caecffea40ba",
+      "answer": "2^7",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $2^{1} \\times 2^{6}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "2^7",
+        "128",
+        "2**7",
+        "2^7"
+      ]
+    }
+  },
+  {
+    "id": 139,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 8,
+    "question_id": "72f012fb-5ac9-43c6-84f4-7bfc68e9f752",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{10^{-3} \\times 10^{2}}{10^{1}}$",
+    "answer": "1/10^2",
+    "payload": {
+      "id": "72f012fb-5ac9-43c6-84f4-7bfc68e9f752",
+      "answer": "1/10^2",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{10^{-3} \\times 10^{2}}{10^{1}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/10^2",
+        "0.01",
+        "1/10**2",
+        "1/10^2"
+      ]
+    }
+  },
+  {
+    "id": 140,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 9,
+    "question_id": "59fd9859-b173-4600-aa7d-c78f25fd5b18",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $5^{-9} \\times 5^{4} \\times 5^{8} \\times 5^{-4}$",
+    "answer": "1/5^1",
+    "payload": {
+      "id": "59fd9859-b173-4600-aa7d-c78f25fd5b18",
+      "answer": "1/5^1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $5^{-9} \\times 5^{4} \\times 5^{8} \\times 5^{-4}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/5^1",
+        "0.2",
+        "1/5**1",
+        "1/5^1"
+      ]
+    }
+  },
+  {
+    "id": 141,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 10,
+    "question_id": "57763cc9-4077-4db4-997b-c17638c7b3ad",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $5^{7} \\times 5^{-3} \\times 5^{3}$",
+    "answer": "5^7",
+    "payload": {
+      "id": "57763cc9-4077-4db4-997b-c17638c7b3ad",
+      "answer": "5^7",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $5^{7} \\times 5^{-3} \\times 5^{3}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "5^7",
+        "78125",
+        "5**7",
+        "5^7"
+      ]
+    }
+  },
+  {
+    "id": 142,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 11,
+    "question_id": "9153efbb-87e0-419e-a583-35ff64c7db51",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{3^{6} \\times 3^{6}}{3^{5}}$",
+    "answer": "3^7",
+    "payload": {
+      "id": "9153efbb-87e0-419e-a583-35ff64c7db51",
+      "answer": "3^7",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{3^{6} \\times 3^{6}}{3^{5}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "3^7",
+        "2187",
+        "3**7",
+        "3^7"
+      ]
+    }
+  },
+  {
+    "id": 143,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 12,
+    "question_id": "ff8981c9-5f37-4dca-8c95-3b7461b8665a",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{3^{-1} \\times 3^{-3}}{3^{-4}}$",
+    "answer": "1",
+    "payload": {
+      "id": "ff8981c9-5f37-4dca-8c95-3b7461b8665a",
+      "answer": "1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{3^{-1} \\times 3^{-3}}{3^{-4}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    }
+  },
+  {
+    "id": 144,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 13,
+    "question_id": "7387d1f3-7472-447a-a2f6-f3c33cdcb294",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{2^{-9} \\times 2^{-2}}{2^{1}}$",
+    "answer": "1/2^12",
+    "payload": {
+      "id": "7387d1f3-7472-447a-a2f6-f3c33cdcb294",
+      "answer": "1/2^12",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{2^{-9} \\times 2^{-2}}{2^{1}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/2^12",
+        "0.000244140625",
+        "1/2**12",
+        "1/2^12"
+      ]
+    }
+  },
+  {
+    "id": 145,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 14,
+    "question_id": "e309c866-8cb5-4cc0-85aa-043b47f9f152",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{2^{2} \\times 2^{8}}{2^{3}}$",
+    "answer": "2^7",
+    "payload": {
+      "id": "e309c866-8cb5-4cc0-85aa-043b47f9f152",
+      "answer": "2^7",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{2^{2} \\times 2^{8}}{2^{3}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "2^7",
+        "128",
+        "2**7",
+        "2^7"
+      ]
+    }
+  },
+  {
+    "id": 146,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 15,
+    "question_id": "8c938ef5-c244-438c-bc8a-c9510c58a330",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{10^{8} \\times 10^{7}}{10^{-6}}$",
+    "answer": "10^21",
+    "payload": {
+      "id": "8c938ef5-c244-438c-bc8a-c9510c58a330",
+      "answer": "10^21",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{10^{8} \\times 10^{7}}{10^{-6}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "10^21",
+        "1e+21",
+        "10**21",
+        "10^21"
+      ]
+    }
+  },
+  {
+    "id": 147,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 16,
+    "question_id": "ae03d5c9-b845-4f81-b0dc-9ba35fb57f18",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $3^{-2} \\times 3^{2}$",
+    "answer": "1",
+    "payload": {
+      "id": "ae03d5c9-b845-4f81-b0dc-9ba35fb57f18",
+      "answer": "1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $3^{-2} \\times 3^{2}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    }
+  },
+  {
+    "id": 148,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 17,
+    "question_id": "aded70ab-6cde-410a-853e-727805472fcf",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{3^{4} \\times 3^{-2}}{3^{3}}$",
+    "answer": "1/3^1",
+    "payload": {
+      "id": "aded70ab-6cde-410a-853e-727805472fcf",
+      "answer": "1/3^1",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{3^{4} \\times 3^{-2}}{3^{3}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "1/3^1",
+        "0.3333333333333333",
+        "1/3**1",
+        "1/3^1"
+      ]
+    }
+  },
+  {
+    "id": 149,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 18,
+    "question_id": "3c1dc4a9-87fd-4957-ac0f-7c8cfc132ddc",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $3^{-3} \\times 3^{8} \\times 3^{8}$",
+    "answer": "3^13",
+    "payload": {
+      "id": "3c1dc4a9-87fd-4957-ac0f-7c8cfc132ddc",
+      "answer": "3^13",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $3^{-3} \\times 3^{8} \\times 3^{8}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "3^13",
+        "1594323",
+        "3**13",
+        "3^13"
+      ]
+    }
+  },
+  {
+    "id": 150,
+    "session_id": "2564f39a-c917-4fee-99de-66a2ec00066c",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "order_index": 19,
+    "question_id": "5839df38-fdc6-47db-8438-2c43db129159",
+    "topic_id": "indices_simplify",
+    "difficulty": 1,
+    "prompt": "Simplify: $\\frac{2^{7} \\times 2^{6} \\times 2^{-2}}{2^{3}}$",
+    "answer": "2^8",
+    "payload": {
+      "id": "5839df38-fdc6-47db-8438-2c43db129159",
+      "answer": "2^8",
+      "topicId": "indices_simplify",
+      "question": "Simplify: $\\frac{2^{7} \\times 2^{6} \\times 2^{-2}}{2^{3}}$",
+      "difficulty": 1,
+      "acceptableAnswers": [
+        "2^8",
+        "256",
+        "2**8",
+        "2^8"
+      ]
+    }
+  }
+]

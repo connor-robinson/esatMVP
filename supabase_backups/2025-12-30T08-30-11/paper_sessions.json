@@ -1,0 +1,2457 @@
+[
+  {
+    "id": "0899d22f-4483-40e3-9228-235b79bc7041",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 59,
+    "paper_name": "ENGAA",
+    "paper_variant": "2020-Section 2-Official",
+    "session_name": "ENGAA 2020 Section 2 (Official) - Physics - 12/17/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Physics"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T10:17:44.493+00:00",
+    "ended_at": "2025-12-17T10:18:05.731+00:00",
+    "deadline_at": "2025-12-17T10:47:44.493+00:00",
+    "per_question_seconds": [
+      8,
+      2,
+      2,
+      1,
+      2,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": "D",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "E",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "C",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "D",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "F",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "C",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      true,
+      true,
+      null,
+      null,
+      true,
+      true,
+      true,
+      true,
+      null,
+      true,
+      true,
+      null,
+      null,
+      null,
+      null,
+      true,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 20,
+      "correct": 9
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T10:18:48.215459+00:00",
+    "updated_at": "2025-12-17T10:21:20.432472+00:00"
+  },
+  {
+    "id": "cbef5477-a97c-4110-8448-1106fe71f8c8",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 69,
+    "paper_name": "TMUA",
+    "paper_variant": "2019-Paper 1-Official",
+    "session_name": "TMUA 2019 Paper 1 (Official) - Mathematics, Mathematical Thinking and Reasoning Skills - 12/17/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Paper 1",
+      "Paper 2"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T10:25:37.212+00:00",
+    "ended_at": "2025-12-17T10:26:01.593+00:00",
+    "deadline_at": "2025-12-17T10:55:37.212+00:00",
+    "per_question_seconds": [
+      1,
+      22,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": "D",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 20,
+      "correct": 7
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T10:26:40.706831+00:00",
+    "updated_at": "2025-12-17T10:32:58.170083+00:00"
+  },
+  {
+    "id": "3385886c-20aa-4346-a8d6-108b376e3adf",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 59,
+    "paper_name": "ENGAA",
+    "paper_variant": "2020-Section 2-Official",
+    "session_name": "ENGAA 2020 Section 2 (Official) - Physics - 12/17/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Physics"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T10:32:12.119+00:00",
+    "ended_at": "2025-12-17T10:32:15.31+00:00",
+    "deadline_at": "2025-12-17T11:02:12.119+00:00",
+    "per_question_seconds": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      true,
+      null,
+      true,
+      null,
+      true,
+      null,
+      true,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 20,
+      "correct": 4
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T10:33:15.58042+00:00",
+    "updated_at": "2025-12-17T10:35:36.074983+00:00"
+  },
+  {
+    "id": "386e7ef4-ac3c-437c-8021-a9d7d0bb5b83",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 71,
+    "paper_name": "TMUA",
+    "paper_variant": "2021-Paper 1-Official",
+    "session_name": "TMUA 2021 Paper 1 (Official) - Mathematics, Mathematical Thinking and Reasoning Skills - 12/17/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Paper 1",
+      "Paper 2"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T15:57:35.885+00:00",
+    "ended_at": "2025-12-17T15:57:55.965+00:00",
+    "deadline_at": "2025-12-17T16:27:35.885+00:00",
+    "per_question_seconds": [
+      6,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      5
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": "D",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "E",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "C",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "F",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "C",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "E",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": "D",
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 20,
+      "correct": 0
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T15:58:38.461434+00:00",
+    "updated_at": "2025-12-17T15:58:58.531459+00:00"
+  },
+  {
+    "id": "8f412af1-ea54-4c42-9486-38d892b3d4f2",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 75,
+    "paper_name": "TMUA",
+    "paper_variant": "2017-Paper 1-Official",
+    "session_name": "TMUA 2017 Paper 1 (Official) - Mathematics, Mathematical Thinking and Reasoning Skills - 12/17/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Paper 1",
+      "Paper 2"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T15:59:09.144+00:00",
+    "ended_at": null,
+    "deadline_at": "2025-12-17T16:29:09.144+00:00",
+    "per_question_seconds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": null,
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T16:00:11.633332+00:00",
+    "updated_at": "2025-12-17T16:00:11.633332+00:00"
+  },
+  {
+    "id": "5829be1b-797a-4436-83b7-44a27d159bc9",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 70,
+    "paper_name": "TMUA",
+    "paper_variant": "2020-Paper 1-Official",
+    "session_name": "TMUA 2020 Paper 1 (Official) - Mathematics, Mathematical Thinking and Reasoning Skills - 12/18/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Paper 1",
+      "Paper 2"
+    ],
+    "time_limit_minutes": 150,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-17T19:03:49.297+00:00",
+    "ended_at": null,
+    "deadline_at": "2025-12-17T21:33:49.297+00:00",
+    "per_question_seconds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": null,
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T19:04:52.360321+00:00",
+    "updated_at": "2025-12-17T19:04:52.360321+00:00"
+  },
+  {
+    "id": "1e17f0d2-e614-4f6e-b044-fae69e4869f6",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 37,
+    "paper_name": "ENGAA",
+    "paper_variant": "2020-Section 1-Official",
+    "session_name": "ENGAA 2020 Section 1 (Official) - Mathematics and Physics, Advanced Mathematics and Advanced Physics - 12/18/2025",
+    "question_start": 1,
+    "question_end": 40,
+    "selected_sections": [
+      "Mathematics and Physics",
+      "Advanced Mathematics and Advanced Physics"
+    ],
+    "time_limit_minutes": 60,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+    ],
+    "started_at": "2025-12-17T19:05:02.684+00:00",
+    "ended_at": null,
+    "deadline_at": "2025-12-17T20:05:02.684+00:00",
+    "per_question_seconds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      true,
+      null,
+      true,
+      true,
+      null,
+      true,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 40,
+      "correct": 4
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-17T19:06:05.389989+00:00",
+    "updated_at": "2025-12-17T19:16:17.54202+00:00"
+  },
+  {
+    "id": "a3eead5e-2900-4a8b-aa73-3e2142cd841b",
+    "user_id": "b9681b78-5aff-46d5-86d9-badc0177fc17",
+    "paper_id": 48,
+    "paper_name": "NSAA",
+    "paper_variant": "2021-Section 1-Official",
+    "session_name": "NSAA 2021 Section 1 (Official) - Biology - 12/22/2025",
+    "question_start": 1,
+    "question_end": 20,
+    "selected_sections": [
+      "Biology"
+    ],
+    "time_limit_minutes": 30,
+    "question_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "started_at": "2025-12-22T09:12:01.442+00:00",
+    "ended_at": "2025-12-22T09:42:36.061+00:00",
+    "deadline_at": "2025-12-22T09:42:01.442+00:00",
+    "per_question_seconds": [
+      171,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "answers": [
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      },
+      {
+        "other": "",
+        "choice": null,
+        "addToDrill": false,
+        "explanation": "",
+        "correctChoice": null
+      }
+    ],
+    "correct_flags": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "guessed_flags": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "mistake_tags": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "score": {
+      "total": 20,
+      "correct": 0
+    },
+    "notes": "",
+    "pinned_insights": null,
+    "created_at": "2025-12-22T09:12:01.679454+00:00",
+    "updated_at": "2025-12-22T09:42:36.882463+00:00"
+  }
+]

@@ -43,7 +43,7 @@ export function useQuestionBank(): UseQuestionBankReturn {
     difficulty: 'All',
     searchTag: '',
     attemptedStatus: 'Mix',
-    reviewStatus: 'All',
+    attemptResult: [],
   });
   const [isAnswered, setIsAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -62,9 +62,24 @@ export function useQuestionBank(): UseQuestionBankReturn {
     try {
       // Build query params - pass all filters to API for server-side filtering
       const params = new URLSearchParams();
-      if (filters.subject !== 'All') params.append('subject', filters.subject);
-      if (filters.difficulty !== 'All') params.append('difficulty', filters.difficulty);
-      if (filters.reviewStatus !== 'All') params.append('reviewStatus', filters.reviewStatus);
+      // Handle subject (can be array or single value) - send all selected subjects
+      const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
+      if (subjects.length > 0) {
+        // Send all subjects as comma-separated values for OR logic
+        params.append('subject', subjects.join(','));
+      }
+      // Handle difficulty (can be array or single value) - send all selected difficulties
+      const difficulties = Array.isArray(filters.difficulty) ? filters.difficulty : (filters.difficulty !== 'All' ? [filters.difficulty] : []);
+      if (difficulties.length > 0) {
+        // Send all difficulties as comma-separated values for OR logic
+        params.append('difficulty', difficulties.join(','));
+      }
+      // Handle attempt result (can be array or single value) - send all selected results
+      const attemptResults = Array.isArray(filters.attemptResult) ? filters.attemptResult : (filters.attemptResult ? [filters.attemptResult] : []);
+      if (attemptResults.length > 0) {
+        // Send all attempt results as comma-separated values for OR logic
+        params.append('attemptResult', attemptResults.join(','));
+      }
       if (filters.attemptedStatus !== 'Mix') params.append('attemptedStatus', filters.attemptedStatus);
       if (filters.searchTag) params.append('tags', filters.searchTag);
       // Request enough questions - API will fetch even more when filtering by "New"
@@ -244,10 +259,18 @@ export function useQuestionBank(): UseQuestionBankReturn {
     await fetchQuestion();
   }, [fetchQuestion]);
 
-  // Update the current question (e.g., after editing)
+  // Update the current question (e.g., after editing or session navigation)
   const updateCurrentQuestion = useCallback((question: QuestionBankQuestion) => {
+    // If question ID changed, reset answered state
+    if (currentQuestion?.id !== question.id) {
+      setIsAnswered(false);
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+      setQuestionStartTime(Date.now());
+      setViewedSolution(false);
+    }
     setCurrentQuestion(question);
-  }, []);
+  }, [currentQuestion?.id]);
 
   // Fetch initial question on mount or filter change
   useEffect(() => {

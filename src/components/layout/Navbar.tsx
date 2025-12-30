@@ -117,7 +117,7 @@ export function Navbar() {
                 href="/questions"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  pathname.startsWith("/questions") ? "text-white/90" : "text-white/50 hover:text-white/80"
+                  pathname.startsWith("/questions") ? "text-interview" : "text-white/50 hover:text-white/80"
                 )}
               >
                 Question Bank

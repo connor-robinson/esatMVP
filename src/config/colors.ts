@@ -1,6 +1,11 @@
 /**
  * Central color configuration for the papers/plan page
  * Edit these 5 colors to update the entire application
+ * 
+ * SECTION COLOR SCHEME:
+ * - Question Bank: Signature Purple (#7b6fa6) - Used for selected states, highlights, and interactive elements
+ * - Past Papers: Blue (#406166 - mathematics color) - Used for paper sessions and related features
+ * - Mental Maths: Green (#85BC82 - primary color) - Used for mental math practice features
  */
 
 export const PAPER_COLORS = {

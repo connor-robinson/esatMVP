@@ -1,145 +1,133 @@
 /**
- * StageCard - Collapsible card representing a roadmap stage (year)
+ * StageNode - Circular node/bubble representing a roadmap stage
+ * Similar to VerticalRoadmap lesson bubbles
  */
 
 "use client";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { motion } from "framer-motion";
 import { getPaperTypeColor } from "@/config/colors";
 import { cn } from "@/lib/utils";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
-import { ChevronDown, ChevronRight, Lock, Play } from "lucide-react";
-import { useState } from "react";
+import { Lock } from "lucide-react";
 
-interface StageCardProps {
+interface StageNodeProps {
   stage: RoadmapStage;
   completedCount: number;
   totalCount: number;
   isUnlocked: boolean;
   isCurrent?: boolean;
-  partCompletions: Map<string, boolean>;
-  onStartStage: () => void;
+  isCompleted?: boolean;
+  onNodeClick: () => void;
+  index: number;
 }
 
-export function StageCard({
+const NODE_SIZE = 140;
+
+export function StageNode({
   stage,
   completedCount,
   totalCount,
   isUnlocked,
   isCurrent = false,
-  partCompletions,
-  onStartStage,
-}: StageCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  isCompleted = false,
+  onNodeClick,
+  index,
+}: StageNodeProps) {
   const examColor = getPaperTypeColor(stage.examName);
-  const isCompleted = completedCount === totalCount && totalCount > 0;
+  const percentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  const handleToggle = () => {
+  const handleClick = () => {
     if (isUnlocked) {
-      setIsExpanded(!isExpanded);
+      onNodeClick();
     }
   };
 
   return (
-    <Card
-      variant="default"
-      className={cn(
-        "transition-all h-full flex flex-col relative min-h-[200px]",
-        !isUnlocked && "opacity-50",
-        isCurrent && "ring-2 ring-primary shadow-lg shadow-primary/30",
-        isUnlocked && "hover:bg-white/7"
-      )}
-    >
-      {/* Collapsed header - single row */}
-      <button
-        onClick={handleToggle}
-        className="w-full p-4 flex items-center gap-3"
-        disabled={!isUnlocked}
-      >
-        {/* Year - largest, primary visual */}
-        <div className="text-3xl font-bold text-white flex-shrink-0 tabular-nums">
-          {stage.year}
-        </div>
-
-        {/* Exam name - secondary */}
-        <div
-          className="text-sm font-medium flex-shrink-0 uppercase tracking-wide"
-          style={{ color: examColor }}
-        >
-          {stage.examName}
-        </div>
-
-        {/* Progress - X / Y */}
-        {isUnlocked && (
-          <div className="flex-1 text-right text-xs text-white/60 tabular-nums">
-            {completedCount} / {totalCount}
-          </div>
-        )}
-
-        {/* Expand icon or lock */}
-        <div className="flex-shrink-0">
-          {!isUnlocked ? (
-            <Lock className="w-4 h-4 text-white/30" />
-          ) : isExpanded ? (
-            <ChevronDown className="w-4 h-4 text-white/40" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-white/40" />
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative">
+        <motion.button
+          onClick={handleClick}
+          disabled={!isUnlocked}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          whileHover={isUnlocked ? { 
+            scale: 1.08,
+            y: -4,
+          } : {}}
+          whileTap={isUnlocked ? { scale: 0.95 } : {}}
+          transition={{
+            opacity: { duration: 0.2 },
+            scale: { duration: 0.2, ease: "easeOut" },
+            y: { duration: 0.2, ease: "easeOut" },
+          }}
+          className={cn(
+            "relative rounded-2xl transition-all backdrop-blur-sm",
+            isCompleted
+              ? "bg-white/8 shadow-xl"
+              : isUnlocked
+              ? "bg-white/8 hover:bg-white/10 hover:shadow-2xl"
+              : "bg-white/4 opacity-40 cursor-not-allowed"
           )}
-        </div>
-      </button>
+          style={{
+            width: NODE_SIZE,
+            height: NODE_SIZE,
+          }}
+        >
+          {/* Backdrop blur overlay */}
+          <div className="absolute inset-0 bg-white/5 rounded-2xl backdrop-blur-xl" />
 
-      {/* Expanded content - parts list and start button */}
-      {isExpanded && isUnlocked && (
-        <div className="px-4 pb-4 pt-2 space-y-3 border-t border-white/10 flex-1 flex flex-col">
-          {/* Parts list */}
-          <div className="space-y-1 flex-1">
-            {stage.parts.map((part) => {
-              const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-              const completed = partCompletions.get(partKey) || false;
-
-              return (
-                <div
-                  key={partKey}
-                  className={cn(
-                    "text-xs p-2 rounded flex items-center gap-2",
-                    completed ? "bg-white/5 text-white/60" : "bg-white/5 text-white/80"
-                  )}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: completed ? "transparent" : examColor }} />
-                  <span className="truncate">
-                    {part.partLetter}: {part.partName}
-                  </span>
-                  {completed && (
-                    <span className="ml-auto text-xs text-primary">✓</span>
-                  )}
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-3">
+            {!isUnlocked ? (
+              <Lock className="h-12 w-12 text-white/20" strokeWidth={2} />
+            ) : (
+              <>
+                <div className="text-lg font-bold text-white/90 text-center leading-tight mb-1">
+                  {stage.year}
                 </div>
-              );
-            })}
+                <div
+                  className="text-lg font-bold uppercase tracking-wide text-center"
+                  style={{ color: examColor }}
+                >
+                  {stage.examName}
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Start Practice Button */}
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              onStartStage();
-            }}
-            variant="primary"
-            className="w-full mt-auto"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Start Practice
-          </Button>
-        </div>
-      )}
+          {/* Section count badge */}
+          {isUnlocked && !isCompleted && totalCount > 0 && (
+            <div
+              className={cn(
+                "absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10",
+                "px-3 py-1 rounded-lg text-xs font-bold",
+                "bg-background/90 backdrop-blur-sm border-2 shadow-lg",
+                isCurrent ? "" : "border-white/25 text-white/60"
+              )}
+              style={isCurrent ? { borderColor: examColor + "66", color: examColor } : undefined}
+            >
+              {completedCount}/{totalCount}
+            </div>
+          )}
 
-      {/* Current indicator badge */}
-      {isCurrent && isUnlocked && !isCompleted && (
-        <div className="absolute -top-2 -right-2 px-2 py-0.5 bg-primary text-white text-xs font-medium rounded-full">
-          Current
-        </div>
-      )}
-    </Card>
+          {/* Completed checkmark badge */}
+          {isCompleted && (
+            <div
+              className={cn(
+                "absolute -bottom-4 left-1/2 transform -translate-x-1/2 z-10",
+                "px-3 py-1 rounded-lg text-xs font-bold",
+                "bg-background/90 backdrop-blur-sm border-2 shadow-lg"
+              )}
+              style={{ borderColor: examColor, color: examColor }}
+            >
+              ✓ Done
+            </div>
+          )}
+        </motion.button>
+      </div>
+
+    </div>
   );
 }
 

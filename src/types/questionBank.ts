@@ -5,7 +5,7 @@
 export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'All';
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
-export type ReviewStatusFilter = 'All' | 'Pending Review' | 'Approved' | 'Needs Revision';
+export type AttemptResultFilter = 'Mixed Results' | 'Unseen' | 'Incorrect Before';
 
 export interface QuestionBankQuestion {
   id: string;
@@ -37,11 +37,11 @@ export interface QuestionAttempt {
 }
 
 export interface QuestionBankFilters {
-  subject: SubjectFilter;
-  difficulty: DifficultyFilter;
+  subject: SubjectFilter | SubjectFilter[]; // Support both single and multi-select
+  difficulty: DifficultyFilter | DifficultyFilter[]; // Support both single and multi-select
   searchTag: string;
   attemptedStatus: AttemptedFilter;
-  reviewStatus: ReviewStatusFilter;
+  attemptResult: AttemptResultFilter | AttemptResultFilter[]; // Support both single and multi-select
 }
 
 export interface QuestionBankStats {

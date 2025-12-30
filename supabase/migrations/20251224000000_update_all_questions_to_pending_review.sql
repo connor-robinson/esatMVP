@@ -10,3 +10,4 @@ WHERE status != 'pending_review';
 COMMENT ON COLUMN ai_generated_questions.status IS 'Review status: pending_review (default), approved, rejected, or needs_revision. All questions start as pending_review.';
 
 
+
