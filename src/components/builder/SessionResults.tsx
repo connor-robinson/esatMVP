@@ -58,13 +58,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs);
 
     const topicStats: Record<string, { correct: number; total: number; times: number[] }> = {};
+    
+    // Create a map of questionId -> question for efficient lookup
+    const questionMap = new Map(session.questions.map(q => [q.id, q]));
 
-    attempts.forEach((attempt, index) => {
-      const topicId = session.questions[index]?.topicId;
+    attempts.forEach((attempt) => {
+      const question = questionMap.get(attempt.questionId);
+      const topicId = question?.topicId;
+      
       if (!topicId) {
-        console.warn(`[SessionResults] Missing topicId for attempt ${index}, question:`, session.questions[index]);
-        return; // Skip attempts without topicId instead of using "unknown"
+        console.warn(`[SessionResults] Missing topicId for attempt with questionId: ${attempt.questionId}`);
+        return; // Skip attempts without valid topicId
       }
+      
       if (!topicStats[topicId]) {
         topicStats[topicId] = { correct: 0, total: 0, times: [] };
       }
@@ -206,6 +212,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   };
 
   const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string) => {
+    // Validate session data
+    if (!session || typeof session.score !== 'number') {
+      console.error('[renderSingleCard] Invalid session data:', session);
+      return null;
+    }
+    
     const isHighlighted = session.isCurrent; // Highlight only the current session
     const scorePercentage = (session.score / 1000) * 100;
 
@@ -340,8 +352,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
       // Always show top 3
       top3.forEach((sessionData: any) => {
-        cards.push(renderSingleCard(sessionData, isGlobalView, cardIndex, topicName));
-        cardIndex++;
+        const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName);
+        if (card) {
+          cards.push(card);
+          cardIndex++;
+        }
       });
 
       // If current is not in top 3, show ellipsis and adjacent
@@ -356,9 +371,42 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         );
         
         adjacent.forEach((sessionData: any) => {
-          cards.push(renderSingleCard(sessionData, isGlobalView, cardIndex, topicName));
-          cardIndex++;
+          const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName);
+          if (card) {
+            cards.push(card);
+            cardIndex++;
+          }
         });
+      }
+
+      if (cards.length === 0) {
+        console.warn('[renderSessionCards] No cards to render despite having structuredData');
+        // Fallback to showing current attempt
+        const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
+        if (currentTopic) {
+          const currentSession = {
+            id: session.id,
+            rank: currentRank || 1,
+            score: currentTopic.score,
+            timestamp: new Date(),
+            isCurrent: true,
+            correctAnswers: currentTopic.correct,
+            totalQuestions: currentTopic.total,
+            avgTimeMs: currentTopic.avgTimeMs,
+            accuracy: currentTopic.accuracy,
+            username: "You",
+          };
+          return (
+            <div className="space-y-3">
+              {renderSingleCard(currentSession, isGlobalView, 0, topicName)}
+            </div>
+          );
+        }
+        return (
+          <div className="text-center py-8 text-white/40 font-mono text-sm">
+            No attempts yet
+          </div>
+        );
       }
 
       return (

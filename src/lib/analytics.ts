@@ -62,18 +62,10 @@ export async function fetchTopicRankings(
   }
 
   // 2. Fetch Global Leaderboard - ALL sessions (no limit)
+  // Simplified query without join to avoid errors
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
-    .select(`
-      id, 
-      user_id, 
-      summary, 
-      completed_at,
-      accuracy,
-      average_time_ms,
-      question_count,
-      user_profiles:user_id(display_name, avatar_url)
-    `)
+    .select("id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
     .limit(10000); // Explicit limit to get all data
@@ -119,8 +111,8 @@ export async function fetchTopicRankings(
       return {
         id: d.id,
         userId: d.user_id || currentUserId,
-        username: isGlobal ? (d.user_profiles?.display_name || "Anonymous") : "You",
-        avatar: d.user_profiles?.avatar_url,
+        username: isGlobal ? "Anonymous" : "You", // Simplified - can add user lookup later if needed
+        avatar: undefined,
         score,
         timestamp,
         isCurrent: d.id === currentSessionId,

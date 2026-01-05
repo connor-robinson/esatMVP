@@ -1174,8 +1174,14 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     schemas_path = os.path.join(base_dir, "schemas", "Schemas_NSAA.md")
     if not os.path.exists(schemas_path):
         schemas_path = os.path.join(base_dir, "Schemas.md")
+    if not os.path.exists(schemas_path):
+        raise FileNotFoundError(f"Schema file not found. Tried: {os.path.join(base_dir, 'schemas', 'Schemas_NSAA.md')} and {os.path.join(base_dir, 'Schemas.md')}")
+    print(f"[run_once] Using schema file: {schemas_path}")
     schemas_md = read_text(schemas_path)
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
+    if schemas and forced_schema_id:
+        sample_sids = [forced_schema_id] if forced_schema_id in schemas else list(schemas.keys())[:3]
+        print(f"[run_once] Loaded {len(schemas)} schemas. Forced schema_id '{forced_schema_id}' {'found' if forced_schema_id in schemas else 'NOT FOUND'} in schemas. Sample IDs: {sample_sids}")
 
     # Load curriculum parser if tag labeling is enabled and not already provided
     if curriculum_parser is None and cfg.enable_tag_labeling:
