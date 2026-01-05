@@ -5,6 +5,7 @@ import { MathContent } from "@/components/shared/MathContent";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 interface Question {
   id: string;
@@ -26,6 +27,7 @@ interface Question {
   tags_confidence?: any;
   tags_labeled_at?: string | null;
   tags_labeled_by?: string | null;
+  paper?: string | null;
   created_at: string;
 }
 
@@ -35,6 +37,39 @@ interface SimplifiedQuestionDetailViewProps {
   onApprove?: (questionId: string) => Promise<void>;
   onReject?: (questionId: string) => Promise<void>;
 }
+
+// Helper function to get subject color based on paper name
+const getSubjectColor = (paper: string | null): string => {
+  if (!paper) return 'bg-white/10 text-white/70';
+  
+  const paperLower = paper.toLowerCase().trim();
+  
+  // Math matching - check for math 1, math 2, m1, m2, etc.
+  if (paperLower.includes('math 1') || paperLower.includes('math1') || paperLower === 'm1' || paperLower.startsWith('m1')) {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (paperLower.includes('math 2') || paperLower.includes('math2') || paperLower === 'm2' || paperLower.startsWith('m2')) {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  
+  // Physics matching - check for physics, p1, p2, etc.
+  if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2' || paperLower.startsWith('p1') || paperLower.startsWith('p2')) {
+    return 'bg-[#2f2835]/30 text-[#a78bfa]';
+  }
+  
+  // Chemistry matching - check for chemistry, c1, c2, etc.
+  if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
+    return 'bg-[#854952]/20 text-[#ef7d7d]';
+  }
+  
+  // Biology matching - check for biology, b1, b2, etc.
+  if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
+    return 'bg-[#506141]/20 text-[#85BC82]';
+  }
+  
+  // Default fallback
+  return 'bg-white/10 text-white/70';
+};
 
 export function SimplifiedQuestionDetailView({
   question,
@@ -106,6 +141,11 @@ export function SimplifiedQuestionDetailView({
         <div className="flex items-center gap-2">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
+          {question.paper && question.paper.trim() && (
+            <Badge variant="default" className={cn(getSubjectColor(question.paper))}>
+              {question.paper}
+            </Badge>
+          )}
           <Badge variant="default">{question.status}</Badge>
         </div>
         <div className="text-sm text-neutral-400">

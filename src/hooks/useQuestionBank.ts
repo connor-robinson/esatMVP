@@ -58,6 +58,74 @@ export function useQuestionBank(): UseQuestionBankReturn {
   const [questionCount, setQuestionCount] = useState(0);
   const answeredQuestionIds = useRef<Set<string>>(new Set());
   const [hasBeenAttempted, setHasBeenAttempted] = useState(false);
+  const hasRestoredFromStorage = useRef(false);
+
+  // localStorage key for persisting unanswered questions
+  const STORAGE_KEY = 'questionBank:currentUnansweredQuestion';
+
+  // Restore unanswered question from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Only restore if the question hasn't been answered
+        if (parsed.question && !parsed.isAnswered) {
+          setCurrentQuestion(parsed.question);
+          setIsAnswered(parsed.isAnswered || false);
+          setSelectedAnswer(parsed.selectedAnswer || null);
+          setIsCorrect(parsed.isCorrect || null);
+          setQuestionStartTime(parsed.questionStartTime || Date.now());
+          setViewedSolution(parsed.viewedSolution || false);
+          setIsLoading(false);
+          hasRestoredFromStorage.current = true;
+          
+          // Check if this question has been attempted before (for UI badge)
+          if (session?.user && parsed.question.id) {
+            fetch(`/api/question-bank/attempts?question_id=${parsed.question.id}&limit=1`)
+              .then(res => res.ok ? res.json() : null)
+              .then(data => setHasBeenAttempted(data?.attempts?.length > 0))
+              .catch(() => setHasBeenAttempted(false));
+          }
+          
+          // Don't fetch a new question if we restored one
+          return;
+        }
+      }
+    } catch (err) {
+      console.error('[useQuestionBank] Error restoring from localStorage:', err);
+      // If restoration fails, continue to fetch a new question
+    }
+    
+    // If no valid stored question, fetch a new one (but only after fetchQuestion is defined)
+    // We'll handle this in the filter change effect
+  }, []); // Only run on mount
+
+  // Save unanswered question to localStorage whenever it changes
+  useEffect(() => {
+    if (currentQuestion && !isAnswered) {
+      try {
+        const toStore = {
+          question: currentQuestion,
+          isAnswered,
+          selectedAnswer,
+          isCorrect,
+          questionStartTime,
+          viewedSolution,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+      } catch (err) {
+        console.error('[useQuestionBank] Error saving to localStorage:', err);
+      }
+    } else if (isAnswered && currentQuestion) {
+      // Clear stored question when answered
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (err) {
+        console.error('[useQuestionBank] Error clearing localStorage:', err);
+      }
+    }
+  }, [currentQuestion, isAnswered, selectedAnswer, isCorrect, questionStartTime, viewedSolution]);
 
   // Fetch a new question
   const fetchQuestion = useCallback(async () => {
@@ -274,6 +342,12 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Move to next question
   const nextQuestion = useCallback(async () => {
+    // Clear stored question when moving to next
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (err) {
+      console.error('[useQuestionBank] Error clearing localStorage:', err);
+    }
     await fetchQuestion();
   }, [fetchQuestion]);
 
@@ -290,8 +364,21 @@ export function useQuestionBank(): UseQuestionBankReturn {
     setCurrentQuestion(question);
   }, [currentQuestion?.id]);
 
-  // Fetch initial question on mount or filter change
+  // Fetch question on mount (if we didn't restore) or when filters change
   useEffect(() => {
+    // On initial mount, if we didn't restore from storage, fetch a question
+    if (!hasRestoredFromStorage.current && !currentQuestion) {
+      fetchQuestion();
+      return;
+    }
+    
+    // If we restored, mark that we've handled the initial load
+    if (hasRestoredFromStorage.current) {
+      hasRestoredFromStorage.current = false;
+      return;
+    }
+    
+    // On filter changes, always fetch a new question
     fetchQuestion();
   }, [fetchQuestion]);
 
