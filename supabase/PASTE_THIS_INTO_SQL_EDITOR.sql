@@ -268,6 +268,7 @@ CREATE TABLE IF NOT EXISTS drill_sessions (
   id text PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   topic_id text NOT NULL,
+  builder_session_id uuid REFERENCES builder_sessions(id) ON DELETE CASCADE,
   level integer DEFAULT 1,
   question_count integer,
   started_at timestamptz,
@@ -281,6 +282,7 @@ CREATE TABLE IF NOT EXISTS drill_sessions (
 
 CREATE INDEX IF NOT EXISTS idx_drill_sessions_user ON drill_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_drill_sessions_topic ON drill_sessions(topic_id);
+CREATE INDEX IF NOT EXISTS idx_drill_sessions_builder_session ON drill_sessions(builder_session_id);
 CREATE INDEX IF NOT EXISTS idx_drill_sessions_created ON drill_sessions(created_at DESC);
 
 -- Trigger for drill_sessions

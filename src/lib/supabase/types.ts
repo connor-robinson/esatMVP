@@ -101,6 +101,7 @@ export type DrillSessionRow = {
   id: string;
   user_id: string;
   topic_id: string;
+  builder_session_id: string | null;
   level: number;
   question_count: number | null;
   started_at: string | null;
@@ -115,6 +116,7 @@ export type DrillSessionInsert = {
   id?: string;
   user_id: string;
   topic_id?: string;
+  builder_session_id?: string | null;
   level?: number;
   question_count?: number | null;
   started_at?: string | null;

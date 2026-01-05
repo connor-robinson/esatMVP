@@ -68,6 +68,7 @@ function calculateTopicStats(
 async function saveDrillSessions(
   supabase: any,
   userId: string,
+  sessionId: string,
   topicStats: Map<string, TopicSessionStats>,
   startedAt: number,
   endedAt: number
@@ -79,6 +80,7 @@ async function saveDrillSessions(
     const drillSession: DrillSessionInsert = {
       user_id: userId,
       topic_id: topicId,
+      builder_session_id: sessionId, // Link back to builder_sessions
       level: 1, // Default level
       question_count: stats.questionsAttempted,
       accuracy: Math.round(accuracy * 10) / 10,
@@ -250,7 +252,7 @@ export async function saveSessionAnalytics(
     const topicStats = calculateTopicStats(sessionData.attempts, sessionData.questionTopics);
     
     // Save topic-specific sessions for history and leaderboard
-    await saveDrillSessions(supabase, sessionData.userId, topicStats, sessionData.startedAt, sessionData.endedAt);
+    await saveDrillSessions(supabase, sessionData.userId, sessionData.sessionId, topicStats, sessionData.startedAt, sessionData.endedAt);
 
     // Update topic progress
     await updateTopicProgress(supabase, sessionData.userId, topicStats);

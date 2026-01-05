@@ -44,7 +44,7 @@ export async function fetchTopicRankings(
   if (currentUserId && currentUserId !== "anonymous") {
     const result = await supabase
       .from("drill_sessions")
-      .select("id, summary, completed_at, accuracy, average_time_ms, question_count")
+      .select("id, builder_session_id, summary, completed_at, accuracy, average_time_ms, question_count")
       .eq("user_id", currentUserId)
       .eq("topic_id", topicId)
       .order("created_at", { ascending: false });
@@ -65,7 +65,7 @@ export async function fetchTopicRankings(
   // Simplified query without join to avoid errors
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
-    .select("id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
+    .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
     .limit(10000); // Explicit limit to get all data
@@ -115,7 +115,7 @@ export async function fetchTopicRankings(
         avatar: undefined,
         score,
         timestamp,
-        isCurrent: d.id === currentSessionId,
+        isCurrent: d.builder_session_id === currentSessionId,
         correctAnswers,
         totalQuestions,
         avgTimeMs,
@@ -127,6 +127,7 @@ export async function fetchTopicRankings(
     if (currentSessionData) {
       const currentSession = {
         id: currentSessionId || "current",
+        builder_session_id: currentSessionId,
         userId: currentUserId,
         username: "You",
         avatar: undefined,
@@ -139,14 +140,14 @@ export async function fetchTopicRankings(
         accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
       };
 
-      // Only add if not already in the list
-      if (!rankings.find(r => r.id === currentSessionId)) {
+      // Only add if not already in the list (check by builder_session_id)
+      if (!rankings.find(r => (r as any).builder_session_id === currentSessionId)) {
         console.log("[processRankings] Adding current session to rankings");
         rankings.push(currentSession);
       } else {
         console.log("[processRankings] Current session already in rankings, updating it");
         // Update existing entry with current data
-        const existingIndex = rankings.findIndex(r => r.id === currentSessionId);
+        const existingIndex = rankings.findIndex(r => (r as any).builder_session_id === currentSessionId);
         if (existingIndex >= 0) {
           rankings[existingIndex] = { ...rankings[existingIndex], ...currentSession };
         }
