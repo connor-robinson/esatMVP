@@ -50,10 +50,13 @@ def load_schema_coverage(coverage_path: str) -> Dict[str, Dict[str, int]]:
         return {}
 
 
-def calculate_schema_target(schema_id: str, coverage: Dict[str, Dict[str, int]]) -> int:
-    """Calculate target: 5 + existing total."""
-    existing = coverage.get(schema_id, {}).get("total", 0)
-    return 5 + existing
+def calculate_schema_target(schema_id: str, schema_data: dict) -> int:
+    """
+    Calculate target based on 4+N logic.
+    Formula: 4 questions per schema + 1 more per exemplar question attached to it.
+    """
+    exemplar_ids = schema_data.get("exemplar_ids", [])
+    return 4 + len(exemplar_ids)
 
 
 @dataclass
@@ -138,7 +141,8 @@ class WorkerManager:
         
         if self.systematic_config.mode == "systematic":
             # Load and sort schemas
-            schemas_md = read_text(os.path.join(base_dir, "1. Designer", "Schemas.md"))
+            schemas_path = Path(base_dir) / "schemas" / "Schemas_NSAA.md"
+            schemas_md = read_text(str(schemas_path))
             schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=tuple(cfg.allow_schema_prefixes))
             self.schema_list = get_schemas_sorted_by_category(schemas, self.systematic_config.category_order)
             
@@ -150,7 +154,8 @@ class WorkerManager:
             if self.systematic_config.schema_coverage_path:
                 self.schema_coverage = load_schema_coverage(self.systematic_config.schema_coverage_path)
                 for schema_id, category in self.schema_list:
-                    self.schema_targets[schema_id] = calculate_schema_target(schema_id, self.schema_coverage)
+                    schema_data = schemas.get(schema_id, {})
+                    self.schema_targets[schema_id] = calculate_schema_target(schema_id, schema_data)
             else:
                 # Fallback: use questions_per_schema for all schemas
                 for schema_id, category in self.schema_list:
@@ -286,55 +291,91 @@ class WorkerManager:
                 "traceback": error_trace
             }
     
+    def _get_next_available_schema(self, schema_progress: dict, active_futures: dict) -> Optional[str]:
+        """
+        Thread-safe method to find the next schema that needs a question.
+        Takes into account both successful questions and 'in-flight' questions.
+        """
+        with self.lock:
+            # Count how many questions are currently in-flight for each schema
+            in_flight = {}
+            for future in active_futures:
+                _, sid = active_futures[future]
+                if sid:
+                    in_flight[sid] = in_flight.get(sid, 0) + 1
+            
+            # Find the first schema that hasn't reached its target (success + in_flight)
+            for schema_id, _ in self.schema_list:
+                progress = schema_progress.get(schema_id)
+                if not progress: continue
+                
+                total_planned = progress["successful"] + in_flight.get(schema_id, 0)
+                if total_planned < progress["target"]:
+                    return schema_id
+            
+            return None
+
+    def _get_next_available_schema(self, schema_progress: dict, active_futures: dict) -> Optional[str]:
+        """
+        Thread-safe method to find the next schema that needs a question.
+        Takes into account both successful questions and 'in-flight' questions.
+        """
+        with self.lock:
+            # Count how many questions are currently in-flight for each schema
+            in_flight = {}
+            for future in active_futures:
+                _, sid = active_futures[future]
+                if sid:
+                    in_flight[sid] = in_flight.get(sid, 0) + 1
+            
+            # Find the first schema that hasn't reached its target (success + in_flight)
+            for schema_id, _ in self.schema_list:
+                progress = schema_progress.get(schema_id)
+                if not progress: continue
+                
+                total_planned = progress["successful"] + in_flight.get(schema_id, 0)
+                if total_planned < progress["target"]:
+                    return schema_id
+            
+            return None
+
     def generate_questions(self, n_questions: int, 
                           progress_callback: Optional[Callable[[int, int], None]] = None,
                           status_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
                           max_failures: int = 20) -> List[Dict[str, Any]]:
         """
         Generate questions using concurrent workers.
-        Continues generating until n_questions successful questions are produced.
-        
-        Args:
-            n_questions: Number of successful questions to generate
-            progress_callback: Optional callback(completed, total) for progress updates
-            status_callback: Optional callback for detailed status updates
-            max_failures: Maximum number of consecutive failures before stopping (default: 20)
-            
-        Returns:
-            List of result dictionaries
+        Continues generating until target successful questions are produced.
         """
         self.stats.start_time = time.time()
         self.results = []
         
-        # Initialize systematic generation state
+        # Calculate target questions
         if self.systematic_config.mode == "systematic":
-            self.current_schema_index = 0
-            self.current_schema_questions = 0
-            if not self.schema_list:
-                raise ValueError("No schemas available for systematic generation")
-            print(f"\n{'='*70}")
+            # In systematic mode, we ignore N_ITEMS and generate everything needed by schemas
+            target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
+        else:
+            target_questions = n_questions
+
+        print(f"\n{'='*70}")
+        if self.systematic_config.mode == "systematic":
             print(f"Starting SYSTEMATIC question generation")
             print(f"Total schemas: {len(self.schema_list)}")
-            print(f"Questions per schema: {self.systematic_config.questions_per_schema}")
-            print(f"Total target: {len(self.schema_list) * self.systematic_config.questions_per_schema} questions")
-            print(f"Workers: {self.max_workers}")
-            print(f"Max consecutive failures: {max_failures}")
-            print(f"{'='*70}\n")
+            print(f"Total target questions (4+N logic): {target_questions}")
         else:
-            print(f"\n{'='*70}")
             print(f"Starting concurrent question generation")
-            print(f"Target: {n_questions} successful questions")
-            print(f"Workers: {self.max_workers}")
-            print(f"Max consecutive failures: {max_failures}")
-            print(f"{'='*70}\n")
+            print(f"Target: {target_questions} successful questions")
+        print(f"Workers: {self.max_workers}")
+        print(f"Max consecutive failures: {max_failures}")
+        print(f"{'='*70}\n")
         
         question_counter = 0  # Total questions attempted
         consecutive_failures = 0  # Track consecutive failures
         
         # Schema progress tracking for systematic mode
-        schema_progress = {}  # schema_id -> {"target": int, "successful": int, "status": str}
+        schema_progress = {}
         if self.systematic_config.mode == "systematic":
-            for schema_id, category in self.schema_list:
+            for schema_id, _ in self.schema_list:
                 target = self.schema_targets.get(schema_id, self.systematic_config.questions_per_schema)
                 schema_progress[schema_id] = {
                     "target": target,
@@ -343,121 +384,55 @@ class WorkerManager:
                 }
         
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            # Keep a pool of active futures
             active_futures = {}
             
-            # Calculate target questions
-            if self.systematic_config.mode == "random":
-                target_questions = n_questions
-            else:
-                # Calculate total from schema targets
-                target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
-            
-            # Keep generating until we have enough successful questions
             while self.stats.successful < target_questions:
-                # No stop checking needed - UI will terminate process directly
-                
-                # Check if we've hit the failure limit
+                # Check failure limit
                 if consecutive_failures >= max_failures:
                     print(f"\n{'='*70}")
                     print(f"STOPPING: Maximum consecutive failures ({max_failures}) reached!")
-                    print(f"Successful: {self.stats.successful}/{n_questions}")
-                    print(f"Total attempts: {self.stats.total_questions}")
-                    print(f"Failed: {self.stats.failed}")
+                    print(f"Successful: {self.stats.successful}/{target_questions}")
                     print(f"{'='*70}\n")
                     break
                 
-                # Determine current schema for systematic generation
-                current_schema_id = None
-                if self.systematic_config.mode == "systematic":
-                    # Check if we've completed current schema
-                    if self.current_schema_index < len(self.schema_list):
-                        current_schema_id, current_category = self.schema_list[self.current_schema_index]
-                        current_schema_stats = schema_progress[current_schema_id]
-                        
-                        # Check if we've generated enough for this schema
-                        if current_schema_stats["successful"] >= current_schema_stats["target"]:
-                            # Move to next schema
-                            current_schema_stats["status"] = "complete"
-                            self.current_schema_index += 1
-                            self.current_schema_questions = 0
-                            
-                            if self.current_schema_index >= len(self.schema_list):
-                                # All schemas complete
-                                print(f"\n{'='*70}")
-                                print(f"All schemas completed!")
-                                print(f"Total successful: {self.stats.successful}")
-                                print(f"{'='*70}\n")
-                                break
-                            
-                            current_schema_id, current_category = self.schema_list[self.current_schema_index]
-                            current_schema_stats = schema_progress[current_schema_id]
-                            current_schema_stats["status"] = "in_progress"
-                            print(f"\n[SYSTEMATIC] Moving to schema {current_schema_id} ({current_category})")
-                    else:
-                        # All schemas done
-                        break
-                
-                # Submit new tasks to keep the pool full
-                if self.systematic_config.mode == "random":
-                    target_questions = n_questions
-                else:
-                    # Calculate total from schema targets
-                    target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
-                
+                # Submit new tasks to keep pool full
                 while len(active_futures) < self.max_workers and self.stats.successful < target_questions:
+                    schema_id = None
+                    if self.systematic_config.mode == "systematic":
+                        schema_id = self._get_next_available_schema(schema_progress, active_futures)
+                        if not schema_id:
+                            break  # No more schemas need work
+                    
                     question_counter += 1
                     worker_id = ((question_counter - 1) % self.max_workers) + 1
                     
-                    # In systematic mode, only submit if current schema needs more questions
-                    if self.systematic_config.mode == "systematic":
-                        if current_schema_id and schema_progress[current_schema_id]["successful"] >= schema_progress[current_schema_id]["target"]:
-                            break  # Current schema is done, will move to next in next iteration
-                    
-                    print(f"[DEBUG] Submitting question {question_counter} (Worker {worker_id})" + 
-                          (f" [Schema: {current_schema_id}]" if current_schema_id else ""))
-                    future = executor.submit(self._worker_task, worker_id, question_counter, target_questions, current_schema_id)
-                    active_futures[future] = (question_counter, current_schema_id)
+                    # Submit task
+                    future = executor.submit(self._worker_task, worker_id, question_counter, target_questions, schema_id)
+                    active_futures[future] = (question_counter, schema_id)
                 
-                # Wait for at least one task to complete
                 if not active_futures:
-                    print("[DEBUG] No active futures, exiting loop")
                     break
                 
-                # Process one completed task at a time
+                # Process completed tasks
                 try:
-                    # Use timeout to prevent hanging
-                    for future in as_completed(active_futures.keys(), timeout=300):  # 5 minute timeout
+                    # Use a short timeout to check for new spots frequently
+                    for future in as_completed(active_futures.keys(), timeout=1.0):
                         question_num, used_schema_id = active_futures.pop(future)
-                        
-                        # No stop checking needed - UI will terminate process directly
                         
                         try:
                             result = future.result()
                             self.results.append(result)
                             
-                            # Check if this was successful
                             was_successful = result.get("success", False)
-                            
                             if was_successful:
-                                consecutive_failures = 0  # Reset failure counter
-                                # Update schema progress in systematic mode
+                                consecutive_failures = 0
                                 if self.systematic_config.mode == "systematic" and used_schema_id:
-                                    if used_schema_id in schema_progress:
+                                    with self.lock:
                                         schema_progress[used_schema_id]["successful"] += 1
-                                        self.current_schema_questions += 1
-                                # Silent - progress shown in status file
                             else:
                                 consecutive_failures += 1
-                                # Silent - failures tracked in status
                             
-                            # Update callbacks
-                            if self.systematic_config.mode == "random":
-                                target_questions = n_questions
-                            else:
-                                # Calculate total from schema targets
-                                target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
-                            
+                            # Callbacks
                             if progress_callback:
                                 progress_callback(self.stats.successful, target_questions)
                             
@@ -468,101 +443,47 @@ class WorkerManager:
                                     "successful": self.stats.successful,
                                     "failed": self.stats.failed,
                                     "consecutive_failures": consecutive_failures,
-                                }
-                                # Add worker status
-                                callback_data["worker_status"] = {
-                                    str(wid): {
-                                        "state": status["state"],
-                                        "schema": status["schema"],
-                                        "stage": status["stage"],
-                                        "message": status["message"]
+                                    "worker_status": {
+                                        str(wid): {
+                                            "state": s["state"],
+                                            "schema": s["schema"],
+                                            "stage": s["stage"],
+                                            "message": s["message"]
+                                        } for wid, s in self.worker_status.items()
                                     }
-                                    for wid, status in self.worker_status.items()
                                 }
-                                # Add systematic generation info
                                 if self.systematic_config.mode == "systematic":
-                                    current_schema_id = None
-                                    current_schema_progress = None
-                                    if self.current_schema_index < len(self.schema_list):
-                                        current_schema_id, current_category = self.schema_list[self.current_schema_index]
-                                        current_schema_stats = schema_progress.get(current_schema_id, {})
-                                        current_schema_progress = {
-                                            "target": current_schema_stats.get("target", 0),
-                                            "successful": current_schema_stats.get("successful", 0),
-                                            "remaining": max(0, current_schema_stats.get("target", 0) - current_schema_stats.get("successful", 0))
-                                        }
-                                    
-                                    callback_data["systematic"] = {
-                                        "current_schema_index": self.current_schema_index,
-                                        "current_schema": current_schema_id,
-                                        "current_schema_title": self.schema_titles.get(current_schema_id, current_schema_id) if current_schema_id else None,
-                                        "current_schema_progress": current_schema_progress,
-                                        "schema_progress": schema_progress,
-                                    }
+                                    callback_data["systematic"] = {"schema_progress": schema_progress}
                                 status_callback(callback_data)
-                            
-                            # Break to continue outer loop and submit new tasks if needed
-                            break
+                                
                         except Exception as e:
-                            # Task raised an exception
+                            print(f"Error retrieving result for question {question_num}: {e}")
                             consecutive_failures += 1
-                            print(f"[ERROR] Question {question_num} raised exception: {e}")
-                            import traceback
-                            print(f"[ERROR] Traceback: {traceback.format_exc()}")
-                            break
-                except TimeoutError:
-                    print(f"[WARNING] Timeout waiting for task completion. Active futures: {len(active_futures)}")
-                    # Remove timed out futures (this shouldn't happen, but handle it)
-                    break
-                
-                # Break if we have enough successful questions
-                if self.systematic_config.mode == "random":
-                    target_questions = n_questions
-                else:
-                    # Calculate total from schema targets
-                    target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
-                
-                if self.stats.successful >= target_questions:
-                    print(f"[DEBUG] Target reached: {self.stats.successful} successful questions")
-                    break
-                
-                # Break if we've hit the failure limit
-                if consecutive_failures >= max_failures:
-                    break
+                        
+                        # Break to re-fill pool
+                        break
+                        
+                except Exception:
+                    # Timeout error is expected, loop again to check if pool needs re-filling
+                    pass
         
         self.stats.end_time = time.time()
         
         # Print summary
-        if self.systematic_config.mode == "random":
-            target_questions = n_questions
-        else:
-            # Calculate total from schema targets
-            target_questions = sum(self.schema_targets.values()) if self.schema_targets else len(self.schema_list) * self.systematic_config.questions_per_schema
-        
         print(f"\n{'='*70}")
         if self.stats.successful >= target_questions:
-            print(f"Generation Complete - Target Reached!")
+            print(f"Generation Complete - All Schemas Saturated!")
         elif consecutive_failures >= max_failures:
             print(f"Generation Stopped - Maximum Failures Reached")
         else:
             print(f"Generation Complete")
         print(f"{'='*70}")
-        print(f"Target: {target_questions} successful questions")
-        if self.systematic_config.mode == "systematic":
-            print(f"Mode: Systematic (by schema)")
-            print(f"Schemas completed: {self.current_schema_index}/{len(self.schema_list)}")
-        print(f"Total attempts: {self.stats.total_questions}")
-        print(f"Successful: {self.stats.successful}")
-        print(f"Failed: {self.stats.failed}")
-        if consecutive_failures >= max_failures:
-            print(f"Consecutive failures: {consecutive_failures} (limit: {max_failures})")
-        if self.stats.total_questions > 0:
-            print(f"Success rate: {self.stats.success_rate:.1f}%")
+        print(f"Total Required: {target_questions}")
+        print(f"Total Successful: {self.stats.successful}")
+        print(f"Total Attempts: {self.stats.total_questions}")
         print(f"Duration: {self.stats.duration:.1f} seconds")
-        if self.stats.total_questions > 0:
-            print(f"Average time per question: {self.stats.duration / self.stats.total_questions:.1f} seconds")
         
-        # Analyze failure reasons if we have failures
+        # Failure Analysis
         if self.stats.failed > 0 and self.results:
             print(f"\nFailure Analysis:")
             failure_reasons = {}
@@ -571,12 +492,9 @@ class WorkerManager:
                     status = result.get("status", "unknown")
                     error = result.get("error", "")
                     
-                    # Categorize failures
-                    if "api key" in str(error).lower() or "permission_denied" in str(error).lower() or "403" in str(error):
-                        category = "API Key Error"
-                    elif "yaml" in str(error).lower() or "parsing" in str(error).lower():
-                        category = "YAML Parsing Error"
-                    elif "quota" in str(error).lower() or "rate limit" in str(error).lower():
+                    if "api key" in str(error).lower() or "403" in str(error):
+                        category = "Auth Error"
+                    elif "quota" in str(error).lower() or "429" in str(error):
                         category = "Rate Limit/Quota"
                     else:
                         category = status
@@ -602,6 +520,14 @@ def main():
     max_workers = int(os.environ.get("MAX_WORKERS", "2"))
     n_questions = int(os.environ.get("N_ITEMS", "5"))
     
+    # Determine mode
+    mode = os.environ.get("GENERATION_MODE", "systematic")
+    systematic_cfg = SystematicGenerationConfig(
+        mode=mode,
+        questions_per_schema=int(os.environ.get("QUESTIONS_PER_SCHEMA", "5")),
+        schema_coverage_path=os.path.join(base_dir, "schema_coverage.json")
+    )
+
     cfg = RunConfig(
         max_implementer_retries=int(os.environ.get("MAX_IMPLEMENTER_RETRIES", "2")),
         max_designer_retries=int(os.environ.get("MAX_DESIGNER_RETRIES", "2")),
@@ -624,7 +550,7 @@ def main():
     )
     
     # Create worker manager
-    manager = WorkerManager(base_dir, cfg, models, max_workers=max_workers)
+    manager = WorkerManager(base_dir, cfg, models, max_workers=max_workers, systematic_config=systematic_cfg)
     
     # Progress callback
     def progress(completed, total):

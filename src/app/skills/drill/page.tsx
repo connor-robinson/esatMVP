@@ -189,6 +189,7 @@ export default function BuilderPage() {
           session={builder.currentSession}
           attempts={builder.attemptLog}
           onBackToBuilder={builder.exitSession}
+          mode={builder.mode}
         />
       </Suspense>
     );

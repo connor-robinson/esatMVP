@@ -54,8 +54,50 @@ export default function QuestionBankPage() {
   // Progress tracking state
   const [progressSubjects, setProgressSubjects] = useState<SubjectFilter[]>(['Math 1']);
   const [showProgressFilter, setShowProgressFilter] = useState(false);
+  
   const [progressStats, setProgressStats] = useState<{ attempted: number; total: number } | null>(null);
   
+  // Fetch progress stats
+  useEffect(() => {
+    const fetchProgressStats = async () => {
+      if (progressSubjects.length === 0) {
+        setProgressStats(null);
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams();
+        params.append('subjects', progressSubjects.join(','));
+        const response = await fetch(`/api/question-bank/progress?${params.toString()}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setProgressStats({
+            attempted: data.attempted || 0,
+            total: data.total || 0
+          });
+        } else {
+          // Fallback
+          const totalParams = new URLSearchParams();
+          totalParams.append('subject', progressSubjects.join(','));
+          totalParams.append('limit', '1');
+          const totalRes = await fetch(`/api/question-bank/questions?${totalParams.toString()}`);
+          if (totalRes.ok) {
+            const totalData = await totalRes.json();
+            setProgressStats({
+              attempted: 0,
+              total: totalData.totalCount || totalData.count || 0
+            });
+          }
+        }
+      } catch (error) {
+        console.error('[Progress] Error fetching stats:', error);
+      }
+    };
+
+    fetchProgressStats();
+  }, [progressSubjects, isAnswered]);
+
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editModalTitle, setEditModalTitle] = useState("");
@@ -80,53 +122,6 @@ export default function QuestionBankPage() {
     setCurrentSelection(null);
     setIncorrectAnswers(new Set());
   }, [currentQuestion?.id]);
-
-  // Fetch progress stats
-  useEffect(() => {
-    const fetchProgressStats = async () => {
-      if (progressSubjects.length === 0) {
-        setProgressStats(null);
-        return;
-      }
-
-      try {
-        // Fetch total questions for selected subjects
-        const subjectParams = new URLSearchParams();
-        subjectParams.append('subject', progressSubjects.join(','));
-        subjectParams.append('limit', '1');
-        subjectParams.append('random', 'false');
-        
-        const questionsRes = await fetch(`/api/question-bank/questions?${subjectParams.toString()}`);
-        const questionsData = await questionsRes.json();
-        const total = questionsData.count || 0;
-
-        // Fetch attempted questions count for selected subjects
-        let attempted = 0;
-        const sessionRes = await fetch('/api/auth/session');
-        if (sessionRes.ok) {
-          const session = await sessionRes.json();
-          const userId = session?.user?.id;
-          
-          if (userId) {
-            // Fetch progress stats from API
-            const progressParams = new URLSearchParams();
-            progressParams.append('subjects', progressSubjects.join(','));
-            const progressRes = await fetch(`/api/question-bank/progress?${progressParams.toString()}`);
-            if (progressRes.ok) {
-              const progressData = await progressRes.json();
-              attempted = progressData.attempted || 0;
-            }
-          }
-        }
-
-        setProgressStats({ attempted, total });
-      } catch (error) {
-        console.error('[Progress] Error fetching stats:', error);
-      }
-    };
-
-    fetchProgressStats();
-  }, [progressSubjects]);
 
   // Timer effect - start from 0:00 when new question loads
   useEffect(() => {
@@ -267,8 +262,16 @@ export default function QuestionBankPage() {
       cleanCode = tagCode.replace('chemistry-', ''); 
     }
     
-    // If no prefix matched, return as-is
+    // If no prefix matched, we'll try to find it in any paper
     if (!paperId) {
+      // Search all papers for this code
+      for (const paper of (curriculum.papers || [])) {
+        const topic = paper.topics?.find((t: any) => 
+          t.code === tagCode || 
+          t.code === tagCode.replace(/^[A-Z]+/, '')
+        );
+        if (topic) return topic.title;
+      }
       return tagCode;
     }
     
@@ -277,17 +280,18 @@ export default function QuestionBankPage() {
     if (!paper) return tagCode;
     
     // 3. Match the topic by code
-    // For tags like "M1-M5", cleanCode is "M5", but curriculum has code "5"
-    // For tags like "M2-MM1", cleanCode is "MM1", curriculum has code "MM1"
-    // For tags like "biology-B1", cleanCode is "B1", but curriculum has code "1"
+    // Try exact match first (e.g., cleanCode "M5" matches topic code "M5")
+    let topic = paper.topics?.find((t: any) => t.code === cleanCode);
     
-    // Try exact match first
-    let topic = paper.topics.find((t: any) => t.code === cleanCode);
-    
-    // If not found, try removing letter prefix (B1 -> 1, P1 -> 1, etc.)
+    // If not found, try removing letter prefix (e.g., cleanCode "M5" -> "5" matches topic code "5")
     if (!topic) {
       const numericCode = cleanCode.replace(/^[A-Z]+/, '');
-      topic = paper.topics.find((t: any) => t.code === numericCode);
+      topic = paper.topics?.find((t: any) => t.code === numericCode);
+    }
+    
+    // Final attempt: try matching with the original tag code
+    if (!topic) {
+      topic = paper.topics?.find((t: any) => t.code === tagCode);
     }
     
     return topic ? topic.title : tagCode;
@@ -690,11 +694,15 @@ export default function QuestionBankPage() {
       {/* Fixed Bottom Action Bar */}
       {currentQuestion && !isLoading && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-white/10">
-          {/* Progress Bar - TEST: 156/500 (remove easily) */}
+          {/* Progress Bar */}
           <div className="w-full h-1.5 bg-white/[0.03] relative overflow-hidden">
             <div 
               className="h-full bg-interview/40 transition-all duration-300 ease-signature"
-              style={{ width: `${(156 / 500) * 100}%` }}
+              style={{ 
+                width: progressStats && progressStats.total > 0 
+                  ? `${(progressStats.attempted / progressStats.total) * 100}%` 
+                  : '0%' 
+              }}
             />
           </div>
           <Container size="lg">

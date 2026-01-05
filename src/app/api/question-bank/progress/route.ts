@@ -45,12 +45,14 @@ export async function GET(request: NextRequest) {
     const subjectConditions: string[] = [];
     subjects.forEach(subject => {
       if (subject === 'Math 1') {
-        subjectConditions.push('paper.eq.Math 1');
+        // Use double quotes for values with spaces in .or()
+        subjectConditions.push('paper.eq."Math 1"');
         subjectConditions.push('primary_tag.ilike.M1-%');
         subjectConditions.push('schema_id.eq.M1');
       } else if (subject === 'Math 2') {
-        subjectConditions.push('paper.eq.Math 2');
+        subjectConditions.push('paper.eq."Math 2"');
         subjectConditions.push('primary_tag.ilike.M2-%');
+        // For .in() inside .or(), wrap the values in parentheses and comma-separate them
         subjectConditions.push('schema_id.in.(M2,M3,M4,M5)');
       } else if (subject === 'Physics') {
         subjectConditions.push('schema_id.ilike.P%');
@@ -92,7 +94,8 @@ export async function GET(request: NextRequest) {
       questionsQuery = questionsQuery.or(subjectConditions.join(','));
     }
 
-    const { data: questions, error: questionsError } = await questionsQuery;
+    // Increase limit for fetching all IDs to ensure we get everything (up to 5000)
+    const { data: questions, error: questionsError } = await questionsQuery.limit(5000);
 
     if (questionsError) {
       console.error('[Progress API] Error fetching questions:', questionsError);

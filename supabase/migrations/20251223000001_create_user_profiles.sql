@@ -103,3 +103,4 @@ COMMENT ON COLUMN user_profiles.avatar_url IS 'URL to user avatar image';
 
 
 
+

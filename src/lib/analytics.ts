@@ -16,6 +16,97 @@ import {
   WrongQuestionPattern,
   TopicDetailStats,
 } from "@/types/analytics";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/supabase/types";
+
+/**
+ * Fetch topic rankings (Personal and Global)
+ */
+export async function fetchTopicRankings(
+  supabase: SupabaseClient<Database>,
+  topicId: string,
+  currentUserId: string,
+  currentSessionId?: string,
+  currentScore?: number
+) {
+  // 1. Fetch Personal History
+  const { data: personalData, error: personalError } = await supabase
+    .from("drill_sessions")
+    .select("id, summary, completed_at")
+    .eq("user_id", currentUserId)
+    .eq("topic_id", topicId)
+    .order("created_at", { ascending: false });
+
+  if (personalError) console.error("[analytics] Error fetching personal history:", personalError);
+
+  // 2. Fetch Global Leaderboard
+  const { data: globalData, error: globalError } = await supabase
+    .from("drill_sessions")
+    .select(`
+      id, 
+      user_id, 
+      summary, 
+      completed_at,
+      user_profiles:user_id(display_name, avatar_url)
+    `)
+    .eq("topic_id", topicId)
+    .order("created_at", { ascending: false }); // Order by creation date to get all relevant sessions
+
+  if (globalError) console.error("[analytics] Error fetching global leaderboard:", globalError);
+  const processRankings = (data: any[], isGlobal: boolean, currentSessionScore?: number) => {
+    if (!data) return [];
+
+    let rankings = data.map((d) => ({
+      id: d.id,
+      userId: d.user_id || currentUserId,
+      username: isGlobal ? (d.user_profiles?.display_name || "Anonymous") : "You",
+      avatar: d.user_profiles?.avatar_url,
+      score: (d.summary as any)?.score || 0,
+      timestamp: new Date(d.completed_at),
+      isCurrent: d.id === currentSessionId,
+    }));
+
+    // If this is the global ranking and we have a current session score, add it to the list
+    if (isGlobal && currentSessionScore !== undefined) {
+      rankings.push({
+        id: currentSessionId,
+        userId: currentUserId,
+        username: "You",
+        avatar: undefined,
+        score: currentSessionScore,
+        timestamp: new Date(),
+        isCurrent: true,
+      });
+    }
+
+    // Sort by score descending
+    rankings.sort((a, b) => b.score - a.score);
+
+    // Add ranks
+    rankings = rankings.map((r, i) => ({ ...r, rank: i + 1 }));
+
+    const top3 = rankings.slice(0, 3);
+    const currentIndex = rankings.findIndex((r) => r.isCurrent);
+    
+    if (currentIndex === -1) return { top3: rankings.slice(0, Math.min(rankings.length, 5)), hasGap: false, adjacent: [] }; // Current not found in history yet or not enough data
+    
+    if (currentIndex < 3) return { top3: rankings.slice(0, Math.min(rankings.length, 5)), hasGap: false, adjacent: [] };
+
+    // Current is not in top 3
+    const adjacent = rankings.slice(Math.max(0, currentIndex - 1), Math.min(rankings.length, currentIndex + 2));
+    
+    return {
+      top3,
+      hasGap: currentIndex > 3,
+      adjacent,
+    };
+  };
+
+  return {
+    personal: processRankings(personalData || [], false),
+    global: processRankings(globalData || [], true, currentScore),
+  };
+}
 
 /**
  * Calculate normalized leaderboard score
@@ -292,19 +383,25 @@ export function formatTime(ms: number): string {
 
 /**
  * Calculate session score (0-1000)
- * Formula: (accuracy * 0.5 + speedScore * 0.3 + volume * 0.2) * 1000
+ * Formula: (adjustedAccuracy * 0.5 + speedScore * 0.3 + volume * 0.2) * 1000
+ * Uses Agresti-Coull adjustment for accuracy to reward consistency over small samples
  */
 export function calculateSessionScore(
-  accuracy: number,
-  avgSpeed: number,
-  totalQuestions: number
+  correctAnswers: number,
+  totalQuestions: number,
+  avgSpeed: number
 ): number {
   const accuracyWeight = 0.5;
   const speedWeight = 0.3;
   const volumeWeight = 0.2;
 
-  // Accuracy score (0-1)
-  const accuracyScore = accuracy / 100;
+  if (totalQuestions === 0) return 0;
+
+  // Agresti-Coull adjusted accuracy (plus-four interval)
+  // Rewards consistency and penalizes small sample sizes
+  const n = totalQuestions;
+  const X = correctAnswers;
+  const adjustedAccuracy = (X + 2) / (n + 4);
 
   // Speed score (0-1) - faster is better, 3s baseline
   const speedScore = Math.min(1, 3000 / Math.max(avgSpeed, 500));
@@ -313,7 +410,7 @@ export function calculateSessionScore(
   const volumeScore = Math.min(1, Math.log10(totalQuestions + 1) / 2);
 
   return Math.round(
-    (accuracyScore * accuracyWeight +
+    (adjustedAccuracy * accuracyWeight +
       speedScore * speedWeight +
       volumeScore * volumeWeight) *
       1000
@@ -359,7 +456,7 @@ export function generateMockSessions(count: number = 20): SessionSummary[] {
     const avgSpeed = 2000 + Math.random() * 3000;
     const totalTime = avgSpeed * totalQuestions;
 
-    const score = calculateSessionScore(accuracy, avgSpeed, totalQuestions);
+    const score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
 
     sessions.push({
       id: `session-${i}`,

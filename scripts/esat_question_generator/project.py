@@ -51,6 +51,7 @@ import random
 import hashlib
 import datetime
 import threading
+import sqlite3
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Tuple, Callable
 from dotenv import load_dotenv
@@ -108,7 +109,7 @@ class RunConfig:
     difficulty_weights: Dict[str, float] = None  # type: ignore
     schema_weights: Optional[Dict[str, float]] = None  # optional weighting by schema_id
     out_dir: str = "runs"
-    allow_schema_prefixes: Tuple[str, ...] = ("M", "P")  # choose both maths & physics by default
+    allow_schema_prefixes: Tuple[str, ...] = ("P", "B", "C")  # choose physics, biology & chemistry by default
     enable_tag_labeling: bool = True  # Enable curriculum tag labeling
     curriculum_file_path: Optional[str] = None  # Path to curriculum JSON (default: curriculum/ESAT_CURRICULUM.json)
 
@@ -209,6 +210,43 @@ def dump_jsonl(path: str, obj: Dict[str, Any]) -> None:
 
 
 # ---------- Subject-specific helper functions ----------
+
+def fetch_exemplar_texts(exemplar_ids: List[str]) -> List[str]:
+    """Fetch the actual question text for each exemplar ID from the SQLite DB."""
+    if not exemplar_ids:
+        return []
+    
+    # db_path is relative to the workspace root: scripts/schema_generator/restructure/nsaa_state.db
+    # project.py is in scripts/esat_question_generator/
+    # so we go up to scripts/ then down to schema_generator/
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    scripts_dir = os.path.dirname(current_dir)
+    db_path = os.path.join(scripts_dir, "schema_generator", "restructure", "nsaa_state.db")
+    
+    if not os.path.exists(db_path):
+        return []
+    
+    texts = []
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        valid_ids = [eid for eid in exemplar_ids if eid.strip()]
+        if not valid_ids:
+            return []
+            
+        placeholders = ",".join(["?"] * len(valid_ids))
+        query = f"SELECT text FROM questions_queue WHERE question_id IN ({placeholders})"
+        cursor.execute(query, valid_ids)
+        rows = cursor.fetchall()
+        texts = [row[0] for row in rows]
+        conn.close()
+    except Exception as e:
+        # Silently fail but print for debug if needed
+        # print(f"Error fetching exemplar texts from {db_path}: {e}")
+        pass
+    
+    return texts
 
 def get_subject_from_schema(schema_id: str) -> str:
     """Map schema_id prefix to subject name."""
@@ -335,7 +373,11 @@ def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P
         start = m.start()
         end = matches[i+1].start() if i+1 < len(matches) else len(md)
         block = md[start:end].strip()
-        schemas[schema_id] = {"title": title, "block": block}
+        
+        # Extract exemplar IDs from the block (format: - `ID`: Justification)
+        exemplar_ids = re.findall(r"- `([^`]+)`:", block)
+        
+        schemas[schema_id] = {"title": title, "block": block, "exemplar_ids": exemplar_ids}
     
     if not schemas:
         raise ValueError("No schemas parsed. Ensure Schemas.md uses headings like: ## **M1. Title** or ## **P1. Title** or ## **B1. Title** or ## **C1. Title** or ## **M. Title** or ## **P. Title**")
@@ -570,12 +612,25 @@ def choose_difficulty(cfg: RunConfig) -> str:
     weights = [cfg.difficulty_weights[d] for d in diffs]
     return random.choices(diffs, weights=weights, k=1)[0]
 
-def designer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, schema_block: str, schema_id: str, difficulty: str) -> Dict[str, Any]:
+def designer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, schema_block: str, schema_id: str, difficulty: str, exemplar_ids: List[str] = None) -> Dict[str, Any]:
     subject_prompts = get_subject_prompts(prompts, schema_id)
+    
+    # Inject authentic examples if available
+    exemplar_section = ""
+    if exemplar_ids:
+        # Sample up to 3 random exemplars
+        sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 3))
+        texts = fetch_exemplar_texts(sample_ids)
+        if texts:
+            exemplar_section = "\n\n# AUTHENTIC NSAA EXAMPLES\n"
+            for i, text in enumerate(texts):
+                exemplar_section += f"Example {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
+            exemplar_section += "\nUse these real examples to calibrate the mathematical complexity and concise phrasing of your new design."
+
     user = f"""You will receive a schema and a target difficulty.
 
 Schema:
-{schema_block}
+{schema_block}{exemplar_section}
 
 Target difficulty: {difficulty}
 
@@ -1147,6 +1202,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     else:
         schema_id = choose_schema(schemas, cfg)
     schema_block = schemas[schema_id]["block"]
+    exemplar_ids = schemas[schema_id].get("exemplar_ids", [])
     difficulty = choose_difficulty(cfg)
 
     if callbacks and "on_schema_selected" in callbacks:
@@ -1165,7 +1221,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         try:
             if callbacks and "on_stage_progress" in callbacks:
                 callbacks["on_stage_progress"]("Designer", f"Attempt {d_try + 1}/{cfg.max_designer_retries + 1}")
-            idea_plan = designer_call(llm, prompts, models, schema_block, schema_id, difficulty)
+            idea_plan = designer_call(llm, prompts, models, schema_block, schema_id, difficulty, exemplar_ids)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Designer", idea_plan)
             break

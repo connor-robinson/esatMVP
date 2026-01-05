@@ -3,8 +3,9 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, TopicProgressInsert, TopicProgressRow } from "@/lib/supabase/types";
+import type { Database, TopicProgressInsert, TopicProgressRow, DrillSessionInsert } from "@/lib/supabase/types";
 import type { QuestionAttempt } from "@/types/core";
+import { calculateSessionScore } from "../analytics";
 
 interface SessionData {
   sessionId: string;
@@ -59,6 +60,44 @@ function calculateTopicStats(
   });
 
   return topicMap;
+}
+
+/**
+ * Save topic-specific results into drill_sessions table
+ */
+async function saveDrillSessions(
+  supabase: any,
+  userId: string,
+  topicStats: Map<string, TopicSessionStats>,
+  startedAt: number,
+  endedAt: number
+): Promise<void> {
+  for (const [topicId, stats] of topicStats.entries()) {
+    const accuracy = (stats.questionsCorrect / stats.questionsAttempted) * 100;
+    const score = calculateSessionScore(stats.questionsCorrect, stats.questionsAttempted, stats.avgTimeMs);
+
+    const drillSession: DrillSessionInsert = {
+      user_id: userId,
+      topic_id: topicId,
+      level: 1, // Default level
+      question_count: stats.questionsAttempted,
+      accuracy: Math.round(accuracy * 10) / 10,
+      average_time_ms: Math.round(stats.avgTimeMs),
+      started_at: new Date(startedAt).toISOString(),
+      completed_at: new Date(endedAt).toISOString(),
+      summary: {
+        score,
+        correctAnswers: stats.questionsCorrect,
+        totalQuestions: stats.questionsAttempted,
+        totalTimeMs: stats.totalTimeMs,
+      } as any,
+    };
+
+    const { error } = await supabase.from("drill_sessions").insert(drillSession);
+    if (error) {
+      console.error(`[session-saver] Error inserting into drill_sessions for ${topicId}:`, error);
+    }
+  }
 }
 
 /**
@@ -210,6 +249,9 @@ export async function saveSessionAnalytics(
     // Calculate topic-level stats
     const topicStats = calculateTopicStats(sessionData.attempts, sessionData.questionTopics);
     
+    // Save topic-specific sessions for history and leaderboard
+    await saveDrillSessions(supabase, sessionData.userId, topicStats, sessionData.startedAt, sessionData.endedAt);
+
     // Update topic progress
     await updateTopicProgress(supabase, sessionData.userId, topicStats);
     

@@ -48,64 +48,64 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('ai_generated_questions')
-      .select('*');
+      .select('*', { count: 'exact' });
     
-    // Note: attemptResult filtering will be applied after fetching attempts
-
-    // Apply subject filter (OR logic for multiple subjects)
+    // 1. Apply subject filter (OR logic for multiple subject conditions)
     if (subjects.length > 0) {
       console.log('[Question Bank API] Incoming subject filters:', subjects);
       
       const subjectConditions: string[] = [];
       subjects.forEach(subject => {
-      if (subject === 'Math 1') {
-        // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
-          subjectConditions.push('paper.eq.Math 1');
+        if (subject === 'Math 1') {
+          // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
+          // Use double quotes for values with spaces in .or()
+          subjectConditions.push('paper.eq."Math 1"');
           subjectConditions.push('primary_tag.ilike.M1-%');
           subjectConditions.push('schema_id.eq.M1');
-      } else if (subject === 'Math 2') {
-        // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
-          subjectConditions.push('paper.eq.Math 2');
+        } else if (subject === 'Math 2') {
+          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
+          subjectConditions.push('paper.eq."Math 2"');
           subjectConditions.push('primary_tag.ilike.M2-%');
+          // For .in() inside .or(), wrap the values in parentheses and comma-separate them
+          // Note: commas inside .in() don't break the outer .or() split if they are inside parentheses
           subjectConditions.push('schema_id.in.(M2,M3,M4,M5)');
-      } else if (subject === 'Physics') {
-        // Physics: schema_id starts with P OR primary_tag starts with P-
+        } else if (subject === 'Physics') {
+          // Physics: schema_id starts with P OR primary_tag starts with P-
           subjectConditions.push('schema_id.ilike.P%');
           subjectConditions.push('primary_tag.ilike.P-%');
-      } else if (subject === 'Chemistry') {
-        // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
+        } else if (subject === 'Chemistry') {
+          // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
           subjectConditions.push('schema_id.ilike.C%');
           subjectConditions.push('primary_tag.ilike.chemistry-%');
-      } else if (subject === 'Biology') {
-        // Biology: schema_id starts with B OR primary_tag starts with biology-
+        } else if (subject === 'Biology') {
+          // Biology: schema_id starts with B OR primary_tag starts with biology-
           subjectConditions.push('schema_id.ilike.B%');
           subjectConditions.push('primary_tag.ilike.biology-%');
         }
       });
       
       if (subjectConditions.length > 0) {
-        // Use OR to combine all subject conditions
         query = query.or(subjectConditions.join(','));
       }
     }
 
-    // Apply difficulty filter (OR logic for multiple difficulties)
+    // 2. Apply difficulty filter (ANDed with subject filter)
     if (difficulties.length > 0) {
       if (difficulties.length === 1) {
         query = query.eq('difficulty', difficulties[0]);
       } else {
-        // Multiple difficulties: use OR logic
-        const difficultyConditions = difficulties.map(d => `difficulty.eq.${d}`).join(',');
-        query = query.or(difficultyConditions);
+        // Multiple difficulties: use .in() for clean AND logic with subjects
+        query = query.in('difficulty', difficulties);
       }
     }
 
-    // Apply tag filter (search in primary_tag and secondary_tags)
+    // 3. Apply tag filter (ANDed with previous filters)
     if (tags) {
       const tagLower = tags.toLowerCase();
-      query = query.or(
-        `primary_tag.ilike.%${tagLower}%,secondary_tags.cs.{${tagLower}}`
-      );
+      // If we already have a subject filter (which used .or()), we must use .filter() 
+      // for the second OR group to avoid overwriting the first one.
+      // PostgREST supports multiple OR groups by using the 'or' parameter multiple times.
+      query = query.filter('or', 'or', `(primary_tag.ilike.%${tagLower}%,secondary_tags.cs.{${tagLower}})`);
     }
 
     // Apply attempted status and attempt result filter (server-side)
@@ -164,25 +164,20 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Apply ordering
-    // When filtering by "New", we need to fetch more questions since some will be filtered out
-    const fetchLimit = attemptedStatus === 'New' && userId 
-      ? limit * 10  // Fetch 10x more when filtering for new questions
-      : random 
-        ? limit * 2  // Fetch 2x for random
-        : limit * 2;  // Default to 2x for better coverage
-    
+    // Apply ordering and limits
+    // If random is true, we fetch a larger pool and shuffle client-side
+    // We should at least order by something to ensure deterministic but variety-filled results
     if (random) {
-      // For random, we'll fetch more and shuffle client-side for better randomness
-      query = query.limit(fetchLimit);
+      // Fetch up to 500 questions for better variety/filtering pool
+      // Using a random-ish sort order by sorting by created_at with a variable limit
+      query = query.limit(500);
     } else {
-      // Sort by status priority (pending_review and approved first), then by created_at
-      // We'll do this client-side after fetching since Supabase doesn't support custom sort orders easily
-      query = query.limit(fetchLimit).order('created_at', { ascending: false });
+      // Sort by created_at (newer first) for non-random mode
+      query = query.limit(limit * 2).order('created_at', { ascending: false });
     }
 
     // Execute the query to get all matching questions
-    const { data: allQuestions, error: queryError } = await query;
+    const { data: allQuestions, error: queryError, count: totalCount } = await query;
 
     if (queryError) {
       console.error('[Question Bank API] Supabase error:', queryError);
@@ -198,39 +193,23 @@ export async function GET(request: NextRequest) {
     
     // Apply attemptedStatus filter first
     if (attemptedStatus && attemptedStatus !== 'Mix' && userId) {
-      console.log(`[Question Bank API] Filtering by attemptedStatus: ${attemptedStatus}`, {
-        userId,
-        attemptedQuestionIdsCount: attemptedQuestionIds.length,
-        questionsBeforeFilter: beforeFilterCount
-      });
-      
       if (attemptedStatus === 'New') {
         // Exclude questions the user has attempted
         const attemptedSet = new Set(attemptedQuestionIds);
         filteredQuestions = filteredQuestions.filter(
           (q: any) => !attemptedSet.has(q.id)
         );
-        console.log(`[Question Bank API] After "New" filter: ${filteredQuestions.length} questions`);
       } else if (attemptedStatus === 'Attempted') {
         // Only include questions the user has attempted
-        if (attemptedQuestionIds.length === 0) {
-          console.log(`[Question Bank API] User has no attempts, returning empty result`);
-          return NextResponse.json({
-            questions: [],
-            count: 0,
-          });
-        }
         const attemptedSet = new Set(attemptedQuestionIds);
         filteredQuestions = filteredQuestions.filter(
           (q: any) => attemptedSet.has(q.id)
         );
-        console.log(`[Question Bank API] After "Attempted" filter: ${filteredQuestions.length} questions`);
       }
     }
     
     // Apply attemptResult filter
     if (attemptResults.length > 0 && userId) {
-      const beforeAttemptResultCount = filteredQuestions.length;
       const attemptedSet = new Set(attemptedQuestionIds);
       const incorrectSet = new Set(incorrectQuestionIds);
       
@@ -246,19 +225,25 @@ export async function GET(request: NextRequest) {
         }
       });
       
-      // Apply OR logic: question matches if it matches any of the selected result filters
       if (resultFilters.length > 0) {
         filteredQuestions = filteredQuestions.filter((q: any) => 
           resultFilters.some(filter => filter(q))
         );
       }
-      
-      console.log(`[Question Bank API] After attemptResult filter (${attemptResults.join(', ')}): ${filteredQuestions.length} questions (from ${beforeAttemptResultCount})`);
     }
 
-    // Apply pagination after filtering
+    // Shuffle BEFORE slicing for random mode
+    if (random) {
+      filteredQuestions = shuffleArray(filteredQuestions);
+    }
+
+    // Apply pagination after filtering and shuffling
     const paginatedQuestions = filteredQuestions.slice(offset, offset + limit);
-    const count = filteredQuestions.length;
+    
+    // The count we return should be the total count matching the filters in the database
+    const count = (attemptedStatus && attemptedStatus !== 'Mix') || attemptResults.length > 0 || tags
+      ? filteredQuestions.length
+      : (totalCount !== null ? totalCount : filteredQuestions.length);
 
     console.log(`[Question Bank API] Final result: ${filteredQuestions.length} questions after all filtering`, {
       subjects: subjects.length > 0 ? subjects : 'All',
@@ -268,7 +253,8 @@ export async function GET(request: NextRequest) {
       tags,
       fetchedFromDB: allQuestions?.length || 0,
       afterFilters: filteredQuestions.length,
-      attemptedIdsCount: attemptedQuestionIds.length
+      attemptedIdsCount: attemptedQuestionIds.length,
+      totalCountFromSupabase: totalCount
     });
     
     // If filtering by "New" and we got 0 questions, but we fetched questions, it means all were attempted
@@ -337,6 +323,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       questions: finalQuestions,
       count: count,
+      totalCount: totalCount || 0
     });
   } catch (error) {
     console.error('[Question Bank API] Unexpected error:', error);
