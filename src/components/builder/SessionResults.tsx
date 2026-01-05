@@ -95,26 +95,79 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
   // Load rankings data for each topic
   useEffect(() => {
-    if (!authSession?.user?.id || result.topicBreakdown.length === 0) return;
+    if (result.topicBreakdown.length === 0) return;
 
     const loadAllRankings = async () => {
       setIsLoadingRankings(true);
       const newRankings: Record<string, any> = {};
+      const userId = authSession?.user?.id || "anonymous";
+      
+      console.log("[SessionResults] Loading rankings for topics:", result.topicBreakdown.map(t => t.topicId));
+      console.log("[SessionResults] User ID:", userId);
+      console.log("[SessionResults] Session ID:", session.id);
+      
+      // Expose debug function to window for console access
+      (window as any).debugDrillSessions = async (topicId?: string) => {
+        const topicsToCheck = topicId ? [topicId] : result.topicBreakdown.map(t => t.topicId);
+        
+        for (const tid of topicsToCheck) {
+          console.log(`\n=== Debugging topic: ${tid} ===`);
+          
+          // Check all sessions for this topic
+          const { data: allSessions, error } = await supabase
+            .from("drill_sessions")
+            .select("id, user_id, topic_id, summary, completed_at, created_at, accuracy, average_time_ms, question_count")
+            .eq("topic_id", tid)
+            .order("created_at", { ascending: false })
+            .limit(100);
+          
+          if (error) {
+            console.error(`Error fetching sessions for ${tid}:`, error);
+          } else {
+            console.log(`Found ${allSessions?.length || 0} total sessions for topic ${tid}`);
+            console.log("Sample sessions:", allSessions?.slice(0, 5));
+          }
+          
+          // Check personal sessions if logged in
+          if (userId !== "anonymous") {
+            const { data: personalSessions } = await supabase
+              .from("drill_sessions")
+              .select("id, summary, completed_at")
+              .eq("user_id", userId)
+              .eq("topic_id", tid)
+              .order("created_at", { ascending: false });
+            
+            console.log(`Found ${personalSessions?.length || 0} personal sessions for user ${userId}`);
+          }
+        }
+      };
       
       for (const topic of result.topicBreakdown) {
-        const rankings = await fetchTopicRankings(
-          supabase,
-          topic.topicId,
-          authSession.user.id,
-          session.id,
-          {
-            score: topic.score,
-            correctAnswers: topic.correct,
-            totalQuestions: topic.total,
-            avgTimeMs: topic.avgTimeMs,
-          }
-        );
-        newRankings[topic.topicId] = rankings;
+        try {
+          const rankings = await fetchTopicRankings(
+            supabase,
+            topic.topicId,
+            userId,
+            session.id,
+            {
+              score: topic.score,
+              correctAnswers: topic.correct,
+              totalQuestions: topic.total,
+              avgTimeMs: topic.avgTimeMs,
+            }
+          );
+          
+          console.log(`[SessionResults] Rankings for ${topic.topicId}:`, {
+            personal: rankings.personal?.length || 0,
+            global: rankings.global?.length || 0,
+            personalData: rankings.personal,
+            globalData: rankings.global,
+          });
+          
+          newRankings[topic.topicId] = rankings;
+        } catch (error) {
+          console.error(`[SessionResults] Error loading rankings for ${topic.topicId}:`, error);
+        }
       }
       
       setRankingsData(newRankings);
@@ -133,12 +186,126 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
+  const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string) => {
+    const isHighlighted = session.isMostRecent;
+    const scorePercentage = (session.score / 1000) * 100;
+
+    return (
+      <motion.div
+        key={session.id}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: idx * 0.03 }}
+        className={cn(
+          "rounded-organic-md border p-4 transition-all",
+          isHighlighted
+            ? (isGlobalView 
+                ? "bg-blue-500/10 border-blue-400/30 ring-1 ring-blue-500/20" 
+                : "bg-primary/10 border-primary/30 ring-1 ring-primary/20")
+            : (isGlobalView
+                ? "bg-white/[0.02] border-white/10 hover:border-blue-500/20"
+                : "bg-white/[0.02] border-white/10 hover:border-white/20")
+        )}
+      >
+        <div className="flex items-center gap-6">
+          {/* Rank Number - Leftmost */}
+          <div className="flex-shrink-0">
+            <div className={cn(
+              "text-2xl font-bold tabular-nums font-mono",
+              isGlobalView ? "text-blue-400" : "text-primary"
+            )}>
+              {session.rank}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 min-w-0">
+            {/* Score and Topic Name Row */}
+            <div className="flex items-baseline justify-between gap-4 mb-2">
+              <div className="flex items-baseline gap-3 min-w-0">
+                <span className="text-2xl font-bold text-white/90 tabular-nums font-mono">
+                  {session.score}
+                </span>
+                <span className="text-sm text-white/40 font-mono">/ 1000</span>
+                <span className="text-xs text-white/30 font-mono truncate">
+                  {topicName}
+                </span>
+              </div>
+              <span className="text-xs text-white/40 font-mono flex-shrink-0">
+                {new Date(session.timestamp).toLocaleDateString()}
+              </span>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${scorePercentage}%` }}
+                transition={{ duration: 0.8, delay: idx * 0.05 }}
+                className={cn(
+                  "h-full rounded-full",
+                  isGlobalView ? "bg-blue-500" : "bg-primary"
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Right Side Stats */}
+          <div className="flex-shrink-0 text-right">
+            <div className="space-y-1">
+              <div className="text-xs font-mono text-white/70">
+                {formatTimeMs(session.avgTimeMs)} <span className="text-white/40">/ q</span>
+              </div>
+              <div className="text-xs font-mono text-white/70">
+                {session.correctAnswers}/{session.totalQuestions} <span className="text-white/40">correct</span>
+              </div>
+              <div className={cn(
+                "text-xs font-mono font-bold",
+                isGlobalView ? "text-blue-400" : "text-primary"
+              )}>
+                {session.accuracy.toFixed(0)}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
   const renderSessionCards = (topicId: string, topicName: string) => {
     const data = rankingsData[topicId]?.[rankingView];
+    
+    console.log(`[renderSessionCards] Topic: ${topicId}, View: ${rankingView}, Data:`, data);
+    
     if (!data || !Array.isArray(data) || data.length === 0) {
+      // Even if no data, we should show the current attempt
+      const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
+      if (currentTopic) {
+        // Show at least the current attempt
+        const currentSession = {
+          id: session.id,
+          rank: 1,
+          score: currentTopic.score,
+          timestamp: new Date(),
+          isCurrent: true,
+          isMostRecent: true,
+          correctAnswers: currentTopic.correct,
+          totalQuestions: currentTopic.total,
+          avgTimeMs: currentTopic.avgTimeMs,
+          accuracy: currentTopic.accuracy,
+          username: "You",
+        };
+        
+        return (
+          <div className="space-y-3">
+            {renderSingleCard(currentSession, rankingView === "global", 0, topicName)}
+          </div>
+        );
+      }
+      
       return (
         <div className="text-center py-8 text-white/40 font-mono text-sm">
-          No {rankingView === "personal" ? "previous" : ""} attempts yet
+          No attempts yet
         </div>
       );
     }
@@ -147,91 +314,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     return (
       <div className="space-y-3">
-        {data.map((session: any, idx: number) => {
-          const isHighlighted = session.isMostRecent;
-          const scorePercentage = (session.score / 1000) * 100;
-
-          return (
-            <motion.div
-              key={session.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.03 }}
-              className={cn(
-                "rounded-organic-md border p-4 transition-all",
-                isHighlighted
-                  ? (isGlobalView 
-                      ? "bg-blue-500/10 border-blue-400/30 ring-1 ring-blue-500/20" 
-                      : "bg-primary/10 border-primary/30 ring-1 ring-primary/20")
-                  : (isGlobalView
-                      ? "bg-white/[0.02] border-white/10 hover:border-blue-500/20"
-                      : "bg-white/[0.02] border-white/10 hover:border-white/20")
-              )}
-            >
-              <div className="flex items-center gap-6">
-                {/* Rank Number - Leftmost */}
-                <div className="flex-shrink-0">
-                  <div className={cn(
-                    "text-2xl font-bold tabular-nums font-mono",
-                    isGlobalView ? "text-blue-400" : "text-primary"
-                  )}>
-                    {session.rank}
-                  </div>
-                </div>
-
-                {/* Main Content Area */}
-                <div className="flex-1 min-w-0">
-                  {/* Score and Topic Name Row */}
-                  <div className="flex items-baseline justify-between gap-4 mb-2">
-                    <div className="flex items-baseline gap-3 min-w-0">
-                      <span className="text-2xl font-bold text-white/90 tabular-nums font-mono">
-                        {session.score}
-                      </span>
-                      <span className="text-sm text-white/40 font-mono">/ 1000</span>
-                      <span className="text-xs text-white/30 font-mono truncate">
-                        {topicName}
-                      </span>
-                    </div>
-                    <span className="text-xs text-white/40 font-mono flex-shrink-0">
-                      {new Date(session.timestamp).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${scorePercentage}%` }}
-                      transition={{ duration: 0.8, delay: idx * 0.05 }}
-                      className={cn(
-                        "h-full rounded-full",
-                        isGlobalView ? "bg-blue-500" : "bg-primary"
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* Right Side Stats */}
-                <div className="flex-shrink-0 text-right">
-                  <div className="space-y-1">
-                    <div className="text-xs font-mono text-white/70">
-                      {formatTimeMs(session.avgTimeMs)} <span className="text-white/40">/ q</span>
-                    </div>
-                    <div className="text-xs font-mono text-white/70">
-                      {session.correctAnswers}/{session.totalQuestions} <span className="text-white/40">correct</span>
-                    </div>
-                    <div className={cn(
-                      "text-xs font-mono font-bold",
-                      isGlobalView ? "text-blue-400" : "text-primary"
-                    )}>
-                      {session.accuracy.toFixed(0)}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+        {data.map((sessionData: any, idx: number) => 
+          renderSingleCard(sessionData, isGlobalView, idx, topicName)
+        )}
       </div>
     );
   };

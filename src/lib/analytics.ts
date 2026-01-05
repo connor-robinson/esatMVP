@@ -35,15 +35,31 @@ export async function fetchTopicRankings(
     avgTimeMs: number;
   }
 ) {
-  // 1. Fetch Personal History - ALL sessions
-  const { data: personalData, error: personalError } = await supabase
-    .from("drill_sessions")
-    .select("id, summary, completed_at, accuracy, average_time_ms, question_count")
-    .eq("user_id", currentUserId)
-    .eq("topic_id", topicId)
-    .order("created_at", { ascending: false });
-
-  if (personalError) console.error("[analytics] Error fetching personal history:", personalError);
+  console.log(`[fetchTopicRankings] Fetching for topic: ${topicId}, userId: ${currentUserId}`);
+  
+  // 1. Fetch Personal History - ALL sessions (only if user is not anonymous)
+  let personalData: any[] = [];
+  let personalError = null;
+  
+  if (currentUserId && currentUserId !== "anonymous") {
+    const result = await supabase
+      .from("drill_sessions")
+      .select("id, summary, completed_at, accuracy, average_time_ms, question_count")
+      .eq("user_id", currentUserId)
+      .eq("topic_id", topicId)
+      .order("created_at", { ascending: false });
+    
+    personalData = result.data || [];
+    personalError = result.error;
+    
+    if (personalError) {
+      console.error("[analytics] Error fetching personal history:", personalError);
+    } else {
+      console.log(`[fetchTopicRankings] Found ${personalData.length} personal sessions for topic ${topicId}`);
+    }
+  } else {
+    console.log("[fetchTopicRankings] Skipping personal history fetch (anonymous user)");
+  }
 
   // 2. Fetch Global Leaderboard - ALL sessions (no limit)
   const { data: globalData, error: globalError } = await supabase
@@ -59,9 +75,14 @@ export async function fetchTopicRankings(
       user_profiles:user_id(display_name, avatar_url)
     `)
     .eq("topic_id", topicId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(10000); // Explicit limit to get all data
 
-  if (globalError) console.error("[analytics] Error fetching global leaderboard:", globalError);
+  if (globalError) {
+    console.error("[analytics] Error fetching global leaderboard:", globalError);
+  } else {
+    console.log(`[fetchTopicRankings] Found ${globalData?.length || 0} global sessions for topic ${topicId}`);
+  }
 
   const processRankings = (
     data: any[], 
@@ -73,61 +94,73 @@ export async function fetchTopicRankings(
       avgTimeMs: number;
     }
   ) => {
-    if (!data || data.length === 0) {
-      // If no data but we have current session, return just that
-      if (currentSessionData) {
-        return [{
-          id: currentSessionId || "current",
-          userId: currentUserId,
-          username: "You",
-          avatar: undefined,
-          score: currentSessionData.score,
-          timestamp: new Date(),
-          isCurrent: true,
-          isMostRecent: true,
-          correctAnswers: currentSessionData.correctAnswers,
-          totalQuestions: currentSessionData.totalQuestions,
-          avgTimeMs: currentSessionData.avgTimeMs,
-          accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
-        }];
-      }
-      return [];
-    }
-
-    let rankings = data.map((d) => {
+    console.log(`[processRankings] Processing ${data?.length || 0} records, isGlobal: ${isGlobal}, hasCurrentData: ${!!currentSessionData}`);
+    
+    let rankings = (data || []).map((d) => {
       const summary = d.summary as any || {};
+      const score = summary.score || 0;
+      const correctAnswers = summary.correctAnswers || 0;
+      const totalQuestions = summary.totalQuestions || d.question_count || 0;
+      const avgTimeMs = summary.totalTimeMs 
+        ? (summary.totalTimeMs / (summary.totalQuestions || 1)) 
+        : (d.average_time_ms || 0);
+      const accuracy = d.accuracy || (correctAnswers && totalQuestions ? (correctAnswers / totalQuestions) * 100 : 0);
+      
+      // Handle timestamp - use completed_at, created_at, or current time as fallback
+      let timestamp: Date;
+      if (d.completed_at) {
+        timestamp = new Date(d.completed_at);
+      } else if (d.created_at) {
+        timestamp = new Date(d.created_at);
+      } else {
+        timestamp = new Date(); // Fallback to now
+      }
+      
       return {
         id: d.id,
         userId: d.user_id || currentUserId,
         username: isGlobal ? (d.user_profiles?.display_name || "Anonymous") : "You",
         avatar: d.user_profiles?.avatar_url,
-        score: summary.score || 0,
-        timestamp: new Date(d.completed_at),
+        score,
+        timestamp,
         isCurrent: d.id === currentSessionId,
         isMostRecent: false, // Will set this later
-        correctAnswers: summary.correctAnswers || 0,
-        totalQuestions: summary.totalQuestions || d.question_count || 0,
-        avgTimeMs: summary.totalTimeMs ? (summary.totalTimeMs / (summary.totalQuestions || 1)) : (d.average_time_ms || 0),
-        accuracy: d.accuracy || (summary.correctAnswers && summary.totalQuestions ? (summary.correctAnswers / summary.totalQuestions) * 100 : 0),
+        correctAnswers,
+        totalQuestions,
+        avgTimeMs,
+        accuracy,
       };
     });
 
-    // If we have current session data and it's not in the list, add it
-    if (currentSessionData && !rankings.find(r => r.id === currentSessionId)) {
-      rankings.push({
+    // ALWAYS include current session data if provided (even if no other data exists)
+    if (currentSessionData) {
+      const currentSession = {
         id: currentSessionId || "current",
         userId: currentUserId,
         username: "You",
         avatar: undefined,
         score: currentSessionData.score,
-        timestamp: new Date(),
+        timestamp: new Date(), // Most recent timestamp
         isCurrent: true,
-        isMostRecent: false,
+        isMostRecent: false, // Will set this later
         correctAnswers: currentSessionData.correctAnswers,
         totalQuestions: currentSessionData.totalQuestions,
         avgTimeMs: currentSessionData.avgTimeMs,
         accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
-      });
+      };
+
+      // Only add if not already in the list
+      if (!rankings.find(r => r.id === currentSessionId)) {
+        console.log("[processRankings] Adding current session to rankings");
+        rankings.push(currentSession);
+      } else {
+        console.log("[processRankings] Current session already in rankings, updating it");
+        // Update existing entry with current data
+        const existingIndex = rankings.findIndex(r => r.id === currentSessionId);
+        if (existingIndex >= 0) {
+          rankings[existingIndex] = { ...rankings[existingIndex], ...currentSession };
+        }
+      }
     }
 
     // Sort by score descending for ranking
@@ -142,6 +175,7 @@ export async function fetchTopicRankings(
         current.timestamp > latest.timestamp ? current : latest
       );
       rankings = rankings.map(r => ({ ...r, isMostRecent: r.id === mostRecent.id }));
+      console.log(`[processRankings] Most recent session: ${mostRecent.id}, total rankings: ${rankings.length}`);
     }
 
     return rankings; // Return ALL rankings
