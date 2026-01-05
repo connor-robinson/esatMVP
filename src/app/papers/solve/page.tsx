@@ -4,6 +4,8 @@
 
 "use client";
 
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -101,7 +103,7 @@ export default function PapersSolvePage() {
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId) {
-      router.push("/papers/plan");
+      router.push("/papers/library");
     }
   }, [sessionId, router]);
 
@@ -259,7 +261,7 @@ export default function PapersSolvePage() {
           <Button
             variant="primary"
             className="mt-4"
-            onClick={() => router.push("/papers/plan")}
+            onClick={() => router.push("/papers/library")}
           >
             Start New Session
           </Button>
@@ -279,7 +281,7 @@ export default function PapersSolvePage() {
             {questionsLoading ? (
               <div className="flex items-center justify-center py-16">
                 <div className="text-center space-y-4">
-                  <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto"></div>
+                  <LoadingSpinner size="md" />
                   <p className="text-sm text-white/60">Loading questions...</p>
                 </div>
               </div>

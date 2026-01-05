@@ -61,11 +61,15 @@ export function StageDetailsModal({
     }
 
     async function loadStats() {
+      if (!stage || !userId) return;
+      const currentStage = stage;
+      const currentUserId = userId;
+
       try {
         // Query sessions for this stage
         const paperVariants = new Set(
-          stage.parts.map(
-            (part) => `${stage.year}-${part.paperName}-${part.examType}`
+          currentStage.parts.map(
+            (part) => `${currentStage.year}-${part.paperName}-${part.examType}`
           )
         );
 
@@ -75,8 +79,8 @@ export function StageDetailsModal({
           const { data: variantData, error: variantError } = await supabase
             .from("paper_sessions")
             .select("time_limit_minutes, score, ended_at")
-            .eq("user_id", userId)
-            .eq("paper_name", stage.examName)
+            .eq("user_id", currentUserId)
+            .eq("paper_name", currentStage.examName)
             .eq("paper_variant", variant)
             .not("ended_at", "is", null);
           
@@ -140,15 +144,19 @@ export function StageDetailsModal({
     };
   }, [isOpen]);
 
-  if (!isOpen || !stage) return null;
-
-  const examColor = getPaperTypeColor(stage.examName);
-  const completedCount = Array.from(completionData.values()).filter(
-    (v) => v
-  ).length;
-  const totalCount = stage.parts.length;
+  const allSelected = useMemo(() => {
+    if (!stage) return false;
+    return (
+      selectedParts.size === stage.parts.length &&
+      stage.parts.every((part) => {
+        const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+        return selectedParts.has(partKey);
+      })
+    );
+  }, [selectedParts, stage?.parts]);
 
   const handleSelectAll = (checked: boolean) => {
+    if (!stage) return;
     if (checked) {
       const allPartKeys = new Set(
         stage.parts.map(
@@ -172,7 +180,7 @@ export function StageDetailsModal({
   };
 
   const handleMarkAsDone = async (part: RoadmapPart) => {
-    if (!userId) return;
+    if (!userId || !stage) return;
 
     const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
     setIsMarking(partKey);
@@ -197,6 +205,7 @@ export function StageDetailsModal({
   };
 
   const handleStartSession = () => {
+    if (!stage) return;
     const selectedPartsList = stage.parts.filter((part) => {
       const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
       return selectedParts.has(partKey);
@@ -208,15 +217,13 @@ export function StageDetailsModal({
     }
   };
 
-  const allSelected = useMemo(() => {
-    return (
-      selectedParts.size === stage.parts.length &&
-      stage.parts.every((part) => {
-        const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-        return selectedParts.has(partKey);
-      })
-    );
-  }, [selectedParts, stage.parts]);
+  if (!isOpen || !stage) return null;
+
+  const examColor = getPaperTypeColor(stage.examName);
+  const completedCount = Array.from(completionData.values()).filter(
+    (v) => v
+  ).length;
+  const totalCount = stage.parts.length;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
@@ -273,7 +280,7 @@ export function StageDetailsModal({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Explanation */}
           <div className="text-sm text-white/60 leading-relaxed">
-            Select the sections you want to practice, or mark sections as done if you've completed them elsewhere. Then click "Start Session" to begin.
+            Select the sections you want to practice, or mark sections as done if you&apos;ve completed them elsewhere. Then click &quot;Start Session&quot; to begin.
           </div>
 
           {/* Section Selection */}
@@ -370,7 +377,7 @@ export function StageDetailsModal({
                 Mark Sections as Done
               </h3>
               <p className="text-xs text-white/50">
-                If you've completed any sections outside this app, mark them as done to track your progress.
+                If you&apos;ve completed any sections outside this app, mark them as done to track your progress.
               </p>
               <div className="space-y-2">
                 {stage.parts

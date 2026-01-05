@@ -4,6 +4,8 @@
 
 "use client";
 
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -85,10 +87,7 @@ export function Leaderboard({
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className={cn(
-            "inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent",
-            themeColors.spinner
-          )} />
+          <LoadingSpinner size="md" />
           <p className="text-white/40 mt-4">Loading leaderboard...</p>
         </div>
       ) : (

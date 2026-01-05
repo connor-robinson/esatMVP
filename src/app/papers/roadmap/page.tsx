@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import {
   getRoadmapStages,
+  getRoadmapStagesSync,
   type RoadmapStage,
 } from "@/lib/papers/roadmapConfig";
 import {
@@ -18,8 +19,10 @@ import {
   getStageCompletion,
 } from "@/lib/papers/roadmapCompletion";
 import { RoadmapList } from "@/components/papers/roadmap/RoadmapList";
-import { StageDetailsModal } from "@/components/papers/roadmap/StageDetailsModal";
+import { RoadmapTimeline } from "@/components/papers/roadmap/RoadmapTimeline";
+import { RoadmapAnalytics } from "@/components/papers/roadmap/RoadmapAnalytics";
 import { getSectionForRoadmapPart } from "@/lib/papers/roadmapConfig";
+import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { getPaper, getQuestions } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -30,25 +33,49 @@ export default function PapersRoadmapPage() {
   const router = useRouter();
   const session = useSupabaseSession();
   const { startSession, loadQuestions } = usePaperSessionStore();
-  const [stages] = useState<RoadmapStage[]>(getRoadmapStages());
+  const [stages, setStages] = useState<RoadmapStage[]>([]);
   const [unlockedStages, setUnlockedStages] = useState<Set<string>>(new Set());
   const [completionData, setCompletionData] = useState<
     Map<string, { completed: number; total: number; parts: Map<string, boolean> }>
   >(new Map());
   const [loading, setLoading] = useState(true);
   const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(null);
-  const [selectedStageForModal, setSelectedStageForModal] = useState<RoadmapStage | null>(null);
+
+  // Load stages (including dynamic TMUA stages)
+  useEffect(() => {
+    async function loadStages() {
+      try {
+        const loadedStages = await getRoadmapStages();
+        // Debug: Check for duplicates
+        const stageIds = loadedStages.map(s => s.id);
+        const duplicates = stageIds.filter((id, index) => stageIds.indexOf(id) !== index);
+        if (duplicates.length > 0) {
+          console.warn("[roadmap] Duplicate stage IDs found:", duplicates);
+        }
+        // Debug: Log stages at positions 8 and 26 (0-indexed: 7 and 25)
+        if (loadedStages.length > 7) {
+          console.log("[roadmap] Stage at position 8 (index 7):", loadedStages[7]?.id, loadedStages[7]?.examName, loadedStages[7]?.year);
+        }
+        if (loadedStages.length > 25) {
+          console.log("[roadmap] Stage at position 26 (index 25):", loadedStages[25]?.id, loadedStages[25]?.examName, loadedStages[25]?.year);
+        }
+        setStages(loadedStages);
+      } catch (error) {
+        console.error("[roadmap] Error loading stages:", error);
+        // Fallback to sync version if async fails
+        setStages(getRoadmapStagesSync());
+      }
+    }
+    loadStages();
+  }, []);
 
   // Load completion data
   useEffect(() => {
+    if (stages.length === 0) return; // Wait for stages to load
+
     async function loadCompletionData() {
       try {
-        // TESTING MODE: Unlock all stages for testing/debugging
-        // TODO: Replace with real unlock logic: const unlocked = await getUnlockedStages(session.user.id, stages);
-        const allStageIds = new Set(stages.map(s => s.id));
-        setUnlockedStages(allStageIds);
-
-        // Get completion data for each stage (only if user is logged in)
+        // 1. Get completion data for each stage
         const completionMap = new Map<
           string,
           { completed: number; total: number; parts: Map<string, boolean> }
@@ -66,46 +93,68 @@ export default function PapersRoadmapPage() {
             });
           }
         } else {
-          // If no user, set all to 0 completion
-          for (const stage of stages) {
+          // TESTING SIMULATION: Set stages 0-9 to COMPLETED, 10 to IN PROGRESS
+          for (let i = 0; i < stages.length; i++) {
+            const stage = stages[i];
+            let completed = 0;
+            const partsMap = new Map<string, boolean>();
+
+            if (i < 10) {
+              completed = stage.parts.length;
+              stage.parts.forEach(p => partsMap.set(`${p.paperName}-${p.examType}-${p.partName || ''}`, true));
+            } else if (i === 10) {
+              // Stage 10 is the current target - start with 0 completed
+              completed = 0;
+            }
+
             completionMap.set(stage.id, {
-              completed: 0,
+              completed,
               total: stage.parts.length,
-              parts: new Map(),
+              parts: partsMap,
             });
           }
         }
 
         setCompletionData(completionMap);
 
-        // Determine current stage (first incomplete unlocked stage)
+        // 2. Determine Unlocked Status and Current Stage
+        const unlocked = new Set<string>();
         let currentIndex: number | null = null;
+
         for (let i = 0; i < stages.length; i++) {
           const stage = stages[i];
-          const isUnlocked = allStageIds.has(stage.id);
           const data = completionMap.get(stage.id);
           const isCompleted = (data?.completed || 0) === (data?.total || stage.parts.length) && (data?.total || 0) > 0;
-          
-          if (isUnlocked && !isCompleted) {
-            currentIndex = i;
-            break;
+
+          // Logic: 
+          // - First stage is always unlocked
+          // - Stage N is unlocked if stage N-1 is completed
+          // - For the simulation: indexes 0-10 are explicitly unlocked
+          let isUnlocked = false;
+          if (!session?.user?.id) {
+            isUnlocked = i <= 10;
+          } else {
+            if (i === 0) {
+              isUnlocked = true;
+            } else {
+              const prevStage = stages[i - 1];
+              const prevData = completionMap.get(prevStage.id);
+              const isPrevCompleted = (prevData?.completed || 0) === (prevData?.total || prevStage.parts.length);
+              isUnlocked = isPrevCompleted;
+            }
           }
-        }
-        
-        // If all unlocked stages are complete, current is next locked stage
-        if (currentIndex === null) {
-          for (let i = 0; i < stages.length; i++) {
-            const stage = stages[i];
-            if (!allStageIds.has(stage.id)) {
+
+          if (isUnlocked) {
+            unlocked.add(stage.id);
+            // First incomplete unlocked stage is current
+            if (!isCompleted && currentIndex === null) {
               currentIndex = i;
-              break;
             }
           }
         }
-        
-        // Default to first stage if nothing found
-        const finalCurrentIndex = currentIndex ?? 0;
-        setCurrentStageIndex(finalCurrentIndex);
+
+        setUnlockedStages(unlocked);
+        setCurrentStageIndex(currentIndex ?? 0);
       } catch (error) {
         console.error("[roadmap] Error loading completion data:", error);
       } finally {
@@ -116,11 +165,6 @@ export default function PapersRoadmapPage() {
     loadCompletionData();
   }, [session?.user?.id, stages]);
 
-
-  // Handle node click - open modal
-  const handleNodeClick = useCallback((stage: RoadmapStage) => {
-    setSelectedStageForModal(stage);
-  }, []);
 
   // Handle stage start with selected parts
   const handleStartStage = useCallback(
@@ -151,12 +195,12 @@ export default function PapersRoadmapPage() {
             primaryPaperKey = key;
           }
         }
-        
+
         const primaryParts = partsByPaper.get(primaryPaperKey) || selectedParts;
         const firstPart = primaryParts[0];
-        
+
         const paper = await getPaper(stage.examName, stage.year, firstPart.paperName, firstPart.examType);
-        
+
         if (!paper) {
           console.error("[roadmap] Paper not found for stage");
           return;
@@ -164,32 +208,57 @@ export default function PapersRoadmapPage() {
 
         // Collect sections from selected parts only
         const allSections = new Set<PaperSection>();
-        primaryParts.forEach(part => {
-          const section = getSectionForRoadmapPart(part, stage.examName);
-          allSections.add(section);
-        });
+        const paperType = examNameToPaperType(stage.examName) || "NSAA";
+
+        // Handle TMUA differently - use section mapping
+        if (paperType === "TMUA") {
+          primaryParts.forEach(part => {
+            // TMUA uses Paper 1 / Paper 2 as sections
+            if (part.paperName === "Paper 1") {
+              allSections.add("Paper 1");
+            } else if (part.paperName === "Paper 2") {
+              allSections.add("Paper 2");
+            }
+          });
+        } else {
+          primaryParts.forEach(part => {
+            const section = getSectionForRoadmapPart(part, stage.examName);
+            allSections.add(section);
+          });
+        }
 
         // Get all questions for the primary paper
         const allQuestions = await getQuestions(paper.id);
-        
-        // Filter questions to match selected parts from the primary paper only
-        const matchingQuestions = allQuestions.filter(q => {
-          return primaryParts.some(part => {
-            // Check if question matches this part
-            const partMatches = 
-              (q.partLetter === part.partLetter || q.partLetter?.includes(part.partLetter)) &&
-              (q.partName === part.partName || q.partName?.includes(part.partName));
-            
-            if (!partMatches) return false;
 
-            // Apply question filter if specified (for ENGAA Section 1 Part B)
-            if (part.questionFilter && part.questionFilter.length > 0) {
-              return part.questionFilter.includes(q.questionNumber);
-            }
-            
-            return true;
+        // Filter questions to match selected parts from the primary paper only
+        let matchingQuestions: typeof allQuestions;
+
+        if (paperType === "TMUA") {
+          // For TMUA, filter by section derived from question position
+          const totalQuestions = allQuestions.length;
+          matchingQuestions = allQuestions.filter((q, index) => {
+            const section = deriveTmuaSectionFromQuestion(q, index, totalQuestions);
+            return Array.from(allSections).includes(section);
           });
-        });
+        } else {
+          matchingQuestions = allQuestions.filter(q => {
+            return primaryParts.some(part => {
+              // Check if question matches this part
+              const partMatches =
+                (q.partLetter === part.partLetter || q.partLetter?.includes(part.partLetter)) &&
+                (q.partName === part.partName || q.partName?.includes(part.partName));
+
+              if (!partMatches) return false;
+
+              // Apply question filter if specified (for ENGAA Section 1 Part B)
+              if (part.questionFilter && part.questionFilter.length > 0) {
+                return part.questionFilter.includes(q.questionNumber);
+              }
+
+              return true;
+            });
+          });
+        }
 
         if (matchingQuestions.length === 0) {
           console.error("[roadmap] No matching questions found for stage");
@@ -202,12 +271,16 @@ export default function PapersRoadmapPage() {
         const questionEnd = questionNumbers[questionNumbers.length - 1];
         const totalQuestions = questionNumbers.length;
 
-        // Calculate time (1.5 min per question)
-        const timeLimitMinutes = Math.ceil(totalQuestions * 1.5);
+        // Calculate time (1.5 min per question, or 75 min per section for TMUA)
+        let timeLimitMinutes: number;
+        if (paperType === "TMUA") {
+          timeLimitMinutes = Array.from(allSections).length * 75;
+        } else {
+          timeLimitMinutes = Math.ceil(totalQuestions * 1.5);
+        }
 
         // Create variant string
         const variantString = `${stage.year}-${firstPart.paperName}-${firstPart.examType}`;
-        const paperType = examNameToPaperType(stage.examName) || "NSAA";
 
         // Start session
         startSession({
@@ -267,7 +340,16 @@ export default function PapersRoadmapPage() {
     } catch (error) {
       console.error("[roadmap] Error refreshing completion data:", error);
     }
+
+    setLoading(false);
   }, [session?.user?.id, stages]);
+
+  // Track actual node positions for timeline alignment - MUST be before conditional return
+  const [nodePositions, setNodePositions] = useState<number[]>([]);
+
+  const handleNodePositionsUpdate = useCallback((positions: number[]) => {
+    setNodePositions(positions);
+  }, []);
 
   if (loading) {
     return (
@@ -301,28 +383,39 @@ export default function PapersRoadmapPage() {
     <Container>
       <PageHeader title="Practice Roadmap" />
 
-      {/* Vertical List Roadmap */}
+      {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="py-8">
-        <RoadmapList
-          nodes={timelineNodes}
+        <div className="flex gap-8 lg:gap-12">
+          {/* Left: Timeline (15-20% width, hidden on mobile) */}
+          <div className="w-[18%] flex-shrink-0 hidden lg:block">
+            <div className="sticky top-8">
+              <RoadmapTimeline
+                stages={stages}
+                nodePositions={nodePositions}
+                currentStageIndex={currentStageIndex ?? undefined}
+              />
+            </div>
+          </div>
+
+          {/* Right: Roadmap List (80-85% width, full width on mobile) */}
+          <div className="flex-1 min-w-0 lg:w-[82%]">
+            <RoadmapList
+              nodes={timelineNodes}
+              completionData={completionData}
+              onStartSession={handleStartStage}
+              onNodePositionsUpdate={handleNodePositionsUpdate}
+              timelineNodePositions={nodePositions}
+            />
+          </div>
+        </div>
+        
+        {/* Analytics Section - Full width spanning both columns */}
+        <RoadmapAnalytics
+          stages={stages}
           completionData={completionData}
-          onNodeClick={handleNodeClick}
-          onStartSession={handleStartStage}
+          currentStageIndex={currentStageIndex}
         />
       </div>
-
-      {/* Stage Details Modal */}
-      {selectedStageForModal && (
-        <StageDetailsModal
-          isOpen={selectedStageForModal !== null}
-          onClose={() => setSelectedStageForModal(null)}
-          stage={selectedStageForModal}
-          userId={session?.user?.id || null}
-          completionData={completionData.get(selectedStageForModal.id)?.parts || new Map()}
-          onStartSession={handleStartStage}
-          onCompletionUpdate={refreshCompletionData}
-        />
-      )}
     </Container>
   );
 }

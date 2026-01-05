@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { SubjectFilter, DifficultyFilter, AttemptResultFilter, AttemptedFilter } from '@/types/questionBank';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/question-bank/questions
  * Fetches questions with optional filtering
@@ -56,26 +58,26 @@ export async function GET(request: NextRequest) {
       
       const subjectConditions: string[] = [];
       subjects.forEach(subject => {
-        if (subject === 'Math 1') {
-          // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
+      if (subject === 'Math 1') {
+        // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-" OR schema_id is "M1" (fallback)
           subjectConditions.push('paper.eq.Math 1');
           subjectConditions.push('primary_tag.ilike.M1-%');
           subjectConditions.push('schema_id.eq.M1');
-        } else if (subject === 'Math 2') {
-          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
+      } else if (subject === 'Math 2') {
+        // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
           subjectConditions.push('paper.eq.Math 2');
           subjectConditions.push('primary_tag.ilike.M2-%');
           subjectConditions.push('schema_id.in.(M2,M3,M4,M5)');
-        } else if (subject === 'Physics') {
-          // Physics: schema_id starts with P OR primary_tag starts with P-
+      } else if (subject === 'Physics') {
+        // Physics: schema_id starts with P OR primary_tag starts with P-
           subjectConditions.push('schema_id.ilike.P%');
           subjectConditions.push('primary_tag.ilike.P-%');
-        } else if (subject === 'Chemistry') {
-          // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
+      } else if (subject === 'Chemistry') {
+        // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
           subjectConditions.push('schema_id.ilike.C%');
           subjectConditions.push('primary_tag.ilike.chemistry-%');
-        } else if (subject === 'Biology') {
-          // Biology: schema_id starts with B OR primary_tag starts with biology-
+      } else if (subject === 'Biology') {
+        // Biology: schema_id starts with B OR primary_tag starts with biology-
           subjectConditions.push('schema_id.ilike.B%');
           subjectConditions.push('primary_tag.ilike.biology-%');
         }

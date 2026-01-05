@@ -108,3 +108,8 @@ function generateFactorCommon(): GeneratedQuestion {
 
 
 
+
+
+
+
+

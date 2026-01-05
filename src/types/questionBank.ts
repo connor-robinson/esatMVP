@@ -6,6 +6,7 @@ export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Bio
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
 export type AttemptResultFilter = 'Mixed Results' | 'Unseen' | 'Incorrect Before';
+export type ReviewStatusFilter = 'All' | 'Pending Review' | 'Approved' | 'Needs Revision';
 
 export interface QuestionBankQuestion {
   id: string;
@@ -34,6 +35,10 @@ export interface QuestionAttempt {
   time_spent_ms: number | null;
   viewed_solution: boolean;
   attempted_at: string;
+  was_revealed?: boolean;
+  used_hint?: boolean;
+  wrong_answers_before?: string[];
+  time_until_correct_ms?: number | null;
 }
 
 export interface QuestionBankFilters {
@@ -42,6 +47,7 @@ export interface QuestionBankFilters {
   searchTag: string;
   attemptedStatus: AttemptedFilter;
   attemptResult: AttemptResultFilter | AttemptResultFilter[]; // Support both single and multi-select
+  reviewStatus?: ReviewStatusFilter; // Added for review status filtering
 }
 
 export interface QuestionBankStats {

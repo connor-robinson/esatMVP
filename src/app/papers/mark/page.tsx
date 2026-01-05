@@ -868,7 +868,7 @@ export default function PapersMarkPage() {
   
   // Redirect if no active session (after all hooks)
   if (!sessionId) {
-    router.push("/papers/plan");
+    router.push("/papers/library");
     return null;
   }
   
@@ -2358,7 +2358,7 @@ export default function PapersMarkPage() {
           <Button
             variant="secondary"
             className="px-4 py-2 text-sm rounded-md ring-1 ring-white/10 bg-[#0f1114] text-neutral-300 hover:bg-[#121418]"
-            onClick={() => router.push("/papers/plan")}
+            onClick={() => router.push("/papers/library")}
           >
             New Session
           </Button>

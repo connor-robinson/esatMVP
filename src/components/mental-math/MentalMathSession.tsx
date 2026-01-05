@@ -10,6 +10,7 @@ import { LogOut, Eye, ArrowRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
+import { TriangleDiagram } from "@/components/shared/TriangleDiagram";
 import { FeedbackPopup } from "./FeedbackPopup";
 import { KatexInput } from "./KatexInput";
 import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
@@ -193,11 +194,27 @@ export function MentalMathSession({
                 transition={{ duration: 0.1, ease: "easeInOut" }}
                 className="text-center"
               >
-                <div className="text-5xl md:text-6xl font-bold text-white/95 tracking-tight leading-tight">
+                <div className="text-lg md:text-xl font-semibold text-white/80 tracking-tight leading-tight">
                   <MathContent content={currentQuestion.question} />
                 </div>
               </motion.div>
             </AnimatePresence>
+
+            {/* Diagram (if present) */}
+            {currentQuestion.diagram && (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`diagram-${currentQuestion.id}`}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  className="w-full flex justify-center mt-[-32px]"
+                >
+                  <TriangleDiagram data={currentQuestion.diagram} />
+                </motion.div>
+              </AnimatePresence>
+            )}
 
             {/* Input section */}
             <div className="flex flex-col items-center gap-6 w-full max-w-md">

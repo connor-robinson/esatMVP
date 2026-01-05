@@ -4,6 +4,8 @@
 
 "use client";
 
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -122,7 +124,7 @@ export default function PapersAnalyticsPage() {
     return (
       <Container size="lg">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <LoadingSpinner size="md" />
         </div>
       </Container>
     );

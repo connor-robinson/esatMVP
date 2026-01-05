@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { CalendarIcon, TargetIcon, FireIcon, ChartIcon, TrophyIcon } from "@/components/icons";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 const DAYS_PAST = 180;
 const DAYS_FUTURE = 365;
@@ -269,7 +270,7 @@ export function ActivityHeatmap() {
     return (
       <div className="w-full text-center py-16">
         <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-          <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+          <LoadingSpinner size="sm" />
           <span className="text-sm text-white/60">Loading calendar...</span>
         </div>
       </div>

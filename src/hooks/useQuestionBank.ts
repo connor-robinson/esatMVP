@@ -25,7 +25,12 @@ interface UseQuestionBankReturn {
 
   // Actions
   setFilters: (filters: QuestionBankFilters) => void;
-  submitAnswer: (answer: string, correct: boolean) => Promise<void>;
+  submitAnswer: (answer: string, correct: boolean, metadata?: {
+    wasRevealed?: boolean;
+    usedHint?: boolean;
+    wrongAnswersBefore?: string[];
+    timeUntilCorrectMs?: number | null;
+  }) => Promise<void>;
   nextQuestion: () => Promise<void>;
   viewSolution: () => void;
   updateCurrentQuestion: (question: QuestionBankQuestion) => void;
@@ -161,8 +166,17 @@ export function useQuestionBank(): UseQuestionBankReturn {
   }, [filters, session]);
 
   // Submit answer and save to database
-  const submitAnswer = useCallback(async (answer: string, correct: boolean) => {
-    console.log('[useQuestionBank] submitAnswer called', { answer, correct, currentQuestion: currentQuestion?.id });
+  const submitAnswer = useCallback(async (
+    answer: string, 
+    correct: boolean,
+    metadata?: {
+      wasRevealed?: boolean;
+      usedHint?: boolean;
+      wrongAnswersBefore?: string[];
+      timeUntilCorrectMs?: number | null;
+    }
+  ) => {
+    console.log('[useQuestionBank] submitAnswer called', { answer, correct, currentQuestion: currentQuestion?.id, metadata });
     
     if (!currentQuestion) {
       console.error('[useQuestionBank] No current question');
@@ -193,6 +207,10 @@ export function useQuestionBank(): UseQuestionBankReturn {
               is_correct: correct,
               time_spent_ms: timeSpent,
               viewed_solution: viewedSolution,
+              was_revealed: metadata?.wasRevealed ?? false,
+              used_hint: metadata?.usedHint ?? false,
+              wrong_answers_before: metadata?.wrongAnswersBefore ?? [],
+              time_until_correct_ms: metadata?.timeUntilCorrectMs ?? null,
             }),
           });
 

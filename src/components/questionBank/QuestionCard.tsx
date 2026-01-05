@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { MathContent } from "@/components/shared/MathContent";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import type { QuestionBankQuestion } from "@/types/questionBank";
-import { cn, formatTime } from "@/lib/utils";
-import { CheckCircle2, XCircle, Pencil, Eye, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CheckCircle2, XCircle, Pencil, Eye, ArrowRight, HelpCircle } from "lucide-react";
 
 interface QuestionCardProps {
   question: QuestionBankQuestion;
@@ -21,30 +21,39 @@ interface QuestionCardProps {
   onRevealAnswer?: () => void;
   allowRetry?: boolean;
   getTopicTitle?: (tag: string) => string;
-  elapsedTime?: number;
-  onResetTimer?: () => void;
+  onSelectionChange?: (selectedAnswer: string | null) => void;
+  onIncorrectAnswersChange?: (incorrectAnswers: Set<string>) => void;
 }
 
 // Helper function to get subject color based on paper name
 const getSubjectColor = (paper: string | null): string => {
   if (!paper) return 'bg-white/10 text-white/70';
   
-  const paperLower = paper.toLowerCase();
-  if (paperLower.includes('math 1') || paper === 'Math 1') {
+  const paperLower = paper.toLowerCase().trim();
+  
+  // Math matching - check for math 1, math 2, m1, m2, etc.
+  if (paperLower.includes('math 1') || paperLower.includes('math1') || paperLower === 'm1' || paperLower.startsWith('m1')) {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
-  if (paperLower.includes('math 2') || paper === 'Math 2') {
+  if (paperLower.includes('math 2') || paperLower.includes('math2') || paperLower === 'm2' || paperLower.startsWith('m2')) {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
-  if (paperLower.includes('physics') || paper === 'Physics') {
+  
+  // Physics matching - check for physics, p1, p2, etc.
+  if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2' || paperLower.startsWith('p1') || paperLower.startsWith('p2')) {
     return 'bg-[#2f2835]/30 text-[#a78bfa]';
   }
-  if (paperLower.includes('chemistry') || paper === 'Chemistry') {
+  
+  // Chemistry matching - check for chemistry, c1, c2, etc.
+  if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
     return 'bg-[#854952]/20 text-[#ef7d7d]';
   }
-  if (paperLower.includes('biology') || paper === 'Biology') {
+  
+  // Biology matching - check for biology, b1, b2, etc.
+  if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
     return 'bg-[#506141]/20 text-[#85BC82]';
   }
+  
   // Default fallback
   return 'bg-white/10 text-white/70';
 };
@@ -62,12 +71,13 @@ export function QuestionCard({
   onRevealAnswer,
   allowRetry = false,
   getTopicTitle,
-  elapsedTime = 0,
-  onResetTimer,
+  onSelectionChange,
+  onIncorrectAnswersChange,
 }: QuestionCardProps) {
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(new Set());
+  const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(new Set());
 
   // Get option letters from the options object
   const optionLetters = Object.keys(question.options).sort();
@@ -76,8 +86,33 @@ export function QuestionCard({
   useEffect(() => {
     if (!isAnswered || allowRetry) {
       setLocalSelectedAnswer(null);
+      onSelectionChange?.(null);
     }
-  }, [question.id, isAnswered, allowRetry]);
+    setHoveredOption(null);
+    setRevealedDistractors(new Set());
+    setIncorrectAnswers(new Set());
+  }, [question.id, isAnswered, allowRetry, onSelectionChange]);
+
+  // Notify parent when selection changes
+  useEffect(() => {
+    onSelectionChange?.(localSelectedAnswer);
+  }, [localSelectedAnswer, onSelectionChange]);
+  
+  // Track incorrect answers when they're submitted
+  useEffect(() => {
+    if (isAnswered && !isCorrect && selectedAnswer) {
+      setIncorrectAnswers(prev => {
+        const newSet = new Set(prev).add(selectedAnswer);
+        onIncorrectAnswersChange?.(newSet);
+        return newSet;
+      });
+    }
+  }, [isAnswered, isCorrect, selectedAnswer, onIncorrectAnswersChange]);
+
+  // Notify parent when incorrect answers change
+  useEffect(() => {
+    onIncorrectAnswersChange?.(incorrectAnswers);
+  }, [incorrectAnswers, onIncorrectAnswersChange]);
 
   // Handle Enter key press
   useEffect(() => {
@@ -98,21 +133,30 @@ export function QuestionCard({
 
   const handleSubmit = () => {
     if (!localSelectedAnswer || (isAnswered && !allowRetry && !answerRevealed)) return;
+    // Prevent submitting answers that are already known to be incorrect
+    if (incorrectAnswers.has(localSelectedAnswer)) return;
     const correct = localSelectedAnswer === question.correct_option;
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
   const getOptionStyle = (optionLetter: string) => {
-    // If answer is revealed, show correct answer
+    // If answered correctly, show green background (signature green)
+    if (isAnswered && isCorrect && optionLetter === correctAnswer) {
+      return "bg-[#85BC82]/20 hover:bg-[#85BC82]/25 text-white cursor-default";
+    }
+    
+    // If answer is revealed, show correct answer with green
     if (answerRevealed && optionLetter === correctAnswer) {
-      return "bg-[#506141]/30 text-white cursor-default";
+      return "bg-[#85BC82]/20 text-white cursor-default";
+    }
+
+    // Always keep all previously wrong answers marked as red
+    if (incorrectAnswers.has(optionLetter) && optionLetter !== correctAnswer) {
+      return "bg-[#854952]/25 text-white cursor-default";
     }
 
     // If wrong answer was selected and not revealed, show only that wrong answer
     if (isAnswered && !isCorrect && !answerRevealed) {
-      if (optionLetter === selectedAnswer && optionLetter !== correctAnswer) {
-        return "bg-[#854952]/25 text-white cursor-pointer";
-      }
       // Other options remain interactive
       if (allowRetry) {
         if (localSelectedAnswer === optionLetter) {
@@ -139,7 +183,7 @@ export function QuestionCard({
   return (
     <div className="space-y-6">
       {/* Question stem - in its own card */}
-      <Card className="p-8 relative group bg-white/[0.03]">
+      <Card className="px-8 pt-4 pb-4 relative group bg-white/[0.03]">
         {onEditQuestionStem && (
           <button
             onClick={onEditQuestionStem}
@@ -161,7 +205,7 @@ export function QuestionCard({
             )}>
               {question.difficulty}
             </span>
-            {question.paper && (
+            {question.paper && question.paper.trim() && (
               <span className={cn(
                 "px-3 py-1.5 rounded-organic-md text-xs font-mono",
                 getSubjectColor(question.paper)
@@ -173,7 +217,12 @@ export function QuestionCard({
             {(question.primary_tag || (question.secondary_tags && question.secondary_tags.length > 0)) && getTopicTitle && (
               <div className="flex items-center gap-0">
                 {question.primary_tag && (
-                  <span className="px-3 py-1.5 rounded-l-organic-md bg-secondary/20 text-xs text-secondary font-mono border-r border-secondary/30">
+                  <span className={cn(
+                    "px-3 py-1.5 bg-secondary/20 text-xs text-secondary font-mono",
+                    (!question.secondary_tags || question.secondary_tags.length === 0)
+                      ? "rounded-organic-md"
+                      : "rounded-l-organic-md border-r border-secondary/30"
+                  )}>
                     {getTopicTitle(question.primary_tag)}
                   </span>
                 )}
@@ -191,24 +240,6 @@ export function QuestionCard({
               </div>
             )}
           </div>
-          
-          {/* Timer - in question details row */}
-          {elapsedTime !== undefined && onResetTimer && (
-            <div className="flex items-center gap-4">
-              <Clock 
-                className="w-6 h-6 text-white/70"
-                strokeWidth={1.5}
-              />
-              <div 
-                onDoubleClick={onResetTimer}
-                className="text-2xl font-bold tabular-nums tracking-tight text-white/90 cursor-pointer hover:text-white transition-colors select-none"
-                style={{ fontFamily: "'Times New Roman', Times, serif" }}
-                title="Double-click to reset timer"
-              >
-                {formatTime(elapsedTime)}
-              </div>
-            </div>
-          )}
         </div>
 
         <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem' }}>
@@ -237,16 +268,18 @@ export function QuestionCard({
                 (!isAnswered || allowRetry) && "hover:shadow-lg hover:shadow-primary/5"
               )}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 {/* Option letter badge */}
                 <div
                   className={cn(
                     "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature",
-                    answerRevealed && letter === correctAnswer
-                      ? "bg-[#506141]/40 text-white"
-                      : isAnswered && !isCorrect && !answerRevealed && letter === selectedAnswer && letter !== correctAnswer
+                    isAnswered && isCorrect && letter === correctAnswer
+                      ? "bg-[#85BC82]/40 text-white"
+                      : answerRevealed && letter === correctAnswer
+                      ? "bg-[#85BC82]/40 text-white"
+                      : incorrectAnswers.has(letter) && letter !== correctAnswer
                       ? "bg-[#854952]/35 text-white"
-                      : localSelectedAnswer === letter
+                      : localSelectedAnswer === letter && (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
                       ? "bg-interview/30 text-white"
                       : "bg-white/10 text-white/70"
                   )}
@@ -260,42 +293,84 @@ export function QuestionCard({
                     content={question.options[letter]}
                     className="text-inherit"
                   />
-                  {/* Distractor map inline for wrong answer */}
-                  {isAnswered && !isCorrect && !answerRevealed && letter === selectedAnswer && letter !== correctAnswer && question.distractor_map && question.distractor_map[letter] && (
-                    <span className="text-white/60 text-sm" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                      • <MathContent content={question.distractor_map[letter]} className="text-inherit" />
-                    </span>
+                  {/* Distractor map reveal button or content for wrong answer - show for all incorrect answers */}
+                  {incorrectAnswers.has(letter) && letter !== correctAnswer && question.distractor_map && question.distractor_map[letter] && (
+                    <>
+                      {!revealedDistractors.has(letter) ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRevealedDistractors(prev => new Set(prev).add(letter));
+                          }}
+                          className="flex items-center gap-2 px-3 h-10 rounded-organic-md bg-white/10 hover:bg-white/15 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature text-sm font-mono"
+                        >
+                          <HelpCircle className="w-4 h-4" strokeWidth={2.5} />
+                          <span>Reveal why this answer is wrong</span>
+                        </button>
+                      ) : (
+                        <span className="text-white/60" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
+                          <MathContent content={question.distractor_map[letter]} className="text-inherit" />
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
 
-                {/* Checkmark or X for answered state - using SVG icons from papers/mark, fixed width to prevent size changes */}
-                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                  {answerRevealed && letter === correctAnswer && (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#506141" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                {/* Submit button or Checkmark/X for answered state */}
+                <div className="flex-shrink-0 flex items-center justify-center">
+                  {/* Submit button - shown when option is selected and (not answered OR retry is allowed), but not for previously incorrect answers */}
+                  {((!isAnswered || (isAnswered && allowRetry)) && localSelectedAnswer === letter && !incorrectAnswers.has(letter)) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubmit();
+                      }}
+                      className="w-10 h-10 rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview transition-all duration-fast ease-signature flex items-center justify-center"
+                      style={{
+                        boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                      }}
+                      title="Submit answer"
+                    >
+                      <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                    </button>
                   )}
-                  {isAnswered && !isCorrect && !answerRevealed && letter === selectedAnswer && letter !== correctAnswer && (
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#854952" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                  {/* Checkmark or X for answered state - using SVG icons from papers/mark, fixed width to prevent size changes */}
+                  {isAnswered && (
+                    <>
+                      {(isCorrect && letter === correctAnswer) || (answerRevealed && letter === correctAnswer) ? (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#85BC82" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      ) : incorrectAnswers.has(letter) && letter !== correctAnswer && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#854952" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
-            </button>
+              {/* Edit button - absolutely positioned in top-left, overlapping */}
               {onEditOption && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onEditOption(letter);
                   }}
-                  className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10"
+                  className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10"
                   title={`Edit option ${letter}`}
                 >
-                  <Pencil className="w-3.5 h-3.5 text-white/60" />
+                  <Pencil className="w-3.5 h-3.5 text-white/60" style={{ transform: 'scaleX(-1)' }} />
                 </button>
               )}
+            </button>
             </div>
           );
         })}
@@ -304,31 +379,7 @@ export function QuestionCard({
 
       {/* Simple Feedback - shown by option colors */}
 
-      {/* Check Answer Button - Simple and Modern */}
-      {(!isAnswered || (isAnswered && allowRetry && !answerRevealed)) && localSelectedAnswer && (
-        <div className="flex justify-center mt-8">
-          <button
-            ref={buttonRef}
-            onClick={handleSubmit}
-            className="px-8 py-3 bg-primary text-neutral-900 rounded-lg font-semibold hover:bg-primary-hover transition-all duration-200 hover:scale-105"
-          >
-            Check Answer
-          </button>
-        </div>
-      )}
       
-      {/* Reveal Answer Button - shown when wrong answer */}
-      {isAnswered && !isCorrect && !answerRevealed && onRevealAnswer && (
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={onRevealAnswer}
-            className="px-6 py-2.5 bg-white/5 hover:bg-white/10 rounded-organic-md text-sm text-white/70 transition-all duration-fast ease-signature flex items-center gap-2 border border-white/10"
-          >
-            <Eye className="w-4 h-4" />
-            Reveal Answer
-          </button>
-        </div>
-      )}
     </div>
   );
 }

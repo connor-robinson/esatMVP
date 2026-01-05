@@ -198,6 +198,16 @@ export interface BuilderSession {
   results?: DrillResult[];
 }
 
+export interface TriangleDiagramData {
+  type: "triangle";
+  triangleType: "30-60-90" | "45-45-90";
+  vertices: { x: number; y: number }[];
+  sides: { label?: string; length: number; showLabel: boolean }[];
+  angles: { label?: string; degrees: number; showLabel: boolean; showArc: boolean }[];
+  rightAngleMarker?: boolean;
+  scale?: number;
+}
+
 export interface GeneratedQuestion {
   id: string;
   question: string;
@@ -222,6 +232,8 @@ export interface GeneratedQuestion {
     tolerance: number; // relative tolerance (e.g., 0.01 for 1%)
     aliases?: Record<string, string>; // maps alias -> canonical unit
   };
+  /** Diagram data for visual question types (e.g., triangles) */
+  diagram?: TriangleDiagramData;
 }
 
 export interface QuestionAttempt {

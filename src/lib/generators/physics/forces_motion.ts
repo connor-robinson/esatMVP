@@ -153,3 +153,8 @@ function generateEnergy(): GeneratedQuestion {
 
 
 
+
+
+
+
+

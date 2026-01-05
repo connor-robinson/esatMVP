@@ -6,6 +6,7 @@ import { QuestionDetailView } from "@/components/questions/QuestionDetailView";
 import { SimplifiedQuestionDetailView } from "@/components/questions/SimplifiedQuestionDetailView";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { isQuestionGenerationEnabled } from "@/lib/features";
 import { useRouter } from "next/navigation";
 
@@ -615,7 +616,7 @@ export default function ReviewPage() {
             </div>
             {isGenerating && (
               <div className="flex items-center gap-2 text-xs text-neutral-400">
-                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
+                <LoadingSpinner size="sm" />
                 <span>Generation in progress...</span>
               </div>
             )}

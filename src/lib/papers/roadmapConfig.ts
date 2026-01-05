@@ -38,6 +38,10 @@ const ENGAA_SECTION1_PARTB_FILTERS: Record<number, number[]> = {
  * Get the mapped section for a part
  */
 function getSectionForPart(part: RoadmapPart, examName: ExamName): PaperSection {
+  if (examName === 'TMUA') {
+    // For TMUA, paperName (e.g., "Paper 1") is the section
+    return part.paperName as PaperSection;
+  }
   return mapPartToSection(
     { partLetter: part.partLetter, partName: part.partName },
     examName === 'NSAA' ? 'NSAA' : 'ENGAA'
@@ -178,19 +182,6 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         paperName: 'Section 2',
         examType: 'Official',
       },
-      // Also include Specimen
-      {
-        partLetter: 'Part A',
-        partName: 'Mathematics',
-        paperName: 'Section 1',
-        examType: 'Specimen',
-      },
-      {
-        partLetter: 'Part B',
-        partName: 'Physics',
-        paperName: 'Section 1',
-        examType: 'Specimen',
-      },
     ],
   },
   {
@@ -279,23 +270,10 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     label: 'Advanced Practice',
     parts: [
       {
-        partLetter: 'Part B',
-        partName: 'Advanced Mathematics and Advanced Physics',
-        paperName: 'Section 1',
-        examType: 'Specimen',
-        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2016],
-      },
-      {
         partLetter: 'Part A',
         partName: 'Physics',
         paperName: 'Section 2',
         examType: 'Official',
-      },
-      {
-        partLetter: 'Part A',
-        partName: 'Physics',
-        paperName: 'Section 2',
-        examType: 'Specimen',
       },
     ],
   },
@@ -425,9 +403,98 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
 ];
 
 /**
- * Get all stages
+ * Get available TMUA Paper 1 years from database
  */
-export function getRoadmapStages(): RoadmapStage[] {
+async function getAvailableTmuaPaper1Years(): Promise<number[]> {
+  try {
+    // Dynamic import to avoid SSR issues
+    const { getPapersByExam } = await import('@/lib/supabase/questions');
+    const papers = await getPapersByExam('TMUA');
+    const paper1Years = papers
+      .filter(p => p.paperName === 'Paper 1')
+      .map(p => p.examYear)
+      .filter((year): year is number => typeof year === 'number')
+      .sort((a, b) => a - b); // Sort ascending (2016 to current year)
+    return paper1Years;
+  } catch (error) {
+    console.error('[roadmapConfig] Error fetching TMUA Paper 1 years:', error);
+    // Fallback to common years if database query fails
+    const currentYear = new Date().getFullYear();
+    const years: number[] = [];
+    for (let year = 2016; year <= currentYear; year++) {
+      years.push(year);
+    }
+    return years;
+  }
+}
+
+/**
+ * Generate TMUA Paper 1 stages dynamically
+ */
+async function generateTmuaPaper1Stages(): Promise<RoadmapStage[]> {
+  const years = await getAvailableTmuaPaper1Years();
+  return years.map(year => ({
+    id: `tmua-${year}-paper1`,
+    year,
+    examName: 'TMUA' as ExamName,
+    label: 'Advanced Practice',
+    parts: [
+      {
+        partLetter: 'Paper 1',
+        partName: 'Paper 1',
+        paperName: 'Paper 1',
+        examType: 'Official',
+      },
+    ],
+  }));
+}
+
+/**
+ * Get all stages with proper ordering and dynamic TMUA stages
+ * Order: NSAA 2016-2022, ENGAA, TMUA Paper 1, NSAA 2023 at the end
+ */
+export async function getRoadmapStages(): Promise<RoadmapStage[]> {
+  // Separate NSAA stages
+  const nsaaStages = ROADMAP_STAGES.filter(s => s.examName === 'NSAA' && s.year !== 2023);
+  const nsaa2023 = ROADMAP_STAGES.find(s => s.examName === 'NSAA' && s.year === 2023);
+  
+  // Get ENGAA stages
+  const engaaStages = ROADMAP_STAGES.filter(s => s.examName === 'ENGAA');
+  
+  // Generate TMUA Paper 1 stages
+  const tmuaStages = await generateTmuaPaper1Stages();
+  
+  // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023
+  const orderedStages: RoadmapStage[] = [
+    ...nsaaStages,
+    ...engaaStages,
+    ...tmuaStages,
+  ];
+  
+  // Add NSAA 2023 at the very end if it exists
+  if (nsaa2023) {
+    orderedStages.push(nsaa2023);
+  }
+  
+  // Remove any duplicates by stage ID
+  const seenIds = new Set<string>();
+  const uniqueStages = orderedStages.filter(stage => {
+    if (seenIds.has(stage.id)) {
+      console.warn(`[roadmapConfig] Duplicate stage detected: ${stage.id}`);
+      return false;
+    }
+    seenIds.add(stage.id);
+    return true;
+  });
+  
+  return uniqueStages;
+}
+
+/**
+ * Get all stages synchronously (fallback, doesn't include TMUA)
+ * @deprecated Use getRoadmapStages() instead
+ */
+export function getRoadmapStagesSync(): RoadmapStage[] {
   return ROADMAP_STAGES;
 }
 

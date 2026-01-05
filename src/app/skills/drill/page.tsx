@@ -9,6 +9,7 @@ import { DndContext, DragOverlay, pointerWithin } from "@dnd-kit/core";
 import { Container } from "@/components/layout/Container";
 import { getAllTopics, getTopic } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 // Lazy load heavy components
 const TopicSelector = lazy(() => import("@/components/builder/TopicSelector").then(mod => ({ default: mod.TopicSelector })));
@@ -34,7 +35,7 @@ const BuilderLoadingSkeleton = () => (
 const QuizLoadingSkeleton = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
-      <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
+      <LoadingSpinner size="md" />
       <p className="text-white/40 mt-4">Loading quiz...</p>
     </div>
   </div>

@@ -10,6 +10,7 @@ import { GeneratedQuestion } from "@/types/core";
 import { generateId } from "@/lib/utils";
 import { pick, randomInt } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
+import { generateTriangleDiagram } from "@/lib/diagrams/triangleGenerator";
 
 export function generateTrigApplications(
   level: number,
@@ -103,6 +104,14 @@ function generateSpecialTriangles(): GeneratedQuestion {
         acceptableAnswers: ans.acceptable,
       });
 
+      // Generate diagram
+      const diagram = generateTriangleDiagram({
+        type: "30-60-90",
+        unit: u,
+        givenSide: given as "short" | "long" | "hyp",
+        unknownSide: unknown as "short" | "long" | "hyp",
+      });
+
       return {
         id: generateId(),
         topicId: "trig_applications",
@@ -111,12 +120,24 @@ function generateSpecialTriangles(): GeneratedQuestion {
         difficulty: 2,
         checker,
         acceptableAnswers: ans.acceptable,
+        diagram,
       };
     } else {
       const thetaAt = pick(["B", "C"]);
       const theta = thetaAt === "B" ? 30 : 60;
 
       const prompt = `30-60-90 triangle: short = $${exact.short}$, hyp = $${exact.hyp}$, find angle at $${thetaAt}$ (degrees)`;
+
+      // Generate diagram - show given angles and unknown angle
+      // For angle problems, we show the right angle (90°) and one other angle, then ask for the third
+      const givenAngle = theta === 30 ? 60 : 30; // Show the angle that's NOT being asked for
+      const diagram = generateTriangleDiagram({
+        type: "30-60-90",
+        unit: u,
+        givenSide: "short", // Show short side as given
+        givenAngle: givenAngle,
+        unknownAngle: theta,
+      });
 
       return {
         id: generateId(),
@@ -125,6 +146,7 @@ function generateSpecialTriangles(): GeneratedQuestion {
         answer: String(theta),
         difficulty: 2,
         acceptableAnswers: [String(theta), `${theta}°`],
+        diagram,
       };
     }
   } else {
@@ -155,6 +177,14 @@ function generateSpecialTriangles(): GeneratedQuestion {
         acceptableAnswers: ans.acceptable,
       });
 
+      // Generate diagram
+      const diagram = generateTriangleDiagram({
+        type: "45-45-90",
+        unit: u,
+        givenSide: given as "leg" | "hyp",
+        unknownSide: unknown as "leg" | "hyp",
+      });
+
       return {
         id: generateId(),
         topicId: "trig_applications",
@@ -163,12 +193,22 @@ function generateSpecialTriangles(): GeneratedQuestion {
         difficulty: 2,
         checker,
         acceptableAnswers: ans.acceptable,
+        diagram,
       };
     } else {
       const thetaAt = pick(["B", "C"]);
       const theta = 45;
 
       const prompt = `45-45-90 triangle: leg = $${exact.leg}$, find angle at $${thetaAt}$ (degrees)`;
+
+      // Generate diagram - show right angle and one 45° angle, ask for the other
+      const diagram = generateTriangleDiagram({
+        type: "45-45-90",
+        unit: u,
+        givenSide: "leg",
+        givenAngle: 90, // Show right angle
+        unknownAngle: 45, // Ask for one of the 45° angles
+      });
 
       return {
         id: generateId(),
@@ -177,6 +217,7 @@ function generateSpecialTriangles(): GeneratedQuestion {
         answer: "45",
         difficulty: 2,
         acceptableAnswers: ["45", "45°"],
+        diagram,
       };
     }
   }
@@ -280,6 +321,11 @@ function generateIdentities(): GeneratedQuestion {
     };
   }
 }
+
+
+
+
+
 
 
 

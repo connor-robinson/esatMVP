@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 
 // Minimal shapes for the data we actually use on this page.
 // This avoids tight coupling to the generated Database types.
@@ -58,7 +59,7 @@ export default function ProfilePage() {
       try {
         // Load profile
         const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
+          .from("user_profiles")
           .select("*")
           .eq("id", session.user.id)
           .single();
@@ -111,7 +112,7 @@ export default function ProfilePage() {
           <PageHeader title="Profile" />
           <Card className="p-8">
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <LoadingSpinner size="md" />
             </div>
           </Card>
         </div>

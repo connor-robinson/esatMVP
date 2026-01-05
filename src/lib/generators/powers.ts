@@ -149,3 +149,8 @@ function generateFractionalExponents(): GeneratedQuestion {
 
 
 
+
+
+
+
+

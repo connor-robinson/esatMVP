@@ -113,3 +113,8 @@ COMMENT ON COLUMN question_bank_attempts.viewed_solution IS 'Whether the user vi
 
 
 
+
+
+
+
+

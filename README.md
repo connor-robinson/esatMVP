@@ -10,7 +10,7 @@ This is a streamlined MVP version of the No-Calc Trainer application, focusing o
 - Activity heatmap showing practice history
 
 ### Papers (`/papers/*`)
-- **Plan** (`/papers/plan`): Paper session setup wizard
+- **Library** (`/papers/library`): Paper session setup wizard
 - **Solve** (`/papers/solve`): Timed paper-taking interface
 - **Mark** (`/papers/mark`): Review and marking interface
 - **Analytics** (`/papers/analytics`): Performance analytics (placeholder for now)

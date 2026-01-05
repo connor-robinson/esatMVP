@@ -5,19 +5,19 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { QuestionCard } from "@/components/questionBank/QuestionCard";
 import { FilterPopup } from "@/components/questionBank/FilterPopup";
 import { EditModal } from "@/components/questionBank/EditModal";
-import { ReviewButton } from "@/components/questionBank/ReviewButton";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { MathContent } from "@/components/shared/MathContent";
 import { SolutionModal } from "@/components/questionBank/SolutionModal";
 import { useQuestionBank } from "@/hooks/useQuestionBank";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
-import { ArrowRight, RotateCw, BookOpen, X, Settings, Clock, Pencil, Eye, AlertCircle, Filter } from "lucide-react";
-import type { QuestionBankQuestion } from "@/types/questionBank";
+import { ArrowRight, RotateCw, BookOpen, X, Settings, Pencil, Eye, AlertCircle, Filter, Lightbulb, Check } from "lucide-react";
+import type { QuestionBankQuestion, SubjectFilter } from "@/types/questionBank";
 import { cn, formatTime } from "@/lib/utils";
 
 export default function QuestionBankPage() {
@@ -47,6 +47,14 @@ export default function QuestionBankPage() {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [answerRevealed, setAnswerRevealed] = useState(false);
   const [showDetailedExplanation, setShowDetailedExplanation] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [currentSelection, setCurrentSelection] = useState<string | null>(null);
+  const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(new Set());
+  
+  // Progress tracking state
+  const [progressSubjects, setProgressSubjects] = useState<SubjectFilter[]>(['Math 1']);
+  const [showProgressFilter, setShowProgressFilter] = useState(false);
+  const [progressStats, setProgressStats] = useState<{ attempted: number; total: number } | null>(null);
   
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -69,12 +77,75 @@ export default function QuestionBankPage() {
   useEffect(() => {
     setAnswerRevealed(false);
     setShowDetailedExplanation(false);
+    setCurrentSelection(null);
+    setIncorrectAnswers(new Set());
   }, [currentQuestion?.id]);
 
-  // Timer effect - count up timer
+  // Fetch progress stats
+  useEffect(() => {
+    const fetchProgressStats = async () => {
+      if (progressSubjects.length === 0) {
+        setProgressStats(null);
+        return;
+      }
+
+      try {
+        // Fetch total questions for selected subjects
+        const subjectParams = new URLSearchParams();
+        subjectParams.append('subject', progressSubjects.join(','));
+        subjectParams.append('limit', '1');
+        subjectParams.append('random', 'false');
+        
+        const questionsRes = await fetch(`/api/question-bank/questions?${subjectParams.toString()}`);
+        const questionsData = await questionsRes.json();
+        const total = questionsData.count || 0;
+
+        // Fetch attempted questions count for selected subjects
+        let attempted = 0;
+        const sessionRes = await fetch('/api/auth/session');
+        if (sessionRes.ok) {
+          const session = await sessionRes.json();
+          const userId = session?.user?.id;
+          
+          if (userId) {
+            // Fetch progress stats from API
+            const progressParams = new URLSearchParams();
+            progressParams.append('subjects', progressSubjects.join(','));
+            const progressRes = await fetch(`/api/question-bank/progress?${progressParams.toString()}`);
+            if (progressRes.ok) {
+              const progressData = await progressRes.json();
+              attempted = progressData.attempted || 0;
+            }
+          }
+        }
+
+        setProgressStats({ attempted, total });
+      } catch (error) {
+        console.error('[Progress] Error fetching stats:', error);
+      }
+    };
+
+    fetchProgressStats();
+  }, [progressSubjects]);
+
+  // Timer effect - start from 0:00 when new question loads
+  useEffect(() => {
+    if (!currentQuestion) return;
+    
+    // Reset timer to 0:00 and start it
+    setElapsedTime(0);
+    const newStartTime = Date.now();
+    setTimerStartTime(newStartTime);
+  }, [currentQuestion?.id]);
+
+  // Timer effect - count up timer (stops when correct answer is submitted)
   useEffect(() => {
     if (timerStartTime === null) {
-      setTimerStartTime(Date.now());
+      return;
+    }
+
+    // Stop timer if correct answer is submitted
+    if (isCorrect === true) {
       return;
     }
 
@@ -83,7 +154,7 @@ export default function QuestionBankPage() {
     }, 100); // Update every 100ms for smooth display
 
     return () => clearInterval(interval);
-  }, [timerStartTime]);
+  }, [timerStartTime, isCorrect]);
 
   // Reset timer function
   const resetTimer = () => {
@@ -170,10 +241,6 @@ export default function QuestionBankPage() {
     }
   };
 
-  const handleMarkAsReviewed = () => {
-    // Refresh the question to get updated status
-    nextQuestion();
-  };
 
   // Helper to find topic title from code
   const getTopicTitle = (tagCode: string) => {
@@ -406,9 +473,9 @@ export default function QuestionBankPage() {
     }
   };
 
-
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] py-8">
+    <Fragment>
+      <div className="min-h-[calc(100vh-3.5rem)] py-8 pb-24">
       <Container size="lg">
         <div className="space-y-6">
           {/* Session Progress Indicator */}
@@ -429,69 +496,91 @@ export default function QuestionBankPage() {
             </div>
           )}
 
-          {/* Active Filters Row */}
-          <div className="flex items-center justify-between gap-4 flex-wrap px-6 py-3 rounded-organic-md bg-white/[0.02]">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-medium text-white/50 font-mono">Active Filters:</span>
-                {(() => {
-                  const activeFilters = getActiveFilters();
-                  if (activeFilters.length === 0) {
-                    return <span className="text-xs text-white/40 italic">No filters active</span>;
-                  }
-                  
-                  // Group filters by type
-                  const groupedFilters: Record<string, typeof activeFilters> = {};
-                  activeFilters.forEach(filter => {
-                    if (!groupedFilters[filter.type]) {
-                      groupedFilters[filter.type] = [];
+          {/* Active Filters and Timer Row */}
+          <div className="flex items-center gap-4 flex-wrap">
+            {/* Active Filters Container */}
+            <div className="flex items-center justify-between gap-4 flex-wrap px-6 py-4 rounded-organic-md bg-white/[0.02] flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-medium text-white/50 font-mono">Active Filters:</span>
+                  {(() => {
+                    const activeFilters = getActiveFilters();
+                    if (activeFilters.length === 0) {
+                      return <span className="text-xs text-white/40 font-mono">No filters active</span>;
                     }
-                    groupedFilters[filter.type].push(filter);
-                  });
-                  
-                  // Display groups with "/" within groups, spacing between groups
-                  return (
-                    <div className="flex items-center gap-3 flex-wrap">
-                      {Object.entries(groupedFilters).map(([type, filters], groupIndex) => (
-                        <div key={type} className="flex items-center">
-                          {filters.map((filter, index) => (
-                            <span key={`${filter.type}-${filter.value}`} className="flex items-center">
-                              <button
-                                onClick={filter.onRemove}
-                                className={cn(
-                                  "group relative px-3 py-1.5 rounded-organic-md text-xs font-mono transition-all duration-fast ease-signature cursor-pointer",
-                                  "hover:line-through",
-                                  getFilterColor(filter.type, filter.value)
+                    
+                    // Group filters by type
+                    const groupedFilters: Record<string, typeof activeFilters> = {};
+                    activeFilters.forEach(filter => {
+                      if (!groupedFilters[filter.type]) {
+                        groupedFilters[filter.type] = [];
+                      }
+                      groupedFilters[filter.type].push(filter);
+                    });
+                    
+                    // Display groups with "/" within groups, spacing between groups
+                    return (
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {Object.entries(groupedFilters).map(([type, filters], groupIndex) => (
+                          <div key={type} className="flex items-center">
+                            {filters.map((filter, index) => (
+                              <span key={`${filter.type}-${filter.value}`} className="flex items-center">
+                                <button
+                                  onClick={filter.onRemove}
+                                  className={cn(
+                                    "group relative px-3 py-1.5 rounded-organic-md text-xs font-mono transition-all duration-fast ease-signature cursor-pointer",
+                                    "hover:line-through",
+                                    getFilterColor(filter.type, filter.value)
+                                  )}
+                                  aria-label={`Remove ${filter.label} filter`}
+                                >
+                                  <span>{filter.label}</span>
+                                </button>
+                                {index < filters.length - 1 && (
+                                  <span className="text-white/40 px-2">/</span>
                                 )}
-                                aria-label={`Remove ${filter.label} filter`}
-                              >
-                                <span>{filter.label}</span>
-                              </button>
-                              {index < filters.length - 1 && (
-                                <span className="text-white/40 px-2">/</span>
-                              )}
-                            </span>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
+                              </span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+              </div>
+              
+              {/* Filter button - top right */}
+              <button
+                onClick={() => setShowFilterPopup(true)}
+                className="p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
+                title="Filters & Settings"
+              >
+                <Filter className="w-4 h-4" />
+              </button>
             </div>
             
-            {/* Filter button - top right */}
-            <button
-              onClick={() => setShowFilterPopup(true)}
-              className="p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
-              title="Filters & Settings"
-            >
-              <Filter className="w-4 h-4" />
-            </button>
+            {/* Timer Container */}
+            {elapsedTime !== undefined && (
+              <div className="flex items-center gap-4 px-6 py-4 rounded-organic-md bg-white/[0.02]">
+                <button
+                  onClick={resetTimer}
+                  className="p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
+                  title="Reset timer"
+                >
+                  <RotateCw className="w-4 h-4" />
+                </button>
+                <div 
+                  className="text-xl font-bold tabular-nums tracking-tight text-white/90 select-none"
+                  style={{ fontFamily: "'Times New Roman', Times, serif" }}
+                >
+                  {formatTime(elapsedTime)}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Loading State */}
           {isLoading && (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <LoadingSpinner size="lg" />
             </div>
           )}
 
@@ -525,54 +614,54 @@ export default function QuestionBankPage() {
                 onRevealAnswer={() => setAnswerRevealed(true)}
                 allowRetry={isAnswered && !isCorrect && !answerRevealed}
                 getTopicTitle={getTopicTitle}
-                elapsedTime={elapsedTime}
-                onResetTimer={resetTimer}
+                onSelectionChange={setCurrentSelection}
+                onIncorrectAnswersChange={setIncorrectAnswers}
               />
 
-              {/* Action Buttons - shown after answer is revealed or correct */}
-              {(answerRevealed || (isAnswered && isCorrect)) && (
-                <div className="flex justify-center gap-4">
-                  <Button
-                    onClick={handleNextQuestionInSession}
-                    variant="primary"
-                    size="lg"
-                    className="min-w-[200px]"
-                  >
-                    {sessionMode && sessionCurrentIndex < sessionQuestions.length - 1
-                      ? `Next Question (${sessionCurrentIndex + 1}/${sessionQuestions.length})`
-                      : sessionMode
-                      ? 'Finish Session'
-                      : 'Next Question'}
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                  <Button
-                    onClick={() => setShowDetailedExplanation(true)}
-                    variant="secondary"
-                    size="lg"
-                    className="min-w-[200px]"
-                  >
-                    <BookOpen className="w-5 h-5 mr-2" />
-                    View Detailed Explanation
-                  </Button>
-                </div>
-              )}
 
               {/* Detailed Explanation Modal */}
               {currentQuestion && (
-                <SolutionModal
-                  isOpen={showDetailedExplanation}
-                  onClose={() => setShowDetailedExplanation(false)}
-                  solution_reasoning={currentQuestion.solution_reasoning}
-                  solution_key_insight={currentQuestion.solution_key_insight}
-                  distractor_map={currentQuestion.distractor_map}
-                  correct_option={currentQuestion.correct_option}
-                  options={currentQuestion.options}
-                  isCorrect={isCorrect ?? false}
-                  selectedAnswer={selectedAnswer}
-                  onEditKeyInsight={handleEditKeyInsight}
-                  onEditReasoning={handleEditReasoning}
-                  onEditDistractor={handleEditDistractor}
-                />
+                <Fragment>
+                  <SolutionModal
+                    isOpen={showDetailedExplanation}
+                    onClose={() => setShowDetailedExplanation(false)}
+                    solution_reasoning={currentQuestion.solution_reasoning}
+                    solution_key_insight={currentQuestion.solution_key_insight}
+                    distractor_map={currentQuestion.distractor_map}
+                    correct_option={currentQuestion.correct_option}
+                    options={currentQuestion.options}
+                    isCorrect={isCorrect ?? false}
+                    selectedAnswer={selectedAnswer}
+                    onEditKeyInsight={handleEditKeyInsight}
+                    onEditReasoning={handleEditReasoning}
+                    onEditDistractor={handleEditDistractor}
+                  />
+                  
+                  {/* Hint Modal */}
+                  {showHint && currentQuestion.solution_key_insight && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowHint(false)}>
+                      <div className="bg-white/[0.08] rounded-organic-lg p-6 max-w-2xl w-full border border-white/10" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-organic-md bg-primary/20 flex items-center justify-center">
+                              <Lightbulb className="w-5 h-5 text-primary" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-white/90">Hint</h3>
+                          </div>
+                          <button
+                            onClick={() => setShowHint(false)}
+                            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all"
+                          >
+                            <X className="w-4 h-4 text-white/60" />
+                          </button>
+                        </div>
+                        <div className="text-white/90 leading-relaxed" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem' }}>
+                          <MathContent content={currentQuestion.solution_key_insight} className="text-inherit" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Fragment>
               )}
 
               {/* Edit Modal */}
@@ -584,16 +673,6 @@ export default function QuestionBankPage() {
                 onSave={handleSaveEdit}
               />
 
-              {/* Review Button - only show if pending review or needs revision */}
-              {(currentQuestion.status === 'pending_review' || currentQuestion.status === 'needs_revision') && (
-                <>
-                  {console.log('[Questions Page] Rendering ReviewButton with ID:', currentQuestion.id)}
-                  <ReviewButton
-                    questionId={currentQuestion.id}
-                    onReviewed={handleMarkAsReviewed}
-                  />
-                </>
-              )}
             </div>
           )}
 
@@ -607,7 +686,222 @@ export default function QuestionBankPage() {
           />
         </div>
       </Container>
-    </div>
+      
+      {/* Fixed Bottom Action Bar */}
+      {currentQuestion && !isLoading && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-white/10">
+          {/* Progress Bar - TEST: 156/500 (remove easily) */}
+          <div className="w-full h-1.5 bg-white/[0.03] relative overflow-hidden">
+            <div 
+              className="h-full bg-interview/40 transition-all duration-300 ease-signature"
+              style={{ width: `${(156 / 500) * 100}%` }}
+            />
+          </div>
+          <Container size="lg">
+            <div className="flex items-center justify-center gap-3 py-4 relative">
+              {/* Left: Progress Indicator - positioned absolutely */}
+              {progressStats && (
+                <div className="absolute left-0 flex items-center gap-2">
+                  <span className="text-xs text-white/60 font-mono">
+                    <span className="font-medium text-base">{progressStats.attempted}</span> out of <span className="font-medium text-base">{progressStats.total}</span> questions done
+                    {progressSubjects.length === 1 && (
+                      <Fragment>
+                        {" "}
+                        <button
+                          onClick={() => setShowProgressFilter(!showProgressFilter)}
+                          className="text-white/40 hover:text-white font-normal transition-colors duration-fast ease-signature cursor-pointer"
+                        >
+                          for {progressSubjects[0]}
+                        </button>
+                      </Fragment>
+                    )}
+                    {progressSubjects.length > 1 && (
+                      <Fragment>
+                        {" "}
+                        <button
+                          onClick={() => setShowProgressFilter(!showProgressFilter)}
+                          className="text-white/40 hover:text-white font-normal transition-colors duration-fast ease-signature cursor-pointer"
+                        >
+                          for {progressSubjects.length} subjects
+                        </button>
+                      </Fragment>
+                    )}
+                  </span>
+                </div>
+              )}
+
+              {/* Center: Action Buttons */}
+              <div className="flex items-center justify-center gap-3">
+                {/* Hint Button - always shown if hint exists */}
+                {currentQuestion.solution_key_insight && (
+                  <button
+                    onClick={() => setShowHint(true)}
+                    className="px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10"
+                  >
+                    <Lightbulb className="w-4 h-4" />
+                    <span>Hint</span>
+                  </button>
+                )}
+                
+                {/* Submit Answer OR Next Question (replaces Submit Answer) */}
+              {answerRevealed || (isAnswered && isCorrect) ? (
+                // Next Question Button - shown after answer is revealed or correct
+                <button
+                  onClick={handleNextQuestionInSession}
+                  className="px-6 py-3 rounded-organic-md bg-interview/30 hover:bg-interview/40 text-interview transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium"
+                  style={{
+                    boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                  }}
+                >
+                  <span>
+                    {sessionMode && sessionCurrentIndex < sessionQuestions.length - 1
+                      ? `Next (${sessionCurrentIndex + 1}/${sessionQuestions.length})`
+                      : sessionMode
+                      ? 'Finish Session'
+                      : 'Next Question'}
+                  </span>
+                  <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                </button>
+              ) : (
+                // Submit Answer Button - shown when not answered correctly and not revealed
+                <button
+                  onClick={() => {
+                    if (currentSelection && !incorrectAnswers.has(currentSelection)) {
+                      const correct = currentSelection === currentQuestion.correct_option;
+                      const wrongAnswersArray = Array.from(incorrectAnswers);
+                      const timeUntilCorrect = correct ? elapsedTime : null;
+                      submitAnswer(currentSelection, correct, {
+                        wasRevealed: answerRevealed,
+                        usedHint: showHint,
+                        wrongAnswersBefore: wrongAnswersArray,
+                        timeUntilCorrectMs: timeUntilCorrect,
+                      });
+                    }
+                  }}
+                  disabled={!currentSelection || incorrectAnswers.has(currentSelection)}
+                  className={cn(
+                    "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium",
+                    currentSelection && !incorrectAnswers.has(currentSelection)
+                      ? "bg-interview/30 hover:bg-interview/40 text-interview cursor-pointer"
+                      : "bg-white/5 text-white/40 cursor-not-allowed"
+                  )}
+                  style={
+                    currentSelection && !incorrectAnswers.has(currentSelection)
+                      ? {
+                          boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                        }
+                      : undefined
+                  }
+                  onMouseEnter={(e) => {
+                    if (currentSelection && !incorrectAnswers.has(currentSelection)) {
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentSelection && !incorrectAnswers.has(currentSelection)) {
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    }
+                  }}
+                >
+                  <span>Submit Answer</span>
+                  <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                </button>
+              )}
+
+                {/* Right: Reveal Answer OR Explanation */}
+                {answerRevealed || (isAnswered && isCorrect) ? (
+                  // View Detailed Explanation Button - shown after Reveal Answer is pressed or when answer is correct
+                  <button
+                    onClick={() => setShowDetailedExplanation(true)}
+                    className="px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10"
+                  >
+                    <BookOpen className="w-4 h-4" />
+                    <span>Explanation</span>
+                  </button>
+                ) : (
+                  // Reveal Answer Button - shown when wrong and not revealed
+                  (!isAnswered || (isAnswered && !isCorrect)) && (
+                    <button
+                      onClick={() => setAnswerRevealed(true)}
+                      className="px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Reveal Answer</span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+          </Container>
+        </div>
+      )}
+      </div>
+
+      {/* Progress Filter Speech Bubble */}
+      {showProgressFilter && progressStats && (
+        <Fragment>
+          {/* Backdrop to close on click outside */}
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setShowProgressFilter(false)}
+          />
+          <div className="fixed bottom-20 left-4 z-50">
+            <div className="bg-background border border-white/10 rounded-organic-lg p-4 shadow-xl min-w-[280px] relative">
+              {/* Speech bubble tail */}
+              <div className="absolute -bottom-2 left-8 w-4 h-4 bg-background border-b border-r border-white/10 transform rotate-45"></div>
+            
+            <div className="space-y-2">
+              {(['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'] as SubjectFilter[]).map((subject) => {
+                const isSelected = progressSubjects.includes(subject);
+                const subjectColors: Record<SubjectFilter, { bg: string; text: string; border: string }> = {
+                  'Math 1': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
+                  'Math 2': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
+                  'Physics': { bg: 'bg-[#6B4C93]/30', text: 'text-[#B794F6]', border: 'border-[#B794F6]/30' },
+                  'Chemistry': { bg: 'bg-[#5A7C65]/20', text: 'text-[#85BC82]', border: 'border-[#85BC82]/30' },
+                  'Biology': { bg: 'bg-[#5A7C65]/20', text: 'text-[#85BC82]', border: 'border-[#85BC82]/30' },
+                  'All': { bg: 'bg-white/10', text: 'text-white/70', border: 'border-white/20' },
+                };
+                const colors = subjectColors[subject] || subjectColors['All'];
+                
+                return (
+                  <button
+                    key={subject}
+                    onClick={() => {
+                      if (isSelected) {
+                        setProgressSubjects(prev => prev.filter(s => s !== subject));
+                      } else {
+                        setProgressSubjects(prev => [...prev, subject]);
+                      }
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-organic-md transition-all duration-fast ease-signature text-left border",
+                      isSelected
+                        ? `${colors.bg} ${colors.text} ${colors.border} border-2`
+                        : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+                    )}
+                  >
+                    <div className={cn(
+                      "w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0",
+                      isSelected ? `${colors.border} ${colors.bg}` : "border-white/30 bg-white/5"
+                    )}>
+                      {isSelected && <Check className="w-3 h-3" strokeWidth={2.5} />}
+                    </div>
+                    <span className="font-mono text-xs">{subject}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        </Fragment>
+      )}
+    </Fragment>
   );
 }
 

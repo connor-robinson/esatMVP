@@ -19,7 +19,7 @@ const skillsNavItems = [
 
 const papersNavItems = [
   { href: "/papers/roadmap", label: "Roadmap" },
-  { href: "/papers/plan", label: "Plan" },
+  { href: "/papers/library", label: "Library" },
   { href: "/papers/drill", label: "Drill" },
   { href: "/papers/analytics", label: "Analytics" },
 ];
@@ -45,7 +45,7 @@ export function Navbar() {
       "/skills/drill",
       "/skills/analytics",
       "/papers/roadmap",
-      "/papers/plan",
+      "/papers/library",
       "/papers/drill",
       "/papers/analytics",
       "/questions",
@@ -76,8 +76,8 @@ export function Navbar() {
   }, []);
 
   const loginHref = useMemo(() => {
-    // Default to /papers/plan if on home page or login page
-    const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/plan";
+    // Default to /papers/library if on home page or login page
+    const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/library";
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 
@@ -104,7 +104,7 @@ export function Navbar() {
               </Link>
               <span className="text-sm text-white/30">/</span>
               <Link
-                href="/papers/plan"
+                href="/papers/library"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
                   currentSection === "papers" ? "text-[#5B8D94]" : "text-white/50 hover:text-white/80"

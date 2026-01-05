@@ -1,5 +1,5 @@
 /**
- * Central color configuration for the papers/plan page
+ * Central color configuration for the papers/library page
  * Edit these 5 colors to update the entire application
  * 
  * SECTION COLOR SCHEME:
@@ -10,19 +10,19 @@
 
 export const PAPER_COLORS = {
   // Mathematics & ESAT & MAT
-  mathematics: "#406166",
-  
+  mathematics: "#3d6064", // Midnight Teal
+
   // Physics & TMUA & Long Answers  
-  physics: "#2f2835",
-  
+  physics: "#6b5e94", // Midnight Purple
+
   // Chemistry & PAT
-  chemistry: "#854952",
-  
+  chemistry: "#8c525a", // Midnight Rose
+
   // Biology & NSAA & Completed years
-  biology: "#506141",
-  
+  biology: "#4e6b8a", // Midnight Blue
+
   // Advanced Math & ENGAA & Multiple Choice
-  advanced: "#967139"
+  advanced: "#9e5974" // Midnight Pink
 } as const;
 
 /**

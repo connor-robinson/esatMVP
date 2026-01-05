@@ -6,6 +6,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import type { UserProfileInsert, UserProfileUpdate } from "@/lib/supabase/types";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const supabase = createServerClient();
   

@@ -4,6 +4,8 @@
 
 "use client";
 
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
@@ -23,7 +25,7 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (session?.user) {
-      const redirectTo = searchParams.get("redirectTo") || "/papers/plan";
+      const redirectTo = searchParams.get("redirectTo") || "/papers/library";
       router.push(redirectTo);
     }
   }, [session, searchParams, router]);
@@ -33,7 +35,7 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
 
-      const redirectTo = searchParams.get("redirectTo") || "/papers/plan";
+      const redirectTo = searchParams.get("redirectTo") || "/papers/library";
       // Use absolute URL for redirectTo - Supabase will redirect here after OAuth
       // The redirect URL must be whitelisted in Supabase dashboard
       const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;
@@ -90,7 +92,7 @@ export default function LoginPage() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-neutral-900"></span>
+                    <LoadingSpinner size="sm" />
                     Signing in...
                   </span>
                 ) : (

@@ -14,7 +14,7 @@ const CRITICAL_ROUTES = ["/", "/skills/analytics", "/skills/drill"];
 const SECONDARY_ROUTES = [
   "/papers/analytics",
   "/papers/mark",
-  "/papers/plan",
+  "/papers/library",
   "/papers/solve",
 ];
 

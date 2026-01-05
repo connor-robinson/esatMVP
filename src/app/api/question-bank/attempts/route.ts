@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/question-bank/attempts
  * Saves a question attempt and updates daily metrics
@@ -26,6 +28,10 @@ export async function POST(request: NextRequest) {
       is_correct,
       time_spent_ms,
       viewed_solution,
+      was_revealed,
+      used_hint,
+      wrong_answers_before,
+      time_until_correct_ms,
     } = body;
 
     // Validate input
@@ -54,6 +60,10 @@ export async function POST(request: NextRequest) {
         is_correct,
         time_spent_ms: time_spent_ms || null,
         viewed_solution: viewed_solution || false,
+        was_revealed: was_revealed ?? false,
+        used_hint: used_hint ?? false,
+        wrong_answers_before: wrong_answers_before ?? [],
+        time_until_correct_ms: time_until_correct_ms ?? null,
         attempted_at: new Date().toISOString(),
       } as any)
       .select()

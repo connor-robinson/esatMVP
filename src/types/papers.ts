@@ -119,7 +119,7 @@ export interface DrillStats {
 export interface Question {
   id: number;
   paperId: number;
-  examName: string;
+  examName: ExamName;
   examYear: number;
   paperName: string;
   partLetter: string;
@@ -144,7 +144,7 @@ export interface Question {
 
 export interface Paper {
   id: number;
-  examName: string;
+  examName: ExamName;
   examYear: number;
   paperName: string;
   examType: string;
