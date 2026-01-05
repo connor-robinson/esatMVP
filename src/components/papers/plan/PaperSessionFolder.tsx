@@ -10,7 +10,7 @@ import { X, Play, Clock } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor } from "@/config/colors";
-import type { Paper, PaperSection } from "@/types/papers";
+import type { Paper, PaperSection, ExamName } from "@/types/papers";
 import { getAvailableSectionsFromParts } from "@/lib/papers/sectionMapping";
 import { getQuestions } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -57,7 +57,7 @@ export function PaperSessionFolder({
         partName: q.partName,
       }));
 
-      const paperType = examNameToPaperType(paper.examName) || "NSAA";
+      const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
       const sections = getAvailableSectionsFromParts(
         parts,
         paperType,

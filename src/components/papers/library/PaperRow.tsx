@@ -11,7 +11,7 @@ import { getPaperTypeColor, getSectionColor } from "@/config/colors";
 import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import type { Paper, PaperSection } from "@/types/papers";
+import type { Paper, PaperSection, ExamName } from "@/types/papers";
 
 interface PaperRowProps {
   paper: Paper;
@@ -47,7 +47,7 @@ export function PaperRow({
             partLetter: q.partLetter,
             partName: q.partName,
           }));
-          const paperType = examNameToPaperType(paper.examName) || "NSAA";
+          const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
           const sections = getAvailableSectionsFromParts(
             parts,
             paperType,

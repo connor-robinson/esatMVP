@@ -14,7 +14,7 @@ import { getAvailablePapers } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { getQuestions } from "@/lib/supabase/questions";
 import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
-import type { Paper, PaperSection, Question } from "@/types/papers";
+import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
 import { PaperLibraryFilters } from "@/components/papers/plan/PaperLibraryFilters";
 import { PaperLibraryGrid } from "@/components/papers/plan/PaperLibraryGrid";
 import { PaperSessionSummary } from "@/components/papers/plan/PaperSessionSummary";
@@ -177,7 +177,7 @@ export default function PapersPlanPage() {
 
       // Filter questions by selected sections
       let filteredQuestions: Question[] = [];
-      const paperType = examNameToPaperType(paper.examName) || "NSAA";
+      const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
       if (paperType === "TMUA") {
         const totalQuestions = allQuestions.length;
@@ -220,7 +220,7 @@ export default function PapersPlanPage() {
 
       // Create variant string
       const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
-      const paperTypeName = examNameToPaperType(paper.examName) || "NSAA";
+      const paperTypeName = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
       // Start session
       startSession({
