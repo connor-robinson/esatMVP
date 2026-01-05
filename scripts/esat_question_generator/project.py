@@ -1170,7 +1170,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         raise SystemExit("Missing GEMINI_API_KEY environment variable.")
 
     prompts = load_prompts(base_dir)
-    schemas_md = read_text(os.path.join(base_dir, "Schemas.md"))
+    # Prefer Schemas_NSAA.md if it exists (new restructured schemas), otherwise fall back to Schemas.md
+    schemas_path = os.path.join(base_dir, "schemas", "Schemas_NSAA.md")
+    if not os.path.exists(schemas_path):
+        schemas_path = os.path.join(base_dir, "Schemas.md")
+    schemas_md = read_text(schemas_path)
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
 
     # Load curriculum parser if tag labeling is enabled and not already provided

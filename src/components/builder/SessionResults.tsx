@@ -60,7 +60,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     const topicStats: Record<string, { correct: number; total: number; times: number[] }> = {};
 
     attempts.forEach((attempt, index) => {
-      const topicId = session.questions[index]?.topicId ?? "unknown";
+      const topicId = session.questions[index]?.topicId;
+      if (!topicId) {
+        console.warn(`[SessionResults] Missing topicId for attempt ${index}, question:`, session.questions[index]);
+        return; // Skip attempts without topicId instead of using "unknown"
+      }
       if (!topicStats[topicId]) {
         topicStats[topicId] = { correct: 0, total: 0, times: [] };
       }
@@ -69,16 +73,31 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       topicStats[topicId].times.push(attempt.timeSpent || 0);
     });
 
-    const topicBreakdown = Object.entries(topicStats).map(([topicId, stats]) => ({
-      topicId,
-      correct: stats.correct,
-      total: stats.total,
-      accuracy: stats.total ? (stats.correct / stats.total) * 100 : 0,
-      avgTimeMs: stats.times.length
+    const topicBreakdown = Object.entries(topicStats).map(([topicId, stats]) => {
+      // Calculate avgTimeMs consistently with database logic
+      const avgTimeMs = stats.times.length
         ? stats.times.reduce((sum, t) => sum + t, 0) / stats.times.length
-        : 0,
-      score: calculateSessionScore(stats.correct, stats.total, stats.times.reduce((sum, t) => sum + t, 0) / stats.times.length)
-    }));
+        : 0;
+      
+      // Calculate score using the same method as database (matching session-saver.ts)
+      const score = calculateSessionScore(stats.correct, stats.total, avgTimeMs);
+      
+      console.log(`[SessionResults] Topic breakdown for ${topicId}:`, {
+        correct: stats.correct,
+        total: stats.total,
+        avgTimeMs,
+        score,
+      });
+      
+      return {
+        topicId,
+        correct: stats.correct,
+        total: stats.total,
+        accuracy: stats.total ? (stats.correct / stats.total) * 100 : 0,
+        avgTimeMs,
+        score,
+      };
+    });
 
     return {
       session,
@@ -158,8 +177,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           );
           
           console.log(`[SessionResults] Rankings for ${topic.topicId}:`, {
-            personal: rankings.personal?.length || 0,
-            global: rankings.global?.length || 0,
+            personal: rankings.personal?.allRankings?.length || 0,
+            global: rankings.global?.allRankings?.length || 0,
             personalData: rankings.personal,
             globalData: rankings.global,
           });
@@ -187,7 +206,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   };
 
   const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string) => {
-    const isHighlighted = session.isMostRecent;
+    const isHighlighted = session.isCurrent; // Highlight only the current session
     const scorePercentage = (session.score / 1000) * 100;
 
     return (
@@ -277,18 +296,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     
     console.log(`[renderSessionCards] Topic: ${topicId}, View: ${rankingView}, Data:`, data);
     
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      // Even if no data, we should show the current attempt
+    const isGlobalView = rankingView === "global";
+    
+    // Handle case where data structure is old format (array) or new format (object)
+    if (!data) {
+      // Fallback: show current attempt if no data
       const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
       if (currentTopic) {
-        // Show at least the current attempt
         const currentSession = {
           id: session.id,
           rank: 1,
           score: currentTopic.score,
           timestamp: new Date(),
           isCurrent: true,
-          isMostRecent: true,
           correctAnswers: currentTopic.correct,
           totalQuestions: currentTopic.total,
           avgTimeMs: currentTopic.avgTimeMs,
@@ -298,7 +318,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         
         return (
           <div className="space-y-3">
-            {renderSingleCard(currentSession, rankingView === "global", 0, topicName)}
+            {renderSingleCard(currentSession, isGlobalView, 0, topicName)}
           </div>
         );
       }
@@ -310,13 +330,59 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       );
     }
 
-    const isGlobalView = rankingView === "global";
+    // New structured format: { top3, currentRank, adjacent, allRankings }
+    const structuredData = data.top3 ? data : null;
+    
+    if (structuredData) {
+      const { top3, currentRank, adjacent } = structuredData;
+      const cards: any[] = [];
+      let cardIndex = 0;
+
+      // Always show top 3
+      top3.forEach((sessionData: any) => {
+        cards.push(renderSingleCard(sessionData, isGlobalView, cardIndex, topicName));
+        cardIndex++;
+      });
+
+      // If current is not in top 3, show ellipsis and adjacent
+      if (currentRank !== null && currentRank > 3 && adjacent.length > 0) {
+        cards.push(
+          <div key="ellipsis" className="flex justify-center py-2">
+            <span className={cn(
+              "text-2xl font-bold",
+              isGlobalView ? "text-blue-500/30" : "text-white/20"
+            )}>...</span>
+          </div>
+        );
+        
+        adjacent.forEach((sessionData: any) => {
+          cards.push(renderSingleCard(sessionData, isGlobalView, cardIndex, topicName));
+          cardIndex++;
+        });
+      }
+
+      return (
+        <div className="space-y-3">
+          {cards}
+        </div>
+      );
+    }
+
+    // Fallback for old array format (shouldn't happen, but handle gracefully)
+    if (Array.isArray(data)) {
+      console.warn("[renderSessionCards] Received old array format, converting...");
+      return (
+        <div className="space-y-3">
+          {data.slice(0, 10).map((sessionData: any, idx: number) => 
+            renderSingleCard(sessionData, isGlobalView, idx, topicName)
+          )}
+        </div>
+      );
+    }
 
     return (
-      <div className="space-y-3">
-        {data.map((sessionData: any, idx: number) => 
-          renderSingleCard(sessionData, isGlobalView, idx, topicName)
-        )}
+      <div className="text-center py-8 text-white/40 font-mono text-sm">
+        No attempts yet
       </div>
     );
   };
@@ -486,6 +552,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className="space-y-8">
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicInfo = getTopic(topic.topicId);
+                  if (!topicInfo) {
+                    console.warn(`[SessionResults] Topic not found for topicId: ${topic.topicId}`);
+                  }
                   const topicName = topicInfo?.name || topic.topicId;
                   const isGlobalView = rankingView === "global";
 

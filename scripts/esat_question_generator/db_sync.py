@@ -214,6 +214,7 @@ class DatabaseSync:
             Database ID if successful, None otherwise (if question doesn't pass checks)
         """
         if not self.enabled or not self.client:
+            print(f"[DB_SYNC] Database sync not enabled for {question_item.get('id', 'unknown')}")
             return None
         
         try:
@@ -226,6 +227,7 @@ class DatabaseSync:
             
             if verifier_verdict != "PASS" or style_verdict != "PASS":
                 # Don't save questions that don't pass both checks
+                print(f"[DB_SYNC] Question {question_item.get('id', 'unknown')} rejected: Verifier={verifier_verdict}, Style={style_verdict}")
                 return None
             
             # Use the status parameter passed in (defaults to pending_review for new questions)
@@ -292,16 +294,21 @@ class DatabaseSync:
             if paper:  # NEW: Add paper field for Math questions
                 db_record["paper"] = paper
             
-            # Insert into database (silently)
+            # Insert into database
             result = self.client.table("ai_generated_questions").insert(db_record).execute()
             
             if result.data and len(result.data) > 0:
                 db_id = result.data[0].get("id")
+                print(f"[DB_SYNC] ✓ Successfully saved {question_item.get('id', 'unknown')} to database (ID: {db_id[:8]}...)")
                 return db_id
             else:
-                # Only log errors, not warnings
+                # Insert returned no data - check for errors
+                error_msg = "Unknown error"
                 if hasattr(result, 'error') and result.error:
-                    print(f"[DB_SYNC] Error syncing {question_item.get('id')}: {result.error}")
+                    error_msg = str(result.error)
+                elif hasattr(result, 'message'):
+                    error_msg = str(result.message)
+                print(f"[DB_SYNC] Insert failed for {question_item.get('id', 'unknown')}: {error_msg}")
                 return None
                 
         except Exception as e:
@@ -311,13 +318,17 @@ class DatabaseSync:
             # Ignore expected errors:
             # 23505 = duplicate key (question already exists - this is fine!)
             # 23514 = check constraint violation
-            if "23505" in error_str:
-                # Duplicate key - question already exists, this is fine
+            if "23505" in error_str or "duplicate" in error_str.lower():
+                # Duplicate key - question already exists, this is fine (silent)
                 return None
-            elif "23514" not in error_str and "check constraint" not in error_str.lower():
-                # Not a known constraint violation - log it
-                print(f"[DB_SYNC] Error syncing {question_item.get('id')}: {error_str[:200]}")
-            return None
+            elif "23514" in error_str or "check constraint" in error_str.lower():
+                # Check constraint violation - log it as it might indicate a data issue
+                print(f"[DB_SYNC] Constraint violation for {question_item.get('id', 'unknown')}: {error_str[:200]}")
+                return None
+            else:
+                # Unknown error - log it
+                print(f"[DB_SYNC] Exception syncing {question_item.get('id', 'unknown')}: {error_str[:200]}")
+                return None
     
     def update_question_status(self, generation_id: str, status: str, 
                               reviewed_by: Optional[str] = None,

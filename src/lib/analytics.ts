@@ -124,7 +124,6 @@ export async function fetchTopicRankings(
         score,
         timestamp,
         isCurrent: d.id === currentSessionId,
-        isMostRecent: false, // Will set this later
         correctAnswers,
         totalQuestions,
         avgTimeMs,
@@ -142,7 +141,6 @@ export async function fetchTopicRankings(
         score: currentSessionData.score,
         timestamp: new Date(), // Most recent timestamp
         isCurrent: true,
-        isMostRecent: false, // Will set this later
         correctAnswers: currentSessionData.correctAnswers,
         totalQuestions: currentSessionData.totalQuestions,
         avgTimeMs: currentSessionData.avgTimeMs,
@@ -169,16 +167,31 @@ export async function fetchTopicRankings(
     // Add ranks based on score
     rankings = rankings.map((r, i) => ({ ...r, rank: i + 1 }));
 
-    // Find the most recent one (by timestamp, not score)
-    if (rankings.length > 0) {
-      const mostRecent = rankings.reduce((latest, current) => 
-        current.timestamp > latest.timestamp ? current : latest
-      );
-      rankings = rankings.map(r => ({ ...r, isMostRecent: r.id === mostRecent.id }));
-      console.log(`[processRankings] Most recent session: ${mostRecent.id}, total rankings: ${rankings.length}`);
+    // Find current session rank
+    const currentIndex = rankings.findIndex(r => r.isCurrent);
+    const currentRank = currentIndex >= 0 ? (rankings[currentIndex] as any).rank : null;
+
+    // Always get top 3
+    const top3 = rankings.slice(0, 3);
+
+    // Get adjacent ranks if current is not in top 3
+    let adjacent: typeof rankings = [];
+    if (currentRank !== null && currentRank > 3 && currentIndex >= 0) {
+      // Get rank-1, current, rank+1 (but avoid duplicates with top3)
+      const adjacentStart = Math.max(0, currentIndex - 1);
+      const adjacentEnd = Math.min(rankings.length, currentIndex + 2);
+      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter(r => (r as any).rank > 3);
+      console.log(`[processRankings] Current rank: ${currentRank}, adjacent ranks:`, adjacent.map(r => (r as any).rank));
     }
 
-    return rankings; // Return ALL rankings
+    console.log(`[processRankings] Top 3 ranks: ${top3.map(r => (r as any).rank).join(', ')}, Current rank: ${currentRank}, Total: ${rankings.length}`);
+
+    return {
+      top3,
+      currentRank,
+      adjacent,
+      allRankings: rankings, // Keep all for reference but use structured data for display
+    };
   };
 
   return {
