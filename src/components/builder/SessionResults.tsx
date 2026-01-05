@@ -24,8 +24,7 @@ import {
   ChevronRight, 
   Users, 
   User, 
-  TrendingUp,
-  MoreHorizontal
+  TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -108,7 +107,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           topic.topicId,
           authSession.user.id,
           session.id,
-          topic.score
+          {
+            score: topic.score,
+            correctAnswers: topic.correct,
+            totalQuestions: topic.total,
+            avgTimeMs: topic.avgTimeMs,
+          }
         );
         newRankings[topic.topicId] = rankings;
       }
@@ -129,75 +133,105 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
-  const renderRankingList = (topicId: string) => {
+  const renderSessionCards = (topicId: string, topicName: string) => {
     const data = rankingsData[topicId]?.[rankingView];
-    if (!data) return null;
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return (
+        <div className="text-center py-8 text-white/40 font-mono text-sm">
+          No {rankingView === "personal" ? "previous" : ""} attempts yet
+        </div>
+      );
+    }
 
     const isGlobalView = rankingView === "global";
-    const { top3, hasGap, adjacent } = data.top3 ? data : { top3: data, hasGap: false, adjacent: [] };
 
     return (
-      <div className="mt-4 space-y-2">
-        {top3.map((r: any) => (
-          <div 
-            key={r.id} 
-            className={cn(
-              "flex items-center justify-between p-2 rounded-lg text-xs font-mono transition-all border",
-              r.isCurrent 
-                ? (isGlobalView ? "bg-blue-500/20 border-blue-400/30 ring-1 ring-blue-500/20" : "bg-primary/20 border-primary/30 ring-1 ring-primary/20")
-                : "bg-white/5 border-white/5"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <span className={cn(
-                "w-5 h-5 flex items-center justify-center rounded-full font-bold",
-                r.rank === 1 ? "bg-yellow-500/20 text-yellow-500" : 
-                r.rank === 2 ? "bg-slate-300/20 text-slate-300" :
-                r.rank === 3 ? "bg-amber-600/20 text-amber-600" : (isGlobalView ? "text-blue-400/40" : "text-white/40")
-              )}>
-                {r.rank === 1 ? "🥇" : r.rank === 2 ? "🥈" : r.rank === 3 ? "🥉" : r.rank}
-              </span>
-              <span className={cn(r.isCurrent ? "text-white font-bold" : (isGlobalView ? "text-blue-100/70" : "text-white/70"))}>
-                {r.username}
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-white/40">{new Date(r.timestamp).toLocaleDateString()}</span>
-              <span className={cn("font-bold", isGlobalView ? "text-blue-400" : "text-primary")}>{r.score}</span>
-            </div>
-          </div>
-        ))}
+      <div className="space-y-3">
+        {data.map((session: any, idx: number) => {
+          const isHighlighted = session.isMostRecent;
+          const scorePercentage = (session.score / 1000) * 100;
 
-        {hasGap && (
-          <div className="flex justify-center py-1">
-            <MoreHorizontal className={cn("h-4 w-4", isGlobalView ? "text-blue-500/20" : "text-white/20")} />
-          </div>
-        )}
+          return (
+            <motion.div
+              key={session.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.03 }}
+              className={cn(
+                "rounded-organic-md border p-4 transition-all",
+                isHighlighted
+                  ? (isGlobalView 
+                      ? "bg-blue-500/10 border-blue-400/30 ring-1 ring-blue-500/20" 
+                      : "bg-primary/10 border-primary/30 ring-1 ring-primary/20")
+                  : (isGlobalView
+                      ? "bg-white/[0.02] border-white/10 hover:border-blue-500/20"
+                      : "bg-white/[0.02] border-white/10 hover:border-white/20")
+              )}
+            >
+              <div className="flex items-center gap-6">
+                {/* Rank Number - Leftmost */}
+                <div className="flex-shrink-0">
+                  <div className={cn(
+                    "text-2xl font-bold tabular-nums font-mono",
+                    isGlobalView ? "text-blue-400" : "text-primary"
+                  )}>
+                    {session.rank}
+                  </div>
+                </div>
 
-        {adjacent && adjacent.filter((r: any) => r.rank > 3).map((r: any) => (
-          <div 
-            key={r.id} 
-            className={cn(
-              "flex items-center justify-between p-2 rounded-lg text-xs font-mono transition-all border",
-              r.isCurrent 
-                ? (isGlobalView ? "bg-blue-500/20 border-blue-400/30 ring-1 ring-blue-500/20" : "bg-primary/20 border-primary/30 ring-1 ring-primary/20")
-                : "bg-white/5 border-white/5"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <span className={cn("w-5 h-5 flex items-center justify-center", isGlobalView ? "text-blue-400/40" : "text-white/40")}>
-                {r.rank}
-              </span>
-              <span className={cn(r.isCurrent ? "text-white font-bold" : (isGlobalView ? "text-blue-100/70" : "text-white/70"))}>
-                {r.username}
-              </span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-white/40">{new Date(r.timestamp).toLocaleDateString()}</span>
-              <span className={cn("font-bold", isGlobalView ? "text-blue-400" : "text-primary")}>{r.score}</span>
-            </div>
-          </div>
-        ))}
+                {/* Main Content Area */}
+                <div className="flex-1 min-w-0">
+                  {/* Score and Topic Name Row */}
+                  <div className="flex items-baseline justify-between gap-4 mb-2">
+                    <div className="flex items-baseline gap-3 min-w-0">
+                      <span className="text-2xl font-bold text-white/90 tabular-nums font-mono">
+                        {session.score}
+                      </span>
+                      <span className="text-sm text-white/40 font-mono">/ 1000</span>
+                      <span className="text-xs text-white/30 font-mono truncate">
+                        {topicName}
+                      </span>
+                    </div>
+                    <span className="text-xs text-white/40 font-mono flex-shrink-0">
+                      {new Date(session.timestamp).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${scorePercentage}%` }}
+                      transition={{ duration: 0.8, delay: idx * 0.05 }}
+                      className={cn(
+                        "h-full rounded-full",
+                        isGlobalView ? "bg-blue-500" : "bg-primary"
+                      )}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Side Stats */}
+                <div className="flex-shrink-0 text-right">
+                  <div className="space-y-1">
+                    <div className="text-xs font-mono text-white/70">
+                      {formatTimeMs(session.avgTimeMs)} <span className="text-white/40">/ q</span>
+                    </div>
+                    <div className="text-xs font-mono text-white/70">
+                      {session.correctAnswers}/{session.totalQuestions} <span className="text-white/40">correct</span>
+                    </div>
+                    <div className={cn(
+                      "text-xs font-mono font-bold",
+                      isGlobalView ? "text-blue-400" : "text-primary"
+                    )}>
+                      {session.accuracy.toFixed(0)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     );
   };
@@ -336,11 +370,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           >
             <div className="p-6 rounded-organic-lg bg-white/[0.02] border border-white/10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <h2 className="text-xl font-heading font-semibold text-white/90 flex items-center gap-2">
+                <h2 className="text-xl font-heading font-semibold text-white/90">
                   Topic Breakdown
-                  <span className="text-xs font-mono text-white/30 font-normal px-2 py-0.5 rounded-full border border-white/10 ml-2">
-                    {result.topicBreakdown.length} Topics
-                  </span>
                 </h2>
 
                 <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
@@ -367,7 +398,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 </div>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicInfo = getTopic(topic.topicId);
                   const topicName = topicInfo?.name || topic.topicId;
@@ -376,91 +407,35 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   return (
                     <motion.div
                       key={topic.topicId}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + idx * 0.05 }}
-                      className={cn(
-                        "p-5 rounded-organic-lg border transition-all duration-300",
-                        isGlobalView 
-                          ? "bg-blue-500/[0.02] border-blue-500/10 hover:border-blue-500/20" 
-                          : "bg-white/[0.03] border-white/5 hover:border-white/10"
-                      )}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.1 }}
                     >
-                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className={cn(
-                                "w-2 h-2 rounded-full",
-                                isGlobalView ? "bg-blue-400/60" : "bg-primary/60"
-                              )} />
-                              <span className="font-medium text-white/90 text-lg">{topicName}</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-sm font-mono">
-                              <span className="text-white/40">
-                                {topic.correct}/{topic.total} Correct
-                              </span>
-                              <span className={cn(
-                                "px-2 py-1 rounded bg-white/5 font-bold",
-                                topic.accuracy >= 80 ? "text-interview" : isGlobalView ? "text-blue-400" : "text-primary"
-                              )}>
-                                {topic.accuracy.toFixed(0)}%
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-8 mb-6">
-                            <div>
-                              <div className="text-[10px] text-white/30 uppercase font-mono mb-2 tracking-widest">Accuracy</div>
-                              <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${topic.accuracy}%` }}
-                                  transition={{ duration: 1, delay: 0.8 + idx * 0.1 }}
-                                  className={cn(
-                                    "h-full rounded-full transition-all",
-                                    topic.accuracy >= 80 ? "bg-interview" : isGlobalView ? "bg-blue-500" : "bg-primary"
-                                  )}
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-[10px] text-white/30 uppercase font-mono mb-2 tracking-widest">Average Speed</div>
-                              <div className="text-sm font-mono text-white/70">
-                                {formatTimeMs(topic.avgTimeMs)} <span className="text-white/30 text-xs">/ q</span>
-                              </div>
-                            </div>
-                          </div>
+                      {/* Topic Header */}
+                      <div className="mb-4">
+                        <div className="flex items-center gap-3 mb-1">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            isGlobalView ? "bg-blue-400/60" : "bg-primary/60"
+                          )} />
+                          <h3 className="text-lg font-heading font-semibold text-white/90">
+                            {topicName}
+                          </h3>
                         </div>
                       </div>
 
-                      {/* Ranking Breakdown */}
-                      <div className={cn(
-                        "pt-4 border-t",
-                        isGlobalView ? "border-blue-500/10" : "border-white/5"
-                      )}>
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className={cn(
-                            "text-[10px] uppercase font-mono tracking-widest flex items-center gap-2",
-                            isGlobalView ? "text-blue-400/50" : "text-white/30"
-                          )}>
-                            {isGlobalView ? <Users className="h-3 w-3" /> : <User className="h-3 w-3" />}
-                            {isGlobalView ? "Global Leaderboard" : "Best Attempts"}
-                          </h4>
-                        </div>
-                        
-                        {isLoadingRankings ? (
-                          <div className="h-20 flex items-center justify-center bg-white/[0.02] rounded-lg">
-                            <div className="animate-pulse flex space-x-2">
-                              <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
-                              <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
-                              <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
-                            </div>
+                      {/* Session Cards List */}
+                      {isLoadingRankings ? (
+                        <div className="h-32 flex items-center justify-center bg-white/[0.02] rounded-lg border border-white/5">
+                          <div className="animate-pulse flex space-x-2">
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
                           </div>
-                        ) : (
-                          renderRankingList(topic.topicId)
-                        )}
-                      </div>
+                        </div>
+                      ) : (
+                        renderSessionCards(topic.topicId, topicName)
+                      )}
                     </motion.div>
                   );
                 })}

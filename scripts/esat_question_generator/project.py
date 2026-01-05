@@ -731,11 +731,21 @@ def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_
     if verifier_obj:
         payload["verifier_report"] = verifier_obj
     
-    # Filter style checker prompt to include only relevant subject instructions
-    filtered_prompt = filter_prompt_by_subject(prompts.style_checker, subject)
+    # Load subject-specific style checker file
+    prompt_dir = os.path.join(os.path.dirname(__file__), "by_subject_prompts")
+    style_checker_file_map = {
+        "physics": "Style_checker_physics.md",
+        "chemistry": "Style_checker_chemistry.md",
+        "biology": "Style_checker_biology.md",
+        "mathematics": "Style_checker.md",  # Keep old file for math for now
+    }
+    
+    style_checker_filename = style_checker_file_map.get(subject, "Style_checker.md")
+    style_checker_path = os.path.join(prompt_dir, style_checker_filename)
+    style_checker_prompt = read_text(style_checker_path)
     
     user = "Package to style-check (YAML):\n" + yaml.safe_dump(payload, sort_keys=False)
-    txt = llm.generate(model=models.style_judge, system_prompt=filtered_prompt, user_prompt=user, temperature=0.3)
+    txt = llm.generate(model=models.style_judge, system_prompt=style_checker_prompt, user_prompt=user, temperature=0.3)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
         raise ValueError(f"Style checker output invalid YAML/object. Raw output:\n{txt}")
@@ -960,15 +970,17 @@ def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tup
     
     all_errors = []
     
-    # Determine if chemistry extension is needed
-    is_chemistry = schema_id.startswith("C") or schema_id.startswith("B")
+    # Get subject from schema_id for subject-specific validation
+    subject = get_subject_from_schema(schema_id)
+    # Map to validation subject (mathematics -> None for backward compatibility)
+    validation_subject = subject if subject in ["physics", "chemistry", "biology"] else None
     
     # Validate question stem
     question = question_obj.get("question", {})
     if isinstance(question, dict):
         stem = question.get("stem", "")
         if stem:
-            is_valid, errors = validate_katex_formatting(stem, skip_render_test=False)
+            is_valid, errors = validate_katex_formatting(stem, skip_render_test=False, subject=validation_subject)
             if not is_valid:
                 all_errors.append({
                     "field": "question.stem",
@@ -980,7 +992,7 @@ def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tup
         if isinstance(options, dict):
             for opt_key, opt_text in options.items():
                 if opt_text:
-                    is_valid, errors = validate_katex_formatting(str(opt_text), skip_render_test=False)
+                    is_valid, errors = validate_katex_formatting(str(opt_text), skip_render_test=False, subject=validation_subject)
                     if not is_valid:
                         all_errors.append({
                             "field": f"question.options.{opt_key}",
@@ -992,7 +1004,7 @@ def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tup
     if isinstance(solution, dict):
         reasoning = solution.get("reasoning", "")
         if reasoning:
-            is_valid, errors = validate_katex_formatting(reasoning, skip_render_test=False)
+            is_valid, errors = validate_katex_formatting(reasoning, skip_render_test=False, subject=validation_subject)
             if not is_valid:
                 all_errors.append({
                     "field": "solution.reasoning",
@@ -1001,7 +1013,7 @@ def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tup
         
         key_insight = solution.get("key_insight", "")
         if key_insight:
-            is_valid, errors = validate_katex_formatting(key_insight, skip_render_test=False)
+            is_valid, errors = validate_katex_formatting(key_insight, skip_render_test=False, subject=validation_subject)
             if not is_valid:
                 all_errors.append({
                     "field": "solution.key_insight",
@@ -1013,7 +1025,7 @@ def validate_question_katex(question_obj: Dict[str, Any], schema_id: str) -> Tup
     if isinstance(distractor_map, dict):
         for opt_key, distractor_text in distractor_map.items():
             if distractor_text:
-                is_valid, errors = validate_katex_formatting(str(distractor_text), skip_render_test=False)
+                is_valid, errors = validate_katex_formatting(str(distractor_text), skip_render_test=False, subject=validation_subject)
                 if not is_valid:
                     all_errors.append({
                         "field": f"distractor_map.{opt_key}",
@@ -1675,7 +1687,10 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             # Validate and fix KaTeX formatting
             try:
                 from katex_validator import validate_question_package, fix_katex_formatting
-                is_valid, errors = validate_question_package(q_pkg)
+                # Get subject for validation
+                validation_subject = get_subject_from_schema(schema_id)
+                validation_subject = validation_subject if validation_subject in ["physics", "chemistry", "biology"] else None
+                is_valid, errors = validate_question_package(q_pkg, subject=validation_subject)
                 if not is_valid:
                     print(f"⚠ KaTeX validation warnings: {errors}")
                     # Fix formatting issues

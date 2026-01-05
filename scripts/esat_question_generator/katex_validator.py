@@ -17,7 +17,7 @@ from katex_linter import lint_katex, format_lint_errors
 from katex_render_test import run_render_test
 
 
-def validate_katex_formatting(text: str, skip_render_test: bool = False) -> Tuple[bool, List[str]]:
+def validate_katex_formatting(text: str, skip_render_test: bool = False, subject: Optional[str] = None) -> Tuple[bool, List[str]]:
     """
     Validate KaTeX formatting using two-stage approach:
     1. Deterministic linter (fast formatting checks)
@@ -26,6 +26,7 @@ def validate_katex_formatting(text: str, skip_render_test: bool = False) -> Tupl
     Args:
         text: Text to validate
         skip_render_test: If True, skip the Node.js render test (lint only)
+        subject: Optional subject ("physics", "chemistry", "biology") for subject-specific checks
         
     Returns:
         Tuple of (is_valid, list_of_errors)
@@ -33,7 +34,7 @@ def validate_katex_formatting(text: str, skip_render_test: bool = False) -> Tupl
     errors: List[str] = []
     
     # Stage 1: Run deterministic linter (fast)
-    lint_errors = lint_katex(text)
+    lint_errors = lint_katex(text, subject=subject)
     if lint_errors:
         # Format lint errors as strings
         errors.extend(format_lint_errors(lint_errors))
@@ -102,13 +103,14 @@ def normalize_katex_formatting(text: str) -> str:
     return text
 
 
-def validate_question_package(question_obj: Dict, skip_render_test: bool = False) -> Tuple[bool, List[str]]:
+def validate_question_package(question_obj: Dict, skip_render_test: bool = False, subject: Optional[str] = None) -> Tuple[bool, List[str]]:
     """
     Validate KaTeX formatting in a complete question package.
     
     Args:
         question_obj: Question package dictionary
         skip_render_test: If True, skip Node.js render test (lint only)
+        subject: Optional subject ("physics", "chemistry", "biology") for subject-specific checks
         
     Returns:
         Tuple of (is_valid, list_of_errors)
@@ -129,7 +131,7 @@ def validate_question_package(question_obj: Dict, skip_render_test: bool = False
         if isinstance(options, dict):
             for opt_key, opt_text in options.items():
                 if opt_text:
-                    is_valid, errors = validate_katex_formatting(str(opt_text), skip_render_test=skip_render_test)
+                    is_valid, errors = validate_katex_formatting(str(opt_text), skip_render_test=skip_render_test, subject=subject)
                     if not is_valid:
                         all_errors.extend([f"Option {opt_key}: {e}" for e in errors])
     
@@ -138,13 +140,13 @@ def validate_question_package(question_obj: Dict, skip_render_test: bool = False
     if isinstance(solution, dict):
         reasoning = solution.get("reasoning", "")
         if reasoning:
-            is_valid, errors = validate_katex_formatting(reasoning, skip_render_test=skip_render_test)
+            is_valid, errors = validate_katex_formatting(reasoning, skip_render_test=skip_render_test, subject=subject)
             if not is_valid:
                 all_errors.extend([f"Solution reasoning: {e}" for e in errors])
         
         key_insight = solution.get("key_insight", "")
         if key_insight:
-            is_valid, errors = validate_katex_formatting(key_insight, skip_render_test=skip_render_test)
+            is_valid, errors = validate_katex_formatting(key_insight, skip_render_test=skip_render_test, subject=subject)
             if not is_valid:
                 all_errors.extend([f"Solution key insight: {e}" for e in errors])
     

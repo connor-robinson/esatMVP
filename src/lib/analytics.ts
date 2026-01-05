@@ -21,25 +21,31 @@ import type { Database } from "@/lib/supabase/types";
 
 /**
  * Fetch topic rankings (Personal and Global)
+ * Returns ALL attempts sorted by score
  */
 export async function fetchTopicRankings(
   supabase: SupabaseClient<Database>,
   topicId: string,
   currentUserId: string,
   currentSessionId?: string,
-  currentScore?: number
+  currentSessionData?: {
+    score: number;
+    correctAnswers: number;
+    totalQuestions: number;
+    avgTimeMs: number;
+  }
 ) {
-  // 1. Fetch Personal History
+  // 1. Fetch Personal History - ALL sessions
   const { data: personalData, error: personalError } = await supabase
     .from("drill_sessions")
-    .select("id, summary, completed_at")
+    .select("id, summary, completed_at, accuracy, average_time_ms, question_count")
     .eq("user_id", currentUserId)
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false });
 
   if (personalError) console.error("[analytics] Error fetching personal history:", personalError);
 
-  // 2. Fetch Global Leaderboard
+  // 2. Fetch Global Leaderboard - ALL sessions (no limit)
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
     .select(`
@@ -47,64 +53,103 @@ export async function fetchTopicRankings(
       user_id, 
       summary, 
       completed_at,
+      accuracy,
+      average_time_ms,
+      question_count,
       user_profiles:user_id(display_name, avatar_url)
     `)
     .eq("topic_id", topicId)
-    .order("created_at", { ascending: false }); // Order by creation date to get all relevant sessions
+    .order("created_at", { ascending: false });
 
   if (globalError) console.error("[analytics] Error fetching global leaderboard:", globalError);
-  const processRankings = (data: any[], isGlobal: boolean, currentSessionScore?: number) => {
-    if (!data) return [];
 
-    let rankings = data.map((d) => ({
-      id: d.id,
-      userId: d.user_id || currentUserId,
-      username: isGlobal ? (d.user_profiles?.display_name || "Anonymous") : "You",
-      avatar: d.user_profiles?.avatar_url,
-      score: (d.summary as any)?.score || 0,
-      timestamp: new Date(d.completed_at),
-      isCurrent: d.id === currentSessionId,
-    }));
+  const processRankings = (
+    data: any[], 
+    isGlobal: boolean, 
+    currentSessionData?: {
+      score: number;
+      correctAnswers: number;
+      totalQuestions: number;
+      avgTimeMs: number;
+    }
+  ) => {
+    if (!data || data.length === 0) {
+      // If no data but we have current session, return just that
+      if (currentSessionData) {
+        return [{
+          id: currentSessionId || "current",
+          userId: currentUserId,
+          username: "You",
+          avatar: undefined,
+          score: currentSessionData.score,
+          timestamp: new Date(),
+          isCurrent: true,
+          isMostRecent: true,
+          correctAnswers: currentSessionData.correctAnswers,
+          totalQuestions: currentSessionData.totalQuestions,
+          avgTimeMs: currentSessionData.avgTimeMs,
+          accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
+        }];
+      }
+      return [];
+    }
 
-    // If this is the global ranking and we have a current session score, add it to the list
-    if (isGlobal && currentSessionScore !== undefined) {
+    let rankings = data.map((d) => {
+      const summary = d.summary as any || {};
+      return {
+        id: d.id,
+        userId: d.user_id || currentUserId,
+        username: isGlobal ? (d.user_profiles?.display_name || "Anonymous") : "You",
+        avatar: d.user_profiles?.avatar_url,
+        score: summary.score || 0,
+        timestamp: new Date(d.completed_at),
+        isCurrent: d.id === currentSessionId,
+        isMostRecent: false, // Will set this later
+        correctAnswers: summary.correctAnswers || 0,
+        totalQuestions: summary.totalQuestions || d.question_count || 0,
+        avgTimeMs: summary.totalTimeMs ? (summary.totalTimeMs / (summary.totalQuestions || 1)) : (d.average_time_ms || 0),
+        accuracy: d.accuracy || (summary.correctAnswers && summary.totalQuestions ? (summary.correctAnswers / summary.totalQuestions) * 100 : 0),
+      };
+    });
+
+    // If we have current session data and it's not in the list, add it
+    if (currentSessionData && !rankings.find(r => r.id === currentSessionId)) {
       rankings.push({
-        id: currentSessionId,
+        id: currentSessionId || "current",
         userId: currentUserId,
         username: "You",
         avatar: undefined,
-        score: currentSessionScore,
+        score: currentSessionData.score,
         timestamp: new Date(),
         isCurrent: true,
+        isMostRecent: false,
+        correctAnswers: currentSessionData.correctAnswers,
+        totalQuestions: currentSessionData.totalQuestions,
+        avgTimeMs: currentSessionData.avgTimeMs,
+        accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
       });
     }
 
-    // Sort by score descending
+    // Sort by score descending for ranking
     rankings.sort((a, b) => b.score - a.score);
 
-    // Add ranks
+    // Add ranks based on score
     rankings = rankings.map((r, i) => ({ ...r, rank: i + 1 }));
 
-    const top3 = rankings.slice(0, 3);
-    const currentIndex = rankings.findIndex((r) => r.isCurrent);
-    
-    if (currentIndex === -1) return { top3: rankings.slice(0, Math.min(rankings.length, 5)), hasGap: false, adjacent: [] }; // Current not found in history yet or not enough data
-    
-    if (currentIndex < 3) return { top3: rankings.slice(0, Math.min(rankings.length, 5)), hasGap: false, adjacent: [] };
+    // Find the most recent one (by timestamp, not score)
+    if (rankings.length > 0) {
+      const mostRecent = rankings.reduce((latest, current) => 
+        current.timestamp > latest.timestamp ? current : latest
+      );
+      rankings = rankings.map(r => ({ ...r, isMostRecent: r.id === mostRecent.id }));
+    }
 
-    // Current is not in top 3
-    const adjacent = rankings.slice(Math.max(0, currentIndex - 1), Math.min(rankings.length, currentIndex + 2));
-    
-    return {
-      top3,
-      hasGap: currentIndex > 3,
-      adjacent,
-    };
+    return rankings; // Return ALL rankings
   };
 
   return {
-    personal: processRankings(personalData || [], false),
-    global: processRankings(globalData || [], true, currentScore),
+    personal: processRankings(personalData || [], false, currentSessionData),
+    global: processRankings(globalData || [], true, currentSessionData),
   };
 }
 
