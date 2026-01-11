@@ -221,16 +221,25 @@ export async function fetchTopicRankings(
     });
 
     // ALWAYS include current session data if provided (even if no other data exists)
-    if (currentSessionData) {
+    if (currentSessionData && currentSessionId) {
+      // Set username based on view type
+      let currentUsername = "You";
+      if (isGlobal) {
+        // For global view, we'll show "You" for current user's session
+        // The username will be set from user_profiles in the data processing above
+        // But since this is the current session, we know it's the current user
+        currentUsername = "You";
+      }
+      
       const currentSession = {
         id: currentSessionId || "current",
         builder_session_id: currentSessionId,
         userId: currentUserId,
-        username: "You",
+        username: currentUsername,
         avatar: undefined,
         score: currentSessionData.score,
         timestamp: new Date(), // Most recent timestamp
-        isCurrent: true,
+        isCurrent: true, // Mark as current session
         correctAnswers: currentSessionData.correctAnswers,
         totalQuestions: currentSessionData.totalQuestions,
         avgTimeMs: currentSessionData.avgTimeMs,
@@ -238,13 +247,14 @@ export async function fetchTopicRankings(
       };
 
       // Only add if not already in the list (check by builder_session_id)
-      const existingIndex = rankings.findIndex(r => (r as any).builder_session_id === currentSessionId);
+      const existingIndex = rankings.findIndex((r: any) => r.builder_session_id === currentSessionId);
       if (existingIndex < 0) {
         console.log("[processRankings] DEBUG: Adding current session to rankings", {
           currentSessionId,
           score: currentSession.score,
           correctAnswers: currentSession.correctAnswers,
           totalQuestions: currentSession.totalQuestions,
+          isGlobal,
         });
         rankings.push(currentSession);
       } else {
@@ -254,31 +264,50 @@ export async function fetchTopicRankings(
           oldScore: rankings[existingIndex].score,
           newScore: currentSession.score,
         });
-        // Update existing entry with current data
-        rankings[existingIndex] = { ...rankings[existingIndex], ...currentSession };
+        // Update existing entry with current data, but preserve isCurrent flag
+        rankings[existingIndex] = { 
+          ...rankings[existingIndex], 
+          ...currentSession,
+          isCurrent: true, // Ensure it's marked as current
+        };
       }
     }
 
-    // Sort by score descending for ranking
-    rankings.sort((a, b) => b.score - a.score);
+    // Sort by score descending, then by timestamp descending (newer sessions rank higher if same score)
+    rankings.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      // If scores are equal, sort by timestamp (newer first)
+      return b.timestamp.getTime() - a.timestamp.getTime();
+    });
 
-    // Add ranks based on score
-    rankings = rankings.map((r: any, i: number) => ({ ...r, rank: i + 1 })) as any[];
+    // Add ranks based on score (ties get same rank, but display order is by timestamp)
+    let rankCounter = 1;
+    rankings = rankings.map((r: any, i: number) => {
+      // If this score is different from previous, update rank
+      if (i > 0 && rankings[i - 1].score !== r.score) {
+        rankCounter = i + 1;
+      }
+      return { ...r, rank: rankCounter };
+    }) as any[];
 
     // Find current session rank
     const currentIndex = rankings.findIndex(r => r.isCurrent);
     const currentRank = currentIndex >= 0 ? (rankings[currentIndex] as any).rank : null;
 
-    // Always get top 3
-    const top3 = rankings.slice(0, 3);
+    // For global view, show top 10 to allow multiple entries per person
+    // For personal view, show top 3 + adjacent (current session context)
+    const topCount = isGlobal ? 10 : 3;
+    const top3 = rankings.slice(0, topCount);
 
-    // Get adjacent ranks if current is not in top 3
+    // Get adjacent ranks if current is not in top N (only for personal view)
     let adjacent: typeof rankings = [];
-    if (currentRank !== null && currentRank > 3 && currentIndex >= 0) {
+    if (!isGlobal && currentRank !== null && currentRank > topCount && currentIndex >= 0) {
       // Get rank-1, current, rank+1 (but avoid duplicates with top3)
       const adjacentStart = Math.max(0, currentIndex - 1);
       const adjacentEnd = Math.min(rankings.length, currentIndex + 2);
-      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter((r: any) => r.rank > 3);
+      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter((r: any) => r.rank > topCount);
       console.log(`[processRankings] DEBUG: Current rank: ${currentRank}, adjacent ranks:`, adjacent.map((r: any) => r.rank));
     }
 

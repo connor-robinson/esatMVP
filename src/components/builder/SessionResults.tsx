@@ -111,11 +111,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     };
   }, [attempts, session]);
 
-  // Load rankings data for each topic
+  // Load rankings data for each topic - refetch when session changes
   useEffect(() => {
     if (result.topicBreakdown.length === 0) return;
 
-      const loadAllRankings = async () => {
+    const loadAllRankings = async () => {
       setIsLoadingRankings(true);
       const newRankings: Record<string, any> = {};
       const userId = authSession?.user?.id || "anonymous";
@@ -201,8 +201,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       setIsLoadingRankings(false);
     };
 
-    loadAllRankings();
-  }, [authSession?.user?.id, result.topicBreakdown, session.id, supabase]);
+    // Add a small delay to ensure database has been updated after session completion
+    // This allows time for the analytics to be saved before we fetch rankings
+    const timeoutId = setTimeout(() => {
+      loadAllRankings();
+    }, 1000); // 1 second delay to ensure database is updated
+
+    return () => clearTimeout(timeoutId);
+  }, [authSession?.user?.id, result.topicBreakdown, session.id, supabase, rankingView]);
 
   const formatTime = (ms: number) => {
     return `${(ms / 1000).toFixed(2)}s`;
@@ -213,14 +219,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
-  const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string) => {
+  const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string, currentSessionId?: string) => {
     // Validate session data
     if (!session || typeof session.score !== 'number') {
       console.error('[renderSingleCard] Invalid session data:', session);
       return null;
     }
     
-    const isHighlighted = session.isCurrent; // Highlight only the current session
+    // Only highlight if it's the current session (matches the session.id we're viewing)
+    // Check if builder_session_id matches currentSessionId, or if isCurrent flag is set and IDs match
+    const isHighlighted = currentSessionId && (
+      session.builder_session_id === currentSessionId ||
+      (session.isCurrent && session.id === currentSessionId)
+    );
     const scorePercentage = (session.score / 1000) * 100;
 
     return (
@@ -271,7 +282,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 )}
               </div>
               <span className="text-xs text-white/40 font-mono flex-shrink-0">
-                {new Date(session.timestamp).toLocaleDateString()}
+                {new Date(session.timestamp).toLocaleDateString()} {new Date(session.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
 
@@ -326,6 +337,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         adjacentCount: data.adjacent?.length || 0,
         allRankingsCount: data.allRankings?.length || 0,
       } : null,
+      currentSessionId: session.id,
     });
     
     const isGlobalView = rankingView === "global";
@@ -350,7 +362,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         
         return (
           <div className="space-y-3">
-            {renderSingleCard(currentSession, isGlobalView, 0, topicName)}
+            {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
           </div>
         );
       }
@@ -369,18 +381,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       const { top3, currentRank, adjacent } = structuredData;
       const cards: any[] = [];
       let cardIndex = 0;
+      const topCount = isGlobalView ? 10 : 3; // 10 for global (to show multiple per person), 3 for personal
 
-      // Always show top 3
+      // Show top N (10 for global, 3 for personal)
       top3.forEach((sessionData: any) => {
-        const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName);
+        const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName, session.id);
         if (card) {
           cards.push(card);
           cardIndex++;
         }
       });
 
-      // If current is not in top 3, show ellipsis and adjacent
-      if (currentRank !== null && currentRank > 3 && adjacent.length > 0) {
+      // If current is not in top N (for personal view only), show ellipsis and adjacent
+      if (!isGlobalView && currentRank !== null && currentRank > topCount && adjacent.length > 0) {
         cards.push(
           <div key="ellipsis" className="flex justify-center py-2">
             <span className={cn(
@@ -391,7 +404,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         );
         
         adjacent.forEach((sessionData: any) => {
-          const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName);
+          const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName, session.id);
           if (card) {
             cards.push(card);
             cardIndex++;
@@ -426,7 +439,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           };
           return (
             <div className="space-y-3">
-              {renderSingleCard(currentSession, isGlobalView, 0, topicName)}
+              {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
             </div>
           );
         }
@@ -454,7 +467,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       return (
         <div className="space-y-3">
           {data.slice(0, 10).map((sessionData: any, idx: number) => 
-            renderSingleCard(sessionData, isGlobalView, idx, topicName)
+            renderSingleCard(sessionData, isGlobalView, idx, topicName, session.id)
           )}
         </div>
       );
