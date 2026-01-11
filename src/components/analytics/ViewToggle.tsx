@@ -52,14 +52,14 @@ export function ViewToggle({ value, onChange, timeRangeSelector, topicSelector }
 
       {/* Right: Personal/Global Toggle */}
       <div className="flex-shrink-0">
-        <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
+        <div className="flex gap-2 p-1 bg-white/5 rounded-organic-lg">
           <button
             onClick={() => onChange("personal")}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm",
+              "flex items-center gap-2 px-4 py-2 rounded-organic-md font-medium transition-all duration-200 text-sm",
               value === "personal"
-                ? "bg-primary/20 text-primary shadow-lg shadow-primary/10"
-                : "text-white/50 hover:text-white/80"
+                ? "bg-primary/20 text-primary"
+                : "text-white/60 hover:text-white/80"
             )}
           >
             <User className="h-4 w-4" />
@@ -68,10 +68,10 @@ export function ViewToggle({ value, onChange, timeRangeSelector, topicSelector }
           <button
             onClick={() => onChange("global")}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm",
+              "flex items-center gap-2 px-4 py-2 rounded-organic-md font-medium transition-all duration-200 text-sm",
               value === "global"
-                ? "bg-cyan/20 text-cyan-light shadow-lg shadow-cyan/10"
-                : "text-white/50 hover:text-white/80"
+                ? "bg-interview/20 text-interview"
+                : "text-white/60 hover:text-white/80"
             )}
           >
             <Globe className="h-4 w-4" />

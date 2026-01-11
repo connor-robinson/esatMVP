@@ -29,7 +29,7 @@ export function TimeRangeSelector({ value, onChange }: TimeRangeSelectorProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-primary/20 text-primary shadow-lg shadow-primary/10 border border-primary/30 hover:bg-primary/30"
+        className="flex items-center gap-2 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-200 bg-primary/20 text-primary hover:bg-primary/30"
       >
         <Calendar className="h-4 w-4" />
         <span>{currentRange?.label}</span>
@@ -48,7 +48,7 @@ export function TimeRangeSelector({ value, onChange }: TimeRangeSelectorProps) {
           />
 
           {/* Dropdown menu */}
-          <div className="absolute right-0 top-full mt-2 w-48 bg-background/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden z-20">
+          <div className="absolute right-0 top-full mt-2 w-48 bg-background/95 backdrop-blur-xl rounded-organic-lg shadow-2xl overflow-hidden z-20">
             {ranges.map((range) => (
               <button
                 key={range.value}

@@ -61,14 +61,14 @@ export function PastSessionsSection({
   };
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl p-6">
+    <div className="relative rounded-organic-lg overflow-hidden bg-primary/10 p-6">
       {/* Section Header */}
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4 mb-6">
         <div className="flex-1">
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/80">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/90">
             {sortBy === "recent" ? "Recent Sessions" : "Top Sessions"}
           </h2>
-          <p className="text-sm text-white/40 mt-1">
+          <p className="text-sm text-white/60 mt-1">
             Last {topSessions.length} completed sessions
           </p>
         </div>
@@ -76,7 +76,7 @@ export function PastSessionsSection({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as "recent" | "performance")}
-            className="appearance-none cursor-pointer bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200"
+            className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200"
             style={{
               colorScheme: "dark",
             }}
@@ -88,15 +88,15 @@ export function PastSessionsSection({
               Sort by Performance
             </option>
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40 pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
         </div>
         <button
           onClick={onToggleCollapse}
-          className="p-2 rounded-xl hover:bg-white/5 transition-colors group"
+          className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group"
         >
           <ChevronDown 
             className={cn(
-              "h-6 w-6 text-white/40 group-hover:text-white/60 transition-all duration-200",
+              "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
               isCollapsed && "rotate-180"
             )}
           />

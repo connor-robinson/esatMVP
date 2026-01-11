@@ -32,27 +32,27 @@ export function TopicDetailCard({
   // Color-code by performance
   const getPerformanceColor = () => {
     if (topic.accuracy >= 85) {
-      return "border-primary/30 bg-primary/5";
+      return "bg-primary/10";
     } else if (topic.accuracy < 70) {
-      return "border-[#8c4a4a]/30 bg-[#8c4a4a]/5";
+      return "bg-error/10";
     }
-    return "border-white/10 bg-white/5";
+    return "bg-white/[0.02]";
   };
 
   // Get topic icon color
   const getTopicColor = () => {
-    if (topic.accuracy >= 85) return "bg-primary/30 border-primary/50";
-    if (topic.accuracy < 70) return "bg-[#8c4a4a]/30 border-[#8c4a4a]/50";
-    return "bg-white/20 border-white/30";
+    if (topic.accuracy >= 85) return "bg-primary/20";
+    if (topic.accuracy < 70) return "bg-error/20";
+    return "bg-white/10";
   };
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        "w-full text-left p-4 rounded-xl border-2 transition-all hover:bg-white/8",
+        "w-full text-left p-4 rounded-organic-md transition-all hover:bg-white/5",
         getPerformanceColor(),
-        isExpanded && "ring-2 ring-white/10"
+        isExpanded && "bg-white/[0.04]"
       )}
     >
       {/* Collapsed View - Banner Style */}
@@ -61,7 +61,7 @@ export function TopicDetailCard({
         <div className="flex items-center gap-4 pr-6 border-r border-white/10 min-w-[240px]">
           <div
             className={cn(
-              "flex-shrink-0 w-12 h-12 rounded-lg border-2 flex items-center justify-center",
+              "flex-shrink-0 w-12 h-12 rounded-organic-md flex items-center justify-center",
               getTopicColor()
             )}
           >
@@ -126,7 +126,7 @@ export function TopicDetailCard({
         </div>
 
         {/* Section 3: Expand Icon */}
-        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-colors hover:bg-white/10">
+        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10">
           <Plus
             className={cn(
               "h-5 w-5 text-white/60 transition-transform duration-300",
@@ -146,29 +146,29 @@ export function TopicDetailCard({
 
           {/* Practice Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-1">Practice Frequency</div>
+            <div className="p-3 rounded-organic-md bg-white/[0.02]">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Practice Frequency</div>
               <div className="text-lg font-bold text-white/90">
                 {topic.practiceFrequency.toFixed(1)}/week
               </div>
             </div>
-            <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-1">Recent (7 days)</div>
+            <div className="p-3 rounded-organic-md bg-white/[0.02]">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Recent (7 days)</div>
               <div className="text-lg font-bold text-white/90">
                 {topic.recentSessions} session{topic.recentSessions !== 1 ? "s" : ""}
               </div>
             </div>
             {topic.bestSpeed && (
-              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-1">Best Speed</div>
+              <div className="p-3 rounded-organic-md bg-white/[0.02]">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Best Speed</div>
                 <div className="text-lg font-bold text-success">
                   {(topic.bestSpeed / 1000).toFixed(2)}s
                 </div>
               </div>
             )}
             {topic.rank && (
-              <div className="p-3 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-1">Global Rank</div>
+              <div className="p-3 rounded-organic-md bg-white/[0.02]">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Global Rank</div>
                 <div className="text-lg font-bold text-white/90">#{topic.rank}</div>
               </div>
             )}

@@ -59,13 +59,28 @@ export function useQuestionBank(): UseQuestionBankReturn {
   const answeredQuestionIds = useRef<Set<string>>(new Set());
   const [hasBeenAttempted, setHasBeenAttempted] = useState(false);
   const hasRestoredFromStorage = useRef(false);
+  const questionCache = useRef<QuestionBankQuestion[]>([]);
+  const isFetching = useRef(false);
+  const lastFiltersHash = useRef<string>('');
 
   // localStorage key for persisting unanswered questions
   const STORAGE_KEY = 'questionBank:currentUnansweredQuestion';
+  const FILTERS_STORAGE_KEY = 'questionBank:filters';
 
   // Restore unanswered question from localStorage on mount
   useEffect(() => {
     try {
+      // Restore filters first
+      const storedFilters = localStorage.getItem(FILTERS_STORAGE_KEY);
+      if (storedFilters) {
+        try {
+          const parsedFilters = JSON.parse(storedFilters);
+          setFilters(parsedFilters);
+        } catch (e) {
+          console.error('[useQuestionBank] Error restoring filters:', e);
+        }
+      }
+
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
@@ -101,6 +116,39 @@ export function useQuestionBank(): UseQuestionBankReturn {
     // We'll handle this in the filter change effect
   }, []); // Only run on mount
 
+  // Handle visibility changes to prevent unwanted refetches
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Page became visible - restore state if we lost it
+        // Only restore if we don't have a current question or if it's different from stored
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.question && !parsed.isAnswered) {
+              // Only restore if we don't have a question or if the stored one is different
+              if (!currentQuestion || currentQuestion.id !== parsed.question.id) {
+                setCurrentQuestion(parsed.question);
+                setIsAnswered(parsed.isAnswered || false);
+                setSelectedAnswer(parsed.selectedAnswer || null);
+                setIsCorrect(parsed.isCorrect || null);
+                setQuestionStartTime(parsed.questionStartTime || Date.now());
+                setViewedSolution(parsed.viewedSolution || false);
+                setIsLoading(false);
+              }
+            }
+          }
+        } catch (err) {
+          console.error('[useQuestionBank] Error restoring on visibility change:', err);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [currentQuestion]);
+
   // Save unanswered question to localStorage whenever it changes
   useEffect(() => {
     if (currentQuestion && !isAnswered) {
@@ -127,45 +175,154 @@ export function useQuestionBank(): UseQuestionBankReturn {
     }
   }, [currentQuestion, isAnswered, selectedAnswer, isCorrect, questionStartTime, viewedSolution]);
 
-  // Fetch a new question
-  const fetchQuestion = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
+  // Save filters to localStorage
+  useEffect(() => {
     try {
-      // Build query params - pass all filters to API for server-side filtering
+      localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+    } catch (err) {
+      console.error('[useQuestionBank] Error saving filters to localStorage:', err);
+    }
+  }, [filters]);
+
+  // Get a hash of current filters for cache invalidation
+  const getFiltersHash = useCallback(() => {
+    return JSON.stringify(filters);
+  }, [filters]);
+
+  // Prefetch and cache questions
+  const prefetchQuestions = useCallback(async (count: number = 10) => {
+    if (isFetching.current) return; // Prevent concurrent fetches
+    
+    isFetching.current = true;
+    try {
       const params = new URLSearchParams();
-      // Handle subject (can be array or single value) - send all selected subjects
       const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
       if (subjects.length > 0) {
-        // Send all subjects as comma-separated values for OR logic
         params.append('subject', subjects.join(','));
       }
-      // Handle difficulty (can be array or single value) - send all selected difficulties
       const difficulties = Array.isArray(filters.difficulty) ? filters.difficulty : (filters.difficulty !== 'All' ? [filters.difficulty] : []);
       if (difficulties.length > 0) {
-        // Send all difficulties as comma-separated values for OR logic
         params.append('difficulty', difficulties.join(','));
       }
-      // Handle attempt result (can be array or single value) - send all selected results
       const attemptResults = Array.isArray(filters.attemptResult) ? filters.attemptResult : (filters.attemptResult ? [filters.attemptResult] : []);
       if (attemptResults.length > 0) {
-        // Send all attempt results as comma-separated values for OR logic
         params.append('attemptResult', attemptResults.join(','));
       }
       if (filters.attemptedStatus !== 'Mix') params.append('attemptedStatus', filters.attemptedStatus);
       if (filters.searchTag) params.append('tags', filters.searchTag);
-      // Request enough questions - API will fetch even more when filtering by "New"
-      const requestedLimit = filters.attemptedStatus === 'New' ? '10' : '5';
+      
+      // Fetch more questions for caching
+      params.append('limit', String(count));
+      params.append('random', 'true');
+
+      const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.questions && data.questions.length > 0) {
+          // Filter out already answered questions and add to cache
+          const newQuestions = data.questions.filter(
+            (q: any) => !answeredQuestionIds.current.has(q.id) && 
+                       !questionCache.current.some(cached => cached.id === q.id)
+          );
+          questionCache.current = [...questionCache.current, ...newQuestions];
+          lastFiltersHash.current = getFiltersHash();
+        }
+      }
+    } catch (err) {
+      console.error('[useQuestionBank] Error prefetching questions:', err);
+    } finally {
+      isFetching.current = false;
+    }
+  }, [filters, getFiltersHash]);
+
+  // Get next question from cache or fetch
+  const getNextQuestionFromCache = useCallback((): QuestionBankQuestion | null => {
+    // Filter out answered questions
+    const available = questionCache.current.filter(
+      q => !answeredQuestionIds.current.has(q.id)
+    );
+    
+    if (available.length > 0) {
+      const question = available[0];
+      // Remove from cache
+      questionCache.current = questionCache.current.filter(q => q.id !== question.id);
+      return question;
+    }
+    
+    return null;
+  }, []);
+
+  // Fetch a new question (with caching)
+  const fetchQuestion = useCallback(async (useCache: boolean = true) => {
+    // Check if filters changed - if so, clear cache
+    const currentFiltersHash = getFiltersHash();
+    if (currentFiltersHash !== lastFiltersHash.current) {
+      questionCache.current = [];
+      lastFiltersHash.current = currentFiltersHash;
+    }
+
+    // Try to get from cache first
+    if (useCache) {
+      const cachedQuestion = getNextQuestionFromCache();
+      if (cachedQuestion) {
+        setCurrentQuestion(cachedQuestion);
+        setIsAnswered(false);
+        setSelectedAnswer(null);
+        setIsCorrect(null);
+        setQuestionStartTime(Date.now());
+        setViewedSolution(false);
+        setQuestionCount(prev => prev + 1);
+        
+        // Check if attempted (non-blocking)
+        if (session?.user) {
+          fetch(`/api/question-bank/attempts?question_id=${cachedQuestion.id}&limit=1`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => setHasBeenAttempted(data?.attempts && data.attempts.length > 0))
+            .catch(() => setHasBeenAttempted(false));
+        } else {
+          setHasBeenAttempted(false);
+        }
+        
+        // Prefetch more questions in background
+        if (questionCache.current.length < 3) {
+          prefetchQuestions(10).catch(() => {});
+        }
+        
+        return;
+      }
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const params = new URLSearchParams();
+      const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
+      if (subjects.length > 0) {
+        params.append('subject', subjects.join(','));
+      }
+      const difficulties = Array.isArray(filters.difficulty) ? filters.difficulty : (filters.difficulty !== 'All' ? [filters.difficulty] : []);
+      if (difficulties.length > 0) {
+        params.append('difficulty', difficulties.join(','));
+      }
+      const attemptResults = Array.isArray(filters.attemptResult) ? filters.attemptResult : (filters.attemptResult ? [filters.attemptResult] : []);
+      if (attemptResults.length > 0) {
+        params.append('attemptResult', attemptResults.join(','));
+      }
+      if (filters.attemptedStatus !== 'Mix') params.append('attemptedStatus', filters.attemptedStatus);
+      if (filters.searchTag) params.append('tags', filters.searchTag);
+      
+      // Fetch multiple questions for caching
+      const requestedLimit = filters.attemptedStatus === 'New' ? '15' : '10';
       params.append('limit', requestedLimit);
-      params.append('random', 'true'); // Get random questions
+      params.append('random', 'true');
 
       const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         if (response.status === 401) {
-          // Authentication required for attempted status filter
           throw new Error(errorData.error || 'Please log in to use attempt status filters');
         }
         throw new Error(errorData.error || 'Failed to fetch question');
@@ -174,13 +331,17 @@ export function useQuestionBank(): UseQuestionBankReturn {
       const data = await response.json();
       
       if (data.questions && data.questions.length > 0) {
-        // Filter out questions already answered in this session (client-side only)
         const unansweredQuestions = data.questions.filter(
           (q: any) => !answeredQuestionIds.current.has(q.id)
         );
         
         if (unansweredQuestions.length > 0) {
           const selectedQuestion = unansweredQuestions[0];
+          // Cache the rest
+          const remaining = unansweredQuestions.slice(1);
+          questionCache.current = [...questionCache.current, ...remaining];
+          lastFiltersHash.current = currentFiltersHash;
+          
           setCurrentQuestion(selectedQuestion);
           setIsAnswered(false);
           setSelectedAnswer(null);
@@ -189,26 +350,16 @@ export function useQuestionBank(): UseQuestionBankReturn {
           setViewedSolution(false);
           setQuestionCount(prev => prev + 1);
           
-          // Check if this question has been attempted before (for UI badge)
-          // Make a lightweight check - only if user is logged in
+          // Check if attempted (non-blocking)
           if (session?.user) {
-            try {
-              const attemptCheck = await fetch(`/api/question-bank/attempts?question_id=${selectedQuestion.id}&limit=1`);
-              if (attemptCheck.ok) {
-                const attemptData = await attemptCheck.json();
-                setHasBeenAttempted(attemptData.attempts && attemptData.attempts.length > 0);
-              } else {
-                setHasBeenAttempted(false);
-              }
-            } catch (err) {
-              // If check fails, assume not attempted
-              setHasBeenAttempted(false);
-            }
+            fetch(`/api/question-bank/attempts?question_id=${selectedQuestion.id}&limit=1`)
+              .then(res => res.ok ? res.json() : null)
+              .then(data => setHasBeenAttempted(data?.attempts && data.attempts.length > 0))
+              .catch(() => setHasBeenAttempted(false));
           } else {
             setHasBeenAttempted(false);
           }
         } else {
-          // No unanswered questions in this batch
           if (filters.attemptedStatus === 'New') {
             setError('All available questions with these filters have been attempted. Try different filters or check "Mix" to see all questions.');
           } else {
@@ -217,7 +368,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
           setCurrentQuestion(null);
         }
       } else {
-        // No questions returned from API
         if (filters.attemptedStatus === 'New') {
           setError('No new questions found. You may have attempted all questions matching these filters. Try different filters or check "Mix" to see all questions.');
         } else {
@@ -231,7 +381,7 @@ export function useQuestionBank(): UseQuestionBankReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [filters, session]);
+  }, [filters, session, getFiltersHash, getNextQuestionFromCache, prefetchQuestions]);
 
   // Submit answer and save to database
   const submitAnswer = useCallback(async (
@@ -348,7 +498,8 @@ export function useQuestionBank(): UseQuestionBankReturn {
     } catch (err) {
       console.error('[useQuestionBank] Error clearing localStorage:', err);
     }
-    await fetchQuestion();
+    // Use cache for faster switching
+    await fetchQuestion(true);
   }, [fetchQuestion]);
 
   // Update the current question (e.g., after editing or session navigation)
@@ -368,19 +519,21 @@ export function useQuestionBank(): UseQuestionBankReturn {
   useEffect(() => {
     // On initial mount, if we didn't restore from storage, fetch a question
     if (!hasRestoredFromStorage.current && !currentQuestion) {
-      fetchQuestion();
+      fetchQuestion(false); // Don't use cache on initial load
       return;
     }
     
     // If we restored, mark that we've handled the initial load
     if (hasRestoredFromStorage.current) {
       hasRestoredFromStorage.current = false;
+      // Prefetch questions in background for faster switching
+      prefetchQuestions(10).catch(() => {});
       return;
     }
     
-    // On filter changes, always fetch a new question
-    fetchQuestion();
-  }, [fetchQuestion]);
+    // On filter changes, fetch new questions (cache will be cleared automatically)
+    fetchQuestion(false);
+  }, [fetchQuestion, prefetchQuestions, currentQuestion]);
 
   return {
     // State

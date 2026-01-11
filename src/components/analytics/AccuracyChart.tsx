@@ -205,7 +205,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
   };
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl">
+    <div className="relative rounded-organic-lg overflow-hidden bg-white/[0.02]">
       <div className="p-6">
         {/* Header with animated icon and zoom controls */}
         <div className="flex items-center justify-between mb-6">
@@ -233,30 +233,30 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setZoomLevel('week')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
                 zoomLevel === 'week'
-                  ? 'bg-white/15 text-white border border-white/20'
-                  : 'bg-white/5 text-white/50 hover:bg-white/10 border border-white/10'
+                  ? 'bg-primary/20 text-primary'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
             >
               <ZoomIn className="h-3 w-3" />
             </button>
             <button
               onClick={() => setZoomLevel('month')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
                 zoomLevel === 'month'
-                  ? 'bg-white/15 text-white border border-white/20'
-                  : 'bg-white/5 text-white/50 hover:bg-white/10 border border-white/10'
+                  ? 'bg-primary/20 text-primary'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
             >
               30d
             </button>
             <button
               onClick={() => setZoomLevel('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
                 zoomLevel === 'all'
-                  ? 'bg-white/15 text-white border border-white/20'
-                  : 'bg-white/5 text-white/50 hover:bg-white/10 border border-white/10'
+                  ? 'bg-primary/20 text-primary'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
             >
               <Maximize2 className="h-3 w-3" />

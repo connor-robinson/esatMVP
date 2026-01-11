@@ -48,7 +48,10 @@ export async function POST(request: NextRequest) {
       questionId: question_id,
       userAnswer: user_answer,
       isCorrect: is_correct,
-      timeSpentMs: time_spent_ms
+      timeSpentMs: time_spent_ms,
+      wasRevealed: was_revealed,
+      usedHint: used_hint,
+      wrongAnswersBefore: wrong_answers_before
     });
     
     const { data: attempt, error: insertError } = await supabase

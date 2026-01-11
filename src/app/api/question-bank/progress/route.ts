@@ -42,14 +42,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Build subject filter conditions (same logic as questions API)
+    // IMPORTANT: For Math 1, we need to ensure it doesn't overlap with Math 2
+    // Math 1 should ONLY match questions that are explicitly Math 1, not Math 2
     const subjectConditions: string[] = [];
     subjects.forEach(subject => {
       if (subject === 'Math 1') {
-        // Use double quotes for values with spaces in .or()
+        // Math 1: Must have paper="Math 1" OR (primary_tag starts with M1- AND NOT paper="Math 2") OR schema_id is exactly M1
+        // We use AND NOT to exclude Math 2 questions
         subjectConditions.push('paper.eq."Math 1"');
+        // For primary_tag, we need to ensure it's M1- and not M2-
         subjectConditions.push('primary_tag.ilike.M1-%');
+        // Schema_id must be exactly M1 (not M2, M3, etc.)
         subjectConditions.push('schema_id.eq.M1');
       } else if (subject === 'Math 2') {
+        // Math 2: paper="Math 2" OR primary_tag starts with M2- OR schema_id is M2, M3, M4, M5 (but not M1)
         subjectConditions.push('paper.eq."Math 2"');
         subjectConditions.push('primary_tag.ilike.M2-%');
         // For .in() inside .or(), wrap the values in parentheses and comma-separate them
@@ -66,29 +72,14 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Get total count of questions for selected subjects
-    let totalQuery = supabase
-      .from('ai_generated_questions')
-      .select('id', { count: 'exact', head: true });
-
-    if (subjectConditions.length > 0) {
-      totalQuery = totalQuery.or(subjectConditions.join(','));
-    }
-
-    const { count: total, error: totalError } = await totalQuery;
-
-    if (totalError) {
-      console.error('[Progress API] Error fetching total:', totalError);
-      return NextResponse.json(
-        { error: 'Failed to fetch total questions' },
-        { status: 500 }
-      );
-    }
+    // We'll calculate total from the filtered questions below
+    // This ensures Math 1 and Math 2 don't overlap in the count
 
     // Get all question IDs for selected subjects (just IDs, no limit needed for counting)
+    // We need to fetch paper, primary_tag, and schema_id to properly filter Math 1 vs Math 2
     let questionsQuery = supabase
       .from('ai_generated_questions')
-      .select('id');
+      .select('id, paper, primary_tag, schema_id');
 
     if (subjectConditions.length > 0) {
       questionsQuery = questionsQuery.or(subjectConditions.join(','));
@@ -105,7 +96,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const questionIds = new Set((questions || []).map((q: any) => q.id));
+    // Filter questions client-side to ensure Math 1 and Math 2 don't overlap
+    const filteredQuestions = (questions || []).filter((q: any) => {
+      // If Math 1 is selected, exclude any Math 2 questions
+      if (subjects.includes('Math 1')) {
+        // Exclude if it's explicitly Math 2
+        if (q.paper === 'Math 2') return false;
+        if (q.primary_tag?.startsWith('M2-')) return false;
+        if (['M2', 'M3', 'M4', 'M5'].includes(q.schema_id)) return false;
+      }
+      // If Math 2 is selected, exclude any Math 1 questions
+      if (subjects.includes('Math 2')) {
+        // Exclude if it's explicitly Math 1
+        if (q.paper === 'Math 1') return false;
+        if (q.primary_tag?.startsWith('M1-')) return false;
+        if (q.schema_id === 'M1') return false;
+      }
+      return true;
+    });
+
+    const questionIds = new Set(filteredQuestions.map((q: any) => q.id));
+    const total = filteredQuestions.length;
 
     // Get all attempts for the user
     const { data: attempts, error: attemptsError } = await supabase
@@ -129,6 +140,15 @@ export async function GET(request: NextRequest) {
     );
 
     const attempted = attemptedQuestionIds.size;
+
+    console.log('[Progress API] Progress stats:', {
+      subjects: subjects.join(', '),
+      total,
+      attempted,
+      totalAttemptsInDB: attempts?.length || 0,
+      matchingAttempts: attemptedQuestionIds.size,
+      questionIdsCount: questionIds.size
+    });
 
     return NextResponse.json({
       attempted,

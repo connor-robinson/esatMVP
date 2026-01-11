@@ -6,11 +6,12 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { MathContent } from "@/components/shared/MathContent";
 import type { QuestionBankQuestion } from "@/types/questionBank";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 
 interface QuestionLibraryGridProps {
   questions: QuestionBankQuestion[];
@@ -20,7 +21,7 @@ interface QuestionLibraryGridProps {
 
 const subjectColors: Record<string, string> = {
   'Math 1': '#5da8f0',
-  'Math 2': '#5da8f0',
+  'Math 2': '#ff69b4', // Pink for Math 2
   'Physics': '#a78bfa',
   'Chemistry': '#ef7d7d',
   'Biology': '#85BC82',
@@ -51,12 +52,15 @@ export function QuestionLibraryGrid({
   selectedQuestionIds,
   onToggleQuestion,
 }: QuestionLibraryGridProps) {
-  // Track collapsed subjects - all expanded by default
-  const [collapsedSubjects, setCollapsedSubjects] = useState<Set<string>>(new Set());
-  // Track collapsed primary tags - all expanded by default
-  const [collapsedTags, setCollapsedTags] = useState<Set<string>>(new Set());
+  const session = useSupabaseSession();
+  // Track expanded subjects - all collapsed by default (empty set means all collapsed)
+  const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
+  // Track expanded primary tags - all collapsed by default (empty set means all collapsed)
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
   // Curriculum data for tag lookups
   const [curriculum, setCurriculum] = useState<any>(null);
+  // Track which questions have been attempted
+  const [attemptedQuestionIds, setAttemptedQuestionIds] = useState<Set<string>>(new Set());
 
   // Fetch curriculum data
   useEffect(() => {
@@ -65,6 +69,59 @@ export function QuestionLibraryGrid({
       .then(data => setCurriculum(data))
       .catch(err => console.error('Error fetching curriculum:', err));
   }, []);
+
+  // Fetch attempted question IDs if user is logged in
+  useEffect(() => {
+    if (session?.user && questions.length > 0) {
+      // Get all question IDs
+      const questionIds = questions.map(q => q.id);
+      
+      // Fetch attempts for all questions at once
+      fetch(`/api/question-bank/attempts?limit=1000`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.attempts) {
+            // Get unique question IDs that have been attempted
+            const attemptedIds = new Set(
+              data.attempts
+                .filter((a: any) => questionIds.includes(a.question_id))
+                .map((a: any) => a.question_id)
+            );
+            setAttemptedQuestionIds(attemptedIds);
+            console.log('[QuestionLibraryGrid] Loaded attempted questions:', attemptedIds.size);
+          }
+        })
+        .catch(err => {
+          console.error('[QuestionLibraryGrid] Error fetching attempts:', err);
+        });
+    }
+  }, [session?.user, questions]);
+
+  // Fetch attempted question IDs if user is logged in
+  useEffect(() => {
+    if (session?.user && questions.length > 0) {
+      // Get all question IDs
+      const questionIds = questions.map(q => q.id);
+      
+      // Fetch attempts for all questions at once
+      fetch(`/api/question-bank/attempts?limit=1000`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.attempts) {
+            // Get unique question IDs that have been attempted
+            const attemptedIds = new Set(
+              data.attempts
+                .filter((a: any) => questionIds.includes(a.question_id))
+                .map((a: any) => a.question_id)
+            );
+            setAttemptedQuestionIds(attemptedIds);
+          }
+        })
+        .catch(err => {
+          console.error('[QuestionLibraryGrid] Error fetching attempts:', err);
+        });
+    }
+  }, [session?.user, questions]);
 
   // Helper to find topic title from tag code
   const getTopicTitle = (tagCode: string): string => {
@@ -91,8 +148,16 @@ export function QuestionLibraryGrid({
       cleanCode = tagCode.replace('chemistry-', ''); 
     }
     
-    // If no prefix matched, return the original code
+    // If no prefix matched, try to find it in any paper
     if (!paperId) {
+      // Search all papers for this code
+      for (const paper of (curriculum.papers || [])) {
+        const topic = paper.topics?.find((t: any) => 
+          t.code === tagCode || 
+          t.code === tagCode.replace(/^[A-Z]+/, '')
+        );
+        if (topic) return topic.title;
+      }
       return tagCode;
     }
     
@@ -110,36 +175,41 @@ export function QuestionLibraryGrid({
       topic = paper.topics?.find((t: any) => t.code === numericCode);
     }
     
+    // Final attempt: try matching with the original tag code
+    if (!topic) {
+      topic = paper.topics?.find((t: any) => t.code === tagCode);
+    }
+    
     // 4. Return the title if found, otherwise return the original code
     return topic?.title || tagCode;
   };
 
   const toggleSubject = (subject: string) => {
-    setCollapsedSubjects((prev) => {
+    setExpandedSubjects((prev) => {
       const next = new Set(prev);
       if (next.has(subject)) {
-        next.delete(subject);
+        next.delete(subject); // Collapse
       } else {
-        next.add(subject);
+        next.add(subject); // Expand
       }
       return next;
     });
   };
 
   const toggleTag = (tagKey: string) => {
-    setCollapsedTags((prev) => {
+    setExpandedTags((prev) => {
       const next = new Set(prev);
       if (next.has(tagKey)) {
-        next.delete(tagKey);
+        next.delete(tagKey); // Collapse
       } else {
-        next.add(tagKey);
+        next.add(tagKey); // Expand
       }
       return next;
     });
   };
 
-  const isSubjectExpanded = (subject: string) => !collapsedSubjects.has(subject);
-  const isTagExpanded = (tagKey: string) => !collapsedTags.has(tagKey);
+  const isSubjectExpanded = (subject: string) => expandedSubjects.has(subject);
+  const isTagExpanded = (tagKey: string) => expandedTags.has(tagKey);
 
   // Group questions by subject, then by primary_tag
   const questionsBySubjectAndTag = useMemo(() => {
@@ -169,8 +239,29 @@ export function QuestionLibraryGrid({
       });
     });
 
-    // Sort subjects alphabetically
-    const sortedSubjects = Object.keys(grouped).sort();
+    // Sort subjects: put Math 1 and Math 2 at the end, others alphabetically
+    const sortedSubjects = Object.keys(grouped).sort((a, b) => {
+      const isMath1 = a === 'Math 1';
+      const isMath2 = a === 'Math 2';
+      const isOtherMath1 = b === 'Math 1';
+      const isOtherMath2 = b === 'Math 2';
+      
+      // Math 1 and Math 2 go to the end
+      if (isMath1 || isMath2) {
+        if (isOtherMath1 || isOtherMath2) {
+          // Both are Math, sort Math 1 before Math 2
+          if (isMath1 && isOtherMath2) return -1;
+          if (isMath2 && isOtherMath1) return 1;
+          return 0;
+        }
+        return 1; // Math goes after non-Math
+      }
+      if (isOtherMath1 || isOtherMath2) {
+        return -1; // Non-Math goes before Math
+      }
+      // Both are non-Math, sort alphabetically
+      return a.localeCompare(b);
+    });
 
     return { grouped, sortedSubjects };
   }, [questions]);
@@ -299,6 +390,7 @@ export function QuestionLibraryGrid({
                                       {tagQuestions.map((question, index) => {
                                         const isSelected = selectedQuestionIds.has(question.id);
                                         const questionNumber = index + 1;
+                                        const hasBeenAttempted = attemptedQuestionIds.has(question.id);
 
                                         return (
                                           <div
@@ -327,11 +419,18 @@ export function QuestionLibraryGrid({
 
                                             {/* Question content */}
                                             <div className="flex-1 min-w-0 space-y-2">
-                                              {/* Header: Question Number, Difficulty */}
+                                              {/* Header: Question Number, Difficulty, Attempted Badge */}
                                               <div className="flex items-center gap-2 flex-wrap">
                                                 <span className="text-xs font-mono font-semibold text-white/90">
                                                   Question {questionNumber}
                                                 </span>
+                                                {hasBeenAttempted && (
+                                                  <CheckCircle2 
+                                                    className="w-3.5 h-3.5 text-green-400" 
+                                                    strokeWidth={2.5}
+                                                    title="You have attempted this question"
+                                                  />
+                                                )}
                                                 <span
                                                   className="text-[10px] px-2 py-0.5 rounded uppercase font-mono tracking-wider"
                                                   style={{

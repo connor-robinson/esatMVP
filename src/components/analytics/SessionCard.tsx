@@ -46,11 +46,11 @@ function SessionCardComponent({
     <button
       onClick={onClick}
       className={cn(
-        "w-full text-left p-4 rounded-xl border-2 transition-all",
+        "w-full text-left p-4 rounded-organic-md transition-all",
         isLatest
-          ? "border-primary/40 shadow-lg shadow-primary/20 bg-primary/5"
-          : "border-white/10 bg-white/5 hover:bg-white/8",
-        isExpanded && "ring-2 ring-white/10"
+          ? "bg-primary/15"
+          : "bg-white/[0.02] hover:bg-white/5",
+        isExpanded && "bg-white/[0.04]"
       )}
     >
       {/* Collapsed View - Banner Style */}
@@ -112,7 +112,7 @@ function SessionCardComponent({
             {session.topicNames.map((topic, i) => (
               <span
                 key={i}
-                className="text-xs px-2 py-0.5 rounded-md bg-white/10 text-white/60 border border-white/10"
+                className="text-xs px-2 py-0.5 rounded-organic-md bg-white/5 text-white/70"
               >
                 {topic}
               </span>
@@ -121,7 +121,7 @@ function SessionCardComponent({
         </div>
 
         {/* Section 3: Expand Icon */}
-        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center transition-colors hover:bg-white/10">
+        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10">
           <Plus
             className={cn(
               "h-5 w-5 text-white/60 transition-transform duration-300",
