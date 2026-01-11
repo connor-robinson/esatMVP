@@ -30,6 +30,14 @@ export default function LoginPage() {
     }
   }, [session, searchParams, router]);
 
+  // Read error from URL params
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(decodeURIComponent(urlError));
+    }
+  }, [searchParams]);
+
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
@@ -67,17 +75,17 @@ export default function LoginPage() {
   }
 
   return (
-    <Container size="lg">
+    <Container>
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-6">
           <PageHeader
             title="Sign In"
             description="Sign in with Google to save your paper sessions and track your progress."
           />
 
-          <Card variant="default" className="p-8 space-y-6">
+          <Card variant="flat" className="p-8 space-y-6">
             {error && (
-              <div className="p-4 rounded-organic-md bg-error/10 border border-error/20 text-error text-sm">
+              <div className="p-4 rounded-lg bg-red-500/10 text-red-400 text-sm">
                 {error}
               </div>
             )}
