@@ -383,46 +383,94 @@ export function useBuilderSession() {
 
     // Only save to database if user is logged in
     if (authSession?.user) {
-      (supabase as any)
-        .from("builder_sessions")
-        .insert({
-          id: sessionId,
-          user_id: authSession.user.id,
-          started_at: new Date(startedAt).toISOString(),
-          attempts: 0,
-          settings: {
-            selectedTopicVariants,
-            questionCount,
-          },
-        })
-        .then(({ error }: { error: any }) => {
-          if (error) {
-            console.error("[builder] failed to create session", error);
-          }
-        });
-
-      if (questions.length > 0) {
-        const rows = questions.map((q, index) => ({
-          session_id: sessionId,
-          user_id: authSession.user.id,
-          order_index: index,
-          question_id: q.id,
-          topic_id: q.topicId,
-          difficulty: q.difficulty,
-          prompt: q.question,
-          answer: String(q.answer),
-          payload: q,
-        }));
-
-        (supabase as any)
-          .from("builder_session_questions")
-          .insert(rows)
-          .then(({ error }: { error: any }) => {
-            if (error) {
-              console.error("[builder] failed to insert session questions", error);
-            }
+      // Create session first, then insert questions
+      (async () => {
+        try {
+          console.log("[startSession] DEBUG: Creating builder_session", {
+            sessionId,
+            userId: authSession.user.id,
+            startedAt: new Date(startedAt).toISOString(),
           });
-      }
+
+          const { data: sessionData, error: sessionError } = await (supabase as any)
+            .from("builder_sessions")
+            .insert({
+              id: sessionId,
+              user_id: authSession.user.id,
+              started_at: new Date(startedAt).toISOString(),
+              attempts: 0,
+              settings: {
+                selectedTopicVariants,
+                questionCount,
+              },
+            })
+            .select("id")
+            .single();
+
+          if (sessionError) {
+            console.error("[startSession] ERROR: Failed to create builder_session", {
+              error: sessionError,
+              errorCode: sessionError.code,
+              errorMessage: sessionError.message,
+              errorDetails: sessionError.details,
+              sessionId,
+              userId: authSession.user.id,
+            });
+            return; // Don't try to insert questions if session creation failed
+          }
+
+          console.log("[startSession] DEBUG: Builder session created successfully", {
+            sessionId: sessionData?.id,
+          });
+
+          // Now insert questions after session is created
+          if (questions.length > 0) {
+            const rows = questions.map((q, index) => ({
+              session_id: sessionId,
+              user_id: authSession.user.id,
+              order_index: index,
+              question_id: q.id,
+              topic_id: q.topicId,
+              difficulty: q.difficulty,
+              prompt: q.question,
+              answer: String(q.answer),
+              payload: q,
+            }));
+
+            console.log("[startSession] DEBUG: Inserting session questions", {
+              sessionId,
+              questionCount: rows.length,
+            });
+
+            const { data: questionsData, error: questionsError } = await (supabase as any)
+              .from("builder_session_questions")
+              .insert(rows)
+              .select("id");
+
+            if (questionsError) {
+              console.error("[startSession] ERROR: Failed to insert session questions", {
+                error: questionsError,
+                errorCode: questionsError.code,
+                errorMessage: questionsError.message,
+                errorDetails: questionsError.details,
+                sessionId,
+                questionCount: rows.length,
+              });
+            } else {
+              console.log("[startSession] DEBUG: Session questions inserted successfully", {
+                sessionId,
+                insertedCount: questionsData?.length || 0,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("[startSession] ERROR: Unexpected error during session creation", {
+            error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            sessionId,
+          });
+        }
+      })();
     }
   }, [authSession?.user, questionCount, selectedTopicVariants, supabase]);
 
