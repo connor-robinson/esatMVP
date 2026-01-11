@@ -65,12 +65,22 @@ export async function GET(request: NextRequest) {
           subjectConditions.push('primary_tag.ilike.M1-%');
           subjectConditions.push('schema_id.eq.M1');
         } else if (subject === 'Math 2') {
-          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id is M2, M3, M4, or M5 (fallback)
+          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id matches Math 2 patterns
+          // Primary: paper="Math 2" (most reliable) - this should be set for all Math 2 questions
+          // Secondary: primary_tag starts with "M2-"
+          // Fallback: schema_id patterns for Math 2 (M2-M9, M10-M99, M100+)
+          // We avoid M1% to prevent matching M1 (Math 1)
           subjectConditions.push('paper.eq."Math 2"');
           subjectConditions.push('primary_tag.ilike.M2-%');
-          // For .in() inside .or(), wrap the values in parentheses and comma-separate them
-          // Note: commas inside .in() don't break the outer .or() split if they are inside parentheses
-          subjectConditions.push('schema_id.in.(M2,M3,M4,M5)');
+          // Match M2-M9 explicitly
+          subjectConditions.push('schema_id.in.(M2,M3,M4,M5,M6,M7,M8,M9)');
+          // For M10+, we need to match but avoid M1. Since we can't easily do "M1[0-9]" in Supabase,
+          // we'll match common two-digit patterns. For three+ digits (M100+), we can use a pattern
+          // but it's less critical since paper column should be set correctly
+          // Match M10-M19 explicitly (excluding M1)
+          subjectConditions.push('schema_id.in.(M10,M11,M12,M13,M14,M15,M16,M17,M18,M19)');
+          // For M20+, we can use a pattern, but to avoid complexity, we'll rely on paper/primary_tag
+          // If needed, we can add more explicit matches later
         } else if (subject === 'Physics') {
           // Physics: schema_id starts with P OR primary_tag starts with P-
           subjectConditions.push('schema_id.ilike.P%');
@@ -186,7 +196,10 @@ export async function GET(request: NextRequest) {
       query = query.limit(500);
     } else {
       // Sort by created_at (newer first) for non-random mode
-      query = query.limit(limit * 2).order('created_at', { ascending: false });
+      // Increase the fetch limit to ensure we get enough questions after filtering
+      // For library view with limit=100, fetch 500 to account for filtering
+      const fetchLimit = Math.max(limit * 5, 500);
+      query = query.limit(fetchLimit).order('created_at', { ascending: false });
     }
 
     // Execute the query to get all matching questions
@@ -378,4 +391,5 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
+
 

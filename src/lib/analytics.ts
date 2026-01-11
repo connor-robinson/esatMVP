@@ -91,7 +91,7 @@ export async function fetchTopicRankings(
     console.log("[fetchTopicRankings] DEBUG: Skipping personal history fetch (anonymous user)");
   }
 
-  // 2. Fetch Global Leaderboard - ALL sessions (no limit) with user profiles
+  // 2. Fetch Global Leaderboard - ALL sessions (no limit)
   console.log(`[fetchTopicRankings] DEBUG: Fetching global sessions for topic ${topicId}`);
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
@@ -104,8 +104,7 @@ export async function fetchTopicRankings(
       accuracy, 
       average_time_ms, 
       question_count, 
-      created_at,
-      profiles(display_name)
+      created_at
     `)
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
@@ -120,6 +119,37 @@ export async function fetchTopicRankings(
       topicId,
     });
   } else {
+    // Fetch profiles separately since there's no direct FK relationship
+    const userIds = [...new Set((globalData || []).map((d: any) => d.user_id))];
+    let profilesMap: Record<string, { display_name: string | null }> = {};
+    
+    if (userIds.length > 0) {
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", userIds);
+      
+      if (profilesError) {
+        console.error("[fetchTopicRankings] ERROR: Failed to fetch profiles:", {
+          error: profilesError,
+          errorCode: profilesError.code,
+          errorMessage: profilesError.message,
+        });
+      } else {
+        // Create a map of user_id -> profile
+        profilesMap = (profilesData || []).reduce((acc: any, p: any) => {
+          acc[p.id] = { display_name: p.display_name };
+          return acc;
+        }, {});
+      }
+    }
+    
+    // Attach profiles to global data
+    if (globalData) {
+      globalData.forEach((d: any) => {
+        d.profiles = profilesMap[d.user_id] || null;
+      });
+    }
     const globalDataArray = (globalData || []) as any[];
     console.log(`[fetchTopicRankings] DEBUG: Global sessions fetched`, {
       count: globalDataArray.length,
@@ -207,6 +237,7 @@ export async function fetchTopicRankings(
       
       return {
         id: d.id,
+        builder_session_id: d.builder_session_id, // Include this for duplicate checking
         userId: d.user_id || currentUserId,
         username,
         avatar: undefined,
@@ -220,8 +251,13 @@ export async function fetchTopicRankings(
       };
     });
 
-    // ALWAYS include current session data if provided (even if no other data exists)
-    if (currentSessionData && currentSessionId) {
+    // Only add current session if it's not already in the rankings (already saved to database)
+    // If it's already in rankings, it's already marked as current via the mapping above
+    const currentSessionAlreadyInRankings = rankings.some((r: any) => 
+      r.builder_session_id === currentSessionId || r.id === currentSessionId
+    );
+    
+    if (currentSessionData && currentSessionId && !currentSessionAlreadyInRankings) {
       // Set username based on view type
       let currentUsername = "You";
       if (isGlobal) {
@@ -246,31 +282,16 @@ export async function fetchTopicRankings(
         accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
       };
 
-      // Only add if not already in the list (check by builder_session_id)
-      const existingIndex = rankings.findIndex((r: any) => r.builder_session_id === currentSessionId);
-      if (existingIndex < 0) {
-        console.log("[processRankings] DEBUG: Adding current session to rankings", {
-          currentSessionId,
-          score: currentSession.score,
-          correctAnswers: currentSession.correctAnswers,
-          totalQuestions: currentSession.totalQuestions,
-          isGlobal,
-        });
-        rankings.push(currentSession);
-      } else {
-        console.log("[processRankings] DEBUG: Current session already in rankings, updating it", {
-          existingIndex,
-          currentSessionId,
-          oldScore: rankings[existingIndex].score,
-          newScore: currentSession.score,
-        });
-        // Update existing entry with current data, but preserve isCurrent flag
-        rankings[existingIndex] = { 
-          ...rankings[existingIndex], 
-          ...currentSession,
-          isCurrent: true, // Ensure it's marked as current
-        };
-      }
+      // Add the current session (already verified it's not in rankings above)
+      console.log("[processRankings] DEBUG: Adding current session to rankings (not in DB yet)", {
+        currentSessionId,
+        score: currentSession.score,
+        correctAnswers: currentSession.correctAnswers,
+        totalQuestions: currentSession.totalQuestions,
+        isGlobal,
+        existingRankingsCount: rankings.length,
+      });
+      rankings.push(currentSession);
     }
 
     // Sort by score descending, then by timestamp descending (newer sessions rank higher if same score)

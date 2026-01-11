@@ -86,8 +86,8 @@ export default function QuestionsLibraryPage() {
           }
         }
 
-        // Set limit for library view
-        params.append('limit', '100');
+        // Set limit for library view - increased to show more questions
+        params.append('limit', '500');
         params.append('offset', '0');
 
         const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
