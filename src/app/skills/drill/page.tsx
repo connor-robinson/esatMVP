@@ -196,15 +196,6 @@ export default function BuilderPage() {
   }
 
   // Fallback / Debug
-  console.log("[BuilderPage] Render state:", {
-    view: builder.view,
-    hasSession: !!builder.currentSession,
-    questionCount: builder.currentSession?.questions?.length || 0,
-    currentIndex: builder.currentQuestionIndex,
-    hasCurrentQuestion: !!builder.currentQuestion,
-    mode: builder.mode,
-  });
-  
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">

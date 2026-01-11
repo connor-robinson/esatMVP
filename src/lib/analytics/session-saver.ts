@@ -73,6 +73,13 @@ async function saveDrillSessions(
   startedAt: number,
   endedAt: number
 ): Promise<void> {
+  console.log(`[session-saver] DEBUG: saveDrillSessions called`, {
+    userId,
+    sessionId,
+    topicCount: topicStats.size,
+    topics: Array.from(topicStats.keys()),
+  });
+
   for (const [topicId, stats] of topicStats.entries()) {
     const accuracy = (stats.questionsCorrect / stats.questionsAttempted) * 100;
     const score = calculateSessionScore(stats.questionsCorrect, stats.questionsAttempted, stats.avgTimeMs);
@@ -95,9 +102,29 @@ async function saveDrillSessions(
       } as any,
     };
 
-    const { error } = await supabase.from("drill_sessions").insert(drillSession);
+    console.log(`[session-saver] DEBUG: Inserting drill_session for topic ${topicId}:`, {
+      topicId,
+      userId,
+      builder_session_id: sessionId,
+      question_count: drillSession.question_count,
+      accuracy: drillSession.accuracy,
+      average_time_ms: drillSession.average_time_ms,
+      score,
+      summary: drillSession.summary,
+    });
+
+    const { data, error } = await supabase.from("drill_sessions").insert(drillSession).select("id").single();
+    
     if (error) {
-      console.error(`[session-saver] Error inserting into drill_sessions for ${topicId}:`, error);
+      console.error(`[session-saver] ERROR: Failed to insert drill_session for ${topicId}:`, {
+        error,
+        errorCode: error.code,
+        errorMessage: error.message,
+        errorDetails: error.details,
+        drillSession,
+      });
+    } else {
+      console.log(`[session-saver] SUCCESS: Inserted drill_session for ${topicId} with id:`, data?.id);
     }
   }
 }
@@ -245,11 +272,27 @@ export async function saveSessionAnalytics(
   supabase: any,
   sessionData: SessionData
 ): Promise<void> {
-  console.log("[session-saver] Saving analytics for session:", sessionData.sessionId);
+  console.log("[session-saver] DEBUG: saveSessionAnalytics called", {
+    sessionId: sessionData.sessionId,
+    userId: sessionData.userId,
+    attemptCount: sessionData.attempts.length,
+    questionTopicsCount: sessionData.questionTopics.length,
+    startedAt: new Date(sessionData.startedAt).toISOString(),
+    endedAt: new Date(sessionData.endedAt).toISOString(),
+  });
 
   try {
     // Calculate topic-level stats
     const topicStats = calculateTopicStats(sessionData.attempts, sessionData.questionTopics);
+    console.log("[session-saver] DEBUG: Calculated topic stats", {
+      topicCount: topicStats.size,
+      topics: Array.from(topicStats.entries()).map(([id, stats]) => ({
+        topicId: id,
+        questionsAttempted: stats.questionsAttempted,
+        questionsCorrect: stats.questionsCorrect,
+        avgTimeMs: stats.avgTimeMs,
+      })),
+    });
     
     // Save topic-specific sessions for history and leaderboard
     await saveDrillSessions(supabase, sessionData.userId, sessionData.sessionId, topicStats, sessionData.startedAt, sessionData.endedAt);
@@ -260,8 +303,18 @@ export async function saveSessionAnalytics(
     // Update daily metrics
     await updateDailyMetrics(supabase, sessionData.userId, sessionData);
     
-    console.log("[session-saver] Successfully saved analytics");
+    console.log("[session-saver] SUCCESS: All analytics saved successfully");
   } catch (error) {
-    console.error("[session-saver] Error saving session analytics:", error);
+    console.error("[session-saver] ERROR: Failed to save session analytics:", {
+      error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+      sessionData: {
+        sessionId: sessionData.sessionId,
+        userId: sessionData.userId,
+        attemptCount: sessionData.attempts.length,
+      },
+    });
+    throw error; // Re-throw to surface the error
   }
 }

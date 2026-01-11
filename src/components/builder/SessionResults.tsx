@@ -67,7 +67,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       const topicId = question?.topicId;
       
       if (!topicId) {
-        console.warn(`[SessionResults] Missing topicId for attempt with questionId: ${attempt.questionId}`);
+        console.error(`[SessionResults] ERROR: Missing topicId for attempt with questionId: ${attempt.questionId}`);
         return; // Skip attempts without valid topicId
       }
       
@@ -87,13 +87,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       
       // Calculate score using the same method as database (matching session-saver.ts)
       const score = calculateSessionScore(stats.correct, stats.total, avgTimeMs);
-      
-      console.log(`[SessionResults] Topic breakdown for ${topicId}:`, {
-        correct: stats.correct,
-        total: stats.total,
-        avgTimeMs,
-        score,
-      });
       
       return {
         topicId,
@@ -122,14 +115,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   useEffect(() => {
     if (result.topicBreakdown.length === 0) return;
 
-    const loadAllRankings = async () => {
+      const loadAllRankings = async () => {
       setIsLoadingRankings(true);
       const newRankings: Record<string, any> = {};
       const userId = authSession?.user?.id || "anonymous";
       
-      console.log("[SessionResults] Loading rankings for topics:", result.topicBreakdown.map(t => t.topicId));
-      console.log("[SessionResults] User ID:", userId);
-      console.log("[SessionResults] Session ID:", session.id);
+      console.log("[SessionResults] DEBUG: Loading rankings", {
+        topics: result.topicBreakdown.map(t => t.topicId),
+        userId,
+        sessionId: session.id,
+        topicCount: result.topicBreakdown.length,
+      });
       
       // Expose debug function to window for console access
       (window as any).debugDrillSessions = async (topicId?: string) => {
@@ -182,16 +178,22 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             }
           );
           
-          console.log(`[SessionResults] Rankings for ${topic.topicId}:`, {
-            personal: rankings.personal?.allRankings?.length || 0,
-            global: rankings.global?.allRankings?.length || 0,
-            personalData: rankings.personal,
-            globalData: rankings.global,
+          console.log(`[SessionResults] DEBUG: Rankings loaded for ${topic.topicId}`, {
+            personalCount: rankings.personal?.allRankings?.length || 0,
+            globalCount: rankings.global?.allRankings?.length || 0,
+            personalCurrentRank: rankings.personal?.currentRank,
+            globalCurrentRank: rankings.global?.currentRank,
+            personalTop3Count: rankings.personal?.top3?.length || 0,
+            globalTop3Count: rankings.global?.top3?.length || 0,
           });
           
           newRankings[topic.topicId] = rankings;
         } catch (error) {
-          console.error(`[SessionResults] Error loading rankings for ${topic.topicId}:`, error);
+          console.error(`[SessionResults] ERROR: Failed to load rankings for ${topic.topicId}:`, {
+            error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            topicId: topic.topicId,
+          });
         }
       }
       
@@ -306,7 +308,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   const renderSessionCards = (topicId: string, topicName: string) => {
     const data = rankingsData[topicId]?.[rankingView];
     
-    console.log(`[renderSessionCards] Topic: ${topicId}, View: ${rankingView}, Data:`, data);
+    console.log(`[renderSessionCards] DEBUG: Rendering cards`, {
+      topicId,
+      topicName,
+      view: rankingView,
+      hasData: !!data,
+      dataStructure: data ? {
+        hasTop3: !!data.top3,
+        top3Count: data.top3?.length || 0,
+        currentRank: data.currentRank,
+        adjacentCount: data.adjacent?.length || 0,
+        allRankingsCount: data.allRankings?.length || 0,
+      } : null,
+    });
     
     const isGlobalView = rankingView === "global";
     
@@ -380,7 +394,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       }
 
       if (cards.length === 0) {
-        console.warn('[renderSessionCards] No cards to render despite having structuredData');
+        console.warn('[renderSessionCards] WARNING: No cards to render despite having structuredData', {
+          topicId,
+          view: rankingView,
+          structuredData: {
+            top3Count: structuredData.top3?.length || 0,
+            currentRank: structuredData.currentRank,
+            adjacentCount: structuredData.adjacent?.length || 0,
+          },
+        });
         // Fallback to showing current attempt
         const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
         if (currentTopic) {
@@ -418,7 +440,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     // Fallback for old array format (shouldn't happen, but handle gracefully)
     if (Array.isArray(data)) {
-      console.warn("[renderSessionCards] Received old array format, converting...");
+      console.warn("[renderSessionCards] WARNING: Received old array format, converting...", {
+        topicId,
+        view: rankingView,
+        arrayLength: data.length,
+      });
       return (
         <div className="space-y-3">
           {data.slice(0, 10).map((sessionData: any, idx: number) => 

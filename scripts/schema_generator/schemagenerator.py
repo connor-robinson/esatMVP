@@ -4135,9 +4135,8 @@ class App(tk.Tk):
                 qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
                 result["question_id"] = qid
                 
-                # Mark as used immediately
-                self.used_question_ids.add(qid)
-                self._save_used_questions()
+                # NOTE: Do NOT mark as used here - questions are only marked as used when
+                # they're actually attached to a schema or accepted as a new schema
                 
                 # CRITICAL: Reload schemas to see latest state (including schemas created by other threads)
                 # This ensures each question sees the full history, even schemas created in this session
@@ -4357,6 +4356,10 @@ Return ONLY valid JSON:
             # Update markdown file with new exemplar question
             justification = f"Exemplifies pattern (fit score: {fit_score:.1f})"
             self._update_schema_exemplars_in_file(schema_id, qid, justification)
+            
+            # Mark question as used (it's now in a schema)
+            self.used_question_ids.add(qid)
+            self._save_used_questions()
         
         # Log the attachment
         append_text(DECISIONS_JSONL, json.dumps({
@@ -4462,6 +4465,11 @@ Return ONLY valid JSON:
             # Update coverage stats
             update_schema_coverage(new_id, candidate, self.index)
             
+            # Mark all questions in evidence as used (they're now in a schema)
+            for qid in candidate.evidence:
+                self.used_question_ids.add(qid)
+            self._save_used_questions()
+            
             # Log success
             append_text(DECISIONS_JSONL, json.dumps({
                 "ts": now_iso(),
@@ -4543,16 +4551,9 @@ Return ONLY valid JSON:
         
         batch = stratified_sample_questions(unused_pool, batch_size, max_per_paper, shuffle, seed)
         
-        # Mark these questions as used
-        for q in batch:
-            qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
-            self.used_question_ids.add(qid)
-
-        # Save used questions to disk
-        self._save_used_questions()
-        
-        # Update global questions-used progress after sampling
-        self._update_paper_progress()
+        # NOTE: Do NOT mark questions as used here - they should only be marked as used
+        # when they're actually accepted into schemas (in on_accept_new, on_accept_all, etc.)
+        # This allows questions to be reused if candidates are rejected/ignored
 
         def work():
             self._set_status("Calling Gemini for candidates…")
@@ -4753,10 +4754,20 @@ Return ONLY valid JSON:
     
     def _update_schema_exemplars_in_file(self, schema_id: str, question_id: str, justification: str):
         """Update schema markdown file to add a new exemplar question."""
-        if not self.schemas_md_path.exists():
+        # For TMUA: Determine correct file based on schema prefix
+        target_schemas_path = self.schemas_md_path
+        if MODE == "TMUA":
+            prefix = schema_id[0] if schema_id else "M"
+            if prefix == "R":
+                target_schemas_path = TMUA_PAPER2_SCHEMAS_MD
+            else:
+                # M prefix or any other prefix defaults to Paper 1
+                target_schemas_path = TMUA_PAPER1_SCHEMAS_MD
+        
+        if not target_schemas_path.exists():
             return
         
-        md = safe_read_text(self.schemas_md_path)
+        md = safe_read_text(target_schemas_path)
         lines = md.splitlines()
         
         # Find the schema block
@@ -5189,6 +5200,11 @@ Return ONLY valid JSON:
                     # Update coverage stats for this schema
                     update_schema_coverage(new_id, c, self.index)
                     
+                    # Mark all questions in evidence as used (they're now in a schema)
+                    for qid in c.evidence:
+                        self.used_question_ids.add(qid)
+                    self._save_used_questions()
+                    
                     # Log success
                     hits = self.sim_hits.get(c.candidate_id, [])
                     top_hit = hits[0] if hits else SimilarityHit("?", 0, "?")
@@ -5359,6 +5375,11 @@ Return ONLY valid JSON:
 
         # Update coverage stats for this schema
         update_schema_coverage(new_id, c, self.index)
+        
+        # Mark all questions in evidence as used (they're now in a schema)
+        for qid in c.evidence:
+            self.used_question_ids.add(qid)
+        self._save_used_questions()
 
         append_text(DECISIONS_JSONL, json.dumps({
             "ts": now_iso(),

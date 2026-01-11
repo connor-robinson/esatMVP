@@ -35,16 +35,28 @@ export async function fetchTopicRankings(
     avgTimeMs: number;
   }
 ) {
-  console.log(`[fetchTopicRankings] Fetching for topic: ${topicId}, userId: ${currentUserId}`);
+  console.log(`[fetchTopicRankings] DEBUG: Starting fetch`, {
+    topicId,
+    currentUserId,
+    currentSessionId,
+    hasCurrentSessionData: !!currentSessionData,
+    currentSessionData: currentSessionData ? {
+      score: currentSessionData.score,
+      correctAnswers: currentSessionData.correctAnswers,
+      totalQuestions: currentSessionData.totalQuestions,
+      avgTimeMs: currentSessionData.avgTimeMs,
+    } : null,
+  });
   
   // 1. Fetch Personal History - ALL sessions (only if user is not anonymous)
   let personalData: any[] = [];
   let personalError = null;
   
   if (currentUserId && currentUserId !== "anonymous") {
+    console.log(`[fetchTopicRankings] DEBUG: Fetching personal sessions for user ${currentUserId}, topic ${topicId}`);
     const result = await supabase
       .from("drill_sessions")
-      .select("id, builder_session_id, summary, completed_at, accuracy, average_time_ms, question_count")
+      .select("id, builder_session_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
       .eq("user_id", currentUserId)
       .eq("topic_id", topicId)
       .order("created_at", { ascending: false });
@@ -53,16 +65,34 @@ export async function fetchTopicRankings(
     personalError = result.error;
     
     if (personalError) {
-      console.error("[analytics] Error fetching personal history:", personalError);
+      console.error("[fetchTopicRankings] ERROR: Failed to fetch personal history:", {
+        error: personalError,
+        errorCode: personalError.code,
+        errorMessage: personalError.message,
+        errorDetails: personalError.details,
+        topicId,
+        userId: currentUserId,
+      });
     } else {
-      console.log(`[fetchTopicRankings] Found ${personalData.length} personal sessions for topic ${topicId}`);
+      console.log(`[fetchTopicRankings] DEBUG: Personal sessions fetched`, {
+        count: personalData.length,
+        topicId,
+        userId: currentUserId,
+        sample: personalData.slice(0, 3).map(d => ({
+          id: d.id,
+          builder_session_id: d.builder_session_id,
+          score: d.summary?.score,
+          accuracy: d.accuracy,
+          question_count: d.question_count,
+        })),
+      });
     }
   } else {
-    console.log("[fetchTopicRankings] Skipping personal history fetch (anonymous user)");
+    console.log("[fetchTopicRankings] DEBUG: Skipping personal history fetch (anonymous user)");
   }
 
   // 2. Fetch Global Leaderboard - ALL sessions (no limit)
-  // Simplified query without join to avoid errors
+  console.log(`[fetchTopicRankings] DEBUG: Fetching global sessions for topic ${topicId}`);
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
     .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
@@ -71,9 +101,28 @@ export async function fetchTopicRankings(
     .limit(10000); // Explicit limit to get all data
 
   if (globalError) {
-    console.error("[analytics] Error fetching global leaderboard:", globalError);
+    console.error("[fetchTopicRankings] ERROR: Failed to fetch global leaderboard:", {
+      error: globalError,
+      errorCode: globalError.code,
+      errorMessage: globalError.message,
+      errorDetails: globalError.details,
+      topicId,
+    });
   } else {
-    console.log(`[fetchTopicRankings] Found ${globalData?.length || 0} global sessions for topic ${topicId}`);
+    const globalDataArray = (globalData || []) as any[];
+    console.log(`[fetchTopicRankings] DEBUG: Global sessions fetched`, {
+      count: globalDataArray.length,
+      topicId,
+      uniqueUsers: globalDataArray.length > 0 ? new Set(globalDataArray.map((d: any) => d.user_id)).size : 0,
+      sample: globalDataArray.slice(0, 3).map((d: any) => ({
+        id: d.id,
+        user_id: d.user_id,
+        builder_session_id: d.builder_session_id,
+        score: d.summary?.score,
+        accuracy: d.accuracy,
+        question_count: d.question_count,
+      })),
+    });
   }
 
   const processRankings = (
@@ -86,9 +135,14 @@ export async function fetchTopicRankings(
       avgTimeMs: number;
     }
   ) => {
-    console.log(`[processRankings] Processing ${data?.length || 0} records, isGlobal: ${isGlobal}, hasCurrentData: ${!!currentSessionData}`);
+    console.log(`[processRankings] DEBUG: Processing rankings`, {
+      recordCount: data?.length || 0,
+      isGlobal,
+      hasCurrentData: !!currentSessionData,
+      currentSessionId,
+    });
     
-    let rankings = (data || []).map((d) => {
+    let rankings = (data || []).map((d: any, index: number) => {
       const summary = d.summary as any || {};
       const score = summary.score || 0;
       const correctAnswers = summary.correctAnswers || 0;
@@ -108,6 +162,22 @@ export async function fetchTopicRankings(
         timestamp = new Date(); // Fallback to now
       }
       
+      const isCurrent = d.builder_session_id === currentSessionId;
+      
+      if (index < 3 || isCurrent) {
+        console.log(`[processRankings] DEBUG: Processing record ${index}`, {
+          id: d.id,
+          builder_session_id: d.builder_session_id,
+          isCurrent,
+          score,
+          correctAnswers,
+          totalQuestions,
+          avgTimeMs,
+          accuracy,
+          summary: summary,
+        });
+      }
+      
       return {
         id: d.id,
         userId: d.user_id || currentUserId,
@@ -115,7 +185,7 @@ export async function fetchTopicRankings(
         avatar: undefined,
         score,
         timestamp,
-        isCurrent: d.builder_session_id === currentSessionId,
+        isCurrent,
         correctAnswers,
         totalQuestions,
         avgTimeMs,
@@ -141,16 +211,24 @@ export async function fetchTopicRankings(
       };
 
       // Only add if not already in the list (check by builder_session_id)
-      if (!rankings.find(r => (r as any).builder_session_id === currentSessionId)) {
-        console.log("[processRankings] Adding current session to rankings");
+      const existingIndex = rankings.findIndex(r => (r as any).builder_session_id === currentSessionId);
+      if (existingIndex < 0) {
+        console.log("[processRankings] DEBUG: Adding current session to rankings", {
+          currentSessionId,
+          score: currentSession.score,
+          correctAnswers: currentSession.correctAnswers,
+          totalQuestions: currentSession.totalQuestions,
+        });
         rankings.push(currentSession);
       } else {
-        console.log("[processRankings] Current session already in rankings, updating it");
+        console.log("[processRankings] DEBUG: Current session already in rankings, updating it", {
+          existingIndex,
+          currentSessionId,
+          oldScore: rankings[existingIndex].score,
+          newScore: currentSession.score,
+        });
         // Update existing entry with current data
-        const existingIndex = rankings.findIndex(r => (r as any).builder_session_id === currentSessionId);
-        if (existingIndex >= 0) {
-          rankings[existingIndex] = { ...rankings[existingIndex], ...currentSession };
-        }
+        rankings[existingIndex] = { ...rankings[existingIndex], ...currentSession };
       }
     }
 
@@ -158,7 +236,7 @@ export async function fetchTopicRankings(
     rankings.sort((a, b) => b.score - a.score);
 
     // Add ranks based on score
-    rankings = rankings.map((r, i) => ({ ...r, rank: i + 1 }));
+    rankings = rankings.map((r: any, i: number) => ({ ...r, rank: i + 1 })) as any[];
 
     // Find current session rank
     const currentIndex = rankings.findIndex(r => r.isCurrent);
@@ -173,11 +251,19 @@ export async function fetchTopicRankings(
       // Get rank-1, current, rank+1 (but avoid duplicates with top3)
       const adjacentStart = Math.max(0, currentIndex - 1);
       const adjacentEnd = Math.min(rankings.length, currentIndex + 2);
-      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter(r => (r as any).rank > 3);
-      console.log(`[processRankings] Current rank: ${currentRank}, adjacent ranks:`, adjacent.map(r => (r as any).rank));
+      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter((r: any) => r.rank > 3);
+      console.log(`[processRankings] DEBUG: Current rank: ${currentRank}, adjacent ranks:`, adjacent.map((r: any) => r.rank));
     }
 
-    console.log(`[processRankings] Top 3 ranks: ${top3.map(r => (r as any).rank).join(', ')}, Current rank: ${currentRank}, Total: ${rankings.length}`);
+    console.log(`[processRankings] DEBUG: Final rankings summary`, {
+      isGlobal,
+      totalRankings: rankings.length,
+      top3Scores: top3.map((r: any) => ({ rank: r.rank, score: r.score, userId: r.userId })),
+      currentRank,
+      currentIndex,
+      hasCurrent: currentIndex >= 0,
+      currentScore: currentIndex >= 0 ? rankings[currentIndex].score : null,
+    });
 
     return {
       top3,
@@ -187,9 +273,26 @@ export async function fetchTopicRankings(
     };
   };
 
+  const personalResult = processRankings(personalData || [], false, currentSessionData);
+  const globalResult = processRankings((globalData || []) as any[], true, currentSessionData);
+
+  console.log(`[fetchTopicRankings] DEBUG: Final results`, {
+    topicId,
+    personal: {
+      totalRankings: personalResult.allRankings.length,
+      top3Count: personalResult.top3.length,
+      currentRank: personalResult.currentRank,
+    },
+    global: {
+      totalRankings: globalResult.allRankings.length,
+      top3Count: globalResult.top3.length,
+      currentRank: globalResult.currentRank,
+    },
+  });
+
   return {
-    personal: processRankings(personalData || [], false, currentSessionData),
-    global: processRankings(globalData || [], true, currentSessionData),
+    personal: personalResult,
+    global: globalResult,
   };
 }
 
