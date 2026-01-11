@@ -24,6 +24,11 @@ const papersNavItems = [
   { href: "/papers/analytics", label: "Analytics" },
 ];
 
+const questionsNavItems = [
+  { href: "/questions/bank", label: "Bank" },
+  { href: "/questions/library", label: "Library" },
+];
+
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -37,7 +42,11 @@ export function Navbar() {
     : pathname.startsWith("/questions") ? "questions"
     : "home";
 
-  const currentNavItems = currentSection === "skills" ? skillsNavItems : currentSection === "papers" ? papersNavItems : [];
+  const currentNavItems = 
+    currentSection === "skills" ? skillsNavItems 
+    : currentSection === "papers" ? papersNavItems 
+    : currentSection === "questions" ? questionsNavItems
+    : [];
 
   useEffect(() => {
     const allRoutes = [
@@ -48,7 +57,8 @@ export function Navbar() {
       "/papers/library",
       "/papers/drill",
       "/papers/analytics",
-      "/questions",
+      "/questions/bank",
+      "/questions/library",
     ];
 
     allRoutes.forEach((route, index) => {
@@ -114,7 +124,7 @@ export function Navbar() {
               </Link>
               <span className="text-sm text-white/30">/</span>
               <Link
-                href="/questions"
+                href="/questions/bank"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
                   pathname.startsWith("/questions") ? "text-interview" : "text-white/50 hover:text-white/80"
@@ -147,7 +157,9 @@ export function Navbar() {
                         isActive
                           ? currentSection === "skills"
                             ? "bg-primary/10 text-primary"
-                            : "bg-[#5B8D94]/10 text-[#5B8D94]"
+                            : currentSection === "papers"
+                            ? "bg-[#5B8D94]/10 text-[#5B8D94]"
+                            : "bg-interview/10 text-interview"
                           : "text-white/60 hover:text-white/90 hover:bg-white/5",
                         isPressed && !isActive && "bg-[#121418] scale-[0.97]"
                       )}

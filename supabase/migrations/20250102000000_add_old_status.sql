@@ -14,3 +14,8 @@ CHECK (status IN ('pending_review', 'approved', 'rejected', 'needs_revision', 'o
 COMMENT ON COLUMN ai_generated_questions.status IS 
   'Review status: pending_review (default), approved, rejected, needs_revision, or old (archived)';
 
+
+
+
+
+

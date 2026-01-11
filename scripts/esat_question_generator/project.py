@@ -96,9 +96,25 @@ except Exception:
 class ModelsConfig:
     designer: str = "gemini-3-pro-preview"
     implementer: str = "gemini-3-pro-preview"
-    verifier: str = "gemini-3-pro-preview"
+    verifier: str = "gemini-2.5-flash"
     style_judge: str = "gemini-2.5-flash"
     classifier: str = "gemini-2.5-flash"  # NEW: For curriculum tag classification
+
+
+def get_default_models_config() -> ModelsConfig:
+    """
+    Returns a ModelsConfig instance with default model values.
+    This is the single source of truth for model defaults.
+    Environment variables can override individual models.
+    """
+    import os
+    return ModelsConfig(
+        designer=os.environ.get("MODEL_DESIGNER", "gemini-3-pro-preview"),
+        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-3-pro-preview"),
+        verifier=os.environ.get("MODEL_VERIFIER", "gemini-2.5-flash"),
+        style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
+        classifier=os.environ.get("MODEL_CLASSIFIER", "gemini-2.5-flash"),
+    )
 
 
 @dataclass
@@ -1951,12 +1967,7 @@ def main():
         allow_schema_prefixes=tuple(schema_prefixes.split(",")),
     )
 
-    models = ModelsConfig(
-        designer=os.environ.get("MODEL_DESIGNER", "gemini-3-pro-preview"),
-        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-3-pro-preview"),
-        verifier=os.environ.get("MODEL_VERIFIER", "gemini-3-pro-preview"),
-        style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
-    )
+    models = get_default_models_config()
 
     n = int(n_items)
     run_many(n=n, base_dir=base_dir, cfg=cfg, models=models)
@@ -2329,12 +2340,10 @@ def run_gui():
         allow_schema_prefixes=("M",),  # Math only for GUI
     )
     
-    models = ModelsConfig(
-        designer=os.environ.get("MODEL_DESIGNER", "gemini-3-pro-preview"),
-        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-3-pro-preview"),
-        verifier=os.environ.get("MODEL_VERIFIER", "gemini-3-pro-preview"),
-        style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
-    )
+    models = get_default_models_config()
+    # Override style_judge for this specific function if needed
+    if os.environ.get("MODEL_STYLE"):
+        models.style_judge = os.environ.get("MODEL_STYLE")
     
     root = tk.Tk()
     app = PipelineGUI(root, base_dir, cfg, models)

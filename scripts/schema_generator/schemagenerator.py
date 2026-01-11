@@ -87,11 +87,14 @@ SCHEMAS_DIR_DEFAULT = PROJECT_ROOT_DEFAULT / "scripts" / "esat_question_generato
 
 # Select schemas file based on MODE
 if MODE == "TMUA":
-    SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+    # TMUA has TWO separate schema files (Paper 1 and Paper 2 are different exam types)
+    SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA_Paper1.md"  # Default to Paper 1
 else:  # ESAT mode
     SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_ESAT.md"
 
-TMUA_SCHEMAS_MD_DEFAULT = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+# TMUA separate schema files
+TMUA_PAPER1_SCHEMAS_MD = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA_Paper1.md"  # Mathematical Knowledge
+TMUA_PAPER2_SCHEMAS_MD = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA_Paper2.md"  # Mathematical Reasoning
 
 # Cache + logs now live alongside schemas for easier reasoning about one "schemas" area
 CACHE_DIR_DEFAULT = SCHEMAS_DIR_DEFAULT / "_cache"
@@ -135,10 +138,13 @@ class QuestionItem:
     pdf_path: str
     year: Optional[str]
     exam: Optional[str]
-    section: Optional[str]
+    section: Optional[str]  # For TMUA: "Paper 1" or "Paper 2"
     qnum: int
     text: str
     skipped_diagram: bool
+    # TMUA Official Solutions fields
+    solution_text: Optional[str] = None  # Full solution text from Official Solutions PDF
+    solution_pdf_path: Optional[str] = None  # Path to the Official Solutions PDF that provided this solution
 
 @dataclass
 class SchemaSummary:
@@ -755,6 +761,82 @@ def get_tmua_prefix_from_evidence(candidate: Candidate) -> Optional[str]:
         return None  # Mixed or unclear
 
 
+def get_tmua_paper_type_from_evidence_ids(evidence_ids: List[str]) -> tuple[str, bool]:
+    """
+    Determine TMUA paper type from evidence/question IDs.
+    Returns: (paper_type, is_mixed) where paper_type is "Paper1", "Paper2", or "Mixed"
+    """
+    paper1_count = 0
+    paper2_count = 0
+    
+    for qid in evidence_ids:
+        qid_upper = str(qid).upper()
+        if "TMUA" in qid_upper:
+            if "PAPER1" in qid_upper or "PAPER 1" in qid_upper or "_PAPER1" in qid_upper:
+                paper1_count += 1
+            elif "PAPER2" in qid_upper or "PAPER 2" in qid_upper or "_PAPER2" in qid_upper:
+                paper2_count += 1
+    
+    if paper1_count > 0 and paper2_count == 0:
+        return ("Paper1", False)
+    elif paper2_count > 0 and paper1_count == 0:
+        return ("Paper2", False)
+    elif paper1_count > 0 and paper2_count > 0:
+        return ("Mixed", True)
+    else:
+        # No clear TMUA evidence - check prefix
+        # M prefix = Paper 1, R prefix = Paper 2 (for schemas already created)
+        return ("Unknown", False)
+
+
+def extract_schema_blocks_from_markdown(markdown: str) -> List[tuple[str, str]]:
+    """
+    Extract individual schema blocks from markdown.
+    Returns: List of (schema_id, block_text) tuples.
+    """
+    blocks = []
+    lines = markdown.splitlines()
+    
+    i = 0
+    while i < len(lines):
+        m = SCHEMA_HEADER_RE.match(lines[i].strip())
+        if not m:
+            i += 1
+            continue
+        
+        schema_id = m.group(1)
+        block_start = i
+        
+        # Find the end of this schema block (next schema header or end of file)
+        i += 1
+        while i < len(lines):
+            line = lines[i].strip()
+            # Stop at next schema header
+            if SCHEMA_HEADER_RE.match(line):
+                break
+            # Stop at separator after schema content
+            if line == "---" and i > block_start + 5:  # At least a few lines of content
+                i += 1  # Include the separator
+                break
+            i += 1
+        
+        # Extract the block
+        block_lines = lines[block_start:i]
+        block_text = "\n".join(block_lines)
+        
+        # Ensure block ends with separator
+        if not block_text.strip().endswith("---"):
+            block_text += "\n\n---\n"
+        
+        blocks.append((schema_id, block_text))
+        
+        # If we hit a separator, skip it
+        if i < len(lines) and lines[i].strip() == "---":
+            i += 1
+    
+    return blocks
+
+
 # ----------------------------
 # Feature: Used questions tracking
 # ----------------------------
@@ -1265,6 +1347,52 @@ def infer_exam_section_from_path(pdf_path: Path) -> Tuple[Optional[str], Optiona
     return exam, section, year
 
 
+def get_paper_identifier_from_path(pdf_path: Path) -> str:
+    """
+    Extract normalized paper identifier from path for matching Past Papers with Official Solutions.
+    Example: "TMUA 2023 Paper 1 Past Paper.pdf" -> "TMUA_2023_Paper1"
+    Example: "TMUA 2023 Paper 1 Official Solutions.pdf" -> "TMUA_2023_Paper1"
+    """
+    exam, section, year = infer_exam_section_from_path(pdf_path)
+    
+    # Build normalized identifier
+    parts = []
+    if exam:
+        parts.append(exam.upper())
+    if year:
+        parts.append(year)
+    if section:
+        # Normalize section: "Paper 1" -> "Paper1", "Section 1" -> "Section1"
+        section_normalized = section.replace(" ", "")
+        parts.append(section_normalized)
+    
+    if not parts:
+        # Fallback: try to extract from filename
+        name_lower = pdf_path.name.lower()
+        # Look for patterns like "tmua 2023 paper 1"
+        m = re.search(r"(tmua|nsaa|engaa)\s*(\d{4})\s*(paper|section)\s*(\d)", name_lower)
+        if m:
+            parts = [m.group(1).upper(), m.group(2), f"{m.group(3).capitalize()}{m.group(4)}"]
+        else:
+            # Last resort: use stem
+            parts = [pdf_path.stem]
+    
+    return "_".join(parts)
+
+
+def find_matching_solutions_pdf(past_paper_path: Path, solutions_list: List[Path]) -> Optional[Path]:
+    """
+    Find Official Solutions PDF that matches a Past Paper.
+    Returns the matching solutions PDF path, or None if not found.
+    """
+    paper_id = get_paper_identifier_from_path(past_paper_path)
+    for sol_path in solutions_list:
+        sol_id = get_paper_identifier_from_path(sol_path)
+        if paper_id == sol_id:
+            return sol_path
+    return None
+
+
 def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[bool, str]:
     """
     Validate extracted questions meet quality thresholds.
@@ -1274,7 +1402,8 @@ def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[
     - Total non-whitespace chars < 500
     - Zero questions detected
     - Median question length < 40 chars
-    - No option letters (A/B/C/D) found anywhere
+    - For non-TMUA: No option letters found (A-D)
+    - For TMUA: More lenient - options might be on separate answer sheet
     """
     if not items:
         return False, "No questions detected"
@@ -1292,12 +1421,23 @@ def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[
     if median_length < 40:
         return False, f"Questions too short (median {median_length} chars < 40 threshold)"
     
-    # Check for option letters (A/B/C/D) in at least some questions
+    # Check if this is a TMUA paper
+    is_tmua = any("TMUA" in str(pdf_path).upper() for item in items if item.exam == "TMUA") or "TMUA" in str(pdf_path).upper()
+    
+    # For TMUA: More lenient validation - options might be on separate answer sheet
+    # Just check that we have reasonable question count (15-25 questions expected)
+    if is_tmua:
+        if len(items) < 10:
+            return False, f"Too few questions extracted ({len(items)} < 10) - likely extraction issue"
+        # Don't require option letters for TMUA - they might be on answer sheet
+        return True, ""
+    
+    # For non-TMUA: Check for option letters (A-D)
     all_text = " ".join(q.text for q in items)
-    has_options = bool(re.search(r'[A-D]\)|[A-D]\.|\(A\)|\(B\)|\(C\)|\(D\)', all_text))
+    has_options = bool(re.search(r'[A-D]\)|[A-D]\.|\([A-D]\)|[A-D]:', all_text))
     
     if not has_options:
-        return False, "No option letters (A/B/C/D) found - likely not a question paper"
+        return False, "No option letters (A-D) found - likely not a question paper"
     
     return True, ""
 
@@ -1305,8 +1445,8 @@ def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[
 def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, bool]] = None) -> Tuple[List[QuestionItem], PDFExtractionStats]:
     """
     Best-effort question extraction:
-    - Reads page text
-    - Splits by question-number lines (with fallback patterns)
+    - For TMUA: Uses per-page extraction (one question per page typically)
+    - For others: Splits by question-number lines (with fallback patterns)
     - Annotates diagram skip (with overrides)
     """
     exam, section, year = infer_exam_section_from_path(pdf_path)
@@ -1315,71 +1455,93 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
     doc = fitz.open(pdf_path)
     items: List[QuestionItem] = []
     overrides = overrides or {}
-
-    for pi in range(doc.page_count):
+    
+    # Check if this is a TMUA paper - use per-page extraction
+    is_tmua = exam == "TMUA"
+    
+    # For TMUA, skip first page (cover/instructions), then use one question per page
+    start_page = 1 if is_tmua else 0
+    
+    for pi in range(start_page, doc.page_count):
         page = doc.load_page(pi)
         raw = page.get_text("text") or ""
         text = normalize_spaces(raw)
-        if not text:
+        if not text or len(text.strip()) < 50:  # Skip blank pages
             continue
 
         page_has_diagram = detect_page_has_diagram(page)
-
-        # Split into question blocks - try primary pattern first
-        lines = text.splitlines()
-        starts: List[Tuple[int, int, str]] = []
-        pattern_used = "primary"
         
-        for idx, line in enumerate(lines):
-            m = QSTART_RE.match(line)
-            if m:
-                qnum = int(m.group(1))
-                starts.append((idx, qnum, m.group(2)))
-        
-        # Try fallback patterns if primary found nothing
-        if not starts:
-            for idx, line in enumerate(lines):
-                for pattern_name, pattern_re in [
-                    ("fallback1", QSTART_RE_FALLBACK1),
-                    ("fallback2", QSTART_RE_FALLBACK2),
-                    ("fallback3", QSTART_RE_FALLBACK3),
-                ]:
-                    m = pattern_re.match(line)
-                    if m:
-                        qnum = int(m.group(1))
-                        rest = m.group(2) if pattern_re.groups >= 2 else ""
-                        starts.append((idx, qnum, rest))
-                        pattern_used = pattern_name
-                        break
-                if starts:
-                    break
-
-        if not starts:
-            continue
-
-        for si, (start_idx, qnum, first_line_rest) in enumerate(starts):
-            end_idx = starts[si + 1][0] if si + 1 < len(starts) else len(lines)
-            block_lines = [f"{qnum} {first_line_rest}"] + lines[start_idx + 1:end_idx]
-            qtext = normalize_spaces("\n".join(block_lines))
+        if is_tmua:
+            # TMUA: One question per page - extract question number from first few lines
+            lines = text.splitlines()
+            qnum = None
             
-            # Sanity filter: skip questions that are too short or malformed
-            if len(qtext.strip()) < 40:
-                # Too short - likely extraction error
+            # Try to find question number in first 5 non-empty lines
+            # TMUA question numbers are typically at the very top of the page
+            qnum = None
+            for line_idx, line in enumerate(lines[:5]):
+                line_stripped = line.strip()
+                if not line_stripped or line_stripped.lower() in ["blank page", "page", ""]:
+                    continue
+                
+                # Pattern 1: Just number alone on line (most common for TMUA): "1", "2", "3"
+                m = re.match(r"^(\d{1,2})\s*$", line_stripped)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 25:
+                        qnum = candidate
+                        break
+                
+                # Pattern 2: Number followed by space and text: "1 ", "2 "
+                # Must be at start of line and have substantial content after
+                m = re.match(r"^(\d{1,2})\s+", line_stripped)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 25 and len(line_stripped) > 5:  # Must have content after number
+                        qnum = candidate
+                        break
+                
+                # Pattern 3: "Question N" or "Q N" (explicit)
+                m = re.match(r"^Question\s+(\d{1,2})[:\.]?\s*", line_stripped, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 25:
+                        qnum = candidate
+                        break
+                m = re.match(r"^Q\.?\s*(\d{1,2})[:\.]?\s*", line_stripped, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 25:
+                        qnum = candidate
+                        break
+            
+            # If no explicit question number found, infer from page number
+            # (accounting for skipped cover page) - but only for reasonable page numbers
+            if qnum is None:
+                inferred_qnum = (pi - start_page) + 1
+                # Only use inference if it's reasonable (1-25)
+                if 1 <= inferred_qnum <= 25:
+                    qnum = inferred_qnum
+                else:
+                    # Skip this page if we can't determine question number
+                    continue
+            
+            # Use entire page text as question text
+            qtext = text.strip()
+            
+            # Skip if page appears to be instructions/cover or too many questions
+            if qnum > 25 or len(qtext) < 100:
                 continue
             
-            if not re.search(r'[A-D]\)|[A-D]\.|\(A\)|\(B\)', qtext):
-                # No option letters - might not be a multiple choice question
-                # (Allow it through but note this in logs if needed)
-                pass
-
-            # Diagram detection: check override first, then use likelihood score
-            if qnum in overrides:
-                # override True = force include (i.e. not skipped)
-                skipped = not overrides[qnum]
-            else:
-                # Use per-question diagram likelihood score
-                diagram_score = compute_diagram_likelihood(qtext, page_has_diagram)
-                skipped = diagram_score > 0.5
+            # TMUA uses A-J options (10 choices) - but allow through even without explicit options
+            # (options might be on separate answer sheet)
+            
+            # Diagram detection: User requested to ignore diagram filtering for now
+            # Always set skipped_diagram = False (don't filter out any questions)
+            skipped = False
+            
+            # Note: We don't skip questions here - we'll handle that in build_or_load_index
+            # after extracting solutions, so we can still match solutions to question numbers
 
             item = QuestionItem(
                 paper_id=paper_id,
@@ -1389,9 +1551,70 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
                 section=section,
                 qnum=qnum,
                 text=qtext,
-                skipped_diagram=skipped,
+                skipped_diagram=skipped,  # Always False now
             )
             items.append(item)
+                
+        else:
+            # Non-TMUA: Original multi-question-per-page logic
+            lines = text.splitlines()
+            starts: List[Tuple[int, int, str]] = []
+            
+            for idx, line in enumerate(lines):
+                m = QSTART_RE.match(line)
+                if m:
+                    qnum = int(m.group(1))
+                    starts.append((idx, qnum, m.group(2)))
+            
+            # Try fallback patterns if primary found nothing
+            if not starts:
+                for idx, line in enumerate(lines):
+                    for pattern_name, pattern_re in [
+                        ("fallback1", QSTART_RE_FALLBACK1),
+                        ("fallback2", QSTART_RE_FALLBACK2),
+                        ("fallback3", QSTART_RE_FALLBACK3),
+                    ]:
+                        m = pattern_re.match(line)
+                        if m:
+                            qnum = int(m.group(1))
+                            rest = m.group(2) if pattern_re.groups >= 2 else ""
+                            starts.append((idx, qnum, rest))
+                            break
+                    if starts:
+                        break
+
+            if not starts:
+                continue
+            
+            # Process all questions found on this page
+            for si, (start_idx, qnum, first_line_rest) in enumerate(starts):
+                end_idx = starts[si + 1][0] if si + 1 < len(starts) else len(lines)
+                block_lines = [f"{qnum} {first_line_rest}"] + lines[start_idx + 1:end_idx]
+                qtext = normalize_spaces("\n".join(block_lines))
+                
+                # Sanity filter: skip questions that are too short or malformed
+                if len(qtext.strip()) < 40:
+                    continue
+                
+                # Validate options (non-TMUA uses A-D)
+                if not re.search(r'[A-D]\)|[A-D]\.|\([A-D]\)', qtext):
+                    continue
+                
+                # Diagram detection: User requested to ignore diagram filtering for now
+                # Always set skipped_diagram = False (don't filter out any questions)
+                skipped = False
+
+                item = QuestionItem(
+                    paper_id=paper_id,
+                    pdf_path=str(pdf_path),
+                    year=year,
+                    exam=exam,
+                    section=section,
+                    qnum=qnum,
+                    text=qtext,
+                    skipped_diagram=skipped,
+                )
+                items.append(item)
 
     doc.close()
     
@@ -1417,7 +1640,91 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
     return items, stats
 
 
-def save_extraction_report(stats: List[PDFExtractionStats], total_scanned: int) -> None:
+def extract_solutions_from_official_solutions_pdf(pdf_path: Path) -> Dict[int, str]:
+    """
+    Extract question number -> solution text mappings from Official Solutions PDF.
+    Returns: {1: "solution text for Q1", 2: "solution text for Q2", ...}
+    Handles multiple solutions per page and various question marker formats.
+    """
+    doc = fitz.open(pdf_path)
+    solutions: Dict[int, str] = {}
+    
+    # Pattern to match question markers: "Question 1", "Q1", "1.", "1)", etc.
+    question_marker_patterns = [
+        re.compile(r"^Question\s+(\d{1,2})[:\.]?\s*", re.IGNORECASE),
+        re.compile(r"^Q\.?\s*(\d{1,2})[:\.]?\s*", re.IGNORECASE),
+        re.compile(r"^(\d{1,2})[:\.\)]\s+", re.IGNORECASE),
+        re.compile(r"^(\d{1,2})\s+", re.IGNORECASE),  # Just number + space (like "1 ")
+    ]
+    
+    # Extract all text from all pages
+    full_text = ""
+    for page_num in range(doc.page_count):
+        page = doc.load_page(page_num)
+        page_text = page.get_text("text") or ""
+        full_text += normalize_spaces(page_text) + "\n"
+    
+    doc.close()
+    
+    # Find all question markers and their positions
+    lines = full_text.splitlines()
+    question_positions: List[Tuple[int, int]] = []  # (line_index, question_num)
+    
+    for idx, line in enumerate(lines):
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+            
+        for pattern in question_marker_patterns:
+            m = pattern.match(line_stripped)
+            if m:
+                try:
+                    qnum = int(m.group(1))
+                    # Only accept reasonable question numbers (1-25 for TMUA)
+                    if 1 <= qnum <= 25:
+                        question_positions.append((idx, qnum))
+                        break
+                except (ValueError, IndexError):
+                    continue
+    
+    if not question_positions:
+        # Fallback: look for numbered sections in text
+        print(f"[WARN] No question markers found in {pdf_path.name}, trying alternative patterns")
+        return solutions
+    
+    # Sort by line index to ensure correct order
+    question_positions.sort()
+    
+    # Extract solution text between question markers
+    for i, (start_idx, qnum) in enumerate(question_positions):
+        # End at next question marker or end of document
+        end_idx = question_positions[i + 1][0] if i + 1 < len(question_positions) else len(lines)
+        
+        # Extract solution text (skip the question marker line itself)
+        solution_lines = lines[start_idx + 1:end_idx]
+        solution_text = normalize_spaces("\n".join(solution_lines))
+        
+        # Clean up: remove common prefixes/suffixes that might have been included
+        solution_text = re.sub(r"^(Solution|Answer|Solution:?|Answer:?)\s*:?\s*", "", solution_text, flags=re.IGNORECASE)
+        solution_text = solution_text.strip()
+        
+        # Remove trailing dots/dashes that might be from page formatting
+        solution_text = re.sub(r"\.+$", "", solution_text)  # Remove trailing dots
+        solution_text = solution_text.strip()
+        
+        if solution_text and len(solution_text) > 10:  # Minimum reasonable solution length
+            # If we already have a solution for this question number, append (might be continuation)
+            if qnum in solutions:
+                solutions[qnum] += "\n\n" + solution_text
+            else:
+                solutions[qnum] = solution_text
+    
+    return solutions
+
+
+def save_extraction_report(stats: List[PDFExtractionStats], total_scanned: int, 
+                          solution_coverage: Optional[Dict[str, int]] = None,
+                          discarded_papers: int = 0) -> None:
     """Save extraction report to _logs/extraction_report.json"""
     report_path = LOG_DIR_DEFAULT / "extraction_report.json"
     
@@ -1438,6 +1745,15 @@ def save_extraction_report(stats: List[PDFExtractionStats], total_scanned: int) 
         },
         "per_pdf": [asdict(s) for s in stats]
     }
+    
+    # Add TMUA-specific stats if available
+    if MODE == "TMUA" and solution_coverage:
+        report["tmua_stats"] = {
+            "discarded_papers_without_solutions": discarded_papers,
+            "total_questions": solution_coverage["total_questions"],
+            "questions_with_solutions": solution_coverage["questions_with_solutions"],
+            "solution_coverage_percent": (solution_coverage["questions_with_solutions"] / solution_coverage["total_questions"] * 100) if solution_coverage["total_questions"] > 0 else 0.0
+        }
     
     safe_write_text(report_path, json.dumps(report, indent=2))
     print(f"[INFO] Extraction report saved to {report_path}")
@@ -1478,6 +1794,18 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
             items = [q for q in items if q.exam != "TMUA"]  # Includes None values
         
         print(f"[INDEX] After filtering: {before_count} -> {len(items)} questions")
+        
+        # Remove unknown papers (section = None, "?", or empty)
+        before_unknown_filter = len(items)
+        items = [
+            q for q in items
+            if q.section  # Must have a section
+            and q.section != "?"  # Not unknown
+            and (isinstance(q.section, str) and q.section.strip() != "")  # Not empty
+        ]
+        if before_unknown_filter > len(items):
+            print(f"[INDEX] Removed {before_unknown_filter - len(items)} questions from unknown papers")
+        
         return items
 
     # Discover PDFs
@@ -1502,8 +1830,40 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     if before_count > len(pdfs):
         print(f"[INDEX] Spec filter: {before_count} -> {len(pdfs)} PDFs (excluded Spec folders)")
 
-    # Filter to only include "Past Paper" files (exclude answer keys, conversion tables, etc.)
-    if not include_non_papers:
+    # Track valid paper pairs for TMUA mode (will be used in extraction loop)
+    valid_tmua_pairs: List[Tuple[Path, Path]] = []
+    discarded_tmua_count = 0
+    tmua_solutions_map: Dict[Path, Path] = {}  # Lookup: past_paper_path -> solutions_path
+    
+    # Filter PDFs based on mode - TMUA mode handles Past Papers and Official Solutions differently
+    if MODE == "TMUA":
+        # Step 1: Separate Past Papers from Official Solutions
+        past_papers = [p for p in pdfs if "past paper" in p.name.lower()]
+        official_solutions = [p for p in pdfs if "official solutions" in p.name.lower()]
+        
+        print(f"[INDEX] TMUA mode: Found {len(past_papers)} Past Papers and {len(official_solutions)} Official Solutions PDFs")
+        
+        # Step 2: Match Past Papers with Official Solutions and discard unmatched
+        for pp in past_papers:
+            matching_solution = find_matching_solutions_pdf(pp, official_solutions)
+            if matching_solution:
+                valid_tmua_pairs.append((pp, matching_solution))
+                tmua_solutions_map[pp] = matching_solution
+            else:
+                paper_id = get_paper_identifier_from_path(pp)
+                print(f"[SKIP] No Official Solutions found for {pp.name} (ID: {paper_id}) - discarding paper")
+                discarded_tmua_count += 1
+        
+        print(f"[INDEX] TMUA mode: Matched {len(valid_tmua_pairs)} paper pairs, discarded {discarded_tmua_count} papers without solutions")
+        
+        # Step 3: Only process Past Papers that have solutions (solutions will be processed with their pairs)
+        pdfs = [pp for pp, _ in valid_tmua_pairs]
+        
+        if len(pdfs) == 0:
+            print(f"[WARN] No valid TMUA paper pairs found! Need both Past Papers and matching Official Solutions.")
+    
+    elif not include_non_papers:
+        # ESAT mode: Filter to only include "Past Paper" files (exclude answer keys, conversion tables, etc.)
         before_count = len(pdfs)
         # Only include files with "Past Paper" in the filename
         pdfs = [p for p in pdfs if "past paper" in p.name.lower()]
@@ -1525,6 +1885,7 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     total_pdfs = len(pdfs)
     all_items: List[QuestionItem] = []
     extraction_stats: List[PDFExtractionStats] = []
+    solution_coverage_stats: Dict[str, int] = {"total_questions": 0, "questions_with_solutions": 0}
 
     for i, pdf in enumerate(pdfs, 1):
         try:
@@ -1554,6 +1915,96 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
                 # Extract and cache
                 pdf_overrides = overrides_map.get(str(pdf), {})
                 items, stats = extract_questions_from_pdf(pdf, pdf_overrides)
+                
+                # For TMUA mode: Extract solutions and match to questions
+                if MODE == "TMUA" and stats.status == "SUCCESS" and pdf in tmua_solutions_map:
+                    matching_solutions_path = tmua_solutions_map[pdf]
+                    try:
+                        solutions_dict = extract_solutions_from_official_solutions_pdf(matching_solutions_path)
+                        print(f"[INDEX] Extracted {len(solutions_dict)} solutions from {matching_solutions_path.name}")
+                        
+                        # Check if this paper should skip questions (unknown papers or TMUA 2017 Paper 1)
+                        exam, section, year = infer_exam_section_from_path(pdf)
+                        
+                        # Check if extracted items have unknown sections (section is None, "?", or empty)
+                        # This is the primary check - if items have unknown sections, skip questions
+                        items_have_unknown_section = items and any(
+                            not q.section or 
+                            q.section == "?" or 
+                            (isinstance(q.section, str) and q.section.strip() == "")
+                            for q in items
+                        )
+                        
+                        # Also check path inference result as fallback
+                        has_unknown_section_from_path = not section or section == "?" or (isinstance(section, str) and section.strip() == "")
+                        is_unknown = items_have_unknown_section or has_unknown_section_from_path or (not exam and not year)
+                        
+                        # Check if this is TMUA 2017 Paper 1 (check both path and items)
+                        is_2017_paper1_from_path = (exam == "TMUA" and year == "2017" and section and "Paper 1" in section)
+                        items_are_2017_paper1 = items and any(
+                            q.year == "2017" and q.section and "Paper 1" in q.section
+                            for q in items
+                        )
+                        is_2017_paper1 = is_2017_paper1_from_path or items_are_2017_paper1
+                        
+                        # For unknown papers: delete everything (don't save anything)
+                        # For TMUA 2017 Paper 1: skip questions but save solutions
+                        
+                        if is_unknown:
+                            # Delete unknown papers completely - don't save anything
+                            print(f"[INDEX] Deleting unknown paper {pdf.name} completely (including solutions)")
+                            items = []  # Clear all items
+                        elif is_2017_paper1:
+                            # Only save solutions, not questions (for TMUA 2017 Paper 1)
+                            print(f"[INDEX] Skipping questions for {pdf.name} (buggy questions), but saving {len(solutions_dict)} solutions")
+                            # Create solution-only items (with minimal question text)
+                            solution_items = []
+                            for qnum, solution_text in solutions_dict.items():
+                                solution_item = QuestionItem(
+                                    paper_id=f"SOLUTION_ONLY_{pdf.stem}",
+                                    pdf_path=str(pdf),
+                                    year=year,
+                                    exam=exam,
+                                    section=section,
+                                    qnum=qnum,
+                                    text=f"[Question {qnum} - question text not saved due to extraction issues]",
+                                    skipped_diagram=False,
+                                    solution_text=solution_text,
+                                    solution_pdf_path=str(matching_solutions_path)
+                                )
+                                solution_items.append(solution_item)
+                            items = solution_items  # Replace items with solution-only items
+                            print(f"[INDEX] Saved {len(solution_items)} solutions (questions skipped)")
+                        else:
+                            # Normal flow: Match solutions to questions
+                            matched_count = 0
+                            unmatched_questions = []
+                            unmatched_solutions = []
+                            
+                            for question in items:
+                                if question.qnum in solutions_dict:
+                                    question.solution_text = solutions_dict[question.qnum]
+                                    question.solution_pdf_path = str(matching_solutions_path)
+                                    matched_count += 1
+                                else:
+                                    unmatched_questions.append(question.qnum)
+                            
+                            # Check which solutions weren't matched
+                            matched_qnums = set(q.qnum for q in items if q.solution_text)
+                            for sol_qnum in solutions_dict.keys():
+                                if sol_qnum not in matched_qnums:
+                                    unmatched_solutions.append(sol_qnum)
+                            
+                            print(f"[INDEX] Matched {matched_count}/{len(items)} solutions to questions for {pdf.name}")
+                            if unmatched_questions:
+                                print(f"  [WARN] Questions without solutions: {sorted(unmatched_questions)[:10]}{'...' if len(unmatched_questions) > 10 else ''}")
+                            if unmatched_solutions:
+                                print(f"  [WARN] Solutions without matching questions: {sorted(unmatched_solutions)[:10]}{'...' if len(unmatched_solutions) > 10 else ''}")
+                            
+                            solution_coverage_stats["questions_with_solutions"] += matched_count
+                    except Exception as e:
+                        print(f"[WARN] Failed to extract solutions from {matching_solutions_path.name}: {e}")
+                
                 # Only cache if extraction was successful
                 if stats.status == "SUCCESS":
                     # Save to per-PDF cache
@@ -1569,8 +2020,18 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
                     progress_callback(i, total_pdfs, f"{pdf.name} (SKIPPED: {stats.failure_reason})")
                 continue
             
-            # Debug: Show exam detection for this PDF
-            if items:
+            # Show clean summary for this PDF (only in TMUA mode for cleaner output)
+            if items and MODE == "TMUA":
+                # Extract paper info for cleaner output
+                paper_info = ""
+                if items:
+                    first_q = items[0]
+                    year = first_q.year or "?"
+                    section = first_q.section or "?"
+                    paper_info = f"{year} {section}"
+                print(f"[INDEX] {paper_info}: {len(items)} questions extracted")
+            elif items:
+                # For non-TMUA, show detailed info
                 exam_counts = {}
                 for q in items:
                     exam = q.exam or "None"
@@ -1586,6 +2047,9 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
             
             if before_filter > len(items):
                 print(f"[INDEX] {pdf.name}: Filtered {before_filter} -> {len(items)} questions (mode={MODE})")
+            
+            # Update solution coverage stats
+            solution_coverage_stats["total_questions"] += len(items)
             
             all_items.extend(items)
         except Exception as e:
@@ -1606,11 +2070,46 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     # Save aggregated cache
     safe_write_text(INDEX_JSON, json.dumps([asdict(x) for x in all_items], indent=2))
     
-    # Save extraction report
-    save_extraction_report(extraction_stats, total_pdfs)
+    # Save extraction report with solution coverage stats
+    save_extraction_report(extraction_stats, total_pdfs, solution_coverage_stats if MODE == "TMUA" else None, discarded_tmua_count if MODE == "TMUA" else 0)
     
-    # Final summary
-    print(f"[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
+    # Final summary - cleaner output for TMUA
+    if MODE == "TMUA" and len(all_items) > 0:
+        # Group by paper type and year for cleaner output
+        paper1_questions = [q for q in all_items if q.section and "Paper 1" in q.section]
+        paper2_questions = [q for q in all_items if q.section and "Paper 2" in q.section]
+        
+        # Group by year
+        paper1_by_year = {}
+        paper2_by_year = {}
+        for q in paper1_questions:
+            year = q.year or "Unknown"
+            paper1_by_year[year] = paper1_by_year.get(year, 0) + 1
+        for q in paper2_questions:
+            year = q.year or "Unknown"
+            paper2_by_year[year] = paper2_by_year.get(year, 0) + 1
+        
+        print(f"\n[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
+        if discarded_tmua_count > 0:
+            print(f"[INDEX] Discarded {discarded_tmua_count} papers without Official Solutions")
+        print(f"[INDEX] Paper 1 (Mathematical Knowledge): {len(paper1_questions)} questions")
+        for year in sorted(paper1_by_year.keys()):
+            print(f"  - {year}: {paper1_by_year[year]} questions")
+        print(f"[INDEX] Paper 2 (Mathematical Reasoning): {len(paper2_questions)} questions")
+        for year in sorted(paper2_by_year.keys()):
+            print(f"  - {year}: {paper2_by_year[year]} questions")
+        
+        if solution_coverage_stats["total_questions"] > 0:
+            coverage_pct = (solution_coverage_stats["questions_with_solutions"] / solution_coverage_stats["total_questions"]) * 100
+            print(f"[INDEX] Solution coverage: {solution_coverage_stats['questions_with_solutions']}/{solution_coverage_stats['total_questions']} questions ({coverage_pct:.1f}%)")
+    else:
+        print(f"[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
+        if MODE == "TMUA" and discarded_tmua_count > 0:
+            print(f"[INDEX] TMUA: Discarded {discarded_tmua_count} papers without Official Solutions")
+        if MODE == "TMUA" and solution_coverage_stats["total_questions"] > 0:
+            coverage_pct = (solution_coverage_stats["questions_with_solutions"] / solution_coverage_stats["total_questions"]) * 100
+            print(f"[INDEX] TMUA: Solution coverage: {solution_coverage_stats['questions_with_solutions']}/{solution_coverage_stats['total_questions']} questions ({coverage_pct:.1f}%)")
+    
     if len(all_items) == 0:
         print(f"[WARN] No questions indexed! Possible causes:")
         print(f"  - No PDFs found in {papers_dir}")
@@ -1635,6 +2134,17 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
             exam = q.exam or "None"
             exam_counts[exam] = exam_counts.get(exam, 0) + 1
         print(f"[INDEX] Final exam distribution: {exam_counts}")
+    
+    # Remove unknown papers (section = None, "?", or empty) before returning
+    before_unknown_filter = len(all_items)
+    all_items = [
+        q for q in all_items
+        if q.section  # Must have a section
+        and q.section != "?"  # Not unknown
+        and (isinstance(q.section, str) and q.section.strip() != "")  # Not empty
+    ]
+    if before_unknown_filter > len(all_items):
+        print(f"[INDEX] Removed {before_unknown_filter - len(all_items)} questions from unknown papers")
     
     return all_items
 
@@ -1796,11 +2306,15 @@ def prompt_candidates(
         [f"- {s.schema_id}: {s.title} | {s.core_move}".strip() for s in schema_summaries]
     )
 
-    # Evidence corpus: short question IDs + text
+    # Evidence corpus: short question IDs + text (with solution if available for TMUA)
     corpus_lines = []
     for q in questions:
         qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
-        corpus_lines.append(f"[{qid}] {q.text}")
+        if q.solution_text:
+            # Include solution text for TMUA questions
+            corpus_lines.append(f"[{qid}] Question: {q.text} | Solution: {q.solution_text}")
+        else:
+            corpus_lines.append(f"[{qid}] {q.text}")
 
     corpus = "\n\n".join(corpus_lines)
 
@@ -1889,7 +2403,12 @@ Include a clear note in the "Notes for generation" section indicating this:
 Keep it concise and as the last bullet point if possible.
 """
     
-    schema_file = "Schemas_TMUA.md" if is_tmua else "Schemas.md"
+    # For TMUA, schema file depends on paper type (will be set correctly when writing)
+    if is_tmua:
+        tmua_prefix = get_tmua_prefix_from_evidence(candidate) if has_tmua_evidence(candidate) else "M"
+        schema_file = "Schemas_TMUA_Paper1.md" if tmua_prefix == "M" else "Schemas_TMUA_Paper2.md"
+    else:
+        schema_file = "Schemas.md"
     
     # Build exemplar list text with backticks format
     exemplar_text = ""
@@ -2027,7 +2546,25 @@ class App(tk.Tk):
         self.used_question_ids: set = set()  # Track questions already used in batches
 
         self._build_ui()
-        self._load_schemas()
+        
+        # Check if TMUA schemas need to be split on startup (before loading)
+        if MODE == "TMUA":
+            legacy_file = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+            if legacy_file.exists():
+                # Automatically split if legacy file exists
+                try:
+                    print("[AUTO-SPLIT] Detected legacy Schemas_TMUA.md file. Splitting into Paper 1 and Paper 2...")
+                    # Temporarily set schemas_md_path for split function
+                    original_path = self.schemas_md_path
+                    self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD  # Default for split function
+                    stats = self._split_tmua_schemas_by_paper_type()
+                    self.schemas_md_path = original_path
+                    if "error" not in stats:
+                        print(f"[AUTO-SPLIT] Complete: {stats['paper1_count']} Paper 1, {stats['paper2_count']} Paper 2, {stats['mixed_count']} mixed")
+                except Exception as e:
+                    print(f"[AUTO-SPLIT] Failed: {e}")
+        
+        self._load_schemas()  # This will reload after split if it happened
         self._load_embeddings()
         self._load_meta()
         self._load_used_questions()
@@ -2052,10 +2589,18 @@ class App(tk.Tk):
                 print(f"[MODE] Changed to {MODE}")
                 # Update schemas file path based on mode
                 if MODE == "TMUA":
-                    self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
+                    # Ensure both TMUA schema files exist
+                    for schema_path, paper_name in [
+                        (TMUA_PAPER1_SCHEMAS_MD, "Paper 1 Schemas (Mathematical Knowledge)"),
+                        (TMUA_PAPER2_SCHEMAS_MD, "Paper 2 Schemas (Mathematical Reasoning)")
+                    ]:
+                        if not schema_path.exists():
+                            schema_path.parent.mkdir(parents=True, exist_ok=True)
+                            schema_path.write_text(f"# TMUA {paper_name}\n\n", encoding="utf-8")
+                    self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD  # Default to Paper 1 for UI
                 else:
                     self.schemas_md_path = SCHEMAS_MD_DEFAULT
-                # Reload schemas with new path
+                # Reload schemas with new path (for TMUA, loads both Paper 1 and Paper 2)
                 self._load_schemas()
                 self._load_embeddings()
                 self._load_meta()
@@ -2076,21 +2621,32 @@ class App(tk.Tk):
 
         ttk.Button(top, text="Index PDFs", command=self.on_index).pack(side="left", padx=6)
         ttk.Button(top, text="View Extraction Report", command=self.on_view_extraction_report).pack(side="left", padx=6)
+        ttk.Button(top, text="Review Questions & Solutions", command=self.on_review_questions_solutions).pack(side="left", padx=6)
         ttk.Button(top, text="Generate candidates (batch)", command=self.on_generate).pack(side="left", padx=6)
         ttk.Button(top, text="Process All Questions", command=self.on_process_all_questions).pack(side="left", padx=6)
         ttk.Button(top, text="Reload Schemas.md", command=self._load_schemas).pack(side="left", padx=6)
         
         def on_wipe_data():
             """Wipe all schema data after confirmation."""
+            # Build mode-specific warning message
+            if MODE == "TMUA":
+                schema_files_desc = "- Schemas_TMUA_Paper1.md (cleared)\n- Schemas_TMUA_Paper2.md (cleared)"
+            else:
+                schema_files_desc = "- Schemas_ESAT.md (cleared)"
+            
             if messagebox.askyesno("Wipe Schema Data", 
-                "This will DELETE all schemas and cache files:\n\n"
-                "- Schemas_ESAT.md (cleared)\n"
-                "- All JSON cache files (deleted)\n\n"
+                f"This will DELETE all schemas and cache files:\n\n"
+                f"{schema_files_desc}\n"
+                "- Schema metadata, embeddings, coverage (deleted)\n"
+                "- Used questions tracking (deleted)\n"
+                "- Candidates and decisions logs (cleared)\n\n"
+                f"Mode: {MODE}\n\n"
                 "This cannot be undone!\n\n"
                 "Continue?"):
                 wiped = self._wipe_schema_data()
+                mode_desc = "TMUA (Paper 1 & Paper 2)" if MODE == "TMUA" else MODE
                 messagebox.showinfo("Wipe Complete", 
-                    f"Wiped {len(wiped)} files:\n" + "\n".join(f"- {f}" for f in wiped))
+                    f"Wiped {len(wiped)} files ({mode_desc}):\n" + "\n".join(f"- {f}" for f in wiped))
         
         wipe_btn = tk.Button(top, text="Wipe All Data", command=on_wipe_data, 
                             fg="red", bg="white")
@@ -2174,6 +2730,68 @@ class App(tk.Tk):
         renumber_btn = tk.Button(top, text="Renumber Schemas", command=on_renumber_schemas,
                                 fg="blue", bg="white")
         renumber_btn.pack(side="left", padx=6)
+        
+        def on_split_tmua_schemas():
+            """Split TMUA schemas into Paper 1 and Paper 2 files based on evidence."""
+            if MODE != "TMUA":
+                messagebox.showinfo("TMUA Only", "This function is only available in TMUA mode.")
+                return
+            
+            if not messagebox.askyesno("Split TMUA Schemas", 
+                "This will split all TMUA schemas into Paper 1 and Paper 2 files based on evidence:\n\n"
+                "- Paper 1 (M prefix) → Schemas_TMUA_Paper1.md\n"
+                "- Paper 2 (R prefix) → Schemas_TMUA_Paper2.md\n"
+                "- Mixed schemas (both Paper 1 and Paper 2 evidence) will be split into two versions\n"
+                "- Schemas with only Paper 2 evidence will be moved to Paper 2 file\n\n"
+                "A backup will be created before splitting.\n\n"
+                "Continue?"):
+                return
+            
+            def work():
+                try:
+                    self._set_status("Splitting TMUA schemas by paper type...")
+                    
+                    # Create backup
+                    backup_dir = SCHEMAS_DIR_DEFAULT / "_backups"
+                    backup_dir.mkdir(parents=True, exist_ok=True)
+                    timestamp = now_iso().replace(":", "-").replace("T", "_").split(".")[0]
+                    
+                    for schema_file in [TMUA_PAPER1_SCHEMAS_MD, TMUA_PAPER2_SCHEMAS_MD]:
+                        if schema_file.exists():
+                            backup_path = backup_dir / f"{schema_file.stem}_{timestamp}{schema_file.suffix}"
+                            shutil.copy2(schema_file, backup_path)
+                    
+                    stats = self._split_tmua_schemas_by_paper_type()
+                    
+                    if "error" in stats:
+                        self.after(0, lambda: messagebox.showerror("Split Failed", stats["error"]))
+                        self.after(0, lambda: self._set_status(f"Split failed: {stats['error']}"))
+                    else:
+                        summary = (
+                            f"Paper 1: {stats['paper1_count']} schemas\n"
+                            f"Paper 2: {stats['paper2_count']} schemas\n"
+                            f"Mixed (split): {stats['mixed_count']} schemas\n"
+                            f"Unknown: {stats['unknown_count']} schemas\n"
+                            f"Total: {stats['total']} schemas"
+                        )
+                        self.after(0, lambda: messagebox.showinfo("Split Complete", 
+                            f"Successfully split TMUA schemas:\n\n{summary}"))
+                        self.after(0, lambda: self._set_status(
+                        f"Split complete: {stats['paper1_count']} Paper 1, {stats['paper2_count']} Paper 2, "
+                        f"{stats['mixed_count']} mixed schemas split. "
+                        f"Released {stats.get('released_paper1', 0) + stats.get('released_paper2', 0)} questions for reuse."))
+                except Exception as e:
+                    error_msg = str(e)
+                    self.after(0, lambda: messagebox.showerror("Split Failed", 
+                        f"Failed to split schemas:\n{error_msg}"))
+                    self.after(0, lambda: self._set_status(f"Split failed: {error_msg}"))
+            
+            threading.Thread(target=work, daemon=True).start()
+        
+        if MODE == "TMUA":
+            split_btn = tk.Button(top, text="Split TMUA Schemas", command=on_split_tmua_schemas,
+                                bg="lightblue")
+            split_btn.pack(side="left", padx=6)
 
         ttk.Label(top, text="Batch filter:").pack(side="left", padx=(10, 2))
         self.batch_filter = ttk.Entry(top, width=30)
@@ -2324,13 +2942,49 @@ class App(tk.Tk):
         self.update_idletasks()
 
     def _load_schemas(self):
-        if not self.schemas_md_path.exists():
-            messagebox.showerror("Schemas.md not found", f"Missing: {self.schemas_md_path}")
-            return
-        md = safe_read_text(self.schemas_md_path)
-        self.schema_summaries = parse_schema_summaries(md)
-        self.schema_fullness = compute_schema_fullness(md)
-        self._set_status(f"Loaded {len(self.schema_summaries)} schemas from Schemas.md")
+        """Load schemas. For TMUA mode, load BOTH Paper 1 and Paper 2 schemas for comparison."""
+        all_summaries = []
+        all_fullness = {}
+        
+        if MODE == "TMUA":
+            # Load both Paper 1 and Paper 2 schemas
+            for schema_path, paper_name in [
+                (TMUA_PAPER1_SCHEMAS_MD, "Paper 1"),
+                (TMUA_PAPER2_SCHEMAS_MD, "Paper 2")
+            ]:
+                if schema_path.exists():
+                    md = safe_read_text(schema_path)
+                    summaries = parse_schema_summaries(md)
+                    fullness = compute_schema_fullness(md)
+                    all_summaries.extend(summaries)
+                    all_fullness.update(fullness)
+                else:
+                    # Create empty file if it doesn't exist
+                    schema_path.parent.mkdir(parents=True, exist_ok=True)
+                    schema_path.write_text(f"# TMUA {paper_name} Schemas\n\n", encoding="utf-8")
+            
+            # Default to Paper 1 schema path for writing (will be switched based on candidate)
+            if not self.schemas_md_path or not self.schemas_md_path.exists():
+                self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
+        else:
+            # ESAT mode: load single schema file
+            if not self.schemas_md_path.exists():
+                messagebox.showerror("Schemas.md not found", f"Missing: {self.schemas_md_path}")
+                return
+            md = safe_read_text(self.schemas_md_path)
+            all_summaries = parse_schema_summaries(md)
+            all_fullness = compute_schema_fullness(md)
+        
+        self.schema_summaries = all_summaries
+        self.schema_fullness = all_fullness
+        
+        paper1_count = len([s for s in all_summaries if s.schema_id.startswith("M")])
+        paper2_count = len([s for s in all_summaries if s.schema_id.startswith("R")])
+        if MODE == "TMUA":
+            self._set_status(f"Loaded {len(all_summaries)} schemas (M/Paper1: {paper1_count}, R/Paper2: {paper2_count}) from TMUA schema files")
+        else:
+            self._set_status(f"Loaded {len(all_summaries)} schemas from {self.schemas_md_path.name}")
+        
         # Update enrich schema combo
         self._update_enrich_controls()
     
@@ -2385,21 +3039,42 @@ class App(tk.Tk):
         self.destroy()
     
     def _wipe_schema_data(self):
-        """Wipe all schema-related files for a fresh start."""
-        files_to_wipe = [
-            SCHEMAS_MD_DEFAULT,  # Schemas_ESAT.md
+        """Wipe all schema-related files for a fresh start. In TMUA mode, wipes both Paper 1 and Paper 2."""
+        files_to_wipe = []
+        
+        # Schema markdown files - depends on mode
+        if MODE == "TMUA":
+            # TMUA mode: wipe both Paper 1 and Paper 2 schema files
+            files_to_wipe.extend([
+                TMUA_PAPER1_SCHEMAS_MD,
+                TMUA_PAPER2_SCHEMAS_MD,
+            ])
+        else:
+            # ESAT mode: wipe ESAT schema file
+            files_to_wipe.append(SCHEMAS_MD_DEFAULT)
+        
+        # Common schema-related JSON files (contain schema metadata, embeddings, coverage)
+        files_to_wipe.extend([
             SCHEMA_EMBEDDINGS_JSON,
             SCHEMA_COVERAGE_JSON,
             SCHEMAS_META_JSON,
             USED_QUESTIONS_JSON,
-        ]
+        ])
         
         wiped = []
         for file_path in files_to_wipe:
             if file_path.exists():
                 if file_path.suffix == '.md':
-                    # Clear markdown file but keep structure
-                    file_path.write_text("# ESAT Schemas\n\n", encoding="utf-8")
+                    # Clear markdown file but keep structure with appropriate header
+                    if MODE == "TMUA":
+                        if file_path == TMUA_PAPER1_SCHEMAS_MD:
+                            file_path.write_text("# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n", encoding="utf-8")
+                        elif file_path == TMUA_PAPER2_SCHEMAS_MD:
+                            file_path.write_text("# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n", encoding="utf-8")
+                        else:
+                            file_path.write_text("# TMUA Schemas\n\n", encoding="utf-8")
+                    else:
+                        file_path.write_text("# ESAT Schemas\n\n", encoding="utf-8")
                 else:
                     # Delete JSON files
                     file_path.unlink()
@@ -2421,6 +3096,314 @@ class App(tk.Tk):
         self._save_used_questions()
         
         return wiped
+    
+    def _split_tmua_schemas_by_paper_type(self) -> Dict[str, Any]:
+        """
+        Split existing TMUA schemas into Paper 1 and Paper 2 files based on evidence.
+        Returns stats about the split operation.
+        """
+        if MODE != "TMUA":
+            return {"error": "Not in TMUA mode"}
+        
+        # Load metadata to get evidence for each schema
+        schemas_meta = load_schemas_meta()
+        
+        # Check all possible schema files (Paper 1, Paper 2, and legacy TMUA file)
+        all_schema_files = [
+            TMUA_PAPER1_SCHEMAS_MD,
+            TMUA_PAPER2_SCHEMAS_MD,
+            SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md",  # Legacy file
+        ]
+        
+        all_blocks: List[tuple[str, str, str]] = []  # (schema_id, block_text, source_file)
+        
+        # Extract all schema blocks from all files
+        for schema_file in all_schema_files:
+            if schema_file.exists():
+                md = safe_read_text(schema_file)
+                blocks = extract_schema_blocks_from_markdown(md)
+                for schema_id, block_text in blocks:
+                    all_blocks.append((schema_id, block_text, schema_file.name))
+        
+        if not all_blocks:
+            return {"error": "No schemas found to split"}
+        
+        # Categorize blocks by paper type
+        paper1_blocks: List[tuple[str, str]] = []  # (schema_id, block_text)
+        paper2_blocks: List[tuple[str, str]] = []  # (schema_id, block_text)
+        mixed_blocks: List[tuple[str, str, List[str]]] = []  # (schema_id, block_text, evidence_ids)
+        unknown_blocks: List[tuple[str, str]] = []  # (schema_id, block_text)
+        
+        for schema_id, block_text, source_file in all_blocks:
+            # Get evidence from metadata
+            meta = schemas_meta.get(schema_id, {})
+            evidence_ids = meta.get("evidence", [])
+            
+            # Also check exemplar questions in the schema block itself
+            parsed = parse_schema_block(block_text)
+            exemplar_qids = [qid for qid, _ in parsed.get("exemplar_questions", [])]
+            
+            # Combine all question IDs
+            all_qids = list(evidence_ids) + exemplar_qids
+            
+            # Determine paper type
+            if all_qids:
+                paper_type, is_mixed = get_tmua_paper_type_from_evidence_ids(all_qids)
+                
+                if is_mixed:
+                    mixed_blocks.append((schema_id, block_text, all_qids))
+                elif paper_type == "Paper1":
+                    paper1_blocks.append((schema_id, block_text))
+                elif paper_type == "Paper2":
+                    paper2_blocks.append((schema_id, block_text))
+                else:
+                    # Unknown - check prefix: M = Paper 1, R = Paper 2
+                    if schema_id.startswith("M"):
+                        paper1_blocks.append((schema_id, block_text))
+                    elif schema_id.startswith("R"):
+                        paper2_blocks.append((schema_id, block_text))
+                    else:
+                        unknown_blocks.append((schema_id, block_text))
+            else:
+                # No evidence - infer from prefix
+                if schema_id.startswith("M"):
+                    paper1_blocks.append((schema_id, block_text))
+                elif schema_id.startswith("R"):
+                    paper2_blocks.append((schema_id, block_text))
+                else:
+                    unknown_blocks.append((schema_id, block_text))
+        
+        # Write Paper 1 schemas
+        paper1_content = "# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n"
+        for schema_id, block_text in paper1_blocks:
+            paper1_content += block_text + "\n\n"
+        
+        # Write Paper 2 schemas
+        paper2_content = "# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n"
+        for schema_id, block_text in paper2_blocks:
+            paper2_content += block_text + "\n\n"
+        
+        # Handle mixed schemas: split into two versions or move to majority paper type
+        released_questions = {"Paper1": [], "Paper2": []}  # Track questions released for reuse
+        
+        for schema_id, block_text, evidence_ids in mixed_blocks:
+            paper_type, _ = get_tmua_paper_type_from_evidence_ids(evidence_ids)
+            parsed = parse_schema_block(block_text)
+            
+            # Count Paper 1 vs Paper 2 in evidence
+            paper1_count = sum(1 for qid in evidence_ids if "PAPER1" in str(qid).upper() or "PAPER 1" in str(qid).upper())
+            paper2_count = sum(1 for qid in evidence_ids if "PAPER2" in str(qid).upper() or "PAPER 2" in str(qid).upper())
+            
+            # Filter exemplar questions by paper type
+            paper1_exemplars = []
+            paper2_exemplars = []
+            
+            for qid, justification in parsed.get("exemplar_questions", []):
+                qid_upper = str(qid).upper()
+                if "PAPER1" in qid_upper or "PAPER 1" in qid_upper or "_PAPER1" in qid_upper:
+                    paper1_exemplars.append((qid, justification))
+                elif "PAPER2" in qid_upper or "PAPER 2" in qid_upper or "_PAPER2" in qid_upper:
+                    paper2_exemplars.append((qid, justification))
+            
+            # Get metadata for this schema
+            meta = schemas_meta.get(schema_id, {})
+            all_evidence = meta.get("evidence", [])
+            
+            # Filter evidence by paper type
+            paper1_evidence = [qid for qid in all_evidence if "PAPER1" in str(qid).upper() or "PAPER 1" in str(qid).upper() or "_PAPER1" in str(qid).upper()]
+            paper2_evidence = [qid for qid in all_evidence if "PAPER2" in str(qid).upper() or "PAPER 2" in str(qid).upper() or "_PAPER2" in str(qid).upper()]
+            
+            # Create separate versions for each paper if both have exemplars
+            if paper1_exemplars and paper2_exemplars:
+                # Split into two schemas - one for each paper
+                # Paper 1 version (keep original schema ID)
+                paper1_block = self._create_schema_version_for_paper(block_text, schema_id, "M", paper1_exemplars)
+                paper1_content += paper1_block + "\n\n"
+                # Update metadata to only have Paper 1 evidence
+                if schema_id in schemas_meta:
+                    schemas_meta[schema_id]["evidence"] = paper1_evidence
+                    schemas_meta[schema_id]["has_tmua_evidence"] = True
+                else:
+                    schemas_meta[schema_id] = {
+                        "evidence": paper1_evidence,
+                        "edits_count": 0,
+                        "locked": False,
+                        "has_tmua_evidence": True,
+                        "unique_id": schema_id,
+                        "created_at": now_iso()
+                    }
+                
+                # Paper 2 version (create new schema ID for Paper 2 version)
+                new_paper2_id = generate_unique_schema_id("R")
+                paper2_block = self._create_schema_version_for_paper(block_text, schema_id, "R", paper2_exemplars)
+                # Replace schema ID in the block with new ID
+                paper2_block = re.sub(rf"## \*\*{re.escape(schema_id)}\.", f"## **{new_paper2_id}.", paper2_block)
+                paper2_content += paper2_block + "\n\n"
+                # Create metadata entry for new Paper 2 schema
+                schemas_meta[new_paper2_id] = {
+                    "evidence": paper2_evidence,
+                    "edits_count": 0,
+                    "locked": meta.get("locked", False),
+                    "has_tmua_evidence": True,
+                    "unique_id": new_paper2_id,
+                    "created_at": now_iso()
+                }
+                
+                # Note: No questions released when splitting into two schemas - both keep their questions
+            else:
+                # Move to majority paper type - release questions from minority type
+                if paper1_count >= paper2_count:
+                    paper1_content += block_text + "\n\n"
+                    # Keep only Paper 1 evidence, release Paper 2 questions
+                    if schema_id in schemas_meta:
+                        schemas_meta[schema_id]["evidence"] = paper1_evidence
+                        schemas_meta[schema_id]["has_tmua_evidence"] = True
+                    released_questions["Paper2"].extend(paper2_evidence)
+                else:
+                    paper2_content += block_text + "\n\n"
+                    # Keep only Paper 2 evidence, release Paper 1 questions
+                    if schema_id in schemas_meta:
+                        schemas_meta[schema_id]["evidence"] = paper2_evidence
+                        schemas_meta[schema_id]["has_tmua_evidence"] = True
+                    released_questions["Paper1"].extend(paper1_evidence)
+        
+        # Handle unknown blocks - try to infer from content or move to Paper 1 as default
+        for schema_id, block_text in unknown_blocks:
+            # Default to Paper 1 for unknown (M prefix or ambiguous)
+            if schema_id.startswith("M") or not schema_id.startswith("R"):
+                paper1_content += block_text + "\n\n"
+            else:
+                paper2_content += block_text + "\n\n"
+        
+        # Ensure files exist
+        TMUA_PAPER1_SCHEMAS_MD.parent.mkdir(parents=True, exist_ok=True)
+        TMUA_PAPER2_SCHEMAS_MD.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Write to files
+        safe_write_text(TMUA_PAPER1_SCHEMAS_MD, paper1_content)
+        safe_write_text(TMUA_PAPER2_SCHEMAS_MD, paper2_content)
+        
+        # Delete legacy file if it exists
+        legacy_file = SCHEMAS_DIR_DEFAULT / "Schemas_TMUA.md"
+        if legacy_file.exists() and legacy_file != TMUA_PAPER1_SCHEMAS_MD and legacy_file != TMUA_PAPER2_SCHEMAS_MD:
+            legacy_file.unlink()
+        
+        # Save updated metadata (with filtered evidence for mixed schemas)
+        save_schemas_meta(schemas_meta)
+        
+        # Remove released questions from used_questions tracking so they can be reused
+        if released_questions["Paper1"] or released_questions["Paper2"]:
+            used_qids = load_used_questions()
+            released_count = 0
+            for paper_type, qids in released_questions.items():
+                for qid in qids:
+                    if qid in used_qids:
+                        used_qids.remove(qid)
+                        released_count += 1
+            if released_count > 0:
+                save_used_questions(used_qids)
+                print(f"[SPLIT] Released {released_count} questions from mixed schemas for reuse ({len(released_questions['Paper1'])} Paper 1, {len(released_questions['Paper2'])} Paper 2)")
+        
+        # Reload schemas
+        self._load_schemas()
+        
+        stats = {
+            "paper1_count": len(paper1_blocks),
+            "paper2_count": len(paper2_blocks),
+            "mixed_count": len(mixed_blocks),
+            "unknown_count": len(unknown_blocks),
+            "total": len(all_blocks),
+            "released_paper1": len(released_questions["Paper1"]),
+            "released_paper2": len(released_questions["Paper2"])
+        }
+        
+        return stats
+    
+    def _create_schema_version_for_paper(self, original_block: str, original_schema_id: str, 
+                                        new_prefix: str, exemplar_questions: List[tuple[str, str]]) -> str:
+        """
+        Create a version of a schema block for a specific paper type.
+        Updates exemplar questions to only include relevant ones.
+        """
+        lines = original_block.splitlines()
+        result_lines = []
+        
+        i = 0
+        in_exemplar_section = False
+        exemplar_replaced = False
+        
+        while i < len(lines):
+            line = lines[i]
+            line_stripped = line.strip()
+            
+            # Update schema ID in header
+            m = SCHEMA_HEADER_RE.match(line_stripped)
+            if m:
+                # Change prefix while keeping number or unique ID
+                schema_id_part = m.group(1)
+                if "_" in schema_id_part:
+                    # Unique ID: keep the unique part but change prefix
+                    unique_part = schema_id_part.split("_", 1)[1]
+                    new_schema_id = f"{new_prefix}_{unique_part}"
+                else:
+                    # Sequential ID: change prefix
+                    new_schema_id = new_prefix + schema_id_part[1:] if len(schema_id_part) > 1 else new_prefix + "1"
+                
+                title = m.group(3).strip()
+                result_lines.append(f"## **{new_schema_id}. {title}**")
+                i += 1
+                continue
+            
+            # Detect start of exemplar questions section
+            if "exemplar questions" in line_stripped.lower():
+                in_exemplar_section = True
+                result_lines.append(line)  # Keep the header
+                i += 1
+                # Skip all exemplar bullet points
+                while i < len(lines):
+                    if lines[i].strip().startswith("- ") or lines[i].strip().startswith("* "):
+                        # Skip old exemplar
+                        i += 1
+                        continue
+                    # Check if we've moved to next section
+                    next_line = lines[i].strip()
+                    if (next_line.startswith("**") or 
+                        next_line == "---" or 
+                        SCHEMA_HEADER_RE.match(next_line) or
+                        (next_line and not next_line.startswith("-") and not next_line.startswith("*"))):
+                        break
+                    i += 1
+                
+                # Add filtered exemplar questions
+                if exemplar_questions:
+                    for qid, justification in exemplar_questions:
+                        result_lines.append(f"- `{qid}`: {justification}")
+                else:
+                    # No exemplars for this paper type - add a note
+                    result_lines.append("- (No exemplar questions for this paper type)")
+                
+                exemplar_replaced = True
+                in_exemplar_section = False
+                continue
+            
+            # Skip lines that are part of old exemplar section (if we're in it)
+            if in_exemplar_section and (line_stripped.startswith("- ") or line_stripped.startswith("* ")):
+                i += 1
+                continue
+            
+            # Stop at separator
+            if line_stripped == "---":
+                result_lines.append(line)
+                break
+            
+            result_lines.append(line)
+            i += 1
+        
+        # Ensure block ends with separator
+        if result_lines and result_lines[-1].strip() != "---":
+            result_lines.append("---")
+        
+        return "\n".join(result_lines)
     
     def _renumber_all_schemas(self) -> Dict[str, str]:
         """
@@ -2634,13 +3617,13 @@ class App(tk.Tk):
             return
 
         # Total available = diagram-free questions in the index
-        total_questions = sum(1 for q in self.index if not q.skipped_diagram)
+        total_questions = len(self.index)  # Include all questions (diagram filtering disabled)
         
         # Only count used questions that actually exist in the current index
         # This prevents counting questions from different filters or removed papers
         used_in_index = 0
         for q in self.index:
-            if not q.skipped_diagram:
+            if True:  # Include all questions (diagram filtering disabled)
                 qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
                 if qid in self.used_question_ids:
                     used_in_index += 1
@@ -2664,7 +3647,7 @@ class App(tk.Tk):
         # Build set of valid question IDs from current index
         valid_qids = set()
         for q in self.index:
-            if not q.skipped_diagram:
+            if True:  # Include all questions (diagram filtering disabled)
                 qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
                 valid_qids.add(qid)
         
@@ -2777,13 +3760,13 @@ class App(tk.Tk):
             )
             
             total = len(self.index)
-            kept = sum(1 for q in self.index if not q.skipped_diagram)
+            kept = len(self.index)  # Include all questions (diagram filtering disabled)
             
             # Check if we're working with TMUA and switch schemas file if needed
             if self.index:
                 is_tmua = any(q.exam == "TMUA" for q in self.index)
                 if is_tmua:
-                    self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
+                    self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
                     # Ensure the file exists (create empty if needed)
                     if not self.schemas_md_path.exists():
                         self.schemas_md_path.write_text("# TMUA Schemas\n\n", encoding="utf-8")
@@ -2817,6 +3800,213 @@ class App(tk.Tk):
 
         threading.Thread(target=work, daemon=True).start()
 
+    def on_review_questions_solutions(self):
+        """Open a window to review questions with their extracted solutions."""
+        if not self.index:
+            messagebox.showinfo("Index first", "Click 'Index PDFs' first.")
+            return
+        
+        # Filter to only questions with solutions (for TMUA)
+        # Also exclude unknown papers (section = None, "?", or empty)
+        questions_with_solutions = [
+            q for q in self.index 
+            if q.solution_text 
+            and q.section  # Must have a section
+            and q.section != "?"  # Not unknown
+            and (isinstance(q.section, str) and q.section.strip() != "")  # Not empty
+        ]
+        
+        if not questions_with_solutions:
+            messagebox.showinfo("No Solutions", 
+                "No questions with solutions found. Make sure you've indexed TMUA papers with Official Solutions.")
+            return
+        
+        # Create review window
+        review_win = tk.Toplevel(self)
+        review_win.title("Review Questions & Solutions")
+        review_win.geometry("1200x800")
+        
+        # Top frame: Filters and navigation
+        top_frame = ttk.Frame(review_win)
+        top_frame.pack(fill="x", padx=10, pady=10)
+        
+        # Filter by paper type (for TMUA)
+        filter_frame = ttk.Frame(top_frame)
+        filter_frame.pack(side="left", padx=5)
+        
+        ttk.Label(filter_frame, text="Filter:").pack(side="left", padx=5)
+        filter_var = tk.StringVar(value="All")
+        
+        # Store references for callback
+        review_data = {
+            'questions': questions_with_solutions,
+            'filter_var': filter_var,
+            'current_idx_var': tk.IntVar(value=0),
+            'question_listbox': None,
+            'question_display': None,
+            'solution_display': None,
+            'question_info': None
+        }
+        
+        def update_list():
+            self._update_review_list(review_win, review_data)
+        
+        ttk.Radiobutton(filter_frame, text="All", variable=filter_var, value="All",
+                       command=update_list).pack(side="left")
+        
+        if MODE == "TMUA":
+            ttk.Radiobutton(filter_frame, text="Paper 1", variable=filter_var, value="Paper 1",
+                           command=update_list).pack(side="left", padx=5)
+            ttk.Radiobutton(filter_frame, text="Paper 2", variable=filter_var, value="Paper 2",
+                           command=update_list).pack(side="left", padx=5)
+        
+        # Navigation
+        nav_frame = ttk.Frame(top_frame)
+        nav_frame.pack(side="right", padx=5)
+        
+        def nav_prev():
+            idx = review_data['current_idx_var'].get()
+            if idx > 0:
+                review_data['current_idx_var'].set(idx - 1)
+                self._update_review_display(review_data)
+        
+        def nav_next():
+            idx = review_data['current_idx_var'].get()
+            filtered = self._get_filtered_questions(review_data['questions'], filter_var)
+            if idx < len(filtered) - 1:
+                review_data['current_idx_var'].set(idx + 1)
+                self._update_review_display(review_data)
+        
+        ttk.Button(nav_frame, text="◀ Previous", command=nav_prev).pack(side="left", padx=2)
+        review_data['question_info'] = ttk.Label(nav_frame, text="0 / 0")
+        review_data['question_info'].pack(side="left", padx=10)
+        ttk.Button(nav_frame, text="Next ▶", command=nav_next).pack(side="left", padx=2)
+        
+        # Main content: Question list on left, question/solution display on right
+        main_frame = ttk.Frame(review_win)
+        main_frame.pack(fill="both", expand=True, padx=10, pady=5)
+        
+        # Left: Question list
+        list_frame = ttk.LabelFrame(main_frame, text="Questions", padding=5)
+        list_frame.pack(side="left", fill="both", expand=False, padx=(0, 5))
+        list_frame.config(width=300)
+        
+        question_listbox = tk.Listbox(list_frame, width=40, height=30)
+        question_listbox.pack(fill="both", expand=True)
+        review_data['question_listbox'] = question_listbox
+        
+        def on_list_select(event):
+            selection = question_listbox.curselection()
+            if selection:
+                review_data['current_idx_var'].set(selection[0])
+                self._update_review_display(review_data)
+        
+        question_listbox.bind("<<ListboxSelect>>", on_list_select)
+        
+        # Right: Question and solution display
+        display_frame = ttk.Frame(main_frame)
+        display_frame.pack(side="right", fill="both", expand=True)
+        
+        # Question display
+        question_label = ttk.Label(display_frame, text="Question:", font=("TkDefaultFont", 10, "bold"))
+        question_label.pack(anchor="w", pady=(0, 5))
+        
+        question_display = tk.Text(display_frame, wrap="word", height=15, padx=10, pady=10)
+        question_display.pack(fill="both", expand=True)
+        review_data['question_display'] = question_display
+        
+        # Solution display
+        solution_label = ttk.Label(display_frame, text="Solution:", font=("TkDefaultFont", 10, "bold"))
+        solution_label.pack(anchor="w", pady=(10, 5))
+        
+        solution_display = tk.Text(display_frame, wrap="word", height=15, padx=10, pady=10, bg="#f0f0f0")
+        solution_display.pack(fill="both", expand=True)
+        review_data['solution_display'] = solution_display
+        
+        # Initial update
+        self._update_review_list(review_win, review_data)
+    
+    def _get_filtered_questions(self, questions: List[QuestionItem], filter_var: tk.StringVar) -> List[QuestionItem]:
+        """Filter questions by paper type."""
+        filter_value = filter_var.get()
+        if filter_value == "All":
+            return questions
+        elif filter_value == "Paper 1":
+            return [q for q in questions if q.section and "Paper 1" in q.section]
+        elif filter_value == "Paper 2":
+            return [q for q in questions if q.section and "Paper 2" in q.section]
+        return questions
+    
+    def _update_review_list(self, win, review_data: dict):
+        """Update the question list based on filter."""
+        questions = review_data['questions']
+        filter_var = review_data['filter_var']
+        filtered = self._get_filtered_questions(questions, filter_var)
+        
+        # Update listbox
+        question_listbox = review_data['question_listbox']
+        question_listbox.delete(0, tk.END)
+        for q in filtered:
+            year = q.year or "?"
+            section = q.section or "?"
+            qnum = q.qnum
+            label = f"{year} {section} Q{qnum}"
+            question_listbox.insert(tk.END, label)
+        
+        # Reset to first question
+        if filtered:
+            review_data['current_idx_var'].set(0)
+            question_listbox.selection_set(0)
+            self._update_review_display(review_data)
+    
+    def _update_review_display(self, review_data: dict):
+        """Update the question and solution display."""
+        questions = review_data['questions']
+        filter_var = review_data['filter_var']
+        current_idx_var = review_data['current_idx_var']
+        question_display = review_data['question_display']
+        solution_display = review_data['solution_display']
+        question_info = review_data['question_info']
+        
+        filtered = self._get_filtered_questions(questions, filter_var)
+        idx = current_idx_var.get()
+        
+        if not filtered or idx < 0 or idx >= len(filtered):
+            question_display.delete("1.0", tk.END)
+            solution_display.delete("1.0", tk.END)
+            if question_info:
+                question_info.config(text="0 / 0")
+            return
+        
+        q = filtered[idx]
+        
+        # Update info label
+        if question_info:
+            question_info.config(text=f"{idx + 1} / {len(filtered)}")
+        
+        # Update listbox selection
+        question_listbox = review_data['question_listbox']
+        question_listbox.selection_clear(0, tk.END)
+        question_listbox.selection_set(idx)
+        question_listbox.see(idx)
+        
+        # Display question
+        question_display.delete("1.0", tk.END)
+        question_header = f"Question {q.qnum}"
+        if q.year:
+            question_header += f" ({q.year}"
+            if q.section:
+                question_header += f" {q.section}"
+            question_header += ")"
+        question_display.insert("1.0", f"{question_header}\n\n{q.text}")
+        
+        # Display solution
+        solution_display.delete("1.0", tk.END)
+        if q.solution_text:
+            solution_display.insert("1.0", q.solution_text)
+        else:
+            solution_display.insert("1.0", "[No solution available]")
+    
     def on_view_extraction_report(self):
         """Display extraction report in a popup window."""
         report_path = LOG_DIR_DEFAULT / "extraction_report.json"
@@ -2900,7 +4090,8 @@ class App(tk.Tk):
             pool = [q for q in pool if filt in q.pdf_path.lower()]
         
         # Only diagram-free
-        pool = [q for q in pool if not q.skipped_diagram]
+        # Include all questions (diagram filtering disabled)
+        # pool = [q for q in pool if not q.skipped_diagram]  # Disabled per user request
         
         if len(pool) < 1:
             messagebox.showwarning("No questions", "No diagram-free questions matched the filter.")
@@ -3218,13 +4409,30 @@ Return ONLY valid JSON:
             if not md_response.rstrip().endswith("---"):
                 md_response = md_response.rstrip() + "\n\n---\n"
             
+            # For TMUA: Route to correct schema file based on prefix (M = Paper 1, R = Paper 2)
+            target_schemas_path = self.schemas_md_path
+            if MODE == "TMUA":
+                if normalized_prefix == "R":
+                    target_schemas_path = TMUA_PAPER2_SCHEMAS_MD
+                else:
+                    # M prefix or any other prefix defaults to Paper 1
+                    target_schemas_path = TMUA_PAPER1_SCHEMAS_MD
+                
+                # Ensure file exists
+                if not target_schemas_path.exists():
+                    target_schemas_path.parent.mkdir(parents=True, exist_ok=True)
+                    if normalized_prefix == "R":
+                        target_schemas_path.write_text("# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n", encoding="utf-8")
+                    else:
+                        target_schemas_path.write_text("# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n", encoding="utf-8")
+            
             # Atomic write to file
-            temp_file = self.schemas_md_path.with_suffix('.tmp')
+            temp_file = target_schemas_path.with_suffix('.tmp')
             try:
-                current_content = safe_read_text(self.schemas_md_path)
+                current_content = safe_read_text(target_schemas_path)
                 new_content = current_content.rstrip() + "\n\n" + md_response + "\n"
                 safe_write_text(temp_file, new_content)
-                shutil.move(str(temp_file), str(self.schemas_md_path))
+                shutil.move(str(temp_file), str(target_schemas_path))
             except Exception as e:
                 print(f"[ERROR] Failed to write schema to file: {e}")
                 if temp_file.exists():
@@ -3264,7 +4472,7 @@ Return ONLY valid JSON:
                 "has_tmua_evidence": has_tmua_evidence(candidate),
             }) + "\n")
             
-            print(f"[AUTO-ACCEPT] Created new schema {new_id} from question {qid}")
+            print(f"[AUTO-ACCEPT] Created new schema {new_id} from question {qid} (saved to {target_schemas_path.name})")
             
             # Reload schemas so subsequent questions see the new schema
             self._load_schemas()
@@ -3287,7 +4495,7 @@ Return ONLY valid JSON:
         if self.index:
             is_tmua = any(q.exam == "TMUA" for q in self.index)
             if is_tmua:
-                self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
+                self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
                 # Ensure the file exists
                 if not self.schemas_md_path.exists():
                     self.schemas_md_path.parent.mkdir(parents=True, exist_ok=True)
@@ -3304,7 +4512,8 @@ Return ONLY valid JSON:
             pool = [q for q in pool if filt in q.pdf_path.lower()]
 
         # Only diagram-free
-        pool = [q for q in pool if not q.skipped_diagram]
+        # Include all questions (diagram filtering disabled)
+        # pool = [q for q in pool if not q.skipped_diagram]  # Disabled per user request
 
         if len(pool) < 10:
             messagebox.showwarning("Small batch", f"Only {len(pool)} diagram-free questions matched. Try a broader filter.")
@@ -3442,10 +4651,14 @@ Return ONLY valid JSON:
         
         # Compute similarities
         for c in self.candidates:
-            # Step 1: Fast comparison against ALL schemas
+            # Step 1: Fast comparison - filter schemas by prefix (TMUA: M vs M, R vs R only)
             fast_hits = []
             cand_emb = candidate_embeddings.get(c.candidate_id)
             for s in self.schema_summaries:
+                # For TMUA: Only compare within same paper type (M = Paper 1, R = Paper 2)
+                # For ESAT: Compare all schemas (M, P, B, C can be compared with each other)
+                if MODE == "TMUA" and c.prefix != s.schema_id[0]:
+                    continue  # Skip if prefixes don't match (Paper 1 vs Paper 2)
                 existing_emb = self.schema_embeddings.get(s.schema_id)
                 score = schema_similarity(c.title, c.core_move, s, cand_emb, existing_emb)
                 fast_hits.append((s, score))
@@ -3625,7 +4838,7 @@ Return ONLY valid JSON:
         new_md = "\n".join(lines)
         if not new_md.endswith("\n"):
             new_md += "\n"
-        safe_write_text(self.schemas_md_path, new_md)
+        safe_write_text(target_schemas_path, new_md)
     
     def _auto_ignore_high_similarity(self) -> int:
         """Auto-ignore candidates with similarity > threshold, prefix-specific.
@@ -3823,16 +5036,21 @@ Return ONLY valid JSON:
         def work():
             self._set_status(f"Accepting {len(self.candidates)} candidates...")
             
-            # Ensure correct schemas file path (check if TMUA)
+            # For TMUA: Ensure both schema files exist (will route based on candidate prefix)
             if self.index:
                 is_tmua = any(q.exam == "TMUA" for q in self.index)
                 if is_tmua:
-                    self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
-                    # Ensure the file exists
-                    if not self.schemas_md_path.exists():
-                        self.schemas_md_path.parent.mkdir(parents=True, exist_ok=True)
-                        self.schemas_md_path.write_text("# TMUA Schemas\n\n", encoding="utf-8")
-                    # Reload schemas with correct path
+                    # Ensure both TMUA schema files exist
+                    for schema_path, paper_name in [
+                        (TMUA_PAPER1_SCHEMAS_MD, "Paper 1 Schemas (Mathematical Knowledge)"),
+                        (TMUA_PAPER2_SCHEMAS_MD, "Paper 2 Schemas (Mathematical Reasoning)")
+                    ]:
+                        if not schema_path.exists():
+                            schema_path.parent.mkdir(parents=True, exist_ok=True)
+                            schema_path.write_text(f"# TMUA {paper_name}\n\n", encoding="utf-8")
+                    # Default to Paper 1 for UI, actual write routes based on candidate
+                    self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
+                    # Reload schemas (loads both Paper 1 and Paper 2 for comparison)
                     self._load_schemas()
             
             # Initialize counters
@@ -3898,15 +5116,24 @@ Return ONLY valid JSON:
                             "recurrence_stats": stats,
                         }) + "\n")
                     
-                    # Ensure correct schemas file path (double-check for TMUA)
+                    # Route to correct TMUA schema file based on prefix (M = Paper 1, R = Paper 2)
                     if has_tmua_evidence(c):
-                        self.schemas_md_path = TMUA_SCHEMAS_MD_DEFAULT
+                        tmua_prefix = get_tmua_prefix_from_evidence(c)
+                        if tmua_prefix == "R":
+                            self.schemas_md_path = TMUA_PAPER2_SCHEMAS_MD
+                        else:
+                            # Default to Paper 1 for M prefix or if unclear
+                            self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
                     
                     # Ensure schemas file exists
                     if not self.schemas_md_path.exists():
                         self.schemas_md_path.parent.mkdir(parents=True, exist_ok=True)
                         if has_tmua_evidence(c):
-                            initial_content = "# TMUA Schemas\n\n"
+                            tmua_prefix = get_tmua_prefix_from_evidence(c) if has_tmua_evidence(c) else "M"
+                            if tmua_prefix == "R":
+                                initial_content = "# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n"
+                            else:
+                                initial_content = "# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n"
                         else:
                             initial_content = "# Schemas\n\n"
                         self.schemas_md_path.write_text(initial_content, encoding="utf-8")
@@ -4075,6 +5302,27 @@ Return ONLY valid JSON:
             if not messagebox.askyesno("Likely merge", f"Top similarity is {top_hit.schema_id} at {top_hit.score:.0f}.\nStill append as NEW?"):
                 return
 
+        # For TMUA: Route to correct schema file based on prefix (M = Paper 1, R = Paper 2)
+        # Check prefix directly first, then fall back to evidence-based detection
+        if MODE == "TMUA":
+            # Normalize prefix to single letter
+            normalized_prefix = normalize_prefix(c.prefix)
+            
+            # Route based on prefix: R = Paper 2, M (or anything else) = Paper 1
+            if normalized_prefix == "R":
+                self.schemas_md_path = TMUA_PAPER2_SCHEMAS_MD
+            else:
+                # M prefix or any other prefix defaults to Paper 1
+                self.schemas_md_path = TMUA_PAPER1_SCHEMAS_MD
+            
+            # Ensure file exists
+            if not self.schemas_md_path.exists():
+                self.schemas_md_path.parent.mkdir(parents=True, exist_ok=True)
+                if normalized_prefix == "R":
+                    self.schemas_md_path.write_text("# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n", encoding="utf-8")
+                else:
+                    self.schemas_md_path.write_text("# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n", encoding="utf-8")
+
         # Assign unique schema ID (no conflicts even with parallel processing)
         # Normalize prefix to single letter (M, P, B, C, R)
         normalized_prefix = normalize_prefix(c.prefix)
@@ -4091,7 +5339,7 @@ Return ONLY valid JSON:
             safe_write_text(temp_file, new_content)
             shutil.move(str(temp_file), str(self.schemas_md_path))
         except Exception as e:
-            messagebox.showerror("Write failed", f"Failed to write Schemas.md: {e}")
+            messagebox.showerror("Write failed", f"Failed to write {self.schemas_md_path.name}: {e}")
             if temp_file.exists():
                 temp_file.unlink()
             return
@@ -4124,9 +5372,9 @@ Return ONLY valid JSON:
         }) + "\n")
 
         self._load_schemas()
-        self._set_status(f"Appended NEW schema {new_id} to Schemas.md")
+        self._set_status(f"Appended NEW schema {new_id} to {self.schemas_md_path.name}")
 
-        messagebox.showinfo("Appended", f"Appended {new_id} to Schemas.md")
+        messagebox.showinfo("Appended", f"Appended {new_id} to {self.schemas_md_path.name}")
 
     # Feature B: Merge
     def on_merge(self):

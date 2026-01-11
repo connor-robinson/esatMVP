@@ -182,3 +182,8 @@ function generateGCFLCM(): GeneratedQuestion {
 
 
 
+
+
+
+
+

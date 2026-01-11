@@ -109,3 +109,8 @@ function generateMultiplication(): GeneratedQuestion {
 
 
 
+
+
+
+
+

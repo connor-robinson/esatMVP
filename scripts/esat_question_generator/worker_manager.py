@@ -542,12 +542,8 @@ def main():
         allow_schema_prefixes=tuple(os.environ.get("SCHEMA_PREFIXES", "M,P").split(",")),
     )
     
-    models = ModelsConfig(
-        designer=os.environ.get("MODEL_DESIGNER", "gemini-3-pro-preview"),
-        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-3-pro-preview"),
-        verifier=os.environ.get("MODEL_VERIFIER", "gemini-3-pro-preview"),
-        style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
-    )
+    from project import get_default_models_config
+    models = get_default_models_config()
     
     # Create worker manager
     manager = WorkerManager(base_dir, cfg, models, max_workers=max_workers, systematic_config=systematic_cfg)

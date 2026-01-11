@@ -23,6 +23,8 @@ export async function GET(request: NextRequest) {
     const attemptResults = attemptResultParam ? attemptResultParam.split(',') as AttemptResultFilter[] : [];
     const attemptedStatus = searchParams.get('attemptedStatus') as AttemptedFilter | null;
     const tags = searchParams.get('tags') || '';
+    const search = searchParams.get('search') || '';
+    const idParam = searchParams.get('id') || '';
     const limit = parseInt(searchParams.get('limit') || '20', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
     const random = searchParams.get('random') === 'true';
@@ -99,7 +101,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 3. Apply tag filter (ANDed with previous filters)
+    // 3. Apply ID search filter (if provided)
+    if (idParam) {
+      // Search by generation_id or id (UUID)
+      query = query.or(`generation_id.eq.${idParam},id.eq.${idParam}`);
+    }
+
+    // 4. Apply search filter (question stem content search)
+    if (search && !idParam) {
+      query = query.ilike('question_stem', `%${search}%`);
+    }
+
+    // 5. Apply tag filter (ANDed with previous filters)
     if (tags) {
       const tagLower = tags.toLowerCase();
       // If we already have a subject filter (which used .or()), we must use .filter() 

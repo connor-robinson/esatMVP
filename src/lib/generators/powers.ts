@@ -155,3 +155,8 @@ function generateFractionalExponents(): GeneratedQuestion {
 
 
 
+
+
+
+
+
