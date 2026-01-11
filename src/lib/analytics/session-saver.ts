@@ -237,14 +237,21 @@ async function updateDailyMetrics(
         total_questions: existing.total_questions + totalQuestions,
         correct_answers: existing.correct_answers + correctAnswers,
         total_time_ms: existing.total_time_ms + totalTimeMs,
-        sessions_count: existing.sessions_count + 1,
+        session_count: existing.session_count + 1,
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", userId)
       .eq("metric_date", today);
 
     if (updateError) {
-      console.error("[session-saver] Error updating user_daily_metrics:", updateError);
+      console.error("[session-saver] ERROR: Failed to update user_daily_metrics:", {
+        error: updateError,
+        errorCode: updateError.code,
+        errorMessage: updateError.message,
+        errorDetails: updateError.details,
+        userId,
+        metricDate: today,
+      });
     }
   } else {
     // Insert new record
@@ -256,8 +263,19 @@ async function updateDailyMetrics(
         total_questions: totalQuestions,
         correct_answers: correctAnswers,
         total_time_ms: totalTimeMs,
-        sessions_count: 1,
+        session_count: 1,
       });
+
+    if (insertError) {
+      console.error("[session-saver] ERROR: Failed to insert user_daily_metrics:", {
+        error: insertError,
+        errorCode: insertError.code,
+        errorMessage: insertError.message,
+        errorDetails: insertError.details,
+        userId,
+        metricDate: today,
+      });
+    }
 
     if (insertError) {
       console.error("[session-saver] Error inserting user_daily_metrics:", insertError);

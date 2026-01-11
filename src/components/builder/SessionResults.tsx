@@ -253,16 +253,22 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0">
-            {/* Score and Topic Name Row */}
+            {/* Score and Username/Topic Row */}
             <div className="flex items-baseline justify-between gap-4 mb-2">
               <div className="flex items-baseline gap-3 min-w-0">
                 <span className="text-2xl font-bold text-white/90 tabular-nums font-mono">
                   {session.score}
                 </span>
                 <span className="text-sm text-white/40 font-mono">/ 1000</span>
-                <span className="text-xs text-white/30 font-mono truncate">
-                  {topicName}
-                </span>
+                {isGlobalView ? (
+                  <span className="text-xs text-white/50 font-mono truncate">
+                    {session.username}
+                  </span>
+                ) : (
+                  <span className="text-xs text-white/30 font-mono truncate">
+                    {topicName}
+                  </span>
+                )}
               </div>
               <span className="text-xs text-white/40 font-mono flex-shrink-0">
                 {new Date(session.timestamp).toLocaleDateString()}

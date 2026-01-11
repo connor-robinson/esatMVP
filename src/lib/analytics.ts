@@ -91,11 +91,22 @@ export async function fetchTopicRankings(
     console.log("[fetchTopicRankings] DEBUG: Skipping personal history fetch (anonymous user)");
   }
 
-  // 2. Fetch Global Leaderboard - ALL sessions (no limit)
+  // 2. Fetch Global Leaderboard - ALL sessions (no limit) with user profiles
   console.log(`[fetchTopicRankings] DEBUG: Fetching global sessions for topic ${topicId}`);
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
-    .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
+    .select(`
+      id, 
+      builder_session_id, 
+      user_id, 
+      summary, 
+      completed_at, 
+      accuracy, 
+      average_time_ms, 
+      question_count, 
+      created_at,
+      user_profiles(display_name)
+    `)
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
     .limit(10000); // Explicit limit to get all data
@@ -164,6 +175,20 @@ export async function fetchTopicRankings(
       
       const isCurrent = d.builder_session_id === currentSessionId;
       
+      // Get username - for global view, use display_name from user_profiles, for personal use "You"
+      let username: string;
+      if (isGlobal) {
+        // Use display_name from user_profiles if available
+        username = d.user_profiles?.display_name || "Anonymous User";
+        // If it's the current user, show "You" instead
+        if (d.user_id === currentUserId) {
+          username = "You";
+        }
+      } else {
+        // Personal view always shows "You"
+        username = "You";
+      }
+      
       if (index < 3 || isCurrent) {
         console.log(`[processRankings] DEBUG: Processing record ${index}`, {
           id: d.id,
@@ -174,14 +199,16 @@ export async function fetchTopicRankings(
           totalQuestions,
           avgTimeMs,
           accuracy,
-          summary: summary,
+          username,
+          userId: d.user_id,
+          displayName: d.user_profiles?.display_name,
         });
       }
       
       return {
         id: d.id,
         userId: d.user_id || currentUserId,
-        username: isGlobal ? "Anonymous" : "You", // Simplified - can add user lookup later if needed
+        username,
         avatar: undefined,
         score,
         timestamp,
