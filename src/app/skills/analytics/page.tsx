@@ -301,7 +301,7 @@ async function fetchLeaderboard(
       questions_correct, 
       questions_attempted, 
       average_time_ms,
-      user_profiles!inner(display_name)
+      profiles!inner(display_name)
     `);
 
   // Filter by topic if specified
@@ -322,7 +322,7 @@ async function fetchLeaderboard(
   >();
 
   (data as any[])?.forEach((row) => {
-    const displayName = row.user_profiles?.display_name || "Anonymous User";
+    const displayName = row.profiles?.display_name || "Anonymous User";
     const entry = grouped.get(row.user_id) ?? {
       userId: row.user_id,
       displayName: row.user_id === userId ? "You" : displayName,

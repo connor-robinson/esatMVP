@@ -105,7 +105,7 @@ export async function fetchTopicRankings(
       average_time_ms, 
       question_count, 
       created_at,
-      user_profiles(display_name)
+      profiles(display_name)
     `)
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
@@ -175,11 +175,11 @@ export async function fetchTopicRankings(
       
       const isCurrent = d.builder_session_id === currentSessionId;
       
-      // Get username - for global view, use display_name from user_profiles, for personal use "You"
+      // Get username - for global view, use display_name from profiles, for personal use "You"
       let username: string;
       if (isGlobal) {
-        // Use display_name from user_profiles if available
-        username = d.user_profiles?.display_name || "Anonymous User";
+        // Use display_name from profiles if available
+        username = d.profiles?.display_name || "Anonymous User";
         // If it's the current user, show "You" instead
         if (d.user_id === currentUserId) {
           username = "You";
@@ -201,7 +201,7 @@ export async function fetchTopicRankings(
           accuracy,
           username,
           userId: d.user_id,
-          displayName: d.user_profiles?.display_name,
+          displayName: d.profiles?.display_name,
         });
       }
       
@@ -226,7 +226,7 @@ export async function fetchTopicRankings(
       let currentUsername = "You";
       if (isGlobal) {
         // For global view, we'll show "You" for current user's session
-        // The username will be set from user_profiles in the data processing above
+        // The username will be set from profiles in the data processing above
         // But since this is the current session, we know it's the current user
         currentUsername = "You";
       }

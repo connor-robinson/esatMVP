@@ -340,7 +340,7 @@ export type AiGeneratedQuestionInsert = {
 };
 export type AiGeneratedQuestionUpdate = Partial<AiGeneratedQuestionRow>;
 
-// user_profiles
+// profiles
 export type UserProfileRow = {
   id: string;
   display_name: string | null;
@@ -457,7 +457,7 @@ export type Database = {
         Insert: AiGeneratedQuestionInsert;
         Update: AiGeneratedQuestionUpdate;
       };
-      user_profiles: {
+      profiles: {
         Row: UserProfileRow;
         Insert: UserProfileInsert;
         Update: UserProfileUpdate;

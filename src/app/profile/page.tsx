@@ -59,7 +59,7 @@ export default function ProfilePage() {
       try {
         // Load profile
         const { data: profileData, error: profileError } = await supabase
-          .from("user_profiles")
+          .from("profiles")
           .select("*")
           .eq("id", session.user.id)
           .single();

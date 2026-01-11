@@ -18,7 +18,7 @@ export async function GET() {
   }
 
   const { data: profile, error } = await supabase
-    .from("user_profiles")
+    .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
   // Check if profile exists
   const { data: existing } = await supabase
-    .from("user_profiles")
+    .from("profiles")
     .select("id")
     .eq("id", user.id)
     .single();
@@ -58,8 +58,8 @@ export async function POST(request: Request) {
     if (bio !== undefined) update.bio = bio;
 
     const { data: profile, error } = await supabase
-      .from("user_profiles")
-      // @ts-ignore - Type inference issue with user_profiles Update type
+      .from("profiles")
+      // @ts-ignore - Type inference issue with profiles Update type
       .update(update)
       .eq("id", user.id)
       .select()
@@ -81,8 +81,8 @@ export async function POST(request: Request) {
     };
 
     const { data: profile, error } = await supabase
-      .from("user_profiles")
-      // @ts-ignore - Type inference issue with user_profiles Insert type
+      .from("profiles")
+      // @ts-ignore - Type inference issue with profiles Insert type
       .insert(insert)
       .select()
       .single();
@@ -114,8 +114,8 @@ export async function PATCH(request: Request) {
   if (bio !== undefined) update.bio = bio;
 
   const { data: profile, error } = await supabase
-    .from("user_profiles")
-    // @ts-ignore - Type inference issue with user_profiles Update type
+    .from("profiles")
+    // @ts-ignore - Type inference issue with profiles Update type
     .update(update)
     .eq("id", user.id)
     .select()
