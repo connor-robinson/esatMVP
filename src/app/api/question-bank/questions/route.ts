@@ -74,13 +74,20 @@ export async function GET(request: NextRequest) {
           subjectConditions.push('primary_tag.ilike.M2-%');
           // Match M2-M9 explicitly
           subjectConditions.push('schema_id.in.(M2,M3,M4,M5,M6,M7,M8,M9)');
-          // For M10+, we need to match but avoid M1. Since we can't easily do "M1[0-9]" in Supabase,
-          // we'll match common two-digit patterns. For three+ digits (M100+), we can use a pattern
-          // but it's less critical since paper column should be set correctly
-          // Match M10-M19 explicitly (excluding M1)
+          // For M10-M19, match explicitly (excluding M1)
           subjectConditions.push('schema_id.in.(M10,M11,M12,M13,M14,M15,M16,M17,M18,M19)');
-          // For M20+, we can use a pattern, but to avoid complexity, we'll rely on paper/primary_tag
-          // If needed, we can add more explicit matches later
+          // For M20+, use pattern matching: M2% matches M20-M29, M3% matches M30-M39, etc.
+          // This covers M20-M99. For M100+, we rely on paper/primary_tag as those should be set correctly
+          subjectConditions.push('schema_id.ilike.M2%');
+          subjectConditions.push('schema_id.ilike.M3%');
+          subjectConditions.push('schema_id.ilike.M4%');
+          subjectConditions.push('schema_id.ilike.M5%');
+          subjectConditions.push('schema_id.ilike.M6%');
+          subjectConditions.push('schema_id.ilike.M7%');
+          subjectConditions.push('schema_id.ilike.M8%');
+          subjectConditions.push('schema_id.ilike.M9%');
+          // Note: M1% pattern would match M1 (Math 1), so we don't include it
+          // Questions with schema_id like M108 should have paper="Math 2" set, so they'll match via paper condition
         } else if (subject === 'Physics') {
           // Physics: schema_id starts with P OR primary_tag starts with P-
           subjectConditions.push('schema_id.ilike.P%');

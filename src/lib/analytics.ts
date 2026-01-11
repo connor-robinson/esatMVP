@@ -93,19 +93,11 @@ export async function fetchTopicRankings(
 
   // 2. Fetch Global Leaderboard - ALL sessions (no limit)
   console.log(`[fetchTopicRankings] DEBUG: Fetching global sessions for topic ${topicId}`);
+  console.log(`[fetchTopicRankings] DEBUG: Query will NOT include profiles join (fetching separately)`);
+  
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
-    .select(`
-      id, 
-      builder_session_id, 
-      user_id, 
-      summary, 
-      completed_at, 
-      accuracy, 
-      average_time_ms, 
-      question_count, 
-      created_at
-    `)
+    .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
     .limit(10000); // Explicit limit to get all data
@@ -117,13 +109,25 @@ export async function fetchTopicRankings(
       errorMessage: globalError.message,
       errorDetails: globalError.details,
       topicId,
+      queryDetails: "SELECT id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at FROM drill_sessions WHERE topic_id = ?",
     });
   } else {
+    console.log(`[fetchTopicRankings] DEBUG: Global sessions query succeeded`, {
+      count: globalData?.length || 0,
+      topicId,
+    });
+    
     // Fetch profiles separately since there's no direct FK relationship
-    const userIds = [...new Set((globalData || []).map((d: any) => d.user_id))];
+    const userIds = globalData ? [...new Set(globalData.map((d: any) => d.user_id))] : [];
+    console.log(`[fetchTopicRankings] DEBUG: Extracted ${userIds.length} unique user IDs from sessions`, {
+      userIds: userIds.slice(0, 10), // Log first 10
+      totalSessions: globalData?.length || 0,
+    });
+    
     let profilesMap: Record<string, { display_name: string | null }> = {};
     
     if (userIds.length > 0) {
+      console.log(`[fetchTopicRankings] DEBUG: Fetching profiles for ${userIds.length} users`);
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
         .select("id, display_name")
@@ -134,13 +138,23 @@ export async function fetchTopicRankings(
           error: profilesError,
           errorCode: profilesError.code,
           errorMessage: profilesError.message,
+          errorDetails: profilesError.details,
+          userIdCount: userIds.length,
         });
       } else {
+        console.log(`[fetchTopicRankings] DEBUG: Profiles fetched successfully`, {
+          profileCount: profilesData?.length || 0,
+          expectedCount: userIds.length,
+        });
         // Create a map of user_id -> profile
         profilesMap = (profilesData || []).reduce((acc: any, p: any) => {
           acc[p.id] = { display_name: p.display_name };
           return acc;
         }, {});
+        console.log(`[fetchTopicRankings] DEBUG: Profiles map created`, {
+          mapSize: Object.keys(profilesMap).length,
+          sampleProfiles: Object.entries(profilesMap).slice(0, 3),
+        });
       }
     }
     
@@ -149,7 +163,12 @@ export async function fetchTopicRankings(
       globalData.forEach((d: any) => {
         d.profiles = profilesMap[d.user_id] || null;
       });
+      console.log(`[fetchTopicRankings] DEBUG: Attached profiles to sessions`, {
+        sessionsWithProfiles: globalData.filter((d: any) => d.profiles).length,
+        sessionsWithoutProfiles: globalData.filter((d: any) => !d.profiles).length,
+      });
     }
+    
     const globalDataArray = (globalData || []) as any[];
     console.log(`[fetchTopicRankings] DEBUG: Global sessions fetched`, {
       count: globalDataArray.length,
@@ -165,6 +184,8 @@ export async function fetchTopicRankings(
       })),
     });
   }
+  
+  const globalDataArray = (globalData || []) as any[];
 
   const processRankings = (
     data: any[], 
