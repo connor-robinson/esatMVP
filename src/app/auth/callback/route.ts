@@ -33,29 +33,48 @@ export async function GET(request: Request) {
   }
 
   try {
+    console.log("[auth/callback] Starting OAuth callback processing");
     const supabase = createRouteClient();
     
+    console.log("[auth/callback] Exchanging code for session...");
     // Exchange code for session - this sets cookies automatically with SSR
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
-      console.error("[auth] Exchange error:", exchangeError);
+      console.error("[auth/callback] Exchange error:", {
+        message: exchangeError.message,
+        status: exchangeError.status,
+        name: exchangeError.name,
+        fullError: JSON.stringify(exchangeError, null, 2)
+      });
       return NextResponse.redirect(
         new URL(`/login?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
       );
     }
 
+    console.log("[auth/callback] Session exchange successful", {
+      hasSession: !!data.session,
+      hasUser: !!data.user,
+      userId: data.user?.id
+    });
+
     if (!data.session) {
+      console.error("[auth/callback] No session in response");
       return NextResponse.redirect(
         new URL("/login?error=no_session", requestUrl.origin)
       );
     }
 
+    console.log("[auth/callback] Successfully authenticated, redirecting to:", redirectTo);
     // Success - redirect to intended page
     // The session is now stored in cookies and will be available on the next page
     return NextResponse.redirect(new URL(redirectTo, requestUrl.origin));
   } catch (err) {
-    console.error("[auth] Callback error:", err);
+    console.error("[auth/callback] Unexpected error:", {
+      error: err,
+      message: err instanceof Error ? err.message : "Unknown error",
+      stack: err instanceof Error ? err.stack : undefined
+    });
     return NextResponse.redirect(
       new URL(
         `/login?error=${encodeURIComponent(err instanceof Error ? err.message : "Unknown error")}`,
