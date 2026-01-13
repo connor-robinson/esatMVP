@@ -515,10 +515,18 @@ export function useQuestionBank(): UseQuestionBankReturn {
     setCurrentQuestion(question);
   }, [currentQuestion?.id]);
 
+  // Track if we've done initial fetch
+  const hasInitialFetched = useRef(false);
+  const lastFiltersRef = useRef<string>('');
+  
   // Fetch question on mount (if we didn't restore) or when filters change
   useEffect(() => {
+    const currentFiltersHash = getFiltersHash();
+    
     // On initial mount, if we didn't restore from storage, fetch a question
-    if (!hasRestoredFromStorage.current && !currentQuestion) {
+    if (!hasRestoredFromStorage.current && !currentQuestion && !hasInitialFetched.current) {
+      hasInitialFetched.current = true;
+      lastFiltersRef.current = currentFiltersHash;
       fetchQuestion(false); // Don't use cache on initial load
       return;
     }
@@ -526,14 +534,19 @@ export function useQuestionBank(): UseQuestionBankReturn {
     // If we restored, mark that we've handled the initial load
     if (hasRestoredFromStorage.current) {
       hasRestoredFromStorage.current = false;
+      hasInitialFetched.current = true;
+      lastFiltersRef.current = currentFiltersHash;
       // Prefetch questions in background for faster switching
       prefetchQuestions(10).catch(() => {});
       return;
     }
     
     // On filter changes, fetch new questions (cache will be cleared automatically)
-    fetchQuestion(false);
-  }, [fetchQuestion, prefetchQuestions, currentQuestion]);
+    if (hasInitialFetched.current && lastFiltersRef.current !== currentFiltersHash) {
+      lastFiltersRef.current = currentFiltersHash;
+      fetchQuestion(false);
+    }
+  }, [filters, currentQuestion]); // Depend on filters and currentQuestion, but use refs to prevent loops
 
   return {
     // State

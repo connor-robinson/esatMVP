@@ -70,12 +70,13 @@ export function QuestionLibraryGrid({
       .catch(err => console.error('Error fetching curriculum:', err));
   }, []);
 
+  // Memoize question IDs to prevent infinite loops
+  const questionIds = useMemo(() => questions.map(q => q.id), [questions]);
+  const questionIdsString = useMemo(() => questionIds.join(','), [questionIds]);
+
   // Fetch attempted question IDs if user is logged in
   useEffect(() => {
-    if (session?.user && questions.length > 0) {
-      // Get all question IDs
-      const questionIds = questions.map(q => q.id);
-      
+    if (session?.user && questionIds.length > 0) {
       // Fetch attempts for all questions at once
       fetch(`/api/question-bank/attempts?limit=1000`)
         .then(res => res.ok ? res.json() : null)
@@ -95,7 +96,7 @@ export function QuestionLibraryGrid({
           console.error('[QuestionLibraryGrid] Error fetching attempts:', err);
         });
     }
-  }, [session?.user, questions]);
+  }, [session?.user, questionIdsString]); // Use stringified IDs to prevent re-runs
 
   // Helper to find topic title from tag code
   const getTopicTitle = (tagCode: string): string => {

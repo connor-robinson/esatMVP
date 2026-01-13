@@ -209,9 +209,13 @@ export async function fetchTopicRankings(
       const score = summary.score || 0;
       const correctAnswers = summary.correctAnswers || 0;
       const totalQuestions = summary.totalQuestions || d.question_count || 0;
-      const avgTimeMs = summary.totalTimeMs 
-        ? (summary.totalTimeMs / (summary.totalQuestions || 1)) 
+      
+      // Always prefer summary.totalTimeMs for exact calculation (matches SessionResults.tsx)
+      // This ensures consistency with the current session calculation
+      const avgTimeMs = summary.totalTimeMs && summary.totalQuestions
+        ? (summary.totalTimeMs / summary.totalQuestions)
         : (d.average_time_ms || 0);
+      
       const accuracy = d.accuracy || (correctAnswers && totalQuestions ? (correctAnswers / totalQuestions) * 100 : 0);
       
       // Handle timestamp - use completed_at, created_at, or current time as fallback
@@ -225,6 +229,48 @@ export async function fetchTopicRankings(
       }
       
       const isCurrent = d.builder_session_id === currentSessionId;
+      
+      // If this is the current session and we have currentSessionData, use the exact values
+      // to ensure consistency with what's shown in the topic breakdown
+      if (isCurrent && currentSessionData && currentSessionId) {
+        console.log(`[processRankings] DEBUG: Overriding current session values with exact data`, {
+          id: d.id,
+          builder_session_id: d.builder_session_id,
+          oldScore: score,
+          newScore: currentSessionData.score,
+          oldAvgTimeMs: avgTimeMs,
+          newAvgTimeMs: currentSessionData.avgTimeMs,
+          oldCorrectAnswers: correctAnswers,
+          newCorrectAnswers: currentSessionData.correctAnswers,
+          oldTotalQuestions: totalQuestions,
+          newTotalQuestions: currentSessionData.totalQuestions,
+        });
+        
+        // Get username - for current session, always show "You" if it's the current user
+        let username: string;
+        if (isGlobal) {
+          // For global view, show "You" for current user's session
+          username = "You";
+        } else {
+          // Personal view always shows "You"
+          username = "You";
+        }
+        
+        return {
+          id: d.id,
+          builder_session_id: d.builder_session_id,
+          userId: d.user_id || currentUserId,
+          username,
+          avatar: undefined,
+          score: currentSessionData.score, // Use exact score from current session
+          timestamp,
+          isCurrent: true,
+          correctAnswers: currentSessionData.correctAnswers, // Use exact values
+          totalQuestions: currentSessionData.totalQuestions,
+          avgTimeMs: currentSessionData.avgTimeMs, // Use exact avgTimeMs from current session
+          accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
+        };
+      }
       
       // Get username - for global view, use display_name from profiles, for personal use "You"
       let username: string;

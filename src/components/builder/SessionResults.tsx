@@ -165,6 +165,16 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       
       for (const topic of result.topicBreakdown) {
         try {
+          // Log the exact values being passed to ensure consistency
+          console.log(`[SessionResults] DEBUG: Fetching rankings for topic ${topic.topicId}`, {
+            topicId: topic.topicId,
+            score: topic.score,
+            correctAnswers: topic.correct,
+            totalQuestions: topic.total,
+            avgTimeMs: topic.avgTimeMs,
+            accuracy: topic.accuracy,
+          });
+          
           const rankings = await fetchTopicRankings(
             supabase,
             topic.topicId,
