@@ -2280,20 +2280,31 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
 class Gemini:
     def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
         genai.configure(api_key=api_key)
+        self._requested_model = model
         # Try to create the model, fallback to gemini-1.5-flash if not available
         try:
             self.model = genai.GenerativeModel(model)
+            self._actual_model = model
+            print(f"[INFO] Using model: {model}")
         except Exception as e:
             print(f"[WARN] Model {model} not available, trying gemini-1.5-flash: {e}")
             try:
                 self.model = genai.GenerativeModel("gemini-1.5-flash")
+                self._actual_model = "gemini-1.5-flash"
+                print(f"[INFO] Using fallback model: gemini-1.5-flash")
             except Exception:
                 # Last resort: try gemini-pro
                 self.model = genai.GenerativeModel("gemini-pro")
+                self._actual_model = "gemini-pro"
+                print(f"[INFO] Using fallback model: gemini-pro")
         self.api_key = api_key
         self._last_request_time = 0
         self._request_lock = threading.Lock()
         self._min_delay = 1.0  # Minimum delay between requests (seconds) - increased to avoid rate limits
+    
+    def get_model_name(self) -> str:
+        """Return the actual model name being used."""
+        return getattr(self, '_actual_model', self._requested_model)
 
     def _rate_limit(self):
         """Enforce rate limiting with minimum delay between requests."""
@@ -4362,11 +4373,8 @@ class App(tk.Tk):
                 self.after(0, lambda: self._set_status("Stage 1: Extracting fingerprints..."))
                 fingerprints = self._extract_fingerprints_parallel(unused_pool)
                 
-                # Barrier: Wait for all fingerprints
-                expected_count = len(unused_pool)
-                if not _wait_for_fingerprints(expected_count, FINGERPRINTS_DIR_DEFAULT):
-                    self.after(0, lambda: messagebox.showerror("Error", "Timeout waiting for fingerprints to complete."))
-                    return
+                # Skip barrier - continue with what we have
+                # (The worker already loads existing fingerprints from disk)
                 
                 # Filter to eligible fingerprints
                 eligible_fps = {qid: fp for qid, fp in fingerprints.items() if fp.eligible}
@@ -4404,8 +4412,14 @@ class App(tk.Tk):
                     "total_candidates": len(candidates),
                     "created": 0,
                     "merged": 0,
-                    "rejected": 0
+                    "rejected": 0,
+                    "questions_lost": 0
                 }
+                
+                # Log model being used
+                model_name = self.gemini.get_model_name()
+                print(f"[INFO] Using model: {model_name}")
+                self.after(0, lambda: self._set_status(f"Using model: {model_name}"))
                 
                 for candidate in candidates:
                     try:
@@ -4414,6 +4428,8 @@ class App(tk.Tk):
                         if not is_valid:
                             print(f"[REJECT] Candidate {candidate.candidate_id}: {error_msg}")
                             stats["rejected"] += 1
+                            if candidate.evidence:
+                                stats["questions_lost"] += len(candidate.evidence)
                             continue
                         
                         # Check for collisions
@@ -4435,9 +4451,15 @@ class App(tk.Tk):
                                 self.used_question_ids.add(qid)
                         else:
                             stats["rejected"] += 1
+                            # Count questions lost due to rejection
+                            if candidate.evidence:
+                                stats["questions_lost"] = stats.get("questions_lost", 0) + len(candidate.evidence)
                     except Exception as e:
                         print(f"[ERROR] Failed to process candidate {candidate.candidate_id}: {e}")
                         stats["rejected"] += 1
+                        # Count questions lost due to error
+                        if candidate.evidence:
+                            stats["questions_lost"] = stats.get("questions_lost", 0) + len(candidate.evidence)
                 
                 # Save used questions
                 self._save_used_questions()
@@ -4448,7 +4470,9 @@ class App(tk.Tk):
                 self.after(0, self._load_meta)
                 
                 # Show summary
+                questions_lost = stats.get("questions_lost", 0)
                 summary = (f"Three-stage pipeline complete:\n\n"
+                          f"Model used: {self.gemini.get_model_name()}\n\n"
                           f"Stage 1: {len(eligible_fps)} eligible fingerprints extracted\n"
                           f"Stage 2: {len(clusters)} clusters created\n"
                           f"Stage 3: {stats['total_candidates']} schema candidates generated\n\n"
@@ -4456,6 +4480,8 @@ class App(tk.Tk):
                           f"✓ New schemas created: {stats['created']}\n"
                           f"↻ Merged with existing: {stats['merged']}\n"
                           f"✗ Rejected: {stats['rejected']}")
+                if questions_lost > 0:
+                    summary += f"\n⚠ Questions lost due to failures: {questions_lost}"
                 
                 self.after(0, lambda: messagebox.showinfo("Processing Complete", summary))
                 self.after(0, lambda: self._set_status(
@@ -4663,10 +4689,10 @@ Return ONLY valid JSON:
         
         unclustered = [qid for qid in eligible_fps.keys() if qid not in clustered_qids]
         if unclustered:
-            # Group singletons into small clusters
-            singleton_batch_size = 5
-            for i in range(0, len(unclustered), singleton_batch_size):
-                all_clusters[next_cluster_id] = unclustered[i:i+singleton_batch_size]
+            # Create individual clusters for each unclustered question
+            # This ensures every question gets a schema (even if it's a unique pattern)
+            for qid in unclustered:
+                all_clusters[next_cluster_id] = [qid]
                 next_cluster_id += 1
         
         return all_clusters
@@ -4679,19 +4705,21 @@ Return ONLY valid JSON:
         """
         candidates = []
         
-        # Filter clusters: skip too small (< 3) or handle too large (> 40)
+        # Process all clusters - use every question
+        # For small clusters (< 3), we'll still create schemas (they might be unique patterns)
+        # For large clusters (> 25), split into multiple schemas to ensure diversity
         valid_clusters = {}
         for cluster_id, qids in clusters.items():
             if len(qids) < 3:
-                # Too small, skip or merge with nearest
-                continue
-            elif len(qids) > 40:
-                # Too large, split into smaller clusters
-                # Simple split: divide into chunks of ~20
+                # Small clusters: create schema anyway (might be unique patterns)
+                valid_clusters[cluster_id] = qids
+            elif len(qids) > 25:
+                # Large clusters: split into multiple schemas (each with 15-25 questions)
+                # This ensures we create multiple schemas and use all questions
                 chunk_size = 20
                 for i in range(0, len(qids), chunk_size):
                     chunk = qids[i:i+chunk_size]
-                    if len(chunk) >= 3:
+                    if len(chunk) >= 1:  # Accept even single-question chunks
                         valid_clusters[len(valid_clusters)] = chunk
             else:
                 valid_clusters[cluster_id] = qids
@@ -4761,24 +4789,33 @@ Return ONLY valid JSON:
                         resp = resp["candidates"][0] if resp["candidates"] else {}
                     
                     if resp:
-                        # Select 3-8 evidence qids from cluster
-                        evidence_qids = qids[:8] if len(qids) >= 8 else qids
-                        if len(evidence_qids) < 3:
-                            evidence_qids = qids[:3] if len(qids) >= 3 else qids
+                        # Use ALL questions from cluster as evidence (not just 3-8)
+                        # This ensures every question gets used
+                        evidence_qids = qids  # Use all questions in the cluster
                         
-                        # Build exemplar justifications
+                        # Build exemplar justifications for all questions
                         exemplar_justifications = {}
                         for qid in evidence_qids:
                             if qid in fingerprints:
                                 fp = fingerprints[qid]
                                 exemplar_justifications[qid] = f"Exemplifies {fp.reasoning_pattern_hint}"
+                            else:
+                                exemplar_justifications[qid] = "Exemplifies pattern"
+                        
+                        # If LLM returned evidence, use it, but ensure we include all cluster questions
+                        llm_evidence = resp.get("evidence", [])
+                        if llm_evidence:
+                            # Merge LLM evidence with all cluster questions (no duplicates)
+                            all_evidence = list(set(evidence_qids + llm_evidence))
+                        else:
+                            all_evidence = evidence_qids
                         
                         candidate = Candidate(
                             candidate_id=resp.get("candidate_id") or f"C{cluster_id}",
                             title=str(resp.get("title", "")),
                             prefix=str(resp.get("prefix", prefix)),
                             core_move=str(resp.get("core_move", "")),
-                            evidence=list(resp.get("evidence", evidence_qids)),
+                            evidence=all_evidence,  # Use all questions
                             collision_guess=list(resp.get("collision_guess", [])),
                             confidence=float(resp.get("confidence", 0.0)),
                             exemplar_justifications=resp.get("exemplar_justifications", exemplar_justifications),

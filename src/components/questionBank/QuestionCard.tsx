@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MathContent } from "@/components/shared/MathContent";
+import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import type { QuestionBankQuestion } from "@/types/questionBank";
@@ -243,10 +244,18 @@ export function QuestionCard({
         </div>
 
         <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem' }}>
-          <MathContent
-            content={question.question_stem}
-            className="text-white/95"
-          />
+          {question.graph_spec ? (
+            <QuestionWithGraph
+              questionText={question.question_stem}
+              graphSpec={question.graph_spec}
+              className="text-white/95"
+            />
+          ) : (
+            <MathContent
+              content={question.question_stem}
+              className="text-white/95"
+            />
+          )}
         </div>
       </Card>
 

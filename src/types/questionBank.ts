@@ -2,6 +2,8 @@
  * Question Bank Types
  */
 
+import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
+
 export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'All';
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
@@ -24,6 +26,7 @@ export interface QuestionBankQuestion {
   secondary_tags: string[] | null;
   status: 'pending_review' | 'approved' | 'rejected' | 'needs_revision';
   created_at: string;
+  graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs
 }
 
 export interface QuestionAttempt {

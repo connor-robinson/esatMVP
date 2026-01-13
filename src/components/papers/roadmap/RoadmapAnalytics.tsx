@@ -6,9 +6,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Clock, Target, CheckCircle2, ArrowRight } from "lucide-react";
+import { Info } from "lucide-react";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
-import { cn } from "@/lib/utils";
 
 interface RoadmapAnalyticsProps {
   stages: RoadmapStage[];
@@ -112,14 +111,13 @@ export function RoadmapAnalytics({
       <h2 className="text-xl font-semibold text-white/90 mb-6">Progress Overview</h2>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Progress Percentage */}
         <div className="rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wide">
               Progress
             </span>
-            <Target className="w-4 h-4 text-white/30" />
           </div>
           <div className="text-3xl font-bold text-white/90 mb-1">
             {stats.progressPercentage}%
@@ -141,88 +139,65 @@ export function RoadmapAnalytics({
 
         {/* Completed Time */}
         <div className="rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-start justify-between mb-3">
             <span className="text-xs font-medium text-white/40 uppercase tracking-wide">
               Completed
             </span>
-            <CheckCircle2 className="w-4 h-4 text-white/30" />
-          </div>
-          <div className="text-3xl font-bold text-white/90 mb-1">
-            {Math.round(stats.completedMinutes)}
-          </div>
-          <div className="text-xs text-white/50">minutes practiced</div>
-          <div className="text-xs text-white/40 mt-1">
-            {stats.completedQuestions} questions
-          </div>
-        </div>
-
-        {/* Remaining Time */}
-        <div className="rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-white/40 uppercase tracking-wide">
-              Remaining
-            </span>
-            <Clock className="w-4 h-4 text-white/30" />
-          </div>
-          <div className="text-3xl font-bold text-white/90 mb-1">
-            {Math.round(stats.remainingMinutes)}
-          </div>
-          <div className="text-xs text-white/50">minutes remaining</div>
-          <div className="text-xs text-white/40 mt-1">
-            {stats.remainingQuestions} questions
-          </div>
-        </div>
-
-        {/* Total Time */}
-        <div className="rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-white/40 uppercase tracking-wide">
-              Total
-            </span>
-            <Clock className="w-4 h-4 text-white/30" />
-          </div>
-          <div className="text-3xl font-bold text-white/90 mb-1">
-            {Math.round(stats.totalMinutes)}
-          </div>
-          <div className="text-xs text-white/50">total minutes</div>
-          <div className="text-xs text-white/40 mt-1">
-            {stats.totalQuestions} questions
-          </div>
-        </div>
-      </div>
-
-      {/* Next Steps */}
-      {nextStage && (
-        <div className="rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
-          <div className="flex items-center gap-2 mb-3">
-            <ArrowRight className="w-4 h-4 text-white/50" />
-            <span className="text-sm font-semibold text-white/70">What to do next</span>
-          </div>
-          <div className="text-base font-medium text-white/90 mb-1">
-            {nextStage.examName} {nextStage.year}
-          </div>
-          <div className="text-sm text-white/50">
-            {nextStage.parts.length} part{nextStage.parts.length !== 1 ? "s" : ""} to practice
-          </div>
-          {nextStage.parts.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {nextStage.parts.slice(0, 3).map((part, idx) => (
-                <span
-                  key={idx}
-                  className="px-2.5 py-1 rounded-md text-xs font-medium text-white/60 bg-white/[0.05]"
-                >
-                  {part.partLetter}: {part.partName}
-                </span>
-              ))}
-              {nextStage.parts.length > 3 && (
-                <span className="px-2.5 py-1 rounded-md text-xs font-medium text-white/40 bg-white/[0.05]">
-                  +{nextStage.parts.length - 3} more
-                </span>
-              )}
+            <div className="relative group">
+              <Info className="w-4 h-4 text-white/30 cursor-help" />
+              <div className="absolute right-0 top-full mt-2 w-64 p-3 bg-[#1a1d21] border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                <p className="text-xs text-white/70 leading-relaxed">
+                  This shows expected time to complete the questions themselves. Actual practice time is much longer as marking and reviewing your work is the most important part of learning.
+                </p>
+              </div>
             </div>
-          )}
+          </div>
+          <div className="mb-1">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold text-white/90">{Math.round(stats.completedMinutes)}</span>
+              <span className="text-xl font-light text-white/25">/</span>
+              <span className="text-2xl font-bold text-white/90">{Math.round(stats.totalMinutes)}</span>
+            </div>
+          </div>
+          <div className="text-xs font-medium text-white/40 uppercase tracking-wide mt-1">
+            minutes practiced
+          </div>
+          <div className="text-xs text-white/50 mt-1">
+            {stats.completedQuestions} / {stats.totalQuestions} questions
+          </div>
         </div>
-      )}
+
+        {/* What to do next */}
+        {nextStage && (
+          <div className="md:col-span-2 rounded-organic-lg p-5 bg-white/[0.06] backdrop-blur-md border border-transparent">
+            <div className="mb-3">
+              <span className="text-xs font-medium text-white/40 uppercase tracking-wide">
+                What to do next
+              </span>
+            </div>
+            <div className="text-lg font-semibold text-white/90 mb-2">
+              {nextStage.examName} {nextStage.year}
+            </div>
+            {nextStage.parts.length > 0 && (
+              <>
+                <div className="text-sm text-white/50 mb-3">
+                  {nextStage.parts.length} part{nextStage.parts.length !== 1 ? "s" : ""} to practice
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {nextStage.parts.map((part, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 rounded-md text-xs font-medium text-white/60 bg-white/[0.05]"
+                    >
+                      {part.partLetter}: {part.partName}
+                    </span>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

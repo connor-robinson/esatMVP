@@ -33,16 +33,16 @@ export async function isPartCompleted(
     const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
     const section = getSectionForRoadmapPart(part, examName);
 
-    // Query for completed sessions matching this part
+    // Query for ALL completed sessions matching this paper variant
+    // We need to check ALL sessions, not just the most recent one,
+    // because a user might complete different parts in different sessions
     const { data, error } = await supabase
       .from('paper_sessions')
       .select('id, ended_at, selected_sections, paper_name, paper_variant')
       .eq('user_id', userId)
       .eq('paper_name', examName)
       .eq('paper_variant', paperVariant)
-      .not('ended_at', 'is', null) // Session must be completed
-      .order('ended_at', { ascending: false })
-      .limit(1);
+      .not('ended_at', 'is', null); // Session must be completed
 
     if (error) {
       console.error('[roadmapCompletion] Error checking part completion:', error);
@@ -53,16 +53,19 @@ export async function isPartCompleted(
       return false;
     }
 
-    // Check if the session's selected_sections includes our section
-    const session = data[0] as { id: string; ended_at: string | null; selected_sections: string[] | null; paper_name: string; paper_variant: string };
-    const selectedSections = session.selected_sections as string[] | null;
-
-    if (!selectedSections || selectedSections.length === 0) {
-      return false;
+    // Check if ANY completed session includes our section
+    // This handles cases where user completes different parts in different sessions
+    for (const session of data) {
+      const selectedSections = session.selected_sections as string[] | null;
+      
+      if (selectedSections && selectedSections.length > 0) {
+        if (selectedSections.includes(section)) {
+          return true; // Found a completed session with this section
+        }
+      }
     }
 
-    // Check if the section matches
-    return selectedSections.includes(section);
+    return false; // No completed session found with this section
   } catch (error) {
     console.error('[roadmapCompletion] Error in isPartCompleted:', error);
     return false;

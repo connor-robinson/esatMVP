@@ -133,9 +133,11 @@ export function RoadmapList({
     // Only proceed if nodes are available and we haven't scrolled yet
     if (nodes.length === 0 || hasScrolledRef.current) return;
 
-    // TEST MODE: Hardcoded target to match RoadmapTimeline
-    const TEST_MODE = true;
-    const targetIndex = TEST_MODE ? 10 : nodes.findIndex(n => n.isCurrent) !== -1 ? nodes.findIndex(n => n.isCurrent) : 0;
+    // Find the current stage index (first incomplete unlocked stage)
+    const targetIndex = nodes.findIndex(n => n.isCurrent);
+    
+    // If no current stage found, don't auto-scroll
+    if (targetIndex < 0) return;
 
     if (targetIndex < 0) return;
 

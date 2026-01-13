@@ -93,24 +93,12 @@ export default function PapersRoadmapPage() {
             });
           }
         } else {
-          // TESTING SIMULATION: Set stages 0-9 to COMPLETED, 10 to IN PROGRESS
-          for (let i = 0; i < stages.length; i++) {
-            const stage = stages[i];
-            let completed = 0;
-            const partsMap = new Map<string, boolean>();
-
-            if (i < 10) {
-              completed = stage.parts.length;
-              stage.parts.forEach(p => partsMap.set(`${p.paperName}-${p.examType}-${p.partName || ''}`, true));
-            } else if (i === 10) {
-              // Stage 10 is the current target - start with 0 completed
-              completed = 0;
-            }
-
+          // No user session - set all stages to 0 completion
+          for (const stage of stages) {
             completionMap.set(stage.id, {
-              completed,
+              completed: 0,
               total: stage.parts.length,
-              parts: partsMap,
+              parts: new Map<string, boolean>(),
             });
           }
         }
@@ -129,19 +117,14 @@ export default function PapersRoadmapPage() {
           // Logic: 
           // - First stage is always unlocked
           // - Stage N is unlocked if stage N-1 is completed
-          // - For the simulation: indexes 0-10 are explicitly unlocked
           let isUnlocked = false;
-          if (!session?.user?.id) {
-            isUnlocked = i <= 10;
+          if (i === 0) {
+            isUnlocked = true;
           } else {
-            if (i === 0) {
-              isUnlocked = true;
-            } else {
-              const prevStage = stages[i - 1];
-              const prevData = completionMap.get(prevStage.id);
-              const isPrevCompleted = (prevData?.completed || 0) === (prevData?.total || prevStage.parts.length);
-              isUnlocked = isPrevCompleted;
-            }
+            const prevStage = stages[i - 1];
+            const prevData = completionMap.get(prevStage.id);
+            const isPrevCompleted = (prevData?.completed || 0) === (prevData?.total || prevStage.parts.length) && (prevData?.total || 0) > 0;
+            isUnlocked = isPrevCompleted;
           }
 
           if (isUnlocked) {

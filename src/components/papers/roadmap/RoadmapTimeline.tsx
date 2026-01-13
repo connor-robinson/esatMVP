@@ -9,11 +9,6 @@ import { motion } from "framer-motion";
 import { getPaperTypeColor, PAPER_COLORS } from "@/config/colors";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
 
-// TEST MODE: Set to true and specify index to test progress visualization
-// TODO: Remove this when implementing real progress tracking
-const TEST_MODE = true;
-const TEST_CURRENT_INDEX = 10; // Set user at 10th paper for testing
-
 interface TimelineMarker {
   stageIndex: number;
   examName: string;
@@ -27,8 +22,8 @@ interface RoadmapTimelineProps {
 }
 
 export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: RoadmapTimelineProps) {
-  // Use test mode if enabled, otherwise use provided currentStageIndex
-  const effectiveCurrentIndex = TEST_MODE ? TEST_CURRENT_INDEX : (currentStageIndex ?? 0);
+  // Use provided currentStageIndex, default to 0 if not provided
+  const effectiveCurrentIndex = currentStageIndex ?? 0;
   // Define guidance text at specific transition points - split into multiple small boxes (max 15 words each)
   const markers: TimelineMarker[] = [];
 
