@@ -44,7 +44,7 @@ export function TopicSelector({
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-cyan/20 text-cyan-light shadow-lg shadow-cyan/10 border border-cyan/30 hover:bg-cyan/30"
+        className="flex items-center gap-2 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-200 bg-interview/20 text-interview hover:bg-interview/30"
       >
         <BookOpen className="h-4 w-4" />
         <span>
@@ -69,7 +69,7 @@ export function TopicSelector({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full mt-2 right-0 w-64 bg-background/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
+              className="absolute top-full mt-2 right-0 w-64 bg-background/95 backdrop-blur-xl rounded-organic-lg shadow-2xl z-50 overflow-hidden"
             >
               {/* Search Bar */}
               <div className="p-3 border-b border-white/10">
@@ -80,7 +80,7 @@ export function TopicSelector({
                     placeholder="Search topics..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/90 placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-cyan/40 focus:border-cyan/40 transition-all"
+                    className="w-full pl-10 pr-3 py-2 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-interview/40 transition-all"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
@@ -92,9 +92,9 @@ export function TopicSelector({
                 <button
                   onClick={() => handleTopicSelect("all")}
                   className={cn(
-                    "w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors",
+                    "w-full text-left px-4 py-2.5 rounded-organic-md text-sm transition-colors",
                     value === "all"
-                      ? "bg-cyan/20 text-cyan-light font-medium"
+                      ? "bg-interview/20 text-interview font-medium"
                       : "text-white/70 hover:bg-white/5"
                   )}
                 >
@@ -113,9 +113,9 @@ export function TopicSelector({
                       key={topic.id}
                       onClick={() => handleTopicSelect(topic.id)}
                       className={cn(
-                        "w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors",
+                        "w-full text-left px-4 py-2.5 rounded-organic-md text-sm transition-colors",
                         value === topic.id
-                          ? "bg-cyan/20 text-cyan-light font-medium"
+                          ? "bg-interview/20 text-interview font-medium"
                           : "text-white/70 hover:bg-white/5"
                       )}
                     >

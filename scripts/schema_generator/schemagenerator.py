@@ -123,8 +123,8 @@ DIAGRAM_KEYWORDS = [
 DRAWING_COUNT_THRESHOLD = 10
 
 # Full automation configuration
-MAX_QUESTIONS_PER_SCHEMA = 5  # Maximum questions per schema before creating new one
-CONFIDENCE_THRESHOLD = 7.5  # fit_score threshold (0-10) - below this creates new schema
+MAX_QUESTIONS_PER_SCHEMA = 5  # Maximum questions per schema before creating new one (increased from 5)
+CONFIDENCE_THRESHOLD = 6.5  # fit_score threshold (0-10) - below this creates new schema (lowered from 7.5 to allow more exemplars)
 PARALLEL_WORKERS = 5  # Number of parallel Gemini API workers
 
 
@@ -162,6 +162,14 @@ class Candidate:
     collision_guess: List[str]  # existing schema IDs
     confidence: float  # 0..1
     exemplar_justifications: Optional[Dict[str, str]] = None  # qid -> one-line reason
+    # New fields for designer-ready schemas
+    trigger_cues: Optional[List[str]] = None  # 2-5 cues that help detect the schema
+    canonical_steps: Optional[List[str]] = None  # 3-6 steps (phrases)
+    variation_knobs: Optional[List[str]] = None  # 3-6 ways to generate new questions
+    distractor_archetypes: Optional[List[str]] = None  # 2-4 common wrong moves
+    answer_form: Optional[str] = None  # "integer|rational|algebraic|logic|multiple_choice_logic|other"
+    scope: Optional[str] = None  # "too_broad|good|too_specific"
+    collision_reason: Optional[str] = None  # Reason for collision_guess if nonempty
 
 @dataclass
 class ReasoningFingerprint:
@@ -171,6 +179,19 @@ class ReasoningFingerprint:
     asked_type: str  # "compute value", "compare", "count solutions", etc.
     dominant_move: str  # One sentence describing the key reasoning step
     wrong_path_family: List[str]  # Common wrong approaches (2-4 bullets)
+
+@dataclass
+class QuestionFingerprint:
+    """Enhanced fingerprint for Stage 1 extraction with clustering-friendly fields."""
+    qid: str
+    eligible: bool
+    reasoning_pattern_hint: str  # 3-8 word pattern label (not topic)
+    core_move_guess: str  # One imperative sentence
+    trigger_cues: List[str]  # 2-5 concrete surface signals
+    mini_steps: List[str]  # 3-6 short steps (phrases)
+    wrong_move: str  # One sentence describing common incorrect approach
+    answer_form: str  # "integer|rational|algebraic|logic|multiple_choice_logic|other"
+    confidence: float  # 0.0-1.0
 
 @dataclass
 class PDFExtractionStats:
@@ -1004,6 +1025,53 @@ def validate_prefix_against_content(candidate: Candidate, index: List[QuestionIt
     return True, ""
 
 
+def extract_question_fingerprint(question: QuestionItem, gemini: 'Gemini') -> Optional[QuestionFingerprint]:
+    """
+    Extract enhanced question fingerprint using Stage 1 prompt.
+    Returns None if extraction fails.
+    """
+    try:
+        # Load fingerprint extraction prompt
+        template = load_prompt_template(FINGERPRINT_EXTRACTION_PROMPT_PATH)
+        
+        qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+        question_text = question.text[:1000] if question.text else ""
+        solution_text = question.solution_text[:1000] if question.solution_text else ""
+        has_diagram = question.skipped_diagram  # Note: skipped_diagram is True if diagram was detected
+        
+        prompt = template.format(
+            qid=qid,
+            question_text=question_text,
+            solution_text=solution_text,
+            has_diagram=has_diagram
+        )
+        
+        resp = gemini.generate_json(prompt)
+        if resp and isinstance(resp, dict):
+            # Handle list wrapper if present
+            if isinstance(resp, list):
+                resp = resp[0] if resp else {}
+            elif "candidates" in resp and isinstance(resp["candidates"], list):
+                resp = resp["candidates"][0] if resp["candidates"] else {}
+            
+            if resp:
+                return QuestionFingerprint(
+                    qid=str(resp.get("qid", qid)),
+                    eligible=bool(resp.get("eligible", True)),
+                    reasoning_pattern_hint=str(resp.get("reasoning_pattern_hint", "")),
+                    core_move_guess=str(resp.get("core_move_guess", "")),
+                    trigger_cues=list(resp.get("trigger_cues", [])),
+                    mini_steps=list(resp.get("mini_steps", [])),
+                    wrong_move=str(resp.get("wrong_move", "")),
+                    answer_form=str(resp.get("answer_form", "other")),
+                    confidence=float(resp.get("confidence", 0.0))
+                )
+    except Exception as e:
+        print(f"[WARN] Failed to extract question fingerprint: {e}")
+    
+    return None
+
+
 def extract_reasoning_fingerprint(question: QuestionItem, gemini: 'Gemini') -> Optional[ReasoningFingerprint]:
     """
     Use Gemini to extract structured reasoning fingerprint from question.
@@ -1040,6 +1108,62 @@ Focus on the REASONING PATTERN, not the topic.
         print(f"[WARN] Failed to extract reasoning fingerprint: {e}")
     
     return None
+
+
+def _extract_fingerprint_worker(question: QuestionItem, gemini: 'Gemini', fingerprints_dir: Path) -> Tuple[str, Optional[QuestionFingerprint], Optional[str]]:
+    """
+    Worker function for parallel fingerprint extraction.
+    Returns (qid, fingerprint, error_message).
+    """
+    qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+    fingerprint_file = fingerprints_dir / f"{qid}.json"
+    
+    # Skip if already exists
+    if fingerprint_file.exists():
+        try:
+            with open(fingerprint_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return (qid, QuestionFingerprint(**data), None)
+        except Exception as e:
+            # File exists but corrupted, re-extract
+            pass
+    
+    # Extract fingerprint with retries
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            fingerprint = extract_question_fingerprint(question, gemini)
+            if fingerprint:
+                # Save to file
+                fingerprint_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(fingerprint_file, 'w', encoding='utf-8') as f:
+                    json.dump(asdict(fingerprint), f, indent=2)
+                return (qid, fingerprint, None)
+        except Exception as e:
+            if attempt == max_retries - 1:
+                return (qid, None, str(e))
+            time.sleep(0.5 * (attempt + 1))  # Exponential backoff
+    
+    return (qid, None, "Failed after retries")
+
+
+def _wait_for_fingerprints(expected_count: int, fingerprints_dir: Path, max_wait_seconds: int = 300, check_interval: float = 2.0) -> bool:
+    """
+    Barrier implementation: wait for all expected fingerprints to be written.
+    Returns True when all complete, False if timeout.
+    """
+    start_time = time.time()
+    while time.time() - start_time < max_wait_seconds:
+        # Count fingerprint files
+        fingerprint_files = list(fingerprints_dir.glob("*.json"))
+        actual_count = len(fingerprint_files)
+        
+        if actual_count >= expected_count:
+            return True
+        
+        time.sleep(check_interval)
+    
+    return False
 
 
 def compute_schema_fit_score(
@@ -2279,6 +2403,12 @@ FULL_PROMPT_PATH = PROMPT_DIR / "Schema_Full_Prompt.md"
 COMPRESS_PROMPT_PATH = PROMPT_DIR / "Schema_Compress_Prompt.md"
 SPLIT_PROMPT_PATH = PROMPT_DIR / "Schema_Split_Prompt.md"
 ENRICH_PROMPT_PATH = PROMPT_DIR / "Schema_Enrich_Prompt.md"
+FINGERPRINT_EXTRACTION_PROMPT_PATH = PROMPT_DIR / "Fingerprint_Extraction_Prompt.md"
+SCHEMA_SYNTHESIS_CLUSTER_PROMPT_PATH = PROMPT_DIR / "Schema_Synthesis_Cluster_Prompt.md"
+
+# Fingerprints directory for Stage 1 output
+FINGERPRINTS_DIR_DEFAULT = Path(__file__).parent / "fingerprints"
+FINGERPRINTS_DIR_DEFAULT.mkdir(parents=True, exist_ok=True)
 
 def load_prompt_template(path: Path) -> str:
     """Load a prompt template from a markdown file."""
@@ -4067,15 +4197,126 @@ class App(tk.Tk):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load extraction report: {e}")
 
+    def _accept_candidate_as_schema(self, candidate: Candidate) -> Optional[str]:
+        """
+        Accept a candidate as a new schema (helper method for pipeline).
+        Returns schema_id if successful, None otherwise.
+        """
+        try:
+            # Generate full schema markdown
+            md = self.gemini.generate_text(prompt_full_schema(candidate))
+            md = md.strip()
+            
+            # Ensure trailing separator
+            if not md.endswith("---"):
+                if not md.endswith("\n"):
+                    md += "\n"
+                md += "\n---\n"
+            
+            # Validate and auto-fix
+            is_valid, errors, fixed_preview = validate_schema_block(md, auto_fix=True)
+            if fixed_preview:
+                md = fixed_preview
+            
+            if not is_valid:
+                print(f"[REJECT] Candidate {candidate.candidate_id}: Validation failed: {errors}")
+                return None
+            
+            # For TMUA: Route to correct schema file based on prefix
+            if MODE == "TMUA":
+                normalized_prefix = normalize_prefix(candidate.prefix)
+                if normalized_prefix == "R":
+                    target_path = TMUA_PAPER2_SCHEMAS_MD
+                else:
+                    target_path = TMUA_PAPER1_SCHEMAS_MD
+                
+                if not target_path.exists():
+                    target_path.parent.mkdir(parents=True, exist_ok=True)
+                    if normalized_prefix == "R":
+                        target_path.write_text("# TMUA Paper 2 Schemas (Mathematical Reasoning)\n\n", encoding="utf-8")
+                    else:
+                        target_path.write_text("# TMUA Paper 1 Schemas (Mathematical Knowledge)\n\n", encoding="utf-8")
+            else:
+                target_path = self.schemas_md_path
+                if not target_path.exists():
+                    target_path.parent.mkdir(parents=True, exist_ok=True)
+                    target_path.write_text("# Schemas\n\n", encoding="utf-8")
+            
+            # Assign unique schema ID
+            normalized_prefix = normalize_prefix(candidate.prefix)
+            new_id = generate_unique_schema_id(normalized_prefix)
+            
+            # Clean placeholders
+            md = clean_schema_markdown(md, new_id, candidate.title)
+            
+            # Atomic write
+            temp_file = target_path.with_suffix('.tmp')
+            try:
+                current_content = safe_read_text(target_path)
+                new_content = current_content + "\n" + md + "\n"
+                safe_write_text(temp_file, new_content)
+                shutil.move(str(temp_file), str(target_path))
+            except Exception as e:
+                print(f"[ERROR] Failed to write schema {new_id}: {e}")
+                if temp_file.exists():
+                    temp_file.unlink()
+                return None
+            
+            # Update meta
+            if new_id not in self.schemas_meta:
+                self.schemas_meta[new_id] = {
+                    "edits_count": 0,
+                    "locked": False,
+                    "evidence": [],
+                    "unique_id": new_id,
+                    "created_at": now_iso()
+                }
+            self.schemas_meta[new_id]["has_tmua_evidence"] = has_tmua_evidence(candidate)
+            save_schemas_meta(self.schemas_meta)
+            
+            # Update coverage
+            update_schema_coverage(new_id, candidate, self.index)
+            
+            return new_id
+        except Exception as e:
+            print(f"[ERROR] Failed to accept candidate {candidate.candidate_id}: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
+    
+    def _merge_candidate_into_schema(self, candidate: Candidate, schema_id: str):
+        """
+        Merge a candidate's evidence into an existing schema.
+        """
+        try:
+            # Add evidence to existing schema
+            if schema_id not in self.schemas_meta:
+                self.schemas_meta[schema_id] = {"evidence": [], "edits_count": 0}
+            
+            existing_evidence = set(self.schemas_meta[schema_id].get("evidence", []))
+            for qid in candidate.evidence:
+                if qid not in existing_evidence:
+                    existing_evidence.add(qid)
+            
+            self.schemas_meta[schema_id]["evidence"] = list(existing_evidence)
+            save_schemas_meta(self.schemas_meta)
+            
+            # Update schema markdown file with new exemplars
+            for qid in candidate.evidence:
+                if qid not in existing_evidence:
+                    justification = candidate.exemplar_justifications.get(qid, "Exemplifies pattern") if candidate.exemplar_justifications else "Exemplifies pattern"
+                    self._update_schema_exemplars_in_file(schema_id, qid, justification)
+        except Exception as e:
+            print(f"[ERROR] Failed to merge candidate into {schema_id}: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def on_process_all_questions(self):
         """
-        Fully automated processing of all questions.
-        Decision logic:
-        1. If schema has ≥5 questions → Create new schema
-        2. Else if fit_score ≤ 7.5 → Create new schema
-        3. Else → Attach to existing schema
-        
-        All decisions are executed immediately (no waiting room).
+        Three-stage schema generation pipeline:
+        1. Stage 1: Parallel fingerprint extraction (one LLM call per question)
+        2. Stage 2: LLM-based clustering of fingerprints
+        3. Stage 3: Parallel schema synthesis (one LLM call per cluster)
         """
         if not self.index:
             messagebox.showinfo("Index first", "Click 'Index PDFs' first.")
@@ -4089,12 +4330,8 @@ class App(tk.Tk):
         if filt:
             pool = [q for q in pool if filt in q.pdf_path.lower()]
         
-        # Only diagram-free
-        # Include all questions (diagram filtering disabled)
-        # pool = [q for q in pool if not q.skipped_diagram]  # Disabled per user request
-        
         if len(pool) < 1:
-            messagebox.showwarning("No questions", "No diagram-free questions matched the filter.")
+            messagebox.showwarning("No questions", "No questions matched the filter.")
             return
         
         # Filter out already used questions
@@ -4111,172 +4348,127 @@ class App(tk.Tk):
                 return
         
         # Confirm before starting
-        if not messagebox.askyesno("Process All Questions (Fully Automated)", 
-            f"This will process {len(unused_pool)} questions with FULL AUTOMATION.\n\n"
-            f"Decision logic:\n"
-            f"- Schema has ≥{MAX_QUESTIONS_PER_SCHEMA} questions → New schema\n"
-            f"- Fit score ≤ {CONFIDENCE_THRESHOLD} → New schema\n"
-            f"- Otherwise → Attach to best matching schema\n\n"
-            f"All schemas are created/updated immediately.\n"
-            f"Using {PARALLEL_WORKERS} parallel workers.\n\n"
+        if not messagebox.askyesno("Process All Questions (Three-Stage Pipeline)", 
+            f"This will process {len(unused_pool)} questions using the new three-stage pipeline:\n\n"
+            f"Stage 1: Extract fingerprints in parallel ({PARALLEL_WORKERS} workers)\n"
+            f"Stage 2: Cluster fingerprints using LLM\n"
+            f"Stage 3: Synthesize schemas from clusters ({PARALLEL_WORKERS} workers)\n\n"
             f"Continue?"):
             return
         
-        def process_single_question(question: QuestionItem) -> Dict[str, Any]:
-            """Process a single question and return result stats."""
-            result = {
-                "question_id": "",
-                "action": "error",
-                "schema_id": None,
-                "error": None
-            }
-            
+        def work():
             try:
-                qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
-                result["question_id"] = qid
+                # Stage 1: Extract fingerprints in parallel
+                self.after(0, lambda: self._set_status("Stage 1: Extracting fingerprints..."))
+                fingerprints = self._extract_fingerprints_parallel(unused_pool)
                 
-                # NOTE: Do NOT mark as used here - questions are only marked as used when
-                # they're actually attached to a schema or accepted as a new schema
+                # Barrier: Wait for all fingerprints
+                expected_count = len(unused_pool)
+                if not _wait_for_fingerprints(expected_count, FINGERPRINTS_DIR_DEFAULT):
+                    self.after(0, lambda: messagebox.showerror("Error", "Timeout waiting for fingerprints to complete."))
+                    return
                 
-                # CRITICAL: Reload schemas to see latest state (including schemas created by other threads)
-                # This ensures each question sees the full history, even schemas created in this session
-                self._load_schemas()
-                self._load_meta()
+                # Filter to eligible fingerprints
+                eligible_fps = {qid: fp for qid, fp in fingerprints.items() if fp.eligible}
+                self.after(0, lambda: self._set_status(
+                    f"Stage 1 complete: {len(eligible_fps)}/{len(fingerprints)} eligible fingerprints"
+                ))
                 
-                # If no schemas exist, create first one
-                if not self.schema_summaries:
-                    schema_id = self._auto_accept_new_schema(question)
-                    if schema_id:
-                        result["action"] = "new_schema"
-                        result["schema_id"] = schema_id
-                    else:
-                        result["action"] = "error"
-                        result["error"] = "Failed to create first schema"
-                    return result
+                if len(eligible_fps) < 3:
+                    self.after(0, lambda: messagebox.showwarning("Too Few Fingerprints", 
+                        f"Only {len(eligible_fps)} eligible fingerprints. Need at least 3 for clustering."))
+                    return
                 
-                # Extract reasoning fingerprint
-                fingerprint = extract_reasoning_fingerprint(question, self.gemini)
+                # Stage 2: Cluster fingerprints
+                self.after(0, lambda: self._set_status("Stage 2: Clustering fingerprints..."))
+                clusters = self._cluster_fingerprints_llm(eligible_fps)
                 
-                # Match against all schemas
-                matches = match_question_to_schemas(
-                    question=question,
-                    existing_schemas=self.schema_summaries,
-                    schema_exemplars={s.schema_id: self._get_exemplar_questions_for_schema(s.schema_id) 
-                                    for s in self.schema_summaries},
-                    gemini=self.gemini,
-                    top_k=5
-                )
+                if not clusters:
+                    self.after(0, lambda: messagebox.showerror("Error", "Clustering failed or produced no clusters."))
+                    return
                 
-                if matches:
-                    best_schema_id, best_score, _ = matches[0]
-                    
-                    # Check question count for best matching schema
-                    question_count = self._get_question_count_for_schema(best_schema_id)
-                    
-                    # Decision logic:
-                    # 1. If schema has ≥5 questions → Create new schema
-                    # 2. Else if fit_score ≤ 7.5 → Create new schema
-                    # 3. Else → Attach to existing schema
-                    
-                    if question_count >= MAX_QUESTIONS_PER_SCHEMA:
-                        # Schema is full, create new one
-                        schema_id = self._auto_accept_new_schema(question)
+                self.after(0, lambda: self._set_status(
+                    f"Stage 2 complete: {len(clusters)} clusters created"
+                ))
+                
+                # Stage 3: Synthesize schemas from clusters
+                self.after(0, lambda: self._set_status("Stage 3: Synthesizing schemas from clusters..."))
+                candidates = self._synthesize_schemas_from_clusters(clusters, eligible_fps)
+                
+                if not candidates:
+                    self.after(0, lambda: messagebox.showwarning("No Candidates", "No schema candidates were generated."))
+                    return
+                
+                # Process candidates: validate and create/merge schemas
+                stats = {
+                    "total_candidates": len(candidates),
+                    "created": 0,
+                    "merged": 0,
+                    "rejected": 0
+                }
+                
+                for candidate in candidates:
+                    try:
+                        # Validate candidate
+                        is_valid, error_msg = validate_prefix_against_content(candidate, self.index)
+                        if not is_valid:
+                            print(f"[REJECT] Candidate {candidate.candidate_id}: {error_msg}")
+                            stats["rejected"] += 1
+                            continue
+                        
+                        # Check for collisions
+                        if candidate.collision_guess:
+                            # Try to merge with existing schema
+                            collision_id = candidate.collision_guess[0]
+                            if any(s.schema_id == collision_id for s in self.schema_summaries):
+                                # Merge logic: add evidence to existing schema
+                                self._merge_candidate_into_schema(candidate, collision_id)
+                                stats["merged"] += 1
+                                continue
+                        
+                        # Create new schema
+                        schema_id = self._accept_candidate_as_schema(candidate)
                         if schema_id:
-                            result["action"] = "new_schema"
-                            result["schema_id"] = schema_id
+                            stats["created"] += 1
+                            # Mark questions as used
+                            for qid in candidate.evidence:
+                                self.used_question_ids.add(qid)
                         else:
-                            result["action"] = "error"
-                            result["error"] = "Failed to create new schema (schema full)"
-                    elif best_score <= CONFIDENCE_THRESHOLD:
-                        # Low confidence, create new schema
-                        schema_id = self._auto_accept_new_schema(question)
-                        if schema_id:
-                            result["action"] = "new_schema"
-                            result["schema_id"] = schema_id
-                        else:
-                            result["action"] = "error"
-                            result["error"] = "Failed to create new schema (low confidence)"
-                    else:
-                        # High confidence, attach to existing schema
-                        self._auto_attach_question_to_schema(question, best_schema_id, best_score)
-                        # Reload schemas so subsequent questions see the update
-                        self._load_schemas()
-                        self._load_meta()
-                        result["action"] = "attached"
-                        result["schema_id"] = best_schema_id
-                else:
-                    # No matches, create new schema
-                    schema_id = self._auto_accept_new_schema(question)
-                    if schema_id:
-                        result["action"] = "new_schema"
-                        result["schema_id"] = schema_id
-                    else:
-                        result["action"] = "error"
-                        result["error"] = "Failed to create new schema (no matches)"
+                            stats["rejected"] += 1
+                    except Exception as e:
+                        print(f"[ERROR] Failed to process candidate {candidate.candidate_id}: {e}")
+                        stats["rejected"] += 1
+                
+                # Save used questions
+                self._save_used_questions()
+                
+                # Final reload
+                self.after(0, self._load_schemas)
+                self.after(0, self._load_embeddings)
+                self.after(0, self._load_meta)
+                
+                # Show summary
+                summary = (f"Three-stage pipeline complete:\n\n"
+                          f"Stage 1: {len(eligible_fps)} eligible fingerprints extracted\n"
+                          f"Stage 2: {len(clusters)} clusters created\n"
+                          f"Stage 3: {stats['total_candidates']} schema candidates generated\n\n"
+                          f"Results:\n"
+                          f"✓ New schemas created: {stats['created']}\n"
+                          f"↻ Merged with existing: {stats['merged']}\n"
+                          f"✗ Rejected: {stats['rejected']}")
+                
+                self.after(0, lambda: messagebox.showinfo("Processing Complete", summary))
+                self.after(0, lambda: self._set_status(
+                    f"Done. {stats['created']} created, {stats['merged']} merged, {stats['rejected']} rejected."
+                ))
                 
             except Exception as e:
-                result["action"] = "error"
-                result["error"] = str(e)
-            
-            return result
-        
-        def work():
-            self._set_status(f"Processing {len(unused_pool)} questions with {PARALLEL_WORKERS} workers...")
-            
-            stats = {
-                "total": len(unused_pool),
-                "processed": 0,
-                "attached": 0,
-                "new_schemas": 0,
-                "errors": 0
-            }
-            
-            # Process questions in parallel
-            with ThreadPoolExecutor(max_workers=PARALLEL_WORKERS) as executor:
-                # Submit all tasks
-                future_to_question = {executor.submit(process_single_question, q): q for q in unused_pool}
-                
-                # Process results as they complete
-                for future in as_completed(future_to_question):
-                    try:
-                        result = future.result()
-                        stats["processed"] += 1
-                        
-                        if result["action"] == "attached":
-                            stats["attached"] += 1
-                        elif result["action"] == "new_schema":
-                            stats["new_schemas"] += 1
-                        else:
-                            stats["errors"] += 1
-                            print(f"[ERROR] Question {result['question_id']}: {result.get('error', 'Unknown error')}")
-                        
-                        # Update status periodically
-                        if stats["processed"] % 10 == 0:
-                            self.after(0, lambda: self._set_status(
-                                f"Processed {stats['processed']}/{stats['total']} "
-                                f"(Attached: {stats['attached']}, New: {stats['new_schemas']}, Errors: {stats['errors']})"
-                            ))
-                    except Exception as e:
-                        stats["errors"] += 1
-                        stats["processed"] += 1
-                        print(f"[ERROR] Failed to process question: {e}")
-            
-            # Final reload
-            self.after(0, self._load_schemas)
-            self.after(0, self._load_embeddings)
-            self.after(0, self._load_meta)
-            
-            # Show summary
-            summary = (f"Processed {stats['processed']}/{stats['total']} questions:\n\n"
-                      f"✓ Attached to schemas: {stats['attached']}\n"
-                      f"+ New schemas created: {stats['new_schemas']}\n"
-                      f"✗ Errors: {stats['errors']}\n\n"
-                      f"All schemas have been updated immediately.")
-            
-            self.after(0, lambda: messagebox.showinfo("Processing Complete", summary))
-            self.after(0, lambda: self._set_status(
-                f"Done. {stats['attached']} attached, {stats['new_schemas']} new schemas, {stats['errors']} errors."
-            ))
+                error_msg = f"Fatal error in pipeline: {e}"
+                print(f"[ERROR] {error_msg}")
+                import traceback
+                traceback.print_exc()
+                self.after(0, lambda: messagebox.showerror("Error", error_msg))
+                self.after(0, lambda: self._set_status("Error occurred. Check console for details."))
         
         threading.Thread(target=work, daemon=True).start()
     
@@ -4337,6 +4529,297 @@ Return ONLY valid JSON:
             print(f"[ERROR] Failed to create candidate from question: {e}")
         
         return None
+    
+    def _extract_fingerprints_parallel(self, questions: List[QuestionItem]) -> Dict[str, QuestionFingerprint]:
+        """
+        Stage 1: Extract fingerprints from all questions in parallel.
+        Returns dict mapping qid -> QuestionFingerprint.
+        """
+        fingerprints = {}
+        fingerprints_dir = FINGERPRINTS_DIR_DEFAULT
+        
+        def extract_worker(question: QuestionItem) -> Tuple[str, Optional[QuestionFingerprint], Optional[str]]:
+            return _extract_fingerprint_worker(question, self.gemini, fingerprints_dir)
+        
+        with ThreadPoolExecutor(max_workers=PARALLEL_WORKERS) as executor:
+            future_to_question = {executor.submit(extract_worker, q): q for q in questions}
+            
+            completed = 0
+            for future in as_completed(future_to_question):
+                try:
+                    qid, fingerprint, error = future.result()
+                    if fingerprint:
+                        fingerprints[qid] = fingerprint
+                    else:
+                        print(f"[WARN] Failed to extract fingerprint for {qid}: {error}")
+                    completed += 1
+                    if completed % 10 == 0:
+                        self.after(0, lambda c=completed: self._set_status(
+                            f"Stage 1: Extracting fingerprints ({c}/{len(questions)} complete)..."
+                        ))
+                except Exception as e:
+                    q = future_to_question[future]
+                    qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
+                    print(f"[ERROR] Exception extracting fingerprint for {qid}: {e}")
+        
+        return fingerprints
+    
+    def _cluster_fingerprints_llm(self, fingerprints: Dict[str, QuestionFingerprint]) -> Dict[int, List[str]]:
+        """
+        Stage 2: Cluster fingerprints using LLM.
+        Returns dict mapping cluster_id -> List[qid].
+        """
+        if not fingerprints:
+            return {}
+        
+        # Filter to eligible fingerprints only
+        eligible_fps = {qid: fp for qid, fp in fingerprints.items() if fp.eligible}
+        
+        if len(eligible_fps) < 3:
+            # Too few fingerprints, create one cluster
+            return {0: list(eligible_fps.keys())}
+        
+        # Group fingerprints into batches for LLM processing (50-100 at a time)
+        batch_size = 75
+        fingerprint_list = list(eligible_fps.items())
+        batches = [fingerprint_list[i:i+batch_size] for i in range(0, len(fingerprint_list), batch_size)]
+        
+        all_clusters = {}
+        next_cluster_id = 0
+        
+        for batch_idx, batch in enumerate(batches):
+            self.after(0, lambda b=batch_idx+1, t=len(batches): self._set_status(
+                f"Stage 2: Clustering fingerprints (batch {b}/{t})..."
+            ))
+            
+            # Build cluster text for each fingerprint
+            fingerprint_texts = []
+            for qid, fp in batch:
+                cluster_text = f"{fp.reasoning_pattern_hint} | {fp.core_move_guess} | {', '.join(fp.trigger_cues)}"
+                fingerprint_texts.append({
+                    "qid": qid,
+                    "cluster_text": cluster_text,
+                    "reasoning_pattern_hint": fp.reasoning_pattern_hint,
+                    "core_move_guess": fp.core_move_guess,
+                    "trigger_cues": fp.trigger_cues
+                })
+            
+            # LLM clustering prompt
+            prompt = f"""Group these {len(batch)} question fingerprints into clusters based on similar reasoning patterns.
+
+Each fingerprint has:
+- reasoning_pattern_hint: A pattern label
+- core_move_guess: The key reasoning move
+- trigger_cues: Surface signals that detect the pattern
+
+Group fingerprints that share:
+- Similar reasoning_pattern_hint
+- Similar core_move_guess
+- Overlapping trigger_cues
+
+Avoid creating too many small clusters (< 3 items) or too few large clusters (> 40 items).
+Aim for clusters of 5-25 fingerprints each.
+
+Fingerprints:
+{json.dumps(fingerprint_texts, indent=2)}
+
+Return ONLY valid JSON:
+{{
+  "clusters": [
+    {{
+      "cluster_id": 1,
+      "qids": ["qid1", "qid2", "qid3"],
+      "reasoning_pattern": "Brief description of the shared pattern"
+    }},
+    ...
+  ]
+}}
+"""
+            
+            try:
+                resp = self.gemini.generate_json(prompt)
+                if resp and isinstance(resp, dict):
+                    clusters_data = resp.get("clusters", [])
+                    if isinstance(resp, list):
+                        clusters_data = resp
+                    
+                    for cluster_data in clusters_data:
+                        if isinstance(cluster_data, dict):
+                            qids = cluster_data.get("qids", [])
+                            if qids:
+                                all_clusters[next_cluster_id] = qids
+                                next_cluster_id += 1
+            except Exception as e:
+                print(f"[WARN] Failed to cluster batch {batch_idx + 1}: {e}")
+                # Fallback: create one cluster per batch
+                batch_qids = [qid for qid, _ in batch]
+                all_clusters[next_cluster_id] = batch_qids
+                next_cluster_id += 1
+        
+        # Handle any unclustered fingerprints (singletons)
+        clustered_qids = set()
+        for cluster_qids in all_clusters.values():
+            clustered_qids.update(cluster_qids)
+        
+        unclustered = [qid for qid in eligible_fps.keys() if qid not in clustered_qids]
+        if unclustered:
+            # Group singletons into small clusters
+            singleton_batch_size = 5
+            for i in range(0, len(unclustered), singleton_batch_size):
+                all_clusters[next_cluster_id] = unclustered[i:i+singleton_batch_size]
+                next_cluster_id += 1
+        
+        return all_clusters
+    
+    def _synthesize_schemas_from_clusters(self, clusters: Dict[int, List[str]], 
+                                         fingerprints: Dict[str, QuestionFingerprint]) -> List[Candidate]:
+        """
+        Stage 3: Synthesize schema candidates from clusters in parallel.
+        Returns list of Candidate objects.
+        """
+        candidates = []
+        
+        # Filter clusters: skip too small (< 3) or handle too large (> 40)
+        valid_clusters = {}
+        for cluster_id, qids in clusters.items():
+            if len(qids) < 3:
+                # Too small, skip or merge with nearest
+                continue
+            elif len(qids) > 40:
+                # Too large, split into smaller clusters
+                # Simple split: divide into chunks of ~20
+                chunk_size = 20
+                for i in range(0, len(qids), chunk_size):
+                    chunk = qids[i:i+chunk_size]
+                    if len(chunk) >= 3:
+                        valid_clusters[len(valid_clusters)] = chunk
+            else:
+                valid_clusters[cluster_id] = qids
+        
+        if not valid_clusters:
+            return []
+        
+        def synthesize_worker(cluster_id: int, qids: List[str]) -> Optional[Candidate]:
+            """Worker function to synthesize one schema from a cluster."""
+            try:
+                # Get fingerprints for this cluster
+                cluster_fps = [fingerprints[qid] for qid in qids if qid in fingerprints]
+                if not cluster_fps:
+                    return None
+                
+                # Select representative fingerprints (8-20, or all if small)
+                if len(cluster_fps) <= 20:
+                    representative_fps = cluster_fps
+                else:
+                    # Sample evenly
+                    step = len(cluster_fps) // 20
+                    representative_fps = cluster_fps[::step][:20]
+                
+                # Determine prefix from question IDs
+                prefix = "M"  # Default
+                for qid in qids:
+                    if "Paper2" in qid or "_Paper2_" in qid:
+                        prefix = "R"
+                        break
+                    elif "Paper1" in qid or "_Paper1_" in qid:
+                        prefix = "M"
+                        break
+                
+                # Load schema synthesis prompt
+                template = load_prompt_template(SCHEMA_SYNTHESIS_CLUSTER_PROMPT_PATH)
+                
+                # Format existing schemas
+                existing_schemas_text = "\n".join(
+                    [f"- {s.schema_id}: {s.title} | {s.core_move}" for s in self.schema_summaries[:20]]
+                )
+                
+                # Format cluster fingerprints as JSON
+                cluster_fps_json = json.dumps([
+                    {
+                        "qid": fp.qid,
+                        "reasoning_pattern_hint": fp.reasoning_pattern_hint,
+                        "core_move_guess": fp.core_move_guess,
+                        "trigger_cues": fp.trigger_cues,
+                        "mini_steps": fp.mini_steps,
+                        "wrong_move": fp.wrong_move,
+                        "answer_form": fp.answer_form
+                    }
+                    for fp in representative_fps
+                ], indent=2)
+                
+                prompt = template.format(
+                    existing_schemas=existing_schemas_text,
+                    cluster_fingerprints=cluster_fps_json
+                )
+                
+                resp = self.gemini.generate_json(prompt)
+                if resp and isinstance(resp, dict):
+                    # Handle list wrapper
+                    if isinstance(resp, list):
+                        resp = resp[0] if resp else {}
+                    elif "candidates" in resp:
+                        resp = resp["candidates"][0] if resp["candidates"] else {}
+                    
+                    if resp:
+                        # Select 3-8 evidence qids from cluster
+                        evidence_qids = qids[:8] if len(qids) >= 8 else qids
+                        if len(evidence_qids) < 3:
+                            evidence_qids = qids[:3] if len(qids) >= 3 else qids
+                        
+                        # Build exemplar justifications
+                        exemplar_justifications = {}
+                        for qid in evidence_qids:
+                            if qid in fingerprints:
+                                fp = fingerprints[qid]
+                                exemplar_justifications[qid] = f"Exemplifies {fp.reasoning_pattern_hint}"
+                        
+                        candidate = Candidate(
+                            candidate_id=resp.get("candidate_id") or f"C{cluster_id}",
+                            title=str(resp.get("title", "")),
+                            prefix=str(resp.get("prefix", prefix)),
+                            core_move=str(resp.get("core_move", "")),
+                            evidence=list(resp.get("evidence", evidence_qids)),
+                            collision_guess=list(resp.get("collision_guess", [])),
+                            confidence=float(resp.get("confidence", 0.0)),
+                            exemplar_justifications=resp.get("exemplar_justifications", exemplar_justifications),
+                            trigger_cues=list(resp.get("trigger_cues", [])),
+                            canonical_steps=list(resp.get("canonical_steps", [])),
+                            variation_knobs=list(resp.get("variation_knobs", [])),
+                            distractor_archetypes=list(resp.get("distractor_archetypes", [])),
+                            answer_form=str(resp.get("answer_form", "other")),
+                            scope=str(resp.get("scope", "good")),
+                            collision_reason=resp.get("collision_reason")
+                        )
+                        return candidate
+            except Exception as e:
+                print(f"[ERROR] Failed to synthesize schema for cluster {cluster_id}: {e}")
+                import traceback
+                traceback.print_exc()
+            
+            return None
+        
+        # Process clusters in parallel
+        with ThreadPoolExecutor(max_workers=PARALLEL_WORKERS) as executor:
+            future_to_cluster = {
+                executor.submit(synthesize_worker, cluster_id, qids): cluster_id
+                for cluster_id, qids in valid_clusters.items()
+            }
+            
+            completed = 0
+            for future in as_completed(future_to_cluster):
+                try:
+                    candidate = future.result()
+                    if candidate:
+                        candidates.append(candidate)
+                    completed += 1
+                    self.after(0, lambda c=completed, t=len(valid_clusters): self._set_status(
+                        f"Stage 3: Synthesizing schemas ({c}/{t} clusters complete)..."
+                    ))
+                except Exception as e:
+                    cluster_id = future_to_cluster[future]
+                    print(f"[ERROR] Exception synthesizing cluster {cluster_id}: {e}")
+        
+        return candidates
     
     def _auto_attach_question_to_schema(self, question: QuestionItem, schema_id: str, fit_score: float):
         """Auto-attach a question as exemplar to an existing schema."""

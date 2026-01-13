@@ -82,39 +82,13 @@ export function QuestionLibraryGrid({
         .then(data => {
           if (data?.attempts) {
             // Get unique question IDs that have been attempted
-            const attemptedIds = new Set(
+            const attemptedIds = new Set<string>(
               data.attempts
                 .filter((a: any) => questionIds.includes(a.question_id))
-                .map((a: any) => a.question_id)
+                .map((a: any) => String(a.question_id))
             );
             setAttemptedQuestionIds(attemptedIds);
             console.log('[QuestionLibraryGrid] Loaded attempted questions:', attemptedIds.size);
-          }
-        })
-        .catch(err => {
-          console.error('[QuestionLibraryGrid] Error fetching attempts:', err);
-        });
-    }
-  }, [session?.user, questions]);
-
-  // Fetch attempted question IDs if user is logged in
-  useEffect(() => {
-    if (session?.user && questions.length > 0) {
-      // Get all question IDs
-      const questionIds = questions.map(q => q.id);
-      
-      // Fetch attempts for all questions at once
-      fetch(`/api/question-bank/attempts?limit=1000`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data?.attempts) {
-            // Get unique question IDs that have been attempted
-            const attemptedIds = new Set(
-              data.attempts
-                .filter((a: any) => questionIds.includes(a.question_id))
-                .map((a: any) => a.question_id)
-            );
-            setAttemptedQuestionIds(attemptedIds);
           }
         })
         .catch(err => {
@@ -425,11 +399,12 @@ export function QuestionLibraryGrid({
                                                   Question {questionNumber}
                                                 </span>
                                                 {hasBeenAttempted && (
-                                                  <CheckCircle2 
-                                                    className="w-3.5 h-3.5 text-green-400" 
-                                                    strokeWidth={2.5}
-                                                    title="You have attempted this question"
-                                                  />
+                                                  <span title="You have attempted this question">
+                                                    <CheckCircle2 
+                                                      className="w-3.5 h-3.5 text-green-400" 
+                                                      strokeWidth={2.5}
+                                                    />
+                                                  </span>
                                                 )}
                                                 <span
                                                   className="text-[10px] px-2 py-0.5 rounded uppercase font-mono tracking-wider"
