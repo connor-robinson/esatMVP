@@ -366,6 +366,13 @@ export default function PapersRoadmapPage() {
     <Container>
       <PageHeader title="Practice Roadmap" />
 
+      {/* Analytics Section - At the top */}
+      <RoadmapAnalytics
+        stages={stages}
+        completionData={completionData}
+        currentStageIndex={currentStageIndex}
+      />
+
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="py-8">
         <div className="flex gap-8 lg:gap-12">
@@ -391,13 +398,6 @@ export default function PapersRoadmapPage() {
             />
           </div>
         </div>
-        
-        {/* Analytics Section - Full width spanning both columns */}
-        <RoadmapAnalytics
-          stages={stages}
-          completionData={completionData}
-          currentStageIndex={currentStageIndex}
-        />
       </div>
     </Container>
   );

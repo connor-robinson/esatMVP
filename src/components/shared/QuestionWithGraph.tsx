@@ -12,11 +12,12 @@ import { cn } from "@/lib/utils";
 
 interface QuestionWithGraphProps {
   questionText: string;
-  graphSpec?: TMUAGraphSpec | null;
+  graphSpec?: TMUAGraphSpec | null; // Deprecated: single graph spec
+  graphSpecs?: Record<string, TMUAGraphSpec> | null; // Map of graph ID to spec for multiple graphs
   className?: string;
 }
 
-export function QuestionWithGraph({ questionText, graphSpec, className }: QuestionWithGraphProps) {
+export function QuestionWithGraph({ questionText, graphSpec, graphSpecs, className }: QuestionWithGraphProps) {
   const { parts } = useMemo(() => {
     // Parse question text and split by <GRAPH> tags
     const graphTagRegex = /<GRAPH\s+id="([^"]+)"\s*\/?>/gi;
@@ -63,23 +64,25 @@ export function QuestionWithGraph({ questionText, graphSpec, className }: Questi
   }, [questionText]);
 
   return (
-    <div className={cn("question-with-graph space-y-2", className)}>
+    <div className={cn("question-with-graph", className)}>
       {parts.map((part, idx) => {
         if (part.type === "graph") {
-          // Render graph if spec is provided
-          if (graphSpec) {
+          // Look up graph spec by ID (prefer graphSpecs map, fallback to single graphSpec)
+          const spec = graphSpecs?.[part.graphId || ""] || graphSpec;
+          
+          if (spec) {
             return (
               <div
                 key={`graph-${idx}`}
                 className="tmua-graph-container"
                 style={{
-                  marginTop: "8px",
-                  marginBottom: "10px",
-                  marginLeft: "24px",
+                  marginTop: "0px",
+                  marginBottom: "0px",
+                  marginLeft: "0px",
                   width: "fit-content",
                 }}
               >
-                <TMUAGraph spec={graphSpec} />
+                <TMUAGraph spec={spec} />
               </div>
             );
           } else {
@@ -88,7 +91,7 @@ export function QuestionWithGraph({ questionText, graphSpec, className }: Questi
               <div
                 key={`graph-${idx}`}
                 className="text-white/40 text-sm italic"
-                style={{ marginLeft: "24px" }}
+                style={{ marginLeft: "0px" }}
               >
                 [Graph: {part.graphId}]
               </div>

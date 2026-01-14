@@ -23,25 +23,24 @@ import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 const FORCE_TEST_QUESTION = true; // Set to false to disable test question override
 
 const TEST_QUESTION: QuestionBankQuestion = {
-  id: "test-graph-question-001",
+  id: "tmua_graph_test_01",
   generation_id: "test-graph-001",
   schema_id: "M1",
   difficulty: "Medium",
   question_stem: `11  The diagram shows a quadratic curve.
 
-    <GRAPH id="q11_graph" />
+<GRAPH id="q11_graph" />
 
-    The curve crosses the x-axis at (2, 0) and (q, 0), where q > 2.
-    The curve and the coordinate axes form two regions R and S as shown.
+The curve crosses the x-axis at (2, 0) and (q, 0), where q > 2 The curve and the coordinate axes form two regions R and S as shown.
 
-    Find the value of q such that the area of region R equals the area of region S.
+Find the value of q such that the area of region R equals the area of region S.
 
-    A  √6
-    B  3
-    C  18/5
-    D  4
-    E  6
-    F  33/5`,
+A  √6
+B  3
+C  18/5
+D  4
+E  6
+F  33/5`,
   options: {
     A: "√6",
     B: "3",
@@ -54,31 +53,76 @@ const TEST_QUESTION: QuestionBankQuestion = {
   solution_reasoning: "The quadratic function is f(x) = x² - 8x + 12 = (x-2)(x-6). The roots are at x=2 and x=6. To find q such that area R = area S, we need to solve the integral equation...",
   solution_key_insight: "The curve is f(x) = x² - 8x + 12. Region R is above the x-axis from 0 to 2, and region S is below the x-axis from 2 to q. Setting the areas equal gives q = 6.",
   distractor_map: null,
-  paper: "Math 1",
-  primary_tag: "M1-Integration",
-  secondary_tags: ["M1-Quadratic", "M1-Area"],
+  paper: "Paper 1",
+  primary_tag: "M1",
+  secondary_tags: ["MM1"],
   status: "approved",
   created_at: new Date().toISOString(),
-  graph_spec: {
-    kind: "function",
-    fn: { kind: "poly2", a: 1, b: -8, c: 12 },
-    xRange: [-0.8, 7.2],
-    yRange: [-5.5, 8.5],
-    axes: {
-      show: true,
-      arrowheads: true,
-      xLabel: { text: "x", italic: true, dx: 0, dy: 0 },
-      yLabel: { text: "y", italic: true, dx: 0, dy: 0 },
-    },
-    xMarks: [
-      { x: 2, label: { text: "2", italic: false, dx: 0, dy: 0 }, tick: false },
-      { x: 6, label: { text: "q", italic: true, dx: 6, dy: 0 }, tick: false },
-    ],
-    annotations: [
-      { kind: "text", x: 0.9, y: 2.1, text: "R", italic: true },
-      { kind: "text", x: 3.6, y: -1.6, text: "S", italic: true },
-    ],
-  } as TMUAGraphSpec,
+  graph_specs: {
+    q11_graph: {
+      version: 2,
+      xRange: [-0.8, 7.2],
+      yRange: [-5.5, 13],
+      axes: {
+        show: true,
+        arrowheads: true,
+        xLabel: { text: "x", italic: true, dx: 0, dy: 0 },
+        yLabel: { text: "y", italic: true, dx: 0, dy: 0 },
+      },
+      objects: [
+        {
+          id: "f",
+          kind: "function",
+          fn: { kind: "poly2", a: 1, b: -8, c: 12 },
+        },
+        {
+          id: "xaxis",
+          kind: "line",
+          form: { kind: "horiz", y: 0 },
+        },
+        {
+          id: "yaxis",
+          kind: "line",
+          form: { kind: "vert", x: 0 },
+        },
+      ],
+      marks: {
+        xMarks: [
+          { x: 2, label: { text: "2", italic: false, dx: 0, dy: 0 }, tick: false },
+          { x: 6, label: { text: "q", italic: true, dx: 6, dy: 0 }, tick: false },
+        ],
+      },
+      regions: [
+        {
+          id: "R",
+          label: { text: "R", italic: true, placement: { kind: "auto" } },
+          fill: { enabled: false },
+          definition: {
+            kind: "inequalities",
+            inside: [
+              { kind: "x_between", a: 0, b: 2 },
+              { kind: "above", of: "xaxis" },
+              { kind: "above_function", of: "f" },
+            ],
+          },
+        },
+        {
+          id: "S",
+          label: { text: "S", italic: true, placement: { kind: "auto" } },
+          fill: { enabled: false },
+          definition: {
+            kind: "inequalities",
+            inside: [
+              { kind: "x_between", a: 2, b: 6 },
+              { kind: "below", of: "xaxis" },
+              { kind: "below_function", of: "f" },
+            ],
+          },
+        },
+      ],
+      annotations: [],
+    } as TMUAGraphSpec,
+  } as Record<string, TMUAGraphSpec>,
 };
 // ============================================================================
 // END TEMPORARY TEST CODE

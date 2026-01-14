@@ -734,6 +734,7 @@ export default function QuestionBankPage() {
                     onEditKeyInsight={handleEditKeyInsight}
                     onEditReasoning={handleEditReasoning}
                     onEditDistractor={handleEditDistractor}
+                    graphSpecs={currentQuestion.graph_specs}
                   />
                   
                   {/* Hint Modal */}

@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { MathContent } from "@/components/shared/MathContent";
+import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
+import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 import { X, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +20,7 @@ interface SolutionModalProps {
   onEditKeyInsight?: () => void;
   onEditReasoning?: () => void;
   onEditDistractor?: (optionLetter: string) => void;
+  graphSpecs?: Record<string, TMUAGraphSpec> | null;
 }
 
 export function SolutionModal({
@@ -33,6 +36,7 @@ export function SolutionModal({
   onEditKeyInsight,
   onEditReasoning,
   onEditDistractor,
+  graphSpecs,
 }: SolutionModalProps) {
   // Prevent scrolling on body when modal is open
   useEffect(() => {
@@ -116,10 +120,18 @@ export function SolutionModal({
                 )}
               </div>
               <div className="p-4 rounded-organic-md bg-white/[0.08]" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
-                <MathContent
-                  content={solution_reasoning}
-                  className="text-white/90"
-                />
+                {graphSpecs ? (
+                  <QuestionWithGraph
+                    questionText={solution_reasoning}
+                    graphSpecs={graphSpecs}
+                    className="text-white/90"
+                  />
+                ) : (
+                  <MathContent
+                    content={solution_reasoning}
+                    className="text-white/90"
+                  />
+                )}
               </div>
             </div>
           )}

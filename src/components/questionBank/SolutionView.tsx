@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { MathContent } from "@/components/shared/MathContent";
+import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
+import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 import { Card } from "@/components/ui/Card";
 import { ChevronDown, ChevronUp, Lightbulb, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,6 +14,7 @@ interface SolutionViewProps {
   correct_option: string;
   isCorrect: boolean;
   autoShow?: boolean;
+  graphSpecs?: Record<string, TMUAGraphSpec> | null;
 }
 
 export function SolutionView({
@@ -20,6 +23,7 @@ export function SolutionView({
   correct_option,
   isCorrect,
   autoShow = false,
+  graphSpecs,
 }: SolutionViewProps) {
   // Auto-expand for wrong answers, collapsed for correct (but can be expanded)
   const [isExpanded, setIsExpanded] = useState(autoShow ? !isCorrect : false);
@@ -116,10 +120,18 @@ export function SolutionView({
                 Detailed Solution
               </h4>
               <div className="p-4 rounded-organic-md bg-white/5">
-                <MathContent
-                  content={solution_reasoning}
-                  className="text-sm text-white/80 leading-relaxed"
-                />
+                {graphSpecs ? (
+                  <QuestionWithGraph
+                    questionText={solution_reasoning}
+                    graphSpecs={graphSpecs}
+                    className="text-sm text-white/80 leading-relaxed"
+                  />
+                ) : (
+                  <MathContent
+                    content={solution_reasoning}
+                    className="text-sm text-white/80 leading-relaxed"
+                  />
+                )}
               </div>
             </div>
           )}

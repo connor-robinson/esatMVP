@@ -2,7 +2,7 @@
  * Question Bank Types
  */
 
-import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
+import type { TMUAGraphSpecV2 as TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 
 export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'All';
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
@@ -26,7 +26,8 @@ export interface QuestionBankQuestion {
   secondary_tags: string[] | null;
   status: 'pending_review' | 'approved' | 'rejected' | 'needs_revision';
   created_at: string;
-  graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs
+  graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs (deprecated, use graph_specs)
+  graph_specs?: Record<string, TMUAGraphSpec> | null; // Map of graph ID to graph spec for questions/solutions with multiple graphs
 }
 
 export interface QuestionAttempt {

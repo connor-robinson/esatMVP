@@ -184,7 +184,7 @@ export function QuestionCard({
   return (
     <div className="space-y-6">
       {/* Question stem - in its own card */}
-      <Card className="px-8 pt-4 pb-4 relative group bg-white/[0.03]">
+      <Card className="px-8 pt-0 pb-0 relative group bg-white/[0.03]">
         {onEditQuestionStem && (
           <button
             onClick={onEditQuestionStem}
@@ -243,11 +243,12 @@ export function QuestionCard({
           </div>
         </div>
 
-        <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem' }}>
-          {question.graph_spec ? (
+        <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem', marginTop: '0', marginBottom: '0', paddingTop: '0', paddingBottom: '0' }}>
+          {(question.graph_spec || question.graph_specs) ? (
             <QuestionWithGraph
               questionText={question.question_stem}
               graphSpec={question.graph_spec}
+              graphSpecs={question.graph_specs}
               className="text-white/95"
             />
           ) : (

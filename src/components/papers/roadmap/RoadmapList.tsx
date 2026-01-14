@@ -239,6 +239,7 @@ export function RoadmapList({
         return (
           <div
             key={node.stage.id}
+            data-stage-id={node.stage.id}
             ref={(el) => {
               if (el) {
                 cardRefs.current[index] = el;

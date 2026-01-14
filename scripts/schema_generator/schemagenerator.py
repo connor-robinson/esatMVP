@@ -4413,13 +4413,25 @@ class App(tk.Tk):
                     "created": 0,
                     "merged": 0,
                     "rejected": 0,
-                    "questions_lost": 0
+                    "questions_lost": 0,
+                    "skipped": 0
                 }
                 
                 # Log model being used
                 model_name = self.gemini.get_model_name()
                 print(f"[INFO] Using model: {model_name}")
                 self.after(0, lambda: self._set_status(f"Using model: {model_name}"))
+                
+                # Reload schemas to check what already exists
+                self._load_schemas()
+                existing_schema_evidence = set()
+                for schema in self.schema_summaries:
+                    meta = self.schemas_meta.get(schema.schema_id, {})
+                    evidence = meta.get("evidence", [])
+                    existing_schema_evidence.update(evidence)
+                
+                # Track failed candidates for resume
+                failed_candidates = []
                 
                 for candidate in candidates:
                     try:
@@ -4461,6 +4473,14 @@ class App(tk.Tk):
                         if candidate.evidence:
                             stats["questions_lost"] = stats.get("questions_lost", 0) + len(candidate.evidence)
                 
+                # Save failed candidates for resume if any
+                if failed_candidates:
+                    failed_file = FINGERPRINTS_DIR_DEFAULT.parent / "failed_candidates.jsonl"
+                    with open(failed_file, 'w', encoding='utf-8') as f:
+                        for candidate in failed_candidates:
+                            f.write(json.dumps(asdict(candidate), ensure_ascii=False) + "\n")
+                    print(f"[INFO] Saved {len(failed_candidates)} failed candidates to {failed_file}")
+                
                 # Save used questions
                 self._save_used_questions()
                 
@@ -4471,6 +4491,7 @@ class App(tk.Tk):
                 
                 # Show summary
                 questions_lost = stats.get("questions_lost", 0)
+                skipped = stats.get("skipped", 0)
                 summary = (f"Three-stage pipeline complete:\n\n"
                           f"Model used: {self.gemini.get_model_name()}\n\n"
                           f"Stage 1: {len(eligible_fps)} eligible fingerprints extracted\n"
@@ -4479,9 +4500,13 @@ class App(tk.Tk):
                           f"Results:\n"
                           f"✓ New schemas created: {stats['created']}\n"
                           f"↻ Merged with existing: {stats['merged']}\n"
+                          f"⊘ Skipped (already exist): {skipped}\n"
                           f"✗ Rejected: {stats['rejected']}")
                 if questions_lost > 0:
                     summary += f"\n⚠ Questions lost due to failures: {questions_lost}"
+                if failed_candidates:
+                    summary += f"\n💾 {len(failed_candidates)} failed candidates saved for resume"
+                    summary += f"\n💾 {len(failed_candidates)} failed candidates saved for resume"
                 
                 self.after(0, lambda: messagebox.showinfo("Processing Complete", summary))
                 self.after(0, lambda: self._set_status(
@@ -4490,6 +4515,143 @@ class App(tk.Tk):
                 
             except Exception as e:
                 error_msg = f"Fatal error in pipeline: {e}"
+                print(f"[ERROR] {error_msg}")
+                import traceback
+                traceback.print_exc()
+                self.after(0, lambda: messagebox.showerror("Error", error_msg))
+                self.after(0, lambda: self._set_status("Error occurred. Check console for details."))
+        
+        threading.Thread(target=work, daemon=True).start()
+    
+    def on_resume_failed_candidates(self):
+        """
+        Resume processing failed candidates from a previous run.
+        """
+        failed_file = FINGERPRINTS_DIR_DEFAULT.parent / "failed_candidates.jsonl"
+        
+        if not failed_file.exists():
+            messagebox.showinfo("No Failed Candidates", "No failed candidates file found. All candidates were processed successfully.")
+            return
+        
+        # Load failed candidates
+        failed_candidates = []
+        try:
+            with open(failed_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        data = json.loads(line)
+                        failed_candidates.append(Candidate(**data))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load failed candidates: {e}")
+            return
+        
+        if not failed_candidates:
+            messagebox.showinfo("No Failed Candidates", "Failed candidates file is empty.")
+            return
+        
+        if not messagebox.askyesno("Resume Failed Candidates", 
+            f"Found {len(failed_candidates)} failed candidates.\n\n"
+            f"This will retry processing them.\n\n"
+            f"Continue?"):
+            return
+        
+        def work():
+            try:
+                self.after(0, lambda: self._set_status(f"Resuming {len(failed_candidates)} failed candidates..."))
+                
+                # Reload schemas to check what already exists
+                self._load_schemas()
+                self._load_meta()
+                
+                existing_schema_evidence = set()
+                for schema in self.schema_summaries:
+                    meta = self.schemas_meta.get(schema.schema_id, {})
+                    evidence = meta.get("evidence", [])
+                    existing_schema_evidence.update(evidence)
+                
+                stats = {
+                    "total": len(failed_candidates),
+                    "created": 0,
+                    "merged": 0,
+                    "rejected": 0,
+                    "skipped": 0,
+                    "questions_lost": 0
+                }
+                
+                model_name = self.gemini.get_model_name()
+                print(f"[INFO] Resuming with model: {model_name}")
+                
+                for candidate in failed_candidates:
+                    try:
+                        # Check if already processed
+                        candidate_evidence_set = set(candidate.evidence)
+                        if candidate_evidence_set.issubset(existing_schema_evidence):
+                            stats["skipped"] += 1
+                            print(f"[SKIP] Candidate {candidate.candidate_id}: Already processed")
+                            continue
+                        
+                        # Validate candidate
+                        is_valid, error_msg = validate_prefix_against_content(candidate, self.index)
+                        if not is_valid:
+                            print(f"[REJECT] Candidate {candidate.candidate_id}: {error_msg}")
+                            stats["rejected"] += 1
+                            if candidate.evidence:
+                                stats["questions_lost"] += len(candidate.evidence)
+                            continue
+                        
+                        # Check for collisions
+                        if candidate.collision_guess:
+                            collision_id = candidate.collision_guess[0]
+                            if any(s.schema_id == collision_id for s in self.schema_summaries):
+                                self._merge_candidate_into_schema(candidate, collision_id)
+                                stats["merged"] += 1
+                                meta = self.schemas_meta.get(collision_id, {})
+                                existing_schema_evidence.update(meta.get("evidence", []))
+                                continue
+                        
+                        # Create new schema
+                        schema_id = self._accept_candidate_as_schema(candidate)
+                        if schema_id:
+                            stats["created"] += 1
+                            for qid in candidate.evidence:
+                                self.used_question_ids.add(qid)
+                            existing_schema_evidence.update(candidate.evidence)
+                        else:
+                            stats["rejected"] += 1
+                            if candidate.evidence:
+                                stats["questions_lost"] += len(candidate.evidence)
+                    except Exception as e:
+                        print(f"[ERROR] Failed to process candidate {candidate.candidate_id}: {e}")
+                        stats["rejected"] += 1
+                        if candidate.evidence:
+                            stats["questions_lost"] += len(candidate.evidence)
+                
+                # Save used questions
+                self._save_used_questions()
+                
+                # Final reload
+                self.after(0, self._load_schemas)
+                self.after(0, self._load_embeddings)
+                self.after(0, self._load_meta)
+                
+                # Show summary
+                summary = (f"Resume complete:\n\n"
+                          f"Model used: {model_name}\n\n"
+                          f"Total candidates: {stats['total']}\n"
+                          f"✓ Created: {stats['created']}\n"
+                          f"↻ Merged: {stats['merged']}\n"
+                          f"⊘ Skipped: {stats['skipped']}\n"
+                          f"✗ Rejected: {stats['rejected']}")
+                if stats["questions_lost"] > 0:
+                    summary += f"\n⚠ Questions lost: {stats['questions_lost']}"
+                
+                self.after(0, lambda: messagebox.showinfo("Resume Complete", summary))
+                self.after(0, lambda: self._set_status(
+                    f"Resume done. {stats['created']} created, {stats['merged']} merged, {stats['rejected']} rejected."
+                ))
+                
+            except Exception as e:
+                error_msg = f"Fatal error in resume: {e}"
                 print(f"[ERROR] {error_msg}")
                 import traceback
                 traceback.print_exc()
