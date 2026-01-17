@@ -111,109 +111,118 @@ export function Leaderboard({
                 No results found
               </div>
             ) : (
-              filteredEntries.slice(0, 50).map((entry) => {
-                const isCurrentUser = entry.userId === currentUserId;
+              <>
+                {/* Show top 5 */}
+                {filteredEntries.slice(0, 5).map((entry) => {
+                  const isCurrentUser = entry.userId === currentUserId;
 
-                return (
-                  <div
-                    key={entry.userId}
-                    className={cn(
-                      "grid grid-cols-12 gap-4 px-4 py-3 rounded-xl transition-colors",
-                      isCurrentUser
-                        ? `${themeColors.bg} border ${themeColors.border}`
-                        : "hover:bg-white/5"
-                    )}
-                  >
-                    {/* Rank */}
-                    <div className="col-span-1 flex items-center justify-center">
-                      <span
-                        className={cn(
-                          "text-sm font-bold",
-                          entry.rank <= 3
-                            ? themeColors.text
-                            : "text-white/60"
-                        )}
-                      >
-                        {entry.badge || entry.rank}
-                      </span>
-                    </div>
+                  return (
+                    <div
+                      key={entry.userId}
+                      className={cn(
+                        "grid grid-cols-12 gap-4 px-4 py-3 rounded-xl transition-colors",
+                        isCurrentUser
+                          ? `${themeColors.bg} border ${themeColors.border}`
+                          : "hover:bg-white/5"
+                      )}
+                    >
+                      {/* Rank */}
+                      <div className="col-span-1 flex items-center justify-center">
+                        <span
+                          className={cn(
+                            "text-sm font-bold",
+                            entry.rank <= 3
+                              ? themeColors.text
+                              : "text-white/60"
+                          )}
+                        >
+                          {entry.badge || entry.rank}
+                        </span>
+                      </div>
 
-                    {/* Username */}
-                    <div className="col-span-4 flex items-center">
-                      <span
-                        className={cn(
-                          "text-sm font-medium truncate",
-                          isCurrentUser ? themeColors.text : "text-white/80"
-                        )}
-                      >
-                        {entry.username}
-                      </span>
-                    </div>
+                      {/* Username */}
+                      <div className="col-span-4 flex items-center">
+                        <span
+                          className={cn(
+                            "text-sm font-medium truncate",
+                            isCurrentUser ? themeColors.text : "text-white/80"
+                          )}
+                        >
+                          {entry.username}
+                        </span>
+                      </div>
 
-                    {/* Score */}
-                    <div className="col-span-2 flex items-center justify-end">
-                      <span className="text-sm font-bold text-white/70">
-                        {entry.score.toFixed(0)}
-                      </span>
-                    </div>
+                      {/* Score */}
+                      <div className="col-span-2 flex items-center justify-end">
+                        <span className="text-sm font-bold text-white/70">
+                          {entry.score.toFixed(0)}
+                        </span>
+                      </div>
 
-                    {/* Accuracy */}
-                    <div className="col-span-2 flex items-center justify-end">
-                      <span className="text-sm text-white/60">
-                        {entry.accuracy.toFixed(1)}%
-                      </span>
-                    </div>
+                      {/* Accuracy */}
+                      <div className="col-span-2 flex items-center justify-end">
+                        <span className="text-sm text-white/60">
+                          {entry.accuracy.toFixed(1)}%
+                        </span>
+                      </div>
 
-                    {/* Avg Speed */}
-                    <div className="col-span-3 flex items-center justify-end">
-                      <span className="text-sm font-mono text-white/60">
-                        {entry.avgSpeed > 0 ? (60000 / entry.avgSpeed).toFixed(1) : "0.0"} q/min
-                      </span>
+                      {/* Avg Speed */}
+                      <div className="col-span-3 flex items-center justify-end">
+                        <span className="text-sm font-mono text-white/60">
+                          {entry.avgSpeed > 0 ? (60000 / entry.avgSpeed).toFixed(1) : "0.0"} q/min
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })}
+
+                {/* Show ellipsis and current user if not in top 5 */}
+                {currentUserEntry &&
+                  currentUserEntry.rank > 5 &&
+                  !searchQuery && (
+                    <>
+                      {/* Ellipsis */}
+                      <div className="flex justify-center py-2">
+                        <span className="text-2xl font-bold text-white/20">...</span>
+                      </div>
+
+                      {/* Current user entry */}
+                      <div className={cn(
+                        "grid grid-cols-12 gap-4 px-4 py-3 rounded-xl border",
+                        themeColors.bg,
+                        themeColors.border
+                      )}>
+                        <div className="col-span-1 flex items-center justify-center">
+                          <span className={cn("text-sm font-bold", themeColors.text)}>
+                            {currentUserEntry.rank}
+                          </span>
+                        </div>
+                        <div className="col-span-4 flex items-center">
+                          <span className={cn("text-sm font-medium", themeColors.text)}>
+                            {currentUserEntry.username}
+                          </span>
+                        </div>
+                        <div className="col-span-2 flex items-center justify-end">
+                          <span className="text-sm font-bold text-white/70">
+                            {currentUserEntry.score.toFixed(0)}
+                          </span>
+                        </div>
+                        <div className="col-span-2 flex items-center justify-end">
+                          <span className="text-sm text-white/60">
+                            {currentUserEntry.accuracy.toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="col-span-3 flex items-center justify-end">
+                          <span className="text-sm font-mono text-white/60">
+                            {currentUserEntry.avgSpeed > 0 ? (60000 / currentUserEntry.avgSpeed).toFixed(1) : "0.0"} q/min
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+              </>
             )}
           </div>
-
-          {/* Current user summary if not visible */}
-          {currentUserEntry &&
-            currentUserEntry.rank > 50 &&
-            !searchQuery && (
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <div className={cn(
-                  "grid grid-cols-12 gap-4 px-4 py-3 rounded-xl border",
-                  themeColors.bg,
-                  themeColors.border
-                )}>
-                  <div className="col-span-1 flex items-center justify-center">
-                    <span className={cn("text-sm font-bold", themeColors.text)}>
-                      {currentUserEntry.rank}
-                    </span>
-                  </div>
-                  <div className="col-span-4 flex items-center">
-                    <span className={cn("text-sm font-medium", themeColors.text)}>
-                      {currentUserEntry.username}
-                    </span>
-                  </div>
-                  <div className="col-span-2 flex items-center justify-end">
-                    <span className="text-sm font-bold text-white/70">
-                      {currentUserEntry.score.toFixed(0)}
-                    </span>
-                  </div>
-                  <div className="col-span-2 flex items-center justify-end">
-                    <span className="text-sm text-white/60">
-                      {currentUserEntry.accuracy.toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="col-span-3 flex items-center justify-end">
-                    <span className="text-sm font-mono text-white/60">
-                      {currentUserEntry.avgSpeed > 0 ? (60000 / currentUserEntry.avgSpeed).toFixed(1) : "0.0"} q/min
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
         </>
       )}
     </div>

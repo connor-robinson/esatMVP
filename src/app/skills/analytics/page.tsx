@@ -15,7 +15,7 @@ import type {
   LeaderboardEntry,
   SessionSummary,
 } from "@/types/analytics";
-import { calculateLeaderboardScore, calculateTrend, generateInsights, getTopicExtremes } from "@/lib/analytics";
+import { calculateLeaderboardScore, calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
@@ -307,11 +307,33 @@ async function fetchRecentSessions(
     console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
   }
 
-  // Create a map of builder_session_id -> drill_session data (aggregate across topics)
+  // Create a map of builder_session_id -> drill_session data
+  // Use summary from drill_sessions if available (contains session-level stats, not per-topic)
   const drillSessionsMap = new Map<string, { score: number; correctAnswers: number; totalQuestions: number; totalTime: number; accuracy: number; avgSpeed: number }>();
   if (drillSessionsData) {
+    // Group by builder_session_id and use the first row with a summary (summary contains session-level data)
+    const sessionsProcessed = new Set<string>();
+    
     drillSessionsData.forEach((ds: any) => {
-      if (!ds.builder_session_id) return;
+      if (!ds.builder_session_id || sessionsProcessed.has(ds.builder_session_id)) return;
+      
+      // Prefer summary data as it contains the full session stats
+      if (ds.summary && typeof ds.summary === 'object' && ds.summary.correctAnswers !== undefined) {
+        drillSessionsMap.set(ds.builder_session_id, {
+          score: ds.summary.score || 0,
+          correctAnswers: ds.summary.correctAnswers || 0,
+          totalQuestions: ds.summary.totalQuestions || 0,
+          totalTime: ds.summary.totalTimeMs || 0,
+          accuracy: 0, // Will calculate from correctAnswers/totalQuestions
+          avgSpeed: 0, // Will calculate from totalTime/totalQuestions
+        });
+        sessionsProcessed.add(ds.builder_session_id);
+      }
+    });
+
+    // For sessions without summary, try to aggregate from multiple drill_sessions rows
+    drillSessionsData.forEach((ds: any) => {
+      if (!ds.builder_session_id || sessionsProcessed.has(ds.builder_session_id)) return;
       
       const existing = drillSessionsMap.get(ds.builder_session_id) || {
         score: 0,
@@ -322,37 +344,33 @@ async function fetchRecentSessions(
         avgSpeed: 0,
       };
 
-      // Extract from summary JSON if available
-      if (ds.summary && typeof ds.summary === 'object') {
-        existing.score = Math.max(existing.score, ds.summary.score || 0);
-        existing.correctAnswers += ds.summary.correctAnswers || 0;
-        existing.totalQuestions += ds.summary.totalQuestions || 0;
-        existing.totalTime += ds.summary.totalTimeMs || 0;
-      } else {
-        // Fallback to individual fields
-        existing.totalQuestions += ds.question_count || 0;
-        existing.totalTime += (ds.average_time_ms || 0) * (ds.question_count || 0);
+      // Aggregate from individual fields (only if no summary was found)
+      existing.totalQuestions += ds.question_count || 0;
+      existing.totalTime += (ds.average_time_ms || 0) * (ds.question_count || 0);
+      // For correctAnswers without summary, we need to calculate from accuracy
+      if (ds.accuracy !== null && ds.accuracy !== undefined && ds.question_count) {
+        existing.correctAnswers += Math.round((ds.accuracy / 100) * ds.question_count);
       }
 
       drillSessionsMap.set(ds.builder_session_id, existing);
+      sessionsProcessed.add(ds.builder_session_id);
     });
 
-    // Calculate aggregated accuracy and avgSpeed
+    // Calculate accuracy and avgSpeed for all entries
     drillSessionsMap.forEach((stats, sessionId) => {
       if (stats.totalQuestions > 0) {
-        // If we have summary data, use it; otherwise calculate from drill_sessions
-        const drillSession = drillSessionsData?.find((ds: any) => ds.builder_session_id === sessionId) as any;
-        if (drillSession?.summary && typeof drillSession.summary === 'object') {
-          // Already set from summary
-        } else {
-          // Calculate from aggregated data
-          if (drillSessionsData) {
-            stats.accuracy = drillSessionsData
-              .filter((ds: any) => ds.builder_session_id === sessionId)
-              .reduce((sum: number, ds: any) => sum + ((ds.accuracy || 0) * (ds.question_count || 0)), 0) / stats.totalQuestions;
-          }
+        // Calculate accuracy from correctAnswers/totalQuestions if not already set
+        if (stats.accuracy === 0 && stats.correctAnswers > 0) {
+          stats.accuracy = (stats.correctAnswers / stats.totalQuestions) * 100;
         }
-        stats.avgSpeed = stats.totalTime / stats.totalQuestions;
+        // Calculate avgSpeed from totalTime/totalQuestions
+        if (stats.totalTime > 0) {
+          stats.avgSpeed = stats.totalTime / stats.totalQuestions;
+        }
+        // Recalculate score using calculateSessionScore for consistency
+        if (stats.correctAnswers > 0 || stats.totalQuestions > 0) {
+          stats.score = calculateSessionScore(stats.correctAnswers, stats.totalQuestions, stats.avgSpeed);
+        }
       }
     });
   }
@@ -419,34 +437,30 @@ async function fetchRecentSessions(
     let avgSpeed: number;
     let score: number;
 
-    if (savedData && savedData.totalQuestions > 0) {
+    // Always use questions.length as the source of truth for totalQuestions
+    // Questions in the session, not just attempted ones
+    const sessionTotalQuestions = questions.length;
+
+    if (savedData && savedData.totalQuestions > 0 && savedData.correctAnswers !== undefined) {
       // Use saved data from database (most accurate)
-      totalQuestions = savedData.totalQuestions;
+      // Use the totalQuestions from savedData if it matches questions.length, otherwise use questions.length
+      totalQuestions = savedData.totalQuestions === sessionTotalQuestions ? savedData.totalQuestions : sessionTotalQuestions;
       correctAnswers = savedData.correctAnswers;
-      accuracy = Math.round(savedData.accuracy * 10) / 10; // Round to 1 decimal
-      totalTime = savedData.totalTime;
-      avgSpeed = Math.round(savedData.avgSpeed); // Round to nearest ms
-      score = Math.round(savedData.score * 100) / 100; // Round to 2 decimals
+      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0;
+      totalTime = savedData.totalTime || 0;
+      avgSpeed = savedData.avgSpeed > 0 ? Math.round(savedData.avgSpeed) : 0;
+      // Recalculate score using calculateSessionScore for consistency
+      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
     } else {
       // Fallback to calculating from attempts
-      totalQuestions = attempts.length > 0 ? attempts.length : questions.length;
+      // totalQuestions should be the number of questions in the session, not attempts
+      totalQuestions = sessionTotalQuestions;
       correctAnswers = attempts.filter(a => a.is_correct === true).length;
-      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0; // Round to 1 decimal
+      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0;
       totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
-      avgSpeed = totalQuestions > 0 && totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0; // Round to nearest ms
-      score = calculateLeaderboardScore({
-        userId,
-        totalQuestions,
-        correctAnswers,
-        totalTime,
-        sessionCount: 1,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastPracticeDate: null,
-        topicStats: {},
-        createdAt: new Date(),
-      });
-      score = Math.round(score * 100) / 100; // Round to 2 decimals
+      avgSpeed = totalQuestions > 0 && totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0;
+      // Use calculateSessionScore for individual sessions, not calculateLeaderboardScore
+      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
     }
     
     // Debug logging

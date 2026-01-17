@@ -281,6 +281,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     // For global view, use column-based layout
     if (isGlobalView) {
       const scorePercentage = (session.score / 1000) * 100;
+      // Show progress bar only for top 3 or current attempt
+      const showProgressBar = session.rank <= 3 || isHighlighted;
       
       return (
         <motion.div
@@ -295,15 +297,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               : "bg-white/[0.02] hover:bg-white/[0.04]"
           )}
         >
-          {/* Progress Bar - Thicker, more readable, desaturated */}
-          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/[0.03]">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${scorePercentage}%` }}
-              transition={{ duration: 0.8, delay: idx * 0.05 }}
-              className="h-full bg-blue-500/40"
-            />
-          </div>
+          {/* Progress Bar - Only for top 3 or current attempt */}
+          {showProgressBar && (
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/[0.03]">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${scorePercentage}%` }}
+                transition={{ duration: 0.8, delay: idx * 0.05 }}
+                className="h-full bg-blue-500/40"
+              />
+            </div>
+          )}
 
           {/* Content Grid */}
           <div className="grid grid-cols-12 gap-4 items-center relative z-10">
@@ -509,10 +513,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       const { top3, currentRank, adjacent } = structuredData;
       const cards: any[] = [];
       let cardIndex = 0;
-      const topCount = isGlobalView ? 10 : 3; // 10 for global (to show multiple per person), 3 for personal
+      const topCount = isGlobalView ? 5 : 3; // 5 for global (top 5 leaderboard), 3 for personal
 
-      // Show top N (10 for global, 3 for personal)
-      top3.forEach((sessionData: any) => {
+      // Show top N (5 for global, 3 for personal)
+      const topEntries = isGlobalView ? top3.slice(0, 5) : top3.slice(0, 3);
+      topEntries.forEach((sessionData: any) => {
         const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName, session.id);
         if (card) {
           cards.push(card);
@@ -520,24 +525,45 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         }
       });
 
-      // If current is not in top N (for personal view only), show ellipsis and adjacent
-      if (!isGlobalView && currentRank !== null && currentRank > topCount && adjacent.length > 0) {
-        cards.push(
-          <div key="ellipsis" className="flex justify-center py-2">
-            <span className={cn(
-              "text-2xl font-bold",
-              isGlobalView ? "text-blue-500/30" : "text-white/20"
-            )}>...</span>
-          </div>
-        );
-        
-        adjacent.forEach((sessionData: any) => {
-          const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName, session.id);
+      // Check if current attempt is in top entries
+      const currentInTop = topEntries.some((entry: any) => 
+        entry.isCurrent || (session.id && (entry.builder_session_id === session.id || entry.id === session.id))
+      );
+
+      // If current is not in top N, show ellipsis and current attempt
+      if (currentRank !== null && currentRank > topCount && !currentInTop) {
+        // Find current attempt in adjacent or create from session data
+        const currentAttempt = adjacent.find((entry: any) => 
+          entry.isCurrent || (session.id && (entry.builder_session_id === session.id || entry.id === session.id))
+        ) || {
+          id: session.id,
+          rank: currentRank,
+          score: result.score,
+          timestamp: new Date(),
+          isCurrent: true,
+          correctAnswers: result.correctAnswers,
+          totalQuestions: result.totalQuestions,
+          avgTimeMs: result.averageTimeMs,
+          accuracy: result.accuracy,
+          username: "You",
+        };
+
+        if (currentAttempt) {
+          cards.push(
+            <div key="ellipsis" className="flex justify-center py-2">
+              <span className={cn(
+                "text-2xl font-bold",
+                isGlobalView ? "text-blue-500/30" : "text-white/20"
+              )}>...</span>
+            </div>
+          );
+          
+          const card = renderSingleCard(currentAttempt, isGlobalView, cardIndex, topicName, session.id);
           if (card) {
             cards.push(card);
             cardIndex++;
           }
-        });
+        }
       }
 
       if (cards.length === 0) {
