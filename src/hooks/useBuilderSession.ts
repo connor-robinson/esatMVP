@@ -480,6 +480,10 @@ export function useBuilderSession() {
         // Silently skip if no user session (anonymous mode)
         return;
       }
+      // Find the order_index for this question from the session questions
+      const question = currentSession?.questions.find(q => q.id === attempt.questionId);
+      const orderIndex = currentSession?.questions.findIndex(q => q.id === attempt.questionId) ?? null;
+      
       (supabase as any).from("builder_attempts").insert({
         session_id: sessionId,
         user_id: authSession.user.id,
@@ -488,9 +492,10 @@ export function useBuilderSession() {
         is_correct: attempt.isCorrect,
         time_spent_ms: attempt.timeSpent ?? null,
         attempted_at: new Date(attempt.timestamp).toISOString(),
+        order_index: orderIndex !== null ? orderIndex : undefined,
       });
     },
-    [authSession?.user, supabase],
+    [authSession?.user, supabase, currentSession],
   );
 
   const finalizeSession = useCallback(

@@ -262,6 +262,7 @@ export type BuilderAttemptRow = {
   is_correct: boolean | null;
   time_spent_ms: number | null;
   attempted_at: string;
+  order_index: number | null;
 };
 export type BuilderAttemptInsert = {
   id?: number;
@@ -272,6 +273,7 @@ export type BuilderAttemptInsert = {
   is_correct?: boolean | null;
   time_spent_ms?: number | null;
   attempted_at?: string;
+  order_index?: number | null;
 };
 export type BuilderAttemptUpdate = Partial<BuilderAttemptRow>;
 

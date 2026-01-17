@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <div className="flex items-center justify-between gap-4">
             <span className="text-white/50 text-xs">Speed:</span>
             <span className="text-warning font-bold text-xs">
-              {payload[1].value.toFixed(2)} q/s
+              {payload[1].value.toFixed(1)} q/min
             </span>
           </div>
         </div>
@@ -88,7 +88,7 @@ export function SessionMiniChart({ data }: SessionMiniChartProps) {
             tick={{ fill: "rgba(255,255,255,0.4)" }}
             tickLine={false}
             axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
-            tickFormatter={(value) => `${value.toFixed(2)} q/s`}
+              tickFormatter={(value) => `${value.toFixed(1)} q/min`}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line

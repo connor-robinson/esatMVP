@@ -85,7 +85,7 @@ function SessionCardComponent({
             <div>
               <div className="text-xs text-white/40 leading-none mb-1">Speed</div>
               <div className="text-lg font-bold text-white/90 leading-none">
-                {session.avgSpeed > 0 ? (1000 / session.avgSpeed).toFixed(2) : "0.00"} q/s
+                {session.avgSpeed > 0 ? (60000 / session.avgSpeed).toFixed(1) : "0.0"} q/min
               </div>
             </div>
           </div>

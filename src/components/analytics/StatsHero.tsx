@@ -113,7 +113,7 @@ export function StatsHero({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Avg Speed</div>
-                  <div className="text-3xl font-bold text-white/90 leading-none">{avgSpeed > 0 ? (1000 / avgSpeed).toFixed(2) : "0.00"} q/s</div>
+                  <div className="text-3xl font-bold text-white/90 leading-none">{(avgSpeed / 1000).toFixed(1)}s</div>
                   <TrendIndicator trend={speedTrend} size="sm" />
                 </div>
               </div>

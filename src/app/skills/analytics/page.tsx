@@ -19,6 +19,7 @@ import { calculateLeaderboardScore, calculateTrend, generateInsights, getTopicEx
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
+import { TOPICS } from "@/config/topics";
 
 const ViewToggle = lazy(() =>
   import("@/components/analytics/ViewToggle").then((mod) => ({ default: mod.ViewToggle })),
@@ -36,16 +37,11 @@ const GlobalView = lazy(() =>
   import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
 );
 
-const AVAILABLE_TOPICS = [
-  { id: "addition", name: "Addition Fast" },
-  { id: "subtraction", name: "Subtraction Fast" },
-  { id: "multiplication", name: "Multiplication" },
-  { id: "division", name: "Division" },
-  { id: "fractions", name: "Simplifying Fractions" },
-  { id: "fractions-decimal", name: "Friendly Fraction <-> Decimal" },
-  { id: "triangles", name: "Special Triangles" },
-  { id: "integrate", name: "Integrate" },
-];
+// Get all available topics from config
+const AVAILABLE_TOPICS = Object.values(TOPICS).map(topic => ({
+  id: topic.id,
+  name: topic.name,
+}));
 
 async function fetchTopicProgress(
   supabase: SupabaseClient<Database>,
@@ -75,8 +71,8 @@ async function fetchTopicProgress(
     const avgTime = row.average_time_ms;
     const lastPracticed = row.last_practiced ? new Date(row.last_practiced) : null;
 
-    // Map topic ID to proper name
-    const topic = AVAILABLE_TOPICS.find(t => t.id === topicId);
+    // Map topic ID to proper name from TOPICS config
+    const topic = TOPICS[topicId];
     const topicName = topic?.name || topicId;
 
     topicStats[topicId] = {
@@ -271,25 +267,54 @@ async function fetchRecentSessions(
     return [];
   }
 
-  // Get all attempts for these sessions, ordered by attempted_at to preserve question order
+  // Get all attempts for these sessions
   const sessionIds = (data as any[]).map((s: any) => s.id);
   const { data: attemptsData, error: attemptsError } = await supabase
     .from("builder_attempts")
-    .select("session_id, is_correct, time_spent_ms, attempted_at")
+    .select("session_id, is_correct, time_spent_ms, attempted_at, question_id, order_index")
     .in("session_id", sessionIds)
-    .order("attempted_at", { ascending: true });
+    .order("order_index", { ascending: true })
+    .order("attempted_at", { ascending: true }); // Fallback if order_index is null
+  
+  // Also get session questions to match question order (fallback if order_index not set)
+  const { data: questionsData } = await supabase
+    .from("builder_session_questions")
+    .select("session_id, question_id, order_index")
+    .in("session_id", sessionIds)
+    .order("order_index", { ascending: true });
 
   if (attemptsError) {
     console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
   }
 
-  // Group attempts by session, preserving order
+  // Create a map of session_id -> question_id -> order_index (fallback if order_index not in attempts)
+  const questionOrderMap = new Map<string, Map<string, number>>();
+  if (questionsData) {
+    questionsData.forEach((q: any) => {
+      if (!questionOrderMap.has(q.session_id)) {
+        questionOrderMap.set(q.session_id, new Map());
+      }
+      questionOrderMap.get(q.session_id)!.set(q.question_id, q.order_index);
+    });
+  }
+
+  // Group attempts by session, using order_index from attempts or falling back to questions map
   const attemptsBySession = new Map<string, any[]>();
   if (attemptsData) {
     attemptsData.forEach((attempt: any) => {
       const sessionAttempts = attemptsBySession.get(attempt.session_id) || [];
+      // Use order_index from attempt if available, otherwise get from questions map
+      if (attempt.order_index === null || attempt.order_index === undefined) {
+        const orderMap = questionOrderMap.get(attempt.session_id);
+        attempt.order_index = orderMap?.get(attempt.question_id) ?? sessionAttempts.length;
+      }
       sessionAttempts.push(attempt);
       attemptsBySession.set(attempt.session_id, sessionAttempts);
+    });
+    
+    // Sort attempts by order_index (should already be sorted, but ensure it)
+    attemptsBySession.forEach((attempts, sessionId) => {
+      attempts.sort((a, b) => (a.order_index ?? 999) - (b.order_index ?? 999));
     });
   }
 
@@ -307,7 +332,7 @@ async function fetchRecentSessions(
     // Get unique topics
     const topicIds = [...new Set(questions.map((q: any) => q.topic_id).filter(Boolean))];
     const topicNames = topicIds.map(topicId => {
-      const topic = AVAILABLE_TOPICS.find(t => t.id === topicId);
+      const topic = TOPICS[topicId];
       return topic?.name || topicId;
     });
 
@@ -492,9 +517,9 @@ export default function AnalyticsPage() {
   const speedTrend = useMemo(() => {
     if (performanceData.length < 2) return { value: 0, direction: "neutral" as const, percentage: 0 };
     const recent = performanceData.slice(-7);
-    // Convert to questions per second for trend calculation (higher is better)
-    const current = recent[recent.length - 1]?.avgSpeed > 0 ? 1000 / recent[recent.length - 1].avgSpeed : 0;
-    const previous = recent[0]?.avgSpeed > 0 ? 1000 / recent[0].avgSpeed : 0;
+    // Convert to questions per minute for trend calculation (higher is better)
+    const current = recent[recent.length - 1]?.avgSpeed > 0 ? 60000 / recent[recent.length - 1].avgSpeed : 0;
+    const previous = recent[0]?.avgSpeed > 0 ? 60000 / recent[0].avgSpeed : 0;
     return calculateTrend(current, previous);
   }, [performanceData]);
   const questionsTrend = useMemo(() => {

@@ -72,7 +72,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="flex items-center justify-between gap-6">
             <span className="text-white/50 text-xs">Avg Speed</span>
             <span className="text-warning font-bold text-lg">
-              {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(2)} q/s` : "—"}
+              {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(1)} q/min` : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between gap-6">
@@ -143,17 +143,17 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
   const yDomain = useMemo(() => {
     const values = filteredData
       .filter(d => d.questionsAnswered > 0 && d.avgSpeed > 0)
-      .map(d => 1000 / d.avgSpeed); // Convert to questions per second
+      .map(d => 60000 / d.avgSpeed); // Convert to questions per minute
     
-    if (values.length === 0) return [0, 1];
+    if (values.length === 0) return [0, 60];
     
     const min = Math.min(...values);
     const max = Math.max(...values);
-    const padding = (max - min) * 0.25 || 0.1;
+    const padding = (max - min) * 0.25 || 5;
     
     return [
-      Math.max(0, Math.floor((min - padding) * 100) / 100),
-      Math.ceil((max + padding) * 100) / 100 + 0.1 // Extra padding at top
+      Math.max(0, Math.floor((min - padding) * 10) / 10),
+      Math.ceil((max + padding) * 10) / 10 + 5 // Extra padding at top
     ];
   }, [filteredData]);
 
@@ -161,8 +161,8 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
   const chartData = useMemo(() => {
     const formatted = filteredData.map((d) => {
       const date = new Date(d.date);
-      // Convert to questions per second (higher is better)
-      const speed = d.questionsAnswered > 0 && d.avgSpeed > 0 ? (1000 / d.avgSpeed) : null;
+      // Convert to questions per minute (higher is better)
+      const speed = d.questionsAnswered > 0 && d.avgSpeed > 0 ? (60000 / d.avgSpeed) : null;
       
       return {
         date: date.toLocaleDateString("en-US", {
@@ -320,7 +320,7 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
               tickLine={false}
               axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
               domain={yDomain}
-              tickFormatter={(value) => `${value.toFixed(2)} q/s`}
+              tickFormatter={(value) => `${value.toFixed(1)} q/min`}
             />
             <Tooltip 
               content={<CustomTooltip />} 
@@ -394,7 +394,7 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
         </div>
 
         <p className="text-xs text-white/30 mt-4 text-center">
-          Higher is better • Questions per second
+          Higher is better • Questions per minute
         </p>
       </div>
     </div>

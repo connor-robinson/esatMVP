@@ -583,17 +583,17 @@ export function generateInsights(
   if (previousStats && previousStats.totalQuestions > 0) {
     const currentSpeedMs = stats.totalTime / stats.totalQuestions;
     const previousSpeedMs = previousStats.totalTime / previousStats.totalQuestions;
-    // Convert to questions per second (higher is better)
-    const currentQps = currentSpeedMs > 0 ? 1000 / currentSpeedMs : 0;
-    const previousQps = previousSpeedMs > 0 ? 1000 / previousSpeedMs : 0;
-    const speedImprovement = currentQps - previousQps; // Higher is better
+    // Convert to questions per minute (higher is better)
+    const currentQpm = currentSpeedMs > 0 ? 60000 / currentSpeedMs : 0;
+    const previousQpm = previousSpeedMs > 0 ? 60000 / previousSpeedMs : 0;
+    const speedImprovement = currentQpm - previousQpm; // Higher is better
 
-    if (speedImprovement > 0.1) {
-      // More than 0.1 q/s improvement
+    if (speedImprovement > 1) {
+      // More than 1 q/min improvement
       insights.push({
         id: "speed-improvement",
         type: "improvement",
-        message: `You're ${speedImprovement.toFixed(2)} q/s faster! 🚀`,
+        message: `You're ${speedImprovement.toFixed(1)} q/min faster! 🚀`,
         icon: "⚡",
         timestamp: new Date(),
       });
@@ -689,9 +689,9 @@ export function getTopicExtremes(stats: UserStats): {
   strongest: TopicStats[];
   weakest: TopicStats[];
 } {
-  // Lower threshold to 5 questions to show more topics
+  // Lower threshold to 1 question to show all topics with any data
   const topicsWithData = Object.values(stats.topicStats).filter(
-    (t) => t.questionsAnswered >= 5
+    (t) => t.questionsAnswered >= 1
   );
 
   if (topicsWithData.length === 0) {
@@ -827,14 +827,14 @@ export function generateSessionDetail(session: SessionSummary & { _attempts?: an
       }
       const questionNumber = index + 1;
       const runningAccuracy = (runningCorrect / questionNumber) * 100;
-      // Convert time_spent_ms to seconds, then to questions per second
-      const timeSpentSec = (attempt.time_spent_ms || session.avgSpeed) / 1000;
-      const questionsPerSecond = timeSpentSec > 0 ? 1 / timeSpentSec : 0;
+      // Convert time_spent_ms to questions per minute
+      const timeSpentMs = attempt.time_spent_ms || session.avgSpeed;
+      const questionsPerMinute = timeSpentMs > 0 ? 60000 / timeSpentMs : 0;
 
       progressData.push({
         questionNumber,
         accuracy: runningAccuracy,
-        speed: questionsPerSecond,
+        speed: questionsPerMinute,
       });
     });
   } else {
@@ -843,11 +843,11 @@ export function generateSessionDetail(session: SessionSummary & { _attempts?: an
       const runningCorrect = Math.round((session.correctAnswers / session.totalQuestions) * i);
       const runningAccuracy = (runningCorrect / i) * 100;
 
-      // Convert avgSpeed (ms per question) to questions per second
-      const questionsPerSecond = session.avgSpeed > 0 ? 1000 / session.avgSpeed : 0;
+      // Convert avgSpeed (ms per question) to questions per minute
+      const questionsPerMinute = session.avgSpeed > 0 ? 60000 / session.avgSpeed : 0;
       // Add some variance
-      const variance = (Math.random() - 0.5) * 0.2; // ±0.1 q/s variance
-      const questionSpeed = Math.max(0.1, questionsPerSecond + variance);
+      const variance = (Math.random() - 0.5) * 5; // ±2.5 q/min variance
+      const questionSpeed = Math.max(1, questionsPerMinute + variance);
 
       progressData.push({
         questionNumber: i,
@@ -981,8 +981,8 @@ export function generateTopicSessionHistory(
   const isImproving = topic.accuracy > 70;
   const trend = isImproving ? 1 : -0.5;
 
-  // Convert topic avgSpeed (ms per question) to questions per second
-  const currentQps = topic.avgSpeed > 0 ? 1000 / topic.avgSpeed : 0;
+  // Convert topic avgSpeed (ms per question) to questions per minute
+  const currentQpm = topic.avgSpeed > 0 ? 60000 / topic.avgSpeed : 0;
 
   for (let i = 1; i <= sessionCount; i++) {
     // Create gradual trend with some variance
@@ -996,19 +996,19 @@ export function generateTopicSessionHistory(
       Math.min(100, startAccuracy + progressFactor * trend * 15 + variance)
     );
 
-    // For speed, convert to questions per second (higher is better)
-    // Start from a lower/higher qps and trend toward current
-    const startQps = currentQps - trend * 0.3; // Adjust trend for qps
-    const qpsVariance = (Math.random() - 0.5) * 0.2; // ±0.1 q/s variance
+    // For speed, convert to questions per minute (higher is better)
+    // Start from a lower/higher qpm and trend toward current
+    const startQpm = currentQpm - trend * 10; // Adjust trend for qpm
+    const qpmVariance = (Math.random() - 0.5) * 5; // ±2.5 q/min variance
     const speed = Math.max(
-      0.1,
-      startQps + progressFactor * trend * 0.3 + qpsVariance
+      1,
+      startQpm + progressFactor * trend * 10 + qpmVariance
     );
 
     history.push({
       sessionNumber: i,
       accuracy: Math.round(accuracy * 10) / 10,
-      speed: Math.round(speed * 100) / 100, // Round to 2 decimal places for q/s
+      speed: Math.round(speed * 10) / 10, // Round to 1 decimal place for q/min
     });
   }
 
