@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase/client';
 import type { ExamName, ExamType, PaperSection } from '@/types/papers';
 import type { RoadmapPart, RoadmapStage } from './roadmapConfig';
 import { getSectionForRoadmapPart } from './roadmapConfig';
+import type { PaperSessionRow } from '@/lib/supabase/types';
 
 /**
  * Construct paper variant string from components
@@ -55,7 +56,7 @@ export async function isPartCompleted(
 
     // Check if ANY completed session includes our section
     // This handles cases where user completes different parts in different sessions
-    for (const session of data) {
+    for (const session of data as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant'>[]) {
       const selectedSections = session.selected_sections as string[] | null;
       
       if (selectedSections && selectedSections.length > 0) {

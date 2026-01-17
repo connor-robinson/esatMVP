@@ -138,6 +138,7 @@ export type TMUAGraphSpecV2 = {
     yLabel?: { text: string; italic?: boolean; dx?: number; dy?: number };
   };
   objects: GraphObject[];
+  derived?: Array<TangentObject | IntersectionObject>;
   regions?: RegionSpec[];
   marks?: {
     xMarks?: AxisMark[];
