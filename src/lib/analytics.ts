@@ -815,20 +815,25 @@ export function generateMockSessions(count: number = 20): SessionSummary[] {
 /**
  * Generate session detail with progress data
  */
-export function generateSessionDetail(session: SessionSummary & { _attempts?: any[] }): SessionDetail {
+export function generateSessionDetail(
+  session: SessionSummary & { 
+    _attempts?: any[]; 
+    _questionsMap?: Map<string, { prompt: string; answer: string }>;
+  }
+): SessionDetail {
   const progressData: SessionProgressPoint[] = [];
 
   // If we have real attempts data, use it; otherwise generate mock data
   if (session._attempts && session._attempts.length > 0) {
     let runningCorrect = 0;
     session._attempts.forEach((attempt, index) => {
-      if (attempt.is_correct) {
+      if (attempt.is_correct === true) {
         runningCorrect++;
       }
       const questionNumber = index + 1;
       const runningAccuracy = (runningCorrect / questionNumber) * 100;
       // Convert time_spent_ms to questions per minute
-      const timeSpentMs = attempt.time_spent_ms || session.avgSpeed;
+      const timeSpentMs = attempt.time_spent_ms || session.avgSpeed || 1000;
       const questionsPerMinute = timeSpentMs > 0 ? 60000 / timeSpentMs : 0;
 
       progressData.push({
@@ -857,51 +862,54 @@ export function generateSessionDetail(session: SessionSummary & { _attempts?: an
     }
   }
 
-  // Generate common mistakes for recent sessions
+  // Generate common mistakes from real wrong attempts
   let commonMistakes: WrongQuestionPattern[] | undefined;
-  if (session.isLatest || Math.random() > 0.7) {
-    const operations = ["+", "-", "×", "÷"];
-    const mistakeCount = Math.floor(Math.random() * 3) + 2;
-
-    commonMistakes = [];
-    for (let i = 0; i < mistakeCount; i++) {
-      const a = Math.floor(Math.random() * 50) + 10;
-      const b = Math.floor(Math.random() * 20) + 2;
-      const op = operations[Math.floor(Math.random() * operations.length)];
-
-      let correctAnswer: number;
-      switch (op) {
-        case "+":
-          correctAnswer = a + b;
-          break;
-        case "-":
-          correctAnswer = a - b;
-          break;
-        case "×":
-          correctAnswer = a * b;
-          break;
-        case "÷":
-          correctAnswer = Math.floor(a / b);
-          break;
-        default:
-          correctAnswer = 0;
-      }
-
-      const userAnswer =
-        correctAnswer + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 10 + 1);
-
-      commonMistakes.push({
-        question: `${a} ${op} ${b}`,
-        userAnswer,
-        correctAnswer,
-        count: Math.floor(Math.random() * 3) + 1,
+  if (session._attempts && session._attempts.length > 0 && session._questionsMap) {
+    // Get all wrong attempts
+    const wrongAttempts = session._attempts.filter(a => a.is_correct === false);
+    
+    if (wrongAttempts.length > 0) {
+      // Group by question (using prompt as key)
+      const mistakesMap = new Map<string, { question: string; userAnswer: string; correctAnswer: string; count: number }>();
+      
+      wrongAttempts.forEach((attempt) => {
+        const questionData = session._questionsMap!.get(attempt.question_id);
+        if (questionData) {
+          const key = questionData.prompt; // Use prompt as key to group same questions
+          const existing = mistakesMap.get(key);
+          
+          if (existing) {
+            existing.count++;
+            // Update user answer if different (take the most recent)
+            if (attempt.user_answer) {
+              existing.userAnswer = attempt.user_answer;
+            }
+          } else {
+            mistakesMap.set(key, {
+              question: questionData.prompt,
+              userAnswer: attempt.user_answer || "—",
+              correctAnswer: questionData.answer || "—",
+              count: 1,
+            });
+          }
+        }
       });
+      
+      // Convert to array and sort by count (most common first)
+      commonMistakes = Array.from(mistakesMap.values())
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10); // Top 10 most common mistakes
+      
+      // Only show if we have mistakes
+      if (commonMistakes.length === 0) {
+        commonMistakes = undefined;
+      }
     }
   }
 
   return {
     ...session,
-    progressData,
+    progressData: progressData.length > 0 ? progressData : undefined,
     commonMistakes,
   };
 }

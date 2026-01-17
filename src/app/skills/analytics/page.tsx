@@ -343,12 +343,27 @@ async function fetchRecentSessions(
     const questions = (session.builder_session_questions as any[]) || [];
     const attempts = attemptsBySession.get(session.id) || [];
     
-    // Calculate stats from attempts
+    // Calculate stats from attempts (prefer attempts.length, fallback to questions.length)
+    // Use questions.length if we have questions but no attempts (session in progress)
+    const totalQuestions = attempts.length > 0 ? attempts.length : questions.length;
     const correctAnswers = attempts.filter(a => a.is_correct === true).length;
-    const totalQuestions = attempts.length || questions.length; // Use questions length as fallback
     const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
     const totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
-    const avgSpeed = totalQuestions > 0 ? totalTime / totalQuestions : 0;
+    const avgSpeed = totalQuestions > 0 && totalTime > 0 ? totalTime / totalQuestions : 0;
+    
+    // Debug logging
+    if (index === 0) {
+      console.log("[fetchRecentSessions] DEBUG: Latest session stats", {
+        sessionId: session.id,
+        attemptsCount: attempts.length,
+        questionsCount: questions.length,
+        correctAnswers,
+        totalQuestions,
+        accuracy,
+        totalTime,
+        avgSpeed,
+      });
+    }
 
     // Get unique topics
     const topicIds = [...new Set(questions.map((q: any) => q.topic_id).filter(Boolean))];

@@ -60,7 +60,7 @@ function SessionCardComponent({
           <RankBadge rank={rank} sortMode={sortMode} size="compact" />
           <div className="flex items-baseline gap-1.5">
             <span className="text-4xl font-bold text-white/95 tracking-tight">
-              {session.score}
+              {session.score || 0}
             </span>
             <span className="text-sm text-white/40 font-medium">/1000</span>
           </div>
@@ -74,7 +74,7 @@ function SessionCardComponent({
             <div>
               <div className="text-xs text-white/40 leading-none mb-1">Accuracy</div>
               <div className="text-lg font-bold text-white/90 leading-none">
-                {session.accuracy.toFixed(1)}%
+                {isNaN(session.accuracy) ? "0.0" : session.accuracy.toFixed(1)}%
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@ function SessionCardComponent({
             <div>
               <div className="text-xs text-white/40 leading-none mb-1">Questions</div>
               <div className="text-base font-semibold text-white/80 leading-none">
-                {session.correctAnswers}/{session.totalQuestions}
+                {session.correctAnswers || 0}/{session.totalQuestions || 0}
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ function SessionCardComponent({
       {isExpanded && sessionDetail && (
         <div className="mt-4 space-y-4 pt-4 border-t border-white/10">
           {/* Mini Chart */}
-          {sessionDetail.progressData && (
+          {sessionDetail.progressData && sessionDetail.progressData.length > 0 && (
             <div>
               <h4 className="text-sm font-semibold text-white/70 mb-3">
                 Session Progress
@@ -147,8 +147,16 @@ function SessionCardComponent({
           )}
 
           {/* Wrong Questions Table */}
-          {sessionDetail.commonMistakes && (
+          {sessionDetail.commonMistakes && sessionDetail.commonMistakes.length > 0 && (
             <WrongQuestionsTable mistakes={sessionDetail.commonMistakes} maxRows={5} />
+          )}
+          
+          {/* Show message if no data available */}
+          {(!sessionDetail.progressData || sessionDetail.progressData.length === 0) &&
+           (!sessionDetail.commonMistakes || sessionDetail.commonMistakes.length === 0) && (
+            <div className="text-sm text-white/40 text-center py-4">
+              No detailed data available for this session
+            </div>
           )}
         </div>
       )}
