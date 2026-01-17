@@ -83,13 +83,13 @@ function DraggableTopicHeader({
   };
 
   return (
-    <div key={topic.id} className="space-y-1">
+        <div key={topic.id} className="space-y-1">
       {/* Topic header - expandable and draggable */}
       <div
         ref={setNodeRef}
         style={style}
         className={cn(
-          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-xl text-white/90 transition-all shadow-sm",
+          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-organic-md text-white/90 transition-all",
           isDragging && "opacity-50",
           isAnyVariantSelected
             ? "bg-primary/10"
@@ -234,10 +234,15 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
     <Card variant="flat" className="p-5 h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
-          Choose Topics
-        </h2>
-        <span className="text-sm text-white/50 font-medium">
+        <div>
+          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
+            Choose Topics
+          </h2>
+          <p className="text-sm font-mono text-white/50 mt-1">
+            Select topics to practice. Drag or click + to add.
+          </p>
+        </div>
+        <span className="text-xs text-white/50">
           {selectedTopicIds.length} {selectedTopicIds.length === 1 ? 'item' : 'items'} selected
         </span>
       </div>
@@ -249,7 +254,7 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search topics..."
-          className="w-full h-11 px-4 rounded-xl bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all shadow-sm"
+          className="w-full h-11 px-4 rounded-organic-md bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all border border-white/10 focus:border-primary/50"
         />
       </div>
 
@@ -261,11 +266,11 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
           const isExpanded = expandedCategories.has(highLevelCategory);
 
           return (
-            <div key={category} className="rounded-xl bg-white/[0.02] shadow-sm">
+            <div key={category} className="rounded-organic-md bg-white/[0.02]">
               {/* Category Header - Clickable */}
               <button
                 onClick={() => toggleCategory(highLevelCategory)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors rounded-t-xl"
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors rounded-t-organic-md"
               >
                 <div className="flex items-center gap-2">
                   {isExpanded ? (

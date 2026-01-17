@@ -53,7 +53,7 @@ function GroupedTopicChip({
   return (
     <div className="space-y-1">
       {/* Parent topic header */}
-      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-white/90 transition-colors shadow-sm border border-primary/20">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-organic-md bg-primary/10 text-white/90 transition-colors">
         {/* Expand/collapse button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -138,7 +138,7 @@ function SortableVariantChip({
         isDragging && "opacity-30"
       )}
     >
-      <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors shadow-sm">
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors">
         {/* Drag handle */}
         <button
           className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/70 cursor-grab active:cursor-grabbing transition-colors flex-shrink-0"
@@ -172,12 +172,12 @@ function DropZone({ isOver }: { isOver: boolean }) {
   return (
     <div className="col-span-full w-full h-full min-h-[240px]">
       <div className={cn(
-        "rounded-2xl text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200 h-full",
+        "rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200 h-full",
         isOver 
           ? "bg-primary/10 text-primary/80 scale-[1.02]" 
           : "bg-white/[0.02] hover:bg-white/[0.03]"
       )}>
-        <div className="flex items-center gap-3 text-lg">
+        <div className="flex items-center gap-3 text-base">
           <GripVertical size={20} strokeWidth={2} className="opacity-70" />
           <span className="font-semibold">Drag topics here</span>
         </div>
@@ -228,22 +228,27 @@ export function SessionFolder({
     >
       {/* Entire card is droppable */}
       <div ref={setNodeRef} className="h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
             Session Folder
           </h2>
-          <span className="text-sm text-white/50 font-medium">
-            {totalItems} {totalItems === 1 ? 'item' : 'items'}
-          </span>
+          <p className="text-sm font-mono text-white/50 mt-1">
+            Drop topics here or click + to add them.
+          </p>
         </div>
+        <span className="text-xs text-white/50">
+          {totalItems} {totalItems === 1 ? 'item' : 'items'}
+        </span>
+      </div>
 
         {/* Drop zone / Topics - Fixed height to prevent resizing */}
         <div
           className={cn(
-            "min-h-[260px] rounded-2xl p-5 mb-5 transition-all duration-200 relative shadow-sm",
+            "min-h-[260px] rounded-organic-lg p-5 mb-5 transition-all duration-200 relative",
             isOver 
-              ? "bg-primary/15 ring-2 ring-primary/60 shadow-[0_0_20px_rgba(74,140,111,0.3)] scale-[1.01]" 
+              ? "bg-primary/15 ring-2 ring-primary/60 scale-[1.01]" 
               : "bg-white/[0.03]"
           )}
         >
@@ -285,22 +290,21 @@ export function SessionFolder({
         {/* Question count on left, Save and Clear on right */}
         <div className="flex items-stretch gap-3">
           {/* Question count input - bubble style, expanded */}
-          <div className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/[0.07] transition-colors flex-1 shadow-sm">
-            <span className="text-white/60 text-sm whitespace-nowrap">#</span>
+          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-organic-md bg-white/5 hover:bg-white/[0.07] transition-colors flex-1 border border-white/10">
+            <span className="text-white/50 text-sm font-mono whitespace-nowrap">Questions:</span>
             <input
               type="number"
               value={questionCount}
               onChange={(e) => onQuestionCountChange(Number(e.target.value) || 1)}
               min="1"
               max="100"
-              className="bg-transparent border-0 outline-none focus:outline-none focus:ring-0 w-14 text-white text-sm text-center font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-0 m-0"
+              className="bg-transparent border-0 outline-none focus:outline-none focus:ring-0 w-16 text-white text-sm text-center font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-0 m-0"
               style={{ boxShadow: 'none' }}
             />
-            <span className="text-white/60 text-sm whitespace-nowrap">questions</span>
           </div>
 
           {/* Load Preset button */}
-          <button
+          <Button
             onClick={() => {
               if (presets.length > 0 && onLoadPreset) {
                 const presetNumber = prompt(`Available presets:\n${presets.map((p, i) => `${i + 1}. ${p.name}`).join('\n')}\n\nEnter preset number:`);
@@ -310,62 +314,50 @@ export function SessionFolder({
               }
             }}
             disabled={presets.length === 0}
-            className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
-              presets.length === 0
-                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
-                : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
-            )}
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
             title={presets.length === 0 ? "No saved presets" : "Load a saved preset"}
           >
-            <FolderDown className="h-5 w-5" strokeWidth={2} />
+            <FolderDown className="h-4 w-4" strokeWidth={2} />
             <span>Load</span>
-          </button>
+          </Button>
 
           {/* Save and Clear buttons - grouped with text */}
-          <button
+          <Button
             onClick={onSave}
             disabled={totalItems === 0}
-            className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
-              totalItems === 0
-                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
-                : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white interaction-scale"
-            )}
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-2"
           >
-            <Save className="h-5 w-5" strokeWidth={2} />
+            <Save className="h-4 w-4" strokeWidth={2} />
             <span>Save</span>
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={onClear}
             disabled={totalItems === 0}
-            className={cn(
-              "flex items-center gap-2.5 px-5 py-3 rounded-2xl transition-all duration-200 text-sm font-medium whitespace-nowrap shadow-sm",
-              totalItems === 0
-                ? "bg-white/[0.02] text-white/30 cursor-not-allowed"
-                : "bg-white/5 text-red-400/80 hover:bg-red-500/10 hover:text-red-400 interaction-scale"
-            )}
+            variant="danger"
+            size="sm"
+            className="flex items-center gap-2"
           >
-            <Trash2 className="h-5 w-5" strokeWidth={2} />
+            <Trash2 className="h-4 w-4" strokeWidth={2} />
             <span>Clear</span>
-          </button>
+          </Button>
         </div>
 
         {/* Start button - minimalistic style, no border */}
-        <button
+        <Button
           onClick={onStart}
           disabled={!canStart}
-          className={cn(
-            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-semibold text-base transition-all duration-fast ease-signature",
-            !canStart
-              ? "bg-white/5 text-white/30 cursor-not-allowed"
-              : "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary-light interaction-scale"
-          )}
+          variant={canStart ? "primary" : "secondary"}
+          size="lg"
+          className="w-full flex items-center justify-center gap-3"
         >
           <Play className="h-5 w-5" strokeWidth={2} />
           <span>Start Session</span>
-        </button>
+        </Button>
 
           {!canStart && totalItems === 0 && (
             <div className="text-sm text-white/40 text-center">

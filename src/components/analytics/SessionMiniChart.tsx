@@ -22,20 +22,20 @@ interface SessionMiniChartProps {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/95 backdrop-blur-xl border border-white/10 rounded-xl p-3 shadow-2xl">
-        <p className="text-white/90 font-semibold text-xs mb-2">
+      <div className="bg-background/95 backdrop-blur-xl border border-white/10 rounded-organic-lg p-3 shadow-2xl">
+        <p className="text-white/90 font-semibold text-xs mb-2.5 font-mono">
           Question #{payload[0].payload.questionNumber}
         </p>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-white/50 text-xs">Accuracy:</span>
-            <span className="text-[#7ba3a0] font-bold text-xs">
+            <span className="text-white/50 text-xs font-mono">Accuracy:</span>
+            <span className="text-primary font-bold text-xs font-mono">
               {payload[0].value.toFixed(1)}%
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-white/50 text-xs">Speed:</span>
-            <span className="text-warning font-bold text-xs">
+            <span className="text-white/50 text-xs font-mono">Speed:</span>
+            <span className="text-warning/80 font-bold text-xs font-mono">
               {payload[1].value.toFixed(1)} q/min
             </span>
           </div>
@@ -49,76 +49,76 @@ const CustomTooltip = ({ active, payload }: any) => {
 export function SessionMiniChart({ data }: SessionMiniChartProps) {
   return (
     <div className="w-full">
-      <ResponsiveContainer width="100%" height={150}>
-        <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={180}>
+        <LineChart data={data} margin={{ top: 12, right: 16, left: -16, bottom: 12 }}>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.03)"
+            stroke="rgba(255,255,255,0.04)"
             vertical={false}
           />
           <XAxis
             dataKey="questionNumber"
-            stroke="rgba(255,255,255,0.1)"
-            style={{ fontSize: "10px" }}
-            tick={{ fill: "rgba(255,255,255,0.4)" }}
+            stroke="rgba(255,255,255,0.08)"
+            style={{ fontSize: "11px" }}
+            tick={{ fill: "rgba(255,255,255,0.5)" }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
             label={{
               value: "Question #",
               position: "insideBottom",
-              offset: -5,
-              style: { fontSize: "10px", fill: "rgba(255,255,255,0.3)" },
+              offset: -8,
+              style: { fontSize: "11px", fill: "rgba(255,255,255,0.4)" },
             }}
           />
           <YAxis
             yAxisId="left"
-            stroke="rgba(255,255,255,0.1)"
-            style={{ fontSize: "10px" }}
-            tick={{ fill: "rgba(255,255,255,0.4)" }}
+            stroke="rgba(255,255,255,0.08)"
+            style={{ fontSize: "11px" }}
+            tick={{ fill: "rgba(255,255,255,0.5)" }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
             domain={[0, 100]}
             tickFormatter={(value) => `${value}%`}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
-            stroke="rgba(255,255,255,0.1)"
-            style={{ fontSize: "10px" }}
-            tick={{ fill: "rgba(255,255,255,0.4)" }}
+            stroke="rgba(255,255,255,0.08)"
+            style={{ fontSize: "11px" }}
+            tick={{ fill: "rgba(255,255,255,0.5)" }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
-              tickFormatter={(value) => `${value.toFixed(1)} q/min`}
+            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
+            tickFormatter={(value) => `${value.toFixed(1)} q/min`}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line
             yAxisId="left"
             type="monotone"
             dataKey="accuracy"
-            stroke="#7ba3a0"
-            strokeWidth={2}
+            stroke="#85BC82"
+            strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 4, fill: "#7ba3a0" }}
+            activeDot={{ r: 5, fill: "#85BC82" }}
           />
           <Line
             yAxisId="right"
             type="monotone"
             dataKey="speed"
-            stroke="#f59e0b"
-            strokeWidth={2}
+            stroke="rgba(245,158,11,0.7)"
+            strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 4, fill: "#f59e0b" }}
+            activeDot={{ r: 5, fill: "rgba(245,158,11,0.7)" }}
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="flex items-center justify-center gap-4 mt-2">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-0.5 bg-[#7ba3a0]" />
-          <span className="text-xs text-white/50">Accuracy</span>
+      <div className="flex items-center justify-center gap-6 mt-4">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-1 rounded-sm bg-primary" />
+          <span className="text-xs text-white/60 font-mono">Accuracy</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-0.5 bg-warning" />
-          <span className="text-xs text-white/50">Speed</span>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-1 rounded-sm bg-warning/70" />
+          <span className="text-xs text-white/60 font-mono">Speed</span>
         </div>
       </div>
     </div>

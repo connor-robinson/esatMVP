@@ -280,8 +280,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     // For global view, use column-based layout
     if (isGlobalView) {
-      // Determine score tier for subtle visual indicator
-      const scoreTier = session.score >= 900 ? 'excellent' : session.score >= 750 ? 'great' : session.score >= 600 ? 'good' : 'developing';
+      const scorePercentage = (session.score / 1000) * 100;
       
       return (
         <motion.div
@@ -290,19 +289,24 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
           className={cn(
-            "relative rounded-organic-md p-5 transition-all",
+            "relative rounded-organic-md p-5 transition-all overflow-hidden",
             isHighlighted
               ? "bg-blue-500/10 ring-1 ring-blue-500/20"
-              : "bg-white/[0.02] hover:bg-white/[0.04]",
-            // Subtle left border accent based on score (very subtle, not busy)
-            scoreTier === 'excellent' && "border-l-2 border-blue-500/30",
-            scoreTier === 'great' && "border-l-2 border-blue-400/20",
-            scoreTier === 'good' && "border-l-2 border-blue-300/15",
-            scoreTier === 'developing' && "border-l-2 border-white/5"
+              : "bg-white/[0.02] hover:bg-white/[0.04]"
           )}
         >
+          {/* Progress Bar - Thicker, more readable, desaturated */}
+          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/[0.03]">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${scorePercentage}%` }}
+              transition={{ duration: 0.8, delay: idx * 0.05 }}
+              className="h-full bg-blue-500/40"
+            />
+          </div>
+
           {/* Content Grid */}
-          <div className="grid grid-cols-12 gap-4 items-center">
+          <div className="grid grid-cols-12 gap-4 items-center relative z-10">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
               <div className="text-lg font-bold tabular-nums font-mono text-blue-400">

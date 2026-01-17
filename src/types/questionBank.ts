@@ -28,6 +28,7 @@ export interface QuestionBankQuestion {
   created_at: string;
   graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs (deprecated, use graph_specs)
   graph_specs?: Record<string, TMUAGraphSpec> | null; // Map of graph ID to graph spec for questions/solutions with multiple graphs
+  idea_plan?: any | null; // JSONB field containing generation metadata, including variation_mode (FAR/SIBLINGS)
 }
 
 export interface QuestionAttempt {

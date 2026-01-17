@@ -7,6 +7,7 @@
 import { Suspense, lazy } from "react";
 import { DndContext, DragOverlay, pointerWithin } from "@dnd-kit/core";
 import { Container } from "@/components/layout/Container";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { getAllTopics, getTopic } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -63,16 +64,12 @@ export default function BuilderPage() {
       >
         <Container size="xl" className="py-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-xl font-semibold uppercase tracking-wider text-white/70 mb-3">
-              Session Builder
-            </h1>
-            <p className="text-sm text-white/50">
-              Create custom practice sessions by combining multiple topics.
-            </p>
-          </div>
+          <PageHeader
+            title="Session Builder"
+            description="Create custom practice sessions by combining multiple topics. Drag topics to the session folder or click the + button to add them."
+          />
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 mt-6">
             {/* Left: Topic selector */}
             <div>
               <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
