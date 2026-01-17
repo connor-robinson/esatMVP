@@ -227,6 +227,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     return `${(ms / 1000).toFixed(1)}s`;
   };
 
+  const getInitials = (username: string) => {
+    if (!username || username === "You" || username === "Anonymous User") return "?";
+    const words = username.trim().split(/\s+/);
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return username.substring(0, 2).toUpperCase();
+  };
+
   const renderSingleCard = (session: any, isGlobalView: boolean, idx: number, topicName: string, currentSessionId?: string) => {
     // Validate session data
     if (!session || typeof session.score !== 'number') {
@@ -242,6 +251,117 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     );
     const scorePercentage = (session.score / 1000) * 100;
 
+    // For global view, use column-based layout
+    if (isGlobalView) {
+      return (
+        <motion.div
+          key={session.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: idx * 0.03 }}
+          className={cn(
+            "relative rounded-organic-md p-3 transition-all overflow-hidden",
+            isHighlighted
+              ? "bg-blue-500/10 ring-1 ring-blue-500/20"
+              : "bg-white/[0.02] hover:bg-white/[0.04]"
+          )}
+        >
+          {/* Progress Bar - Full width at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/5">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${scorePercentage}%` }}
+              transition={{ duration: 0.8, delay: idx * 0.05 }}
+              className="h-full bg-blue-500"
+            />
+          </div>
+
+          {/* Content Grid */}
+          <div className="grid grid-cols-12 gap-4 items-center relative z-10">
+            {/* Rank */}
+            <div className="col-span-1 flex items-center justify-center">
+              <div className="text-lg font-bold tabular-nums font-mono text-blue-400">
+                {session.rank}
+              </div>
+            </div>
+
+            {/* Avatar + Name */}
+            <div className="col-span-4 flex items-center gap-3 min-w-0">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                {session.avatar ? (
+                  <img 
+                    src={session.avatar} 
+                    alt={session.username}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to initials if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<span class="text-xs font-medium text-white/70">${getInitials(session.username)}</span>`;
+                      }
+                    }}
+                  />
+                ) : (
+                  <span className="text-xs font-medium text-white/70">
+                    {getInitials(session.username)}
+                  </span>
+                )}
+              </div>
+              <span className="text-sm text-white/80 font-medium truncate">
+                {session.username}
+              </span>
+            </div>
+
+            {/* Score */}
+            <div className="col-span-2 flex items-center justify-end">
+              <div className="text-right">
+                <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                  {session.score}
+                </div>
+                <div className="text-xs text-white/40 font-mono">/ 1000</div>
+              </div>
+            </div>
+
+            {/* Accuracy */}
+            <div className="col-span-2 flex items-center justify-end">
+              <div className="text-right">
+                <div className={cn(
+                  "text-base font-bold font-mono",
+                  "text-blue-400"
+                )}>
+                  {session.accuracy.toFixed(0)}%
+                </div>
+                <div className="text-xs text-white/40 font-mono">accuracy</div>
+              </div>
+            </div>
+
+            {/* Speed */}
+            <div className="col-span-2 flex items-center justify-end">
+              <div className="text-right">
+                <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                  {formatTimeMs(session.avgTimeMs)}
+                </div>
+                <div className="text-xs text-white/40 font-mono">per question</div>
+              </div>
+            </div>
+
+            {/* Questions */}
+            <div className="col-span-1 flex items-center justify-end">
+              <div className="text-right">
+                <div className="text-sm font-semibold text-white/80 tabular-nums font-mono">
+                  {session.correctAnswers}/{session.totalQuestions}
+                </div>
+                <div className="text-xs text-white/40 font-mono">correct</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // For personal view, keep the original layout
     return (
       <motion.div
         key={session.id}
@@ -249,45 +369,32 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.03 }}
         className={cn(
-          "rounded-organic-md border p-4 transition-all",
+          "rounded-organic-md p-3 transition-all",
           isHighlighted
-            ? (isGlobalView 
-                ? "bg-blue-500/10 border-blue-400/30 ring-1 ring-blue-500/20" 
-                : "bg-primary/10 border-primary/30 ring-1 ring-primary/20")
-            : (isGlobalView
-                ? "bg-white/[0.02] border-white/10 hover:border-blue-500/20"
-                : "bg-white/[0.02] border-white/10 hover:border-white/20")
+            ? "bg-primary/10 ring-1 ring-primary/20"
+            : "bg-white/[0.02] hover:bg-white/[0.04]"
         )}
       >
         <div className="flex items-center gap-6">
           {/* Rank Number - Leftmost */}
           <div className="flex-shrink-0">
-            <div className={cn(
-              "text-2xl font-bold tabular-nums font-mono",
-              isGlobalView ? "text-blue-400" : "text-primary"
-            )}>
+            <div className="text-lg font-bold tabular-nums font-mono text-primary">
               {session.rank}
             </div>
           </div>
 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0">
-            {/* Score and Username/Topic Row */}
+            {/* Score and Topic Row */}
             <div className="flex items-baseline justify-between gap-4 mb-2">
               <div className="flex items-baseline gap-3 min-w-0">
-                <span className="text-2xl font-bold text-white/90 tabular-nums font-mono">
+                <span className="text-xl font-bold text-white/90 tabular-nums font-mono">
                   {session.score}
                 </span>
                 <span className="text-sm text-white/40 font-mono">/ 1000</span>
-                {isGlobalView ? (
-                  <span className="text-xs text-white/50 font-mono truncate">
-                    {session.username}
-                  </span>
-                ) : (
-                  <span className="text-xs text-white/30 font-mono truncate">
-                    {topicName}
-                  </span>
-                )}
+                <span className="text-xs text-white/30 font-mono truncate">
+                  {topicName}
+                </span>
               </div>
               <span className="text-xs text-white/40 font-mono flex-shrink-0">
                 {new Date(session.timestamp).toLocaleDateString()} {new Date(session.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -295,15 +402,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             </div>
 
             {/* Progress Bar */}
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
+            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${scorePercentage}%` }}
                 transition={{ duration: 0.8, delay: idx * 0.05 }}
-                className={cn(
-                  "h-full rounded-full",
-                  isGlobalView ? "bg-blue-500" : "bg-primary"
-                )}
+                className="h-full rounded-full bg-primary"
               />
             </div>
           </div>
@@ -317,10 +421,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className="text-xs font-mono text-white/70">
                 {session.correctAnswers}/{session.totalQuestions} <span className="text-white/40">correct</span>
               </div>
-              <div className={cn(
-                "text-xs font-mono font-bold",
-                isGlobalView ? "text-blue-400" : "text-primary"
-              )}>
+              <div className="text-xs font-mono font-bold text-primary">
                 {session.accuracy.toFixed(0)}%
               </div>
             </div>

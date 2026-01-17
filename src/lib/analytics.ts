@@ -100,7 +100,7 @@ export async function fetchTopicRankings(
     .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
-    .limit(500); // OPTIMIZED: Reduced from 10000 to 500 for egress optimization (top 500 sessions per topic)
+    .limit(10000); // Explicit limit to get all data
 
   if (globalError) {
     console.error("[fetchTopicRankings] ERROR: Failed to fetch global leaderboard:", {
@@ -124,13 +124,13 @@ export async function fetchTopicRankings(
       totalSessions: globalData?.length || 0,
     });
     
-    let profilesMap: Record<string, { display_name: string | null }> = {};
+    let profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
     
     if (userIds.length > 0) {
       console.log(`[fetchTopicRankings] DEBUG: Fetching profiles for ${userIds.length} users`);
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select("id, display_name")
+        .select("id, display_name, avatar_url")
         .in("id", userIds);
       
       if (profilesError) {
@@ -148,7 +148,7 @@ export async function fetchTopicRankings(
         });
         // Create a map of user_id -> profile
         profilesMap = (profilesData || []).reduce((acc: any, p: any) => {
-          acc[p.id] = { display_name: p.display_name };
+          acc[p.id] = { display_name: p.display_name, avatar_url: p.avatar_url };
           return acc;
         }, {});
         console.log(`[fetchTopicRankings] DEBUG: Profiles map created`, {
@@ -209,13 +209,9 @@ export async function fetchTopicRankings(
       const score = summary.score || 0;
       const correctAnswers = summary.correctAnswers || 0;
       const totalQuestions = summary.totalQuestions || d.question_count || 0;
-      
-      // Always prefer summary.totalTimeMs for exact calculation (matches SessionResults.tsx)
-      // This ensures consistency with the current session calculation
-      const avgTimeMs = summary.totalTimeMs && summary.totalQuestions
-        ? (summary.totalTimeMs / summary.totalQuestions)
+      const avgTimeMs = summary.totalTimeMs 
+        ? (summary.totalTimeMs / (summary.totalQuestions || 1)) 
         : (d.average_time_ms || 0);
-      
       const accuracy = d.accuracy || (correctAnswers && totalQuestions ? (correctAnswers / totalQuestions) * 100 : 0);
       
       // Handle timestamp - use completed_at, created_at, or current time as fallback
@@ -229,48 +225,6 @@ export async function fetchTopicRankings(
       }
       
       const isCurrent = d.builder_session_id === currentSessionId;
-      
-      // If this is the current session and we have currentSessionData, use the exact values
-      // to ensure consistency with what's shown in the topic breakdown
-      if (isCurrent && currentSessionData && currentSessionId) {
-        console.log(`[processRankings] DEBUG: Overriding current session values with exact data`, {
-          id: d.id,
-          builder_session_id: d.builder_session_id,
-          oldScore: score,
-          newScore: currentSessionData.score,
-          oldAvgTimeMs: avgTimeMs,
-          newAvgTimeMs: currentSessionData.avgTimeMs,
-          oldCorrectAnswers: correctAnswers,
-          newCorrectAnswers: currentSessionData.correctAnswers,
-          oldTotalQuestions: totalQuestions,
-          newTotalQuestions: currentSessionData.totalQuestions,
-        });
-        
-        // Get username - for current session, always show "You" if it's the current user
-        let username: string;
-        if (isGlobal) {
-          // For global view, show "You" for current user's session
-          username = "You";
-        } else {
-          // Personal view always shows "You"
-          username = "You";
-        }
-        
-        return {
-          id: d.id,
-          builder_session_id: d.builder_session_id,
-          userId: d.user_id || currentUserId,
-          username,
-          avatar: undefined,
-          score: currentSessionData.score, // Use exact score from current session
-          timestamp,
-          isCurrent: true,
-          correctAnswers: currentSessionData.correctAnswers, // Use exact values
-          totalQuestions: currentSessionData.totalQuestions,
-          avgTimeMs: currentSessionData.avgTimeMs, // Use exact avgTimeMs from current session
-          accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
-        };
-      }
       
       // Get username - for global view, use display_name from profiles, for personal use "You"
       let username: string;
@@ -307,7 +261,7 @@ export async function fetchTopicRankings(
         builder_session_id: d.builder_session_id, // Include this for duplicate checking
         userId: d.user_id || currentUserId,
         username,
-        avatar: undefined,
+        avatar: d.profiles?.avatar_url || undefined,
         score,
         timestamp,
         isCurrent,
@@ -339,7 +293,7 @@ export async function fetchTopicRankings(
         builder_session_id: currentSessionId,
         userId: currentUserId,
         username: currentUsername,
-        avatar: undefined,
+        avatar: undefined, // Current user's avatar would need to be fetched separately if needed
         score: currentSessionData.score,
         timestamp: new Date(), // Most recent timestamp
         isCurrent: true, // Mark as current session
@@ -581,19 +535,16 @@ export function generateInsights(
 
   // Speed improvement
   if (previousStats && previousStats.totalQuestions > 0) {
-    const currentSpeedMs = stats.totalTime / stats.totalQuestions;
-    const previousSpeedMs = previousStats.totalTime / previousStats.totalQuestions;
-    // Convert to questions per minute (higher is better)
-    const currentQpm = currentSpeedMs > 0 ? 60000 / currentSpeedMs : 0;
-    const previousQpm = previousSpeedMs > 0 ? 60000 / previousSpeedMs : 0;
-    const speedImprovement = currentQpm - previousQpm; // Higher is better
+    const currentSpeed = stats.totalTime / stats.totalQuestions;
+    const previousSpeed = previousStats.totalTime / previousStats.totalQuestions;
+    const speedImprovement = previousSpeed - currentSpeed; // Lower is better
 
-    if (speedImprovement > 1) {
-      // More than 1 q/min improvement
+    if (speedImprovement > 500) {
+      // More than 0.5s faster
       insights.push({
         id: "speed-improvement",
         type: "improvement",
-        message: `You're ${speedImprovement.toFixed(1)} q/min faster! 🚀`,
+        message: `You're ${(speedImprovement / 1000).toFixed(1)}s faster per question! 🚀`,
         icon: "⚡",
         timestamp: new Date(),
       });
@@ -689,9 +640,8 @@ export function getTopicExtremes(stats: UserStats): {
   strongest: TopicStats[];
   weakest: TopicStats[];
 } {
-  // Lower threshold to 1 question to show all topics with any data
   const topicsWithData = Object.values(stats.topicStats).filter(
-    (t) => t.questionsAnswered >= 1
+    (t) => t.questionsAnswered >= 10
   );
 
   if (topicsWithData.length === 0) {
@@ -870,7 +820,7 @@ export function generateSessionDetail(
     
     if (wrongAttempts.length > 0) {
       // Group by question (using prompt as key)
-      const mistakesMap = new Map<string, { question: string; userAnswer: string; correctAnswer: string; count: number }>();
+      const mistakesMap = new Map<string, { question: string; userAnswer: number; correctAnswer: number; count: number }>();
       
       wrongAttempts.forEach((attempt) => {
         const questionData = session._questionsMap!.get(attempt.question_id);
@@ -878,17 +828,26 @@ export function generateSessionDetail(
           const key = questionData.prompt; // Use prompt as key to group same questions
           const existing = mistakesMap.get(key);
           
+          // Parse answers to numbers (handle cases where they might be strings)
+          const userAnswerNum = attempt.user_answer ? parseFloat(String(attempt.user_answer)) : NaN;
+          const correctAnswerNum = questionData.answer ? parseFloat(String(questionData.answer)) : NaN;
+          
+          // Skip if we can't parse valid numbers
+          if (isNaN(userAnswerNum) || isNaN(correctAnswerNum)) {
+            return;
+          }
+          
           if (existing) {
             existing.count++;
             // Update user answer if different (take the most recent)
-            if (attempt.user_answer) {
-              existing.userAnswer = attempt.user_answer;
+            if (!isNaN(userAnswerNum)) {
+              existing.userAnswer = userAnswerNum;
             }
           } else {
             mistakesMap.set(key, {
               question: questionData.prompt,
-              userAnswer: attempt.user_answer || "—",
-              correctAnswer: questionData.answer || "—",
+              userAnswer: userAnswerNum,
+              correctAnswer: correctAnswerNum,
               count: 1,
             });
           }
@@ -909,7 +868,7 @@ export function generateSessionDetail(
 
   return {
     ...session,
-    progressData: progressData.length > 0 ? progressData : undefined,
+    progressData: progressData.length > 0 ? progressData : [],
     commonMistakes,
   };
 }
@@ -989,9 +948,6 @@ export function generateTopicSessionHistory(
   const isImproving = topic.accuracy > 70;
   const trend = isImproving ? 1 : -0.5;
 
-  // Convert topic avgSpeed (ms per question) to questions per minute
-  const currentQpm = topic.avgSpeed > 0 ? 60000 / topic.avgSpeed : 0;
-
   for (let i = 1; i <= sessionCount; i++) {
     // Create gradual trend with some variance
     const progressFactor = (i - 1) / (sessionCount - 1 || 1); // 0 to 1
@@ -1004,19 +960,16 @@ export function generateTopicSessionHistory(
       Math.min(100, startAccuracy + progressFactor * trend * 15 + variance)
     );
 
-    // For speed, convert to questions per minute (higher is better)
-    // Start from a lower/higher qpm and trend toward current
-    const startQpm = currentQpm - trend * 10; // Adjust trend for qpm
-    const qpmVariance = (Math.random() - 0.5) * 5; // ±2.5 q/min variance
+    const startSpeed = topic.avgSpeed / 1000 + trend * 1.5;
     const speed = Math.max(
-      1,
-      startQpm + progressFactor * trend * 10 + qpmVariance
+      0.5,
+      startSpeed - progressFactor * trend * 1.5 + (Math.random() - 0.5) * 0.8
     );
 
     history.push({
       sessionNumber: i,
       accuracy: Math.round(accuracy * 10) / 10,
-      speed: Math.round(speed * 10) / 10, // Round to 1 decimal place for q/min
+      speed: Math.round(speed * 10) / 10,
     });
   }
 
