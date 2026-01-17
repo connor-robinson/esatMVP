@@ -45,6 +45,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   const [rankingsData, setRankingsData] = useState<Record<string, any>>({});
   const [isLoadingRankings, setIsLoadingRankings] = useState(false);
 
+  // CENTRAL CALCULATION: All session-level stats calculated here from attempts
+  // This ensures consistency across all displays (top cards, highlighted cards, etc.)
   const result = useMemo(() => {
     const totalQuestions = attempts.length;
     const correctAnswers = attempts.filter((a) => a.isCorrect).length;
@@ -55,6 +57,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     const fastestTimeMs = times.length ? Math.min(...times) : 0;
     const slowestTimeMs = times.length ? Math.max(...times) : 0;
 
+    // Use the same calculateSessionScore function that saves to database
     const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs);
 
     const topicStats: Record<string, { correct: number; total: number; times: number[] }> = {};
@@ -467,27 +470,26 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     // Handle case where data structure is old format (array) or new format (object)
     if (!data) {
       // Fallback: show current attempt if no data
-      const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
-      if (currentTopic) {
-        const currentSession = {
-          id: session.id,
-          rank: 1,
-          score: currentTopic.score,
-          timestamp: new Date(),
-          isCurrent: true,
-          correctAnswers: currentTopic.correct,
-          totalQuestions: currentTopic.total,
-          avgTimeMs: currentTopic.avgTimeMs,
-          accuracy: currentTopic.accuracy,
-          username: "You",
-        };
-        
-        return (
-          <div className="space-y-4">
-            {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
-          </div>
-        );
-      }
+      // IMPORTANT: Use SESSION-LEVEL stats, not topic-level stats
+      // This ensures consistency with the top cards
+      const currentSession = {
+        id: session.id,
+        rank: 1,
+        score: result.score, // Session-level score
+        timestamp: new Date(),
+        isCurrent: true,
+        correctAnswers: result.correctAnswers, // Session-level correct
+        totalQuestions: result.totalQuestions, // Session-level total
+        avgTimeMs: result.averageTimeMs, // Session-level avg time
+        accuracy: result.accuracy, // Session-level accuracy
+        username: "You",
+      };
+      
+      return (
+        <div className="space-y-4">
+          {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
+        </div>
+      );
       
       return (
         <div className="text-center py-8 text-white/40 font-mono text-sm">
@@ -545,26 +547,25 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           },
         });
         // Fallback to showing current attempt
-        const currentTopic = result.topicBreakdown.find(t => t.topicId === topicId);
-        if (currentTopic) {
-          const currentSession = {
-            id: session.id,
-            rank: currentRank || 1,
-            score: currentTopic.score,
-            timestamp: new Date(),
-            isCurrent: true,
-            correctAnswers: currentTopic.correct,
-            totalQuestions: currentTopic.total,
-            avgTimeMs: currentTopic.avgTimeMs,
-            accuracy: currentTopic.accuracy,
-            username: "You",
-          };
-          return (
-            <div className="space-y-3">
-              {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
-            </div>
-          );
-        }
+        // IMPORTANT: Use SESSION-LEVEL stats, not topic-level stats
+        // This ensures consistency with the top cards
+        const currentSession = {
+          id: session.id,
+          rank: currentRank || 1,
+          score: result.score, // Session-level score
+          timestamp: new Date(),
+          isCurrent: true,
+          correctAnswers: result.correctAnswers, // Session-level correct
+          totalQuestions: result.totalQuestions, // Session-level total
+          avgTimeMs: result.averageTimeMs, // Session-level avg time
+          accuracy: result.accuracy, // Session-level accuracy
+          username: "You",
+        };
+        return (
+          <div className="space-y-4">
+            {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
+          </div>
+        );
         return (
           <div className="text-center py-8 text-white/40 font-mono text-sm">
             No attempts yet

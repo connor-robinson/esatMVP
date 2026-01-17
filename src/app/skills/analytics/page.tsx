@@ -341,14 +341,16 @@ async function fetchRecentSessions(
     drillSessionsMap.forEach((stats, sessionId) => {
       if (stats.totalQuestions > 0) {
         // If we have summary data, use it; otherwise calculate from drill_sessions
-        const drillSession = drillSessionsData.find((ds: any) => ds.builder_session_id === sessionId);
+        const drillSession = drillSessionsData?.find((ds: any) => ds.builder_session_id === sessionId) as any;
         if (drillSession?.summary && typeof drillSession.summary === 'object') {
           // Already set from summary
         } else {
           // Calculate from aggregated data
-          stats.accuracy = drillSessionsData
-            .filter((ds: any) => ds.builder_session_id === sessionId)
-            .reduce((sum: number, ds: any) => sum + ((ds.accuracy || 0) * (ds.question_count || 0)), 0) / stats.totalQuestions;
+          if (drillSessionsData) {
+            stats.accuracy = drillSessionsData
+              .filter((ds: any) => ds.builder_session_id === sessionId)
+              .reduce((sum: number, ds: any) => sum + ((ds.accuracy || 0) * (ds.question_count || 0)), 0) / stats.totalQuestions;
+          }
         }
         stats.avgSpeed = stats.totalTime / stats.totalQuestions;
       }
