@@ -581,16 +581,19 @@ export function generateInsights(
 
   // Speed improvement
   if (previousStats && previousStats.totalQuestions > 0) {
-    const currentSpeed = stats.totalTime / stats.totalQuestions;
-    const previousSpeed = previousStats.totalTime / previousStats.totalQuestions;
-    const speedImprovement = previousSpeed - currentSpeed; // Lower is better
+    const currentSpeedMs = stats.totalTime / stats.totalQuestions;
+    const previousSpeedMs = previousStats.totalTime / previousStats.totalQuestions;
+    // Convert to questions per second (higher is better)
+    const currentQps = currentSpeedMs > 0 ? 1000 / currentSpeedMs : 0;
+    const previousQps = previousSpeedMs > 0 ? 1000 / previousSpeedMs : 0;
+    const speedImprovement = currentQps - previousQps; // Higher is better
 
-    if (speedImprovement > 500) {
-      // More than 0.5s faster
+    if (speedImprovement > 0.1) {
+      // More than 0.1 q/s improvement
       insights.push({
         id: "speed-improvement",
         type: "improvement",
-        message: `You're ${(speedImprovement / 1000).toFixed(1)}s faster per question! 🚀`,
+        message: `You're ${speedImprovement.toFixed(2)} q/s faster! 🚀`,
         icon: "⚡",
         timestamp: new Date(),
       });
@@ -686,8 +689,9 @@ export function getTopicExtremes(stats: UserStats): {
   strongest: TopicStats[];
   weakest: TopicStats[];
 } {
+  // Lower threshold to 5 questions to show more topics
   const topicsWithData = Object.values(stats.topicStats).filter(
-    (t) => t.questionsAnswered >= 10
+    (t) => t.questionsAnswered >= 5
   );
 
   if (topicsWithData.length === 0) {
@@ -811,23 +815,46 @@ export function generateMockSessions(count: number = 20): SessionSummary[] {
 /**
  * Generate session detail with progress data
  */
-export function generateSessionDetail(session: SessionSummary): SessionDetail {
+export function generateSessionDetail(session: SessionSummary & { _attempts?: any[] }): SessionDetail {
   const progressData: SessionProgressPoint[] = [];
 
-  // Generate progress points for each question
-  for (let i = 1; i <= session.totalQuestions; i++) {
-    const runningCorrect = Math.round((session.correctAnswers / session.totalQuestions) * i);
-    const runningAccuracy = (runningCorrect / i) * 100;
+  // If we have real attempts data, use it; otherwise generate mock data
+  if (session._attempts && session._attempts.length > 0) {
+    let runningCorrect = 0;
+    session._attempts.forEach((attempt, index) => {
+      if (attempt.is_correct) {
+        runningCorrect++;
+      }
+      const questionNumber = index + 1;
+      const runningAccuracy = (runningCorrect / questionNumber) * 100;
+      // Convert time_spent_ms to seconds, then to questions per second
+      const timeSpentSec = (attempt.time_spent_ms || session.avgSpeed) / 1000;
+      const questionsPerSecond = timeSpentSec > 0 ? 1 / timeSpentSec : 0;
 
-    // Add some variance to speed
-    const questionSpeed =
-      (session.avgSpeed + (Math.random() - 0.5) * 1000) / 1000;
-
-    progressData.push({
-      questionNumber: i,
-      accuracy: runningAccuracy,
-      speed: Math.max(0.5, questionSpeed),
+      progressData.push({
+        questionNumber,
+        accuracy: runningAccuracy,
+        speed: questionsPerSecond,
+      });
     });
+  } else {
+    // Fallback to generating progress points for each question
+    for (let i = 1; i <= session.totalQuestions; i++) {
+      const runningCorrect = Math.round((session.correctAnswers / session.totalQuestions) * i);
+      const runningAccuracy = (runningCorrect / i) * 100;
+
+      // Convert avgSpeed (ms per question) to questions per second
+      const questionsPerSecond = session.avgSpeed > 0 ? 1000 / session.avgSpeed : 0;
+      // Add some variance
+      const variance = (Math.random() - 0.5) * 0.2; // ±0.1 q/s variance
+      const questionSpeed = Math.max(0.1, questionsPerSecond + variance);
+
+      progressData.push({
+        questionNumber: i,
+        accuracy: runningAccuracy,
+        speed: questionSpeed,
+      });
+    }
   }
 
   // Generate common mistakes for recent sessions
@@ -954,6 +981,9 @@ export function generateTopicSessionHistory(
   const isImproving = topic.accuracy > 70;
   const trend = isImproving ? 1 : -0.5;
 
+  // Convert topic avgSpeed (ms per question) to questions per second
+  const currentQps = topic.avgSpeed > 0 ? 1000 / topic.avgSpeed : 0;
+
   for (let i = 1; i <= sessionCount; i++) {
     // Create gradual trend with some variance
     const progressFactor = (i - 1) / (sessionCount - 1 || 1); // 0 to 1
@@ -966,16 +996,19 @@ export function generateTopicSessionHistory(
       Math.min(100, startAccuracy + progressFactor * trend * 15 + variance)
     );
 
-    const startSpeed = topic.avgSpeed / 1000 + trend * 1.5;
+    // For speed, convert to questions per second (higher is better)
+    // Start from a lower/higher qps and trend toward current
+    const startQps = currentQps - trend * 0.3; // Adjust trend for qps
+    const qpsVariance = (Math.random() - 0.5) * 0.2; // ±0.1 q/s variance
     const speed = Math.max(
-      0.5,
-      startSpeed - progressFactor * trend * 1.5 + (Math.random() - 0.5) * 0.8
+      0.1,
+      startQps + progressFactor * trend * 0.3 + qpsVariance
     );
 
     history.push({
       sessionNumber: i,
       accuracy: Math.round(accuracy * 10) / 10,
-      speed: Math.round(speed * 10) / 10,
+      speed: Math.round(speed * 100) / 100, // Round to 2 decimal places for q/s
     });
   }
 

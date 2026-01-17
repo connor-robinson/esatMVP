@@ -42,7 +42,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <div className="flex items-center justify-between gap-4">
             <span className="text-white/50 text-xs">Speed:</span>
             <span className="text-warning font-bold text-xs">
-              {payload[1].value.toFixed(1)}s
+              {payload[1].value.toFixed(2)} q/s
             </span>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
 
     const recentSpeed = recent.reduce((sum, s) => sum + s.speed, 0) / recent.length;
     const earlySpeed = early.reduce((sum, s) => sum + s.speed, 0) / early.length;
-    const speedChange = earlySpeed - recentSpeed; // Positive is good (getting faster)
+    const speedChange = recentSpeed - earlySpeed; // Positive is good (more q/s = faster)
 
     return {
       accuracy: accuracyChange > 3 ? "up" : accuracyChange < -3 ? "down" : "neutral",
@@ -111,7 +111,7 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
               {getTrendIcon(trends.speed)}
               <span>
                 Speed {trends.speed === "up" ? "improving" : trends.speed === "down" ? "slower" : "steady"}{" "}
-                {Math.abs(trends.speedChange).toFixed(1)}s
+                {Math.abs(trends.speedChange).toFixed(2)} q/s
               </span>
             </div>
           </div>
@@ -157,7 +157,7 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
               tick={{ fill: "rgba(255,255,255,0.4)" }}
               tickLine={false}
               axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
-              tickFormatter={(value) => `${value}s`}
+              tickFormatter={(value) => `${value.toFixed(2)} q/s`}
             />
             <Tooltip content={<CustomTooltip />} />
             <Line

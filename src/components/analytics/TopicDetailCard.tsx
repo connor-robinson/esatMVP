@@ -96,7 +96,7 @@ export function TopicDetailCard({
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-wider text-white/40 leading-none mb-1">Speed</div>
               <div className="text-lg font-bold text-white/90 leading-none">
-                {(topic.avgSpeed / 1000).toFixed(1)}s
+                {topic.avgSpeed > 0 ? (1000 / topic.avgSpeed).toFixed(2) : "0.00"} q/s
               </div>
             </div>
           </div>
@@ -162,7 +162,7 @@ export function TopicDetailCard({
               <div className="p-3 rounded-organic-md bg-white/[0.02]">
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60 mb-1">Best Speed</div>
                 <div className="text-lg font-bold text-success">
-                  {(topic.bestSpeed / 1000).toFixed(2)}s
+                  {topic.bestSpeed > 0 ? (1000 / topic.bestSpeed).toFixed(2) : "0.00"} q/s
                 </div>
               </div>
             )}

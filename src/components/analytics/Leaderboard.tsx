@@ -167,7 +167,7 @@ export function Leaderboard({
                     {/* Avg Speed */}
                     <div className="col-span-3 flex items-center justify-end">
                       <span className="text-sm font-mono text-white/60">
-                        {(entry.avgSpeed / 1000).toFixed(2)}s
+                        {entry.avgSpeed > 0 ? (1000 / entry.avgSpeed).toFixed(2) : "0.00"} q/s
                       </span>
                     </div>
                   </div>
@@ -208,7 +208,7 @@ export function Leaderboard({
                   </div>
                   <div className="col-span-3 flex items-center justify-end">
                     <span className="text-sm font-mono text-white/60">
-                      {(currentUserEntry.avgSpeed / 1000).toFixed(2)}s
+                      {currentUserEntry.avgSpeed > 0 ? (1000 / currentUserEntry.avgSpeed).toFixed(2) : "0.00"} q/s
                     </span>
                   </div>
                 </div>

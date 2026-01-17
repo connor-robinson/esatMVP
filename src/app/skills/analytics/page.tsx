@@ -75,9 +75,13 @@ async function fetchTopicProgress(
     const avgTime = row.average_time_ms;
     const lastPracticed = row.last_practiced ? new Date(row.last_practiced) : null;
 
+    // Map topic ID to proper name
+    const topic = AVAILABLE_TOPICS.find(t => t.id === topicId);
+    const topicName = topic?.name || topicId;
+
     topicStats[topicId] = {
       topicId,
-      topicName: topicId,
+      topicName,
       questionsAnswered,
       correctAnswers: correct,
       accuracy: questionsAnswered > 0 ? (correct / questionsAnswered) * 100 : 0,
@@ -267,18 +271,19 @@ async function fetchRecentSessions(
     return [];
   }
 
-  // Get all attempts for these sessions
+  // Get all attempts for these sessions, ordered by attempted_at to preserve question order
   const sessionIds = (data as any[]).map((s: any) => s.id);
   const { data: attemptsData, error: attemptsError } = await supabase
     .from("builder_attempts")
-    .select("session_id, is_correct, time_spent_ms")
-    .in("session_id", sessionIds);
+    .select("session_id, is_correct, time_spent_ms, attempted_at")
+    .in("session_id", sessionIds)
+    .order("attempted_at", { ascending: true });
 
   if (attemptsError) {
     console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
   }
 
-  // Group attempts by session
+  // Group attempts by session, preserving order
   const attemptsBySession = new Map<string, any[]>();
   if (attemptsData) {
     attemptsData.forEach((attempt: any) => {
@@ -329,7 +334,9 @@ async function fetchRecentSessions(
       correctAnswers,
       totalTime,
       isLatest: index === 0,
-    };
+      // Store attempts for progress data generation
+      _attempts: attempts,
+    } as SessionSummary & { _attempts?: any[] };
   });
 }
 
@@ -485,8 +492,9 @@ export default function AnalyticsPage() {
   const speedTrend = useMemo(() => {
     if (performanceData.length < 2) return { value: 0, direction: "neutral" as const, percentage: 0 };
     const recent = performanceData.slice(-7);
-    const current = recent[recent.length - 1]?.avgSpeed || 0;
-    const previous = recent[0]?.avgSpeed || 0;
+    // Convert to questions per second for trend calculation (higher is better)
+    const current = recent[recent.length - 1]?.avgSpeed > 0 ? 1000 / recent[recent.length - 1].avgSpeed : 0;
+    const previous = recent[0]?.avgSpeed > 0 ? 1000 / recent[0].avgSpeed : 0;
     return calculateTrend(current, previous);
   }, [performanceData]);
   const questionsTrend = useMemo(() => {
