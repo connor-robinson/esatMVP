@@ -490,7 +490,9 @@ export default function ReviewPage() {
     pollStatus();
     
     try {
-      interval = setInterval(pollStatus, 2000); // Poll every 2 seconds
+      // OPTIMIZED: Increased from 2 seconds to 10 seconds to reduce egress usage
+      // Reduces polling calls from 30/min to 6/min (80% reduction)
+      interval = setInterval(pollStatus, 10000); // Poll every 10 seconds
     } catch (error) {
       console.error("Error setting up polling:", error);
     }

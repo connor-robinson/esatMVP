@@ -23,106 +23,46 @@ import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 const FORCE_TEST_QUESTION = true; // Set to false to disable test question override
 
 const TEST_QUESTION: QuestionBankQuestion = {
-  id: "tmua_graph_test_01",
-  generation_id: "test-graph-001",
+  id: "tmua_e_function_test_01",
+  generation_id: "test-e-function-001",
   schema_id: "M1",
   difficulty: "Medium",
-  question_stem: `11  The diagram shows a quadratic curve.
+  question_stem: `For any function $f$ defined for all real numbers, let the quantity $E(f)$ be defined by:
+$$ E(f) = \\int_0^1 f(x) \\,\\mathrm{d}x - \\frac{1}{2}\\bigl(f(0) + f(1)\\bigr) $$
+It is given that, for a particular function $f$, $E(f) < 0$.
 
-<GRAPH id="q11_graph" />
-
-The curve crosses the x-axis at (2, 0) and (q, 0), where q > 2 The curve and the coordinate axes form two regions R and S as shown.
-
-Find the value of q such that the area of region R equals the area of region S.
-
-A  √6
-B  3
-C  18/5
-D  4
-E  6
-F  33/5`,
+Which one of the following functions $g$ necessarily satisfies $E(g) > 0$?`,
   options: {
-    A: "√6",
-    B: "3",
-    C: "18/5",
-    D: "4",
-    E: "6",
-    F: "33/5",
+    A: "$g(x) = f(x) + 1$",
+    B: "$g(x) = f(x+1)$",
+    C: "$g(x) = 2f(x)$",
+    D: "$g(x) = f(1-x)$",
+    E: "$g(x) = 1 - f(x)$",
+    F: "$g(x) = (f(x))^2$",
   },
   correct_option: "E",
-  solution_reasoning: "The quadratic function is f(x) = x² - 8x + 12 = (x-2)(x-6). The roots are at x=2 and x=6. To find q such that area R = area S, we need to solve the integral equation...",
-  solution_key_insight: "The curve is f(x) = x² - 8x + 12. Region R is above the x-axis from 0 to 2, and region S is below the x-axis from 2 to q. Setting the areas equal gives q = 6.",
-  distractor_map: null,
+  solution_reasoning: `The quantity $E(f)$ represents the difference between the integral of $f$ and the single-strip trapezium estimate. The operator is linear, meaning $E(af+b) = aE(f) + E(b)$.
+
+First, note that for any constant $k$, the integral $\\int_0^1 k \\,\\mathrm{d}x = k$ and the average of endpoints $\\frac{1}{2}(k+k) = k$, so $E(k) = 0$.
+
+Now check the transformation in option E, $g(x) = 1 - f(x)$:
+$$ E(g) = E(1 - f) = E(1) - E(f) = 0 - E(f) = -E(f) $$
+Since it is given that $E(f) < 0$, it follows that $E(g) > 0$.`,
+  solution_key_insight: "The operator $E$ is linear: $E(1 - f) = E(1) - E(f) = 0 - E(f) = -E(f)$. Since $E(f) < 0$, we have $E(g) = -E(f) > 0$.",
+  distractor_map: {
+    A: "$E(f+1) = E(f) + E(1) = E(f) < 0$",
+    B: "$E(f(x+1))$ depends on the values of $f$ in the interval $[1,2]$, which are unknown",
+    C: "$E(2f) = 2E(f) < 0$ (since multiplying by a positive scalar preserves the sign)",
+    D: "$g(x) = f(1-x)$ is a reflection in $x=0.5$. The area is identical, and the endpoints $f(1)$ and $f(0)$ are swapped but their sum remains the same. Thus $E(g) = E(f) < 0$",
+    F: "Squaring a function does not guarantee the sign of the error term (e.g. if $f$ is linear, $E(f)=0$, but $E(f^2) \\neq 0$)",
+  },
   paper: "Paper 1",
-  primary_tag: "M1",
-  secondary_tags: ["MM1"],
+  primary_tag: "M1-Integration",
+  secondary_tags: ["M1-LinearAlgebra", "M1-Functions"],
   status: "approved",
   created_at: new Date().toISOString(),
-  graph_specs: {
-    q11_graph: {
-      version: 2,
-      xRange: [-0.8, 7.2],
-      yRange: [-5.5, 13],
-      axes: {
-        show: true,
-        arrowheads: true,
-        xLabel: { text: "x", italic: true, dx: 0, dy: 0 },
-        yLabel: { text: "y", italic: true, dx: 0, dy: 0 },
-      },
-      objects: [
-        {
-          id: "f",
-          kind: "function",
-          fn: { kind: "poly2", a: 1, b: -8, c: 12 },
-        },
-        {
-          id: "xaxis",
-          kind: "line",
-          form: { kind: "horiz", y: 0 },
-        },
-        {
-          id: "yaxis",
-          kind: "line",
-          form: { kind: "vert", x: 0 },
-        },
-      ],
-      marks: {
-        xMarks: [
-          { x: 2, label: { text: "2", italic: false, dx: 0, dy: 0 }, tick: false },
-          { x: 6, label: { text: "q", italic: true, dx: 6, dy: 0 }, tick: false },
-        ],
-      },
-      regions: [
-        {
-          id: "R",
-          label: { text: "R", italic: true, placement: { kind: "auto" } },
-          fill: { enabled: false },
-          definition: {
-            kind: "inequalities",
-            inside: [
-              { kind: "x_between", a: 0, b: 2 },
-              { kind: "above", of: "xaxis" },
-              { kind: "above_function", of: "f" },
-            ],
-          },
-        },
-        {
-          id: "S",
-          label: { text: "S", italic: true, placement: { kind: "auto" } },
-          fill: { enabled: false },
-          definition: {
-            kind: "inequalities",
-            inside: [
-              { kind: "x_between", a: 2, b: 6 },
-              { kind: "below", of: "xaxis" },
-              { kind: "below_function", of: "f" },
-            ],
-          },
-        },
-      ],
-      annotations: [],
-    } as TMUAGraphSpec,
-  } as Record<string, TMUAGraphSpec>,
+  graph_spec: null,
+  graph_specs: null,
 };
 // ============================================================================
 // END TEMPORARY TEST CODE

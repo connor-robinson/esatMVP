@@ -120,3 +120,6 @@ function generateFactorCommon(): GeneratedQuestion {
 
 
 
+
+
+

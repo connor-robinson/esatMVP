@@ -198,14 +198,14 @@ export async function GET(request: NextRequest) {
     // If random is true, we fetch a larger pool and shuffle client-side
     // We should at least order by something to ensure deterministic but variety-filled results
     if (random) {
-      // Fetch up to 500 questions for better variety/filtering pool
+      // OPTIMIZED: Reduced from 500 to limit * 2 for variety without excessive egress
       // Using a random-ish sort order by sorting by created_at with a variable limit
-      query = query.limit(500);
+      query = query.limit(Math.min(limit * 2, 200));
     } else {
       // Sort by created_at (newer first) for non-random mode
-      // Increase the fetch limit to ensure we get enough questions after filtering
-      // For library view with limit=100, fetch 500 to account for filtering
-      const fetchLimit = Math.max(limit * 5, 500);
+      // OPTIMIZED: Reduced from limit * 5 to limit * 1.5 to minimize egress
+      // Still ensures enough questions after filtering without fetching excessive data
+      const fetchLimit = Math.min(Math.max(limit * 1.5, 20), 300);
       query = query.limit(fetchLimit).order('created_at', { ascending: false });
     }
 

@@ -355,7 +355,8 @@ async function fetchLeaderboard(
     query = query.eq("topic_id", topicId);
   }
 
-  const { data, error } = await query.limit(500);
+  // OPTIMIZED: Reduced from 500 to 300 for egress optimization (top 300 leaderboard entries)
+  const { data, error } = await query.limit(300);
 
   if (error) {
     console.error("[analytics] failed to load leaderboard base", error);

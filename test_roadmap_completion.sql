@@ -122,3 +122,6 @@ WHERE user_id = auth.uid()
   AND paper_variant = '2020-Section 2-Official'
   AND ended_at IS NOT NULL;
 
+
+
+

@@ -100,7 +100,7 @@ export async function fetchTopicRankings(
     .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
     .eq("topic_id", topicId)
     .order("created_at", { ascending: false })
-    .limit(10000); // Explicit limit to get all data
+    .limit(500); // OPTIMIZED: Reduced from 10000 to 500 for egress optimization (top 500 sessions per topic)
 
   if (globalError) {
     console.error("[fetchTopicRankings] ERROR: Failed to fetch global leaderboard:", {

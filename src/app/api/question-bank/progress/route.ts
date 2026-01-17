@@ -85,8 +85,9 @@ export async function GET(request: NextRequest) {
       questionsQuery = questionsQuery.or(subjectConditions.join(','));
     }
 
-    // Increase limit for fetching all IDs to ensure we get everything (up to 5000)
-    const { data: questions, error: questionsError } = await questionsQuery.limit(5000);
+    // OPTIMIZED: Reduced from 5000 to 1000 for egress optimization
+    // Note: If you have more than 1000 questions per subject, consider using count queries instead
+    const { data: questions, error: questionsError } = await questionsQuery.limit(1000);
 
     if (questionsError) {
       console.error('[Progress API] Error fetching questions:', questionsError);
