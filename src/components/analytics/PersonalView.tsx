@@ -6,8 +6,9 @@
 
 import { useMemo, useState } from "react";
 import { StatsHero } from "./StatsHero";
+import { PerformanceChartsSection } from "./PerformanceChartsSection";
 import { PastSessionsSection } from "./PastSessionsSection";
-import { TopicPerformanceSection } from "./TopicPerformanceSection";
+import { TopicsOverviewSection } from "./TopicsOverviewSection";
 import {
   TimeRange,
   UserStats,
@@ -92,17 +93,23 @@ export function PersonalView({
         onToggleCollapse={() => toggleSection("overview")}
       />
 
-      {/* 2. Past Sessions */}
+      {/* 2. Performance Charts */}
+      <PerformanceChartsSection 
+        performanceData={performanceData}
+        isCollapsed={collapsedSections.has("performance")}
+        onToggleCollapse={() => toggleSection("performance")}
+      />
+
+      {/* 3. Past Sessions */}
       <PastSessionsSection 
         sessions={sessions}
         isCollapsed={collapsedSections.has("sessions")}
         onToggleCollapse={() => toggleSection("sessions")}
       />
 
-      {/* 3. Topic Performance & Analysis (merged performance charts + topic breakdown) */}
-      <TopicPerformanceSection
+      {/* 4. Topic Performance & Overview (merged topic performance + topic breakdown) */}
+      <TopicsOverviewSection
         userStats={userStats}
-        performanceData={performanceData}
         strongest={strongest}
         weakest={weakest}
         isCollapsed={collapsedSections.has("topics")}

@@ -4,7 +4,7 @@
 
 "use client";
 
-import { Target, TrendingUp, Zap, Flame, Trophy, AlertTriangle, ChevronDown } from "lucide-react";
+import { Target, TrendingUp, Zap, Flame, ChevronDown } from "lucide-react";
 import { TrendData } from "@/types/analytics";
 import { TrendIndicator } from "./TrendIndicator";
 import { cn } from "@/lib/utils";
@@ -135,60 +135,6 @@ export function StatsHero({
               </div>
             </div>
           </div>
-
-          {/* Topic Performance */}
-          {(strongest || weakest) && (
-            <div className="mt-6 pt-6 border-t border-white/10">
-              <h3 className="text-base font-bold uppercase tracking-wider text-white/90 mb-4">Topic Performance</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Strongest Topic */}
-                {strongest && strongest.topicId && strongest.topicName && typeof strongest.accuracy === 'number' && (
-                  <div className="relative rounded-organic-md overflow-hidden bg-primary/10 p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0 flex items-center justify-center">
-                        <Trophy className="h-6 w-6 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Strongest</div>
-                        <button
-                          onClick={() => onTopicClick(strongest.topicId, strongest.topicName)}
-                          className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors text-left"
-                        >
-                          {strongest.topicName}
-                        </button>
-                        <div className="text-xs text-white/60 mt-1">
-                          {strongest.accuracy.toFixed(1)}% accuracy
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Weakest Topic */}
-                {weakest && weakest.topicId && weakest.topicName && typeof weakest.accuracy === 'number' && (
-                  <div className="relative rounded-organic-md overflow-hidden bg-error/10 p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0 flex items-center justify-center">
-                        <AlertTriangle className="h-6 w-6 text-error" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Needs Work</div>
-                        <button
-                          onClick={() => onTopicClick(weakest.topicId, weakest.topicName)}
-                          className="text-sm font-semibold text-error hover:text-error/80 transition-colors text-left"
-                        >
-                          {weakest.topicName}
-                        </button>
-                        <div className="text-xs text-white/60 mt-1">
-                          {weakest.accuracy.toFixed(1)}% accuracy
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

@@ -214,6 +214,19 @@ export function QuestionCard({
                 {question.paper}
               </span>
             )}
+            {/* TMUA variation mode label (FAR/SIBLINGS) */}
+            {question.paper && (question.paper === 'Paper1' || question.paper === 'Paper2') && question.idea_plan && question.idea_plan.variation_mode && (
+              <span className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-mono",
+                question.idea_plan.variation_mode === 'FAR' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  : question.idea_plan.variation_mode === 'SIBLINGS'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'bg-white/10 text-white/70'
+              )}>
+                {question.idea_plan.variation_mode}
+              </span>
+            )}
             {/* Grouped primary and secondary tags */}
             {(question.primary_tag || (question.secondary_tags && question.secondary_tags.length > 0)) && getTopicTitle && (
               <div className="flex items-center gap-0">
