@@ -20,7 +20,10 @@ export interface MathSegment {
  * Adds a space after if the following character is not a space and not punctuation
  */
 function addSpacingAroundInlineMath(text: string): string {
-  if (!text) return text;
+  // Ensure text is a string
+  if (text == null) return "";
+  const textStr = String(text);
+  if (!textStr) return textStr;
   
   // First, we need to protect display math ($$...$$) from being processed
   // We'll manually find all display math blocks to handle consecutive ones correctly
@@ -28,7 +31,7 @@ function addSpacingAroundInlineMath(text: string): string {
   let placeholderIndex = 0;
   
   // Find all display math blocks manually to handle consecutive $$ correctly
-  let textWithPlaceholders = text;
+  let textWithPlaceholders = textStr;
   let searchIndex = 0;
   
   while (searchIndex < textWithPlaceholders.length) {
@@ -113,11 +116,14 @@ function addSpacingAroundInlineMath(text: string): string {
  * that cause KaTeX parsing errors
  */
 function sanitizeMathContent(text: string): string {
-  if (!text) return text;
+  // Ensure text is a string
+  if (text == null) return "";
+  const textStr = String(text);
+  if (!textStr) return textStr;
   
   // Remove any standalone $ characters inside math delimiters
   // This fixes "can't use function '$' in math mode" errors
-  let sanitized = text;
+  let sanitized = textStr;
   
   // Find all display math blocks ($$...$$) and inline math blocks ($...$)
   // and remove any nested $ characters inside them
@@ -153,10 +159,13 @@ function sanitizeMathContent(text: string): string {
  * by finding the earliest occurring delimiter.
  */
 export function parseMathContent(text: string): MathSegment[] {
-  if (!text) return [];
+  // Ensure text is a string
+  if (text == null) return [];
+  const textStr = String(text);
+  if (!textStr) return [];
   
   // Sanitize the text first to remove problematic characters
-  const sanitizedText = sanitizeMathContent(text);
+  const sanitizedText = sanitizeMathContent(textStr);
 
   const segments: MathSegment[] = [];
   let currentIndex = 0;
@@ -227,14 +236,19 @@ export function renderMath(
   math: string,
   displayMode: boolean = false
 ): string | null {
+  // Ensure math is a string
+  if (math == null) return null;
+  const mathStr = String(math);
+  if (!mathStr) return null;
+  
   try {
-    return katex.renderToString(math, {
+    return katex.renderToString(mathStr, {
       throwOnError: false,
       displayMode,
       strict: false,
     });
   } catch (error) {
-    console.error("[KaTeX] Rendering error:", error, "for math:", math);
+    console.error("[KaTeX] Rendering error:", error, "for math:", mathStr);
     return null;
   }
 }
@@ -244,15 +258,21 @@ export function renderMath(
  * Handles escaping of text content and rendering of math
  */
 export function renderMathContent(text: string): string {
+  // Ensure text is a string
+  if (text == null) return "";
+  const textStr = String(text);
+  
   // Add spacing around inline math expressions before parsing
-  const textWithSpacing = addSpacingAroundInlineMath(text);
+  const textWithSpacing = addSpacingAroundInlineMath(textStr);
   const segments = parseMathContent(textWithSpacing);
   const htmlParts: string[] = [];
 
   for (const segment of segments) {
     if (segment.type === "text") {
+      // Ensure segment.content is a string before calling replace
+      const contentStr = segment.content != null ? String(segment.content) : "";
       // Escape HTML in text content and preserve newlines
-      const escaped = segment.content
+      const escaped = contentStr
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -261,20 +281,22 @@ export function renderMathContent(text: string): string {
         .replace(/\n/g, "<br>");
       htmlParts.push(escaped);
     } else if (segment.type === "inline") {
-      const rendered = renderMath(segment.content, false);
+      const contentStr = segment.content != null ? String(segment.content) : "";
+      const rendered = renderMath(contentStr, false);
       if (rendered) {
         htmlParts.push(rendered);
       } else {
         // Fallback: show raw math with delimiters
-        htmlParts.push(`$${segment.content}$`);
+        htmlParts.push(`$${contentStr}$`);
       }
     } else if (segment.type === "display") {
-      const rendered = renderMath(segment.content, true);
+      const contentStr = segment.content != null ? String(segment.content) : "";
+      const rendered = renderMath(contentStr, true);
       if (rendered) {
         htmlParts.push(rendered);
       } else {
         // Fallback: show raw math with delimiters
-        htmlParts.push(`$$${segment.content}$$`);
+        htmlParts.push(`$$${contentStr}$$`);
       }
     }
   }

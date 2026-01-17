@@ -204,12 +204,16 @@ async function fetchPreviousPeriodStats(
   const previousPeriodEnd = new Date(currentPeriodStart);
   previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
 
+  // Format dates as YYYY-MM-DD strings
+  const startDateStr = previousPeriodStart.toISOString().split("T")[0];
+  const endDateStr = previousPeriodEnd.toISOString().split("T")[0];
+
   const { data, error } = await supabase
     .from("user_daily_metrics")
     .select("total_questions, correct_answers, total_time_ms, sessions_count")
     .eq("user_id", userId)
-    .gte("metric_date", previousPeriodStart.toISOString().split("T")[0])
-    .lte("metric_date", previousPeriodEnd.toISOString().split("T")[0]);
+    .gte("metric_date", startDateStr)
+    .lte("metric_date", endDateStr);
 
   if (error || !data || data.length === 0) {
     return null;
@@ -271,15 +275,15 @@ async function fetchRecentSessions(
   const sessionIds = (data as any[]).map((s: any) => s.id);
   const { data: attemptsData, error: attemptsError } = await supabase
     .from("builder_attempts")
-    .select("session_id, is_correct, time_spent_ms, attempted_at, question_id, order_index")
+    .select("session_id, is_correct, time_spent_ms, attempted_at, question_id, user_answer, order_index")
     .in("session_id", sessionIds)
-    .order("order_index", { ascending: true })
+    .order("order_index", { ascending: true, nullsLast: true })
     .order("attempted_at", { ascending: true }); // Fallback if order_index is null
   
-  // Also get session questions to match question order (fallback if order_index not set)
+  // Get session questions with prompt and answer for common mistakes
   const { data: questionsData } = await supabase
     .from("builder_session_questions")
-    .select("session_id, question_id, order_index")
+    .select("session_id, question_id, order_index, prompt, answer")
     .in("session_id", sessionIds)
     .order("order_index", { ascending: true });
 
@@ -318,13 +322,30 @@ async function fetchRecentSessions(
     });
   }
 
+  // Create a map of session_id -> question_id -> question data (for common mistakes)
+  const questionsMap = new Map<string, Map<string, { prompt: string; answer: string }>>();
+  if (questionsData) {
+    questionsData.forEach((q: any) => {
+      if (!questionsMap.has(q.session_id)) {
+        questionsMap.set(q.session_id, new Map());
+      }
+      if (q.prompt && q.answer) {
+        questionsMap.get(q.session_id)!.set(q.question_id, {
+          prompt: q.prompt,
+          answer: q.answer,
+        });
+      }
+    });
+  }
+
   // Map to SessionSummary format
   return (data as any[]).map((session: any, index: number) => {
     const questions = (session.builder_session_questions as any[]) || [];
     const attempts = attemptsBySession.get(session.id) || [];
     
-    const correctAnswers = attempts.filter(a => a.is_correct).length;
-    const totalQuestions = attempts.length;
+    // Calculate stats from attempts
+    const correctAnswers = attempts.filter(a => a.is_correct === true).length;
+    const totalQuestions = attempts.length || questions.length; // Use questions length as fallback
     const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
     const totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
     const avgSpeed = totalQuestions > 0 ? totalTime / totalQuestions : 0;
@@ -335,6 +356,9 @@ async function fetchRecentSessions(
       const topic = TOPICS[topicId];
       return topic?.name || topicId;
     });
+
+    // Get questions map for this session
+    const sessionQuestionsMap = questionsMap.get(session.id) || new Map();
 
     return {
       id: session.id,
@@ -359,9 +383,10 @@ async function fetchRecentSessions(
       correctAnswers,
       totalTime,
       isLatest: index === 0,
-      // Store attempts for progress data generation
+      // Store attempts and questions map for progress data and common mistakes generation
       _attempts: attempts,
-    } as SessionSummary & { _attempts?: any[] };
+      _questionsMap: sessionQuestionsMap,
+    } as SessionSummary & { _attempts?: any[]; _questionsMap?: Map<string, { prompt: string; answer: string }> };
   });
 }
 
@@ -370,17 +395,10 @@ async function fetchLeaderboard(
   userId: string,
   topicId?: string,
 ): Promise<LeaderboardEntry[]> {
-  // Build query with profile join
+  // Build query without profile join (fetch profiles separately)
   let query = supabase
     .from("topic_progress")
-    .select(`
-      user_id, 
-      topic_id, 
-      questions_correct, 
-      questions_attempted, 
-      average_time_ms,
-      profiles!inner(display_name)
-    `);
+    .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms");
 
   // Filter by topic if specified
   if (topicId && topicId !== "all") {
@@ -395,13 +413,30 @@ async function fetchLeaderboard(
     return [];
   }
 
+  // Get unique user IDs and fetch profiles separately
+  const userIds = [...new Set((data as any[])?.map((row: any) => row.user_id) || [])];
+  const profilesMap = new Map<string, string>();
+  
+  if (userIds.length > 0) {
+    const { data: profilesData } = await supabase
+      .from("profiles")
+      .select("id, display_name")
+      .in("id", userIds);
+    
+    if (profilesData) {
+      profilesData.forEach((profile: any) => {
+        profilesMap.set(profile.id, profile.display_name || "Anonymous User");
+      });
+    }
+  }
+
   const grouped = new Map<
     string,
     { userId: string; displayName: string; correct: number; attempted: number; avgTime: number; topics: number }
   >();
 
   (data as any[])?.forEach((row) => {
-    const displayName = row.profiles?.display_name || "Anonymous User";
+    const displayName = profilesMap.get(row.user_id) || "Anonymous User";
     const entry = grouped.get(row.user_id) ?? {
       userId: row.user_id,
       displayName: row.user_id === userId ? "You" : displayName,
