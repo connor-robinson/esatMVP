@@ -277,7 +277,7 @@ async function fetchRecentSessions(
     .from("builder_attempts")
     .select("session_id, is_correct, time_spent_ms, attempted_at, question_id, user_answer, order_index")
     .in("session_id", sessionIds)
-    .order("order_index", { ascending: true, nullsLast: true })
+    .order("order_index", { ascending: true })
     .order("attempted_at", { ascending: true }); // Fallback if order_index is null
   
   // Get session questions with prompt and answer for common mistakes

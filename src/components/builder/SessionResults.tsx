@@ -21,10 +21,8 @@ import {
   Trophy, 
   Info, 
   X, 
-  ChevronRight, 
   Users, 
-  User, 
-  TrendingUp
+  User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -533,27 +531,23 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             transition={{ delay: 0.1 }}
             className="lg:col-span-1"
           >
-            <div className="h-full p-6 rounded-organic-lg bg-primary/10 border border-primary/20 relative overflow-hidden group">
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 rounded-organic-md bg-primary/20 flex items-center justify-center">
-                    <Trophy className="h-5 w-5 text-primary" />
-                  </div>
-                  <button 
-                    onClick={() => setShowScoreInfo(true)}
-                    className="text-white/30 hover:text-white/60 transition-colors"
-                  >
-                    <Info className="h-4 w-4" />
-                  </button>
+            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-primary" />
+                  <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Session Score</div>
                 </div>
-                <div className="text-sm text-white/50 font-mono mb-1 uppercase tracking-tight">Session Score</div>
-                <div className="text-5xl font-bold text-white/90 tabular-nums leading-none mb-2">
-                  {result.score}
-                </div>
-                <div className="text-xs text-white/40 font-mono">Out of 1000 points</div>
+                <button 
+                  onClick={() => setShowScoreInfo(true)}
+                  className="text-white/30 hover:text-white/60 transition-colors"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
               </div>
-              {/* Background Glow */}
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-primary/20 blur-3xl rounded-full group-hover:bg-primary/30 transition-all duration-700" />
+              <div className="text-5xl font-bold text-white/90 tabular-nums leading-none mb-2">
+                {result.score}
+              </div>
+              <div className="text-xs text-white/40 font-mono">Out of 1000 points</div>
             </div>
           </motion.div>
 
@@ -563,11 +557,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02] border border-white/10">
-              <div className="w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center mb-4 text-white/60">
-                <Target className="h-5 w-5" />
+            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="h-4 w-4 text-white/60" />
+                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Accuracy</div>
               </div>
-              <div className="text-sm text-white/50 font-mono mb-1 uppercase tracking-tight">Accuracy</div>
               <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2">
                 {result.accuracy.toFixed(1)}%
               </div>
@@ -583,11 +577,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02] border border-white/10">
-              <div className="w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center mb-4 text-white/60">
-                <Clock className="h-5 w-5" />
+            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
+              <div className="flex items-center gap-2 mb-4">
+                <Clock className="h-4 w-4 text-white/60" />
+                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Avg Speed</div>
               </div>
-              <div className="text-sm text-white/50 font-mono mb-1 uppercase tracking-tight">Avg Speed</div>
               <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2">
                 {formatTimeMs(result.averageTimeMs)}
               </div>
@@ -601,11 +595,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02] border border-white/10">
-              <div className="w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center mb-4 text-white/60">
-                <Zap className="h-5 w-5" />
+            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="h-4 w-4 text-white/60" />
+                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Fastest</div>
               </div>
-              <div className="text-sm text-white/50 font-mono mb-1 uppercase tracking-tight">Fastest</div>
               <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2 text-interview">
                 {formatTime(result.fastestTimeMs)}
               </div>
@@ -614,15 +608,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Detailed Topic Breakdown */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="lg:col-span-2"
           >
-            <div className="p-6 rounded-organic-lg bg-white/[0.02] border border-white/10">
+            <div className="p-6 rounded-organic-lg bg-white/[0.02]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <h2 className="text-xl font-heading font-semibold text-white/90">
                   Topic Breakdown
@@ -699,50 +692,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               </div>
             </div>
           </motion.div>
-
-          {/* Right Column: Insights or Actions */}
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="p-6 rounded-organic-lg bg-white/[0.02] border border-white/10 flex flex-col items-center text-center py-10"
-            >
-              <div className="w-16 h-16 rounded-organic-lg bg-white/5 flex items-center justify-center mb-6">
-                <ChevronRight className="h-8 w-8 text-white/40" />
-              </div>
-              <h3 className="text-xl font-heading font-semibold text-white/90 mb-2">Ready for more?</h3>
-              <p className="text-white/50 text-sm mb-8 leading-relaxed max-w-[200px]">
-                Target your weak areas or increase the difficulty to keep improving.
-              </p>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={onBackToBuilder}
-                className="w-full rounded-organic-md shadow-lg"
-              >
-                Continue Training
-              </Button>
-            </motion.div>
-
-            {/* Quick Tips Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="p-6 rounded-organic-lg border border-white/5 bg-white/[0.01]"
-            >
-              <h4 className="text-xs font-mono uppercase tracking-widest text-white/30 mb-4">Pro Tip</h4>
-              <div className="flex gap-3">
-                <div className="mt-1">
-                  <TrendingUp className="h-4 w-4 text-interview" />
-                </div>
-                <p className="text-white/60 text-xs leading-relaxed font-mono italic">
-                  &quot;Accuracy is more important than speed in early training. Focus on getting it right, and the speed will follow naturally.&quot;
-                </p>
-              </div>
-            </motion.div>
-          </div>
         </div>
 
         {/* Score Info Modal */}
