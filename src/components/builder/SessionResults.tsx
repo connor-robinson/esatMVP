@@ -25,6 +25,8 @@ import {
   User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SessionMiniChart } from "@/components/analytics/SessionMiniChart";
+import { SessionProgressPoint } from "@/types/analytics";
 
 interface SessionResultsProps {
   session: BuilderSession;
@@ -96,6 +98,28 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       };
     });
 
+    // Generate progress data for the session chart
+    const progressData: SessionProgressPoint[] = [];
+    let runningCorrect = 0;
+    
+    attempts.forEach((attempt, index) => {
+      const questionNumber = index + 1;
+      if (attempt.isCorrect) runningCorrect += 1;
+      
+      // Running accuracy up to this point
+      const runningAccuracy = questionNumber > 0 ? (runningCorrect / questionNumber) * 100 : 0;
+      
+      // Speed in questions per minute (convert ms to minutes)
+      const timeSpentMs = attempt.timeSpent || 0;
+      const speed = timeSpentMs > 0 ? (60000 / timeSpentMs) : 0; // questions per minute
+      
+      progressData.push({
+        questionNumber,
+        accuracy: runningAccuracy,
+        speed,
+      });
+    });
+
     return {
       session,
       totalQuestions,
@@ -106,6 +130,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       slowestTimeMs,
       score,
       topicBreakdown,
+      progressData,
     };
   }, [attempts, session]);
 
@@ -249,10 +274,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       session.builder_session_id === currentSessionId ||
       (session.isCurrent && session.id === currentSessionId)
     );
-    const scorePercentage = (session.score / 1000) * 100;
 
     // For global view, use column-based layout
     if (isGlobalView) {
+      // Determine score tier for subtle visual indicator
+      const scoreTier = session.score >= 900 ? 'excellent' : session.score >= 750 ? 'great' : session.score >= 600 ? 'good' : 'developing';
+      
       return (
         <motion.div
           key={session.id}
@@ -260,24 +287,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
           className={cn(
-            "relative rounded-organic-md p-3 transition-all overflow-hidden",
+            "relative rounded-organic-md p-5 transition-all",
             isHighlighted
               ? "bg-blue-500/10 ring-1 ring-blue-500/20"
-              : "bg-white/[0.02] hover:bg-white/[0.04]"
+              : "bg-white/[0.02] hover:bg-white/[0.04]",
+            // Subtle left border accent based on score (very subtle, not busy)
+            scoreTier === 'excellent' && "border-l-2 border-blue-500/30",
+            scoreTier === 'great' && "border-l-2 border-blue-400/20",
+            scoreTier === 'good' && "border-l-2 border-blue-300/15",
+            scoreTier === 'developing' && "border-l-2 border-white/5"
           )}
         >
-          {/* Progress Bar - Full width at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/5">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${scorePercentage}%` }}
-              transition={{ duration: 0.8, delay: idx * 0.05 }}
-              className="h-full bg-blue-500"
-            />
-          </div>
-
           {/* Content Grid */}
-          <div className="grid grid-cols-12 gap-4 items-center relative z-10">
+          <div className="grid grid-cols-12 gap-4 items-center">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
               <div className="text-lg font-bold tabular-nums font-mono text-blue-400">
@@ -287,7 +309,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
             {/* Avatar + Name */}
             <div className="col-span-4 flex items-center gap-3 min-w-0">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
                 {session.avatar ? (
                   <img 
                     src={session.avatar} 
@@ -401,15 +423,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               </span>
             </div>
 
-            {/* Progress Bar */}
-            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${scorePercentage}%` }}
-                transition={{ duration: 0.8, delay: idx * 0.05 }}
-                className="h-full rounded-full bg-primary"
-              />
-            </div>
           </div>
 
           {/* Right Side Stats */}
@@ -470,7 +483,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         };
         
         return (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
           </div>
         );
@@ -560,7 +573,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       }
 
       return (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {cards}
         </div>
       );
@@ -574,7 +587,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         arrayLength: data.length,
       });
       return (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {data.slice(0, 10).map((sessionData: any, idx: number) => 
             renderSingleCard(sessionData, isGlobalView, idx, topicName, session.id)
           )}
@@ -709,6 +722,30 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           </motion.div>
         </div>
 
+        {/* Session Progress Section */}
+        {result.progressData && result.progressData.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="w-full"
+          >
+            <div className="p-6 rounded-organic-lg bg-white/[0.02]">
+              <div className="mb-6">
+                <h2 className="text-2xl font-heading font-bold text-white/90 mb-1">
+                  Session Progress
+                </h2>
+                <p className="text-sm text-white/50 font-mono">
+                  Accuracy and speed throughout the session
+                </p>
+              </div>
+              <div className="h-[200px]">
+                <SessionMiniChart data={result.progressData} />
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <div className="grid grid-cols-1 gap-8">
           {/* Detailed Topic Breakdown */}
           <motion.div
@@ -718,9 +755,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           >
             <div className="p-6 rounded-organic-lg bg-white/[0.02]">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <h2 className="text-xl font-heading font-semibold text-white/90">
-                  Topic Breakdown
-                </h2>
+                <div>
+                  <h2 className="text-2xl font-heading font-bold text-white/90 mb-1">
+                    Topic Breakdown
+                  </h2>
+                  <p className="text-sm text-white/50 font-mono">
+                    Performance by topic area
+                  </p>
+                </div>
 
                 <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
                   <button
@@ -763,16 +805,32 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       transition={{ delay: 0.5 + idx * 0.1 }}
                     >
                       {/* Topic Header */}
-                      <div className="mb-4">
-                        <div className="flex items-center gap-3 mb-1">
-                          <div className={cn(
-                            "w-2 h-2 rounded-full",
-                            isGlobalView ? "bg-blue-400/60" : "bg-primary/60"
-                          )} />
-                          <h3 className="text-lg font-heading font-semibold text-white/90">
-                            {topicName}
-                          </h3>
-                        </div>
+                      <div className="mb-6">
+                        <h3 className="text-xl font-heading font-bold text-white/90 mb-1">
+                          {topicName}
+                        </h3>
+                        {isGlobalView && (
+                          <div className="grid grid-cols-12 gap-4 items-center mt-4 pb-2 border-b border-white/5">
+                            <div className="col-span-1 text-center">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Rank</span>
+                            </div>
+                            <div className="col-span-4">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Player</span>
+                            </div>
+                            <div className="col-span-2 text-right">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Score</span>
+                            </div>
+                            <div className="col-span-2 text-right">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Accuracy</span>
+                            </div>
+                            <div className="col-span-2 text-right">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Speed</span>
+                            </div>
+                            <div className="col-span-1 text-right">
+                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Q's</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Session Cards List */}

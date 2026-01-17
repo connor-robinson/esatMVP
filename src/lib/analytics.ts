@@ -781,7 +781,8 @@ export function generateSessionDetail(
         runningCorrect++;
       }
       const questionNumber = index + 1;
-      const runningAccuracy = (runningCorrect / questionNumber) * 100;
+      // Calculate running accuracy - round to 1 decimal place
+      const runningAccuracy = Math.round((runningCorrect / questionNumber) * 1000) / 10;
       // Convert time_spent_ms to questions per minute
       const timeSpentMs = attempt.time_spent_ms || session.avgSpeed || 1000;
       const questionsPerMinute = timeSpentMs > 0 ? 60000 / timeSpentMs : 0;

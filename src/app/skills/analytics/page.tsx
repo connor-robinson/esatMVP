@@ -194,17 +194,26 @@ async function fetchPreviousPeriodStats(
   userId: string,
   days: number,
 ): Promise<UserStats | null> {
-  // Get date ranges
+  // Get date ranges using UTC to avoid timezone issues
   const today = new Date();
-  const currentPeriodStart = new Date(today);
-  currentPeriodStart.setDate(currentPeriodStart.getDate() - days);
+  const currentPeriodStart = new Date(Date.UTC(
+    today.getUTCFullYear(),
+    today.getUTCMonth(),
+    today.getUTCDate() - days
+  ));
   
-  const previousPeriodStart = new Date(currentPeriodStart);
-  previousPeriodStart.setDate(previousPeriodStart.getDate() - days);
-  const previousPeriodEnd = new Date(currentPeriodStart);
-  previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
+  const previousPeriodStart = new Date(Date.UTC(
+    currentPeriodStart.getUTCFullYear(),
+    currentPeriodStart.getUTCMonth(),
+    currentPeriodStart.getUTCDate() - days
+  ));
+  const previousPeriodEnd = new Date(Date.UTC(
+    currentPeriodStart.getUTCFullYear(),
+    currentPeriodStart.getUTCMonth(),
+    currentPeriodStart.getUTCDate() - 1
+  ));
 
-  // Format dates as YYYY-MM-DD strings
+  // Format dates as YYYY-MM-DD strings (UTC)
   const startDateStr = previousPeriodStart.toISOString().split("T")[0];
   const endDateStr = previousPeriodEnd.toISOString().split("T")[0];
 
@@ -287,8 +296,63 @@ async function fetchRecentSessions(
     .in("session_id", sessionIds)
     .order("order_index", { ascending: true });
 
+  // Get saved session data from drill_sessions (contains actual saved score, accuracy, etc.)
+  const { data: drillSessionsData } = await supabase
+    .from("drill_sessions")
+    .select("builder_session_id, summary, accuracy, average_time_ms, question_count")
+    .in("builder_session_id", sessionIds)
+    .not("builder_session_id", "is", null);
+
   if (attemptsError) {
     console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
+  }
+
+  // Create a map of builder_session_id -> drill_session data (aggregate across topics)
+  const drillSessionsMap = new Map<string, { score: number; correctAnswers: number; totalQuestions: number; totalTime: number; accuracy: number; avgSpeed: number }>();
+  if (drillSessionsData) {
+    drillSessionsData.forEach((ds: any) => {
+      if (!ds.builder_session_id) return;
+      
+      const existing = drillSessionsMap.get(ds.builder_session_id) || {
+        score: 0,
+        correctAnswers: 0,
+        totalQuestions: 0,
+        totalTime: 0,
+        accuracy: 0,
+        avgSpeed: 0,
+      };
+
+      // Extract from summary JSON if available
+      if (ds.summary && typeof ds.summary === 'object') {
+        existing.score = Math.max(existing.score, ds.summary.score || 0);
+        existing.correctAnswers += ds.summary.correctAnswers || 0;
+        existing.totalQuestions += ds.summary.totalQuestions || 0;
+        existing.totalTime += ds.summary.totalTimeMs || 0;
+      } else {
+        // Fallback to individual fields
+        existing.totalQuestions += ds.question_count || 0;
+        existing.totalTime += (ds.average_time_ms || 0) * (ds.question_count || 0);
+      }
+
+      drillSessionsMap.set(ds.builder_session_id, existing);
+    });
+
+    // Calculate aggregated accuracy and avgSpeed
+    drillSessionsMap.forEach((stats, sessionId) => {
+      if (stats.totalQuestions > 0) {
+        // If we have summary data, use it; otherwise calculate from drill_sessions
+        const drillSession = drillSessionsData.find((ds: any) => ds.builder_session_id === sessionId);
+        if (drillSession?.summary && typeof drillSession.summary === 'object') {
+          // Already set from summary
+        } else {
+          // Calculate from aggregated data
+          stats.accuracy = drillSessionsData
+            .filter((ds: any) => ds.builder_session_id === sessionId)
+            .reduce((sum: number, ds: any) => sum + ((ds.accuracy || 0) * (ds.question_count || 0)), 0) / stats.totalQuestions;
+        }
+        stats.avgSpeed = stats.totalTime / stats.totalQuestions;
+      }
+    });
   }
 
   // Create a map of session_id -> question_id -> order_index (fallback if order_index not in attempts)
@@ -343,18 +407,51 @@ async function fetchRecentSessions(
     const questions = (session.builder_session_questions as any[]) || [];
     const attempts = attemptsBySession.get(session.id) || [];
     
-    // Calculate stats from attempts (prefer attempts.length, fallback to questions.length)
-    // Use questions.length if we have questions but no attempts (session in progress)
-    const totalQuestions = attempts.length > 0 ? attempts.length : questions.length;
-    const correctAnswers = attempts.filter(a => a.is_correct === true).length;
-    const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
-    const totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
-    const avgSpeed = totalQuestions > 0 && totalTime > 0 ? totalTime / totalQuestions : 0;
+    // Get saved data from drill_sessions if available, otherwise calculate from attempts
+    const savedData = drillSessionsMap.get(session.id);
+    
+    let totalQuestions: number;
+    let correctAnswers: number;
+    let accuracy: number;
+    let totalTime: number;
+    let avgSpeed: number;
+    let score: number;
+
+    if (savedData && savedData.totalQuestions > 0) {
+      // Use saved data from database (most accurate)
+      totalQuestions = savedData.totalQuestions;
+      correctAnswers = savedData.correctAnswers;
+      accuracy = Math.round(savedData.accuracy * 10) / 10; // Round to 1 decimal
+      totalTime = savedData.totalTime;
+      avgSpeed = Math.round(savedData.avgSpeed); // Round to nearest ms
+      score = Math.round(savedData.score * 100) / 100; // Round to 2 decimals
+    } else {
+      // Fallback to calculating from attempts
+      totalQuestions = attempts.length > 0 ? attempts.length : questions.length;
+      correctAnswers = attempts.filter(a => a.is_correct === true).length;
+      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0; // Round to 1 decimal
+      totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
+      avgSpeed = totalQuestions > 0 && totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0; // Round to nearest ms
+      score = calculateLeaderboardScore({
+        userId,
+        totalQuestions,
+        correctAnswers,
+        totalTime,
+        sessionCount: 1,
+        currentStreak: 0,
+        longestStreak: 0,
+        lastPracticeDate: null,
+        topicStats: {},
+        createdAt: new Date(),
+      });
+      score = Math.round(score * 100) / 100; // Round to 2 decimals
+    }
     
     // Debug logging
     if (index === 0) {
       console.log("[fetchRecentSessions] DEBUG: Latest session stats", {
         sessionId: session.id,
+        hasSavedData: !!savedData,
         attemptsCount: attempts.length,
         questionsCount: questions.length,
         correctAnswers,
@@ -362,6 +459,7 @@ async function fetchRecentSessions(
         accuracy,
         totalTime,
         avgSpeed,
+        score,
       });
     }
 
@@ -380,18 +478,7 @@ async function fetchRecentSessions(
       timestamp: new Date(session.ended_at!),
       topicIds,
       topicNames,
-      score: calculateLeaderboardScore({
-        userId,
-        totalQuestions,
-        correctAnswers,
-        totalTime,
-        sessionCount: 1,
-        currentStreak: 0,
-        longestStreak: 0,
-        lastPracticeDate: null,
-        topicStats: {},
-        createdAt: new Date(),
-      }),
+      score,
       accuracy,
       avgSpeed,
       totalQuestions,
