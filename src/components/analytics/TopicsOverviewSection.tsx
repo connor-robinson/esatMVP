@@ -325,13 +325,15 @@ export function TopicsOverviewSection({
                   ) : (
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
-                      {visibleTopicsData.allTopicsWithRank?.map((topic) => {
+                      {visibleTopicsData.allTopicsWithRank?.map((topic, index) => {
                         const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
+                        // When showing all topics, use sequential rank based on current sort order
+                        const displayRank = index + 1;
                         
                         return (
                           <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                             <TopicDetailCard
-                              topic={{ ...topic, rank: topic.rank }}
+                              topic={{ ...topic, rank: displayRank }}
                               isExpanded={expandedId === topic.topicId}
                               onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
                               isTopTopic={isTopTopic}
