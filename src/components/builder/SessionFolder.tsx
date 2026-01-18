@@ -131,58 +131,48 @@ function SortableVariantChip({
 
   return (
     <div 
-      ref={setNodeRef} 
-      style={style} 
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className={cn(
-        "transition-opacity duration-200",
+        "flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors cursor-grab active:cursor-grabbing",
         isDragging && "opacity-30"
       )}
     >
-      <div className="flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors">
-        {/* Drag handle */}
-        <button
-          className="p-0.5 rounded bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/70 cursor-grab active:cursor-grabbing transition-colors flex-shrink-0"
-          {...attributes}
-          {...listeners}
-          aria-label={`Drag ${displayText}`}
-          type="button"
-        >
-          <GripVertical size={14} strokeWidth={2} />
-        </button>
-
-        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-          <span className="truncate font-medium text-sm">{displayText}</span>
-        </div>
-
-        {/* Remove button */}
-        <button
-          onClick={() => onRemove(topicVariantId)}
-          className="p-0.5 rounded hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-all flex-shrink-0"
-          aria-label={`Remove ${displayText}`}
-          type="button"
-        >
-          <X size={14} strokeWidth={2} />
-        </button>
+      <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+        <span className="truncate font-medium text-sm">{displayText}</span>
       </div>
+
+      {/* Remove button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove(topicVariantId);
+        }}
+        className="p-0.5 rounded hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-all flex-shrink-0"
+        aria-label={`Remove ${displayText}`}
+        type="button"
+      >
+        <X size={14} strokeWidth={2} />
+      </button>
     </div>
   );
 }
 
 function DropZone({ isOver }: { isOver: boolean }) {
   return (
-    <div className="col-span-full w-full h-full min-h-[240px]">
-      <div className={cn(
-        "rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200 h-full",
-        isOver 
-          ? "bg-primary/10 text-primary/80 scale-[1.02]" 
-          : "bg-white/[0.02] hover:bg-white/[0.03]"
-      )}>
-        <div className="flex items-center gap-3 text-base">
-          <GripVertical size={20} strokeWidth={2} className="opacity-70" />
-          <span className="font-semibold">Drag topics here</span>
-        </div>
-        <div className="text-sm text-white/40">Or click the + button on a topic</div>
+    <div className={cn(
+      "col-span-full w-full h-full min-h-[240px] rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200",
+      isOver 
+        ? "bg-primary/10 text-primary/80 scale-[1.02]" 
+        : "bg-white/[0.02] hover:bg-white/[0.03]"
+    )}>
+      <div className="flex items-center gap-3 text-base">
+        <GripVertical size={20} strokeWidth={2} className="opacity-70" />
+        <span className="font-semibold">Drag topics here</span>
       </div>
+      <div className="text-sm text-white/40">Or click the + button on a topic</div>
     </div>
   );
 }
@@ -231,7 +221,7 @@ export function SessionFolder({
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
+          <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
             Session Folder
           </h2>
           <p className="text-sm font-mono text-white/50 mt-1">
@@ -290,7 +280,7 @@ export function SessionFolder({
         {/* Question count on left, Save and Clear on right */}
         <div className="flex items-stretch gap-3">
           {/* Question count input - bubble style, expanded */}
-          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-organic-md bg-white/5 hover:bg-white/[0.07] transition-colors flex-1 border border-white/10">
+          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-organic-md bg-white/5 hover:bg-white/[0.07] transition-colors flex-1">
             <span className="text-white/50 text-sm font-mono whitespace-nowrap">Questions:</span>
             <input
               type="number"
@@ -316,7 +306,7 @@ export function SessionFolder({
             disabled={presets.length === 0}
             variant="secondary"
             size="sm"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-0"
             title={presets.length === 0 ? "No saved presets" : "Load a saved preset"}
           >
             <FolderDown className="h-4 w-4" strokeWidth={2} />
@@ -329,7 +319,7 @@ export function SessionFolder({
             disabled={totalItems === 0}
             variant="secondary"
             size="sm"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-0"
           >
             <Save className="h-4 w-4" strokeWidth={2} />
             <span>Save</span>
@@ -338,9 +328,9 @@ export function SessionFolder({
           <Button
             onClick={onClear}
             disabled={totalItems === 0}
-            variant="danger"
+            variant="secondary"
             size="sm"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-0 text-white/60 hover:text-white/80 hover:bg-white/10"
           >
             <Trash2 className="h-4 w-4" strokeWidth={2} />
             <span>Clear</span>
@@ -353,7 +343,7 @@ export function SessionFolder({
           disabled={!canStart}
           variant={canStart ? "primary" : "secondary"}
           size="lg"
-          className="w-full flex items-center justify-center gap-3"
+          className="w-full flex items-center justify-center gap-3 border-0"
         >
           <Play className="h-5 w-5" strokeWidth={2} />
           <span>Start Session</span>

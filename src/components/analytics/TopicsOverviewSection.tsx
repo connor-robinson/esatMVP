@@ -124,15 +124,15 @@ export function TopicsOverviewSection({
                   {strongest && strongest.topicId && strongest.topicName && typeof strongest.accuracy === 'number' && (
                     <button
                       onClick={() => handleStrongestWeakestClick(strongest.topicId, strongest.topicName)}
-                      className="relative rounded-organic-md overflow-hidden bg-primary/10 p-4 hover:bg-primary/15 transition-all duration-200 text-left group"
+                      className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-4 hover:bg-white/5 transition-all duration-200 text-left group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
-                          <Trophy className="h-5 w-5 text-primary" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                          <Trophy className="h-5 w-5 text-white/60" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Strongest</div>
-                          <div className="text-sm font-semibold text-primary group-hover:text-primary/80 transition-colors truncate">
+                          <div className="text-sm font-semibold text-white/90 group-hover:text-white transition-colors truncate">
                             {strongest.topicName}
                           </div>
                           <div className="text-xs text-white/60 mt-1">
@@ -147,15 +147,15 @@ export function TopicsOverviewSection({
                   {weakest && weakest.topicId && weakest.topicName && typeof weakest.accuracy === 'number' && (
                     <button
                       onClick={() => handleStrongestWeakestClick(weakest.topicId, weakest.topicName)}
-                      className="relative rounded-organic-md overflow-hidden bg-error/10 p-4 hover:bg-error/15 transition-all duration-200 text-left group"
+                      className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-4 hover:bg-white/5 transition-all duration-200 text-left group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-error/20 flex items-center justify-center group-hover:bg-error/30 transition-colors">
-                          <AlertTriangle className="h-5 w-5 text-error" />
+                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                          <AlertTriangle className="h-5 w-5 text-white/60" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Needs Work</div>
-                          <div className="text-sm font-semibold text-error group-hover:text-error/80 transition-colors truncate">
+                          <div className="text-sm font-semibold text-white/90 group-hover:text-white transition-colors truncate">
                             {weakest.topicName}
                           </div>
                           <div className="text-xs text-white/60 mt-1">
@@ -225,9 +225,19 @@ export function TopicsOverviewSection({
                 </div>
               </div>
 
+              {/* Column Headers */}
+              <div className="grid grid-cols-12 gap-4 px-4 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+                <div className="col-span-3">Topic</div>
+                <div className="col-span-2 text-right">Accuracy</div>
+                <div className="col-span-2 text-right">Speed</div>
+                <div className="col-span-2 text-right">Sessions</div>
+                <div className="col-span-2 text-right">Questions</div>
+                <div className="col-span-1"></div>
+              </div>
+
               {/* All Topics List (Expandable Cards) */}
               {filteredTopics.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {filteredTopics.map((topic) => (
                     <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                       <TopicDetailCard

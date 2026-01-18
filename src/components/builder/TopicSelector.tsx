@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronRight, GripVertical } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, Square, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Target } from "lucide-react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@/components/ui/Card";
@@ -88,26 +88,19 @@ function DraggableTopicHeader({
       <div
         ref={setNodeRef}
         style={style}
+        {...attributes}
+        {...listeners}
         className={cn(
-          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-organic-md text-white/90 transition-all",
+          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-organic-md text-white/90 transition-all cursor-grab active:cursor-grabbing",
           isDragging && "opacity-50",
           isAnyVariantSelected
             ? "bg-primary/10"
             : "bg-white/5 hover:bg-white/[0.07]"
         )}
       >
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          {/* Drag handle */}
-          <button
-            className="p-1 rounded-lg bg-white/5 text-white/60 hover:text-white hover:bg-white/10 cursor-grab active:cursor-grabbing flex-shrink-0 transition-colors"
-            {...attributes}
-            {...listeners}
-            aria-label={`Drag ${topic.name}`}
-            type="button"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <GripVertical size={16} strokeWidth={2} />
-          </button>
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          {/* Folder icon for topics with variants */}
+          <Folder className="h-5 w-5 text-white/50 flex-shrink-0" strokeWidth={2} />
 
           {/* Expand/collapse button */}
           <button
@@ -115,6 +108,7 @@ function DraggableTopicHeader({
             className="p-0.5 rounded hover:bg-white/5 transition-colors flex-shrink-0"
             aria-label={isExpanded ? "Collapse" : "Expand"}
             type="button"
+            onMouseDown={(e) => e.stopPropagation()}
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4 text-white/60" />
@@ -230,12 +224,23 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
     other: "Other",
   };
 
+  const categoryIcons: Record<HighLevelCategory, JSX.Element> = {
+    arithmetic: <Calculator className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    algebra: <FunctionSquare className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    geometry: <Square className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    number_theory: <Infinity className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    shortcuts: <Zap className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    trigonometry: <Target className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    physics: <Atom className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    other: <FlaskConical className="h-5 w-5 text-white/60" strokeWidth={2} />,
+  };
+
   return (
     <Card variant="flat" className="p-5 h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
+          <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
             Choose Topics
           </h2>
           <p className="text-sm font-mono text-white/50 mt-1">
@@ -254,7 +259,7 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search topics..."
-          className="w-full h-11 px-4 rounded-organic-md bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all border border-white/10 focus:border-primary/50"
+          className="w-full h-11 px-4 rounded-organic-md bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all"
         />
       </div>
 
@@ -270,9 +275,10 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
               {/* Category Header - Clickable */}
               <button
                 onClick={() => toggleCategory(highLevelCategory)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors rounded-t-organic-md"
+                className="w-full flex items-center justify-between px-5 py-5 hover:bg-white/5 transition-colors rounded-t-organic-md"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  {categoryIcons[highLevelCategory]}
                   {isExpanded ? (
                     <ChevronDown className="h-4 w-4 text-white/60" />
                   ) : (

@@ -57,6 +57,22 @@ async function fetchTopicProgress(
     return null;
   }
 
+  // Get actual session counts per topic from drill_sessions
+  const { data: drillSessionsData } = await supabase
+    .from("drill_sessions")
+    .select("topic_id")
+    .eq("user_id", userId);
+
+  // Count sessions per topic
+  const sessionCountsByTopic = new Map<string, number>();
+  if (drillSessionsData) {
+    drillSessionsData.forEach((ds: any) => {
+      if (ds.topic_id) {
+        sessionCountsByTopic.set(ds.topic_id, (sessionCountsByTopic.get(ds.topic_id) || 0) + 1);
+      }
+    });
+  }
+
   const topicStats: UserStats["topicStats"] = {};
   let totalQuestions = 0;
   let correctAnswers = 0;
@@ -70,6 +86,7 @@ async function fetchTopicProgress(
     const correct = row.questions_correct;
     const avgTime = row.average_time_ms;
     const lastPracticed = row.last_practiced ? new Date(row.last_practiced) : null;
+    const topicSessionCount = sessionCountsByTopic.get(topicId) || 0;
 
     // Map topic ID to proper name from TOPICS config
     const topic = TOPICS[topicId];
@@ -84,7 +101,7 @@ async function fetchTopicProgress(
       avgSpeed: avgTime,
       bestSpeed: avgTime,
       totalTime: questionsAnswered * avgTime,
-      sessionCount: questionsAnswered > 0 ? 1 : 0,
+      sessionCount: topicSessionCount,
       rank: row.current_level ?? 0,
       lastPracticed,
     };
@@ -92,7 +109,7 @@ async function fetchTopicProgress(
     totalQuestions += questionsAnswered;
     correctAnswers += correct;
     totalTime += questionsAnswered * avgTime;
-    sessionCount += questionsAnswered > 0 ? 1 : 0;
+    sessionCount += topicSessionCount;
 
     if (lastPracticed && (!lastPractice || lastPracticed > lastPractice)) {
       lastPractice = lastPracticed;

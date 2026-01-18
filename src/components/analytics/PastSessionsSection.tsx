@@ -61,7 +61,7 @@ export function PastSessionsSection({
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-primary/10 p-6">
+    <div className="relative rounded-organic-lg overflow-hidden bg-white/[0.03] p-6">
       {/* Section Header */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex-1">
@@ -113,8 +113,19 @@ export function PastSessionsSection({
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="overflow-hidden"
           >
+            {/* Column Headers */}
+            <div className="grid grid-cols-12 gap-4 px-4 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+              <div className="col-span-1 text-center">Rank</div>
+              <div className="col-span-2 text-right">Score</div>
+              <div className="col-span-2 text-right">Accuracy</div>
+              <div className="col-span-2 text-right">Speed</div>
+              <div className="col-span-2 text-right">Questions</div>
+              <div className="col-span-2 text-left">Date</div>
+              <div className="col-span-1"></div>
+            </div>
+
             {/* Top 3 Sessions */}
-            <div className="space-y-3">
+            <div className="space-y-1">
         {topSessions.map((session, index) => (
           <SessionCard
             key={session.id}

@@ -6,7 +6,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Topic } from "@/types/core";
 import { cn } from "@/lib/utils";
 
@@ -29,25 +29,18 @@ export function TopicCard({ topic, onAdd, isSelected = false }: TopicCardProps) 
     <div
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...listeners}
       className={cn(
-        "flex items-center justify-between w-full rounded-organic-md px-3.5 py-3.5 text-white/90 transition-all",
+        "flex items-center justify-between w-full rounded-organic-md px-3.5 py-3.5 text-white/90 transition-all cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50",
         isSelected 
           ? "bg-primary/10" 
           : "bg-white/5 hover:bg-white/[0.07]"
       )}
     >
-      {/* Drag handle + label + description */}
+      {/* Label + description */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <button
-          className="p-1 rounded-lg bg-white/5 text-white/60 hover:text-white hover:bg-white/10 cursor-grab active:cursor-grabbing flex-shrink-0 transition-colors"
-          {...attributes}
-          {...listeners}
-          aria-label={`Drag ${topic.name}`}
-          type="button"
-        >
-          <GripVertical size={18} strokeWidth={2} />
-        </button>
         <div className="flex flex-col gap-0.5 flex-1 min-w-0">
           <span className="truncate text-base font-semibold">{topic.name}</span>
           <span className="truncate text-xs text-white/40">{topic.description}</span>
