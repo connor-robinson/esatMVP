@@ -5,9 +5,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronRight, Folder, Square, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Target } from "lucide-react";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
+import { ChevronDown, ChevronRight, Hexagon, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Triangle, Plus, Check } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Topic, TopicCategory } from "@/types/core";
 import { TopicCard } from "./TopicCard";
@@ -57,7 +55,7 @@ const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   ecology: "other",
 };
 
-function DraggableTopicHeader({
+function TopicHeaderWithVariants({
   topic,
   isExpanded,
   isAnyVariantSelected,
@@ -74,58 +72,60 @@ function DraggableTopicHeader({
   selectedTopicIds: string[];
   onAddVariant: (variantId: string, topicId: string, variantIdOnly: string) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: `topic-${topic.id}`,
-  });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
-
   return (
-        <div key={topic.id} className="space-y-1">
-      {/* Topic header - expandable and draggable */}
+    <div key={topic.id} className="space-y-1">
+      {/* Topic header - expandable */}
       <div
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
         className={cn(
-          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-organic-md text-white/90 transition-all cursor-grab active:cursor-grabbing",
-          isDragging && "opacity-50",
+          "w-full flex items-center justify-between px-3.5 py-3.5 rounded-organic-md text-white/90 transition-all",
           isAnyVariantSelected
             ? "bg-primary/10"
-            : "bg-white/5 hover:bg-white/[0.07]"
+            : "bg-white/[0.03] hover:bg-white/[0.06]"
         )}
       >
+        {/* Left side - Expand/collapse button with chevron */}
+        <button
+          onClick={onToggle}
+          className="flex items-center flex-shrink-0 transition-colors mr-4"
+          aria-label={isExpanded ? "Collapse" : "Expand"}
+          type="button"
+        >
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-white/60" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-white/60" />
+          )}
+        </button>
+
+        {/* Middle - Content */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          {/* Folder icon for topics with variants */}
-          <Folder className="h-5 w-5 text-white/50 flex-shrink-0" strokeWidth={2} />
-
-          {/* Expand/collapse button */}
-          <button
-            onClick={onToggle}
-            className="p-0.5 rounded hover:bg-white/5 transition-colors flex-shrink-0"
-            aria-label={isExpanded ? "Collapse" : "Expand"}
-            type="button"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-white/60" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-white/60" />
-            )}
-          </button>
-
           <div className="flex flex-col gap-0.5 flex-1 min-w-0 text-left">
             <span className="truncate text-base font-semibold">{topic.name}</span>
             <span className="truncate text-xs text-white/40">{topic.description}</span>
           </div>
         </div>
-        {isAnyVariantSelected && (
+
+        {/* Right side - Plus button or selected count */}
+        {isAnyVariantSelected ? (
           <span className="text-xs text-primary/80 font-medium flex-shrink-0 ml-2">
             {selectedVariantCount} selected
           </span>
+        ) : (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              // Add all variants
+              topic.variants?.forEach((variant) => {
+                const variantId = `${topic.id}-${variant.id}`;
+                onAddVariant(variantId, topic.id, variant.id);
+              });
+            }}
+            className="h-8 w-8 inline-flex items-center justify-center rounded-organic-md flex-shrink-0 transition-all bg-white/5 text-white/70 hover:bg-white/10 interaction-scale"
+            aria-label={`Add all ${topic.name} variants`}
+            type="button"
+          >
+            <Plus size={18} strokeWidth={2} />
+          </button>
         )}
       </div>
 
@@ -213,6 +213,19 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
     return grouped;
   }, [filteredTopics]);
 
+  // Calculate total number of modes (variants) - don't count folders themselves
+  const totalModes = useMemo(() => {
+    return filteredTopics.reduce((count, topic) => {
+      if (topic.variants && topic.variants.length > 0) {
+        // Count each variant (mode) inside the folder
+        return count + topic.variants.length;
+      } else {
+        // Topic without variants counts as 1 mode
+        return count + 1;
+      }
+    }, 0);
+  }, [filteredTopics]);
+
   const categoryLabels: Record<HighLevelCategory, string> = {
     arithmetic: "Arithmetic",
     algebra: "Algebra & Identities",
@@ -227,10 +240,10 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
   const categoryIcons: Record<HighLevelCategory, JSX.Element> = {
     arithmetic: <Calculator className="h-5 w-5 text-white/60" strokeWidth={2} />,
     algebra: <FunctionSquare className="h-5 w-5 text-white/60" strokeWidth={2} />,
-    geometry: <Square className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    geometry: <Hexagon className="h-5 w-5 text-white/60" strokeWidth={2} />,
     number_theory: <Infinity className="h-5 w-5 text-white/60" strokeWidth={2} />,
     shortcuts: <Zap className="h-5 w-5 text-white/60" strokeWidth={2} />,
-    trigonometry: <Target className="h-5 w-5 text-white/60" strokeWidth={2} />,
+    trigonometry: <Triangle className="h-5 w-5 text-white/60" strokeWidth={2} />,
     physics: <Atom className="h-5 w-5 text-white/60" strokeWidth={2} />,
     other: <FlaskConical className="h-5 w-5 text-white/60" strokeWidth={2} />,
   };
@@ -248,7 +261,7 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
           </p>
         </div>
         <span className="text-xs text-white/50">
-          {selectedTopicIds.length} {selectedTopicIds.length === 1 ? 'item' : 'items'} selected
+          {totalModes} {totalModes === 1 ? 'mode' : 'modes'} total
         </span>
       </div>
 
@@ -275,22 +288,22 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
               {/* Category Header - Clickable */}
               <button
                 onClick={() => toggleCategory(highLevelCategory)}
-                className="w-full flex items-center justify-between px-5 py-5 hover:bg-white/5 transition-colors rounded-t-organic-md"
+                className="w-full flex items-center justify-between px-5 py-5 hover:bg-white/[0.04] transition-colors rounded-t-organic-md bg-white/[0.015]"
               >
                 <div className="flex items-center gap-3">
                   {categoryIcons[highLevelCategory]}
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-white/60" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-white/60" />
-                  )}
                   <span className="text-sm font-semibold uppercase tracking-wider text-white/70">
                     {categoryLabels[highLevelCategory] || category}
                   </span>
+                  <span className="text-xs text-white/40">
+                    {categoryTopics.length} {categoryTopics.length === 1 ? 'topic' : 'topics'}
+                  </span>
                 </div>
-                <span className="text-xs text-white/40">
-                  {categoryTopics.length} {categoryTopics.length === 1 ? 'topic' : 'topics'}
-                </span>
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-white/60 flex-shrink-0" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-white/60 flex-shrink-0" />
+                )}
               </button>
 
               {/* Category Topics - Collapsible */}
@@ -309,7 +322,7 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
                     if (hasVariants) {
                       // Topic with variants - show expandable topic header
                       return (
-                        <DraggableTopicHeader
+                        <TopicHeaderWithVariants
                           key={topic.id}
                           topic={topic}
                           isExpanded={isTopicExpanded}

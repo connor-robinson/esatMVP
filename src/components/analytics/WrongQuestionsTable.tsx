@@ -4,8 +4,10 @@
 
 "use client";
 
+import { useState } from "react";
 import { WrongQuestionPattern } from "@/types/analytics";
 import { AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface WrongQuestionsTableProps {
   mistakes: WrongQuestionPattern[];
@@ -16,21 +18,40 @@ export function WrongQuestionsTable({
   mistakes,
   maxRows = 5,
 }: WrongQuestionsTableProps) {
+  const [showAll, setShowAll] = useState(false);
+
   if (!mistakes || mistakes.length === 0) {
     return null;
   }
 
-  const displayedMistakes = mistakes.slice(0, maxRows);
+  // Sort by count (descending)
+  const sortedMistakes = [...mistakes].sort((a, b) => b.count - a.count);
+  
+  const displayedMistakes = showAll ? sortedMistakes : sortedMistakes.slice(0, maxRows);
+  const hasMore = sortedMistakes.length > maxRows;
 
   return (
     <div className="mt-4">
-      <h4 className="text-sm font-semibold text-white/70 mb-3 flex items-center gap-2">
-        <AlertCircle className="h-4 w-4 text-error" />
-        Commonly Wrong Questions
-      </h4>
-      <div className="rounded-xl border border-white/10 overflow-hidden bg-white/[0.02]">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-sm font-semibold text-white/70 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 text-error" />
+          Commonly Wrong Questions
+        </h4>
+        {hasMore && (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-xs text-white/60 hover:text-white/80 transition-colors font-medium"
+          >
+            {showAll ? "Show Less" : "View All"}
+          </button>
+        )}
+      </div>
+      <div className={cn(
+        "rounded-xl border border-white/10 overflow-hidden bg-white/[0.02]",
+        showAll && "max-h-[400px] overflow-y-auto"
+      )}>
         <table className="w-full text-sm">
-          <thead className="text-xs text-white/40 border-b border-white/10 bg-white/5">
+          <thead className="text-xs text-white/40 border-b border-white/10 bg-white/5 sticky top-0">
             <tr>
               <th className="text-left py-2 px-3 font-medium">Question</th>
               <th className="text-center py-2 px-3 font-medium">You</th>

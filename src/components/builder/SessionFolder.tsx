@@ -5,10 +5,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDroppable } from "@dnd-kit/core";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { X, Play, Save, Trash2, Clock, GripVertical, FolderDown, ChevronDown, ChevronRight } from "lucide-react";
+import { X, Play, Save, Trash2, Clock, FolderDown, ChevronDown, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";
@@ -91,7 +88,7 @@ function GroupedTopicChip({
       {isExpanded && (
         <div className="pl-8 space-y-1">
           {variants.map((variant) => (
-            <SortableVariantChip
+            <VariantChip
               key={`${variant.topicId}-${variant.variantId}`}
               topicVariant={variant}
               onRemove={onRemoveVariant}
@@ -114,32 +111,14 @@ function SortableVariantChip({
   const topic = getTopic(topicVariant.topicId);
   const topicVariantId = `${topicVariant.topicId}-${topicVariant.variantId}`;
   
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: topicVariantId,
-  });
-  
   if (!topic) return null;
 
   const variant = topic.variants?.find(v => v.id === topicVariant.variantId);
   const variantName = variant?.name || topicVariant.variantId;
   const displayText = `${variantName}`;
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
   return (
-    <div 
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={cn(
-        "flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-30"
-      )}
-    >
+    <div className="flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors">
       <div className="flex flex-col gap-0.5 flex-1 min-w-0">
         <span className="truncate font-medium text-sm">{displayText}</span>
       </div>
@@ -160,19 +139,13 @@ function SortableVariantChip({
   );
 }
 
-function DropZone({ isOver }: { isOver: boolean }) {
+function EmptyState() {
   return (
-    <div className={cn(
-      "col-span-full w-full h-full min-h-[240px] rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3 transition-all duration-200",
-      isOver 
-        ? "bg-primary/10 text-primary/80 scale-[1.02]" 
-        : "bg-white/[0.02] hover:bg-white/[0.03]"
-    )}>
-      <div className="flex items-center gap-3 text-base">
-        <GripVertical size={20} strokeWidth={2} className="opacity-70" />
-        <span className="font-semibold">Drag topics here</span>
+    <div className="w-full h-full min-h-[240px] rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3">
+      <div className="text-base text-white/40">
+        <span className="font-semibold">No topics added yet</span>
       </div>
-      <div className="text-sm text-white/40">Or click the + button on a topic</div>
+      <div className="text-sm text-white/40">Click the + button on topics to add them</div>
     </div>
   );
 }
@@ -190,10 +163,6 @@ export function SessionFolder({
   presets = [],
   onLoadPreset,
 }: SessionFolderProps) {
-  const { isOver, setNodeRef } = useDroppable({
-    id: "session-folder",
-  });
-
   const totalItems = selectedTopicVariants.length;
   
   // Group variants by topic
@@ -205,19 +174,9 @@ export function SessionFolder({
     return acc;
   }, {} as Record<string, TopicVariantSelection[]>);
 
-  // Generate sortable IDs for each variant
-  const sortableIds = selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`);
-
   return (
-    <Card
-      variant="flat"
-      className={cn(
-        "p-5 transition-all duration-200 shadow-sm",
-        isOver && "ring-2 ring-primary/50 shadow-[0_0_20px_rgba(74,140,111,0.4)]"
-      )}
-    >
-      {/* Entire card is droppable */}
-      <div ref={setNodeRef} className="h-full">
+    <Card variant="flat" className="p-5">
+      <div className="h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
@@ -225,7 +184,7 @@ export function SessionFolder({
             Session Folder
           </h2>
           <p className="text-sm font-mono text-white/50 mt-1">
-            Drop topics here or click + to add them.
+            Click + on topics to add them.
           </p>
         </div>
         <span className="text-xs text-white/50">
@@ -233,45 +192,36 @@ export function SessionFolder({
         </span>
       </div>
 
-        {/* Drop zone / Topics - Fixed height to prevent resizing */}
-        <div
-          className={cn(
-            "min-h-[260px] rounded-organic-lg p-5 mb-5 transition-all duration-200 relative",
-            isOver 
-              ? "bg-primary/15 ring-2 ring-primary/60 scale-[1.01]" 
-              : "bg-white/[0.03]"
-          )}
-        >
+        {/* Topics list */}
+        <div className="min-h-[260px] rounded-organic-lg p-5 mb-5 bg-white/[0.03]">
           {selectedTopicVariants.length === 0 ? (
-            <DropZone isOver={isOver} />
+            <EmptyState />
           ) : (
-            <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
-              <div className="flex flex-col gap-3 pb-12">
-                {Object.entries(groupedByTopic).map(([topicId, variants]) => {
-                  // If topic has multiple variants, show as grouped
-                  if (variants.length > 1) {
-                    return (
-                      <GroupedTopicChip
-                        key={topicId}
-                        topicId={topicId}
-                        variants={variants}
-                        onRemoveVariant={onRemoveTopicVariant}
-                        onRemoveAll={onRemoveAllTopicVariants}
-                      />
-                    );
-                  } else {
-                    // Single variant, show as regular chip
-                    return (
-                      <SortableVariantChip
-                        key={`${variants[0].topicId}-${variants[0].variantId}`}
-                        topicVariant={variants[0]}
-                        onRemove={onRemoveTopicVariant}
-                      />
-                    );
-                  }
-                })}
-              </div>
-            </SortableContext>
+            <div className="flex flex-col gap-3">
+              {Object.entries(groupedByTopic).map(([topicId, variants]) => {
+                // If topic has multiple variants, show as grouped
+                if (variants.length > 1) {
+                  return (
+                    <GroupedTopicChip
+                      key={topicId}
+                      topicId={topicId}
+                      variants={variants}
+                      onRemoveVariant={onRemoveTopicVariant}
+                      onRemoveAll={onRemoveAllTopicVariants}
+                    />
+                  );
+                } else {
+                  // Single variant, show as regular chip
+                  return (
+                    <VariantChip
+                      key={`${variants[0].topicId}-${variants[0].variantId}`}
+                      topicVariant={variants[0]}
+                      onRemove={onRemoveTopicVariant}
+                    />
+                  );
+                }
+              })}
+            </div>
           )}
         </div>
 

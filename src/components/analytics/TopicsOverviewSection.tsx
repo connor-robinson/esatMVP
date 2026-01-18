@@ -8,7 +8,7 @@ import { useState, useMemo } from "react";
 import { UserStats, TopicStats } from "@/types/analytics";
 import { TopicDetailCard } from "./TopicDetailCard";
 import { generateTopicDetails } from "@/lib/analytics";
-import { Search, BarChart3, Trophy, AlertTriangle, ChevronDown } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,8 +28,9 @@ export function TopicsOverviewSection({
   onToggleCollapse,
 }: TopicsOverviewSectionProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"strength" | "weakness" | "time" | "questions">("strength");
+  const [sortBy, setSortBy] = useState<"strength" | "weakness" | "questions">("strength");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showAllTopics, setShowAllTopics] = useState(false);
 
   // Generate all topics with details
   const allTopics = useMemo(() => generateTopicDetails(userStats), [userStats]);
@@ -48,16 +49,26 @@ export function TopicsOverviewSection({
       case "weakness":
         topics.sort((a, b) => a.accuracy - b.accuracy);
         break;
-      case "time":
-        topics.sort((a, b) => b.totalPracticeTime - a.totalPracticeTime);
-        break;
       case "questions":
+        // Sort by number of questions answered (most practiced)
         topics.sort((a, b) => b.questionsAnswered - a.questionsAnswered);
         break;
     }
 
     return topics;
   }, [allTopics, searchQuery, sortBy]);
+
+  // Calculate visible topics based on showAllTopics state
+  const visibleTopicsData = useMemo(() => {
+    if (showAllTopics || filteredTopics.length <= 6) {
+      return { all: filteredTopics, isExpanded: showAllTopics };
+    }
+
+    // Show top 4 and bottom 2
+    const top4 = filteredTopics.slice(0, 4);
+    const bottom2 = filteredTopics.slice(-2);
+    return { top4, bottom2, hasMore: true, isExpanded: false };
+  }, [filteredTopics, showAllTopics]);
 
   const handleTopicClick = (topicId: string, topicName: string) => {
     setExpandedId(topicId);
@@ -82,18 +93,13 @@ export function TopicsOverviewSection({
         onClick={onToggleCollapse}
         className="w-full flex items-center justify-between mb-6 group"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-interview/20 flex items-center justify-center">
-            <BarChart3 className="h-5 w-5 text-interview/80" />
-          </div>
-          <div className="text-left">
-            <h2 className="text-base font-bold uppercase tracking-wider text-white/90 group-hover:text-white transition-colors">
-              Topic Performance & Overview
-            </h2>
-            <p className="text-sm text-white/60 mt-1">
-              Your strongest and weakest topics, plus detailed breakdowns
-            </p>
-          </div>
+        <div className="text-left">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/90 group-hover:text-white transition-colors">
+            Topic Performance & Overview
+          </h2>
+          <p className="text-sm text-white/60 mt-1">
+            Analyze your performance across all topics
+          </p>
         </div>
         <ChevronDown 
           className={cn(
@@ -113,67 +119,6 @@ export function TopicsOverviewSection({
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="overflow-hidden space-y-6"
           >
-            {/* Topic Performance - Strongest & Weakest */}
-            {(strongest || weakest) && (
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
-                  Quick Highlights
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Strongest Topic */}
-                  {strongest && strongest.topicId && strongest.topicName && typeof strongest.accuracy === 'number' && (
-                    <button
-                      onClick={() => handleStrongestWeakestClick(strongest.topicId, strongest.topicName)}
-                      className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-4 hover:bg-white/5 transition-all duration-200 text-left group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                          <Trophy className="h-5 w-5 text-white/60" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Strongest</div>
-                          <div className="text-sm font-semibold text-white/90 group-hover:text-white transition-colors truncate">
-                            {strongest.topicName}
-                          </div>
-                          <div className="text-xs text-white/60 mt-1">
-                            {strongest.accuracy.toFixed(1)}% accuracy
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  )}
-
-                  {/* Weakest Topic */}
-                  {weakest && weakest.topicId && weakest.topicName && typeof weakest.accuracy === 'number' && (
-                    <button
-                      onClick={() => handleStrongestWeakestClick(weakest.topicId, weakest.topicName)}
-                      className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-4 hover:bg-white/5 transition-all duration-200 text-left group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                          <AlertTriangle className="h-5 w-5 text-white/60" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Needs Work</div>
-                          <div className="text-sm font-semibold text-white/90 group-hover:text-white transition-colors truncate">
-                            {weakest.topicName}
-                          </div>
-                          <div className="text-xs text-white/60 mt-1">
-                            {weakest.accuracy.toFixed(1)}% accuracy
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Divider */}
-            {(strongest || weakest) && (
-              <div className="h-px bg-white/10" />
-            )}
-
             {/* All Topics Section */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
@@ -199,9 +144,11 @@ export function TopicsOverviewSection({
                   <div className="relative">
                     <select
                       value={sortBy}
-                      onChange={(e) =>
-                        setSortBy(e.target.value as "strength" | "weakness" | "time" | "questions")
-                      }
+                      onChange={(e) => {
+                        const newSort = e.target.value as "strength" | "weakness" | "questions";
+                        setSortBy(newSort);
+                        setShowAllTopics(false); // Reset expand state when sort changes
+                      }}
                       className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-interview/30 transition-all duration-200"
                       style={{
                         colorScheme: "dark",
@@ -213,11 +160,8 @@ export function TopicsOverviewSection({
                       <option value="weakness" className="bg-neutral-800 text-white">
                         Weakest First
                       </option>
-                      <option value="time" className="bg-neutral-800 text-white">
-                        Most Practiced (Time)
-                      </option>
                       <option value="questions" className="bg-neutral-800 text-white">
-                        Most Practiced (Questions)
+                        Most Practiced
                       </option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
@@ -226,19 +170,29 @@ export function TopicsOverviewSection({
               </div>
 
               {/* Column Headers */}
-              <div className="grid grid-cols-12 gap-4 px-4 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+                <div className="col-span-1">Rank</div>
                 <div className="col-span-3">Topic</div>
-                <div className="col-span-2 text-right">Accuracy</div>
-                <div className="col-span-2 text-right">Speed</div>
-                <div className="col-span-2 text-right">Sessions</div>
-                <div className="col-span-2 text-right">Questions</div>
+                <div className="col-span-2">Accuracy</div>
+                <div className="col-span-2">Speed</div>
+                <div className="col-span-2">Sessions</div>
+                <div className="col-span-1">Questions</div>
                 <div className="col-span-1"></div>
               </div>
 
               {/* All Topics List (Expandable Cards) */}
-              {filteredTopics.length > 0 ? (
-                <div className="space-y-1">
-                  {filteredTopics.map((topic) => (
+              {filteredTopics.length === 0 ? (
+                <div className="text-center py-12 text-white/40">
+                  <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <p>No topics found matching &quot;{searchQuery}&quot;</p>
+                </div>
+              ) : "all" in visibleTopicsData ? (
+                // Show all topics (expanded state)
+                <div className={cn(
+                  "space-y-1",
+                  visibleTopicsData.isExpanded && "max-h-[600px] overflow-y-auto"
+                )}>
+                  {visibleTopicsData.all.map((topic) => (
                     <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                       <TopicDetailCard
                         topic={topic}
@@ -249,9 +203,42 @@ export function TopicsOverviewSection({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 text-white/40">
-                  <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>No topics found matching &quot;{searchQuery}&quot;</p>
+                // Show top 4, ..., bottom 2 (collapsed state)
+                <div className="space-y-1">
+                  {/* Top 4 */}
+                  {visibleTopicsData.top4.map((topic) => (
+                    <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                      <TopicDetailCard
+                        topic={topic}
+                        isExpanded={expandedId === topic.topicId}
+                        onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                      />
+                    </div>
+                  ))}
+
+                  {/* Expand Button */}
+                  {visibleTopicsData.hasMore && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowAllTopics(true);
+                      }}
+                      className="w-full py-3 flex items-center justify-center text-white/60 hover:text-white/80 transition-colors"
+                    >
+                      <span className="text-2xl font-bold">...</span>
+                    </button>
+                  )}
+
+                  {/* Bottom 2 */}
+                  {visibleTopicsData.bottom2.map((topic) => (
+                    <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                      <TopicDetailCard
+                        topic={topic}
+                        isExpanded={expandedId === topic.topicId}
+                        onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

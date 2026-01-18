@@ -114,13 +114,13 @@ export function PastSessionsSection({
             className="overflow-hidden"
           >
             {/* Column Headers */}
-            <div className="grid grid-cols-12 gap-4 px-4 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
-              <div className="col-span-1 text-center">Rank</div>
-              <div className="col-span-2 text-right">Score</div>
-              <div className="col-span-2 text-right">Accuracy</div>
-              <div className="col-span-2 text-right">Speed</div>
-              <div className="col-span-2 text-right">Questions</div>
-              <div className="col-span-2 text-left">Date</div>
+            <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+              <div className="col-span-1">Rank</div>
+              <div className="col-span-2">Score</div>
+              <div className="col-span-2">Accuracy</div>
+              <div className="col-span-2">Speed</div>
+              <div className="col-span-2">Questions</div>
+              <div className="col-span-2">Date</div>
               <div className="col-span-1"></div>
             </div>
 

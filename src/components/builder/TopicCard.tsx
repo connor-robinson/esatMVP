@@ -4,9 +4,7 @@
 
 "use client";
 
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { Plus } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import { Topic } from "@/types/core";
 import { cn } from "@/lib/utils";
 
@@ -17,26 +15,13 @@ interface TopicCardProps {
 }
 
 export function TopicCard({ topic, onAdd, isSelected = false }: TopicCardProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: `topic-${topic.id}`,
-  });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
-
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
       className={cn(
-        "flex items-center justify-between w-full rounded-organic-md px-3.5 py-3.5 text-white/90 transition-all cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50",
+        "flex items-center justify-between w-full rounded-organic-md px-3.5 py-3.5 text-white/90 transition-all",
         isSelected 
           ? "bg-primary/10" 
-          : "bg-white/5 hover:bg-white/[0.07]"
+          : "bg-white/[0.08] hover:bg-white/[0.12]"
       )}
     >
       {/* Label + description */}
@@ -64,7 +49,7 @@ export function TopicCard({ topic, onAdd, isSelected = false }: TopicCardProps) 
         aria-label={`Add ${topic.name}`}
         title={isSelected ? "Already added" : "Add to session"}
       >
-        {isSelected ? <span className="text-xs">✓</span> : <Plus size={18} strokeWidth={2} />}
+        {isSelected ? <Check size={16} strokeWidth={2.5} /> : <Plus size={18} strokeWidth={2} />}
       </button>
     </div>
   );
