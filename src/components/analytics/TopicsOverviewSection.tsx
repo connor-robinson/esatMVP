@@ -330,33 +330,22 @@ export function TopicsOverviewSection({
                   ) : (
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
-                      {(() => {
-                        // Use filteredTopics which is already sorted by sortBy
-                        // Calculate top/bottom based on composite rank for color coding
-                        const topicsByRank = [...filteredTopics].sort((a, b) => (a.rank || 999) - (b.rank || 999));
-                        const topCount = Math.min(3, Math.ceil(filteredTopics.length / 2));
-                        const bottomCount = Math.min(3, Math.floor(filteredTopics.length / 2));
-                        const topByRank = topicsByRank.slice(0, topCount);
-                        const bottomByRank = filteredTopics.length > topCount ? topicsByRank.slice(-bottomCount) : [];
-                        const topTopicIds = new Set(topByRank.map(t => t.topicId));
-                        const bottomTopicIds = new Set(bottomByRank.map(t => t.topicId));
+                      {visibleTopicsData.allTopicsWithRank?.map((topic, index) => {
+                        const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
+                        // Use sequential rank based on current sort order (already sorted by sortBy in visibleTopicsData)
+                        const displayRank = index + 1;
                         
-                        return filteredTopics.map((topic, index) => {
-                          const isTopTopic = topTopicIds.has(topic.topicId) ? true : bottomTopicIds.has(topic.topicId) ? false : undefined;
-                          const displayRank = index + 1;
-                          
-                          return (
-                            <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                              <TopicDetailCard
-                                topic={{ ...topic, rank: displayRank }}
-                                isExpanded={expandedId === topic.topicId}
-                                onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                                isTopTopic={isTopTopic}
-                              />
-                            </div>
-                          );
-                        });
-                      })()}
+                        return (
+                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                            <TopicDetailCard
+                              topic={{ ...topic, rank: displayRank }}
+                              isExpanded={expandedId === topic.topicId}
+                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                              isTopTopic={isTopTopic}
+                            />
+                          </div>
+                        );
+                      })}
                       
                       {/* Hide All Button */}
                       <div className="flex justify-center pt-2">

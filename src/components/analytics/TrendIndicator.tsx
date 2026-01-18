@@ -20,17 +20,17 @@ export function TrendIndicator({ trend, size = "md" }: TrendIndicatorProps) {
   return (
     <div className="flex items-center gap-1 mt-0.5">
       {trend.direction === "up" && (
-        <TrendingUp className={cn(iconSize, "text-success/70")} />
+        <TrendingUp className={cn(iconSize, "text-success/50")} />
       )}
       {trend.direction === "down" && (
-        <TrendingUp className={cn(iconSize, "text-error/70 rotate-180")} />
+        <TrendingUp className={cn(iconSize, "text-error/50 rotate-180")} />
       )}
       <span
         className={cn(
           textSize,
           "font-medium",
-          trend.direction === "up" && "text-success/70",
-          trend.direction === "down" && "text-error/70",
+          trend.direction === "up" && "text-success/50",
+          trend.direction === "down" && "text-error/50",
           trend.direction === "neutral" && "text-white/30"
         )}
       >

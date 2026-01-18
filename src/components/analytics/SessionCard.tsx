@@ -69,7 +69,7 @@ function SessionCardComponent({
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className={cn("text-xl font-bold font-sans", getRankColor())}>
+          <span className={cn("text-xl font-bold font-mono", getRankColor())}>
             {rank}
           </span>
         </div>
@@ -86,28 +86,28 @@ function SessionCardComponent({
 
         {/* Accuracy */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {isNaN(session.accuracy) ? "0.0" : session.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {speedInSeconds}s/q
           </span>
         </div>
 
         {/* Questions */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {session.correctAnswers || 0}/{session.totalQuestions || 0}
           </span>
         </div>
 
         {/* Date */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/60 font-sans">{formattedDate}</span>
+          <span className="text-base text-white/60 font-mono">{formattedDate}</span>
         </div>
 
         {/* Expand Icon */}

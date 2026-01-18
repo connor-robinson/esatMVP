@@ -273,6 +273,58 @@ function generateFakePerformanceData(days: number): PerformanceDataPoint[] {
   return data;
 }
 
+// Fetch today and yesterday's metrics for trend calculation
+async function fetchTodayYesterdayMetrics(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+): Promise<{ today: PerformanceDataPoint | null; yesterday: PerformanceDataPoint | null }> {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const todayStr = today.toISOString().split("T")[0];
+  const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+  const { data, error } = await supabase
+    .from("user_daily_metrics")
+    .select("metric_date, total_questions, correct_answers, total_time_ms")
+    .eq("user_id", userId)
+    .in("metric_date", [todayStr, yesterdayStr])
+    .order("metric_date", { ascending: false });
+
+  if (error) {
+    console.error("[analytics] failed to load today/yesterday metrics", error);
+    return { today: null, yesterday: null };
+  }
+
+  const metricsMap = new Map<string, any>();
+  (data ?? []).forEach((row: any) => {
+    metricsMap.set(row.metric_date, row);
+  });
+
+  const todayData = metricsMap.get(todayStr);
+  const yesterdayData = metricsMap.get(yesterdayStr);
+
+  return {
+    today: todayData ? {
+      date: todayData.metric_date,
+      accuracy: todayData.total_questions
+        ? Math.min(100, (todayData.correct_answers / todayData.total_questions) * 100)
+        : 0,
+      avgSpeed: todayData.total_questions ? todayData.total_time_ms / todayData.total_questions : 0,
+      questionsAnswered: todayData.total_questions,
+    } : null,
+    yesterday: yesterdayData ? {
+      date: yesterdayData.metric_date,
+      accuracy: yesterdayData.total_questions
+        ? Math.min(100, (yesterdayData.correct_answers / yesterdayData.total_questions) * 100)
+        : 0,
+      avgSpeed: yesterdayData.total_questions ? yesterdayData.total_time_ms / yesterdayData.total_questions : 0,
+      questionsAnswered: yesterdayData.total_questions,
+    } : null,
+  };
+}
+
 async function fetchPreviousPeriodStats(
   supabase: SupabaseClient<Database>,
   userId: string,
@@ -611,6 +663,7 @@ export default function AnalyticsPage() {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [previousStats, setPreviousStats] = useState<UserStats | null>(null);
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
+  const [todayYesterdayData, setTodayYesterdayData] = useState<{ today: PerformanceDataPoint | null; yesterday: PerformanceDataPoint | null }>({ today: null, yesterday: null });
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [commonMistakesMap, setCommonMistakesMap] = useState<Map<string, any[]>>(new Map());
 
@@ -646,7 +699,13 @@ export default function AnalyticsPage() {
   useEffect(() => {
     if (!session?.user) return;
     const days = timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : timeRange === "90d" ? 90 : 365;
-    fetchDailyMetrics(supabase, session.user.id, days).then(setPerformanceData);
+    Promise.all([
+      fetchDailyMetrics(supabase, session.user.id, days),
+      fetchTodayYesterdayMetrics(supabase, session.user.id)
+    ]).then(([performance, todayYesterday]) => {
+      setPerformanceData(performance);
+      setTodayYesterdayData(todayYesterday);
+    });
   }, [session?.user, supabase, timeRange]);
 
   const insights = useMemo(() => (userStats ? generateInsights(userStats) : []), [userStats]);
@@ -654,27 +713,53 @@ export default function AnalyticsPage() {
   const strongest = topicExtremes.strongest;
   const weakest = topicExtremes.weakest;
   const accuracyTrend = useMemo(() => {
-    if (performanceData.length < 2) return { value: 0, direction: "neutral" as const, percentage: 0 };
-    const recent = performanceData.slice(-7);
-    const current = recent[recent.length - 1]?.accuracy || 0;
-    const previous = recent[0]?.accuracy || 0;
-    return calculateTrend(current, previous);
-  }, [performanceData]);
+    const today = todayYesterdayData.today;
+    const yesterday = todayYesterdayData.yesterday;
+    
+    if (!today || !yesterday || yesterday.accuracy === 0) {
+      return { value: today?.accuracy || 0, direction: "neutral" as const, percentage: 0 };
+    }
+    
+    return calculateTrend(today.accuracy, yesterday.accuracy);
+  }, [todayYesterdayData]);
+  
   const speedTrend = useMemo(() => {
-    if (performanceData.length < 2) return { value: 0, direction: "neutral" as const, percentage: 0 };
-    const recent = performanceData.slice(-7);
+    const today = todayYesterdayData.today;
+    const yesterday = todayYesterdayData.yesterday;
+    
+    if (!today || !yesterday || yesterday.avgSpeed === 0) {
+      return { value: today?.avgSpeed ? 60000 / today.avgSpeed : 0, direction: "neutral" as const, percentage: 0 };
+    }
+    
     // Convert to questions per minute for trend calculation (higher is better)
-    const current = recent[recent.length - 1]?.avgSpeed > 0 ? 60000 / recent[recent.length - 1].avgSpeed : 0;
-    const previous = recent[0]?.avgSpeed > 0 ? 60000 / recent[0].avgSpeed : 0;
-    return calculateTrend(current, previous);
-  }, [performanceData]);
+    const todaySpeed = today.avgSpeed > 0 ? 60000 / today.avgSpeed : 0;
+    const yesterdaySpeed = yesterday.avgSpeed > 0 ? 60000 / yesterday.avgSpeed : 0;
+    
+    return calculateTrend(todaySpeed, yesterdaySpeed);
+  }, [todayYesterdayData]);
+  
   const questionsTrend = useMemo(() => {
-    if (performanceData.length < 2) return { value: 0, direction: "neutral" as const, percentage: 0 };
-    const recent = performanceData.slice(-7);
-    const current = recent[recent.length - 1]?.questionsAnswered || 0;
-    const previous = recent[0]?.questionsAnswered || 0;
-    return calculateTrend(current, previous);
-  }, [performanceData]);
+    const today = todayYesterdayData.today;
+    const yesterday = todayYesterdayData.yesterday;
+    
+    // If no data for either day, show neutral
+    if (!today || !yesterday) {
+      return { value: today?.questionsAnswered || 0, direction: "neutral" as const, percentage: 0 };
+    }
+    
+    // If no questions today, show 0% change
+    if (today.questionsAnswered === 0) {
+      return { value: 0, direction: "neutral" as const, percentage: 0 };
+    }
+    
+    // If no questions yesterday but questions today, it's an increase (but handle division by zero)
+    if (yesterday.questionsAnswered === 0) {
+      return { value: today.questionsAnswered, direction: "up" as const, percentage: 100 };
+    }
+    
+    // Calculate percentage change from yesterday to today
+    return calculateTrend(today.questionsAnswered, yesterday.questionsAnswered);
+  }, [todayYesterdayData]);
 
   return (
     <Container size="lg" className="py-10 space-y-8">

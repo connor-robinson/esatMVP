@@ -76,7 +76,7 @@ export function PastSessionsSection({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as "recent" | "performance")}
-            className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200"
+            className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none transition-all duration-200"
             style={{
               colorScheme: "dark",
             }}

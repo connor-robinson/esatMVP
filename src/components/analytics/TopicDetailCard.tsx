@@ -117,14 +117,14 @@ export function TopicDetailCard({
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className={cn("text-base font-bold font-sans", getRankColor())}>
+          <span className={cn("text-base font-bold font-mono", getRankColor())}>
             {topic.rank || "-"}
           </span>
         </div>
 
         {/* Topic Name */}
         <div className="col-span-2">
-          <h3 className="text-lg font-medium text-white/90 leading-tight font-sans">
+          <h3 className="text-lg font-medium text-white/90 leading-tight font-mono">
             {topic.topicName}
           </h3>
         </div>
@@ -132,39 +132,39 @@ export function TopicDetailCard({
         {/* Percentile */}
         <div className="col-span-1 flex items-center justify-center">
           {topic.percentile !== undefined ? (
-            <span className="text-white/80 font-sans">
+            <span className="text-white/80 font-mono">
               <span className="text-xl font-bold">{topic.percentile}</span>
               <span className="text-sm text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
             </span>
           ) : (
-            <span className="text-base text-white/80 font-sans">-</span>
+            <span className="text-base text-white/80 font-mono">-</span>
           )}
         </div>
 
         {/* Accuracy */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {topic.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {topic.avgSpeed > 0 ? (topic.avgSpeed / 1000).toFixed(1) : "0.0"}s/q
           </span>
         </div>
 
         {/* Sessions */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {topic.sessionCount}
           </span>
         </div>
 
         {/* Correct/Total */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className="text-base text-white/80 font-sans">
+          <span className="text-base text-white/80 font-mono">
             {Math.round(topic.questionsAnswered * (topic.accuracy / 100))}/{topic.questionsAnswered}
           </span>
         </div>
