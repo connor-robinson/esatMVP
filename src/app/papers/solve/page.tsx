@@ -17,6 +17,7 @@ import { TimerDisplay } from "@/components/papers/TimerDisplay";
 import { ChoicePill } from "@/components/papers/ChoicePill";
 import { QuestionGrid } from "@/components/papers/QuestionGrid";
 import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
+import { NavigatorPopup } from "@/components/papers/NavigatorPopup";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import type { Letter, PaperType } from "@/types/papers";
@@ -40,6 +41,7 @@ export default function PapersSolvePage() {
     answers,
     perQuestionSec,
     guessedFlags,
+    reviewFlags,
     startedAt,
     deadline,
     loadQuestions,
@@ -47,6 +49,7 @@ export default function PapersSolvePage() {
     setAnswer,
     setOther,
     setGuessedFlag,
+    setReviewFlag,
     incrementTime,
     setEndedAt,
     getTotalQuestions,
@@ -61,7 +64,9 @@ export default function PapersSolvePage() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [showNotesPopover, setShowNotesPopover] = useState(false);
-  const [showSectionsPopover, setShowSectionsPopover] = useState(false);
+  const [showNavigator, setShowNavigator] = useState(false);
+  const [showUnseenWarning, setShowUnseenWarning] = useState(false);
+  const [hasViewedContent, setHasViewedContent] = useState<Record<number, boolean>>({});
   
   // Timer effect
   useEffect(() => {
@@ -150,17 +155,11 @@ export default function PapersSolvePage() {
           setShowNotesPopover(false);
         }
       }
-      if (showSectionsPopover) {
-        const target = event.target as Element;
-        if (!target.closest('[data-sections-popover]')) {
-          setShowSectionsPopover(false);
-        }
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showNotesPopover, showSectionsPopover]);
+  }, [showNotesPopover]);
   
   const totalQuestions = getTotalQuestions();
   // Use actual questions array length for display/navigation since questions are filtered
@@ -168,6 +167,7 @@ export default function PapersSolvePage() {
   const remainingTime = getRemainingTime();
   const currentAnswer = answers[currentQuestionIndex];
   const isGuessed = guessedFlags[currentQuestionIndex];
+  const isFlaggedForReview = reviewFlags[currentQuestionIndex];
   
   // Get current question by index (questions are already filtered and ordered)
   const currentQuestion = questions[currentQuestionIndex];
@@ -213,6 +213,10 @@ export default function PapersSolvePage() {
   
   const handleGuessToggle = () => {
     setGuessedFlag(currentQuestionIndex, !isGuessed);
+  };
+
+  const handleReviewFlagToggle = () => {
+    setReviewFlag(currentQuestionIndex, !isFlaggedForReview);
   };
   
   const handleNavigation = (direction: number) => {
@@ -313,6 +317,8 @@ export default function PapersSolvePage() {
                       totalTimeMinutes={timeLimitMinutes}
                       isGuessed={isGuessed}
                       onGuessToggle={handleGuessToggle}
+                      isFlaggedForReview={isFlaggedForReview}
+                      onReviewFlagToggle={handleReviewFlagToggle}
                       paperName={paperName}
                       currentQuestion={currentQuestion}
                     />
@@ -349,229 +355,35 @@ export default function PapersSolvePage() {
           
           {/* Multiple Choice Row */}
           <div className="flex items-center justify-center gap-3 mb-8">
-                {/* Previous Button */}
-            <button
-                  onClick={() => handleNavigation(-1)}
-                  disabled={currentQuestionIndex === 0}
-              className="
-                flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                hover:bg-[#151921]
-                active:scale-95 active:transform
-                disabled:opacity-30 disabled:cursor-not-allowed
-              "
-              style={{ 
-                borderRadius: '12px'
-              }}
-              title="Previous question"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span>Prev</span>
-            </button>
-            
             {/* Answer Choices */}
-            <div className="grid grid-flow-col auto-cols-fr gap-3 flex-1">
-                  {LETTERS.map((letter) => (
-                    <button
-                      key={letter}
-                      onClick={() => handleChoiceSelect(letter)}
-                      className={`
+            <div className="grid grid-flow-col auto-cols-fr gap-3 flex-1 max-w-4xl">
+              {LETTERS.map((letter) => (
+                <button
+                  key={letter}
+                  onClick={() => handleChoiceSelect(letter)}
+                  className={`
                     h-[50px] rounded-xl font-medium transition-all duration-200 text-base
                     backdrop-blur-md shadow-md flex items-center justify-center min-w-[104px] max-w-[104px]
-                        ${currentAnswer?.choice === letter
+                    ${currentAnswer?.choice === letter
                       ? 'text-white shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]'
                       : 'bg-[#0f1114] text-neutral-300 hover:bg-[#151921]'
-                        }
-                      `}
-                      style={currentAnswer?.choice === letter ? { backgroundColor: '#5075a4' } : {}}
-                    >
-                      {letter}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Next Button */}
-            <button
-                  onClick={() => handleNavigation(1)}
-                  disabled={currentQuestionIndex === actualQuestionCount - 1}
-              className="
-                flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                hover:bg-[#151921]
-                active:scale-95 active:transform
-                disabled:opacity-30 disabled:cursor-not-allowed
-              "
-              style={{ 
-                borderRadius: '12px'
-              }}
-              title="Next question"
-            >
-              <span>Next</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+                    }
+                  `}
+                  style={currentAnswer?.choice === letter ? { backgroundColor: '#5075a4' } : {}}
+                >
+                  {letter}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Quick Nav Row */}
-          <div className="flex items-center justify-center gap-3 max-w-fit mx-auto">
-            {/* Section Jump Button with Popover (to the left of Jump Back) */}
-            {questions.length > 0 && (
-              <div className="relative" data-sections-popover>
-                <button
-                  onClick={() => setShowSectionsPopover(!showSectionsPopover)}
-                  className="
-                    flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200
-                    backdrop-blur-md shadow-md bg-[#0f1114] text-neutral-300 
-                    hover:bg-[#151921] hover:text-neutral-200
-                  "
-                  title="Jump to section"                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                  Sections
-                </button>
-
-                {/* Sections Popover */}
-                {showSectionsPopover && (
-                  <div className="fixed bottom-24 left-8 w-56 rounded-lg backdrop-blur-md shadow-2xl bg-black/90 z-[999999]" data-sections-popover>
-                    <div className="p-3 space-y-2">
-                      <div className="text-xs text-neutral-400 mb-2 px-1">
-                        Quickly navigate between sections
-                      </div>
-                      <div className="space-y-1">
-                        {sectionStarts && Object.keys(sectionStarts).length > 0 ? (
-                          Object.entries(sectionStarts)
-                            .sort(([a], [b]) => parseInt(a) - parseInt(b))
-                            .map(([indexStr, sectionName]) => {
-                              const sectionIndex = parseInt(indexStr);
-                              const question = questions[sectionIndex];
-                              const questionNumber = question?.questionNumber ?? (questionRange.start + sectionIndex);
-                              
-                              return (
-                                <button
-                                  key={sectionIndex}
-                                  onClick={() => {
-                                    handleQuestionJump(sectionIndex);
-                                    setShowSectionsPopover(false);
-                                  }}
-                                  className="
-                                    w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-200
-                                    bg-[#11161d] text-neutral-300
-                                    hover:bg-[#1a212d] hover:text-white
-                                  "
-                                >
-                                  <div className="font-medium">{sectionName}</div>
-                                  <div className="text-xs text-neutral-400">Question {questionNumber}</div>
-                                </button>
-                              );
-                            })
-                        ) : (
-                          <div className="text-xs text-neutral-400 px-1 py-1">Loading sections…</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Jump Back Button */}
-            <button
-                onClick={() => handleJumpNavigation(-1)}
-                disabled={currentQuestionIndex < 10}
-              className="
-                flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-neutral-300 
-                hover:bg-[#151921] hover:text-neutral-200
-                disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-[#0f1114] disabled:hover:text-neutral-300
-              "
-              title="Jump back 10 questions"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-              </svg>
-            </button>
-
-            
-            {/* Question Cards */}
-            <div className="flex items-center gap-2">
-              {(() => {
-                const windowStart = Math.floor(currentQuestionIndex / 10) * 10;
-                const windowCount = Math.min(10, Math.max(0, actualQuestionCount - windowStart));
-                return Array.from({ length: windowCount }, (_, i) => {
-                  const questionIndex = windowStart + i;
-                  // Ensure we don't go beyond actual questions array
-                  if (questionIndex >= actualQuestionCount || !questions[questionIndex]) return null;
-                  // Get actual question number from the questions array
-                  const question = questions[questionIndex];
-                  const questionNumber = question?.questionNumber ?? (questionRange.start + questionIndex);
-                  const answer = answers[questionIndex];
-                  const isGuessed = guessedFlags[questionIndex];
-                  const isCurrent = questionIndex === currentQuestionIndex;
-                  const sectionHeader = sectionStarts[questionIndex];
-                  const isLast = questionIndex === actualQuestionCount - 1;
-                  
-                  return (
-                    <div key={questionIndex} className="relative flex items-center justify-center">
-                      {!isLast && sectionHeader && (
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-wide text-neutral-400 pointer-events-none whitespace-nowrap">
-                          {sectionHeader}
-                        </div>
-                      )}
-                      {isLast && (
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-wide text-neutral-400 pointer-events-none">END</div>
-                      )}
-                      <button
-                        onClick={() => handleQuestionJump(questionIndex)}
-                        className={`
-                        h-[50px] w-[50px] rounded-xl text-sm font-medium transition-all duration-200
-                        backdrop-blur-md shadow-md flex items-center justify-center flex-shrink-0
-                          ${isCurrent 
-                          ? 'text-white scale-110 shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]'
-                            : answer?.choice 
-                              ? 'bg-[#11161d] text-neutral-300 hover:bg-[#1a212d] hover:scale-105'
-                              : 'bg-[#0f1114] text-neutral-300 hover:scale-105'
-                          }
-                        `}
-                        style={
-                          isCurrent 
-                            ? { backgroundColor: '#5075a4' }
-                            : {}
-                        }
-                      >
-                        {questionNumber}
-                      </button>
-                    </div>
-                  );
-                }).filter(Boolean);
-              })()}
-              </div>
-              
-            {/* Jump Forward Button */}
-            <button
-                onClick={() => handleJumpNavigation(1)}
-                disabled={currentQuestionIndex >= actualQuestionCount - 10}
-              className="
-                flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-neutral-300 
-                hover:bg-[#151921] hover:text-neutral-200
-                disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-[#0f1114] disabled:hover:text-neutral-300
-              "
-              title="Jump forward 10 questions"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Submit Session Button */}
+          {/* Bottom Bar: Submit Section (left) | Previous, Navigator, Next (right) */}
+          <div className="flex items-center justify-between w-full">
+            {/* Submit Section Button - Left */}
             <button
               onClick={() => setShowConfirmModal(true)}
               className="
-                flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
+                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200
                 backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
                 hover:bg-[#151921]
                 active:scale-95 active:transform
@@ -579,13 +391,83 @@ export default function PapersSolvePage() {
               style={{ 
                 borderRadius: '12px'
               }}
-              title="Submit your session and go to marking"
+              title="Submit section"
             >
-              <span>Submit</span>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18M3 12h18" />
               </svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Submit Section</span>
             </button>
+
+            {/* Previous, Navigator, Next Buttons - Right (close together) */}
+            <div className="flex items-center gap-2">
+              {/* Previous Button */}
+              <button
+                onClick={() => handleNavigation(-1)}
+                disabled={currentQuestionIndex === 0}
+                className="
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
+                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
+                  hover:bg-[#151921]
+                  active:scale-95 active:transform
+                  disabled:opacity-30 disabled:cursor-not-allowed
+                "
+                style={{ 
+                  borderRadius: '12px'
+                }}
+                title="Previous question"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>Previous</span>
+              </button>
+
+              {/* Navigator Button */}
+              <button
+                onClick={() => setShowNavigator(true)}
+                className="
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
+                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
+                  hover:bg-[#151921]
+                  active:scale-95 active:transform
+                "
+                style={{ 
+                  borderRadius: '12px'
+                }}
+                title="Open navigator"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <span>Navigator</span>
+              </button>
+
+              {/* Next Button */}
+              <button
+                onClick={() => handleNavigation(1)}
+                disabled={currentQuestionIndex === actualQuestionCount - 1}
+                className="
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
+                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
+                  hover:bg-[#151921]
+                  active:scale-95 active:transform
+                  disabled:opacity-30 disabled:cursor-not-allowed
+                "
+                style={{ 
+                  borderRadius: '12px'
+                }}
+                title="Next question"
+              >
+                <span>Next</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -699,6 +581,19 @@ export default function PapersSolvePage() {
             </div>
           </div>
         )}
+
+        {/* Navigator Popup */}
+        <NavigatorPopup
+          isOpen={showNavigator}
+          onClose={() => setShowNavigator(false)}
+          totalQuestions={actualQuestionCount}
+          currentQuestionIndex={currentQuestionIndex}
+          answers={answers}
+          reviewFlags={reviewFlags}
+          visitedQuestions={visitedQuestions}
+          onNavigateToQuestion={handleQuestionJump}
+          questionNumbers={questions.map((q) => q.questionNumber)}
+        />
       </div>
     </Container>
   );

@@ -53,7 +53,7 @@ export async function isPartCompleted(
       .ilike('paper_variant', `${year}-%`);
     
     if (!error1 && data1) {
-      data = data1;
+      data = data1 as any[];
     }
     
     // Also check with ExamName (for backwards compatibility or data inconsistencies)
@@ -69,7 +69,8 @@ export async function isPartCompleted(
       if (!error2 && data2) {
         // Merge results, avoiding duplicates
         const existingIds = new Set(data.map(s => s.id));
-        data = [...data, ...data2.filter(s => !existingIds.has(s.id))];
+        const typedData2 = data2 as any[];
+        data = [...data, ...typedData2.filter(s => !existingIds.has(s.id))];
       }
       
       error = error2 || error1;
@@ -161,7 +162,8 @@ export async function loadAllCompletedSessions(userId: string): Promise<Map<stri
 
     // Group sessions by paper_name for faster lookup
     const sessionsByPaperName = new Map<string, any[]>();
-    for (const session of data) {
+    const typedData = data as any[];
+    for (const session of typedData) {
       const paperName = session.paper_name;
       if (!sessionsByPaperName.has(paperName)) {
         sessionsByPaperName.set(paperName, []);

@@ -19,6 +19,8 @@ interface QuestionDisplayProps {
   totalTimeMinutes?: number;
   isGuessed?: boolean;
   onGuessToggle?: () => void;
+  isFlaggedForReview?: boolean;
+  onReviewFlagToggle?: () => void;
   paperName?: string;
   currentQuestion?: Question;
 }
@@ -30,7 +32,9 @@ export function QuestionDisplay({
   remainingTime = 0,
   totalTimeMinutes = 60, 
   isGuessed = false, 
-  onGuessToggle, 
+  onGuessToggle,
+  isFlaggedForReview = false,
+  onReviewFlagToggle,
   paperName = "",
   currentQuestion 
 }: QuestionDisplayProps) {
@@ -281,12 +285,9 @@ export function QuestionDisplay({
 
                 {/* Fixed overlay for buttons - positioned as sibling of scrollable container */}
                 <div className="absolute inset-0 pointer-events-none z-50">
-                  {/* Top Bar: Question Number and Mark-as-Guess (Left), Timer (Right) */}
+                  {/* Top Bar: Mark-as-Guess (Left), Timer (Right) */}
                   <div className="absolute top-6 left-6 pointer-events-auto">
                     <div className="flex flex-col items-start gap-1">
-                      <div className={`text-lg font-bold px-3 py-1 rounded-lg backdrop-blur-sm ${isDarkMode ? 'text-neutral-100 bg-black/50' : 'text-neutral-800 bg-white/80'}`}>
-                        Question {questionNumber}
-                      </div>
                       {onGuessToggle && (
                         <div className={`flex items-center gap-2 px-3 py-1 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
                           <label className={`text-xs font-semibold uppercase tracking-wider ${isGuessed ? 'text-yellow-600' : isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>
@@ -314,8 +315,8 @@ export function QuestionDisplay({
                     </div>
                   </div>
 
-                  {/* Timer - Top Right (aligned with top bar) */}
-                  <div className="absolute top-6 right-6 pointer-events-auto">
+                  {/* Timer and Flag for Review - Top Right */}
+                  <div className="absolute top-6 right-6 pointer-events-auto flex flex-col items-end gap-2">
                     <div className={`flex items-center justify-center gap-2 px-3 py-3 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
                       <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" strokeWidth="2"/>
@@ -367,6 +368,26 @@ export function QuestionDisplay({
                         {Math.floor(remainingTime / 60).toString().padStart(2, '0')}:{(remainingTime % 60).toString().padStart(2, '0')}
                       </span>
                     </div>
+                    {/* Flag for Review Button */}
+                    {onReviewFlagToggle && (
+                      <button
+                        onClick={onReviewFlagToggle}
+                        className={`
+                          flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
+                          backdrop-blur-sm border shadow-sm
+                          ${isFlaggedForReview 
+                            ? `${isDarkMode ? 'bg-blue-600/80 border-blue-500/50 text-white' : 'bg-blue-500/90 border-blue-600 text-white'}`
+                            : `${isDarkMode ? 'bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90' : 'bg-white/80 border-neutral-300 text-neutral-700 hover:bg-white'}`
+                          }
+                        `}
+                        title={isFlaggedForReview ? "Remove flag for review" : "Flag for review"}
+                      >
+                        <svg className="w-3.5 h-3.5" fill={isFlaggedForReview ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        <span>Flag</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Fullscreen Button - Bottom Left */}

@@ -31,6 +31,7 @@ interface PaperSessionState {
   perQuestionSec: number[];
   correctFlags: (boolean | null)[];
   guessedFlags: boolean[];
+  reviewFlags: boolean[];
   mistakeTags: MistakeTag[];
   visitedQuestions: boolean[];
   // Section boundaries for quick nav headers
@@ -68,6 +69,7 @@ interface PaperSessionState {
   setAddToDrill: (questionIndex: number, addToDrill: boolean) => void;
   setCorrectFlag: (questionIndex: number, correct: boolean | null) => void;
   setGuessedFlag: (questionIndex: number, guessed: boolean) => void;
+  setReviewFlag: (questionIndex: number, flagged: boolean) => void;
   setMistakeTag: (questionIndex: number, tag: MistakeTag) => void;
   
   navigateToQuestion: (index: number) => void;
@@ -121,6 +123,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       perQuestionSec: [],
       correctFlags: [],
       guessedFlags: [],
+      reviewFlags: [],
       mistakeTags: [],
       visitedQuestions: [],
       sectionStarts: {},
@@ -155,6 +158,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           perQuestionSec: Array.from({ length: totalQuestions }, () => 0),
           correctFlags: Array.from({ length: totalQuestions }, () => null),
           guessedFlags: Array.from({ length: totalQuestions }, () => false),
+          reviewFlags: Array.from({ length: totalQuestions }, () => false),
           mistakeTags: Array.from({ length: totalQuestions }, () => 'None' as MistakeTag),
           visitedQuestions: Array.from({ length: totalQuestions }, () => false),
           startedAt,
@@ -184,6 +188,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           answers: Array.from({ length: totalQuestions }, initialAnswer),
           correctFlags: Array.from({ length: totalQuestions }, () => null as boolean | null),
           guessedFlags: Array.from({ length: totalQuestions }, () => false),
+          reviewFlags: Array.from({ length: totalQuestions }, () => false),
           mistakeTags: Array.from({ length: totalQuestions }, () => 'None' as MistakeTag),
           notes: '',
           score: null,
@@ -452,6 +457,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   perQuestionSec: Array.from({ length: actualQuestionCount }, (_, i) => currentState.perQuestionSec[i] || 0),
                   correctFlags: Array.from({ length: actualQuestionCount }, (_, i) => currentState.correctFlags[i] ?? null),
                   guessedFlags: Array.from({ length: actualQuestionCount }, (_, i) => currentState.guessedFlags[i] || false),
+                  reviewFlags: Array.from({ length: actualQuestionCount }, (_, i) => currentState.reviewFlags?.[i] || false),
                   mistakeTags: Array.from({ length: actualQuestionCount }, (_, i) => (currentState.mistakeTags[i] || 'None') as MistakeTag),
                   visitedQuestions: Array.from({ length: actualQuestionCount }, () => false),
                   questionOrder: Array.from({ length: actualQuestionCount }, (_, i) => i + 1),
@@ -535,6 +541,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         get().schedulePersist();
       },
       
+      setReviewFlag: (questionIndex, flagged) => {
+        set((state) => {
+          const newReviewFlags = [...state.reviewFlags];
+          newReviewFlags[questionIndex] = flagged;
+          return { reviewFlags: newReviewFlags };
+        });
+        get().schedulePersist();
+      },
+      
       setMistakeTag: (questionIndex, tag) => {
         set((state) => {
           const newMistakeTags = [...state.mistakeTags];
@@ -596,6 +611,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           perQuestionSec: [],
           correctFlags: [],
           guessedFlags: [],
+          reviewFlags: [],
           mistakeTags: [],
           visitedQuestions: [],
           startedAt: null,
@@ -671,6 +687,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           const perQuestionSec = (sessionData.per_question_seconds as number[]) || [];
           const correctFlags = (sessionData.correct_flags as (boolean | null)[]) || [];
           const guessedFlags = (sessionData.guessed_flags as boolean[]) || [];
+          const reviewFlags = (sessionData.review_flags as boolean[]) || [];
           const mistakeTags = (sessionData.mistake_tags as MistakeTag[]) || [];
 
           // Ensure arrays are the right length
@@ -686,6 +703,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           const paddedGuessedFlags = Array.from({ length: totalQuestions }, (_, i) => 
             guessedFlags[i] || false
           );
+          const paddedReviewFlags = Array.from({ length: totalQuestions }, (_, i) => 
+            reviewFlags[i] || false
+          );
           const paddedMistakeTags = Array.from({ length: totalQuestions }, (_, i) => 
             (mistakeTags[i] || 'None') as MistakeTag
           );
@@ -695,6 +715,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             perQuestionSec: paddedPerQuestionSec,
             correctFlags: paddedCorrectFlags,
             guessedFlags: paddedGuessedFlags,
+            reviewFlags: paddedReviewFlags,
             mistakeTags: paddedMistakeTags,
             visitedQuestions: Array.from({ length: totalQuestions }, () => false),
             sectionStarts: {},
@@ -748,6 +769,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           answers: state.answers,
           correctFlags: state.correctFlags,
           guessedFlags: state.guessedFlags,
+          reviewFlags: state.reviewFlags,
           mistakeTags: state.mistakeTags,
           notes: state.notes,
           score: {
@@ -852,6 +874,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         perQuestionSec: state.perQuestionSec,
         correctFlags: state.correctFlags,
         guessedFlags: state.guessedFlags,
+        reviewFlags: state.reviewFlags,
         mistakeTags: state.mistakeTags,
         visitedQuestions: state.visitedQuestions,
         startedAt: state.startedAt,
