@@ -75,12 +75,12 @@ function SessionCardComponent({
         </div>
 
         {/* Score */}
-        <div className="col-span-2 flex items-center justify-center">
-          <div className="flex items-center gap-1.5">
-            <span className="text-2xl font-bold text-white/95 tracking-tight font-sans">
+        <div className="col-span-2 flex items-center justify-end">
+          <div className="text-right">
+            <div className="text-base font-bold text-white/90 tabular-nums font-mono">
               {session.score || 0}
-            </span>
-            <span className="text-sm text-white/40 font-medium font-sans">/ 1000</span>
+            </div>
+            <div className="text-xs text-white/40 font-mono">/ 1000</div>
           </div>
         </div>
 

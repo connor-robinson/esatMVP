@@ -290,12 +290,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
-          className={cn(
-            "relative rounded-organic-md p-5 transition-all overflow-hidden",
-            isHighlighted
-              ? "bg-blue-500/10 ring-1 ring-blue-500/20"
-              : "bg-white/[0.02] hover:bg-white/[0.04]"
-          )}
+            className={cn(
+              "relative rounded-organic-md p-5 transition-all overflow-hidden",
+              isHighlighted
+                ? "bg-green-500/10 ring-1 ring-green-500/20"
+                : "bg-white/[0.02] hover:bg-white/[0.04]"
+            )}
         >
           {/* Progress Bar - Only for top 3 or current attempt */}
           {showProgressBar && (
@@ -304,7 +304,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 initial={{ width: 0 }}
                 animate={{ width: `${scorePercentage}%` }}
                 transition={{ duration: 0.8, delay: idx * 0.05 }}
-                className="h-full bg-blue-500/40"
+                className="h-full bg-green-500/40"
               />
             </div>
           )}
@@ -313,7 +313,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           <div className="grid grid-cols-12 gap-4 items-center relative z-10">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
-              <div className="text-lg font-bold tabular-nums font-mono text-blue-400">
+              <div className="text-lg font-bold tabular-nums font-mono text-green-400">
                 {session.rank}
               </div>
             </div>
@@ -362,7 +362,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className="text-right">
                 <div className={cn(
                   "text-base font-bold font-mono",
-                  "text-blue-400"
+                  "text-green-400"
                 )}>
                   {session.accuracy.toFixed(0)}%
                 </div>
@@ -553,7 +553,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div key="ellipsis" className="flex justify-center py-2">
               <span className={cn(
                 "text-2xl font-bold",
-                isGlobalView ? "text-blue-500/30" : "text-white/20"
+                isGlobalView ? "text-green-500/30" : "text-white/20"
               )}>...</span>
             </div>
           );
@@ -679,7 +679,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-primary" />
+                  <Trophy className="h-4 w-4 text-green-400" />
                   <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Session Score</div>
                 </div>
                 <button 
@@ -689,7 +689,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   <Info className="h-4 w-4" />
                 </button>
               </div>
-              <div className="text-5xl font-bold text-white/90 tabular-nums leading-none mb-2">
+              <div className="text-5xl font-bold text-green-400 tabular-nums leading-none mb-2">
                 {result.score}
               </div>
               <div className="text-xs text-white/40 font-mono">Out of 1000 points</div>
@@ -810,7 +810,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     onClick={() => setRankingView("global")}
                     className={cn(
                       "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-all",
-                      rankingView === "global" ? "bg-blue-500/20 text-blue-400" : "text-white/40 hover:text-white/60"
+                      rankingView === "global" ? "bg-green-500/20 text-green-400" : "text-white/40 hover:text-white/60"
                     )}
                   >
                     <Users className="h-3 w-3" />
@@ -819,7 +819,21 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 </div>
               </div>
 
-              <div className="space-y-8">
+              {/* Column Headers - Show only for personal view */}
+              {!isLoadingRankings && result.topicBreakdown.length > 0 && rankingView === "personal" && (
+                <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-sans">
+                  <div className="col-span-1 text-center">Rank</div>
+                  <div className="col-span-2 text-left">Topic</div>
+                  <div className="col-span-1 text-center">Percentile</div>
+                  <div className="col-span-2 text-center">Accuracy</div>
+                  <div className="col-span-2 text-center">Speed</div>
+                  <div className="col-span-2 text-center">Sessions</div>
+                  <div className="col-span-1 text-center">Questions</div>
+                  <div className="col-span-1"></div>
+                </div>
+              )}
+
+              <div className={cn(rankingView === "personal" ? "space-y-1" : "space-y-8")}>
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicInfo = getTopic(topic.topicId);
                   if (!topicInfo) {
@@ -827,7 +841,84 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   }
                   const topicName = topicInfo?.name || topic.topicId;
                   const isGlobalView = rankingView === "global";
+                  
+                  // Get rankings data for this topic
+                  const topicRankings = rankingsData[topic.topicId]?.[rankingView];
+                  const currentRank = topicRankings?.currentRank || null;
+                  
+                  // For personal view, show topic breakdown card similar to TopicDetailCard
+                  if (!isGlobalView && !isLoadingRankings) {
+                    // Calculate percentile if we have rank information
+                    // For now, we'll just show the topic stats in a card format
+                    return (
+                      <motion.div
+                        key={topic.topicId}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 + idx * 0.1 }}
+                        className="p-5 rounded-organic-md bg-white/5 hover:bg-white/10 transition-all"
+                      >
+                        <div className="grid grid-cols-12 gap-4 items-center">
+                          {/* Rank */}
+                          <div className="col-span-1 flex items-center justify-center">
+                            <span className="text-base font-bold font-sans text-white/70">
+                              {idx + 1}
+                            </span>
+                          </div>
 
+                          {/* Topic Name */}
+                          <div className="col-span-2">
+                            <h3 className="text-lg font-medium text-white/90 leading-tight font-sans">
+                              {topicName}
+                            </h3>
+                          </div>
+
+                          {/* Percentile - Show current rank info if available */}
+                          <div className="col-span-1 flex items-center justify-center">
+                            {currentRank !== null ? (
+                              <span className="text-white/80 font-sans">
+                                <span className="text-xl font-bold">{currentRank}</span>
+                                <span className="text-sm text-white/60">th</span>
+                              </span>
+                            ) : (
+                              <span className="text-base text-white/80 font-sans">-</span>
+                            )}
+                          </div>
+
+                          {/* Accuracy */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <span className="text-base text-white/80 font-sans">
+                              {topic.accuracy.toFixed(1)}%
+                            </span>
+                          </div>
+
+                          {/* Speed */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <span className="text-base text-white/80 font-sans">
+                              {formatTimeMs(topic.avgTimeMs)}/q
+                            </span>
+                          </div>
+
+                          {/* Sessions - Show 1 for current session */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <span className="text-base text-white/80 font-sans">1</span>
+                          </div>
+
+                          {/* Questions */}
+                          <div className="col-span-1 flex items-center justify-center">
+                            <span className="text-base text-white/80 font-sans">
+                              {topic.correct}/{topic.total}
+                            </span>
+                          </div>
+
+                          {/* Empty space to match grid */}
+                          <div className="col-span-1"></div>
+                        </div>
+                      </motion.div>
+                    );
+                  }
+
+                  // For global view, show the existing session cards format but with green theme
                   return (
                     <motion.div
                       key={topic.topicId}
@@ -835,42 +926,40 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 + idx * 0.1 }}
                     >
-                      {/* Topic Header */}
+                      {/* Topic Header for Global View */}
                       <div className="mb-6">
                         <h3 className="text-xl font-heading font-bold text-white/90 mb-1">
                           {topicName}
                         </h3>
-                        {isGlobalView && (
-                          <div className="grid grid-cols-12 gap-4 items-center mt-4 pb-2 border-b border-white/5">
-                            <div className="col-span-1 text-center">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Rank</span>
-                            </div>
-                            <div className="col-span-4">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Player</span>
-                            </div>
-                            <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Score</span>
-                            </div>
-                            <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Accuracy</span>
-                            </div>
-                            <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Speed</span>
-                            </div>
-                            <div className="col-span-1 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Q's</span>
-                            </div>
+                        <div className="grid grid-cols-12 gap-4 items-center mt-4 pb-2 border-b border-white/5">
+                          <div className="col-span-1 text-center">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Rank</span>
                           </div>
-                        )}
+                          <div className="col-span-4">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Player</span>
+                          </div>
+                          <div className="col-span-2 text-right">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Score</span>
+                          </div>
+                          <div className="col-span-2 text-right">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Accuracy</span>
+                          </div>
+                          <div className="col-span-2 text-right">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Speed</span>
+                          </div>
+                          <div className="col-span-1 text-right">
+                            <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Q's</span>
+                          </div>
+                        </div>
                       </div>
 
                       {/* Session Cards List */}
                       {isLoadingRankings ? (
                         <div className="h-32 flex items-center justify-center bg-white/[0.02] rounded-lg border border-white/5">
                           <div className="animate-pulse flex space-x-2">
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-blue-500/20" : "bg-white/20")}></div>
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-green-500/20" : "bg-white/20")}></div>
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-green-500/20" : "bg-white/20")}></div>
+                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-green-500/20" : "bg-white/20")}></div>
                           </div>
                         </div>
                       ) : (

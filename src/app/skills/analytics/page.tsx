@@ -17,6 +17,7 @@ import { calculateSessionScore, calculateTrend, generateInsights, getTopicExtrem
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
+import { TOPICS } from "@/config/topics";
 
 const PersonalView = lazy(() =>
   import("@/components/analytics/PersonalView").then((mod) => ({ default: mod.PersonalView })),
