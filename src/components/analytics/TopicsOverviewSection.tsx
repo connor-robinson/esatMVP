@@ -152,26 +152,71 @@ export function TopicsOverviewSection({
 
   return (
     <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
-      {/* Section Header */}
-      <button
-        onClick={onToggleCollapse}
-        className="w-full flex items-center justify-between mb-6 group"
-      >
-        <div className="text-left">
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/90 group-hover:text-white transition-colors">
+      {/* Section Header with Search and Sort */}
+      <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+        <div className="text-left flex-shrink-0">
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/90">
             Topic Performance & Overview
           </h2>
           <p className="text-sm text-white/60 mt-1">
             Analyze your performance across all topics
           </p>
         </div>
-        <ChevronDown 
-          className={cn(
-            "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-            isCollapsed && "rotate-180"
-          )}
-        />
-      </button>
+        
+        {/* Search and Sort Controls */}
+        <div className="flex gap-3 items-center flex-1 min-w-0 justify-end">
+          {/* Search Input */}
+          <div className="relative flex-1 sm:max-w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+            <input
+              type="text"
+              placeholder="Search topics..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200 font-sans"
+            />
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => {
+                const newSort = e.target.value as "strength" | "weakness" | "questions";
+                setSortBy(newSort);
+              }}
+              className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200 font-sans"
+              style={{
+                colorScheme: "dark",
+              }}
+            >
+              <option value="strength" className="bg-neutral-800 text-white">
+                Strongest First
+              </option>
+              <option value="weakness" className="bg-neutral-800 text-white">
+                Weakest First
+              </option>
+              <option value="questions" className="bg-neutral-800 text-white">
+                Most Practiced
+              </option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+          </div>
+
+          {/* Collapse Button */}
+          <button
+            onClick={onToggleCollapse}
+            className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group flex-shrink-0"
+          >
+            <ChevronDown 
+              className={cn(
+                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                isCollapsed && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
+      </div>
 
       {/* Collapsible Content */}
       <AnimatePresence initial={false}>
@@ -185,49 +230,9 @@ export function TopicsOverviewSection({
           >
             {/* All Topics Section */}
             <div className="space-y-4">
-              {/* Search and Sort Controls - Top Row */}
-              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                {/* Search Input */}
-                <div className="relative flex-1 sm:max-w-[280px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                  <input
-                    type="text"
-                    placeholder="Search topics..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200 font-sans"
-                  />
-                </div>
-
-                {/* Sort Dropdown */}
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => {
-                      const newSort = e.target.value as "strength" | "weakness" | "questions";
-                      setSortBy(newSort);
-                    }}
-                    className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200 font-sans"
-                    style={{
-                      colorScheme: "dark",
-                    }}
-                  >
-                    <option value="strength" className="bg-neutral-800 text-white">
-                      Strongest First
-                    </option>
-                    <option value="weakness" className="bg-neutral-800 text-white">
-                      Weakest First
-                    </option>
-                    <option value="questions" className="bg-neutral-800 text-white">
-                      Most Practiced
-                    </option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
-                </div>
-              </div>
 
               {/* Column Headers */}
-              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-sans">
+              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-mono">
                 <div className="col-span-1 text-center">Rank</div>
                 <div className="col-span-2 text-left">Topic</div>
                 <div className="col-span-1 text-center">
@@ -325,22 +330,33 @@ export function TopicsOverviewSection({
                   ) : (
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
-                      {visibleTopicsData.allTopicsWithRank?.map((topic, index) => {
-                        const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
-                        // When showing all topics, use sequential rank based on current sort order
-                        const displayRank = index + 1;
+                      {(() => {
+                        // Use filteredTopics which is already sorted by sortBy
+                        // Calculate top/bottom based on composite rank for color coding
+                        const topicsByRank = [...filteredTopics].sort((a, b) => (a.rank || 999) - (b.rank || 999));
+                        const topCount = Math.min(3, Math.ceil(filteredTopics.length / 2));
+                        const bottomCount = Math.min(3, Math.floor(filteredTopics.length / 2));
+                        const topByRank = topicsByRank.slice(0, topCount);
+                        const bottomByRank = filteredTopics.length > topCount ? topicsByRank.slice(-bottomCount) : [];
+                        const topTopicIds = new Set(topByRank.map(t => t.topicId));
+                        const bottomTopicIds = new Set(bottomByRank.map(t => t.topicId));
                         
-                        return (
-                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                            <TopicDetailCard
-                              topic={{ ...topic, rank: displayRank }}
-                              isExpanded={expandedId === topic.topicId}
-                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                              isTopTopic={isTopTopic}
-                            />
-                          </div>
-                        );
-                      })}
+                        return filteredTopics.map((topic, index) => {
+                          const isTopTopic = topTopicIds.has(topic.topicId) ? true : bottomTopicIds.has(topic.topicId) ? false : undefined;
+                          const displayRank = index + 1;
+                          
+                          return (
+                            <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                              <TopicDetailCard
+                                topic={{ ...topic, rank: displayRank }}
+                                isExpanded={expandedId === topic.topicId}
+                                onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                                isTopTopic={isTopTopic}
+                              />
+                            </div>
+                          );
+                        });
+                      })()}
                       
                       {/* Hide All Button */}
                       <div className="flex justify-center pt-2">

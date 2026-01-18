@@ -240,7 +240,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
                 repeat: Infinity,
                 repeatDelay: 3
               }}
-              className="text-primary"
+              className="text-white"
             >
               <TrendingUp className="h-5 w-5" />
             </motion.div>
@@ -311,7 +311,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
           <ResponsiveContainer width="100%" height={320}>
             <LineChart 
               data={chartData} 
-              margin={{ top: 15, right: 5, left: 5, bottom: 30 }}
+              margin={{ top: 15, right: 5, left: 5, bottom: 0 }}
             >
             <defs>
               <linearGradient id="accuracyGradient" x1="0" y1="0" x2="0" y2="1">
@@ -361,11 +361,11 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
               activeDot={false}
             />
             
-            {/* Smooth curved trend line - desaturated teal */}
+            {/* Smooth curved trend line - white */}
             <Line
               type="natural"
               dataKey="accuracy"
-              stroke="#85BC82"
+              stroke="rgba(255,255,255,0.9)"
               strokeWidth={2.5}
               dot={false}
               activeDot={false}
