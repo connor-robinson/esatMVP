@@ -17,12 +17,14 @@ interface TopicDetailCardProps {
   topic: TopicDetailStats;
   isExpanded: boolean;
   onClick: () => void;
+  isTopTopic?: boolean; // For green/red color coding
 }
 
 export function TopicDetailCard({
   topic,
   isExpanded,
   onClick,
+  isTopTopic,
 }: TopicDetailCardProps) {
   // Generate history data when expanded
   const historyData = useMemo(
@@ -30,14 +32,21 @@ export function TopicDetailCard({
     [isExpanded, topic]
   );
 
-  // Color-code by performance
+  // Color code based on isTopTopic prop (green for top, red for bottom)
   const getPerformanceColor = () => {
-    if (topic.accuracy >= 85) {
-      return "bg-primary/10";
-    } else if (topic.accuracy < 70) {
-      return "bg-error/10";
-    }
+    if (isTopTopic === true) return "bg-success/10";
+    if (isTopTopic === false) return "bg-error/10";
     return "bg-white/[0.02]";
+  };
+
+  // Get ordinal suffix helper
+  const getOrdinalSuffix = (num: number) => {
+    const j = num % 10;
+    const k = num % 100;
+    if (j === 1 && k !== 11) return "st";
+    if (j === 2 && k !== 12) return "nd";
+    if (j === 3 && k !== 13) return "rd";
+    return "th";
   };
 
   // Get global rank display with color coding
@@ -90,12 +99,12 @@ export function TopicDetailCard({
 
   const globalRankDisplay = getGlobalRankDisplay();
 
-  // Get rank color for topic performance
+  // Get rank color (gold, silver, bronze)
   const getRankColor = () => {
     if (!topic.rank) return "text-white/70";
-    if (topic.rank === 1) return "text-primary";
-    if (topic.rank === 2) return "text-success";
-    if (topic.rank === 3) return "text-interview";
+    if (topic.rank === 1) return "text-yellow-400"; // Gold
+    if (topic.rank === 2) return "text-gray-300"; // Silver
+    if (topic.rank === 3) return "text-amber-600"; // Bronze
     return "text-white/70";
   };
 
@@ -119,16 +128,21 @@ export function TopicDetailCard({
 
         {/* Topic Name */}
         <div className="col-span-2">
-          <h3 className="text-base font-semibold text-white/90 leading-tight">
+          <h3 className="text-lg font-semibold text-white/90 leading-tight">
             {topic.topicName}
           </h3>
         </div>
 
         {/* Percentile */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className="text-base text-white/80">
-            {topic.percentile !== undefined ? `${topic.percentile}th` : "-"}
-          </span>
+          {topic.percentile !== undefined ? (
+            <span className="text-white/80">
+              <span className="text-2xl font-bold">{topic.percentile}</span>
+              <span className="text-xs text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
+            </span>
+          ) : (
+            <span className="text-base text-white/80">-</span>
+          )}
         </div>
 
         {/* Accuracy */}

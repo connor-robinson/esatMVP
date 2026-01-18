@@ -5,13 +5,15 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ChevronDown, ChevronRight, Plus, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Check, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor, getSectionColor } from "@/config/colors";
 import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, ExamName } from "@/types/papers";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { getPaperCompletionStatus, getPaperSectionCompletion } from "@/lib/papers/libraryCompletion";
 
 interface PaperRowProps {
   paper: Paper;
@@ -33,7 +35,11 @@ export function PaperRow({
   const [isExpanded, setIsExpanded] = useState(false);
   const [availableSections, setAvailableSections] = useState<PaperSection[]>([]);
   const [loadingSections, setLoadingSections] = useState(false);
+  const [paperCompletionStatus, setPaperCompletionStatus] = useState<'none' | 'partial' | 'complete'>('none');
+  const [sectionCompletionMap, setSectionCompletionMap] = useState<Map<PaperSection, boolean>>(new Map());
+  const [loadingCompletion, setLoadingCompletion] = useState(false);
 
+  const session = useSupabaseSession();
   const paperColor = getPaperTypeColor(paper.examName);
 
   // Load sections when expanded
@@ -68,6 +74,26 @@ export function PaperRow({
   const allSectionsSelected = useMemo(() => {
     return availableSections.length > 0 && availableSections.every(s => selectedSections.has(s));
   }, [availableSections, selectedSections]);
+
+  // Load completion status when sections are available
+  useEffect(() => {
+    if (availableSections.length > 0 && session?.user?.id && !loadingCompletion) {
+      const loadCompletionStatus = async () => {
+        setLoadingCompletion(true);
+        try {
+          const status = await getPaperCompletionStatus(session.user.id, paper, availableSections);
+          const sectionMap = await getPaperSectionCompletion(session.user.id, paper, availableSections);
+          setPaperCompletionStatus(status);
+          setSectionCompletionMap(sectionMap);
+        } catch (error) {
+          console.error('[PaperRow] Error loading completion status:', error);
+        } finally {
+          setLoadingCompletion(false);
+        }
+      };
+      loadCompletionStatus();
+    }
+  }, [availableSections, session?.user?.id, paper, loadingCompletion]);
 
   const handleAddFullPaper = () => {
     if (availableSections.length > 0) {
@@ -122,6 +148,18 @@ export function PaperRow({
             <div className="text-xs text-white/50">
               {paper.examType}
             </div>
+            {/* Completion status badge for paper */}
+            {paperCompletionStatus !== 'none' && (
+              <div className={cn(
+                "px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide flex items-center gap-1",
+                paperCompletionStatus === 'complete' 
+                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+              )}>
+                <CheckCircle2 className="w-3 h-3" />
+                {paperCompletionStatus === 'complete' ? 'Complete' : 'In Progress'}
+              </div>
+            )}
           </div>
         </div>
 
@@ -195,6 +233,7 @@ export function PaperRow({
               <div className="flex flex-wrap gap-2">
                 {availableSections.map((section) => {
                   const isSelected = selectedSections.has(section);
+                  const isCompleted = sectionCompletionMap.get(section);
                   const sectionColor = getSectionColor(section);
                   return (
                     <button
@@ -202,7 +241,7 @@ export function PaperRow({
                       type="button"
                       onClick={() => onToggleSection(paper.id, section)}
                       className={cn(
-                        "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                        "px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5",
                         isSelected
                           ? "text-white shadow-sm"
                           : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
@@ -215,7 +254,10 @@ export function PaperRow({
                           : undefined
                       }
                     >
-                      {section}
+                      <span>{section}</span>
+                      {isCompleted && (
+                        <CheckCircle2 className="w-3 h-3 text-green-400" strokeWidth={2.5} />
+                      )}
                     </button>
                   );
                 })}

@@ -110,7 +110,7 @@ export function StatsHero({
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Current Streak</div>
                 <div className="flex items-center gap-2">
                   <div className="text-3xl font-bold leading-none text-white/95">{currentStreak}</div>
-                  <Flame className="h-6 w-6 text-primary" />
+                  <Flame className="h-6 w-6 text-white/90" />
                 </div>
                 <div className="text-xs text-white/40 mt-1">
                   Best: {longestStreak} days

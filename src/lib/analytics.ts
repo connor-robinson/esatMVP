@@ -423,6 +423,81 @@ export function calculateLeaderboardScore(stats: UserStats): number {
 }
 
 /**
+ * Calculate composite topic performance score
+ * Combines accuracy (50%), practice volume (30%), and speed (20%)
+ * Designed to be fair and prevent gaming the system
+ * 
+ * @param topic - Topic stats to score
+ * @returns Composite score (0-1000)
+ */
+export function calculateTopicPerformanceScore(topic: TopicStats): number {
+  const accuracyWeight = 0.5;
+  const volumeWeight = 0.3;
+  const speedWeight = 0.2;
+
+  if (topic.questionsAnswered === 0) return 0;
+
+  // Minimum threshold: need at least 10 questions to get a meaningful score
+  const minQuestions = 10;
+  if (topic.questionsAnswered < minQuestions) {
+    // Scale down score for topics with insufficient data
+    const scaleFactor = topic.questionsAnswered / minQuestions;
+    return calculateTopicPerformanceScore({
+      ...topic,
+      questionsAnswered: minQuestions,
+    }) * scaleFactor;
+  }
+
+  // Accuracy score (0-1) - normalized to 0-1 range
+  const accuracy = topic.accuracy / 100;
+
+  // Volume score (0-1) - logarithmic to prevent grinding advantage
+  // Rewards practice but with diminishing returns
+  // Formula: log10(questions + 1) / log10(1000 + 1) 
+  // This means:
+  // - 10 questions ≈ 0.33
+  // - 100 questions ≈ 0.66
+  // - 1000+ questions ≈ 1.0
+  const volumeScore = Math.min(1, Math.log10(topic.questionsAnswered + 1) / Math.log10(1001));
+
+  // Speed score (0-1) - faster is better
+  // Uses a normalized scale where:
+  // - 2 seconds (2000ms) or faster = 1.0 (optimal)
+  // - 5 seconds (5000ms) = 0.8 (baseline)
+  // - 10 seconds (10000ms) = 0.5 (slow)
+  // - 20 seconds (20000ms) or slower = 0.2 (very slow, minimum)
+  const avgSpeedMs = topic.avgSpeed;
+  const optimalSpeed = 2000; // 2 seconds - best possible
+  const baselineSpeed = 5000; // 5 seconds - good baseline
+  const slowSpeed = 10000; // 10 seconds - slow
+  const verySlowSpeed = 20000; // 20 seconds - very slow
+  
+  let speedScore = 1.0;
+  if (avgSpeedMs <= optimalSpeed) {
+    // Faster than or equal to 2s = perfect score
+    speedScore = 1.0;
+  } else if (avgSpeedMs <= baselineSpeed) {
+    // Between 2s and 5s: linear interpolation from 1.0 to 0.8
+    speedScore = 1.0 - ((avgSpeedMs - optimalSpeed) / (baselineSpeed - optimalSpeed)) * 0.2;
+  } else if (avgSpeedMs <= slowSpeed) {
+    // Between 5s and 10s: linear interpolation from 0.8 to 0.5
+    speedScore = 0.8 - ((avgSpeedMs - baselineSpeed) / (slowSpeed - baselineSpeed)) * 0.3;
+  } else {
+    // Slower than 10s: linear interpolation from 0.5 to 0.2 (minimum)
+    speedScore = Math.max(0.2, 0.5 - ((avgSpeedMs - slowSpeed) / (verySlowSpeed - slowSpeed)) * 0.3);
+  }
+
+  // Combine scores with weights
+  const compositeScore = (
+    accuracy * accuracyWeight +
+    volumeScore * volumeWeight +
+    speedScore * speedWeight
+  ) * 1000;
+
+  return Math.round(compositeScore);
+}
+
+/**
  * Calculate trend between two values
  */
 export function calculateTrend(
@@ -1000,24 +1075,34 @@ export function generateTopicDetails(
 ): TopicDetailStats[] {
   const topics = Object.values(userStats.topicStats);
 
-  // Sort topics by accuracy (highest first) to assign proper ranks
-  const sortedTopics = [...topics].sort((a, b) => {
-    // Primary sort: accuracy (descending)
-    if (b.accuracy !== a.accuracy) {
-      return b.accuracy - a.accuracy;
+  // Calculate composite performance score for each topic
+  const topicsWithScores = topics.map(topic => ({
+    topic,
+    score: calculateTopicPerformanceScore(topic),
+  }));
+
+  // Sort topics by composite score (highest first) to assign proper ranks
+  const sortedTopics = topicsWithScores.sort((a, b) => {
+    // Primary sort: composite score (descending)
+    if (b.score !== a.score) {
+      return b.score - a.score;
     }
-    // Secondary sort: questions answered (descending) for tie-breaking
-    return b.questionsAnswered - a.questionsAnswered;
+    // Secondary sort: accuracy (descending) for tie-breaking
+    if (b.topic.accuracy !== a.topic.accuracy) {
+      return b.topic.accuracy - a.topic.accuracy;
+    }
+    // Tertiary sort: questions answered (descending)
+    return b.topic.questionsAnswered - a.topic.questionsAnswered;
   });
 
   const totalTopics = sortedTopics.length;
 
-  return sortedTopics.map((topic, index) => {
+  return sortedTopics.map(({ topic, score }, index) => {
     // Calculate rank (1-based)
     const rank = index + 1;
     
     // Calculate percentile: percentage of topics that perform worse
-    // Percentile = ((totalTopics - rank) / totalTopics) * 100
+    // Percentile = ((totalTopics - rank) / (totalTopics - 1)) * 100
     const percentile = totalTopics > 1 
       ? Math.round(((totalTopics - rank) / (totalTopics - 1)) * 100)
       : 100;
@@ -1031,8 +1116,9 @@ export function generateTopicDetails(
 
     return {
       ...topic,
-      rank, // Proper rank based on sorted position
-      percentile, // Accurate percentile
+      rank, // Proper rank based on composite score
+      percentile, // Accurate percentile based on composite score
+      compositeScore: score, // Store the composite score for reference
       commonMistakes,
       practiceFrequency,
       totalPracticeTime: topic.totalTime,

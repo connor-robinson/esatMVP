@@ -82,13 +82,25 @@ export default function PapersRoadmapPage() {
         >();
 
         if (session?.user?.id) {
+          // OPTIMIZATION: Load all completed sessions once, then process in memory
+          // This avoids hundreds of sequential database queries
+          const { loadAllCompletedSessions, getStageCompletionFromSessions } = await import('@/lib/papers/roadmapCompletion');
+          const sessionsByPaperName = await loadAllCompletedSessions(session.user.id);
+
+          // Process all stages (in-memory operations are fast, no async needed)
           for (const stage of stages) {
-            const count = await getStageCompletionCount(session.user.id, stage);
-            const parts = await getStageCompletion(session.user.id, stage);
+            const parts = getStageCompletionFromSessions(sessionsByPaperName, stage);
+            
+            let completed = 0;
+            for (const [_, isCompleted] of parts) {
+              if (isCompleted) {
+                completed++;
+              }
+            }
 
             completionMap.set(stage.id, {
-              completed: count.completed,
-              total: count.total,
+              completed,
+              total: parts.size,
               parts,
             });
           }

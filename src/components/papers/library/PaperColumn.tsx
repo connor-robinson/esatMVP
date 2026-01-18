@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor } from "@/config/colors";
@@ -13,6 +13,8 @@ import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts, mapPartToSection } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question } from "@/types/papers";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { getPaperCompletionStatus, getPaperSectionCompletion } from "@/lib/papers/libraryCompletion";
 
 interface PaperColumnProps {
   paper: Paper;
@@ -184,7 +186,11 @@ export function PaperColumn({
   const [availableSections, setAvailableSections] = useState<PaperSection[]>([]);
   const [loadingSections, setLoadingSections] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [paperCompletionStatus, setPaperCompletionStatus] = useState<'none' | 'partial' | 'complete'>('none');
+  const [sectionCompletionMap, setSectionCompletionMap] = useState<Map<PaperSection, boolean>>(new Map());
+  const [loadingCompletion, setLoadingCompletion] = useState(false);
 
+  const session = useSupabaseSession();
   const paperColor = getPaperTypeColor(paper.examName);
   const paperType = examNameToPaperType(paper.examName as any) || "NSAA";
 
@@ -257,6 +263,26 @@ export function PaperColumn({
     return grouped;
   }, [availableSections, paperType, paper.examType, questions, paper]);
 
+  // Load completion status when sections are available
+  useEffect(() => {
+    if (availableSections.length > 0 && session?.user?.id && !loadingCompletion) {
+      const loadCompletionStatus = async () => {
+        setLoadingCompletion(true);
+        try {
+          const status = await getPaperCompletionStatus(session.user.id, paper, availableSections);
+          const sectionMap = await getPaperSectionCompletion(session.user.id, paper, availableSections);
+          setPaperCompletionStatus(status);
+          setSectionCompletionMap(sectionMap);
+        } catch (error) {
+          console.error('[PaperColumn] Error loading completion status:', error);
+        } finally {
+          setLoadingCompletion(false);
+        }
+      };
+      loadCompletionStatus();
+    }
+  }, [availableSections, session?.user?.id, paper, loadingCompletion]);
+
   const handleAddPaperClick = () => {
     if (availableSections.length > 0) {
       onAddFullPaper(paper, availableSections);
@@ -303,8 +329,22 @@ export function PaperColumn({
 
         {/* Exam Name and Year */}
         <div className="flex-1 min-w-0">
-          <div className="text-base font-mono font-bold text-white/90">
-            {paper.examName} {paper.examYear}
+          <div className="flex items-center gap-2">
+            <div className="text-base font-mono font-bold text-white/90">
+              {paper.examName} {paper.examYear}
+            </div>
+            {/* Completion status badge for paper */}
+            {paperCompletionStatus !== 'none' && (
+              <div className={cn(
+                "px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide flex items-center gap-1",
+                paperCompletionStatus === 'complete' 
+                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+              )}>
+                <CheckCircle2 className="w-3 h-3" />
+                {paperCompletionStatus === 'complete' ? 'Complete' : 'In Progress'}
+              </div>
+            )}
           </div>
         </div>
 
@@ -372,9 +412,45 @@ export function PaperColumn({
 
                     {/* Section name */}
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-mono font-semibold text-white/80">
-                        {mainSection.name}
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-mono font-semibold text-white/80">
+                          {mainSection.name}
+                        </div>
+                        {/* Check if all sections in this main section are completed */}
+                        {(() => {
+                          const allCompleted = mainSection.subjectParts.length > 0 && 
+                            mainSection.subjectParts.every(section => sectionCompletionMap.get(section));
+                          const someCompleted = mainSection.subjectParts.some(section => sectionCompletionMap.get(section));
+                          
+                          if (allCompleted) {
+                            return (
+                              <div className="flex items-center gap-1 text-[10px] text-green-400">
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Complete</span>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
+                      {/* Show individual section completion indicators */}
+                      {mainSection.subjectParts.length > 1 && (
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                          {mainSection.subjectParts.map((section) => {
+                            const isCompleted = sectionCompletionMap.get(section);
+                            if (!isCompleted) return null;
+                            return (
+                              <div
+                                key={section}
+                                className="text-[9px] text-green-400/80 font-medium flex items-center gap-0.5"
+                              >
+                                <CheckCircle2 className="w-2.5 h-2.5" />
+                                <span>{section}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     {/* Right: Plus button for section */}

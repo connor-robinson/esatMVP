@@ -8,7 +8,7 @@ import { useState, useMemo } from "react";
 import { UserStats, TopicStats, WrongQuestionPattern } from "@/types/analytics";
 import { TopicDetailCard } from "./TopicDetailCard";
 import { generateTopicDetails } from "@/lib/analytics";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -60,17 +60,31 @@ export function TopicsOverviewSection({
     return topics;
   }, [allTopics, searchQuery, sortBy]);
 
-  // Calculate visible topics based on showAllTopics state
+  // Calculate visible topics: top 3 (green) and bottom 3 (red)
   const visibleTopicsData = useMemo(() => {
-    if (showAllTopics || filteredTopics.length <= 6) {
-      return { all: filteredTopics, isExpanded: showAllTopics };
+    const totalTopics = filteredTopics.length;
+    
+    if (totalTopics === 0) {
+      return { isEmpty: true };
     }
-
-    // Show top 4 and bottom 2
-    const top4 = filteredTopics.slice(0, 4);
-    const bottom2 = filteredTopics.slice(-2);
-    return { top4, bottom2, hasMore: true, isExpanded: false };
-  }, [filteredTopics, showAllTopics]);
+    
+    // Determine how many top/bottom to show
+    const topCount = Math.min(3, Math.ceil(totalTopics / 2));
+    const bottomCount = Math.min(3, Math.floor(totalTopics / 2));
+    
+    const topTopics = filteredTopics.slice(0, topCount);
+    const bottomTopics = totalTopics > topCount ? filteredTopics.slice(-bottomCount) : [];
+    
+    // Check if we need "more data needed" message
+    const needsMoreData = totalTopics < 6 && topCount + bottomCount < totalTopics;
+    
+    return {
+      topTopics,
+      bottomTopics,
+      needsMoreData,
+      totalTopics,
+    };
+  }, [filteredTopics]);
 
   const handleTopicClick = (topicId: string, topicName: string) => {
     setExpandedId(topicId);
@@ -138,7 +152,7 @@ export function TopicsOverviewSection({
                       placeholder="Search topics..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-interview/30 transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200"
                     />
                   </div>
 
@@ -149,9 +163,8 @@ export function TopicsOverviewSection({
                       onChange={(e) => {
                         const newSort = e.target.value as "strength" | "weakness" | "questions";
                         setSortBy(newSort);
-                        setShowAllTopics(false); // Reset expand state when sort changes
                       }}
-                      className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-interview/30 transition-all duration-200"
+                      className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200"
                       style={{
                         colorScheme: "dark",
                       }}
@@ -175,7 +188,26 @@ export function TopicsOverviewSection({
               <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
                 <div className="col-span-1 text-center">Rank</div>
                 <div className="col-span-2 text-left">Topic</div>
-                <div className="col-span-1 text-center">Percentile</div>
+                <div className="col-span-1 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <span>Percentile</span>
+                    <div className="relative group">
+                      <Info className="h-3.5 w-3.5 text-white/30 hover:text-white/50 transition-colors cursor-help" />
+                      <div className="absolute right-0 top-full mt-2 z-20 hidden group-hover:block bg-[#0f1114] text-[11px] text-white/80 p-3 rounded-md border border-white/10 w-72 shadow-lg">
+                        <div className="font-semibold mb-2 text-white/90">How Ranking Works</div>
+                        <div className="space-y-1.5 text-white/70">
+                          <p>Topics are ranked using a composite score that combines:</p>
+                          <ul className="list-disc list-inside space-y-0.5 ml-1">
+                            <li><strong>Accuracy (50%):</strong> Your percentage of correct answers</li>
+                            <li><strong>Practice Volume (30%):</strong> Number of questions practiced (with diminishing returns to prevent grinding)</li>
+                            <li><strong>Speed (20%):</strong> Average time per question (faster is better)</li>
+                          </ul>
+                          <p className="mt-2 text-white/60">Minimum 10 questions required for a meaningful score. Percentile shows where you rank among your topics.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="col-span-2 text-center">Accuracy</div>
                 <div className="col-span-2 text-center">Speed</div>
                 <div className="col-span-2 text-center">Sessions</div>
@@ -183,68 +215,63 @@ export function TopicsOverviewSection({
                 <div className="col-span-1"></div>
               </div>
 
-              {/* All Topics List (Expandable Cards) */}
-              {filteredTopics.length === 0 ? (
+              {/* All Topics List - Top 3 (green) and Bottom 3 (red) */}
+              {"isEmpty" in visibleTopicsData ? (
                 <div className="text-center py-12 text-white/40">
                   <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
                   <p>No topics found matching &quot;{searchQuery}&quot;</p>
                 </div>
-              ) : "all" in visibleTopicsData && visibleTopicsData.all ? (
-                // Show all topics (expanded state)
-                <div className={cn(
-                  "space-y-1",
-                  visibleTopicsData.isExpanded && "max-h-[600px] overflow-y-auto"
-                )}>
-                  {visibleTopicsData.all.map((topic) => (
-                    <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                      <TopicDetailCard
-                        topic={topic}
-                        isExpanded={expandedId === topic.topicId}
-                        onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                      />
-                    </div>
-                  ))}
-                </div>
               ) : (
-                // Show top 4, ..., bottom 2 (collapsed state)
-                "top4" in visibleTopicsData && "bottom2" in visibleTopicsData ? (
-                  <div className="space-y-1">
-                    {/* Top 4 */}
-                    {visibleTopicsData.top4.map((topic) => (
-                      <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                        <TopicDetailCard
-                          topic={topic}
-                          isExpanded={expandedId === topic.topicId}
-                          onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                        />
+                <div className="space-y-4">
+                  {/* Top Topics (Green) */}
+                  {visibleTopicsData.topTopics && visibleTopicsData.topTopics.length > 0 && (
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-wider text-success mb-2 px-5">
+                        Top {visibleTopicsData.topTopics.length}
                       </div>
-                    ))}
-
-                    {/* Expand Button */}
-                    {visibleTopicsData.hasMore && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowAllTopics(true);
-                        }}
-                        className="w-full py-3 flex items-center justify-center text-white/60 hover:text-white/80 transition-colors"
-                      >
-                        <span className="text-2xl font-bold">...</span>
-                      </button>
-                    )}
-
-                    {/* Bottom 2 */}
-                    {visibleTopicsData.bottom2.map((topic) => (
-                      <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                        <TopicDetailCard
-                          topic={topic}
-                          isExpanded={expandedId === topic.topicId}
-                          onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                        />
+                      <div className="space-y-1">
+                        {visibleTopicsData.topTopics.map((topic) => (
+                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                            <TopicDetailCard
+                              topic={topic}
+                              isExpanded={expandedId === topic.topicId}
+                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                              isTopTopic={true}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                ) : null
+                    </div>
+                  )}
+
+                  {/* More Data Needed Message */}
+                  {visibleTopicsData.needsMoreData && (
+                    <div className="text-center py-4 text-white/40 text-sm">
+                      More data needed
+                    </div>
+                  )}
+
+                  {/* Bottom Topics (Red) */}
+                  {visibleTopicsData.bottomTopics && visibleTopicsData.bottomTopics.length > 0 && (
+                    <div>
+                      <div className="text-xs font-semibold uppercase tracking-wider text-error mb-2 px-5">
+                        Bottom {visibleTopicsData.bottomTopics.length}
+                      </div>
+                      <div className="space-y-1">
+                        {visibleTopicsData.bottomTopics.map((topic) => (
+                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                            <TopicDetailCard
+                              topic={topic}
+                              isExpanded={expandedId === topic.topicId}
+                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                              isTopTopic={false}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </motion.div>

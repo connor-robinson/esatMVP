@@ -264,7 +264,12 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = 
             {view === "library" ? "Select topics to practice. Click + to add." : "Load a saved preset to quickly start practicing."}
           </p>
         </div>
-        <div className="flex items-center gap-2 ml-4">
+        <div className="flex items-center gap-3 ml-4">
+          {view === "library" && (
+            <span className="text-xs text-white/50">
+              {totalModes} {totalModes === 1 ? 'mode' : 'modes'} total
+            </span>
+          )}
           {/* View Toggle */}
           <div className="flex items-center gap-1 p-1 rounded-organic-md bg-white/[0.03]">
             <button
@@ -290,11 +295,6 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = 
               Presets
             </button>
           </div>
-          {view === "library" && (
-            <span className="text-xs text-white/50">
-              {totalModes} {totalModes === 1 ? 'mode' : 'modes'} total
-            </span>
-          )}
         </div>
       </div>
 

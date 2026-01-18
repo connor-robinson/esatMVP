@@ -257,14 +257,31 @@ export function QuestionSessionSummary({
         onClick={onStartSession}
         disabled={!canStart}
         className={cn(
-          "w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-lg font-semibold text-sm transition-all shadow-md shadow-black/20",
+          "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
           !canStart
-            ? "bg-white/5 text-white/30 cursor-not-allowed"
-            : "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary-light"
+            ? "bg-white/5 text-white/40 cursor-not-allowed"
+            : "bg-primary/30 hover:bg-primary/40 text-primary cursor-pointer"
         )}
+        style={
+          canStart
+            ? {
+                boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+              }
+            : undefined
+        }
+        onMouseEnter={(e) => {
+          if (canStart) {
+            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (canStart) {
+            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+          }
+        }}
       >
-        <Play className="w-4 h-4" />
         <span>Start Practice Session</span>
+        <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
       </button>
     </Card>
   );
