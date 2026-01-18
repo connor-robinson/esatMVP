@@ -407,6 +407,16 @@ async function fetchRecentSessions(
     .in("builder_session_id", sessionIds)
     .not("builder_session_id", "is", null);
 
+  // Type assertion to help TypeScript understand the data structure
+  type DrillSessionData = {
+    builder_session_id: string;
+    summary: any; // JSON type
+    accuracy: number | null;
+    average_time_ms: number | null;
+    question_count: number | null;
+  };
+  const typedDrillSessionsData = (drillSessionsData || []) as DrillSessionData[];
+
   if (attemptsError) {
     console.error("[fetchRecentSessions] Error fetching attempts:", attemptsError);
   }
@@ -414,11 +424,11 @@ async function fetchRecentSessions(
   // Create a map of builder_session_id -> drill_session data
   // Use summary from drill_sessions if available (contains session-level stats, not per-topic)
   const drillSessionsMap = new Map<string, { score: number; correctAnswers: number; totalQuestions: number; totalTime: number; accuracy: number; avgSpeed: number }>();
-  if (drillSessionsData) {
+  if (typedDrillSessionsData && typedDrillSessionsData.length > 0) {
     // Group by builder_session_id and use the first row with a summary (summary contains session-level data)
     const sessionsProcessed = new Set<string>();
     
-    drillSessionsData.forEach((ds: any) => {
+    typedDrillSessionsData.forEach((ds) => {
       if (!ds.builder_session_id || sessionsProcessed.has(ds.builder_session_id)) return;
       
       // Prefer summary data as it contains the full session stats
@@ -436,7 +446,7 @@ async function fetchRecentSessions(
     });
 
     // For sessions without summary, try to aggregate from multiple drill_sessions rows
-    drillSessionsData.forEach((ds: any) => {
+    typedDrillSessionsData.forEach((ds) => {
       if (!ds.builder_session_id || sessionsProcessed.has(ds.builder_session_id)) return;
       
       const existing = drillSessionsMap.get(ds.builder_session_id) || {

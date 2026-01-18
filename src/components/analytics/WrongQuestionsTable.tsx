@@ -47,7 +47,7 @@ export function WrongQuestionsTable({
         )}
       </div>
       <div className={cn(
-        "rounded-xl border border-white/10 overflow-hidden bg-white/[0.02]",
+        "rounded-xl border border-white/10 overflow-hidden bg-white/5",
         showAll && "max-h-[400px] overflow-y-auto"
       )}>
         <table className="w-full text-sm">

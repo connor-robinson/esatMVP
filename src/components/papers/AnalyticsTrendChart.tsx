@@ -1,5 +1,5 @@
 /**
- * Analytics trend chart component - shows percentage scores over time
+ * Analytics trend chart component - shows percentile scores over time
  * Uses the same style as TimeScatterChart (pacing profile) from the mark page
  */
 
@@ -222,7 +222,7 @@ export function AnalyticsTrendChart({
             strokeWidth={1}
           />
 
-          {/* Y-axis labels */}
+              {/* Y-axis labels - showing percentile */}
           {[0, 25, 50, 75, 100].map((pct) => {
             const y = height - padding - (pct / 100) * (height - 2 * padding);
             return (
@@ -234,7 +234,7 @@ export function AnalyticsTrendChart({
                 fontSize={10}
                 fill="rgba(255,255,255,0.2)"
               >
-                {pct}%
+                {pct}th
               </text>
             );
           })}
@@ -293,7 +293,7 @@ export function AnalyticsTrendChart({
               top: Math.max(hoverPoint.y - 32, 0) 
             }}
           >
-            <div>Score: {Math.round(hoverPoint.percentage)}%</div>
+            <div>Percentile: {Math.round(hoverPoint.percentage)}th</div>
             <div>Date: {new Date(hoverPoint.date).toLocaleDateString()}</div>
           </div>
         )}

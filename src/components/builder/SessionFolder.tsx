@@ -5,7 +5,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Play, Save, Trash2, Clock, ChevronDown, ChevronRight } from "lucide-react";
+import { X, Play, Save, Trash2, Clock, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";

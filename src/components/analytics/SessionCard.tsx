@@ -60,9 +60,9 @@ function SessionCardComponent({
       className={cn(
         "w-full text-left px-5 py-4 rounded-organic-md transition-all",
         isLatest
-          ? "bg-white/[0.05]"
-          : "bg-white/[0.02] hover:bg-white/5",
-        isExpanded && "bg-white/[0.04]"
+          ? "bg-white/10"
+          : "bg-white/5 hover:bg-white/10",
+        isExpanded && "bg-white/10"
       )}
     >
       <div className="grid grid-cols-12 gap-4 items-center">

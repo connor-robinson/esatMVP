@@ -61,7 +61,7 @@ export function PastSessionsSection({
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-white/[0.03] p-6">
+    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
       {/* Section Header */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex-1">

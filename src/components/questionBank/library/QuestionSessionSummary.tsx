@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { X, Play, Clock, Edit3, FileText, Plus } from "lucide-react";
+import { X, Play, Clock, Edit3, FileText, Plus, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";

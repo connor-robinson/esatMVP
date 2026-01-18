@@ -13,6 +13,7 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 // Lazy load heavy components
 const TopicSelector = lazy(() => import("@/components/builder/TopicSelector").then(mod => ({ default: mod.TopicSelector })));
 const SessionFolder = lazy(() => import("@/components/builder/SessionFolder").then(mod => ({ default: mod.SessionFolder })));
+const TopicsOverview = lazy(() => import("@/components/builder/TopicsOverview").then(mod => ({ default: mod.TopicsOverview })));
 const PresetManager = lazy(() => import("@/components/builder/PresetManager").then(mod => ({ default: mod.PresetManager })));
 const MentalMathSession = lazy(() => import("@/components/mental-math/MentalMathSession").then(mod => ({ default: mod.MentalMathSession })));
 const SessionResults = lazy(() => import("@/components/builder/SessionResults").then(mod => ({ default: mod.SessionResults })));
@@ -87,6 +88,13 @@ export default function BuilderPage() {
                 presets={builder.presets}
                 onLoadPreset={builder.loadPreset}
               />
+              </Suspense>
+            </div>
+
+            {/* Topics Overview */}
+            <div>
+              <Suspense fallback={<div className="h-48 bg-white/10 rounded-lg animate-pulse" />}>
+                <TopicsOverview />
               </Suspense>
             </div>
 

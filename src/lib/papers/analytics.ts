@@ -278,4 +278,300 @@ export function getAllMistakeTags(sessions: PaperSession[]): MistakeTag[] {
   return allTags;
 }
 
+/**
+ * Extract year from paper variant string
+ */
+export function extractYearFromVariant(variant: string): number | null {
+  const yearMatch = variant.match(/\d{4}/);
+  return yearMatch ? parseInt(yearMatch[0], 10) : null;
+}
+
+/**
+ * Calculate percentile based on distribution of scores within the same paper
+ * Percentile represents where this session's score ranks among all sessions for that paper
+ */
+export function calculatePercentileFromPaperDistribution(
+  score: number,
+  allScoresForPaper: number[]
+): number {
+  if (allScoresForPaper.length === 0) return 0;
+  if (allScoresForPaper.length === 1) return 50; // If only one score, return median
+  
+  const sortedScores = [...allScoresForPaper].sort((a, b) => a - b);
+  const rank = sortedScores.filter(s => s <= score).length;
+  const percentile = (rank / sortedScores.length) * 100;
+  
+  return Math.max(0, Math.min(100, percentile));
+}
+
+/**
+ * Calculate trend data with percentile instead of percentage
+ * Percentiles are calculated based on the distribution of all sessions for each paper type
+ */
+export function calculateTrendDataWithPercentiles(
+  sessions: PaperSession[]
+): Array<{ date: number; percentile: number; paperType?: PaperType; section?: PaperSection; rawScore?: number }> {
+  // Group sessions by paper type to calculate percentiles within each paper
+  const scoresByPaper = new Map<PaperType, number[]>();
+  
+  // Collect all scores by paper type
+  sessions.filter(s => s.score && s.startedAt).forEach(session => {
+    const paperType = session.paperName;
+    const scorePercentage = session.score ? (session.score.correct / session.score.total) * 100 : 0;
+    
+    if (!scoresByPaper.has(paperType)) {
+      scoresByPaper.set(paperType, []);
+    }
+    scoresByPaper.get(paperType)!.push(scorePercentage);
+  });
+  
+  // Calculate percentile for each session
+  const results: Array<{ date: number; percentile: number; paperType?: PaperType; section?: PaperSection; rawScore?: number }> = [];
+  
+  sessions.filter(s => s.score && s.startedAt).forEach(session => {
+    const paperType = session.paperName;
+    const scorePercentage = session.score ? (session.score.correct / session.score.total) * 100 : 0;
+    const firstSection = session.selectedSections?.[0];
+    
+    // Get all scores for this paper type and calculate percentile
+    const allScoresForPaper = scoresByPaper.get(paperType) || [];
+    const percentile = calculatePercentileFromPaperDistribution(scorePercentage, allScoresForPaper);
+    
+    results.push({
+      date: session.startedAt!,
+      percentile,
+      paperType,
+      section: firstSection,
+      rawScore: scorePercentage,
+    });
+  });
+  
+  return results.sort((a, b) => a.date - b.date);
+}
+
+export interface SectionPerformance {
+  section: PaperSection;
+  accuracy: number;
+  avgTimePerQuestion: number;
+  guessedRate: number;
+  totalQuestions: number;
+  correctQuestions: number;
+  trend: 'improving' | 'declining' | 'stable';
+  trendValue: number; // Percentage point change
+}
+
+export interface SectionPerformanceWithHistory {
+  section: PaperSection;
+  currentAccuracy: number;
+  avgTimePerQuestion: number;
+  guessedRate: number;
+  totalQuestions: number;
+  correctQuestions: number;
+  trend: 'improving' | 'declining' | 'stable';
+  trendValue: number;
+  history: Array<{ date: number; accuracy: number; sessionId: string }>;
+}
+
+export interface TimeManagementInsight {
+  section: PaperSection;
+  avgTimePerQuestion: number;
+  totalTimeSpent: number;
+  timePercentage: number; // % of total session time
+  accuracy: number;
+  efficiencyScore: number; // correct questions per minute
+  recommendation: string; // "Too slow", "Too fast", "Optimal"
+}
+
+/**
+ * Calculate section performance with trends across all sessions
+ * Note: For multi-section sessions, we attribute performance to all included sections
+ */
+export function calculateSectionPerformance(
+  sessions: PaperSession[]
+): SectionPerformanceWithHistory[] {
+  const sectionData = new Map<PaperSection, {
+    accuracies: number[];
+    times: number[];
+    guessed: number[];
+    totals: number[];
+    corrects: number[];
+    history: Array<{ date: number; accuracy: number; sessionId: string }>;
+  }>();
+
+  // Collect data per section
+  sessions.filter(s => s.score && s.selectedSections && s.selectedSections.length > 0).forEach(session => {
+    const scorePercentage = session.score ? (session.score.correct / session.score.total) * 100 : 0;
+    const totalQuestions = session.score?.total || session.perQuestionSec.length;
+    const correctQuestions = session.score?.correct || 0;
+    const avgTime = session.perQuestionSec.length > 0
+      ? session.perQuestionSec.reduce((a, b) => a + b, 0) / session.perQuestionSec.length
+      : 0;
+    const guessedCount = session.guessedFlags?.filter(g => g).length || 0;
+    const guessedRate = totalQuestions > 0 ? (guessedCount / totalQuestions) * 100 : 0;
+
+    // For each section in this session, add the session data
+    session.selectedSections?.forEach(section => {
+      if (!sectionData.has(section)) {
+        sectionData.set(section, {
+          accuracies: [],
+          times: [],
+          guessed: [],
+          totals: [],
+          corrects: [],
+          history: [],
+        });
+      }
+
+      const data = sectionData.get(section)!;
+      data.accuracies.push(scorePercentage);
+      data.times.push(avgTime);
+      data.guessed.push(guessedRate);
+      data.totals.push(totalQuestions);
+      data.corrects.push(correctQuestions);
+      if (session.startedAt) {
+        data.history.push({
+          date: session.startedAt,
+          accuracy: scorePercentage,
+          sessionId: session.id,
+        });
+      }
+    });
+  });
+
+  // Calculate metrics and trends per section
+  const results: SectionPerformanceWithHistory[] = [];
+
+  sectionData.forEach((data, section) => {
+    if (data.accuracies.length === 0) return;
+
+    const currentAccuracy = data.accuracies[data.accuracies.length - 1];
+    const avgAccuracy = data.accuracies.reduce((a, b) => a + b, 0) / data.accuracies.length;
+    const avgTime = data.times.reduce((a, b) => a + b, 0) / data.times.length;
+    const avgGuessedRate = data.guessed.reduce((a, b) => a + b, 0) / data.guessed.length;
+    const totalQuestions = data.totals.reduce((a, b) => a + b, 0);
+    const correctQuestions = data.corrects.reduce((a, b) => a + b, 0);
+
+    // Calculate trend (comparing first half vs second half of sessions)
+    let trend: 'improving' | 'declining' | 'stable' = 'stable';
+    let trendValue = 0;
+
+    if (data.accuracies.length >= 2) {
+      const midpoint = Math.floor(data.accuracies.length / 2);
+      const firstHalf = data.accuracies.slice(0, midpoint);
+      const secondHalf = data.accuracies.slice(midpoint);
+      const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+      const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+      trendValue = secondAvg - firstAvg;
+
+      if (trendValue > 3) trend = 'improving';
+      else if (trendValue < -3) trend = 'declining';
+    }
+
+    // Sort history by date
+    const history = [...data.history].sort((a, b) => a.date - b.date);
+
+    results.push({
+      section,
+      currentAccuracy: avgAccuracy,
+      avgTimePerQuestion: avgTime,
+      guessedRate: avgGuessedRate,
+      totalQuestions,
+      correctQuestions,
+      trend,
+      trendValue,
+      history,
+    });
+  });
+
+  // Sort by section name for consistent display
+  return results.sort((a, b) => a.section.localeCompare(b.section));
+}
+
+/**
+ * Calculate time management insights per section
+ */
+export function calculateTimeManagementInsights(
+  sessions: PaperSession[]
+): TimeManagementInsight[] {
+  const sectionData = new Map<PaperSection, {
+    times: number[];
+    totalTimes: number[];
+    accuracies: number[];
+    corrects: number[];
+  }>();
+
+  // Collect time data per section
+  sessions.filter(s => s.score && s.selectedSections && s.selectedSections.length > 0).forEach(session => {
+    const totalSessionTime = session.perQuestionSec.reduce((a, b) => a + b, 0);
+    const avgTimePerQ = session.perQuestionSec.length > 0
+      ? totalSessionTime / session.perQuestionSec.length
+      : 0;
+    const accuracy = session.score ? (session.score.correct / session.score.total) * 100 : 0;
+    const correctQuestions = session.score?.correct || 0;
+
+    session.selectedSections?.forEach(section => {
+      if (!sectionData.has(section)) {
+        sectionData.set(section, {
+          times: [],
+          totalTimes: [],
+          accuracies: [],
+          corrects: [],
+        });
+      }
+
+      const data = sectionData.get(section)!;
+      data.times.push(avgTimePerQ);
+      data.totalTimes.push(totalSessionTime);
+      data.accuracies.push(accuracy);
+      data.corrects.push(correctQuestions);
+    });
+  });
+
+  // Calculate average total time across all sessions for percentage calculation
+  const allTotalTimes = sessions
+    .filter(s => s.perQuestionSec.length > 0)
+    .map(s => s.perQuestionSec.reduce((a, b) => a + b, 0));
+  const avgTotalSessionTime = allTotalTimes.length > 0
+    ? allTotalTimes.reduce((a, b) => a + b, 0) / allTotalTimes.length
+    : 1;
+
+  const results: TimeManagementInsight[] = [];
+
+  sectionData.forEach((data, section) => {
+    if (data.times.length === 0) return;
+
+    const avgTimePerQ = data.times.reduce((a, b) => a + b, 0) / data.times.length;
+    const avgTotalTime = data.totalTimes.reduce((a, b) => a + b, 0) / data.totalTimes.length;
+    const timePercentage = avgTotalSessionTime > 0 ? (avgTotalTime / avgTotalSessionTime) * 100 : 0;
+    const avgAccuracy = data.accuracies.reduce((a, b) => a + b, 0) / data.accuracies.length;
+    const avgCorrects = data.corrects.reduce((a, b) => a + b, 0) / data.corrects.length;
+
+    // Efficiency: correct questions per minute
+    const efficiencyScore = avgTotalTime > 0 ? (avgCorrects / (avgTotalTime / 60)) : 0;
+
+    // Recommendation based on time and accuracy
+    let recommendation = "Optimal";
+    if (avgTimePerQ > 180 && avgAccuracy < 70) { // >3 min per question, <70% accuracy
+      recommendation = "Too slow - accuracy suffering";
+    } else if (avgTimePerQ < 60 && avgAccuracy < 60) { // <1 min, <60% accuracy
+      recommendation = "Too fast - slow down for accuracy";
+    } else if (avgTimePerQ > 180) {
+      recommendation = "Consider pacing faster";
+    } else if (avgTimePerQ < 60 && avgAccuracy > 80) {
+      recommendation = "Efficient pacing";
+    }
+
+    results.push({
+      section,
+      avgTimePerQuestion: avgTimePerQ,
+      totalTimeSpent: avgTotalTime,
+      timePercentage,
+      accuracy: avgAccuracy,
+      efficiencyScore,
+      recommendation,
+    });
+  });
+
+  return results.sort((a, b) => a.section.localeCompare(b.section));
+}
 

@@ -52,7 +52,7 @@ export function StatsHero({
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-white/[0.03] p-6">
+    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
       {/* Section Header */}
       <button
         onClick={onToggleCollapse}
@@ -78,7 +78,7 @@ export function StatsHero({
           {/* Stats Pills Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Questions */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-5">
+            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Total Questions</div>
                 <div className="text-3xl font-bold text-white/95 leading-none">{totalQuestions}</div>
@@ -87,7 +87,7 @@ export function StatsHero({
             </div>
 
             {/* Accuracy */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-5">
+            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Accuracy</div>
                 <div className="text-3xl font-bold text-white/90 leading-none">{accuracy.toFixed(1)}%</div>
@@ -96,7 +96,7 @@ export function StatsHero({
             </div>
 
             {/* Average Speed */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-5">
+            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Avg Speed</div>
                 <div className="text-3xl font-bold text-white/90 leading-none">{(avgSpeed / 1000).toFixed(1)}s</div>
@@ -105,7 +105,7 @@ export function StatsHero({
             </div>
 
             {/* Current Streak */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/[0.02] p-5">
+            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Current Streak</div>
                 <div className="flex items-center gap-2">

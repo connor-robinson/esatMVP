@@ -36,7 +36,7 @@ export function TopicDetailCard({
   const getPerformanceColor = () => {
     if (isTopTopic === true) return "bg-success/10";
     if (isTopTopic === false) return "bg-error/10";
-    return "bg-white/[0.02]";
+    return "bg-white/5";
   };
 
   // Get ordinal suffix helper
@@ -114,7 +114,7 @@ export function TopicDetailCard({
       className={cn(
         "w-full text-left p-5 rounded-organic-md transition-all hover:bg-white/5",
         getPerformanceColor(),
-        isExpanded && "bg-white/[0.04]"
+        isExpanded && "bg-white/10"
       )}
     >
       {/* Collapsed View - Grid Layout */}
