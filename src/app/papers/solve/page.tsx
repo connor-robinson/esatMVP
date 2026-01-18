@@ -18,6 +18,8 @@ import { ChoicePill } from "@/components/papers/ChoicePill";
 import { QuestionGrid } from "@/components/papers/QuestionGrid";
 import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
 import { NavigatorPopup } from "@/components/papers/NavigatorPopup";
+import { SectionSummary } from "@/components/papers/SectionSummary";
+import { SubmitSectionReview } from "@/components/papers/SubmitSectionReview";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import type { Letter, PaperType } from "@/types/papers";
@@ -57,7 +59,15 @@ export default function PapersSolvePage() {
     getCorrectCount,
     visitedQuestions,
     selectedSections,
-    sectionStarts
+    sectionStarts,
+    currentSectionIndex,
+    sectionTimeLimits,
+    sectionInstructionTimer,
+    setSectionInstructionTimer,
+    allSectionsQuestions,
+    getCurrentSectionQuestions,
+    setCurrentSectionIndex,
+    calculateSectionTimeLimits
   } = usePaperSessionStore();
   
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -66,6 +76,7 @@ export default function PapersSolvePage() {
   const [showNotesPopover, setShowNotesPopover] = useState(false);
   const [showNavigator, setShowNavigator] = useState(false);
   const [showUnseenWarning, setShowUnseenWarning] = useState(false);
+  const [showSubmitReview, setShowSubmitReview] = useState(false);
   const [hasViewedContent, setHasViewedContent] = useState<Record<number, boolean>>({});
   
   // Timer effect
@@ -316,7 +327,81 @@ export default function PapersSolvePage() {
     setEndedAt(Date.now());
     router.push("/papers/mark");
   };
+
+  // Handle section summary next button
+  const handleSectionSummaryNext = () => {
+    setSectionInstructionTimer(0);
+  };
+
+  // Handle section summary timer expiry
+  const handleSectionSummaryTimerExpire = () => {
+    setSectionInstructionTimer(0);
+  };
+
+  // Handle submit section (show review popup)
+  const handleSubmitSection = () => {
+    setShowSubmitReview(true);
+  };
+
+  // Handle submit section review confirmation
+  const handleSubmitSectionConfirm = () => {
+    setShowSubmitReview(false);
+    const isLastSection = currentSectionIndex === selectedSections.length - 1;
+    
+    if (isLastSection) {
+      // Last section - go to marking
+      handleSubmit();
+    } else {
+      // Move to next section
+      const nextSectionIndex = currentSectionIndex + 1;
+      setCurrentSectionIndex(nextSectionIndex);
+      setSectionInstructionTimer(60);
+      // Reset to first question index of new section
+      const currentSectionQuestions = getCurrentSectionQuestions();
+      if (currentSectionQuestions.length > 0) {
+        // Find the index in the full questions array for the first question of the new section
+        const firstQuestionOfSection = currentSectionQuestions[0];
+        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+        if (fullIndex >= 0) {
+          navigateToQuestion(fullIndex);
+        }
+      }
+    }
+  };
   
+  // Handle section summary next button
+  const handleSectionSummaryNext = () => {
+    setSectionInstructionTimer(0);
+  };
+
+  // Handle section summary timer expiry
+  const handleSectionSummaryTimerExpire = () => {
+    setSectionInstructionTimer(0);
+  };
+
+  // Handle submit section (show review popup)
+  const handleSubmitSection = () => {
+    setShowSubmitReview(true);
+  };
+
+  // Handle submit section review confirmation
+  const handleSubmitSectionConfirm = () => {
+    setShowSubmitReview(false);
+    const isLastSection = currentSectionIndex === selectedSections.length - 1;
+    
+    if (isLastSection) {
+      // Last section - go to marking
+      handleSubmit();
+    } else {
+      // Move to next section
+      const nextSectionIndex = currentSectionIndex + 1;
+      setCurrentSectionIndex(nextSectionIndex);
+      setSectionInstructionTimer(60);
+      // Reset to first question of new section (will be filtered by getCurrentSectionQuestions)
+      navigateToQuestion(0);
+    }
+  };
+
   const getTimerVariant = () => {
     const remainingMinutes = remainingTime / 60;
     const totalMinutes = timeLimitMinutes;
@@ -340,6 +425,25 @@ export default function PapersSolvePage() {
             Start New Session
           </Button>
         </div>
+      </Container>
+    );
+  }
+  
+  // Show section summary if instruction timer is active
+  if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+    return (
+      <Container size="lg" className="min-h-screen">
+        <SectionSummary
+          currentSectionIndex={currentSectionIndex}
+          selectedSections={selectedSections}
+          allSectionsQuestions={allSectionsQuestions}
+          sectionTimeLimits={sectionTimeLimits}
+          paperName={paperName}
+          onNext={handleSectionSummaryNext}
+          onTimerExpire={handleSectionSummaryTimerExpire}
+          sectionInstructionTimer={sectionInstructionTimer}
+          setSectionInstructionTimer={setSectionInstructionTimer}
+        />
       </Container>
     );
   }
@@ -433,7 +537,7 @@ export default function PapersSolvePage() {
           <div className="flex items-center gap-3 w-full">
             {/* Submit Section Button - Left */}
             <button
-              onClick={() => setShowConfirmModal(true)}
+              onClick={handleSubmitSection}
               className="
                 flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200
                 backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
@@ -665,6 +769,28 @@ export default function PapersSolvePage() {
           onNavigateToQuestion={handleQuestionJump}
           questionNumbers={questions.map((q) => q.questionNumber)}
         />
+
+        {/* Submit Section Review Popup */}
+        {showSubmitReview && (
+          <SubmitSectionReview
+            isOpen={showSubmitReview}
+            onClose={() => setShowSubmitReview(false)}
+            currentSectionIndex={currentSectionIndex}
+            totalSections={selectedSections.length}
+            sectionQuestions={(() => {
+              const sectionQs = allSectionsQuestions[currentSectionIndex] || [];
+              return sectionQs.map((q, idx) => ({
+                questionNumber: q.questionNumber,
+                index: questions.findIndex(q2 => q2.id === q.id)
+              })).filter(item => item.index >= 0);
+            })()}
+            answers={answers}
+            reviewFlags={reviewFlags}
+            visitedQuestions={visitedQuestions}
+            onNavigateToQuestion={handleQuestionJump}
+            onSubmit={handleSubmitSectionConfirm}
+          />
+        )}
 
         {/* Unseen Content Warning Popup */}
         {showUnseenWarning && (

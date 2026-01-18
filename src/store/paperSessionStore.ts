@@ -37,6 +37,13 @@ interface PaperSessionState {
   // Section boundaries for quick nav headers
   sectionStarts: Record<number, string>;
   
+  // Section-based flow state
+  currentSectionIndex: number;
+  sectionTimeLimits: number[];
+  sectionInstructionTimer: number | null;
+  sectionInstructionDeadline: number | null;
+  allSectionsQuestions: Question[][];
+  
   // Timing
   startedAt: number | null;
   endedAt: number | null;
@@ -85,6 +92,13 @@ interface PaperSessionState {
   getTotalQuestions: () => number;
   getCorrectCount: () => number;
   getRemainingTime: () => number;
+  
+  // Section management actions
+  setCurrentSectionIndex: (index: number) => void;
+  setSectionInstructionTimer: (seconds: number) => void;
+  getCurrentSectionQuestions: () => Question[];
+  getSectionTimeLimit: (sectionIndex: number) => number;
+  calculateSectionTimeLimits: () => void;
 
   schedulePersist: () => void;
   persistSessionToServer: (options?: { immediate?: boolean }) => Promise<void>;
@@ -127,6 +141,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       mistakeTags: [],
       visitedQuestions: [],
       sectionStarts: {},
+      currentSectionIndex: 0,
+      sectionTimeLimits: [],
+      sectionInstructionTimer: null,
+      sectionInstructionDeadline: null,
+      allSectionsQuestions: [],
       
       startedAt: null,
       endedAt: null,
@@ -401,6 +420,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
               // Order questions by section selection order using mapping
               let sectionStarts: Record<number, string> = {};
+              let allSectionsQuestions: Question[][] = [];
+              
               if (processedQuestions.length > 0) {
                 // Sort by selected sections if provided, otherwise keep original order
                 if (state.selectedSections.length > 0) {
@@ -415,6 +436,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     if (indexA === indexB) return a.questionNumber - b.questionNumber;
                     return indexA - indexB;
                   });
+                  
+                  // Group questions by section into allSectionsQuestions array
+                  allSectionsQuestions = state.selectedSections.map((section) => {
+                    return processedQuestions.filter((q) => {
+                      const questionSection = sectionByQuestionId.get(q.id) ?? mapPartToSection({ partLetter: (q as any).partLetter, partName: q.partName }, state.paperName as any);
+                      return String(questionSection).trim() === String(section).trim();
+                    });
+                  });
+                  
+                  console.log('[loadQuestions] Grouped questions by section:', allSectionsQuestions.map((qs, idx) => ({
+                    section: state.selectedSections[idx],
+                    count: qs.length
+                  })));
+                } else {
+                  // If no selected sections, put all questions in one section
+                  allSectionsQuestions = [processedQuestions];
                 }
                 
                 // Build section start indices in the final order (always compute, even without selected sections)
@@ -461,9 +498,21 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   mistakeTags: Array.from({ length: actualQuestionCount }, (_, i) => (currentState.mistakeTags[i] || 'None') as MistakeTag),
                   visitedQuestions: Array.from({ length: actualQuestionCount }, () => false),
                   questionOrder: Array.from({ length: actualQuestionCount }, (_, i) => i + 1),
+                  allSectionsQuestions,
                 });
               } else {
-                set({ questions: processedQuestions, sectionStarts, questionsLoading: false });
+                set({ questions: processedQuestions, sectionStarts, allSectionsQuestions, questionsLoading: false });
+              }
+              
+              // Calculate section time limits after questions are loaded
+              const finalState = get();
+              if (finalState.allSectionsQuestions.length > 0) {
+                finalState.calculateSectionTimeLimits();
+                
+                // Initialize section instruction timer if first section
+                if (finalState.currentSectionIndex === 0 && finalState.sectionInstructionTimer === null) {
+                  finalState.setSectionInstructionTimer(60);
+                }
               }
             } catch (error) {
               console.error('Error loading questions:', error);
@@ -614,6 +663,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           reviewFlags: [],
           mistakeTags: [],
           visitedQuestions: [],
+          sectionStarts: {},
+          currentSectionIndex: 0,
+          sectionTimeLimits: [],
+          sectionInstructionTimer: null,
+          sectionInstructionDeadline: null,
+          allSectionsQuestions: [],
           startedAt: null,
           endedAt: null,
           deadline: null,
@@ -855,6 +910,46 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (!state.deadline) return state.timeLimitMinutes * 60;
         return Math.max(0, Math.ceil((state.deadline - Date.now()) / 1000));
       },
+      
+      // Section management actions
+      setCurrentSectionIndex: (index: number) => {
+        set({ currentSectionIndex: index, currentQuestionIndex: 0 });
+      },
+      
+      setSectionInstructionTimer: (seconds: number) => {
+        const deadline = seconds > 0 ? Date.now() + seconds * 1000 : null;
+        set({ 
+          sectionInstructionTimer: seconds,
+          sectionInstructionDeadline: deadline
+        });
+      },
+      
+      getCurrentSectionQuestions: () => {
+        const state = get();
+        if (state.allSectionsQuestions.length === 0) {
+          // Fallback to questions if allSectionsQuestions not populated
+          return state.questions;
+        }
+        return state.allSectionsQuestions[state.currentSectionIndex] || [];
+      },
+      
+      getSectionTimeLimit: (sectionIndex: number) => {
+        const state = get();
+        return state.sectionTimeLimits[sectionIndex] || 60;
+      },
+      
+      calculateSectionTimeLimits: () => {
+        const state = get();
+        if (state.allSectionsQuestions.length === 0) return;
+        
+        const timeLimits = state.allSectionsQuestions.map((sectionQuestions) => {
+          const questionCount = sectionQuestions.length;
+          // 1.5 minutes per question (or 75 min fixed for TMUA)
+          return state.paperName === 'TMUA' ? 75 : Math.ceil(questionCount * 1.5);
+        });
+        
+        set({ sectionTimeLimits: timeLimits });
+      },
     }),
     {
       name: 'paper-session-store',
@@ -877,11 +972,16 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         reviewFlags: state.reviewFlags,
         mistakeTags: state.mistakeTags,
         visitedQuestions: state.visitedQuestions,
+        sectionStarts: state.sectionStarts,
+        currentSectionIndex: state.currentSectionIndex,
+        sectionTimeLimits: state.sectionTimeLimits,
+        sectionInstructionTimer: state.sectionInstructionTimer,
+        sectionInstructionDeadline: state.sectionInstructionDeadline,
+        allSectionsQuestions: state.allSectionsQuestions,
         startedAt: state.startedAt,
         deadline: state.deadline,
         endedAt: state.endedAt,
         notes: state.notes,
-        sectionStarts: state.sectionStarts,
       }),
     }
   )
