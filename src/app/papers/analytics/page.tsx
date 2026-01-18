@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AnalyticsTrendChart } from "@/components/papers/AnalyticsTrendChart";
+import { MistakeChart } from "@/components/papers/MistakeChart";
 import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { PaperType, PaperSection } from "@/types/papers";
 import { motion, AnimatePresence } from "framer-motion";
@@ -78,6 +79,7 @@ export default function PapersAnalyticsPage() {
       percentage: d.percentile, // Chart will display this as percentile
       paperType: d.paperType,
       section: d.section,
+      rawScore: d.rawScore, // Include raw score for tooltip
     }));
   }, [trendDataWithPercentiles]);
 
@@ -144,6 +146,77 @@ export default function PapersAnalyticsPage() {
   // Calculate time management insights
   const timeManagementInsights = useMemo(() => {
     return calculateTimeManagementInsights(filteredSessions);
+  }, [filteredSessions]);
+
+  // Aggregate mistake tags across all sessions
+  const aggregatedMistakeTags = useMemo(() => {
+    const allMistakes: any[] = [];
+    filteredSessions.forEach(session => {
+      if (session.mistakeTags && session.mistakeTags.length > 0) {
+        allMistakes.push(...session.mistakeTags);
+      }
+    });
+    return allMistakes;
+  }, [filteredSessions]);
+
+  // Aggregate guessing data across all sessions
+  const guessingStats = useMemo(() => {
+    let totalGuessed = 0;
+    let correctGuesses = 0;
+    let wrongGuesses = 0;
+    let guessedIndices: number[] = [];
+    let allGuessedFlags: boolean[] = [];
+    let allCorrectFlags: (boolean | null)[] = [];
+    let allPerQuestionSec: number[] = [];
+
+    filteredSessions.forEach(session => {
+      if (session.guessedFlags && session.correctFlags && session.perQuestionSec) {
+        session.guessedFlags.forEach((guessed, idx) => {
+          if (guessed) {
+            totalGuessed++;
+            guessedIndices.push(allGuessedFlags.length);
+            const correct = session.correctFlags[idx];
+            if (correct === true) correctGuesses++;
+            else if (correct === false) wrongGuesses++;
+          }
+          allGuessedFlags.push(guessed);
+          allCorrectFlags.push(session.correctFlags[idx] ?? null);
+          allPerQuestionSec.push(session.perQuestionSec[idx] || 0);
+        });
+      }
+    });
+
+    const accuracy = totalGuessed > 0 ? (correctGuesses / totalGuessed) * 100 : 0;
+    const timeOnGuessed = guessedIndices.reduce((sum, idx) => sum + (allPerQuestionSec[idx] || 0), 0);
+    const totalTime = allPerQuestionSec.reduce((sum, t) => sum + t, 0);
+    const shareOfTotalTime = totalTime > 0 ? (timeOnGuessed / totalTime) * 100 : 0;
+
+    // Calculate average times for correct vs wrong guesses
+    const correctGuessTimes = guessedIndices
+      .filter(idx => allCorrectFlags[idx] === true)
+      .map(idx => allPerQuestionSec[idx] || 0);
+    const wrongGuessTimes = guessedIndices
+      .filter(idx => allCorrectFlags[idx] === false)
+      .map(idx => allPerQuestionSec[idx] || 0);
+    const avgTimeCorrectGuess = correctGuessTimes.length > 0
+      ? correctGuessTimes.reduce((a, b) => a + b, 0) / correctGuessTimes.length
+      : 0;
+    const avgTimeWrongGuess = wrongGuessTimes.length > 0
+      ? wrongGuessTimes.reduce((a, b) => a + b, 0) / wrongGuessTimes.length
+      : 0;
+
+    return {
+      totalGuessed,
+      correctGuesses,
+      wrongGuesses,
+      accuracy: Math.round(accuracy),
+      shareOfTotalTime: Math.round(shareOfTotalTime),
+      avgTimeCorrectGuess,
+      avgTimeWrongGuess,
+      allGuessedFlags,
+      allCorrectFlags,
+      allPerQuestionSec,
+    };
   }, [filteredSessions]);
 
   const { loadSessionFromDatabase } = usePaperSessionStore();
@@ -348,108 +421,152 @@ export default function PapersAnalyticsPage() {
                 className="overflow-hidden"
               >
                 {visibleSessions.length > 0 ? (
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                    {visibleSessions.map((session) => {
-                      const scorePercentage = session.scorePercentage;
-                      const percentile = session.percentile;
-                      const date = session.startedAt 
-                        ? new Date(session.startedAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })
-                        : 'Unknown date';
-                      const minutes = Math.round(session.timeLimitMinutes);
-                      
-                      // Extract year from variant
-                      const year = extractYearFromVariant(session.paperVariant);
-                      const variantWithoutYear = year 
-                        ? session.paperVariant.replace(/\s*\d{4}\s*/, '').trim()
-                        : session.paperVariant;
-                      
-                      // Main title: Paper name + year
-                      const mainTitle = year 
-                        ? `${session.paperName} ${year}`
-                        : `${session.paperName} ${session.paperVariant}`;
-                      
-                      // Section info
-                      const sectionInfo = session.selectedSections && session.selectedSections.length > 0
-                        ? session.selectedSections.join(", ")
-                        : variantWithoutYear || session.sessionName;
-                      
-                      // Icon color based on paper type
-                      const iconColor = getPaperTypeColor(session.paperName);
+                  <div className="max-h-[600px] overflow-y-auto pr-2">
+                    {/* Column Headers */}
+                    <div className="grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 sticky top-0 bg-[#121418] z-10">
+                      <div className="col-span-4">Paper</div>
+                      <div className="col-span-1 text-center">%</div>
+                      <div className="col-span-1 text-center">Score</div>
+                      <div className="col-span-1 text-center">Percentile</div>
+                      <div className="col-span-1 text-center">Time</div>
+                      <div className="col-span-2 text-center">Date</div>
+                      <div className="col-span-2"></div>
+                    </div>
 
-                      // Get ESAT/TMUA score if applicable
-                      const paperScore = session.paperName === "ESAT" || session.paperName === "TMUA" 
-                        ? scorePercentage !== null ? `${Math.round(scorePercentage)}%` : "N/A"
-                        : null;
+                    {/* Session Rows */}
+                    <div className="space-y-1">
+                      {visibleSessions.map((session) => {
+                        const scorePercentage = session.scorePercentage;
+                        const percentile = session.percentile;
+                        const date = session.startedAt 
+                          ? new Date(session.startedAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })
+                          : 'Unknown date';
+                        const minutes = Math.round(session.timeLimitMinutes);
+                        
+                        // Extract year from variant
+                        const year = extractYearFromVariant(session.paperVariant);
+                        const variantWithoutYear = year 
+                          ? session.paperVariant.replace(/\s*\d{4}\s*/, '').trim()
+                          : session.paperVariant;
+                        
+                        // Main title: Paper name + year
+                        const mainTitle = year 
+                          ? `${session.paperName} ${year}`
+                          : `${session.paperName} ${session.paperVariant}`;
+                        
+                        // Section info
+                        const sectionInfo = session.selectedSections && session.selectedSections.length > 0
+                          ? session.selectedSections.join(", ")
+                          : variantWithoutYear || session.sessionName;
+                        
+                        // Icon color based on paper type
+                        const iconColor = getPaperTypeColor(session.paperName);
 
-                      return (
-                        <div 
-                          key={session.id} 
-                          className="flex items-center justify-between p-5 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors"
-                        >
-                          {/* Left: Icon */}
-                          <div className="flex-shrink-0 mr-4">
-                            <div 
-                              className="w-10 h-10 rounded-md flex items-center justify-center"
-                              style={{ backgroundColor: desaturateColor(iconColor, 0.3) }}
-                            >
-                              <FileText className="w-5 h-5 text-white" />
-                            </div>
-                          </div>
+                        // Calculate converted score (for ENGAA/NSAA/TMUA with conversion tables)
+                        // Note: This requires question data and conversion tables which we don't have here
+                        // For now, we'll show the raw percentage as the score
+                        // TODO: Calculate actual converted score when question data is available
+                        const convertedScore = scorePercentage !== null 
+                          ? (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA")
+                            ? null // Would need conversion table calculation
+                            : null
+                          : null;
 
-                          {/* Middle: Session Info */}
-                          <div className="flex-1 min-w-0 mr-4">
-                            <div className="font-medium text-neutral-100 mb-1">
-                              {mainTitle}
-                            </div>
-                            <div className="text-xs text-neutral-400 mb-1">
-                              {sectionInfo}
-                            </div>
-                            <div className="text-xs text-neutral-500">
-                              {date}
-                            </div>
-                          </div>
-
-                          {/* Right: Stats and Button */}
-                          <div className="flex items-center gap-6">
-                            <div className="text-right space-y-1">
-                              {scorePercentage !== null && (
-                                <div className="text-sm">
-                                  <span className="text-neutral-400">Score: </span>
-                                  <span className="font-medium text-neutral-100">{scorePercentage.toFixed(1)}%</span>
+                        return (
+                          <button
+                            key={session.id}
+                            onClick={() => handleViewMarkPage(session.id)}
+                            className="w-full text-left grid grid-cols-12 gap-4 px-5 py-4 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors items-center"
+                          >
+                            {/* Paper Name & Sections */}
+                            <div className="col-span-4 flex items-center gap-3">
+                              <div 
+                                className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: desaturateColor(iconColor, 0.3) }}
+                              >
+                                <FileText className="w-4 h-4 text-white" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-medium text-white/90 truncate">
+                                  {mainTitle}
                                 </div>
-                              )}
-                              {percentile !== null && (
-                                <div className="text-sm">
-                                  <span className="text-neutral-400">Percentile: </span>
-                                  <span className="font-medium text-neutral-100">{percentile.toFixed(1)}%</span>
+                                <div className="text-xs text-white/60 truncate mt-0.5">
+                                  {sectionInfo}
                                 </div>
-                              )}
-                              {paperScore && (
-                                <div className="text-sm">
-                                  <span className="text-neutral-400">{session.paperName} Score: </span>
-                                  <span className="font-medium text-neutral-100">{paperScore}</span>
-                                </div>
-                              )}
-                              <div className="text-xs text-neutral-500">
-                                {minutes} min
                               </div>
                             </div>
-                            <Button
-                              onClick={() => handleViewMarkPage(session.id)}
-                              variant="primary"
-                              size="sm"
-                              className="whitespace-nowrap"
-                            >
-                              View Mark Page
-                            </Button>
-                          </div>
-                        </div>
-                      );
-                    })}
+
+                            {/* Percentage */}
+                            <div className="col-span-1 flex items-center justify-center">
+                              {scorePercentage !== null ? (
+                                <span className="text-sm text-white/80">
+                                  {scorePercentage.toFixed(1)}%
+                                </span>
+                              ) : (
+                                <span className="text-xs text-white/40">—</span>
+                              )}
+                            </div>
+
+                            {/* Score (converted for ENGAA/NSAA/TMUA) */}
+                            <div className="col-span-1 flex items-center justify-center">
+                              {convertedScore !== null ? (
+                                <span className="text-sm text-white/80 font-medium">
+                                  {convertedScore.toFixed(1)}
+                                </span>
+                              ) : scorePercentage !== null && (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA") ? (
+                                <span className="text-xs text-white/40 italic">—</span>
+                              ) : (
+                                <span className="text-xs text-white/40">—</span>
+                              )}
+                            </div>
+
+                            {/* Percentile */}
+                            <div className="col-span-1 flex items-center justify-center">
+                              {percentile !== null ? (
+                                <span className="text-sm text-white/80 font-medium">
+                                  {percentile.toFixed(1)}th
+                                </span>
+                              ) : (
+                                <span className="text-xs text-white/40">—</span>
+                              )}
+                            </div>
+
+                            {/* Time */}
+                            <div className="col-span-1 flex items-center justify-center">
+                              <span className="text-sm text-white/60">
+                                {minutes}m
+                              </span>
+                            </div>
+
+                            {/* Date */}
+                            <div className="col-span-2 flex items-center justify-center">
+                              <span className="text-sm text-white/60">
+                                {date}
+                              </span>
+                            </div>
+
+                            {/* View Button */}
+                            <div className="col-span-2 flex items-center justify-end">
+                              <Button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewMarkPage(session.id);
+                                }}
+                                variant="secondary"
+                                size="sm"
+                                className="whitespace-nowrap text-xs"
+                              >
+                                View
+                              </Button>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8 text-neutral-500">
@@ -461,30 +578,30 @@ export default function PapersAnalyticsPage() {
           </AnimatePresence>
         </div>
 
-        {/* 4. Section Performance Breakdown & Improvement Tracker */}
+        {/* 4. Mistake Breakdown Chart */}
         <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
           <button
-            onClick={() => toggleSection("sections")}
+            onClick={() => toggleSection("mistakes")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
               <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
-                Section Performance & Trends
+                Mistake Breakdown
               </h2>
               <p className="text-sm text-white/60 mt-1 text-left">
-                Track performance and improvement by section
+                Common mistake patterns across all sessions
               </p>
             </div>
             <ChevronDown 
               className={cn(
                 "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-                collapsedSections.has("sections") && "rotate-180"
+                collapsedSections.has("mistakes") && "rotate-180"
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("sections") && (
+            {!collapsedSections.has("mistakes") && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -492,109 +609,36 @@ export default function PapersAnalyticsPage() {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                {sectionPerformance.length > 0 ? (
-                  <div className="space-y-4">
-                    {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-4 px-2 py-3 text-xs font-semibold text-white/40 border-b border-white/10">
-                      <div className="col-span-3">Section</div>
-                      <div className="col-span-2 text-center">Accuracy</div>
-                      <div className="col-span-2 text-center">Avg Time/Q</div>
-                      <div className="col-span-2 text-center">Guessed %</div>
-                      <div className="col-span-2 text-center">Questions</div>
-                      <div className="col-span-1 text-center">Trend</div>
-                    </div>
-
-                    {/* Section Rows */}
-                    {sectionPerformance.map((section) => {
-                      const getTrendIcon = () => {
-                        if (section.trend === 'improving') {
-                          return <TrendingUp className="h-4 w-4 text-green-400" />;
-                        } else if (section.trend === 'declining') {
-                          return <TrendingDown className="h-4 w-4 text-red-400" />;
-                        }
-                        return <Minus className="h-4 w-4 text-white/40" />;
-                      };
-
-                      const getTrendColor = () => {
-                        if (section.trend === 'improving') return 'text-green-400';
-                        if (section.trend === 'declining') return 'text-red-400';
-                        return 'text-white/60';
-                      };
-
-                      return (
-                        <div
-                          key={section.section}
-                          className="grid grid-cols-12 gap-4 px-2 py-4 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors items-center"
-                        >
-                          <div className="col-span-3">
-                            <div className="font-medium text-white/90">{section.section}</div>
-                            {section.trend !== 'stable' && (
-                              <div className={cn("text-xs mt-0.5", getTrendColor())}>
-                                {section.trend === 'improving' ? '↑' : '↓'} {Math.abs(section.trendValue).toFixed(1)}% vs earlier sessions
-                              </div>
-                            )}
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-base font-medium text-white/90">
-                              {section.currentAccuracy.toFixed(1)}%
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-sm text-white/80">
-                              {(section.avgTimePerQuestion / 60).toFixed(1)} min
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-sm text-white/80">
-                              {section.guessedRate.toFixed(1)}%
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-sm text-white/80">
-                              {section.correctQuestions}/{section.totalQuestions}
-                            </div>
-                          </div>
-                          <div className="col-span-1 flex items-center justify-center">
-                            {getTrendIcon()}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-neutral-500">
-                    <div className="text-sm">No section data available</div>
-                  </div>
-                )}
+                <MistakeChart mistakeTags={aggregatedMistakeTags} />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* 5. Time Management Insights */}
+        {/* 5. Guess Distribution & Time Distribution */}
         <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
           <button
-            onClick={() => toggleSection("time")}
+            onClick={() => toggleSection("distribution")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
               <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
-                Time Management Insights
+                Guessing Behavior & Time Distribution
               </h2>
               <p className="text-sm text-white/60 mt-1 text-left">
-                Optimize your pacing and time allocation
+                Analyze guessing patterns and time allocation
               </p>
             </div>
             <ChevronDown 
               className={cn(
                 "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-                collapsedSections.has("time") && "rotate-180"
+                collapsedSections.has("distribution") && "rotate-180"
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("time") && (
+            {!collapsedSections.has("distribution") && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -602,63 +646,180 @@ export default function PapersAnalyticsPage() {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                {timeManagementInsights.length > 0 ? (
+                <div className="space-y-6">
+                  {/* Guessing Stats */}
                   <div className="space-y-4">
-                    {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-4 px-2 py-3 text-xs font-semibold text-white/40 border-b border-white/10">
-                      <div className="col-span-3">Section</div>
-                      <div className="col-span-2 text-center">Time/Q</div>
-                      <div className="col-span-2 text-center">Accuracy</div>
-                      <div className="col-span-2 text-center">Efficiency</div>
-                      <div className="col-span-3 text-center">Recommendation</div>
+                    <div className="text-sm font-semibold text-white/90">Guessing Behavior</div>
+                    <div className="grid grid-cols-4 gap-3">
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-white/40 mb-1">Total Guessed</div>
+                        <div className="text-lg font-semibold text-white/90">{guessingStats.totalGuessed}</div>
+                      </div>
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-white/40 mb-1">Correct Guesses</div>
+                        <div className="text-lg font-semibold text-white/90">{guessingStats.correctGuesses}</div>
+                      </div>
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-white/40 mb-1">Guess Accuracy</div>
+                        <div className="text-lg font-semibold text-white/90">{guessingStats.accuracy}%</div>
+                      </div>
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-white/40 mb-1">Time on Guesses</div>
+                        <div className="text-lg font-semibold text-white/90">{guessingStats.shareOfTotalTime}%</div>
+                      </div>
                     </div>
 
-                    {/* Insight Rows */}
-                    {timeManagementInsights.map((insight) => {
-                      const getRecommendationColor = () => {
-                        if (insight.recommendation.includes("Optimal") || insight.recommendation.includes("Efficient")) {
-                          return "text-green-400";
-                        } else if (insight.recommendation.includes("Too slow") || insight.recommendation.includes("Too fast")) {
-                          return "text-red-400";
-                        }
-                        return "text-yellow-400";
-                      };
-
-                      return (
-                        <div
-                          key={insight.section}
-                          className="grid grid-cols-12 gap-4 px-2 py-4 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors items-center"
-                        >
-                          <div className="col-span-3">
-                            <div className="font-medium text-white/90">{insight.section}</div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-base font-medium text-white/90">
-                              {(insight.avgTimePerQuestion / 60).toFixed(1)} min
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-sm text-white/80">
-                              {insight.accuracy.toFixed(1)}%
-                            </div>
-                          </div>
-                          <div className="col-span-2 text-center">
-                            <div className="text-sm text-white/80">
-                              {insight.efficiencyScore.toFixed(2)} q/min
-                            </div>
-                          </div>
-                          <div className={cn("col-span-3 text-center text-xs", getRecommendationColor())}>
-                            {insight.recommendation}
+                    {/* Guess Time Split */}
+                    {guessingStats.totalGuessed > 0 && (
+                      <div>
+                        <div className="text-xs text-white/40 mb-2">Guess time split: correct vs wrong</div>
+                        <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
+                          <div className="flex w-full h-full">
+                            {(() => {
+                              const correctTime = guessingStats.correctGuesses * guessingStats.avgTimeCorrectGuess;
+                              const wrongTime = guessingStats.wrongGuesses * guessingStats.avgTimeWrongGuess;
+                              const totalGuessTime = Math.max(1e-6, correctTime + wrongTime);
+                              const correctPct = Math.round((correctTime / totalGuessTime) * 100);
+                              const wrongPct = Math.max(0, 100 - correctPct);
+                              
+                              return (
+                                <>
+                                  <div
+                                    className="h-full flex items-center justify-center text-[11px] font-medium"
+                                    style={{ width: `${correctPct}%`, backgroundColor: `rgba(78, 107, 138, 0.8)` }}
+                                  >
+                                    {correctPct >= 12 ? `${correctPct}%` : ''}
+                                  </div>
+                                  <div
+                                    className="h-full flex items-center justify-center text-[11px] font-medium"
+                                    style={{ width: `${wrongPct}%`, backgroundColor: `rgba(140, 82, 90, 0.8)` }}
+                                  >
+                                    {wrongPct >= 12 ? `${wrongPct}%` : ''}
+                                  </div>
+                                </>
+                              );
+                            })()}
                           </div>
                         </div>
-                      );
-                    })}
+                        <div className="mt-1 flex items-center justify-between text-[11px] text-white/40">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#4e6b8a' }} />
+                            <span>Correct • {guessingStats.correctGuesses} qns • avg {Math.round(guessingStats.avgTimeCorrectGuess)}s</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#8c525a' }} />
+                            <span>Wrong • {guessingStats.wrongGuesses} qns • avg {Math.round(guessingStats.avgTimeWrongGuess)}s</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Guess Distribution Chart */}
+                    {guessingStats.allGuessedFlags.length > 0 && (
+                      <div>
+                        <div className="text-sm font-semibold text-white/200 mb-2">Guess Distribution</div>
+                        {(() => {
+                          const questionNumbers = Array.from({ length: guessingStats.allGuessedFlags.length }, (_, i) => i + 1);
+                          const w = Math.max(420, questionNumbers.length * 14 + 16);
+                          const h = 96; const pad = 12; const stripH = 16; const plotH = h - stripH - pad*3;
+                          const windowSize = 2;
+                          const vals = questionNumbers.map((_, i) => {
+                            let s = 0; let c = 0;
+                            for (let j = Math.max(0, i-windowSize); j <= Math.min(questionNumbers.length-1, i+windowSize); j++) { 
+                              c++; 
+                              s += (guessingStats.allGuessedFlags[j] ? 1 : 0); 
+                            }
+                            return s / Math.max(1, c);
+                          });
+                          const toX = (i:number) => pad + (i/(Math.max(1, vals.length-1))) * (w-2*pad);
+                          const toY = (v:number) => pad + (plotH - v * plotH);
+                          const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
+                          const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
+                          const guessColor = '#9e5974';
+                          const correctBorder = '#4e6b8a';
+                          const wrongBorder = '#8c525a';
+                          const len = Math.max(1, questionNumbers.length);
+                          const innerW = w - 2*pad;
+                          const step = innerW / len;
+                          const desiredBlockW = step - 2;
+                          const blockW = Math.max(10, desiredBlockW);
+                          const blockInset = Math.max(1, (step - (blockW - 2)) / 2);
+                          
+                          return (
+                            <div className="overflow-x-auto flex justify-center">
+                              <svg width={w} height={h} className="block">
+                                <path d={area} fill={`${guessColor}33`} />
+                                <path d={path} stroke={guessColor} strokeWidth={2} fill="none" />
+                                {questionNumbers.map((qn, idx) => {
+                                  const bandStart = pad + idx * step;
+                                  const rectX = bandStart + blockInset;
+                                  const guessed = guessingStats.allGuessedFlags[idx] === true;
+                                  const corr = guessingStats.allCorrectFlags[idx];
+                                  const fill = guessed ? guessColor : '#1a1f27';
+                                  const border = corr === true ? correctBorder : (corr === false ? wrongBorder : 'rgba(255,255,255,0.12)');
+                                  return (
+                                    <g key={qn}>
+                                      <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
+                                      <rect x={rectX} y={h - pad - stripH} width={blockW - 2} height={stripH} rx={4} ry={4} fill={fill} stroke={border} strokeWidth={1} />
+                                    </g>
+                                  );
+                                })}
+                              </svg>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-8 text-neutral-500">
-                    <div className="text-sm">No time management data available</div>
-                  </div>
-                )}
+
+                  {/* Time Distribution */}
+                  {guessingStats.allPerQuestionSec.length > 0 && (
+                    <div className="space-y-4">
+                      <div className="text-sm font-semibold text-white/90">Time Distribution</div>
+                      {(() => {
+                        const times = guessingStats.allPerQuestionSec;
+                        const total = times.reduce((a, b) => a + b, 0);
+                        const correctTimes: number[] = [];
+                        const wrongTimes: number[] = [];
+                        times.forEach((t, i) => {
+                          const corr = guessingStats.allCorrectFlags[i];
+                          if (corr === true) correctTimes.push(t);
+                          else if (corr === false) wrongTimes.push(t);
+                        });
+                        const correctTime = correctTimes.reduce((a, b) => a + b, 0);
+                        const wrongTime = wrongTimes.reduce((a, b) => a + b, 0);
+                        const correctPct = Math.min(100, Math.round((correctTime / Math.max(1, total)) * 100));
+                        const wrongPct = Math.max(0, 100 - correctPct);
+                        
+                        return (
+                          <div>
+                            <div className="text-xs text-white/40 mb-2">Time split: correct vs wrong answers</div>
+                            <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
+                              <div className="flex w-full h-full">
+                                <div
+                                  className="h-full flex items-center justify-center text-[11px] font-medium"
+                                  style={{ width: `${correctPct}%`, backgroundColor: `rgba(78, 107, 138, 0.8)` }}
+                                >
+                                  {correctPct >= 12 ? `${correctPct}%` : ''}
+                                </div>
+                                <div
+                                  className="h-full flex items-center justify-center text-[11px] font-medium"
+                                  style={{ width: `${wrongPct}%`, backgroundColor: `rgba(140, 82, 90, 0.8)` }}
+                                >
+                                  {wrongPct >= 12 ? `${wrongPct}%` : ''}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="mt-1 flex items-center justify-between text-[11px] text-white/40">
+                              <span>Correct {correctPct}%</span>
+                              <span>Wrong {wrongPct}%</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

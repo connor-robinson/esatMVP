@@ -141,6 +141,11 @@ export default function PapersSolvePage() {
         });
       });
       previousQuestionIndexRef.current = currentQuestionIndex;
+      // Reset content viewed status for new question if not already viewed
+      // This allows the warning to show if user tries to answer without viewing
+      if (!hasViewedContent[currentQuestionIndex]) {
+        // Content will be marked as viewed when user scrolls to bottom
+      }
     }
     // Always capture current scroll in case we navigate
     scrollPositionRef.current = window.scrollY;
@@ -203,7 +208,61 @@ export default function PapersSolvePage() {
     });
   }
   
+  // Get current section boundaries
+  const getCurrentSectionBounds = useCallback(() => {
+    const sectionIndices = Object.keys(sectionStarts)
+      .map(Number)
+      .sort((a, b) => a - b);
+    
+    if (sectionIndices.length === 0) {
+      return { start: 0, end: actualQuestionCount - 1 };
+    }
+
+    // Find which section we're currently in
+    let sectionStart = 0;
+    let sectionEnd = actualQuestionCount - 1;
+
+    for (let i = 0; i < sectionIndices.length; i++) {
+      const startIdx = sectionIndices[i];
+      if (currentQuestionIndex >= startIdx) {
+        sectionStart = startIdx;
+        // Find next section start, or end of questions
+        if (i + 1 < sectionIndices.length) {
+          sectionEnd = sectionIndices[i + 1] - 1;
+        } else {
+          sectionEnd = actualQuestionCount - 1;
+        }
+      } else {
+        break;
+      }
+    }
+
+    return { start: sectionStart, end: sectionEnd };
+  }, [currentQuestionIndex, sectionStarts, actualQuestionCount]);
+
+  // Check if current section is complete (all questions have answers)
+  const isCurrentSectionComplete = useCallback(() => {
+    const { start, end } = getCurrentSectionBounds();
+    for (let i = start; i <= end; i++) {
+      if (!answers[i]?.choice) {
+        return false;
+      }
+    }
+    return true;
+  }, [answers, getCurrentSectionBounds]);
+
+  // Check if target index is in next section
+  const isInNextSection = useCallback((targetIndex: number) => {
+    const { start, end } = getCurrentSectionBounds();
+    return targetIndex > end;
+  }, [getCurrentSectionBounds]);
+
   const handleChoiceSelect = (letter: Letter) => {
+    // Check if user has viewed content before allowing answer
+    if (!hasViewedContent[currentQuestionIndex]) {
+      setShowUnseenWarning(true);
+      return;
+    }
     setAnswer(currentQuestionIndex, letter);
   };
   
@@ -224,6 +283,12 @@ export default function PapersSolvePage() {
     const newIndex = currentQuestionIndex + direction;
     const actualCount = questions.length > 0 ? questions.length : totalQuestions;
     if (newIndex >= 0 && newIndex < actualCount) {
+      // Check if trying to navigate to next section without completing current
+      if (direction > 0 && isInNextSection(newIndex) && !isCurrentSectionComplete()) {
+        // Show alert - need to complete current section first
+        alert("You must complete all questions in the current section before moving to the next section.");
+        return;
+      }
       navigateToQuestion(newIndex);
     }
   };
@@ -239,6 +304,11 @@ export default function PapersSolvePage() {
   
   const handleQuestionJump = (index: number) => {
     scrollPositionRef.current = window.scrollY;
+    // Check if trying to jump to next section without completing current
+    if (index > currentQuestionIndex && isInNextSection(index) && !isCurrentSectionComplete()) {
+      alert("You must complete all questions in the current section before moving to the next section.");
+      return;
+    }
     navigateToQuestion(index);
   };
   
@@ -321,6 +391,12 @@ export default function PapersSolvePage() {
                       onReviewFlagToggle={handleReviewFlagToggle}
                       paperName={paperName}
                       currentQuestion={currentQuestion}
+                      onContentViewed={() => {
+                        setHasViewedContent((prev) => ({
+                          ...prev,
+                          [currentQuestionIndex]: true
+                        }));
+                      }}
                     />
                   </div>
                 ) : (
@@ -353,17 +429,38 @@ export default function PapersSolvePage() {
           zIndex: 10
         }}>
           
-          {/* Multiple Choice Row */}
-          <div className="flex items-center justify-center gap-3 mb-8">
-            {/* Answer Choices */}
-            <div className="grid grid-flow-col auto-cols-fr gap-3 flex-1 max-w-4xl">
+          {/* Unified Bottom Bar: Submit Section | Multiple Choice | Previous, Navigator, Next */}
+          <div className="flex items-center gap-3 w-full">
+            {/* Submit Section Button - Left */}
+            <button
+              onClick={() => setShowConfirmModal(true)}
+              className="
+                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200
+                backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
+                hover:bg-[#151921]
+                active:scale-95 active:transform flex-shrink-0
+              "
+              style={{ 
+                borderRadius: '12px'
+              }}
+              title="Submit section"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span>Submit Section</span>
+            </button>
+
+            {/* Answer Choices - Middle (takes remaining space) */}
+            <div className="flex items-center justify-center gap-3 flex-1 min-w-0">
               {LETTERS.map((letter) => (
                 <button
                   key={letter}
                   onClick={() => handleChoiceSelect(letter)}
                   className={`
                     h-[50px] rounded-xl font-medium transition-all duration-200 text-base
-                    backdrop-blur-md shadow-md flex items-center justify-center min-w-[104px] max-w-[104px]
+                    backdrop-blur-md shadow-md flex items-center justify-center flex-1
+                    min-w-0 max-w-[120px]
                     ${currentAnswer?.choice === letter
                       ? 'text-white shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]'
                       : 'bg-[#0f1114] text-neutral-300 hover:bg-[#151921]'
@@ -375,35 +472,9 @@ export default function PapersSolvePage() {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Bottom Bar: Submit Section (left) | Previous, Navigator, Next (right) */}
-          <div className="flex items-center justify-between w-full">
-            {/* Submit Section Button - Left */}
-            <button
-              onClick={() => setShowConfirmModal(true)}
-              className="
-                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                hover:bg-[#151921]
-                active:scale-95 active:transform
-              "
-              style={{ 
-                borderRadius: '12px'
-              }}
-              title="Submit section"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18M3 12h18" />
-              </svg>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span>Submit Section</span>
-            </button>
 
             {/* Previous, Navigator, Next Buttons - Right (close together) */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {/* Previous Button */}
               <button
                 onClick={() => handleNavigation(-1)}
@@ -594,6 +665,44 @@ export default function PapersSolvePage() {
           onNavigateToQuestion={handleQuestionJump}
           questionNumbers={questions.map((q) => q.questionNumber)}
         />
+
+        {/* Unseen Content Warning Popup */}
+        {showUnseenWarning && (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setShowUnseenWarning(false)}
+          >
+            <div
+              className="w-full max-w-md rounded-lg border-2 shadow-2xl bg-[#0e0f13] border-white/12"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-500/20">
+                    <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-100">Unseen content</h3>
+                </div>
+                <p className="text-sm text-neutral-400">
+                  You have not yet viewed the entire screen. Make sure you play all multimedia content, select every tab and scroll to every corner.
+                </p>
+                <div className="flex justify-end pt-2">
+                  <button
+                    onClick={() => setShowUnseenWarning(false)}
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    style={{ backgroundColor: '#5075a4', color: '#ffffff' }}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Container>
   );

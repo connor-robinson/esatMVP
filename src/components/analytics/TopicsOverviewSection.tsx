@@ -215,7 +215,7 @@ export function TopicsOverviewSection({
                 <div className="col-span-1"></div>
               </div>
 
-              {/* All Topics List - Top 3 (green) and Bottom 3 (red) */}
+              {/* All Topics List */}
               {"isEmpty" in visibleTopicsData ? (
                 <div className="text-center py-12 text-white/40">
                   <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
@@ -223,51 +223,102 @@ export function TopicsOverviewSection({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Top Topics (Green) */}
-                  {visibleTopicsData.topTopics && visibleTopicsData.topTopics.length > 0 && (
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-wider text-success mb-2 px-5">
-                        Top {visibleTopicsData.topTopics.length}
-                      </div>
-                      <div className="space-y-1">
-                        {visibleTopicsData.topTopics.map((topic) => (
+                  {!showAllTopics ? (
+                    <>
+                      {/* Top Topics (Green) */}
+                      {visibleTopicsData.topTopics && visibleTopicsData.topTopics.length > 0 && (
+                        <div>
+                          <div className="text-xs font-semibold uppercase tracking-wider text-success mb-2 px-5">
+                            Top {visibleTopicsData.topTopics.length}
+                          </div>
+                          <div className="space-y-1">
+                            {visibleTopicsData.topTopics.map((topic) => (
+                              <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                                <TopicDetailCard
+                                  topic={topic}
+                                  isExpanded={expandedId === topic.topicId}
+                                  onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                                  isTopTopic={true}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* More Data Needed Message */}
+                      {visibleTopicsData.needsMoreData && (
+                        <div className="text-center py-4 text-white/40 text-sm">
+                          More data needed
+                        </div>
+                      )}
+
+                      {/* Bottom Topics (Red) */}
+                      {visibleTopicsData.bottomTopics && visibleTopicsData.bottomTopics.length > 0 && (
+                        <div>
+                          <div className="text-xs font-semibold uppercase tracking-wider text-error mb-2 px-5">
+                            Bottom {visibleTopicsData.bottomTopics.length}
+                          </div>
+                          <div className="space-y-1">
+                            {visibleTopicsData.bottomTopics.map((topic) => (
+                              <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                                <TopicDetailCard
+                                  topic={topic}
+                                  isExpanded={expandedId === topic.topicId}
+                                  onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                                  isTopTopic={false}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Show All Button */}
+                      {filteredTopics.length > (visibleTopicsData.topTopics?.length || 0) + (visibleTopicsData.bottomTopics?.length || 0) && (
+                        <div className="flex justify-center pt-2">
+                          <button
+                            onClick={() => setShowAllTopics(true)}
+                            className="text-sm text-white/60 hover:text-white/80 transition-colors flex items-center gap-1"
+                          >
+                            <span>...</span>
+                            <span>Show All Topics</span>
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    /* All Topics (when showAllTopics is true) */
+                    <div className="space-y-1">
+                      {filteredTopics.map((topic) => {
+                        // Determine if top or bottom based on composite score ranking (topic.rank)
+                        // topic.rank is based on composite score, not recency
+                        const totalTopics = allTopics.length;
+                        // Top 3 get green, bottom 3 get red (based on composite ranking)
+                        const isTop = topic.rank && topic.rank <= Math.min(3, Math.ceil(totalTopics / 2));
+                        const isBottom = topic.rank && topic.rank > totalTopics - Math.min(3, Math.floor(totalTopics / 2));
+                        const isTopTopic = isTop ? true : isBottom ? false : undefined;
+                        
+                        return (
                           <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                             <TopicDetailCard
                               topic={topic}
                               isExpanded={expandedId === topic.topicId}
                               onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                              isTopTopic={true}
+                              isTopTopic={isTopTopic}
                             />
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* More Data Needed Message */}
-                  {visibleTopicsData.needsMoreData && (
-                    <div className="text-center py-4 text-white/40 text-sm">
-                      More data needed
-                    </div>
-                  )}
-
-                  {/* Bottom Topics (Red) */}
-                  {visibleTopicsData.bottomTopics && visibleTopicsData.bottomTopics.length > 0 && (
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-wider text-error mb-2 px-5">
-                        Bottom {visibleTopicsData.bottomTopics.length}
-                      </div>
-                      <div className="space-y-1">
-                        {visibleTopicsData.bottomTopics.map((topic) => (
-                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                            <TopicDetailCard
-                              topic={topic}
-                              isExpanded={expandedId === topic.topicId}
-                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                              isTopTopic={false}
-                            />
-                          </div>
-                        ))}
+                        );
+                      })}
+                      
+                      {/* Hide All Button */}
+                      <div className="flex justify-center pt-2">
+                        <button
+                          onClick={() => setShowAllTopics(false)}
+                          className="text-sm text-white/60 hover:text-white/80 transition-colors"
+                        >
+                          Show Less
+                        </button>
                       </div>
                     </div>
                   )}

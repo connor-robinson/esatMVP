@@ -46,8 +46,9 @@ function SessionCardComponent({
   // Convert avgSpeed (ms per question) to seconds per question
   const speedInSeconds = session.avgSpeed > 0 ? (session.avgSpeed / 1000).toFixed(1) : "0.0";
 
-  // Get rank color (gold, silver, bronze)
+  // Get rank color (gold, silver, bronze) - only when sortMode is "performance"
   const getRankColor = () => {
+    if (sortMode !== "performance") return "text-white/70";
     if (rank === 1) return "text-yellow-400"; // Gold
     if (rank === 2) return "text-gray-300"; // Silver
     if (rank === 3) return "text-amber-600"; // Bronze
@@ -68,7 +69,7 @@ function SessionCardComponent({
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className={cn("text-base font-bold", getRankColor())}>
+          <span className={cn("text-xl font-bold", getRankColor())}>
             {rank}
           </span>
         </div>

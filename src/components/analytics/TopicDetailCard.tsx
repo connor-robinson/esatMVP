@@ -99,12 +99,8 @@ export function TopicDetailCard({
 
   const globalRankDisplay = getGlobalRankDisplay();
 
-  // Get rank color (gold, silver, bronze)
+  // Get rank color - no color coding for rank numbers, just white/70
   const getRankColor = () => {
-    if (!topic.rank) return "text-white/70";
-    if (topic.rank === 1) return "text-yellow-400"; // Gold
-    if (topic.rank === 2) return "text-gray-300"; // Silver
-    if (topic.rank === 3) return "text-amber-600"; // Bronze
     return "text-white/70";
   };
 
@@ -128,7 +124,7 @@ export function TopicDetailCard({
 
         {/* Topic Name */}
         <div className="col-span-2">
-          <h3 className="text-lg font-semibold text-white/90 leading-tight">
+          <h3 className="text-lg font-medium text-white/90 leading-tight">
             {topic.topicName}
           </h3>
         </div>
@@ -137,8 +133,8 @@ export function TopicDetailCard({
         <div className="col-span-1 flex items-center justify-center">
           {topic.percentile !== undefined ? (
             <span className="text-white/80">
-              <span className="text-2xl font-bold">{topic.percentile}</span>
-              <span className="text-xs text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
+              <span className="text-xl font-bold">{topic.percentile}</span>
+              <span className="text-sm text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
             </span>
           ) : (
             <span className="text-base text-white/80">-</span>

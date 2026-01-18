@@ -6,7 +6,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { PAPER_COLORS, PAPER_TYPE_COLORS, SECTION_COLORS, desaturateColor } from "@/config/colors";
+import { PAPER_COLORS, PAPER_TYPE_COLORS, SECTION_COLORS, desaturateColor, getPaperTypeColor } from "@/config/colors";
 import type { PaperType, PaperSection } from "@/types/papers";
 
 interface TrendDataPoint {
@@ -14,10 +14,11 @@ interface TrendDataPoint {
   percentage: number;
   paperType?: PaperType;
   section?: PaperSection;
+  rawScore?: number;
 }
 
 interface AnalyticsTrendChartProps {
-  allSessions: Array<{ date: number; percentage: number; paperType?: PaperType; section?: PaperSection }>;
+  allSessions: Array<{ date: number; percentage: number; paperType?: PaperType; section?: PaperSection; rawScore?: number }>;
   filterMode: "all" | "paper" | "section";
   selectedFilters?: string[];
   className?: string;
@@ -30,7 +31,14 @@ export function AnalyticsTrendChart({
   className 
 }: AnalyticsTrendChartProps) {
   const [animate, setAnimate] = useState(false);
-  const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number; percentage: number; date: number } | null>(null);
+  const [hoverPoint, setHoverPoint] = useState<{ 
+    x: number; 
+    y: number; 
+    percentage: number; 
+    date: number; 
+    paperType?: PaperType; 
+    rawScore?: number;
+  } | null>(null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setAnimate(true));
@@ -258,11 +266,21 @@ export function AnalyticsTrendChart({
                   }}
                   opacity={0.9}
                 />
-                {/* Interactive points */}
+                {/* Interactive points - color coded by paper type */}
                 {lineGroup.map((session, sessionIndex) => {
                   const x = scaleX(sessionIndex, lineGroup.length);
                   const y = scaleY(session.percentage);
-                  const pointColor = filterMode === "all" ? "#ffffff" : line.color;
+                  
+                  // Color code points by paper type
+                  let pointColor: string;
+                  if (filterMode === "all" && session.paperType) {
+                    // Use paper type color from library
+                    pointColor = getPaperTypeColor(session.paperType);
+                  } else if (filterMode === "paper") {
+                    pointColor = line.color;
+                  } else {
+                    pointColor = line.color;
+                  }
                   
                   return (
                     <circle
@@ -274,7 +292,14 @@ export function AnalyticsTrendChart({
                       opacity={0.9}
                       className="cursor-pointer"
                       style={{ transition: 'r 0.2s' }}
-                      onMouseEnter={() => setHoverPoint({ x, y, percentage: session.percentage, date: session.date })}
+                      onMouseEnter={() => setHoverPoint({ 
+                        x, 
+                        y, 
+                        percentage: session.percentage, 
+                        date: session.date,
+                        paperType: session.paperType,
+                        rawScore: session.rawScore
+                      })}
                       onMouseLeave={() => setHoverPoint(null)}
                     />
                   );
@@ -287,14 +312,50 @@ export function AnalyticsTrendChart({
         {/* Tooltip */}
         {hoverPoint && (
           <div
-            className="absolute px-2 py-1 rounded-md text-xs text-neutral-200 bg-black/80 border border-white/10 pointer-events-none z-10"
+            className="absolute px-3 py-2 rounded-md text-xs bg-black/90 border border-white/20 pointer-events-none z-10 shadow-lg min-w-[180px]"
             style={{ 
-              left: Math.min(hoverPoint.x, width - 160), 
-              top: Math.max(hoverPoint.y - 32, 0) 
+              left: Math.min(hoverPoint.x + 10, width - 190), 
+              top: Math.max(hoverPoint.y - 50, 10),
             }}
           >
-            <div>Percentile: {Math.round(hoverPoint.percentage)}th</div>
-            <div>Date: {new Date(hoverPoint.date).toLocaleDateString()}</div>
+            <div className="space-y-1.5">
+              {/* Exam Type with color indicator */}
+              {hoverPoint.paperType && (
+                <div className="flex items-center gap-2 pb-1 border-b border-white/10">
+                  <div 
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: getPaperTypeColor(hoverPoint.paperType) }}
+                  />
+                  <span className="font-semibold text-white">{hoverPoint.paperType}</span>
+                </div>
+              )}
+              
+              {/* Date */}
+              <div className="flex items-center justify-between">
+                <span className="text-white/60">Date:</span>
+                <span className="text-white/90 font-medium">
+                  {new Date(hoverPoint.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  })}
+                </span>
+              </div>
+              
+              {/* Percentile */}
+              <div className="flex items-center justify-between">
+                <span className="text-white/60">Percentile:</span>
+                <span className="text-white/90 font-medium">{Math.round(hoverPoint.percentage)}th</span>
+              </div>
+              
+              {/* Score (if available) */}
+              {hoverPoint.rawScore !== undefined && (
+                <div className="flex items-center justify-between">
+                  <span className="text-white/60">Score:</span>
+                  <span className="text-white/90 font-medium">{hoverPoint.rawScore.toFixed(1)}%</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

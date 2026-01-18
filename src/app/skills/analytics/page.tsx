@@ -844,6 +844,8 @@ export default function AnalyticsPage() {
               questionsTrend={questionsTrend}
               sessions={sessions}
               commonMistakesMap={commonMistakesMap}
+              view={view}
+              onViewChange={setView}
             />
           ) : (
             <div className="h-96 bg-white/[0.03] rounded-organic-lg flex items-center justify-center">
@@ -858,6 +860,9 @@ export default function AnalyticsPage() {
               currentUserId={session?.user?.id || ""}
               availableTopics={AVAILABLE_TOPICS}
               selectedTopic={selectedTopic}
+              onTopicChange={setSelectedTopic}
+              timeRange={timeRange}
+              onTimeRangeChange={setTimeRange}
             />
           </Suspense>
         )}

@@ -23,6 +23,7 @@ interface QuestionDisplayProps {
   onReviewFlagToggle?: () => void;
   paperName?: string;
   currentQuestion?: Question;
+  onContentViewed?: () => void;
 }
 
 export function QuestionDisplay({ 
@@ -142,6 +143,43 @@ export function QuestionDisplay({
     }
   }, [imageLoading]);
 
+  // Track if user has scrolled to view all content
+  useEffect(() => {
+    if (!scrollContainerRef.current || !onContentViewed) return;
+
+    const container = scrollContainerRef.current;
+    let hasScrolledToBottom = false;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
+      
+      if (isAtBottom && !hasScrolledToBottom) {
+        hasScrolledToBottom = true;
+        onContentViewed();
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    
+    // Check initial state - if content fits on screen, mark as viewed
+    const checkInitial = () => {
+      const { scrollHeight, clientHeight } = container;
+      if (scrollHeight <= clientHeight + 10) {
+        onContentViewed();
+      }
+    };
+    
+    // Check after image loads
+    if (!imageLoading) {
+      setTimeout(checkInitial, 200);
+    }
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [imageLoading, onContentViewed]);
+
   // Prevent context menu on image
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -247,33 +285,6 @@ export function QuestionDisplay({
                           />
                         </div>
                       </div>
-                    </div>
-                    
-                    {/* Pills below image */}
-                    <div className="flex items-center gap-3 mt-8 flex-wrap justify-center">
-                      {paperName && (
-                        <div className={`px-2 py-1 text-xs rounded-md border backdrop-blur-sm ${isDarkMode ? 'bg-black/50 text-neutral-400 border-white/20' : 'bg-white/80 text-neutral-600 border-neutral-300'}`}>
-                          {paperName}
-                        </div>
-                      )}
-                      <div className={`px-2 py-1 text-xs rounded-md border backdrop-blur-sm ${isDarkMode ? 'bg-black/50 text-neutral-400 border-white/20' : 'bg-white/80 text-neutral-600 border-neutral-300'}`}>
-                        {new Date().toLocaleDateString()}
-                      </div>
-                      {currentQuestion && (
-                        <>
-                          <div className={`px-2 py-1 text-xs rounded-md border backdrop-blur-sm ${isDarkMode ? 'bg-black/50 text-neutral-400 border-white/20' : 'bg-white/80 text-neutral-600 border-neutral-300'}`}>
-                            {currentQuestion.partName}
-                          </div>
-                          <div className={`px-2 py-1 text-xs rounded-md border backdrop-blur-sm ${isDarkMode ? 'bg-black/50 text-neutral-400 border-white/20' : 'bg-white/80 text-neutral-600 border-neutral-300'}`}>
-                            {currentQuestion.examType}
-                          </div>
-                          {currentQuestion.solutionType !== 'none' && (
-                            <div className={`px-2 py-1 text-xs rounded-md border backdrop-blur-sm ${isDarkMode ? 'bg-black/50 text-neutral-400 border-white/20' : 'bg-white/80 text-neutral-600 border-neutral-300'}`}>
-                              {currentQuestion.solutionType === 'official' ? 'Has Solution' : 'Has Solution'}
-                            </div>
-                          )}
-                        </>
-                      )}
                     </div>
                   </div>
                 </div>

@@ -305,8 +305,22 @@ export function calculatePercentileFromPaperDistribution(
 }
 
 /**
- * Calculate trend data with percentile instead of percentage
- * Percentiles are calculated based on the distribution of all sessions for each paper type
+ * IMPORTANT: This function calculates "relative percentiles" based on the user's own session distribution,
+ * NOT official exam percentiles like the mark page does.
+ * 
+ * The mark page calculates percentiles using:
+ * - Official percentile tables (from /api/esat)
+ * - Section-specific scores (not just overall percentage)
+ * - Score conversion for some papers
+ * - Different tables for TMUA pre-2023 vs post-2024
+ * 
+ * For accurate official percentiles, we would need:
+ * - Question data for each session (to calculate section scores)
+ * - Conversion tables (for papers with score conversion)
+ * - Access to official percentile tables
+ * 
+ * TODO: Consider storing official percentiles when sessions are completed, or
+ * implementing proper percentile calculation that matches the mark page logic.
  */
 export function calculateTrendDataWithPercentiles(
   sessions: PaperSession[]
@@ -326,6 +340,7 @@ export function calculateTrendDataWithPercentiles(
   });
   
   // Calculate percentile for each session
+  // NOTE: This is a "relative percentile" (vs your own sessions), not an official exam percentile
   const results: Array<{ date: number; percentile: number; paperType?: PaperType; section?: PaperSection; rawScore?: number }> = [];
   
   sessions.filter(s => s.score && s.startedAt).forEach(session => {
