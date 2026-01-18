@@ -178,15 +178,39 @@ export default function PapersSolvePage() {
   }, [showNotesPopover]);
   
   const totalQuestions = getTotalQuestions();
-  // Use actual questions array length for display/navigation since questions are filtered
-  const actualQuestionCount = questions.length > 0 ? questions.length : totalQuestions;
-  const remainingTime = getRemainingTime();
-  const currentAnswer = answers[currentQuestionIndex];
-  const isGuessed = guessedFlags[currentQuestionIndex];
-  const isFlaggedForReview = reviewFlags[currentQuestionIndex];
   
-  // Get current question by index (questions are already filtered and ordered)
-  const currentQuestion = questions[currentQuestionIndex];
+  // Get current section questions - if using section-based flow, use filtered questions
+  const currentSectionQuestions = allSectionsQuestions.length > 0 
+    ? (allSectionsQuestions[currentSectionIndex] || [])
+    : questions;
+  
+  // Use current section questions count for navigation and display
+  const actualQuestionCount = currentSectionQuestions.length > 0 
+    ? currentSectionQuestions.length 
+    : (questions.length > 0 ? questions.length : totalQuestions);
+  
+  const remainingTime = getRemainingTime();
+  
+  // Use currentQuestionIndex within the current section (0-based within section)
+  // Map to full questions array if needed for answer storage
+  const sectionQuestionIndex = Math.min(currentQuestionIndex, actualQuestionCount - 1);
+  const currentSectionQuestion = currentSectionQuestions[sectionQuestionIndex];
+  
+  // Find the full index in the questions array for answer storage
+  let fullQuestionIndex = currentQuestionIndex;
+  if (allSectionsQuestions.length > 0 && currentSectionQuestion) {
+    const fullIndex = questions.findIndex(q => q.id === currentSectionQuestion.id);
+    if (fullIndex >= 0) {
+      fullQuestionIndex = fullIndex;
+    }
+  }
+  
+  const currentAnswer = answers[fullQuestionIndex];
+  const isGuessed = guessedFlags[fullQuestionIndex];
+  const isFlaggedForReview = reviewFlags[fullQuestionIndex];
+  
+  // Get current question by index (use section question if available)
+  const currentQuestion = currentSectionQuestion || questions[currentQuestionIndex];
   // Compute section start indices for quick nav labeling
   // sectionStarts now computed in store during load, use directly
 
@@ -270,36 +294,30 @@ export default function PapersSolvePage() {
 
   const handleChoiceSelect = (letter: Letter) => {
     // Check if user has viewed content before allowing answer
-    if (!hasViewedContent[currentQuestionIndex]) {
+    if (!hasViewedContent[sectionQuestionIndex]) {
       setShowUnseenWarning(true);
       return;
     }
-    setAnswer(currentQuestionIndex, letter);
+    setAnswer(fullQuestionIndex, letter);
   };
   
   const handleOtherChange = (value: string) => {
-    setOther(currentQuestionIndex, value);
+    setOther(fullQuestionIndex, value);
   };
   
   const handleGuessToggle = () => {
-    setGuessedFlag(currentQuestionIndex, !isGuessed);
+    setGuessedFlag(fullQuestionIndex, !isGuessed);
   };
 
   const handleReviewFlagToggle = () => {
-    setReviewFlag(currentQuestionIndex, !isFlaggedForReview);
+    setReviewFlag(fullQuestionIndex, !isFlaggedForReview);
   };
   
   const handleNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
-    const newIndex = currentQuestionIndex + direction;
-    const actualCount = questions.length > 0 ? questions.length : totalQuestions;
-    if (newIndex >= 0 && newIndex < actualCount) {
-      // Check if trying to navigate to next section without completing current
-      if (direction > 0 && isInNextSection(newIndex) && !isCurrentSectionComplete()) {
-        // Show alert - need to complete current section first
-        alert("You must complete all questions in the current section before moving to the next section.");
-        return;
-      }
+    // Navigation is within current section only (0 to actualQuestionCount-1)
+    const newIndex = sectionQuestionIndex + direction;
+    if (newIndex >= 0 && newIndex < actualQuestionCount) {
       navigateToQuestion(newIndex);
     }
   };
@@ -315,12 +333,11 @@ export default function PapersSolvePage() {
   
   const handleQuestionJump = (index: number) => {
     scrollPositionRef.current = window.scrollY;
-    // Check if trying to jump to next section without completing current
-    if (index > currentQuestionIndex && isInNextSection(index) && !isCurrentSectionComplete()) {
-      alert("You must complete all questions in the current section before moving to the next section.");
-      return;
+    // In section-based flow, index is relative to current section (0 to actualQuestionCount-1)
+    // Ensure index is within current section bounds
+    if (index >= 0 && index < actualQuestionCount) {
+      navigateToQuestion(index);
     }
-    navigateToQuestion(index);
   };
   
   const handleSubmit = () => {
@@ -582,7 +599,7 @@ export default function PapersSolvePage() {
               {/* Previous Button */}
               <button
                 onClick={() => handleNavigation(-1)}
-                disabled={currentQuestionIndex === 0}
+                    disabled={sectionQuestionIndex === 0}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
                   backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
@@ -624,7 +641,7 @@ export default function PapersSolvePage() {
               {/* Next Button */}
               <button
                 onClick={() => handleNavigation(1)}
-                disabled={currentQuestionIndex === actualQuestionCount - 1}
+                      disabled={sectionQuestionIndex === actualQuestionCount - 1}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
                   backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
