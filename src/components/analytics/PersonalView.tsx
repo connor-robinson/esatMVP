@@ -15,6 +15,7 @@ import {
   PerformanceDataPoint,
   TrendData,
   SessionSummary,
+  WrongQuestionPattern,
 } from "@/types/analytics";
 
 interface PersonalViewProps {
@@ -31,6 +32,7 @@ interface PersonalViewProps {
   speedTrend: TrendData;
   questionsTrend: TrendData;
   sessions: SessionSummary[];
+  commonMistakesMap?: Map<string, WrongQuestionPattern[]>;
 }
 
 export function PersonalView({
@@ -47,6 +49,7 @@ export function PersonalView({
   speedTrend,
   questionsTrend,
   sessions,
+  commonMistakesMap,
 }: PersonalViewProps) {
   const [scrollToTopicId, setScrollToTopicId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -114,6 +117,7 @@ export function PersonalView({
         weakest={weakest}
         isCollapsed={collapsedSections.has("topics")}
         onToggleCollapse={() => toggleSection("topics")}
+        commonMistakesMap={commonMistakesMap}
       />
     </div>
   );

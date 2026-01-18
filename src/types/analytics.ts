@@ -140,6 +140,7 @@ export interface TopicDetailStats extends TopicStats {
   recentSessions: number; // Sessions in last 7 days
   globalRank?: number; // Global rank across all users for this topic
   totalUsers?: number; // Total number of users with this topic
+  percentile?: number; // Percentile rank (0-100) based on accuracy sorting
 }
 
 

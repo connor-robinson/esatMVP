@@ -115,12 +115,12 @@ export function PastSessionsSection({
           >
             {/* Column Headers */}
             <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
-              <div className="col-span-1">Rank</div>
-              <div className="col-span-2">Score</div>
-              <div className="col-span-2">Accuracy</div>
-              <div className="col-span-2">Speed</div>
-              <div className="col-span-2">Questions</div>
-              <div className="col-span-2">Date</div>
+              <div className="col-span-1 text-center">Rank</div>
+              <div className="col-span-2 text-center">Score</div>
+              <div className="col-span-2 text-center">Accuracy</div>
+              <div className="col-span-2 text-center">Speed</div>
+              <div className="col-span-2 text-center">Questions</div>
+              <div className="col-span-2 text-center">Date</div>
               <div className="col-span-1"></div>
             </div>
 

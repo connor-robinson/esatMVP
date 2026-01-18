@@ -90,6 +90,15 @@ export function TopicDetailCard({
 
   const globalRankDisplay = getGlobalRankDisplay();
 
+  // Get rank color for topic performance
+  const getRankColor = () => {
+    if (!topic.rank) return "text-white/70";
+    if (topic.rank === 1) return "text-primary";
+    if (topic.rank === 2) return "text-success";
+    if (topic.rank === 3) return "text-interview";
+    return "text-white/70";
+  };
+
   return (
     <button
       onClick={onClick}
@@ -102,48 +111,49 @@ export function TopicDetailCard({
       {/* Collapsed View - Grid Layout */}
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
-        <div className="col-span-1 flex items-center">
-          <span className="text-base font-bold text-white/70">
+        <div className="col-span-1 flex items-center justify-center">
+          <span className={cn("text-base font-bold", getRankColor())}>
             {topic.rank || "-"}
           </span>
         </div>
 
         {/* Topic Name */}
-        <div className="col-span-3">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-white/90 leading-tight">
-              {topic.topicName}
-            </h3>
-            {/* Global Rank Badge */}
-            <span className={cn("text-xs font-medium", globalRankDisplay.color)}>
-              {globalRankDisplay.text}
-            </span>
-          </div>
+        <div className="col-span-2">
+          <h3 className="text-base font-semibold text-white/90 leading-tight">
+            {topic.topicName}
+          </h3>
+        </div>
+
+        {/* Percentile */}
+        <div className="col-span-1 flex items-center justify-center">
+          <span className="text-base text-white/80">
+            {topic.percentile !== undefined ? `${topic.percentile}th` : "-"}
+          </span>
         </div>
 
         {/* Accuracy */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {topic.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {topic.avgSpeed > 0 ? (topic.avgSpeed / 1000).toFixed(1) : "0.0"}s/q
           </span>
         </div>
 
         {/* Sessions */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {topic.sessionCount}
           </span>
         </div>
 
         {/* Correct/Total */}
-        <div className="col-span-1 flex items-center">
+        <div className="col-span-1 flex items-center justify-center">
           <span className="text-base text-white/80">
             {Math.round(topic.questionsAnswered * (topic.accuracy / 100))}/{topic.questionsAnswered}
           </span>

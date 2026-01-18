@@ -877,48 +877,153 @@ export function generateSessionDetail(
 /**
  * Generate topic details with extended stats
  */
-export function generateTopicDetails(userStats: UserStats): TopicDetailStats[] {
+/**
+ * Fetch common mistakes for topics from database
+ */
+export async function fetchCommonMistakesForTopics(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  topicIds: string[]
+): Promise<Map<string, WrongQuestionPattern[]>> {
+  if (topicIds.length === 0) {
+    return new Map();
+  }
+
+  // Fetch wrong attempts
+  const { data: attemptsData, error: attemptsError } = await supabase
+    .from("builder_attempts")
+    .select("question_id, user_answer, session_id")
+    .eq("user_id", userId)
+    .eq("is_correct", false);
+
+  if (attemptsError) {
+    console.error("[fetchCommonMistakesForTopics] Error fetching attempts:", attemptsError);
+    return new Map();
+  }
+
+  if (!attemptsData || attemptsData.length === 0) {
+    return new Map();
+  }
+
+  // Get unique session IDs and question IDs
+  const sessionIds = [...new Set((attemptsData as any[]).map(a => a.session_id).filter(Boolean))];
+  const questionIds = [...new Set((attemptsData as any[]).map(a => a.question_id).filter(Boolean))];
+
+  // Fetch questions with topic info
+  const { data: questionsData, error: questionsError } = await supabase
+    .from("builder_session_questions")
+    .select("session_id, question_id, topic_id, prompt, answer")
+    .eq("user_id", userId)
+    .in("session_id", sessionIds)
+    .in("topic_id", topicIds);
+
+  if (questionsError) {
+    console.error("[fetchCommonMistakesForTopics] Error fetching questions:", questionsError);
+    return new Map();
+  }
+
+  if (!questionsData || questionsData.length === 0) {
+    return new Map();
+  }
+
+  // Create a map: session_id + question_id -> question data
+  const questionMap = new Map<string, { topic_id: string; prompt: string; answer: string }>();
+  questionsData.forEach((q: any) => {
+    const key = `${q.session_id}:${q.question_id}`;
+    questionMap.set(key, {
+      topic_id: q.topic_id,
+      prompt: q.prompt,
+      answer: q.answer,
+    });
+  });
+
+  // Group mistakes by topic_id and question prompt
+  const mistakesByTopic = new Map<string, Map<string, WrongQuestionPattern>>();
+
+  attemptsData.forEach((attempt: any) => {
+    if (!attempt.question_id || !attempt.session_id) {
+      return;
+    }
+
+    const key = `${attempt.session_id}:${attempt.question_id}`;
+    const questionData = questionMap.get(key);
+    
+    if (!questionData || !questionData.topic_id || !questionData.prompt) {
+      return;
+    }
+
+    const topicId = questionData.topic_id;
+    const prompt = questionData.prompt;
+    
+    // Get or create topic map
+    if (!mistakesByTopic.has(topicId)) {
+      mistakesByTopic.set(topicId, new Map());
+    }
+    
+    const topicMistakes = mistakesByTopic.get(topicId)!;
+    
+    // Get or create mistake entry for this question
+    if (!topicMistakes.has(prompt)) {
+      const userAnswerNum = attempt.user_answer ? parseFloat(String(attempt.user_answer)) : NaN;
+      const correctAnswerNum = questionData.answer ? parseFloat(String(questionData.answer)) : NaN;
+      
+      if (!isNaN(userAnswerNum) && !isNaN(correctAnswerNum)) {
+        topicMistakes.set(prompt, {
+          question: prompt,
+          userAnswer: userAnswerNum,
+          correctAnswer: correctAnswerNum,
+          count: 1,
+        });
+      }
+    } else {
+      // Increment count
+      const mistake = topicMistakes.get(prompt)!;
+      mistake.count++;
+    }
+  });
+
+  // Convert to array format, sort by count (descending), and take top 5 per topic
+  const result = new Map<string, WrongQuestionPattern[]>();
+  mistakesByTopic.forEach((topicMistakes, topicId) => {
+    const sortedMistakes = Array.from(topicMistakes.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5); // Top 5 most common
+    result.set(topicId, sortedMistakes);
+  });
+
+  return result;
+}
+
+export function generateTopicDetails(
+  userStats: UserStats,
+  commonMistakesMap?: Map<string, WrongQuestionPattern[]>
+): TopicDetailStats[] {
   const topics = Object.values(userStats.topicStats);
 
-  return topics.map((topic) => {
-    // Generate common mistakes
-    const operations = ["+", "-", "×", "÷"];
-    const mistakeCount = Math.floor(Math.random() * 4) + 2;
-
-    const commonMistakes: WrongQuestionPattern[] = [];
-    for (let i = 0; i < mistakeCount; i++) {
-      const a = Math.floor(Math.random() * 50) + 10;
-      const b = Math.floor(Math.random() * 20) + 2;
-      const op = operations[Math.floor(Math.random() * operations.length)];
-
-      let correctAnswer: number;
-      switch (op) {
-        case "+":
-          correctAnswer = a + b;
-          break;
-        case "-":
-          correctAnswer = a - b;
-          break;
-        case "×":
-          correctAnswer = a * b;
-          break;
-        case "÷":
-          correctAnswer = Math.floor(a / b);
-          break;
-        default:
-          correctAnswer = 0;
-      }
-
-      const userAnswer =
-        correctAnswer + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 10 + 1);
-
-      commonMistakes.push({
-        question: `${a} ${op} ${b}`,
-        userAnswer,
-        correctAnswer,
-        count: Math.floor(Math.random() * 5) + 1,
-      });
+  // Sort topics by accuracy (highest first) to assign proper ranks
+  const sortedTopics = [...topics].sort((a, b) => {
+    // Primary sort: accuracy (descending)
+    if (b.accuracy !== a.accuracy) {
+      return b.accuracy - a.accuracy;
     }
+    // Secondary sort: questions answered (descending) for tie-breaking
+    return b.questionsAnswered - a.questionsAnswered;
+  });
+
+  const totalTopics = sortedTopics.length;
+
+  return sortedTopics.map((topic, index) => {
+    // Calculate rank (1-based)
+    const rank = index + 1;
+    
+    // Calculate percentile: percentage of topics that perform worse
+    // Percentile = ((totalTopics - rank) / totalTopics) * 100
+    const percentile = totalTopics > 1 
+      ? Math.round(((totalTopics - rank) / (totalTopics - 1)) * 100)
+      : 100;
+
+    // Get common mistakes from map if provided, otherwise use empty array
+    const commonMistakes = commonMistakesMap?.get(topic.topicId) || [];
 
     // Calculate additional stats
     const practiceFrequency = topic.sessionCount / 4; // sessions per week (assuming 4 weeks)
@@ -926,6 +1031,8 @@ export function generateTopicDetails(userStats: UserStats): TopicDetailStats[] {
 
     return {
       ...topic,
+      rank, // Proper rank based on sorted position
+      percentile, // Accurate percentile
       commonMistakes,
       practiceFrequency,
       totalPracticeTime: topic.totalTime,

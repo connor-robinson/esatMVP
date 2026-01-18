@@ -15,7 +15,7 @@ import type {
   LeaderboardEntry,
   SessionSummary,
 } from "@/types/analytics";
-import { calculateLeaderboardScore, calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes } from "@/lib/analytics";
+import { calculateLeaderboardScore, calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes, fetchCommonMistakesForTopics } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
@@ -42,6 +42,90 @@ const AVAILABLE_TOPICS = Object.values(TOPICS).map(topic => ({
   id: topic.id,
   name: topic.name,
 }));
+
+/**
+ * Calculate current and longest streak from user_daily_metrics
+ */
+async function calculateStreaks(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+): Promise<{ currentStreak: number; longestStreak: number }> {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // Fetch last 365 days of metrics
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 365);
+  
+  const { data, error } = await supabase
+    .from("user_daily_metrics")
+    .select("metric_date, total_questions")
+    .eq("user_id", userId)
+    .gte("metric_date", startDate.toISOString().split("T")[0])
+    .lte("metric_date", today.toISOString().split("T")[0])
+    .order("metric_date", { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    return { currentStreak: 0, longestStreak: 0 };
+  }
+
+  // Create a map of dates with activity (questions > 0)
+  const activityMap = new Map<string, boolean>();
+  data.forEach((row: any) => {
+    if (row.total_questions > 0) {
+      activityMap.set(row.metric_date, true);
+    }
+  });
+
+  // Calculate current streak (going backwards from today)
+  let currentStreak = 0;
+  const checkDate = new Date(today);
+  for (let i = 0; i < 365; i++) {
+    const dateStr = checkDate.toISOString().split("T")[0];
+    if (activityMap.has(dateStr)) {
+      currentStreak++;
+    } else {
+      break;
+    }
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+
+  // Calculate longest streak (scan all dates)
+  let longestStreak = 0;
+  let currentRun = 0;
+  const sortedDates = Array.from(activityMap.keys()).sort((a, b) => 
+    new Date(b).getTime() - new Date(a).getTime()
+  );
+
+  // Check consecutive days
+  const allDates = new Set<string>();
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    allDates.add(date.toISOString().split("T")[0]);
+  }
+
+  // Find longest consecutive sequence
+  let maxStreak = 0;
+  let currentStreakRun = 0;
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split("T")[0];
+    
+    if (activityMap.has(dateStr)) {
+      currentStreakRun++;
+      maxStreak = Math.max(maxStreak, currentStreakRun);
+    } else {
+      currentStreakRun = 0;
+    }
+  }
+
+  return {
+    currentStreak,
+    longestStreak: maxStreak,
+  };
+}
 
 async function fetchTopicProgress(
   supabase: SupabaseClient<Database>,
@@ -116,14 +200,17 @@ async function fetchTopicProgress(
     }
   });
 
+  // Calculate real streaks from database
+  const streaks = await calculateStreaks(supabase, userId);
+
   return {
     userId,
     totalQuestions,
     correctAnswers,
     totalTime,
     sessionCount,
-    currentStreak: 0,
-    longestStreak: 0,
+    currentStreak: streaks.currentStreak,
+    longestStreak: streaks.longestStreak,
     lastPracticeDate: lastPractice,
     topicStats,
     createdAt: lastPractice ?? new Date(),
@@ -629,6 +716,7 @@ export default function AnalyticsPage() {
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
+  const [commonMistakesMap, setCommonMistakesMap] = useState<Map<string, any[]>>(new Map());
 
   // Load user stats and initial data
   useEffect(() => {
@@ -649,6 +737,14 @@ export default function AnalyticsPage() {
       setUserStats(stats);
       setPreviousStats(prevStats);
       setSessions(sessionData);
+      
+      // Fetch common mistakes for all topics
+      if (stats) {
+        const topicIds = Object.keys(stats.topicStats);
+        fetchCommonMistakesForTopics(supabase, session.user.id, topicIds).then((mistakesMap) => {
+          setCommonMistakesMap(mistakesMap);
+        });
+      }
     });
   }, [session?.user, supabase]);
 
@@ -737,6 +833,7 @@ export default function AnalyticsPage() {
               speedTrend={speedTrend}
               questionsTrend={questionsTrend}
               sessions={sessions}
+              commonMistakesMap={commonMistakesMap}
             />
           ) : (
             <div className="h-96 bg-white/[0.03] rounded-organic-lg flex items-center justify-center">

@@ -46,6 +46,14 @@ function SessionCardComponent({
   // Convert avgSpeed (ms per question) to seconds per question
   const speedInSeconds = session.avgSpeed > 0 ? (session.avgSpeed / 1000).toFixed(1) : "0.0";
 
+  // Get rank color
+  const getRankColor = () => {
+    if (rank === 1) return "text-primary";
+    if (rank === 2) return "text-success";
+    if (rank === 3) return "text-interview";
+    return "text-white/70";
+  };
+
   return (
     <button
       onClick={onClick}
@@ -59,15 +67,15 @@ function SessionCardComponent({
     >
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
-        <div className="col-span-1 flex items-center">
-          <span className="text-base font-bold text-white/70">
+        <div className="col-span-1 flex items-center justify-center">
+          <span className={cn("text-base font-bold", getRankColor())}>
             {rank}
           </span>
         </div>
 
         {/* Score */}
-        <div className="col-span-2 flex items-center">
-          <div className="flex items-baseline gap-1.5">
+        <div className="col-span-2 flex items-center justify-center">
+          <div className="flex items-center gap-1.5">
             <span className="text-3xl font-bold text-white/95 tracking-tight">
               {session.score || 0}
             </span>
@@ -76,28 +84,28 @@ function SessionCardComponent({
         </div>
 
         {/* Accuracy */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {isNaN(session.accuracy) ? "0.0" : session.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {speedInSeconds}s/q
           </span>
         </div>
 
         {/* Questions */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/80">
             {session.correctAnswers || 0}/{session.totalQuestions || 0}
           </span>
         </div>
 
         {/* Date */}
-        <div className="col-span-2 flex items-center">
+        <div className="col-span-2 flex items-center justify-center">
           <span className="text-base text-white/60">{formattedDate}</span>
         </div>
 
