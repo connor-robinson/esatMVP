@@ -4,6 +4,7 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface NavigatorPopupProps {
@@ -31,6 +32,18 @@ export function NavigatorPopup({
   onNavigateToQuestion,
   questionNumbers,
 }: NavigatorPopupProps) {
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Auto-scroll to current question when opened
+  useEffect(() => {
+    if (isOpen && tableContainerRef.current && currentQuestionIndex >= 0) {
+      const questionRow = document.getElementById(`navigator-question-${currentQuestionIndex}`);
+      if (questionRow) {
+        questionRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [isOpen, currentQuestionIndex]);
+  
   if (!isOpen) return null;
 
   const getQuestionStatus = (index: number): QuestionStatus => {
@@ -51,7 +64,7 @@ export function NavigatorPopup({
   const getStatusColor = (status: QuestionStatus): string => {
     switch (status) {
       case "Complete":
-        return "text-black"; // Black text for Complete
+        return "text-white"; // White text for Complete
       case "Incomplete":
         return "text-red-500"; // Red text for Incomplete
       case "Unseen":
@@ -91,7 +104,7 @@ export function NavigatorPopup({
         </div>
 
         {/* Table */}
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
+        <div ref={tableContainerRef} className="p-4 max-h-[60vh] overflow-y-auto scroll-smooth" style={{ scrollBehavior: 'smooth' }}>
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/10">
@@ -121,6 +134,7 @@ export function NavigatorPopup({
                 return (
                   <tr
                     key={i}
+                    id={`navigator-question-${i}`}
                     onClick={() => {
                       onNavigateToQuestion(i);
                       onClose();
@@ -133,8 +147,10 @@ export function NavigatorPopup({
                     <td className="py-3 px-4 text-sm text-neutral-200">
                       Question {questionNumber}
                     </td>
-                    <td className={cn("py-3 px-4 text-sm font-medium", getStatusColor(status))}>
-                      {status}
+                    <td className="py-3 px-4">
+                      <span className={cn("text-sm font-medium rounded-md px-2 py-1 inline-block", getStatusColor(status), status === "Complete" && "bg-[#5075a4]/30")}>
+                        {status}
+                      </span>
                     </td>
                     <td className="py-3 px-4">
                       {isFlagged && (

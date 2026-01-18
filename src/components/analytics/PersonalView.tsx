@@ -18,8 +18,6 @@ import {
   WrongQuestionPattern,
 } from "@/types/analytics";
 
-import { AnalyticsView } from "./ViewToggle";
-
 interface PersonalViewProps {
   timeRange: TimeRange;
   onTimeRangeChange: (range: TimeRange) => void;
@@ -35,8 +33,6 @@ interface PersonalViewProps {
   questionsTrend: TrendData;
   sessions: SessionSummary[];
   commonMistakesMap?: Map<string, WrongQuestionPattern[]>;
-  view?: AnalyticsView;
-  onViewChange?: (view: AnalyticsView) => void;
 }
 
 export function PersonalView({
@@ -54,8 +50,6 @@ export function PersonalView({
   questionsTrend,
   sessions,
   commonMistakesMap,
-  view = "personal",
-  onViewChange,
 }: PersonalViewProps) {
   const [scrollToTopicId, setScrollToTopicId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
@@ -100,8 +94,6 @@ export function PersonalView({
         onTopicClick={handleTopicClick}
         isCollapsed={collapsedSections.has("overview")}
         onToggleCollapse={() => toggleSection("overview")}
-        view={view}
-        onViewChange={onViewChange}
       />
 
       {/* 2. Performance Charts */}

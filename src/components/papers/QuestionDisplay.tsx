@@ -297,38 +297,25 @@ export function QuestionDisplay({
 
                 {/* Fixed overlay for buttons - positioned as sibling of scrollable container */}
                 <div className="absolute inset-0 pointer-events-none z-50">
-                  {/* Top Bar: Mark-as-Guess (Left), Timer (Right) */}
+                  {/* Fullscreen Button - Top Left */}
                   <div className="absolute top-6 left-6 pointer-events-auto">
-                    <div className="flex flex-col items-start gap-1">
-                      {onGuessToggle && (
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
-                          <label className={`text-xs font-semibold uppercase tracking-wider ${isGuessed ? 'text-yellow-600' : isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>
-                            Mark as Guess
-                          </label>
-                          <button
-                            onClick={onGuessToggle}
-                            className={`
-                              relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-transparent
-                              ${isGuessed 
-                                ? 'bg-yellow-500' 
-                                : 'bg-neutral-600'
-                              }
-                            `}
-                          >
-                            <span
-                              className={`
-                                inline-block h-3 w-3 transform rounded-full bg-white transition-transform
-                                ${isGuessed ? 'translate-x-5' : 'translate-x-1'}
-                              `}
-                            />
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      onClick={toggleFullscreen}
+                      className="
+                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
+                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
+                      "
+                      title="Enter fullscreen mode"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                      </svg>
+                      <span className="hidden sm:inline">Fullscreen</span>
+                    </button>
                   </div>
 
-                  {/* Timer and Flag for Review - Top Right */}
-                  <div className="absolute top-6 right-6 pointer-events-auto flex flex-col items-end gap-2">
+                  {/* Timer - Top Right */}
+                  <div className="absolute top-6 right-6 pointer-events-auto">
                     <div className={`flex items-center justify-center gap-2 px-3 py-3 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
                       <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-neutral-400' : 'text-neutral-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" strokeWidth="2"/>
@@ -380,16 +367,47 @@ export function QuestionDisplay({
                         {Math.floor(remainingTime / 60).toString().padStart(2, '0')}:{(remainingTime % 60).toString().padStart(2, '0')}
                       </span>
                     </div>
-                    {/* Flag for Review Button */}
+                  </div>
+
+                  {/* Mark-as-Guess - Bottom Left */}
+                  <div className="absolute bottom-8 left-8 pointer-events-auto" style={{ bottom: '32px' }}>
+                    {onGuessToggle && (
+                      <div className={`flex items-center gap-2 px-3 py-1 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
+                        <label className={`text-xs font-semibold uppercase tracking-wider ${isGuessed ? 'text-yellow-600' : isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>
+                          Mark as Guess
+                        </label>
+                        <button
+                          onClick={onGuessToggle}
+                          className={`
+                            relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-transparent
+                            ${isGuessed 
+                              ? 'bg-yellow-500' 
+                              : 'bg-neutral-600'
+                            }
+                          `}
+                        >
+                          <span
+                            className={`
+                              inline-block h-3 w-3 transform rounded-full bg-white transition-transform
+                              ${isGuessed ? 'translate-x-5' : 'translate-x-1'}
+                            `}
+                          />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Flag for Review Button - Bottom Right */}
+                  <div className="absolute bottom-8 right-8 pointer-events-auto" style={{ bottom: '32px' }}>
                     {onReviewFlagToggle && (
                       <button
                         onClick={onReviewFlagToggle}
                         className={`
-                          flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                          backdrop-blur-sm border shadow-sm
+                          flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200
+                          backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}
                           ${isFlaggedForReview 
-                            ? `${isDarkMode ? 'bg-blue-600/80 border-blue-500/50 text-white' : 'bg-blue-500/90 border-blue-600 text-white'}`
-                            : `${isDarkMode ? 'bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90' : 'bg-white/80 border-neutral-300 text-neutral-700 hover:bg-white'}`
+                            ? `text-blue-600`
+                            : `${isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`
                           }
                         `}
                         title={isFlaggedForReview ? "Remove flag for review" : "Flag for review"}
@@ -400,51 +418,6 @@ export function QuestionDisplay({
                         <span>Flag</span>
                       </button>
                     )}
-                  </div>
-
-                  {/* Fullscreen Button - Bottom Left */}
-                  <div className="absolute bottom-8 left-8 pointer-events-auto" style={{ bottom: '32px' }}>
-                    <button
-                      onClick={toggleFullscreen}
-                      className="
-                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                      "
-                      title="Enter fullscreen mode"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                      </svg>
-                      <span className="hidden sm:inline">Fullscreen</span>
-                    </button>
-                  </div>
-
-                  {/* Dark Mode Toggle - Bottom Right */}
-                  <div className="absolute bottom-8 right-8 pointer-events-auto" style={{ bottom: '32px' }}>
-                    <button
-                      onClick={toggleDarkMode}
-                      className={`
-                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                      `}
-                      title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                    >
-                      {isDarkMode ? (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                          </svg>
-                          <span className="hidden sm:inline">Light</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                          <span className="hidden sm:inline">Dark</span>
-                        </>
-                      )}
-                    </button>
                   </div>
                 </div>
               </div>

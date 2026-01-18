@@ -61,19 +61,66 @@ export function TopicsOverviewSection({
   }, [allTopics, searchQuery, sortBy]);
 
   // Calculate visible topics: top 3 (green) and bottom 3 (red)
+  // Sort by composite score (topic.rank) first to determine top/bottom
+  const topicsSortedByPerformance = useMemo(() => {
+    return [...allTopics].sort((a, b) => (a.rank || 999) - (b.rank || 999));
+  }, [allTopics]);
+
   const visibleTopicsData = useMemo(() => {
-    const totalTopics = filteredTopics.length;
+    // First, filter by search query
+    let sortedByPerformance = topicsSortedByPerformance.filter((topic) =>
+      topic.topicName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    // Then apply additional sorting if needed (for display order)
+    switch (sortBy) {
+      case "strength":
+        sortedByPerformance.sort((a, b) => b.accuracy - a.accuracy);
+        break;
+      case "weakness":
+        sortedByPerformance.sort((a, b) => a.accuracy - b.accuracy);
+        break;
+      case "questions":
+        sortedByPerformance.sort((a, b) => b.questionsAnswered - a.questionsAnswered);
+        break;
+    }
+
+    const totalTopics = sortedByPerformance.length;
     
     if (totalTopics === 0) {
       return { isEmpty: true };
     }
     
-    // Determine how many top/bottom to show
+    // For top/bottom determination, use composite score rank (topic.rank)
+    // Re-sort by rank to find true top 3 and bottom 3
+    const byRank = [...sortedByPerformance].sort((a, b) => (a.rank || 999) - (b.rank || 999));
     const topCount = Math.min(3, Math.ceil(totalTopics / 2));
     const bottomCount = Math.min(3, Math.floor(totalTopics / 2));
     
-    const topTopics = filteredTopics.slice(0, topCount);
-    const bottomTopics = totalTopics > topCount ? filteredTopics.slice(-bottomCount) : [];
+    const topByRank = byRank.slice(0, topCount);
+    const bottomByRank = totalTopics > topCount ? byRank.slice(-bottomCount) : [];
+    
+    // Map these back to the display order (sortedByPerformance)
+    const topTopicIds = new Set(topByRank.map(t => t.topicId));
+    const bottomTopicIds = new Set(bottomByRank.map(t => t.topicId));
+    
+    // Assign display ranks: top 3 get 1, 2, 3 based on composite score rank
+    const topicsWithDisplayRank = sortedByPerformance.map((topic, displayIndex) => {
+      const isTop = topTopicIds.has(topic.topicId);
+      const isBottom = bottomTopicIds.has(topic.topicId);
+      // For top 3, assign ranks 1, 2, 3 based on their composite rank
+      let displayRank = topic.rank || displayIndex + 1;
+      if (isTop) {
+        const rankInTop = topByRank.findIndex(t => t.topicId === topic.topicId);
+        if (rankInTop !== -1) {
+          displayRank = rankInTop + 1;
+        }
+      }
+      return { ...topic, displayRank, isTop, isBottom };
+    });
+    
+    const topTopics = topicsWithDisplayRank.filter(t => t.isTop);
+    const bottomTopics = topicsWithDisplayRank.filter(t => t.isBottom);
     
     // Check if we need "more data needed" message
     const needsMoreData = totalTopics < 6 && topCount + bottomCount < totalTopics;
@@ -83,8 +130,9 @@ export function TopicsOverviewSection({
       bottomTopics,
       needsMoreData,
       totalTopics,
+      allTopicsWithRank: topicsWithDisplayRank,
     };
-  }, [filteredTopics]);
+  }, [topicsSortedByPerformance, searchQuery, sortBy]);
 
   const handleTopicClick = (topicId: string, topicName: string) => {
     setExpandedId(topicId);
@@ -137,55 +185,49 @@ export function TopicsOverviewSection({
           >
             {/* All Topics Section */}
             <div className="space-y-4">
+              {/* Search and Sort Controls - Top Row */}
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
-                  All Topics
-                </h3>
-                
-                {/* Search and Sort Controls */}
-                <div className="flex flex-col sm:flex-row gap-3 flex-1 sm:justify-end">
-                  {/* Search Input */}
-                  <div className="relative flex-1 sm:max-w-[280px]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <input
-                      type="text"
-                      placeholder="Search topics..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200"
-                    />
-                  </div>
+                {/* Search Input */}
+                <div className="relative flex-1 sm:max-w-[280px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Search topics..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200 font-sans"
+                  />
+                </div>
 
-                  {/* Sort Dropdown */}
-                  <div className="relative">
-                    <select
-                      value={sortBy}
-                      onChange={(e) => {
-                        const newSort = e.target.value as "strength" | "weakness" | "questions";
-                        setSortBy(newSort);
-                      }}
-                      className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200"
-                      style={{
-                        colorScheme: "dark",
-                      }}
-                    >
-                      <option value="strength" className="bg-neutral-800 text-white">
-                        Strongest First
-                      </option>
-                      <option value="weakness" className="bg-neutral-800 text-white">
-                        Weakest First
-                      </option>
-                      <option value="questions" className="bg-neutral-800 text-white">
-                        Most Practiced
-                      </option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
-                  </div>
+                {/* Sort Dropdown */}
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => {
+                      const newSort = e.target.value as "strength" | "weakness" | "questions";
+                      setSortBy(newSort);
+                    }}
+                    className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200 font-sans"
+                    style={{
+                      colorScheme: "dark",
+                    }}
+                  >
+                    <option value="strength" className="bg-neutral-800 text-white">
+                      Strongest First
+                    </option>
+                    <option value="weakness" className="bg-neutral-800 text-white">
+                      Weakest First
+                    </option>
+                    <option value="questions" className="bg-neutral-800 text-white">
+                      Most Practiced
+                    </option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
                 </div>
               </div>
 
               {/* Column Headers */}
-              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-sans">
                 <div className="col-span-1 text-center">Rank</div>
                 <div className="col-span-2 text-left">Topic</div>
                 <div className="col-span-1 text-center">
@@ -228,14 +270,11 @@ export function TopicsOverviewSection({
                       {/* Top Topics (Green) */}
                       {visibleTopicsData.topTopics && visibleTopicsData.topTopics.length > 0 && (
                         <div>
-                          <div className="text-xs font-semibold uppercase tracking-wider text-success mb-2 px-5">
-                            Top {visibleTopicsData.topTopics.length}
-                          </div>
                           <div className="space-y-1">
                             {visibleTopicsData.topTopics.map((topic) => (
                               <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                                 <TopicDetailCard
-                                  topic={topic}
+                                  topic={{ ...topic, rank: topic.displayRank }}
                                   isExpanded={expandedId === topic.topicId}
                                   onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
                                   isTopTopic={true}
@@ -253,17 +292,26 @@ export function TopicsOverviewSection({
                         </div>
                       )}
 
+                      {/* Show All Button (Centered ...) */}
+                      {visibleTopicsData.totalTopics > (visibleTopicsData.topTopics?.length || 0) + (visibleTopicsData.bottomTopics?.length || 0) && (
+                        <div className="flex justify-center pt-2 pb-2">
+                          <button
+                            onClick={() => setShowAllTopics(true)}
+                            className="text-4xl text-white/40 hover:text-white/60 transition-colors font-light leading-none"
+                          >
+                            ...
+                          </button>
+                        </div>
+                      )}
+
                       {/* Bottom Topics (Red) */}
                       {visibleTopicsData.bottomTopics && visibleTopicsData.bottomTopics.length > 0 && (
                         <div>
-                          <div className="text-xs font-semibold uppercase tracking-wider text-error mb-2 px-5">
-                            Bottom {visibleTopicsData.bottomTopics.length}
-                          </div>
                           <div className="space-y-1">
                             {visibleTopicsData.bottomTopics.map((topic) => (
                               <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                                 <TopicDetailCard
-                                  topic={topic}
+                                  topic={{ ...topic, rank: topic.displayRank }}
                                   isExpanded={expandedId === topic.topicId}
                                   onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
                                   isTopTopic={false}
@@ -273,36 +321,17 @@ export function TopicsOverviewSection({
                           </div>
                         </div>
                       )}
-
-                      {/* Show All Button */}
-                      {filteredTopics.length > (visibleTopicsData.topTopics?.length || 0) + (visibleTopicsData.bottomTopics?.length || 0) && (
-                        <div className="flex justify-center pt-2">
-                          <button
-                            onClick={() => setShowAllTopics(true)}
-                            className="text-sm text-white/60 hover:text-white/80 transition-colors flex items-center gap-1"
-                          >
-                            <span>...</span>
-                            <span>Show All Topics</span>
-                          </button>
-                        </div>
-                      )}
                     </>
                   ) : (
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
-                      {filteredTopics.map((topic) => {
-                        // Determine if top or bottom based on composite score ranking (topic.rank)
-                        // topic.rank is based on composite score, not recency
-                        const totalTopics = allTopics.length;
-                        // Top 3 get green, bottom 3 get red (based on composite ranking)
-                        const isTop = topic.rank && topic.rank <= Math.min(3, Math.ceil(totalTopics / 2));
-                        const isBottom = topic.rank && topic.rank > totalTopics - Math.min(3, Math.floor(totalTopics / 2));
-                        const isTopTopic = isTop ? true : isBottom ? false : undefined;
+                      {visibleTopicsData.allTopicsWithRank?.map((topic) => {
+                        const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
                         
                         return (
                           <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                             <TopicDetailCard
-                              topic={topic}
+                              topic={{ ...topic, rank: topic.rank }}
                               isExpanded={expandedId === topic.topicId}
                               onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
                               isTopTopic={isTopTopic}

@@ -15,6 +15,7 @@ import { UserIcon, LogInIcon } from "@/components/icons";
 const skillsNavItems = [
   { href: "/skills/drill", label: "Drill" },
   { href: "/skills/analytics", label: "Analytics" },
+  { href: "/skills/leaderboard", label: "Leaderboard" },
 ];
 
 const papersNavItems = [

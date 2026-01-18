@@ -69,7 +69,7 @@ function SessionCardComponent({
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className={cn("text-xl font-bold", getRankColor())}>
+          <span className={cn("text-xl font-bold font-sans", getRankColor())}>
             {rank}
           </span>
         </div>
@@ -77,37 +77,37 @@ function SessionCardComponent({
         {/* Score */}
         <div className="col-span-2 flex items-center justify-center">
           <div className="flex items-center gap-1.5">
-            <span className="text-2xl font-bold text-white/95 tracking-tight">
+            <span className="text-2xl font-bold text-white/95 tracking-tight font-sans">
               {session.score || 0}
             </span>
-            <span className="text-sm text-white/40 font-medium">/ 1000</span>
+            <span className="text-sm text-white/40 font-medium font-sans">/ 1000</span>
           </div>
         </div>
 
         {/* Accuracy */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80">
+          <span className="text-base text-white/80 font-sans">
             {isNaN(session.accuracy) ? "0.0" : session.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80">
+          <span className="text-base text-white/80 font-sans">
             {speedInSeconds}s/q
           </span>
         </div>
 
         {/* Questions */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80">
+          <span className="text-base text-white/80 font-sans">
             {session.correctAnswers || 0}/{session.totalQuestions || 0}
           </span>
         </div>
 
         {/* Date */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/60">{formattedDate}</span>
+          <span className="text-base text-white/60 font-sans">{formattedDate}</span>
         </div>
 
         {/* Expand Icon */}

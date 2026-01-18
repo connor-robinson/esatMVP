@@ -7,41 +7,20 @@
 import { useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/layout/Container";
-import { AnalyticsView } from "@/components/analytics/ViewToggle";
 import type {
   TimeRange,
   UserStats,
   PerformanceDataPoint,
-  LeaderboardEntry,
   SessionSummary,
 } from "@/types/analytics";
-import { calculateLeaderboardScore, calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes, fetchCommonMistakesForTopics } from "@/lib/analytics";
+import { calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes, fetchCommonMistakesForTopics } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
-import { TOPICS } from "@/config/topics";
 
-const ViewToggle = lazy(() =>
-  import("@/components/analytics/ViewToggle").then((mod) => ({ default: mod.ViewToggle })),
-);
-const TimeRangeSelector = lazy(() =>
-  import("@/components/analytics/TimeRangeSelector").then((mod) => ({ default: mod.TimeRangeSelector })),
-);
-const TopicSelector = lazy(() =>
-  import("@/components/analytics/TopicSelector").then((mod) => ({ default: mod.TopicSelector })),
-);
 const PersonalView = lazy(() =>
   import("@/components/analytics/PersonalView").then((mod) => ({ default: mod.PersonalView })),
 );
-const GlobalView = lazy(() =>
-  import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
-);
-
-// Get all available topics from config
-const AVAILABLE_TOPICS = Object.values(TOPICS).map(topic => ({
-  id: topic.id,
-  name: topic.name,
-}));
 
 /**
  * Calculate current and longest streak from user_daily_metrics
@@ -622,109 +601,15 @@ async function fetchRecentSessions(
   });
 }
 
-async function fetchLeaderboard(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  topicId?: string,
-): Promise<LeaderboardEntry[]> {
-  // Build query without profile join (fetch profiles separately)
-  let query = supabase
-    .from("topic_progress")
-    .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms");
-
-  // Filter by topic if specified
-  if (topicId && topicId !== "all") {
-    query = query.eq("topic_id", topicId);
-  }
-
-  // OPTIMIZED: Reduced from 500 to 300 for egress optimization (top 300 leaderboard entries)
-  const { data, error } = await query.limit(300);
-
-  if (error) {
-    console.error("[analytics] failed to load leaderboard base", error);
-    return [];
-  }
-
-  // Get unique user IDs and fetch profiles separately
-  const userIds = [...new Set((data as any[])?.map((row: any) => row.user_id) || [])];
-  const profilesMap = new Map<string, string>();
-  
-  if (userIds.length > 0) {
-    const { data: profilesData } = await supabase
-      .from("profiles")
-      .select("id, display_name")
-      .in("id", userIds);
-    
-    if (profilesData) {
-      profilesData.forEach((profile: any) => {
-        profilesMap.set(profile.id, profile.display_name || "Anonymous User");
-      });
-    }
-  }
-
-  const grouped = new Map<
-    string,
-    { userId: string; displayName: string; correct: number; attempted: number; avgTime: number; topics: number }
-  >();
-
-  (data as any[])?.forEach((row) => {
-    const displayName = profilesMap.get(row.user_id) || "Anonymous User";
-    const entry = grouped.get(row.user_id) ?? {
-      userId: row.user_id,
-      displayName: row.user_id === userId ? "You" : displayName,
-      correct: 0,
-      attempted: 0,
-      avgTime: 0,
-      topics: 0,
-    };
-
-    entry.correct += row.questions_correct;
-    entry.attempted += row.questions_attempted;
-    entry.avgTime += row.average_time_ms;
-    entry.topics += 1;
-
-    grouped.set(row.user_id, entry);
-  });
-
-  return Array.from(grouped.values())
-    .map((entry) => {
-      const avgTime = entry.topics ? entry.avgTime / entry.topics : 0;
-      const totalTime = entry.attempted * avgTime;
-      return {
-        userId: entry.userId,
-        username: entry.displayName,
-        score: calculateLeaderboardScore({
-          userId: entry.userId,
-          totalQuestions: entry.attempted,
-          correctAnswers: entry.correct,
-          totalTime: totalTime,
-          sessionCount: entry.topics,
-          currentStreak: 0,
-          longestStreak: 0,
-          lastPracticeDate: null,
-          topicStats: {},
-          createdAt: new Date(),
-        }),
-        questionsAnswered: entry.attempted,
-        accuracy: entry.attempted ? (entry.correct / entry.attempted) * 100 : 0,
-        avgSpeed: avgTime,
-        rank: 0,
-      };
-    })
-    .filter((entry) => entry.questionsAnswered > 0); // Only show users with activity
-}
 
 export default function AnalyticsPage() {
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
 
-  const [view, setView] = useState<AnalyticsView>("personal");
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
-  const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [previousStats, setPreviousStats] = useState<UserStats | null>(null);
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [commonMistakesMap, setCommonMistakesMap] = useState<Map<string, any[]>>(new Map());
 
@@ -734,7 +619,6 @@ export default function AnalyticsPage() {
       setUserStats(null);
       setPreviousStats(null);
       setPerformanceData([]);
-      setLeaderboardData([]);
       setSessions([]);
       return;
     }
@@ -757,21 +641,6 @@ export default function AnalyticsPage() {
       }
     });
   }, [session?.user, supabase]);
-
-  // Load leaderboard (reacts to topic changes)
-  useEffect(() => {
-    if (!session?.user) {
-      setLeaderboardData([]);
-      return;
-    }
-
-    fetchLeaderboard(supabase, session.user.id, selectedTopic).then((entries) => {
-      const sorted = entries
-        .sort((a, b) => b.score - a.score)
-        .map((entry, index) => ({ ...entry, rank: index + 1 }));
-      setLeaderboardData(sorted);
-    });
-  }, [session?.user, supabase, selectedTopic]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -808,52 +677,30 @@ export default function AnalyticsPage() {
 
   return (
     <Container size="lg" className="py-10 space-y-8">
-      <Suspense fallback={<div className="h-12 bg-white/5 rounded-lg animate-pulse" />}>
-        <div className="flex items-center justify-end">
-          <ViewToggle value={view} onChange={setView} />
-        </div>
-      </Suspense>
-
-        {view === "personal" ? (
-        <Suspense fallback={<div className="h-96 bg-white/5 rounded-lg animate-pulse" />}>
-          {userStats ? (
-            <PersonalView
-              timeRange={timeRange}
-              onTimeRangeChange={setTimeRange}
-              userStats={userStats}
-              performanceData={performanceData}
-              insights={insights}
-              strongest={strongest}
-              weakest={weakest}
-              accuracy={userStats.totalQuestions ? (userStats.correctAnswers / userStats.totalQuestions) * 100 : 0}
-              avgSpeed={userStats.totalQuestions ? userStats.totalTime / userStats.totalQuestions : 0}
-              accuracyTrend={accuracyTrend}
-              speedTrend={speedTrend}
-              questionsTrend={questionsTrend}
-              sessions={sessions}
-              commonMistakesMap={commonMistakesMap}
-              view={view}
-              onViewChange={setView}
-            />
-          ) : (
-            <div className="h-96 bg-white/[0.03] rounded-organic-lg flex items-center justify-center">
-              <p className="text-white/60">No personal stats yet. Start a session to build your analytics profile.</p>
-            </div>
-          )}
-          </Suspense>
+      <Suspense fallback={<div className="h-96 bg-white/5 rounded-lg animate-pulse" />}>
+        {userStats ? (
+          <PersonalView
+            timeRange={timeRange}
+            onTimeRangeChange={setTimeRange}
+            userStats={userStats}
+            performanceData={performanceData}
+            insights={insights}
+            strongest={strongest}
+            weakest={weakest}
+            accuracy={userStats.totalQuestions ? (userStats.correctAnswers / userStats.totalQuestions) * 100 : 0}
+            avgSpeed={userStats.totalQuestions ? userStats.totalTime / userStats.totalQuestions : 0}
+            accuracyTrend={accuracyTrend}
+            speedTrend={speedTrend}
+            questionsTrend={questionsTrend}
+            sessions={sessions}
+            commonMistakesMap={commonMistakesMap}
+          />
         ) : (
-        <Suspense fallback={<div className="h-96 bg-white/5 rounded-lg animate-pulse" />}>
-            <GlobalView
-              leaderboardData={leaderboardData}
-              currentUserId={session?.user?.id || ""}
-              availableTopics={AVAILABLE_TOPICS}
-              selectedTopic={selectedTopic}
-              onTopicChange={setSelectedTopic}
-              timeRange={timeRange}
-              onTimeRangeChange={setTimeRange}
-            />
-          </Suspense>
+          <div className="h-96 bg-white/[0.03] rounded-organic-lg flex items-center justify-center">
+            <p className="text-white/60">No personal stats yet. Start a session to build your analytics profile.</p>
+          </div>
         )}
+      </Suspense>
     </Container>
   );
 }

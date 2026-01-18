@@ -157,6 +157,24 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
     ];
   }, [filteredData]);
 
+  // Calculate dynamic X-axis interval based on data length
+  const xAxisInterval = useMemo(() => {
+    const dataLength = filteredData.length;
+    if (zoomLevel === 'week') {
+      return 0; // Show all dates for week view
+    } else if (zoomLevel === 'month') {
+      // For 30 days, show every 2-3 days
+      return dataLength <= 15 ? 0 : 1; // Every other day if > 15 points
+    } else {
+      // For 'all' view, calculate based on total data points
+      if (dataLength <= 14) return 0; // Show all
+      if (dataLength <= 30) return 1; // Every other
+      if (dataLength <= 60) return 2; // Every 3rd
+      if (dataLength <= 90) return 4; // Every 5th
+      return Math.floor(dataLength / 12); // ~12 ticks for longer periods
+    }
+  }, [filteredData.length, zoomLevel]);
+
   // Format data for chart with linear regression
   const chartData = useMemo(() => {
     const formatted = filteredData.map((d) => {
@@ -293,7 +311,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
           <ResponsiveContainer width="100%" height={320}>
             <LineChart 
               data={chartData} 
-              margin={{ top: 15, right: 5, left: 20, bottom: 30 }}
+              margin={{ top: 15, right: 5, left: 5, bottom: 30 }}
             >
             <defs>
               <linearGradient id="accuracyGradient" x1="0" y1="0" x2="0" y2="1">
@@ -313,7 +331,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
               tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
-              interval={zoomLevel === 'week' ? 0 : zoomLevel === 'month' ? 3 : 'preserveStartEnd'}
+              interval={xAxisInterval}
               angle={zoomLevel === 'month' || zoomLevel === 'all' ? -45 : 0}
               textAnchor={zoomLevel === 'month' || zoomLevel === 'all' ? "end" : "middle"}
               height={zoomLevel === 'month' || zoomLevel === 'all' ? 60 : 30}
@@ -326,6 +344,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
               axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
               domain={yDomain}
               tickFormatter={(value) => `${value}%`}
+              width={45}
             />
             <Tooltip 
               content={<CustomTooltip />} 

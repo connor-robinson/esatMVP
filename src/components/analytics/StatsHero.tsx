@@ -4,11 +4,10 @@
 
 "use client";
 
-import { Flame, ChevronDown, User, Globe } from "lucide-react";
+import { Flame, ChevronDown } from "lucide-react";
 import { TrendData } from "@/types/analytics";
 import { TrendIndicator } from "./TrendIndicator";
 import { cn } from "@/lib/utils";
-import { AnalyticsView } from "./ViewToggle";
 
 interface StatsHeroProps {
   totalQuestions: number;
@@ -24,8 +23,6 @@ interface StatsHeroProps {
   onTopicClick: (topicId: string, topicName: string) => void;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
-  view?: AnalyticsView;
-  onViewChange?: (view: AnalyticsView) => void;
 }
 
 export function StatsHero({
@@ -42,8 +39,6 @@ export function StatsHero({
   onTopicClick,
   isCollapsed = false,
   onToggleCollapse,
-  view = "personal",
-  onViewChange,
 }: StatsHeroProps) {
   const streakDiff = currentStreak - longestStreak;
   const streakDiffAbs = Math.abs(streakDiff);
@@ -59,57 +54,23 @@ export function StatsHero({
   return (
     <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
       {/* Section Header */}
-      <div className="w-full flex items-center justify-between mb-4">
-        <button
-          onClick={onToggleCollapse}
-          className="flex items-center gap-2 group flex-1"
-        >
-          <div>
-            <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
-              Quick Overview
-            </h2>
-            <p className="text-sm text-white/60 mt-1 text-left">Your performance at a glance</p>
-          </div>
-        </button>
-        
-        {/* Personal/Global Toggle */}
-        {onViewChange && (
-          <div className="flex gap-2 p-1 bg-white/5 rounded-organic-lg">
-            <button
-              onClick={() => onViewChange("personal")}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-organic-md font-medium transition-all duration-200 text-sm",
-                view === "personal"
-                  ? "bg-primary/20 text-primary"
-                  : "text-white/60 hover:text-white/80"
-              )}
-            >
-              <User className="h-3.5 w-3.5" />
-              <span>Personal</span>
-            </button>
-            <button
-              onClick={() => onViewChange("global")}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-organic-md font-medium transition-all duration-200 text-sm",
-                view === "global"
-                  ? "bg-blue-500/20 text-blue-400"
-                  : "text-white/60 hover:text-white/80"
-              )}
-            >
-              <Globe className="h-3.5 w-3.5" />
-              <span>Global</span>
-            </button>
-          </div>
-        )}
-        
+      <button
+        onClick={onToggleCollapse}
+        className="w-full flex items-center justify-between mb-4 group"
+      >
+        <div>
+          <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+            Quick Overview
+          </h2>
+          <p className="text-sm text-white/60 mt-1 text-left">Your performance at a glance</p>
+        </div>
         <ChevronDown 
-          onClick={onToggleCollapse}
           className={cn(
-            "h-6 w-6 text-white/50 hover:text-white/70 transition-all duration-200 cursor-pointer",
+            "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
             isCollapsed && "rotate-180"
           )}
         />
-      </div>
+      </button>
 
       {/* Collapsible Content */}
       {!isCollapsed && (

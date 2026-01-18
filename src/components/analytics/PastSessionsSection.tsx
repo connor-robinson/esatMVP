@@ -114,7 +114,7 @@ export function PastSessionsSection({
             className="overflow-hidden"
           >
             {/* Column Headers */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+            <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-sans">
               <div className="col-span-1 text-center">Rank</div>
               <div className="col-span-2 text-center">Score</div>
               <div className="col-span-2 text-center">Accuracy</div>

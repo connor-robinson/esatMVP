@@ -109,7 +109,7 @@ export function GlobalView({
               className={cn(
                 "px-6 py-2.5 rounded-xl text-sm font-medium transition-all",
                 activeTab === "topScores"
-                  ? "bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-lg shadow-blue-500/10"
+                  ? "bg-success/20 text-success border border-success/40"
                   : "bg-white/5 text-white/60 hover:text-white/90 hover:bg-white/10 border border-white/10"
               )}
             >
@@ -120,7 +120,7 @@ export function GlobalView({
               className={cn(
                 "px-6 py-2.5 rounded-xl text-sm font-medium transition-all",
                 activeTab === "mostPracticed"
-                  ? "bg-blue-500/20 text-blue-400 border border-blue-500/40 shadow-lg shadow-blue-500/10"
+                  ? "bg-success/20 text-success border border-success/40"
                   : "bg-white/5 text-white/60 hover:text-white/90 hover:bg-white/10 border border-white/10"
               )}
             >
@@ -205,7 +205,7 @@ export function GlobalView({
                   className={cn(
                     "grid grid-cols-12 gap-4 px-4 py-3 rounded-organic-md transition-colors",
                     isCurrentUser
-                      ? "bg-blue-500/10 ring-1 ring-blue-500/20"
+                      ? "bg-success/10 ring-1 ring-success/20"
                       : "bg-white/[0.02] hover:bg-white/[0.04]"
                   )}
                 >
@@ -215,9 +215,9 @@ export function GlobalView({
                       className={cn(
                         "text-lg font-bold tabular-nums font-mono",
                         entry.rank <= 3
-                          ? "text-blue-400"
+                          ? "text-success"
                           : isCurrentUser
-                          ? "text-blue-400"
+                          ? "text-success"
                           : "text-white/60"
                       )}
                     >
@@ -243,7 +243,7 @@ export function GlobalView({
                     <span
                       className={cn(
                         "text-sm font-medium truncate",
-                        isCurrentUser ? "text-blue-400" : "text-white/80"
+                        isCurrentUser ? "text-success" : "text-white/80"
                       )}
                     >
                       {entry.username}
@@ -263,7 +263,7 @@ export function GlobalView({
                   {/* Accuracy */}
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold font-mono text-blue-400">
+                      <div className="text-base font-bold font-mono text-success">
                         {entry.accuracy.toFixed(0)}%
                       </div>
                       <div className="text-xs text-white/40 font-mono">accuracy</div>
@@ -296,15 +296,15 @@ export function GlobalView({
             {showEllipsis && currentUserEntry && (
               <>
                 <div className="flex justify-center py-2">
-                  <span className="text-2xl font-bold text-blue-500/30">...</span>
+                  <span className="text-2xl font-bold text-success/30">...</span>
                 </div>
                 <div
                   className={cn(
-                    "grid grid-cols-12 gap-4 px-4 py-3 rounded-organic-md bg-blue-500/10 ring-1 ring-blue-500/20"
+                    "grid grid-cols-12 gap-4 px-4 py-3 rounded-organic-md bg-success/10 ring-1 ring-success/20"
                   )}
                 >
                   <div className="col-span-1 flex items-center justify-center">
-                    <span className="text-lg font-bold tabular-nums font-mono text-blue-400">
+                    <span className="text-lg font-bold tabular-nums font-mono text-success">
                       {currentUserEntry.rank}
                     </span>
                   </div>
@@ -314,7 +314,7 @@ export function GlobalView({
                         {getInitials(currentUserEntry.username)}
                       </span>
                     </div>
-                    <span className="text-sm font-medium truncate text-blue-400">
+                    <span className="text-sm font-medium truncate text-success">
                       {currentUserEntry.username}
                     </span>
                   </div>
@@ -328,7 +328,7 @@ export function GlobalView({
                   </div>
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold font-mono text-blue-400">
+                      <div className="text-base font-bold font-mono text-success">
                         {currentUserEntry.accuracy.toFixed(0)}%
                       </div>
                       <div className="text-xs text-white/40 font-mono">accuracy</div>
@@ -358,7 +358,7 @@ export function GlobalView({
               <div className="flex justify-center pt-4">
                 <button
                   onClick={() => setShowMore(true)}
-                  className="px-4 py-2 rounded-organic-md bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/40 text-sm font-medium transition-all"
+                  className="px-4 py-2 rounded-organic-md bg-success/20 text-success hover:bg-success/30 border border-success/40 text-sm font-medium transition-all"
                 >
                   Show More (up to top 100)
                 </button>
