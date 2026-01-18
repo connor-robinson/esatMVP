@@ -106,6 +106,10 @@ export default function PapersRoadmapPage() {
         setCompletionData(completionMap);
 
         // 2. Determine Unlocked Status and Current Stage
+        // Smart unlocking logic:
+        // - First stage is always unlocked
+        // - Stage N is unlocked if stage N-1 is completed OR if stage N itself is already completed
+        // This handles cases where users complete stages out of order (e.g., complete 2019, then 2018, unlocks 2020)
         const unlocked = new Set<string>();
         let currentIndex: number | null = null;
 
@@ -114,17 +118,19 @@ export default function PapersRoadmapPage() {
           const data = completionMap.get(stage.id);
           const isCompleted = (data?.completed || 0) === (data?.total || stage.parts.length) && (data?.total || 0) > 0;
 
-          // Logic: 
-          // - First stage is always unlocked
-          // - Stage N is unlocked if stage N-1 is completed
           let isUnlocked = false;
           if (i === 0) {
+            // First stage is always unlocked
             isUnlocked = true;
           } else {
+            // Stage is unlocked if:
+            // 1. Previous stage is completed (normal progression), OR
+            // 2. This stage is already completed (handles backward completion)
             const prevStage = stages[i - 1];
             const prevData = completionMap.get(prevStage.id);
             const isPrevCompleted = (prevData?.completed || 0) === (prevData?.total || prevStage.parts.length) && (prevData?.total || 0) > 0;
-            isUnlocked = isPrevCompleted;
+            
+            isUnlocked = isPrevCompleted || isCompleted;
           }
 
           if (isUnlocked) {

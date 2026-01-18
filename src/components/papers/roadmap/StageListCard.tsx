@@ -278,7 +278,18 @@ export function StageListCard({
                                                         <div className="font-medium text-white/70">{part.partLetter}: {part.partName}</div>
                                                         <div className="text-xs text-white/35">{part.paperName}</div>
                                                     </div>
-                                                    {isPartCompleted && <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-white/40" style={{ color: examColor + "AA" }} />}
+                                                    {isPartCompleted && (
+                                                        <div className="flex-shrink-0 flex items-center gap-1.5">
+                                                            <CheckCircle2 
+                                                                className="w-5 h-5" 
+                                                                style={{ color: examColor }} 
+                                                                strokeWidth={2.5}
+                                                            />
+                                                            <span className="text-xs font-medium" style={{ color: examColor + "CC" }}>
+                                                                Done
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             );
                                         })}

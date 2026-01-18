@@ -101,7 +101,7 @@ function GroupedTopicChip({
 }
 
 // Single variant chip
-function SortableVariantChip({ 
+function VariantChip({ 
   topicVariant,
   onRemove 
 }: { 
