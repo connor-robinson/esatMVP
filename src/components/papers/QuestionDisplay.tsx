@@ -37,7 +37,8 @@ export function QuestionDisplay({
   isFlaggedForReview = false,
   onReviewFlagToggle,
   paperName = "",
-  currentQuestion 
+  currentQuestion,
+  onContentViewed
 }: QuestionDisplayProps) {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);

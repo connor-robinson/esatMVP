@@ -470,7 +470,7 @@ export default function PapersAnalyticsPage() {
                         // Note: This requires question data and conversion tables which we don't have here
                         // For now, we'll show the raw percentage as the score
                         // TODO: Calculate actual converted score when question data is available
-                        const convertedScore = scorePercentage !== null 
+                        const convertedScore: number | null = scorePercentage !== null 
                           ? (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA")
                             ? null // Would need conversion table calculation
                             : null
@@ -513,11 +513,7 @@ export default function PapersAnalyticsPage() {
 
                             {/* Score (converted for ENGAA/NSAA/TMUA) */}
                             <div className="col-span-1 flex items-center justify-center">
-                              {convertedScore !== null ? (
-                                <span className="text-sm text-white/80 font-medium">
-                                  {convertedScore.toFixed(1)}
-                                </span>
-                              ) : scorePercentage !== null && (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA") ? (
+                              {scorePercentage !== null && (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA") ? (
                                 <span className="text-xs text-white/40 italic">—</span>
                               ) : (
                                 <span className="text-xs text-white/40">—</span>

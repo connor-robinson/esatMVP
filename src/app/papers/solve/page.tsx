@@ -385,39 +385,6 @@ export default function PapersSolvePage() {
       }
     }
   };
-  
-  // Handle section summary next button
-  const handleSectionSummaryNext = () => {
-    setSectionInstructionTimer(0);
-  };
-
-  // Handle section summary timer expiry
-  const handleSectionSummaryTimerExpire = () => {
-    setSectionInstructionTimer(0);
-  };
-
-  // Handle submit section (show review popup)
-  const handleSubmitSection = () => {
-    setShowSubmitReview(true);
-  };
-
-  // Handle submit section review confirmation
-  const handleSubmitSectionConfirm = () => {
-    setShowSubmitReview(false);
-    const isLastSection = currentSectionIndex === selectedSections.length - 1;
-    
-    if (isLastSection) {
-      // Last section - go to marking
-      handleSubmit();
-    } else {
-      // Move to next section
-      const nextSectionIndex = currentSectionIndex + 1;
-      setCurrentSectionIndex(nextSectionIndex);
-      setSectionInstructionTimer(60);
-      // Reset to first question of new section (will be filtered by getCurrentSectionQuestions)
-      navigateToQuestion(0);
-    }
-  };
 
   const getTimerVariant = () => {
     const remainingMinutes = remainingTime / 60;

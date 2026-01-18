@@ -153,95 +153,64 @@ export function TopicsOverview() {
 
   return (
     <Card variant="flat" className="p-5">
-      <div className="mb-4">
+      <div className="mb-3">
         <h3 className="text-lg font-semibold uppercase tracking-wider text-white/90">
           Topics Overview
         </h3>
-        <p className="text-sm font-mono text-white/50 mt-1">
-          Your performance highlights
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Strongest Topics */}
         {strongest.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-primary" strokeWidth={2} />
-              <span className="text-sm font-semibold text-white/70 uppercase tracking-wider">
-                Strongest
-              </span>
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
+              Strongest
             </div>
-            <div className="space-y-2">
-              {strongest.map((topic) => (
-                <div
-                  key={topic.topicId}
-                  className="p-3 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <span className="text-sm font-medium text-white/90">
-                      {topic.topicName}
-                    </span>
-                    <span className="text-xs font-semibold text-primary">
-                      {topic.accuracy.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-white/50">
-                    <div className="flex items-center gap-1">
-                      <Target className="h-3 w-3" />
-                      <span>{topic.questionsAnswered} questions</span>
-                    </div>
-                    {topic.avgSpeed > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{(topic.avgSpeed / 1000).toFixed(1)}s avg</span>
-                      </div>
-                    )}
-                  </div>
+            {strongest.map((topic) => (
+              <div
+                key={topic.topicId}
+                className="flex items-center justify-between p-2.5 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+              >
+                <span className="text-sm font-medium text-white/90">
+                  {topic.topicName}
+                </span>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="font-semibold text-primary">
+                    {topic.accuracy.toFixed(0)}%
+                  </span>
+                  <span className="text-white/50">
+                    {topic.questionsAnswered} questions
+                  </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Weakest Topics */}
         {weakest.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-400" strokeWidth={2} />
-              <span className="text-sm font-semibold text-white/70 uppercase tracking-wider">
-                Weakest
-              </span>
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
+              Weakest
             </div>
-            <div className="space-y-2">
-              {weakest.map((topic) => (
-                <div
-                  key={topic.topicId}
-                  className="p-3 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <span className="text-sm font-medium text-white/90">
-                      {topic.topicName}
-                    </span>
-                    <span className="text-xs font-semibold text-red-400">
-                      {topic.accuracy.toFixed(0)}%
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs text-white/50">
-                    <div className="flex items-center gap-1">
-                      <Target className="h-3 w-3" />
-                      <span>{topic.questionsAnswered} questions</span>
-                    </div>
-                    {topic.avgSpeed > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{(topic.avgSpeed / 1000).toFixed(1)}s avg</span>
-                      </div>
-                    )}
-                  </div>
+            {weakest.map((topic) => (
+              <div
+                key={topic.topicId}
+                className="flex items-center justify-between p-2.5 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+              >
+                <span className="text-sm font-medium text-white/90">
+                  {topic.topicName}
+                </span>
+                <div className="flex items-center gap-3 text-xs">
+                  <span className="font-semibold text-red-400">
+                    {topic.accuracy.toFixed(0)}%
+                  </span>
+                  <span className="text-white/50">
+                    {topic.questionsAnswered} questions
+                  </span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

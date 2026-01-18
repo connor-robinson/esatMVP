@@ -172,7 +172,9 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
           weekday: "long",
           month: "long",
           day: "numeric",
+          year: "numeric",
         }),
+        dateKey: date.toISOString().split("T")[0], // For better sorting/display
         accuracy,
         questionsAnswered: d.questionsAnswered,
       };
@@ -291,7 +293,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
           <ResponsiveContainer width="100%" height={320}>
             <LineChart 
               data={chartData} 
-              margin={{ top: 15, right: 5, left: -20, bottom: 5 }}
+              margin={{ top: 15, right: 5, left: 20, bottom: 30 }}
             >
             <defs>
               <linearGradient id="accuracyGradient" x1="0" y1="0" x2="0" y2="1">
@@ -307,11 +309,14 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
             <XAxis
               dataKey="date"
               stroke="rgba(255,255,255,0.1)"
-              style={{ fontSize: "10px", fontWeight: 500 }}
-              tick={{ fill: "rgba(255,255,255,0.4)" }}
+              style={{ fontSize: "11px", fontWeight: 500 }}
+              tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
-              interval={zoomLevel === 'week' ? 1 : zoomLevel === 'month' ? 4 : 'preserveStartEnd'}
+              axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+              interval={zoomLevel === 'week' ? 0 : zoomLevel === 'month' ? 3 : 'preserveStartEnd'}
+              angle={zoomLevel === 'month' || zoomLevel === 'all' ? -45 : 0}
+              textAnchor={zoomLevel === 'month' || zoomLevel === 'all' ? "end" : "middle"}
+              height={zoomLevel === 'month' || zoomLevel === 'all' ? 60 : 30}
             />
             <YAxis
               stroke="rgba(255,255,255,0.1)"
