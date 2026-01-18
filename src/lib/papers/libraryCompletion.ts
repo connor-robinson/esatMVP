@@ -47,7 +47,7 @@ export async function isSectionCompleted(
       .ilike('paper_variant', `${paper.examYear}-%`);
     
     if (!error1 && data1) {
-      data = data1;
+      data = data1 as any[];
     }
     
     // Also check with ExamName (for backwards compatibility or data inconsistencies)
@@ -63,7 +63,8 @@ export async function isSectionCompleted(
       if (!error2 && data2) {
         // Merge results, avoiding duplicates
         const existingIds = new Set(data.map(s => s.id));
-        data = [...data, ...data2.filter(s => !existingIds.has(s.id))];
+        const typedData2 = data2 as any[];
+        data = [...data, ...typedData2.filter(s => !existingIds.has(s.id))];
       }
       
       error = error2 || error1;
