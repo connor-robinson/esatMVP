@@ -186,7 +186,7 @@ export function TopicsOverviewSection({
                   <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
                   <p>No topics found matching &quot;{searchQuery}&quot;</p>
                 </div>
-              ) : "all" in visibleTopicsData ? (
+              ) : "all" in visibleTopicsData && visibleTopicsData.all ? (
                 // Show all topics (expanded state)
                 <div className={cn(
                   "space-y-1",
@@ -204,42 +204,44 @@ export function TopicsOverviewSection({
                 </div>
               ) : (
                 // Show top 4, ..., bottom 2 (collapsed state)
-                <div className="space-y-1">
-                  {/* Top 4 */}
-                  {visibleTopicsData.top4.map((topic) => (
-                    <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                      <TopicDetailCard
-                        topic={topic}
-                        isExpanded={expandedId === topic.topicId}
-                        onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                      />
-                    </div>
-                  ))}
+                "top4" in visibleTopicsData && "bottom2" in visibleTopicsData ? (
+                  <div className="space-y-1">
+                    {/* Top 4 */}
+                    {visibleTopicsData.top4.map((topic) => (
+                      <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                        <TopicDetailCard
+                          topic={topic}
+                          isExpanded={expandedId === topic.topicId}
+                          onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                        />
+                      </div>
+                    ))}
 
-                  {/* Expand Button */}
-                  {visibleTopicsData.hasMore && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowAllTopics(true);
-                      }}
-                      className="w-full py-3 flex items-center justify-center text-white/60 hover:text-white/80 transition-colors"
-                    >
-                      <span className="text-2xl font-bold">...</span>
-                    </button>
-                  )}
+                    {/* Expand Button */}
+                    {visibleTopicsData.hasMore && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowAllTopics(true);
+                        }}
+                        className="w-full py-3 flex items-center justify-center text-white/60 hover:text-white/80 transition-colors"
+                      >
+                        <span className="text-2xl font-bold">...</span>
+                      </button>
+                    )}
 
-                  {/* Bottom 2 */}
-                  {visibleTopicsData.bottom2.map((topic) => (
-                    <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                      <TopicDetailCard
-                        topic={topic}
-                        isExpanded={expandedId === topic.topicId}
-                        onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                      />
-                    </div>
-                  ))}
-                </div>
+                    {/* Bottom 2 */}
+                    {visibleTopicsData.bottom2.map((topic) => (
+                      <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                        <TopicDetailCard
+                          topic={topic}
+                          isExpanded={expandedId === topic.topicId}
+                          onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : null
               )}
             </div>
           </motion.div>

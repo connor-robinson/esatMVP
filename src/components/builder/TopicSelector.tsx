@@ -5,16 +5,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronDown, ChevronRight, Hexagon, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Triangle, Plus, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, Hexagon, FunctionSquare, Calculator, Zap, Atom, FlaskConical, Infinity, Triangle, Plus, Check, BookOpen, Clock, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
-import { Topic, TopicCategory } from "@/types/core";
+import { Topic, TopicCategory, SessionPreset } from "@/types/core";
 import { TopicCard } from "./TopicCard";
 import { cn } from "@/lib/utils";
+import { getTopic } from "@/config/topics";
 
 interface TopicSelectorProps {
   topics: Topic[];
   selectedTopicIds: string[]; // Array of "topicId-variantId" or just "topicId" for topics without variants
   onAddTopic: (topicVariantId: string, topicId: string, variantId?: string) => void;
+  presets?: SessionPreset[];
+  onLoadPreset?: (preset: SessionPreset) => void;
 }
 
 // High-level categories for UI grouping (max 8)
@@ -156,7 +159,8 @@ function TopicHeaderWithVariants({
   );
 }
 
-export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSelectorProps) {
+export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = [], onLoadPreset }: TopicSelectorProps) {
+  const [view, setView] = useState<"library" | "presets">("library");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<Set<HighLevelCategory>>(new Set());
   const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
@@ -250,34 +254,124 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
 
   return (
     <Card variant="flat" className="p-5 h-full">
-      {/* Header */}
+      {/* Header with toggle */}
       <div className="flex items-center justify-between mb-5">
-        <div>
+        <div className="flex-1">
           <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
             Choose Topics
           </h2>
           <p className="text-sm font-mono text-white/50 mt-1">
-            Select topics to practice. Drag or click + to add.
+            {view === "library" ? "Select topics to practice. Click + to add." : "Load a saved preset to quickly start practicing."}
           </p>
         </div>
-        <span className="text-xs text-white/50">
-          {totalModes} {totalModes === 1 ? 'mode' : 'modes'} total
-        </span>
+        <div className="flex items-center gap-2 ml-4">
+          {/* View Toggle */}
+          <div className="flex items-center gap-1 p-1 rounded-organic-md bg-white/[0.03]">
+            <button
+              onClick={() => setView("library")}
+              className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all",
+                view === "library"
+                  ? "bg-white/10 text-white/90"
+                  : "text-white/50 hover:text-white/70"
+              )}
+            >
+              Library
+            </button>
+            <button
+              onClick={() => setView("presets")}
+              className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all",
+                view === "presets"
+                  ? "bg-white/10 text-white/90"
+                  : "text-white/50 hover:text-white/70"
+              )}
+            >
+              Presets
+            </button>
+          </div>
+          {view === "library" && (
+            <span className="text-xs text-white/50">
+              {totalModes} {totalModes === 1 ? 'mode' : 'modes'} total
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-5">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search topics..."
-          className="w-full h-11 px-4 rounded-organic-md bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all"
-        />
-      </div>
+      {/* Preset View */}
+      {view === "presets" ? (
+        <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden pr-1 pb-4 scrollbar-thin">
+          {presets.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <BookOpen className="h-12 w-12 text-white/20 mb-4" strokeWidth={1.5} />
+              <p className="text-sm text-white/50 mb-1">No presets saved yet</p>
+              <p className="text-xs text-white/40">Create a session and save it as a preset to get started</p>
+            </div>
+          ) : (
+            presets.map((preset) => (
+              <div
+                key={preset.id}
+                className="p-4 rounded-organic-md bg-white/5 hover:bg-white/[0.07] transition-colors cursor-pointer"
+                onClick={() => onLoadPreset?.(preset)}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-white/90 truncate mb-1.5">
+                      {preset.name}
+                    </div>
+                    <div className="text-xs text-white/50 line-clamp-2 mb-2">
+                      {preset.topicVariantSelections && preset.topicVariantSelections.length > 0
+                        ? preset.topicVariantSelections
+                            .map((tv) => {
+                              const topic = getTopic(tv.topicId);
+                              const variant = topic?.variants?.find(v => v.id === tv.variantId);
+                              return variant ? `${topic.name}: ${variant.name}` : topic?.name || tv.topicId;
+                            })
+                            .join(", ")
+                        : preset.topicIds
+                            .map((id) => getTopic(id)?.name || id)
+                            .join(", ")}
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-white/40">
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={12} />
+                        <span>{preset.durationMin} min</span>
+                      </div>
+                      <span>•</span>
+                      <span>{preset.topicVariantSelections?.length || preset.topicIds.length} {preset.topicVariantSelections?.length === 1 || preset.topicIds.length === 1 ? 'topic' : 'topics'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLoadPreset?.(preset);
+                      }}
+                      className="px-3 py-1.5 rounded-organic-md bg-primary/10 text-primary hover:bg-primary/15 transition-colors text-xs font-medium"
+                    >
+                      Load
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Search */}
+          <div className="mb-5">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search topics..."
+              className="w-full h-11 px-4 rounded-organic-md bg-white/5 outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 placeholder:text-white/40 text-white/90 text-sm transition-all"
+            />
+          </div>
 
-      {/* Topics by category */}
-      <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden pr-1 pb-4 scrollbar-thin">
+          {/* Topics by category */}
+          <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-hidden pr-1 pb-4 scrollbar-thin">
         {Object.entries(filteredByCategory).map(([category, categoryTopics]) => {
           if (!categoryTopics || categoryTopics.length === 0) return null;
           const highLevelCategory = category as HighLevelCategory;
@@ -360,7 +454,9 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic }: TopicSel
             No topics found matching &quot;{searchQuery}&quot;
           </div>
         )}
-      </div>
+          </div>
+        </>
+      )}
     </Card>
   );
 }

@@ -6,7 +6,6 @@
 
 import { Suspense, lazy } from "react";
 import { Container } from "@/components/layout/Container";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -57,13 +56,7 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <Container size="xl" className="py-8">
-        {/* Header */}
-        <PageHeader
-          title="Session Builder"
-          description="Create custom practice sessions by combining multiple topics. Click the + button to add topics to your session."
-        />
-
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
           {/* Left: Topic selector */}
           <div>
             <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
@@ -71,6 +64,8 @@ export default function BuilderPage() {
                 topics={allTopics}
                 selectedTopicIds={builder.selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`)}
                 onAddTopic={builder.addTopic}
+                presets={builder.presets}
+                onLoadPreset={builder.loadPreset}
               />
             </Suspense>
           </div>

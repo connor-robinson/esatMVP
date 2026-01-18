@@ -5,7 +5,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Play, Save, Trash2, Clock, FolderDown, ChevronDown, ChevronRight } from "lucide-react";
+import { X, Play, Save, Trash2, Clock, ChevronDown, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";
@@ -145,7 +145,7 @@ function EmptyState() {
       <div className="text-base text-white/40">
         <span className="font-semibold">No topics added yet</span>
       </div>
-      <div className="text-sm text-white/40">Click the + button on topics to add them</div>
+      <div className="text-sm text-white/40">Click the + button to add topics</div>
     </div>
   );
 }
@@ -184,7 +184,7 @@ export function SessionFolder({
             Session Folder
           </h2>
           <p className="text-sm font-mono text-white/50 mt-1">
-            Click + on topics to add them.
+            Click the + button to add topics.
           </p>
         </div>
         <span className="text-xs text-white/50">
@@ -243,26 +243,6 @@ export function SessionFolder({
             />
           </div>
 
-          {/* Load Preset button */}
-          <Button
-            onClick={() => {
-              if (presets.length > 0 && onLoadPreset) {
-                const presetNumber = prompt(`Available presets:\n${presets.map((p, i) => `${i + 1}. ${p.name}`).join('\n')}\n\nEnter preset number:`);
-                if (presetNumber && parseInt(presetNumber) > 0 && parseInt(presetNumber) <= presets.length) {
-                  onLoadPreset(presets[parseInt(presetNumber) - 1]);
-                }
-              }
-            }}
-            disabled={presets.length === 0}
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-2 border-0"
-            title={presets.length === 0 ? "No saved presets" : "Load a saved preset"}
-          >
-            <FolderDown className="h-4 w-4" strokeWidth={2} />
-            <span>Load</span>
-          </Button>
-
           {/* Save and Clear buttons - grouped with text */}
           <Button
             onClick={onSave}
@@ -272,7 +252,7 @@ export function SessionFolder({
             className="flex items-center gap-2 border-0"
           >
             <Save className="h-4 w-4" strokeWidth={2} />
-            <span>Save</span>
+            <span>Save as preset</span>
           </Button>
           
           <Button
@@ -287,17 +267,20 @@ export function SessionFolder({
           </Button>
         </div>
 
-        {/* Start button - minimalistic style, no border */}
-        <Button
+        {/* Start button - enhanced style */}
+        <button
           onClick={onStart}
           disabled={!canStart}
-          variant={canStart ? "primary" : "secondary"}
-          size="lg"
-          className="w-full flex items-center justify-center gap-3 border-0"
+          className={cn(
+            "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-organic-lg font-semibold text-base transition-all duration-fast ease-signature",
+            canStart
+              ? "bg-primary text-neutral-900 hover:bg-primary-hover hover:shadow-glow interaction-scale"
+              : "bg-white/5 text-white/30 cursor-not-allowed"
+          )}
         >
-          <Play className="h-5 w-5" strokeWidth={2} />
+          <Play className="h-5 w-5" strokeWidth={2.5} />
           <span>Start Session</span>
-        </Button>
+        </button>
 
           {!canStart && totalItems === 0 && (
             <div className="text-sm text-white/40 text-center">
