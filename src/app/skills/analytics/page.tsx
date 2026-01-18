@@ -809,20 +809,8 @@ export default function AnalyticsPage() {
   return (
     <Container size="lg" className="py-10 space-y-8">
       <Suspense fallback={<div className="h-12 bg-white/5 rounded-lg animate-pulse" />}>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center justify-end">
           <ViewToggle value={view} onChange={setView} />
-          <div className="flex items-center gap-3">
-            <Suspense fallback={<div className="h-10 w-40 bg-white/5 rounded" />}>
-                  <TopicSelector
-                    availableTopics={AVAILABLE_TOPICS}
-                    value={selectedTopic}
-                    onChange={setSelectedTopic}
-                  />
-                </Suspense>
-            <Suspense fallback={<div className="h-10 w-32 bg-white/5 rounded" />}>
-              <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-        </Suspense>
-      </div>
         </div>
       </Suspense>
 

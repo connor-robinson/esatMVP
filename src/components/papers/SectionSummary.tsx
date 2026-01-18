@@ -32,7 +32,7 @@ export function SectionSummary({
   sectionInstructionTimer,
   setSectionInstructionTimer,
 }: SectionSummaryProps) {
-  const [displaySeconds, setDisplaySeconds] = useState(60);
+  const [displaySeconds, setDisplaySeconds] = useState(sectionInstructionTimer || 60);
 
   const currentSection = selectedSections[currentSectionIndex];
   const currentSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
@@ -43,23 +43,37 @@ export function SectionSummary({
   const firstQuestion = currentSectionQuestions[0];
   const partLetter = (firstQuestion as any)?.partLetter || '';
   const partName = firstQuestion?.partName || '';
+  const examYear = (firstQuestion as any)?.examYear || '';
   
-  // Format section title
+  // Clean up partLetter - remove "Part " prefix if present
+  const cleanPartLetter = partLetter?.replace(/^Part\s+/i, '') || '';
+  
+  // Format section title - avoid duplication of "Part"
   let sectionTitle = `This is ${currentSection} of the ${paperName} paper`;
-  if (partLetter && partName) {
-    sectionTitle = `This is Part ${partLetter}: ${partName} of the ${paperName} paper`;
+  if (cleanPartLetter && partName) {
+    const yearText = examYear ? ` ${examYear}` : '';
+    sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Timer countdown effect
+  // Initialize display seconds when timer starts
   useEffect(() => {
-    if (sectionInstructionTimer === null || sectionInstructionTimer <= 0) return;
+    if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+      setDisplaySeconds(sectionInstructionTimer);
+    }
+  }, [currentSectionIndex]); // Re-initialize when section changes
+
+  // Timer countdown effect - sync with store timer
+  useEffect(() => {
+    if (sectionInstructionTimer === null || sectionInstructionTimer <= 0) {
+      return;
+    }
 
     const interval = setInterval(() => {
       setDisplaySeconds((prev) => {
-        const newSeconds = prev - 1;
+        const newSeconds = Math.max(0, prev - 1);
         
-        // Update timer in store
         if (newSeconds > 0) {
+          // Update timer in store
           setSectionInstructionTimer(newSeconds);
           return newSeconds;
         } else {
@@ -74,13 +88,6 @@ export function SectionSummary({
     return () => clearInterval(interval);
   }, [sectionInstructionTimer, onTimerExpire, setSectionInstructionTimer]);
 
-  // Initialize display seconds from timer
-  useEffect(() => {
-    if (sectionInstructionTimer !== null) {
-      setDisplaySeconds(sectionInstructionTimer);
-    }
-  }, [sectionInstructionTimer]);
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -94,24 +101,33 @@ export function SectionSummary({
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-8 py-16">
       <div className="w-full max-w-3xl space-y-8">
-        {/* Section Title */}
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-neutral-100 mb-4">
-            {sectionTitle}
-          </h2>
-        </div>
+        {/* Header: Title and Clock (Top Right) */}
+        <div className="flex items-start justify-between w-full">
+          {/* Section Title - Left */}
+          <div className="flex-1">
+            {cleanPartLetter && partName ? (
+              <h2 className="text-xl font-semibold text-neutral-100">
+                This is{' '}
+                <span style={{ color: '#5075a4' }}>Part {cleanPartLetter}</span>
+                {`: ${partName} of the ${paperName}${examYear ? ` ${examYear}` : ''} paper`}
+              </h2>
+            ) : (
+              <h2 className="text-xl font-semibold text-neutral-100">
+                {sectionTitle}
+              </h2>
+            )}
+          </div>
 
-        {/* Countdown Timer */}
-        <div className="flex justify-center">
-          <div className="flex items-center gap-4 px-6 py-4 rounded-lg backdrop-blur-sm bg-black/50 border border-white/10">
-            <svg className="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Countdown Timer - Right */}
+          <div className="flex items-center gap-3 px-4 py-2 rounded-lg backdrop-blur-sm bg-black/50 border border-white/10 flex-shrink-0 ml-4">
+            <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" strokeWidth="2"/>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2" />
             </svg>
-            <span className="text-2xl font-bold tabular-nums text-neutral-100">
+            <span className="text-xl font-bold tabular-nums text-neutral-100">
               {formatTime(displaySeconds)}
             </span>
-            <span className="text-sm text-neutral-400">
+            <span className="text-xs text-neutral-400 whitespace-nowrap">
               You have 1 minute to read these instructions
             </span>
           </div>

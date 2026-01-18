@@ -10,7 +10,6 @@ import { useSupabaseClient, useSupabaseSession } from "@/components/auth/Supabas
 import { getTopicExtremes } from "@/lib/analytics";
 import { getTopic } from "@/config/topics";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Clock, Target } from "lucide-react";
 import type { UserStats } from "@/types/analytics";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
 
