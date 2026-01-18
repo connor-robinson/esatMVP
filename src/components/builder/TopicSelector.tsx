@@ -324,8 +324,9 @@ export function TopicSelector({ topics, selectedTopicIds, onAddTopic, presets = 
                         ? preset.topicVariantSelections
                             .map((tv) => {
                               const topic = getTopic(tv.topicId);
-                              const variant = topic?.variants?.find(v => v.id === tv.variantId);
-                              return variant ? `${topic.name}: ${variant.name}` : topic?.name || tv.topicId;
+                              if (!topic) return tv.topicId;
+                              const variant = topic.variants?.find(v => v.id === tv.variantId);
+                              return variant ? `${topic.name}: ${variant.name}` : topic.name;
                             })
                             .join(", ")
                         : preset.topicIds
