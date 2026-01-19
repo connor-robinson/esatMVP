@@ -117,14 +117,14 @@ export function TopicDetailCard({
       <div className="grid grid-cols-12 gap-4 items-center">
         {/* Rank */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className={cn("text-base font-bold font-mono", getRankColor())}>
+          <span className={cn("text-xl font-bold font-mono", getRankColor())}>
             {topic.rank || "-"}
           </span>
         </div>
 
         {/* Topic Name */}
         <div className="col-span-2">
-          <h3 className="text-lg font-medium text-white/90 leading-tight font-mono">
+          <h3 className="text-sm font-medium text-white/90 leading-tight font-mono truncate">
             {topic.topicName}
           </h3>
         </div>
@@ -132,9 +132,9 @@ export function TopicDetailCard({
         {/* Percentile */}
         <div className="col-span-1 flex items-center justify-center">
           {topic.percentile !== undefined ? (
-            <span className="text-white/80 font-mono">
-              <span className="text-xl font-bold">{topic.percentile}</span>
-              <span className="text-sm text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
+            <span className="text-base text-white/80 font-mono">
+              <span className="font-bold">{topic.percentile}</span>
+              <span className="text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
             </span>
           ) : (
             <span className="text-base text-white/80 font-mono">-</span>

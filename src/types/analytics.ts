@@ -96,6 +96,9 @@ export interface TrendData {
   value: number;
   direction: 'up' | 'down' | 'neutral';
   percentage: number;
+  absoluteChange?: number; // Absolute change from previous value
+  previousValue?: number; // Previous value for reference
+  metricType?: 'questions' | 'accuracy' | 'speed'; // Type of metric for display formatting
 }
 
 export interface SessionSummary {

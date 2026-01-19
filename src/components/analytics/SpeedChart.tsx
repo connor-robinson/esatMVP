@@ -57,32 +57,28 @@ const CustomCross = (props: any) => {
   );
 };
 
-// Glass morphism tooltip
+// Static tooltip - no animation
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-background/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl"
-      >
-        <p className="text-white/90 font-semibold mb-3 text-sm">{data.fullDate}</p>
-        <div className="space-y-2">
+      <div className="bg-background/90 backdrop-blur-xl border border-white/10 rounded-organic-md p-3 shadow-2xl">
+        <p className="text-white/90 font-mono font-semibold mb-2 text-xs">{data.fullDate}</p>
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-6">
-            <span className="text-white/50 text-xs">Avg Speed</span>
-            <span className="text-warning font-bold text-lg">
+            <span className="text-white/50 text-xs font-mono">Avg Speed</span>
+            <span className="text-white/90 font-mono font-bold text-sm">
               {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(1)} q/min` : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between gap-6">
-            <span className="text-white/50 text-xs">Questions</span>
-            <span className="text-white/70 font-medium">
+            <span className="text-white/50 text-xs font-mono">Questions</span>
+            <span className="text-white/70 font-mono text-sm">
               {data.questionsAnswered || 0}
             </span>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
   return null;
@@ -348,7 +344,7 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
             />
             <Tooltip 
               content={<CustomTooltip />} 
-              cursor={{ stroke: "rgba(245, 158, 11, 0.2)", strokeWidth: 2 }}
+              cursor={{ stroke: "rgba(255,255,255,0.2)", strokeWidth: 1.5 }}
             />
             
             {/* Grey straight line of best fit */}
@@ -361,11 +357,11 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
               activeDot={false}
             />
             
-            {/* Smooth curved trend line - white */}
+            {/* Smooth curved trend line - signature green */}
             <Line
               type="natural"
               dataKey="speed"
-              stroke="rgba(255,255,255,0.9)"
+              stroke="#85BC82"
               strokeWidth={2.5}
               dot={false}
               activeDot={false}
@@ -384,27 +380,16 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
                 if (!props.payload || props.payload.speed === null) {
                   return <g />;
                 }
+                // Static active dot - no animation
                 return (
                   <g>
-                    {/* Expanding ring animation */}
-                    <motion.circle
-                      cx={props.cx}
-                      cy={props.cy}
-                      r={0}
-                      fill="none"
-                      stroke="rgba(255,255,255,0.5)"
-                      strokeWidth={2}
-                      initial={{ r: 0, opacity: 1 }}
-                      animate={{ r: 15, opacity: 0 }}
-                      transition={{ duration: 0.6, repeat: Infinity }}
-                    />
                     <circle
                       cx={props.cx}
                       cy={props.cy}
-                      r={10}
-                      fill="rgba(245, 158, 11, 0.2)"
-                      stroke="rgba(255,255,255,0.8)"
-                      strokeWidth={2}
+                      r={6}
+                      fill="rgba(255,255,255,0.9)"
+                      stroke="rgba(255,255,255,0.5)"
+                      strokeWidth={1.5}
                     />
                     <CustomCross {...props} />
                   </g>

@@ -717,10 +717,23 @@ export default function AnalyticsPage() {
     const yesterday = todayYesterdayData.yesterday;
     
     if (!today || !yesterday || yesterday.accuracy === 0) {
-      return { value: today?.accuracy || 0, direction: "neutral" as const, percentage: 0 };
+      return { 
+        value: today?.accuracy || 0, 
+        direction: "neutral" as const, 
+        percentage: 0,
+        absoluteChange: 0,
+        previousValue: yesterday?.accuracy || 0,
+        metricType: 'accuracy' as const
+      };
     }
     
-    return calculateTrend(today.accuracy, yesterday.accuracy);
+    const trend = calculateTrend(today.accuracy, yesterday.accuracy);
+    return {
+      ...trend,
+      absoluteChange: today.accuracy - yesterday.accuracy,
+      previousValue: yesterday.accuracy,
+      metricType: 'accuracy' as const
+    };
   }, [todayYesterdayData]);
   
   const speedTrend = useMemo(() => {
@@ -728,14 +741,27 @@ export default function AnalyticsPage() {
     const yesterday = todayYesterdayData.yesterday;
     
     if (!today || !yesterday || yesterday.avgSpeed === 0) {
-      return { value: today?.avgSpeed ? 60000 / today.avgSpeed : 0, direction: "neutral" as const, percentage: 0 };
+      return { 
+        value: today?.avgSpeed ? 60000 / today.avgSpeed : 0, 
+        direction: "neutral" as const, 
+        percentage: 0,
+        absoluteChange: 0,
+        previousValue: yesterday?.avgSpeed ? 60000 / yesterday.avgSpeed : 0,
+        metricType: 'speed' as const
+      };
     }
     
     // Convert to questions per minute for trend calculation (higher is better)
     const todaySpeed = today.avgSpeed > 0 ? 60000 / today.avgSpeed : 0;
     const yesterdaySpeed = yesterday.avgSpeed > 0 ? 60000 / yesterday.avgSpeed : 0;
     
-    return calculateTrend(todaySpeed, yesterdaySpeed);
+    const trend = calculateTrend(todaySpeed, yesterdaySpeed);
+    return {
+      ...trend,
+      absoluteChange: todaySpeed - yesterdaySpeed,
+      previousValue: yesterdaySpeed,
+      metricType: 'speed' as const
+    };
   }, [todayYesterdayData]);
   
   const questionsTrend = useMemo(() => {
@@ -744,21 +770,48 @@ export default function AnalyticsPage() {
     
     // If no data for either day, show neutral
     if (!today || !yesterday) {
-      return { value: today?.questionsAnswered || 0, direction: "neutral" as const, percentage: 0 };
+      return { 
+        value: today?.questionsAnswered || 0, 
+        direction: "neutral" as const, 
+        percentage: 0,
+        absoluteChange: 0,
+        previousValue: yesterday?.questionsAnswered || 0,
+        metricType: 'questions' as const
+      };
     }
     
-    // If no questions today, show 0% change
+    // If no questions today, show 0 change
     if (today.questionsAnswered === 0) {
-      return { value: 0, direction: "neutral" as const, percentage: 0 };
+      return { 
+        value: 0, 
+        direction: "neutral" as const, 
+        percentage: 0,
+        absoluteChange: 0 - yesterday.questionsAnswered,
+        previousValue: yesterday.questionsAnswered,
+        metricType: 'questions' as const
+      };
     }
     
-    // If no questions yesterday but questions today, it's an increase (but handle division by zero)
+    // If no questions yesterday but questions today, it's an increase
     if (yesterday.questionsAnswered === 0) {
-      return { value: today.questionsAnswered, direction: "up" as const, percentage: 100 };
+      return { 
+        value: today.questionsAnswered, 
+        direction: "up" as const, 
+        percentage: 100,
+        absoluteChange: today.questionsAnswered,
+        previousValue: 0,
+        metricType: 'questions' as const
+      };
     }
     
     // Calculate percentage change from yesterday to today
-    return calculateTrend(today.questionsAnswered, yesterday.questionsAnswered);
+    const trend = calculateTrend(today.questionsAnswered, yesterday.questionsAnswered);
+    return {
+      ...trend,
+      absoluteChange: today.questionsAnswered - yesterday.questionsAnswered,
+      previousValue: yesterday.questionsAnswered,
+      metricType: 'questions' as const
+    };
   }, [todayYesterdayData]);
 
   return (

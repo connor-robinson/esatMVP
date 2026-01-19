@@ -80,3 +80,4 @@ COMMENT ON COLUMN ai_generated_questions.test_type IS
 COMMENT ON COLUMN ai_generated_questions.paper IS 
   'Paper classification: For ESAT: "Math 1" or "Math 2". For TMUA: "Paper1" or "Paper2". NULL for non-math questions.';
 
+

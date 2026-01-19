@@ -55,12 +55,12 @@ export function SectionSummary({
     sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Initialize display seconds when timer starts
+  // Initialize display seconds when timer starts or section changes
   useEffect(() => {
     if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
       setDisplaySeconds(sectionInstructionTimer);
     }
-  }, [currentSectionIndex]); // Re-initialize when section changes
+  }, [currentSectionIndex, sectionInstructionTimer]); // Re-initialize when section or timer changes
 
   // Timer countdown effect - sync with store timer
   useEffect(() => {

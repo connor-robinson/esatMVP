@@ -226,6 +226,21 @@ export default function PapersSolvePage() {
       fullQuestionIndex = fullIndex;
     }
   }
+
+  // Ensure current question is always within current section (when section-based flow is active)
+  useEffect(() => {
+    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0 && currentQuestion) {
+      const isInCurrentSection = currentSectionQuestions.some(q => q.id === currentQuestion.id);
+      if (!isInCurrentSection) {
+        // Current question is not in current section - navigate to first question of current section
+        const firstQuestionOfSection = currentSectionQuestions[0];
+        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+        if (fullIndex >= 0) {
+          navigateToQuestion(fullIndex);
+        }
+      }
+    }
+  }, [currentSectionIndex, currentQuestionIndex, allSectionsQuestions, currentSectionQuestions, currentQuestion, questions, navigateToQuestion]);
   
   const currentAnswer = answers[fullQuestionIndex];
   const isGuessed = guessedFlags[fullQuestionIndex];
@@ -334,19 +349,22 @@ export default function PapersSolvePage() {
   
   const handleNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
-    // Navigation is within current section only (0 to actualQuestionCount-1)
-    const newSectionIndex = sectionQuestionIndex + direction;
-    if (newSectionIndex >= 0 && newSectionIndex < actualQuestionCount) {
-      // Convert section-relative index to global index
-      if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+    // Navigation is within current section only
+    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+      // Section-based flow: navigate within current section only
+      const newSectionIndex = sectionQuestionIndex + direction;
+      if (newSectionIndex >= 0 && newSectionIndex < currentSectionQuestions.length) {
         const targetQuestion = currentSectionQuestions[newSectionIndex];
         const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
         if (globalIndex >= 0) {
           navigateToQuestion(globalIndex);
         }
-      } else {
-        // Fallback for non-section flow
-        navigateToQuestion(newSectionIndex);
+      }
+    } else {
+      // Fallback for non-section flow
+      const newIndex = currentQuestionIndex + direction;
+      if (newIndex >= 0 && newIndex < questions.length) {
+        navigateToQuestion(newIndex);
       }
     }
   };
@@ -362,11 +380,10 @@ export default function PapersSolvePage() {
   
   const handleQuestionJump = (sectionRelativeIndex: number) => {
     scrollPositionRef.current = window.scrollY;
-    // In section-based flow, index is relative to current section (0 to actualQuestionCount-1)
-    // Convert section-relative index to global index
-    if (sectionRelativeIndex < 0 || sectionRelativeIndex >= actualQuestionCount) return;
-    
+    // In section-based flow, index is relative to current section
     if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+      // Ensure index is within current section bounds
+      if (sectionRelativeIndex < 0 || sectionRelativeIndex >= currentSectionQuestions.length) return;
       // Convert section-relative to global index
       const targetQuestion = currentSectionQuestions[sectionRelativeIndex];
       const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
@@ -375,6 +392,7 @@ export default function PapersSolvePage() {
       }
     } else {
       // Fallback for non-section flow
+      if (sectionRelativeIndex < 0 || sectionRelativeIndex >= questions.length) return;
       navigateToQuestion(sectionRelativeIndex);
     }
   };
@@ -386,12 +404,30 @@ export default function PapersSolvePage() {
 
   // Handle section summary next button
   const handleSectionSummaryNext = () => {
+    // Clear the timer to proceed to questions
     setSectionInstructionTimer(0);
+    // Ensure we're on the first question of the current section
+    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+      const firstQuestionOfSection = currentSectionQuestions[0];
+      const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+      if (fullIndex >= 0) {
+        navigateToQuestion(fullIndex);
+      }
+    }
   };
 
   // Handle section summary timer expiry
   const handleSectionSummaryTimerExpire = () => {
+    // Timer expired - proceed to questions
     setSectionInstructionTimer(0);
+    // Ensure we're on the first question of the current section
+    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+      const firstQuestionOfSection = currentSectionQuestions[0];
+      const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+      if (fullIndex >= 0) {
+        navigateToQuestion(fullIndex);
+      }
+    }
   };
 
   // Handle submit section (show review popup)
@@ -408,20 +444,12 @@ export default function PapersSolvePage() {
       // Last section - go to marking
       handleSubmit();
     } else {
-      // Move to next section
+      // Move to next section - show section summary first
       const nextSectionIndex = currentSectionIndex + 1;
       setCurrentSectionIndex(nextSectionIndex);
+      // Show section summary for next section (60 second timer)
       setSectionInstructionTimer(60);
-      // Reset to first question index of new section
-      const currentSectionQuestions = getCurrentSectionQuestions();
-      if (currentSectionQuestions.length > 0) {
-        // Find the index in the full questions array for the first question of the new section
-        const firstQuestionOfSection = currentSectionQuestions[0];
-        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-        if (fullIndex >= 0) {
-          navigateToQuestion(fullIndex);
-        }
-      }
+      // Don't navigate to questions yet - wait for user to click "Next" on summary
     }
   };
 
@@ -605,7 +633,7 @@ export default function PapersSolvePage() {
               {/* Previous Button */}
               <button
                 onClick={() => handleNavigation(-1)}
-                    disabled={sectionQuestionIndex === 0}
+                disabled={sectionQuestionIndex === 0}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
                   backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
@@ -647,7 +675,9 @@ export default function PapersSolvePage() {
               {/* Next Button */}
               <button
                 onClick={() => handleNavigation(1)}
-                      disabled={sectionQuestionIndex === actualQuestionCount - 1}
+                disabled={allSectionsQuestions.length > 0 
+                  ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                  : sectionQuestionIndex >= actualQuestionCount - 1}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
                   backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
@@ -784,7 +814,7 @@ export default function PapersSolvePage() {
         <NavigatorPopup
           isOpen={showNavigator}
           onClose={() => setShowNavigator(false)}
-          totalQuestions={actualQuestionCount}
+          totalQuestions={allSectionsQuestions.length > 0 ? currentSectionQuestions.length : actualQuestionCount}
           currentQuestionIndex={sectionQuestionIndex}
           answers={(() => {
             // Map section-relative indices to global answers
