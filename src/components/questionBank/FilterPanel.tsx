@@ -33,6 +33,8 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Physics': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
   'Chemistry': 'bg-[#ef7d7d]/20 hover:bg-[#ef7d7d]/30 text-[#ef7d7d] border border-[#ef7d7d]/30',
   'Biology': 'bg-[#85BC82]/20 hover:bg-[#85BC82]/30 text-[#85BC82] border border-[#85BC82]/30',
+  'TMUA Paper 1': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
+  'TMUA Paper 2': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
 };
 
 export function FilterPanel({ filters, onFilterChange, onToggleFilters, showToggle = false }: FilterPanelProps) {
