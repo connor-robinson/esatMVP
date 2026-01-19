@@ -5,7 +5,7 @@
 "use client";
 
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -13,7 +13,7 @@ import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AnalyticsTrendChart } from "@/components/papers/AnalyticsTrendChart";
 import { MistakeChart } from "@/components/papers/MistakeChart";
-import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus, Trash2, X } from "lucide-react";
 import type { PaperType, PaperSection } from "@/types/papers";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -31,6 +31,7 @@ import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { getPaperTypeColor, PAPER_TYPE_COLORS, desaturateColor } from "@/config/colors";
 import { cn } from "@/lib/utils";
+import { deletePaperSession } from "@/lib/supabase/papers";
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
@@ -43,6 +44,30 @@ export default function PapersAnalyticsPage() {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "all">("all");
   const [sessionSortBy, setSessionSortBy] = useState<"recent" | "percentage" | "percentile">("recent");
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  
+  // Filter states for Performance Trends
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [selectedPaperTypes, setSelectedPaperTypes] = useState<PaperType[]>([]);
+  
+  // Multi-select dropdown states
+  const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
+  const [paperTypeDropdownOpen, setPaperTypeDropdownOpen] = useState(false);
+  const topicDropdownRef = useRef<HTMLDivElement>(null);
+  const paperTypeDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (topicDropdownRef.current && !topicDropdownRef.current.contains(event.target as Node)) {
+        setTopicDropdownOpen(false);
+      }
+      if (paperTypeDropdownRef.current && !paperTypeDropdownRef.current.contains(event.target as Node)) {
+        setPaperTypeDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Fetch sessions on mount
   useEffect(() => {
@@ -58,19 +83,58 @@ export default function PapersAnalyticsPage() {
     }
   }, [session]);
 
+  // Helper function to map topic filter to sections
+  const topicToSections = (topic: string): PaperSection[] => {
+    switch (topic) {
+      case "Math 1":
+        return ["Mathematics", "Math"];
+      case "Math 2":
+        return ["Advanced Math", "Advanced Mathematics and Advanced Physics"];
+      case "All maths":
+        return ["Mathematics", "Math", "Advanced Math", "Advanced Mathematics and Advanced Physics"];
+      case "Physics":
+        return ["Physics"];
+      case "Chemistry":
+        return ["Chemistry"];
+      case "Biology":
+        return ["Biology"];
+      default:
+        return [];
+    }
+  };
+
   // Filter sessions based on selected filters
   const filteredSessions = useMemo(() => {
-    return filterSessions(sessions, {
+    let filtered = filterSessions(sessions, {
       paperType: selectedPaper,
       section: selectedSection,
       timeRange,
     });
-  }, [sessions, selectedPaper, selectedSection, timeRange]);
 
-  // Calculate trend data with percentiles
+    // Apply topic filters (for Performance Trends)
+    if (selectedTopics.length > 0) {
+      const topicSections = new Set<PaperSection>();
+      selectedTopics.forEach(topic => {
+        topicToSections(topic).forEach(sec => topicSections.add(sec));
+      });
+      filtered = filtered.filter(s => {
+        if (!s.selectedSections || s.selectedSections.length === 0) return false;
+        return s.selectedSections.some(sec => topicSections.has(sec));
+      });
+    }
+
+    // Apply paper type filters (for Performance Trends)
+    if (selectedPaperTypes.length > 0) {
+      filtered = filtered.filter(s => selectedPaperTypes.includes(s.paperName));
+    }
+
+    return filtered;
+  }, [sessions, selectedPaper, selectedSection, timeRange, selectedTopics, selectedPaperTypes]);
+
+  // Calculate trend data with percentiles (use filtered sessions for chart)
   const trendDataWithPercentiles = useMemo(() => {
-    return calculateTrendDataWithPercentiles(sessions);
-  }, [sessions]);
+    return calculateTrendDataWithPercentiles(filteredSessions);
+  }, [filteredSessions]);
 
   // Convert percentile data to format expected by chart (we'll update the chart to use percentile instead of percentage)
   const trendDataForChart = useMemo(() => {
@@ -133,9 +197,9 @@ export default function PapersAnalyticsPage() {
     return sorted;
   }, [sessionsWithPercentiles, sessionSortBy]);
 
-  // Show only first 5 sessions in scrollable view
+  // Use all sorted sessions (removed limit for full scrollability)
   const visibleSessions = useMemo(() => {
-    return sortedSessions.slice(0, 5);
+    return sortedSessions;
   }, [sortedSessions]);
 
   // Calculate section performance with trends
@@ -159,7 +223,7 @@ export default function PapersAnalyticsPage() {
     return allMistakes;
   }, [filteredSessions]);
 
-  // Aggregate guessing data across all sessions
+  // Aggregate guessing data across all sessions (use all sessions, not filtered)
   const guessingStats = useMemo(() => {
     let totalGuessed = 0;
     let correctGuesses = 0;
@@ -169,7 +233,8 @@ export default function PapersAnalyticsPage() {
     let allCorrectFlags: (boolean | null)[] = [];
     let allPerQuestionSec: number[] = [];
 
-    filteredSessions.forEach(session => {
+    // Use all sessions to analyze every guess made
+    sessions.forEach(session => {
       if (session.guessedFlags && session.correctFlags && session.perQuestionSec) {
         session.guessedFlags.forEach((guessed, idx) => {
           if (guessed) {
@@ -217,7 +282,7 @@ export default function PapersAnalyticsPage() {
       allCorrectFlags,
       allPerQuestionSec,
     };
-  }, [filteredSessions]);
+  }, [sessions]);
 
   const { loadSessionFromDatabase } = usePaperSessionStore();
 
@@ -228,6 +293,21 @@ export default function PapersAnalyticsPage() {
       router.push('/papers/mark');
     } catch (error) {
       console.error('Failed to load session:', error);
+    }
+  };
+
+  // Function to delete session
+  const handleDeleteSession = async (sessionId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this session?')) {
+      return;
+    }
+    try {
+      await deletePaperSession(sessionId);
+      setSessions(prev => prev.filter(s => s.id !== sessionId));
+    } catch (error) {
+      console.error('Failed to delete session:', error);
+      alert('Failed to delete session. Please try again.');
     }
   };
 
@@ -267,12 +347,6 @@ export default function PapersAnalyticsPage() {
   return (
     <Container size="lg">
       <div className="space-y-8">
-        {/* Header */}
-        <PageHeader
-          title="Papers Analytics"
-          description="Deep insights into your paper performance. Track progress, identify patterns, and optimize your preparation."
-        />
-
         {/* 1. Overview Section with Performance Summary */}
         <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
           <button
@@ -303,21 +377,21 @@ export default function PapersAnalyticsPage() {
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
+                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
                     <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Average Score</div>
-                    <div className="text-3xl font-bold text-white/95 leading-none">{Math.round(analytics.averageScore)}%</div>
+                    <div className="text-2xl font-bold text-white/95 leading-none">{Math.round(analytics.averageScore)}%</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
+                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
                     <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Sessions Completed</div>
-                    <div className="text-3xl font-bold text-white/95 leading-none">{analytics.totalSessions}</div>
+                    <div className="text-2xl font-bold text-white/95 leading-none">{analytics.totalSessions}</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
+                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
                     <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Avg Time</div>
-                    <div className="text-3xl font-bold text-white/95 leading-none">{Math.round(analytics.averageTime)} min</div>
+                    <div className="text-2xl font-bold text-white/95 leading-none">{Math.round(analytics.averageTime)} min</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-5">
+                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
                     <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Sections Practiced</div>
-                    <div className="text-3xl font-bold text-white/95 leading-none">{sectionsPracticed}</div>
+                    <div className="text-2xl font-bold text-white/95 leading-none">{sectionsPracticed}</div>
                   </div>
                 </div>
               </motion.div>
@@ -356,6 +430,157 @@ export default function PapersAnalyticsPage() {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
+                {/* Filter Dropdowns */}
+                <div className="flex items-center gap-4 mb-6 flex-wrap">
+                  {/* By Topic Filter */}
+                  <div className="relative" ref={topicDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTopicDropdownOpen(!topicDropdownOpen);
+                        setPaperTypeDropdownOpen(false);
+                      }}
+                      className="h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between min-w-[160px]"
+                    >
+                      <span className="truncate text-left">
+                        {selectedTopics.length === 0 ? "By Topic" : `${selectedTopics.length} selected`}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
+                          topicDropdownOpen && "rotate-180"
+                        )}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {topicDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setTopicDropdownOpen(false)}
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px]"
+                          >
+                            <div className="max-h-60 overflow-y-auto">
+                              {["Math 1", "Math 2", "All maths", "Physics", "Chemistry", "Biology"].map((topic) => (
+                                <button
+                                  key={topic}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedTopics(prev =>
+                                      prev.includes(topic)
+                                        ? prev.filter(t => t !== topic)
+                                        : [...prev, topic]
+                                    );
+                                  }}
+                                  className={cn(
+                                    "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
+                                    selectedTopics.includes(topic)
+                                      ? "bg-white/10 text-white"
+                                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                                  )}
+                                >
+                                  <div className={cn(
+                                    "w-4 h-4 rounded border-2 flex items-center justify-center",
+                                    selectedTopics.includes(topic)
+                                      ? "bg-primary border-primary"
+                                      : "border-white/30"
+                                  )}>
+                                    {selectedTopics.includes(topic) && (
+                                      <div className="w-2 h-2 bg-white rounded-sm" />
+                                    )}
+                                  </div>
+                                  {topic}
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* By Paper Type Filter */}
+                  <div className="relative" ref={paperTypeDropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaperTypeDropdownOpen(!paperTypeDropdownOpen);
+                        setTopicDropdownOpen(false);
+                      }}
+                      className="h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between min-w-[160px]"
+                    >
+                      <span className="truncate text-left">
+                        {selectedPaperTypes.length === 0 ? "By Paper Type" : `${selectedPaperTypes.length} selected`}
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
+                          paperTypeDropdownOpen && "rotate-180"
+                        )}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {paperTypeDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setPaperTypeDropdownOpen(false)}
+                          />
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px]"
+                          >
+                            <div className="max-h-60 overflow-y-auto">
+                              {(["TMUA", "ESAT", "NSAA", "ENGAA", "PAT", "MAT", "OTHER"] as PaperType[]).map((paperType) => (
+                                <button
+                                  key={paperType}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedPaperTypes(prev =>
+                                      prev.includes(paperType)
+                                        ? prev.filter(t => t !== paperType)
+                                        : [...prev, paperType]
+                                    );
+                                  }}
+                                  className={cn(
+                                    "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
+                                    selectedPaperTypes.includes(paperType)
+                                      ? "bg-white/10 text-white"
+                                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                                  )}
+                                >
+                                  <div className={cn(
+                                    "w-4 h-4 rounded border-2 flex items-center justify-center",
+                                    selectedPaperTypes.includes(paperType)
+                                      ? "bg-primary border-primary"
+                                      : "border-white/30"
+                                  )}>
+                                    {selectedPaperTypes.includes(paperType) && (
+                                      <div className="w-2 h-2 bg-white rounded-sm" />
+                                    )}
+                                  </div>
+                                  {paperType}
+                                </button>
+                              ))}
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
                 {trendDataForChart.length > 0 ? (
                   <AnalyticsTrendChart
                     allSessions={trendDataForChart}
@@ -389,7 +614,7 @@ export default function PapersAnalyticsPage() {
               <select
                 value={sessionSortBy}
                 onChange={(e) => setSessionSortBy(e.target.value as "recent" | "percentage" | "percentile")}
-                className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200"
+                className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0"
                 style={{ colorScheme: "dark" }}
               >
                 <option value="recent" className="bg-neutral-800 text-white">Sort by Recent</option>
@@ -545,8 +770,8 @@ export default function PapersAnalyticsPage() {
                               </span>
                             </div>
 
-                            {/* View Button */}
-                            <div className="col-span-2 flex items-center justify-end">
+                            {/* Mark Button and Delete Button */}
+                            <div className="col-span-2 flex items-center justify-end gap-2">
                               <Button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -554,10 +779,17 @@ export default function PapersAnalyticsPage() {
                                 }}
                                 variant="secondary"
                                 size="sm"
-                                className="whitespace-nowrap text-xs"
+                                className="whitespace-nowrap text-xs border-0"
                               >
-                                View
+                                Mark
                               </Button>
+                              <button
+                                onClick={(e) => handleDeleteSession(session.id, e)}
+                                className="p-1.5 rounded-lg hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-colors flex-shrink-0"
+                                aria-label="Delete session"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </div>
                           </button>
                         );
