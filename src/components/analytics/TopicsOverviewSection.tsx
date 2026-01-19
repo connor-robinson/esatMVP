@@ -46,7 +46,8 @@ export function TopicsOverviewSection({
     // Sort topics
     switch (sortBy) {
       case "strength":
-        topics.sort((a, b) => b.accuracy - a.accuracy);
+        // Sort by percentile (descending) - higher percentile = stronger
+        topics.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
         break;
       case "weakness":
         topics.sort((a, b) => a.accuracy - b.accuracy);
@@ -75,7 +76,8 @@ export function TopicsOverviewSection({
     // Then apply additional sorting if needed (for display order)
     switch (sortBy) {
       case "strength":
-        sortedByPerformance.sort((a, b) => b.accuracy - a.accuracy);
+        // Sort by percentile (descending) - higher percentile = stronger
+        sortedByPerformance.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
         break;
       case "weakness":
         sortedByPerformance.sort((a, b) => a.accuracy - b.accuracy);
@@ -330,39 +332,22 @@ export function TopicsOverviewSection({
                   ) : (
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
-                      {(() => {
-                        // Ensure topics are sorted by sortBy (they should already be, but re-sort to be safe)
-                        let sortedAllTopics = [...(visibleTopicsData.allTopicsWithRank || [])];
+                      {visibleTopicsData.allTopicsWithRank?.map((topic, index) => {
+                        const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
+                        // Use sequential rank based on current sort order (already sorted by sortBy in visibleTopicsData)
+                        const displayRank = index + 1;
                         
-                        switch (sortBy) {
-                          case "strength":
-                            sortedAllTopics.sort((a, b) => b.accuracy - a.accuracy);
-                            break;
-                          case "weakness":
-                            sortedAllTopics.sort((a, b) => a.accuracy - b.accuracy);
-                            break;
-                          case "questions":
-                            sortedAllTopics.sort((a, b) => b.questionsAnswered - a.questionsAnswered);
-                            break;
-                        }
-                        
-                        return sortedAllTopics.map((topic, index) => {
-                          const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
-                          // Use sequential rank based on current sort order
-                          const displayRank = index + 1;
-                          
-                          return (
-                            <div key={topic.topicId} id={`topic-${topic.topicId}`}>
-                              <TopicDetailCard
-                                topic={{ ...topic, rank: displayRank }}
-                                isExpanded={expandedId === topic.topicId}
-                                onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
-                                isTopTopic={isTopTopic}
-                              />
-                            </div>
-                          );
-                        });
-                      })()}
+                        return (
+                          <div key={topic.topicId} id={`topic-${topic.topicId}`}>
+                            <TopicDetailCard
+                              topic={{ ...topic, rank: displayRank }}
+                              isExpanded={expandedId === topic.topicId}
+                              onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
+                              isTopTopic={isTopTopic}
+                            />
+                          </div>
+                        );
+                      })}
                       
                       {/* Hide All Button */}
                       <div className="flex justify-center pt-2">

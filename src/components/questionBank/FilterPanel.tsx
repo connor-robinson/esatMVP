@@ -12,7 +12,7 @@ interface FilterPanelProps {
   showToggle?: boolean;
 }
 
-const subjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+const subjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'];
 const difficulties: DifficultyFilter[] = ['All', 'Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
 const reviewStatuses: ReviewStatusFilter[] = ['All', 'Pending Review', 'Approved', 'Needs Revision'];

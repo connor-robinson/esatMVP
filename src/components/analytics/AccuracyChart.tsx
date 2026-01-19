@@ -62,7 +62,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-background/90 backdrop-blur-xl border border-white/10 rounded-organic-md p-3 shadow-2xl">
+      <div className="bg-background/50 backdrop-blur-xl border border-white/10 rounded-organic-md p-3 shadow-2xl">
         <p className="text-white/90 font-mono font-semibold mb-2 text-xs">{data.fullDate}</p>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-6">

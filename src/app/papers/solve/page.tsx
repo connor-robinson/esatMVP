@@ -116,6 +116,17 @@ export default function PapersSolvePage() {
     }
   }, [sessionId, paperId, questions.length, questionsLoading, loadQuestions]);
   
+  // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
+  useEffect(() => {
+    if (allSectionsQuestions.length > 0 && 
+        currentSectionIndex === 0 && 
+        sectionInstructionTimer === null &&
+        !questionsLoading) {
+      // First section and timer not initialized - initialize it
+      setSectionInstructionTimer(60);
+    }
+  }, [allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, questionsLoading, setSectionInstructionTimer]);
+  
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId) {
@@ -228,7 +239,13 @@ export default function PapersSolvePage() {
   }
 
   // Ensure current question is always within current section (when section-based flow is active)
+  // Skip validation when section summary is showing (sectionInstructionTimer > 0)
   useEffect(() => {
+    // Don't validate if section summary is showing
+    if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+      return;
+    }
+    
     if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0 && currentQuestion) {
       const isInCurrentSection = currentSectionQuestions.some(q => q.id === currentQuestion.id);
       if (!isInCurrentSection) {
@@ -240,7 +257,7 @@ export default function PapersSolvePage() {
         }
       }
     }
-  }, [currentSectionIndex, currentQuestionIndex, allSectionsQuestions, currentSectionQuestions, currentQuestion, questions, navigateToQuestion]);
+  }, [currentSectionIndex, currentQuestionIndex, allSectionsQuestions, currentSectionQuestions, currentQuestion, questions, navigateToQuestion, sectionInstructionTimer]);
   
   const currentAnswer = answers[fullQuestionIndex];
   const isGuessed = guessedFlags[fullQuestionIndex];
@@ -349,16 +366,22 @@ export default function PapersSolvePage() {
   
   const handleNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
-    // Navigation is within current section only
+    
     if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
-      // Section-based flow: navigate within current section only
+      // Section-based flow: strictly enforce section boundaries
       const newSectionIndex = sectionQuestionIndex + direction;
-      if (newSectionIndex >= 0 && newSectionIndex < currentSectionQuestions.length) {
-        const targetQuestion = currentSectionQuestions[newSectionIndex];
-        const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
-        if (globalIndex >= 0) {
-          navigateToQuestion(globalIndex);
-        }
+      
+      // Validate: must stay within current section
+      if (newSectionIndex < 0 || newSectionIndex >= currentSectionQuestions.length) {
+        return; // Don't navigate outside section
+      }
+      
+      // Convert section-relative to global index
+      const targetQuestion = currentSectionQuestions[newSectionIndex];
+      const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
+      
+      if (globalIndex >= 0) {
+        navigateToQuestion(globalIndex);
       }
     } else {
       // Fallback for non-section flow
@@ -371,11 +394,26 @@ export default function PapersSolvePage() {
 
   const handleJumpNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
-    const jumpSize = 10; // Jump by 10 questions to match the quick nav display
-    const actualCount = questions.length > 0 ? questions.length : totalQuestions;
-    const newIndex = currentQuestionIndex + (direction * jumpSize);
-    const clampedIndex = Math.max(0, Math.min(newIndex, actualCount - 1));
-    navigateToQuestion(clampedIndex);
+    
+    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+      // Section-based flow: jump within current section only
+      const jumpSize = 10;
+      const newSectionIndex = sectionQuestionIndex + (direction * jumpSize);
+      const clampedSectionIndex = Math.max(0, Math.min(newSectionIndex, currentSectionQuestions.length - 1));
+      
+      const targetQuestion = currentSectionQuestions[clampedSectionIndex];
+      const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
+      if (globalIndex >= 0) {
+        navigateToQuestion(globalIndex);
+      }
+    } else {
+      // Fallback for non-section flow
+      const jumpSize = 10;
+      const actualCount = questions.length > 0 ? questions.length : totalQuestions;
+      const newIndex = currentQuestionIndex + (direction * jumpSize);
+      const clampedIndex = Math.max(0, Math.min(newIndex, actualCount - 1));
+      navigateToQuestion(clampedIndex);
+    }
   };
   
   const handleQuestionJump = (sectionRelativeIndex: number) => {
@@ -407,11 +445,14 @@ export default function PapersSolvePage() {
     // Clear the timer to proceed to questions
     setSectionInstructionTimer(0);
     // Ensure we're on the first question of the current section
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
-      const firstQuestionOfSection = currentSectionQuestions[0];
-      const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-      if (fullIndex >= 0) {
-        navigateToQuestion(fullIndex);
+    if (allSectionsQuestions.length > 0) {
+      const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+      if (sectionQuestions.length > 0) {
+        const firstQuestionOfSection = sectionQuestions[0];
+        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+        if (fullIndex >= 0) {
+          navigateToQuestion(fullIndex);
+        }
       }
     }
   };
@@ -421,11 +462,14 @@ export default function PapersSolvePage() {
     // Timer expired - proceed to questions
     setSectionInstructionTimer(0);
     // Ensure we're on the first question of the current section
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
-      const firstQuestionOfSection = currentSectionQuestions[0];
-      const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-      if (fullIndex >= 0) {
-        navigateToQuestion(fullIndex);
+    if (allSectionsQuestions.length > 0) {
+      const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+      if (sectionQuestions.length > 0) {
+        const firstQuestionOfSection = sectionQuestions[0];
+        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+        if (fullIndex >= 0) {
+          navigateToQuestion(fullIndex);
+        }
       }
     }
   };
@@ -590,14 +634,11 @@ export default function PapersSolvePage() {
             <button
               onClick={handleSubmitSection}
               className="
-                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                hover:bg-[#151921]
-                active:scale-95 active:transform flex-shrink-0
+                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
+                hover:bg-white/10 hover:border-white/20
+                active:scale-95 flex-shrink-0
               "
-              style={{ 
-                borderRadius: '12px'
-              }}
               title="Submit section"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -613,15 +654,13 @@ export default function PapersSolvePage() {
                   key={letter}
                   onClick={() => handleChoiceSelect(letter)}
                   className={`
-                    h-[50px] rounded-xl font-medium transition-all duration-200 text-base
-                    backdrop-blur-md shadow-md flex items-center justify-center flex-1
-                    min-w-0 max-w-[120px]
+                    h-[50px] rounded-organic-md font-medium transition-all duration-fast ease-signature text-base
+                    flex items-center justify-center flex-1 min-w-0 max-w-[120px]
                     ${currentAnswer?.choice === letter
-                      ? 'text-white shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)]'
-                      : 'bg-[#0f1114] text-neutral-300 hover:bg-[#151921]'
+                      ? 'bg-[#5075a4] text-white border border-[#5075a4]'
+                      : 'bg-white/5 border border-white/10 text-neutral-100 hover:bg-white/10 hover:border-white/20'
                     }
                   `}
-                  style={currentAnswer?.choice === letter ? { backgroundColor: '#5075a4' } : {}}
                 >
                   {letter}
                 </button>
@@ -635,15 +674,12 @@ export default function PapersSolvePage() {
                 onClick={() => handleNavigation(-1)}
                 disabled={sectionQuestionIndex === 0}
                 className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                  hover:bg-[#151921]
-                  active:scale-95 active:transform
-                  disabled:opacity-30 disabled:cursor-not-allowed
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
+                  hover:bg-white/10 hover:border-white/20
+                  active:scale-95
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10
                 "
-                style={{ 
-                  borderRadius: '12px'
-                }}
                 title="Previous question"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -656,14 +692,11 @@ export default function PapersSolvePage() {
               <button
                 onClick={() => setShowNavigator(true)}
                 className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                  hover:bg-[#151921]
-                  active:scale-95 active:transform
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
+                  hover:bg-white/10 hover:border-white/20
+                  active:scale-95
                 "
-                style={{ 
-                  borderRadius: '12px'
-                }}
                 title="Open navigator"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -679,15 +712,12 @@ export default function PapersSolvePage() {
                   ? sectionQuestionIndex >= currentSectionQuestions.length - 1
                   : sectionQuestionIndex >= actualQuestionCount - 1}
                 className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-200
-                  backdrop-blur-md shadow-md bg-[#0f1114] text-[#5075a4]
-                  hover:bg-[#151921]
-                  active:scale-95 active:transform
-                  disabled:opacity-30 disabled:cursor-not-allowed
+                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
+                  hover:bg-white/10 hover:border-white/20
+                  active:scale-95
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10
                 "
-                style={{ 
-                  borderRadius: '12px'
-                }}
                 title="Next question"
               >
                 <span>Next</span>

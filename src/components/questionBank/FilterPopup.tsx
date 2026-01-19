@@ -13,7 +13,7 @@ interface FilterPopupProps {
   onStartSession?: (config: { count: number; topics: string[]; difficulties: string[] }) => void;
 }
 
-const subjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+const subjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'];
 const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
 const attemptResults: AttemptResultFilter[] = ['Mixed Results', 'Unseen', 'Incorrect Before'];
@@ -34,6 +34,8 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Physics': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
   'Chemistry': 'bg-[#854952]/20 hover:bg-[#854952]/30 text-[#ef7d7d]',
   'Biology': 'bg-[#506141]/20 hover:bg-[#506141]/30 text-[#85BC82]',
+  'TMUA Paper 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
+  'TMUA Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
 };
 
 export function FilterPopup({

@@ -4,7 +4,7 @@
 
 import type { TMUAGraphSpecV2 as TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 
-export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'All';
+export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'TMUA Paper 1' | 'TMUA Paper 2' | 'All';
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
 export type AttemptResultFilter = 'Mixed Results' | 'Unseen' | 'Incorrect Before';

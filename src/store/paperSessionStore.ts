@@ -913,7 +913,25 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       
       // Section management actions
       setCurrentSectionIndex: (index: number) => {
-        set({ currentSectionIndex: index, currentQuestionIndex: 0 });
+        const state = get();
+        let newQuestionIndex = 0; // Fallback
+        
+        // Find the first question of the new section
+        if (state.allSectionsQuestions.length > index) {
+          const sectionQuestions = state.allSectionsQuestions[index];
+          if (sectionQuestions.length > 0) {
+            const firstQuestion = sectionQuestions[0];
+            const globalIndex = state.questions.findIndex(q => q.id === firstQuestion.id);
+            if (globalIndex >= 0) {
+              newQuestionIndex = globalIndex;
+            }
+          }
+        }
+        
+        set({ 
+          currentSectionIndex: index, 
+          currentQuestionIndex: newQuestionIndex 
+        });
       },
       
       setSectionInstructionTimer: (seconds: number) => {
