@@ -189,6 +189,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           questionsLoading: false,
           questionsError: null,
           sessionPersistPromise: null,
+          // Reset section-related state
+          currentSectionIndex: 0,
+          sectionInstructionTimer: null,
+          sectionInstructionDeadline: null,
+          allSectionsQuestions: [],
+          sectionTimeLimits: [],
+          sectionStarts: {},
         });
 
         const payload = {
@@ -438,17 +445,36 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   });
                   
                   // Group questions by section into allSectionsQuestions array
+                  console.log('[loadQuestions] Grouping questions by selected sections:', state.selectedSections);
+                  
                   allSectionsQuestions = state.selectedSections.map((section) => {
-                    return processedQuestions.filter((q) => {
+                    const sectionQuestions = processedQuestions.filter((q) => {
                       const questionSection = sectionByQuestionId.get(q.id) ?? mapPartToSection({ partLetter: (q as any).partLetter, partName: q.partName }, state.paperName as any);
                       return String(questionSection).trim() === String(section).trim();
                     });
+                    return sectionQuestions;
                   });
                   
-                  console.log('[loadQuestions] Grouped questions by section:', allSectionsQuestions.map((qs, idx) => ({
+                  // Validate grouping results
+                  const groupedInfo = allSectionsQuestions.map((qs, idx) => ({
                     section: state.selectedSections[idx],
                     count: qs.length
-                  })));
+                  }));
+                  
+                  console.log('[loadQuestions] Grouped questions by section:', groupedInfo);
+                  
+                  // Warn if any section has no questions
+                  groupedInfo.forEach((info) => {
+                    if (info.count === 0) {
+                      console.warn(`[loadQuestions] Section "${info.section}" has no questions!`);
+                    }
+                  });
+                  
+                  // Verify total questions match
+                  const totalGrouped = allSectionsQuestions.reduce((sum, qs) => sum + qs.length, 0);
+                  if (totalGrouped !== processedQuestions.length) {
+                    console.error(`[loadQuestions] Question count mismatch: grouped ${totalGrouped}, total ${processedQuestions.length}`);
+                  }
                 } else {
                   // If no selected sections, put all questions in one section
                   allSectionsQuestions = [processedQuestions];
@@ -509,10 +535,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               if (finalState.allSectionsQuestions.length > 0) {
                 finalState.calculateSectionTimeLimits();
                 
-                // Initialize section instruction timer if first section
-                if (finalState.currentSectionIndex === 0 && finalState.sectionInstructionTimer === null) {
+                // Initialize section instruction timer for first section if section mode is active
+                if (finalState.selectedSections.length > 0 && 
+                    finalState.currentSectionIndex === 0 && 
+                    (finalState.sectionInstructionTimer === null || finalState.sectionInstructionTimer === 0)) {
+                  console.log('[loadQuestions] Initializing section instruction timer for first section');
                   finalState.setSectionInstructionTimer(60);
                 }
+              } else if (finalState.selectedSections.length > 0) {
+                console.warn('[loadQuestions] Section mode active but allSectionsQuestions is empty. Questions may not be properly grouped.');
               }
             } catch (error) {
               console.error('Error loading questions:', error);

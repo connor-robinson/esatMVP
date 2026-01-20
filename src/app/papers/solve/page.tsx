@@ -118,14 +118,23 @@ export default function PapersSolvePage() {
   
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
   useEffect(() => {
-    if (allSectionsQuestions.length > 0 && 
-        currentSectionIndex === 0 && 
-        sectionInstructionTimer === null &&
-        !questionsLoading) {
-      // First section and timer not initialized - initialize it
+    // Only initialize if:
+    // 1. Section mode is active (selectedSections.length > 0)
+    // 2. Questions are loaded (questions.length > 0 and not loading)
+    // 3. Questions are grouped (allSectionsQuestions.length > 0)
+    // 4. Current section has questions
+    // 5. Timer is not already set (null or 0)
+    if (selectedSections.length > 0 && 
+        questions.length > 0 && 
+        !questionsLoading &&
+        allSectionsQuestions.length > 0 && 
+        currentSectionIndex < allSectionsQuestions.length &&
+        allSectionsQuestions[currentSectionIndex]?.length > 0 &&
+        (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
+      console.log('[solve] Initializing section instruction timer for section', currentSectionIndex);
       setSectionInstructionTimer(60);
     }
-  }, [allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, questionsLoading, setSectionInstructionTimer]);
+  }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
   
   // Redirect if no active session
   useEffect(() => {
@@ -202,8 +211,31 @@ export default function PapersSolvePage() {
   
   const totalQuestions = getTotalQuestions();
   
+  // Determine if section mode is active
+  const isSectionMode = selectedSections.length > 0 && allSectionsQuestions.length > 0;
+  
+  // Debug logging for section mode state
+  useEffect(() => {
+    if (selectedSections.length > 0) {
+      console.log('[solve] Section mode state:', {
+        selectedSections,
+        allSectionsQuestionsLength: allSectionsQuestions.length,
+        currentSectionIndex,
+        sectionInstructionTimer,
+        questionsLoaded: questions.length > 0,
+        questionsLoading,
+        isSectionMode
+      });
+    }
+  }, [selectedSections.length, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, questions.length, questionsLoading, isSectionMode]);
+  
+  // Validate section mode state
+  if (selectedSections.length > 0 && allSectionsQuestions.length === 0 && questions.length > 0 && !questionsLoading) {
+    console.error('[solve] Section mode active but questions not grouped. selectedSections:', selectedSections, 'allSectionsQuestions.length:', allSectionsQuestions.length);
+  }
+  
   // Get current section questions - if using section-based flow, use filtered questions
-  const currentSectionQuestions = allSectionsQuestions.length > 0 
+  const currentSectionQuestions = isSectionMode
     ? (allSectionsQuestions[currentSectionIndex] || [])
     : questions;
   
@@ -219,7 +251,7 @@ export default function PapersSolvePage() {
   
   // Calculate section-relative index by finding currentQuestion's position in currentSectionQuestions
   let sectionQuestionIndex = 0;
-  if (allSectionsQuestions.length > 0 && currentQuestion) {
+  if (isSectionMode && currentQuestion && currentSectionQuestions.length > 0) {
     const foundIndex = currentSectionQuestions.findIndex(q => q.id === currentQuestion.id);
     sectionQuestionIndex = foundIndex >= 0 ? foundIndex : 0;
   } else {
@@ -246,18 +278,26 @@ export default function PapersSolvePage() {
       return;
     }
     
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0 && currentQuestion) {
+    if (isSectionMode && currentSectionQuestions.length > 0 && currentQuestion) {
       const isInCurrentSection = currentSectionQuestions.some(q => q.id === currentQuestion.id);
       if (!isInCurrentSection) {
+        console.warn('[solve] Current question not in current section. Recovering to first question of section.', {
+          currentQuestionId: currentQuestion.id,
+          currentQuestionNumber: currentQuestion.questionNumber,
+          currentSectionIndex,
+          currentSectionQuestions: currentSectionQuestions.map(q => ({ id: q.id, number: q.questionNumber }))
+        });
         // Current question is not in current section - navigate to first question of current section
         const firstQuestionOfSection = currentSectionQuestions[0];
-        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-        if (fullIndex >= 0) {
-          navigateToQuestion(fullIndex);
+        if (firstQuestionOfSection) {
+          const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+          if (fullIndex >= 0) {
+            navigateToQuestion(fullIndex);
+          }
         }
       }
     }
-  }, [currentSectionIndex, currentQuestionIndex, allSectionsQuestions, currentSectionQuestions, currentQuestion, questions, navigateToQuestion, sectionInstructionTimer]);
+  }, [isSectionMode, currentSectionIndex, currentQuestionIndex, currentSectionQuestions, currentQuestion, questions, navigateToQuestion, sectionInstructionTimer]);
   
   const currentAnswer = answers[fullQuestionIndex];
   const isGuessed = guessedFlags[fullQuestionIndex];
@@ -367,12 +407,13 @@ export default function PapersSolvePage() {
   const handleNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
     
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+    if (isSectionMode && currentSectionQuestions.length > 0) {
       // Section-based flow: strictly enforce section boundaries
       const newSectionIndex = sectionQuestionIndex + direction;
       
       // Validate: must stay within current section
       if (newSectionIndex < 0 || newSectionIndex >= currentSectionQuestions.length) {
+        console.log('[solve] Navigation blocked: attempting to navigate outside current section');
         return; // Don't navigate outside section
       }
       
@@ -382,7 +423,13 @@ export default function PapersSolvePage() {
       
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
+      } else {
+        console.error('[solve] Failed to find global index for target question in current section');
       }
+    } else if (selectedSections.length > 0 && allSectionsQuestions.length === 0) {
+      // Section mode should be active but grouping failed - prevent navigation
+      console.error('[solve] Section mode active but questions not grouped. Cannot navigate.');
+      return;
     } else {
       // Fallback for non-section flow
       const newIndex = currentQuestionIndex + direction;
@@ -395,7 +442,7 @@ export default function PapersSolvePage() {
   const handleJumpNavigation = (direction: number) => {
     scrollPositionRef.current = window.scrollY;
     
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+    if (isSectionMode && currentSectionQuestions.length > 0) {
       // Section-based flow: jump within current section only
       const jumpSize = 10;
       const newSectionIndex = sectionQuestionIndex + (direction * jumpSize);
@@ -405,7 +452,13 @@ export default function PapersSolvePage() {
       const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
+      } else {
+        console.error('[solve] Failed to find global index for jumped question');
       }
+    } else if (selectedSections.length > 0 && allSectionsQuestions.length === 0) {
+      // Section mode should be active but grouping failed - prevent navigation
+      console.error('[solve] Section mode active but questions not grouped. Cannot jump.');
+      return;
     } else {
       // Fallback for non-section flow
       const jumpSize = 10;
@@ -419,15 +472,24 @@ export default function PapersSolvePage() {
   const handleQuestionJump = (sectionRelativeIndex: number) => {
     scrollPositionRef.current = window.scrollY;
     // In section-based flow, index is relative to current section
-    if (allSectionsQuestions.length > 0 && currentSectionQuestions.length > 0) {
+    if (isSectionMode && currentSectionQuestions.length > 0) {
       // Ensure index is within current section bounds
-      if (sectionRelativeIndex < 0 || sectionRelativeIndex >= currentSectionQuestions.length) return;
+      if (sectionRelativeIndex < 0 || sectionRelativeIndex >= currentSectionQuestions.length) {
+        console.log('[solve] Question jump blocked: index outside current section bounds');
+        return;
+      }
       // Convert section-relative to global index
       const targetQuestion = currentSectionQuestions[sectionRelativeIndex];
       const globalIndex = questions.findIndex(q => q.id === targetQuestion.id);
       if (globalIndex >= 0) {
         navigateToQuestion(globalIndex);
+      } else {
+        console.error('[solve] Failed to find global index for jumped question');
       }
+    } else if (selectedSections.length > 0 && allSectionsQuestions.length === 0) {
+      // Section mode should be active but grouping failed - prevent navigation
+      console.error('[solve] Section mode active but questions not grouped. Cannot jump to question.');
+      return;
     } else {
       // Fallback for non-section flow
       if (sectionRelativeIndex < 0 || sectionRelativeIndex >= questions.length) return;
