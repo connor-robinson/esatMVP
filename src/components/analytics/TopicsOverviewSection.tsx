@@ -50,7 +50,8 @@ export function TopicsOverviewSection({
         topics.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
         break;
       case "weakness":
-        topics.sort((a, b) => a.accuracy - b.accuracy);
+        // Sort by percentile (ascending) - lower percentile = weaker
+        topics.sort((a, b) => (a.percentile || 0) - (b.percentile || 0));
         break;
       case "questions":
         // Sort by number of questions answered (most practiced)
@@ -80,7 +81,8 @@ export function TopicsOverviewSection({
         sortedByPerformance.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
         break;
       case "weakness":
-        sortedByPerformance.sort((a, b) => a.accuracy - b.accuracy);
+        // Sort by percentile (ascending) - lower percentile = weaker
+        sortedByPerformance.sort((a, b) => (a.percentile || 0) - (b.percentile || 0));
         break;
       case "questions":
         sortedByPerformance.sort((a, b) => b.questionsAnswered - a.questionsAnswered);
@@ -93,31 +95,25 @@ export function TopicsOverviewSection({
       return { isEmpty: true };
     }
     
-    // For top/bottom determination, use composite score rank (topic.rank)
-    // Re-sort by rank to find true top 3 and bottom 3
-    const byRank = [...sortedByPerformance].sort((a, b) => (a.rank || 999) - (b.rank || 999));
+    // For top/bottom color determination, use CURRENT display order (after sortBy is applied)
+    // Top 3 items in the current sorted list = green, bottom 3 = red
     const topCount = Math.min(3, Math.ceil(totalTopics / 2));
     const bottomCount = Math.min(3, Math.floor(totalTopics / 2));
     
-    const topByRank = byRank.slice(0, topCount);
-    const bottomByRank = totalTopics > topCount ? byRank.slice(-bottomCount) : [];
+    // Determine top and bottom based on display order (sortedByPerformance)
+    const topByDisplayOrder = sortedByPerformance.slice(0, topCount);
+    const bottomByDisplayOrder = totalTopics > topCount ? sortedByPerformance.slice(-bottomCount) : [];
     
-    // Map these back to the display order (sortedByPerformance)
-    const topTopicIds = new Set(topByRank.map(t => t.topicId));
-    const bottomTopicIds = new Set(bottomByRank.map(t => t.topicId));
+    const topTopicIds = new Set(topByDisplayOrder.map(t => t.topicId));
+    const bottomTopicIds = new Set(bottomByDisplayOrder.map(t => t.topicId));
     
-    // Assign display ranks: top 3 get 1, 2, 3 based on composite score rank
+    // Assign ranks and colors based on display order
+    // Rank numbers stay as topic.rank (composite score based), but colors change based on display order
     const topicsWithDisplayRank = sortedByPerformance.map((topic, displayIndex) => {
       const isTop = topTopicIds.has(topic.topicId);
       const isBottom = bottomTopicIds.has(topic.topicId);
-      // For top 3, assign ranks 1, 2, 3 based on their composite rank
-      let displayRank = topic.rank || displayIndex + 1;
-      if (isTop) {
-        const rankInTop = topByRank.findIndex(t => t.topicId === topic.topicId);
-        if (rankInTop !== -1) {
-          displayRank = rankInTop + 1;
-        }
-      }
+      // Keep rank as topic.rank (composite score based), don't change it based on display order
+      const displayRank = topic.rank || displayIndex + 1;
       return { ...topic, displayRank, isTop, isBottom };
     });
     
@@ -333,14 +329,15 @@ export function TopicsOverviewSection({
                     /* All Topics (when showAllTopics is true) */
                     <div className="space-y-1">
                       {visibleTopicsData.allTopicsWithRank?.map((topic, index) => {
+                        // Colors based on display order (top 3 = green, bottom 3 = red)
+                        // This is already set correctly in visibleTopicsData based on sortedByPerformance
                         const isTopTopic = topic.isTop ? true : topic.isBottom ? false : undefined;
-                        // Use sequential rank based on current sort order (already sorted by sortBy in visibleTopicsData)
-                        const displayRank = index + 1;
+                        // Rank stays as topic.rank (composite score based), don't change it based on display order
                         
                         return (
                           <div key={topic.topicId} id={`topic-${topic.topicId}`}>
                             <TopicDetailCard
-                              topic={{ ...topic, rank: displayRank }}
+                              topic={{ ...topic, rank: topic.rank }}
                               isExpanded={expandedId === topic.topicId}
                               onClick={() => setExpandedId(expandedId === topic.topicId ? null : topic.topicId)}
                               isTopTopic={isTopTopic}

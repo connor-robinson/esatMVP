@@ -13,3 +13,4 @@ COMMENT ON COLUMN builder_attempts.order_index IS
   'Order of the question within the session (0-indexed), used for session progress tracking';
 
 
+

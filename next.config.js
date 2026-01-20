@@ -40,6 +40,12 @@ const nextConfig = {
   images: {
     unoptimized: false,
     formats: ["image/webp", "image/avif"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
   },
 
   poweredByHeader: false,

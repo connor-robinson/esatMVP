@@ -14,10 +14,10 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "No-Calc Trainer | Master Mental Math",
+  title: "CantabPrep | Premium ESAT & TMUA Mastery",
   description:
-    "Train for non-calculator exams like ESAT and TMUA. Build speed and accuracy with gamified practice sessions.",
-  keywords: ["mental math", "ESAT", "TMUA", "math training", "no calculator"],
+    "Master the ESAT & TMUA. Secure your Cambridge offer. The non-calculator, high-pressure entrance exams demand more than just knowledge. Master the speed and strategy required for the 2024-25 cycle.",
+  keywords: ["mental math", "ESAT", "TMUA", "Cambridge", "entrance exams", "no calculator", "CantabPrep"],
 };
 
 export default async function RootLayout({
@@ -63,6 +63,8 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
