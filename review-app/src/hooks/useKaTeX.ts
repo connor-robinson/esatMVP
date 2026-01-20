@@ -4,6 +4,7 @@
 
 "use client";
 
+// @ts-ignore - katex types resolution issue
 import katex from "katex";
 import "katex/dist/katex.min.css";
 // @ts-ignore
