@@ -1,0 +1,4 @@
+# Exclude review-app from main app builds
+# This is a separate Next.js application that should be deployed independently
+review-app/
+
