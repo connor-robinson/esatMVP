@@ -32,6 +32,9 @@ export function SectionSummary({
   sectionInstructionTimer,
   setSectionInstructionTimer,
 }: SectionSummaryProps) {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:35',message:'SectionSummary render',data:{currentSectionIndex,sectionInstructionTimer,hasOnNext:!!onNext,hasOnTimerExpire:!!onTimerExpire},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
+  // #endregion
   const [displaySeconds, setDisplaySeconds] = useState(sectionInstructionTimer || 60);
 
   const currentSection = selectedSections[currentSectionIndex];
@@ -57,27 +60,51 @@ export function SectionSummary({
 
   // Initialize display seconds when timer starts or section changes
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:59',message:'Timer init effect',data:{sectionInstructionTimer,currentSectionIndex,willSet:sectionInstructionTimer !== null && sectionInstructionTimer > 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
+    // #endregion
     if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:61',message:'Setting displaySeconds',data:{sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A4'})}).catch(()=>{});
+      // #endregion
       setDisplaySeconds(sectionInstructionTimer);
     }
   }, [currentSectionIndex, sectionInstructionTimer]); // Re-initialize when section or timer changes
 
   // Timer countdown effect - sync with store timer
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:66',message:'Timer countdown effect entry',data:{sectionInstructionTimer,displaySeconds,willStart:sectionInstructionTimer !== null && sectionInstructionTimer > 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
+    // #endregion
     if (sectionInstructionTimer === null || sectionInstructionTimer <= 0) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:68',message:'Timer countdown effect early return',data:{sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
+      // #endregion
       return;
     }
 
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:71',message:'Starting timer interval',data:{sectionInstructionTimer,displaySeconds},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
+    // #endregion
     const interval = setInterval(() => {
       setDisplaySeconds((prev) => {
         const newSeconds = Math.max(0, prev - 1);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:73',message:'Timer tick',data:{prev,newSeconds,willExpire:newSeconds === 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
+        // #endregion
         
         if (newSeconds > 0) {
           // Update timer in store
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:77',message:'Updating store timer',data:{newSeconds},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
+          // #endregion
           setSectionInstructionTimer(newSeconds);
           return newSeconds;
         } else {
           // Timer expired
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:81',message:'Timer expired',data:{hasOnTimerExpire:!!onTimerExpire},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
+          // #endregion
           setSectionInstructionTimer(0);
           onTimerExpire();
           return 0;
@@ -177,7 +204,12 @@ export function SectionSummary({
         {/* Next Button */}
         <div className="flex justify-center pt-4">
           <Button
-            onClick={onNext}
+            onClick={() => {
+              // #region agent log
+              fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:180',message:'Next button clicked',data:{hasOnNext:!!onNext,currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
+              // #endregion
+              onNext();
+            }}
             variant="primary"
             className="px-8 py-3 text-base font-medium"
           >

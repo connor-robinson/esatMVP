@@ -640,10 +640,17 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
       
       navigateToQuestion: (index) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:611',message:'navigateToQuestion called',data:{index,currentState:get().currentQuestionIndex,questionsLength:get().questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
+        // #endregion
         set((state) => {
           const newVisitedQuestions = [...state.visitedQuestions];
           newVisitedQuestions[index] = true;
-          return { currentQuestionIndex: index, visitedQuestions: newVisitedQuestions };
+          const newState = { currentQuestionIndex: index, visitedQuestions: newVisitedQuestions };
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:616',message:'navigateToQuestion state update',data:{index,before:state.currentQuestionIndex,after:index},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
+          // #endregion
+          return newState;
         });
       },
       
@@ -966,11 +973,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
       
       setSectionInstructionTimer: (seconds: number) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:968',message:'setSectionInstructionTimer called',data:{seconds,currentState:get().sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
+        // #endregion
         const deadline = seconds > 0 ? Date.now() + seconds * 1000 : null;
+        const stateBefore = get().sectionInstructionTimer;
         set({ 
           sectionInstructionTimer: seconds,
           sectionInstructionDeadline: deadline
         });
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:973',message:'setSectionInstructionTimer state updated',data:{seconds,stateBefore,stateAfter:get().sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
+        // #endregion
       },
       
       getCurrentSectionQuestions: () => {

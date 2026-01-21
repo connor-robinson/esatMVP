@@ -13,10 +13,37 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
+    // Check environment variables first
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('[Review API] Missing environment variables:', {
+        hasUrl: !!supabaseUrl,
+        hasKey: !!supabaseKey,
+      });
+      return NextResponse.json(
+        { 
+          error: 'Server configuration error', 
+          details: 'Missing Supabase environment variables',
+          hasUrl: !!supabaseUrl,
+          hasKey: !!supabaseKey,
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createServerClient();
     const resolvedParams = await Promise.resolve(params);
     const { id } = resolvedParams;
     const body = await request.json();
+    
+    console.log('[Review API] Update request:', {
+      id,
+      bodyKeys: Object.keys(body),
+      hasQuestionStem: 'question_stem' in body,
+      hasOptions: 'options' in body,
+    });
 
     // Get current user
     const {
@@ -80,6 +107,22 @@ export async function PATCH(
     }
 
     // Update the question
+    console.log('[Review API] Attempting update:', {
+      id,
+      updateKeys: Object.keys(updates),
+      updatesPreview: Object.keys(updates).reduce((acc, key) => {
+        const value = updates[key];
+        if (typeof value === 'string') {
+          acc[key] = value.substring(0, 50) + (value.length > 50 ? '...' : '');
+        } else if (typeof value === 'object') {
+          acc[key] = `[Object with ${Object.keys(value || {}).length} keys]`;
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as any),
+    });
+
     const { data, error } = await supabase
       .from('ai_generated_questions')
       .update(updates)
@@ -88,19 +131,22 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error('[Review API] Error updating question:', {
+      console.error('[Review API] Supabase error updating question:', {
         error,
         id,
         updates: Object.keys(updates),
         errorCode: error.code,
         errorMessage: error.message,
         errorDetails: error.details,
+        errorHint: error.hint,
+        fullError: JSON.stringify(error, null, 2),
       });
       return NextResponse.json(
         { 
           error: 'Failed to update question', 
-          details: error.message,
+          details: error.message || 'Unknown error',
           code: error.code,
+          hint: error.hint,
         },
         { status: 500 }
       );
@@ -114,11 +160,22 @@ export async function PATCH(
       );
     }
 
+    console.log('[Review API] Update successful:', { id, updatedFields: Object.keys(updates) });
     return NextResponse.json({ question: data as ReviewQuestion });
   } catch (error: any) {
-    console.error('[Review API] Unexpected error:', error);
+    console.error('[Review API] Unexpected error:', {
+      error,
+      message: error?.message,
+      stack: error?.stack,
+      name: error?.name,
+      fullError: JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    });
     return NextResponse.json(
-      { error: 'Internal server error', details: error?.message },
+      { 
+        error: 'Internal server error', 
+        details: error?.message || 'Unknown error occurred',
+        type: error?.name || 'Error',
+      },
       { status: 500 }
     );
   }

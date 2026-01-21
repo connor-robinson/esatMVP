@@ -79,12 +79,21 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        let errorData: any = {};
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          console.error('[useQuestionEditor] Failed to parse error response:', e);
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+        
         const errorMessage = errorData.error || errorData.details || 'Failed to save changes';
         console.error('[useQuestionEditor] API error:', {
           status: response.status,
           statusText: response.statusText,
+          url: response.url,
           error: errorData,
+          fullErrorData: JSON.stringify(errorData, null, 2),
         });
         throw new Error(errorMessage);
       }

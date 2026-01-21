@@ -118,20 +118,30 @@ export default function PapersSolvePage() {
   
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:127',message:'Timer init useEffect',data:{selectedSectionsLength:selectedSections.length,questionsLength:questions.length,questionsLoading,allSectionsQuestionsLength:allSectionsQuestions.length,currentSectionIndex,sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
+    // #endregion
     // Only initialize if:
     // 1. Section mode is active (selectedSections.length > 0)
     // 2. Questions are loaded (questions.length > 0 and not loading)
     // 3. Questions are grouped (allSectionsQuestions.length > 0)
     // 4. Current section has questions
     // 5. Timer is not already set (null or 0)
-    if (selectedSections.length > 0 && 
+    const shouldInit = selectedSections.length > 0 && 
         questions.length > 0 && 
         !questionsLoading &&
         allSectionsQuestions.length > 0 && 
         currentSectionIndex < allSectionsQuestions.length &&
         allSectionsQuestions[currentSectionIndex]?.length > 0 &&
-        (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
+        (sectionInstructionTimer === null || sectionInstructionTimer === 0);
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:137',message:'Timer init check result',data:{shouldInit,willInit:shouldInit},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
+    // #endregion
+    if (shouldInit) {
       console.log('[solve] Initializing section instruction timer for section', currentSectionIndex);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:140',message:'Calling setSectionInstructionTimer(60)',data:{currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
+      // #endregion
       setSectionInstructionTimer(60);
     }
   }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
@@ -504,23 +514,56 @@ export default function PapersSolvePage() {
 
   // Handle section summary next button
   const handleSectionSummaryNext = () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:506',message:'handleSectionSummaryNext called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,questionsLength:questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
+    // #endregion
     // Clear the timer to proceed to questions
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:508',message:'Setting timer to 0',data:{before:sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B5'})}).catch(()=>{});
+    // #endregion
     setSectionInstructionTimer(0);
     // Ensure we're on the first question of the current section
     if (allSectionsQuestions.length > 0) {
       const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:512',message:'Section questions found',data:{currentSectionIndex,sectionQuestionsLength:sectionQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+      // #endregion
       if (sectionQuestions.length > 0) {
         const firstQuestionOfSection = sectionQuestions[0];
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:514',message:'Finding first question index',data:{firstQuestionId:firstQuestionOfSection.id,firstQuestionNumber:firstQuestionOfSection.questionNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
+        // #endregion
         const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:515',message:'Question index lookup result',data:{fullIndex,willNavigate:fullIndex >= 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
+        // #endregion
         if (fullIndex >= 0) {
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:516',message:'Calling navigateToQuestion',data:{fullIndex,beforeIndex:currentQuestionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
+          // #endregion
           navigateToQuestion(fullIndex);
+        } else {
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:518',message:'Question not found in questions array',data:{firstQuestionId:firstQuestionOfSection.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
+          // #endregion
         }
+      } else {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:520',message:'Section has no questions',data:{currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+        // #endregion
       }
+    } else {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:522',message:'allSectionsQuestions is empty',data:{allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+      // #endregion
     }
   };
 
   // Handle section summary timer expiry
   const handleSectionSummaryTimerExpire = () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:563',message:'handleSectionSummaryTimerExpire called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
+    // #endregion
     // Timer expired - proceed to questions
     setSectionInstructionTimer(0);
     // Ensure we're on the first question of the current section

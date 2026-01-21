@@ -142,7 +142,7 @@ export function QuestionPanel({
                   )}
                 </div>
                 {showDistractor && (
-                  <div className="ml-13 p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
+                  <div className="ml-[52px] p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
                     <div className="text-xs font-mono text-white/50 mb-1">Why this is incorrect:</div>
                     <MathContent content={distractorText} />
                   </div>

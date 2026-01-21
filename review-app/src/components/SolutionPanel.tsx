@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MathContent } from "./shared/MathContent";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Lightbulb, BookOpen } from "lucide-react";
+import { ChevronDown, ChevronUp, Lightbulb } from "lucide-react";
 import type { ReviewQuestion } from "@/types/review";
 
 interface SolutionPanelProps {
@@ -28,36 +28,26 @@ export function SolutionPanel({
     <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-white/10 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-            <BookOpen className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-base font-semibold text-white/90">
-              Solution & Explanation
-            </h3>
-            <p className="text-xs text-white/50">
-              Correct Answer: {question.correct_option}
-            </p>
-          </div>
-        </div>
+        <h3 className="text-base font-semibold text-white/90">
+          Solution & Explanation
+        </h3>
       </div>
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* Key Insight */}
+        {/* Hint */}
         {question.solution_key_insight && (
           <div className="space-y-2">
             <button
               onClick={() => setKeyInsightExpanded(!keyInsightExpanded)}
-              className="flex items-center justify-between w-full p-4 rounded-organic-md bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
+              className="flex items-center justify-between w-full p-4 rounded-organic-md bg-primary/10 hover:bg-primary/15 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
                   <Lightbulb className="w-4 h-4 text-primary" />
                 </div>
                 <h4 className="text-sm font-semibold text-primary">
-                  Key Insight
+                  Hint
                 </h4>
               </div>
               {keyInsightExpanded ? (
@@ -67,7 +57,7 @@ export function SolutionPanel({
               )}
             </button>
             {keyInsightExpanded && (
-              <div className="p-4 rounded-organic-md bg-primary/5 border border-primary/10">
+              <div className="p-4 rounded-organic-md bg-primary/5">
                 {isEditMode ? (
                   <textarea
                     value={question.solution_key_insight || ''}
