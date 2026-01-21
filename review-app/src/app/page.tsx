@@ -65,20 +65,41 @@ export default function ReviewPage() {
 
   const handleSave = async () => {
     try {
+      console.log('[ReviewPage] Starting save...', {
+        currentQuestionId: currentQuestion?.id,
+        editedQuestionId: editedQuestion?.id,
+      });
+      
       const updated = await saveChanges();
+      
       if (updated) {
+        console.log('[ReviewPage] Save completed, updating state:', {
+          updatedId: updated.id,
+          questionStemPreview: updated.question_stem?.substring(0, 50),
+        });
+        
         setNotification({ type: 'success', message: 'Changes saved successfully!' });
+        
         // Update the current question state with the saved data
         // This ensures the UI immediately reflects the saved changes
         setCurrentQuestion(updated);
-        // Note: We don't refresh from server here because:
-        // 1. The save already returned the updated question
-        // 2. Refreshing might cause a race condition or overwrite the saved data
-        // 3. The updated question from the API is the source of truth
+        
+        // Force a small delay to ensure state updates propagate
+        // This helps with React's batching
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        console.log('[ReviewPage] State updated after save');
+      } else {
+        console.warn('[ReviewPage] Save returned null/undefined');
+        setNotification({ type: 'error', message: 'Save completed but no data was returned' });
       }
     } catch (err: any) {
       const errorMessage = err?.message || 'Failed to save changes';
-      console.error('[ReviewPage] Save error:', err);
+      console.error('[ReviewPage] Save error:', {
+        error: err,
+        message: errorMessage,
+        stack: err?.stack,
+      });
       setNotification({ type: 'error', message: errorMessage });
     }
   };

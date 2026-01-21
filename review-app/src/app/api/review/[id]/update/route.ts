@@ -106,7 +106,8 @@ export async function PATCH(
       // Still proceed to update updated_at timestamp
     }
 
-    // Update the question
+    // Update the question and return the updated data in one operation
+    // This matches the pattern used in the main app and ensures atomicity
     console.log('[Review API] Attempting update:', {
       id,
       updateKeys: Object.keys(updates),
@@ -123,11 +124,13 @@ export async function PATCH(
       }, {} as any),
     });
 
-    // First, perform the update without select
-    const { error: updateError } = await supabase
+    // Perform update and select in one operation (like main app)
+    const { data, error: updateError } = await supabase
       .from('ai_generated_questions')
       .update(updates)
-      .eq('id', id);
+      .eq('id', id)
+      .select()
+      .single();
 
     if (updateError) {
       console.error('[Review API] Supabase error updating question:', {
@@ -151,40 +154,42 @@ export async function PATCH(
       );
     }
 
-    // Then, fetch the updated question separately
-    const { data, error: fetchError } = await supabase
-      .from('ai_generated_questions')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
-
-    if (fetchError) {
-      console.error('[Review API] Error fetching updated question:', {
-        error: fetchError,
-        id,
-        errorCode: fetchError.code,
-        errorMessage: fetchError.message,
-      });
-      // Update succeeded but fetch failed - still return success with a note
-      return NextResponse.json(
-        { 
-          question: null,
-          message: 'Question updated successfully but could not be retrieved',
-          warning: fetchError.message,
-        },
-        { status: 200 }
-      );
-    }
-
     if (!data) {
-      console.error('[Review API] Question not found after update');
+      console.error('[Review API] No data returned after update');
       return NextResponse.json(
-        { error: 'Question was updated but could not be found' },
+        { error: 'Question was updated but could not be retrieved' },
         { status: 500 }
       );
     }
 
-    console.log('[Review API] Update successful:', { id, updatedFields: Object.keys(updates) });
+    // Verify that the update actually persisted by checking key fields
+    const updateVerified = Object.keys(updates).every(key => {
+      if (key === 'updated_at' || key === 'reviewed_by') return true; // These always change
+      const dbValue = data[key as keyof typeof data];
+      const expectedValue = updates[key as keyof typeof updates];
+      // For JSONB fields, compare stringified versions
+      if (typeof dbValue === 'object' && typeof expectedValue === 'object') {
+        return JSON.stringify(dbValue) === JSON.stringify(expectedValue);
+      }
+      return dbValue === expectedValue;
+    });
+
+    if (!updateVerified) {
+      console.warn('[Review API] Update may not have persisted correctly:', {
+        id,
+        expected: updates,
+        actual: Object.fromEntries(
+          Object.keys(updates).map(key => [key, data[key as keyof typeof data]])
+        ),
+      });
+    }
+
+    console.log('[Review API] Update successful:', { 
+      id, 
+      updatedFields: Object.keys(updates),
+      updateVerified,
+      questionStemPreview: data.question_stem?.substring(0, 50),
+    });
     return NextResponse.json({ question: data as ReviewQuestion });
   } catch (error: any) {
     console.error('[Review API] Unexpected error:', {
