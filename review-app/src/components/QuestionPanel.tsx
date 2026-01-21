@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MathContent } from "./shared/MathContent";
 import { cn } from "@/lib/utils";
+import { Eye } from "lucide-react";
 import type { ReviewQuestion } from "@/types/review";
 
 interface QuestionPanelProps {
@@ -18,6 +19,7 @@ export function QuestionPanel({
   onQuestionStemChange,
   onOptionChange,
 }: QuestionPanelProps) {
+  const [showAnswer, setShowAnswer] = useState(false);
   const optionLetters = Object.keys(question.options).sort();
 
   const getSubjectColor = (paper: string | null): string => {
@@ -97,35 +99,72 @@ export function QuestionPanel({
           <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
             Options
           </label>
-          {optionLetters.map((letter) => (
-            <div key={letter} className="flex items-start gap-3">
-              <div className={cn(
-                "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm",
-                letter === question.correct_option
-                  ? "bg-[#85BC82]/40 text-white"
-                  : "bg-white/10 text-white/70"
-              )}>
-                {letter}
-              </div>
-              {isEditMode ? (
-                <textarea
-                  value={question.options[letter] || ''}
-                  onChange={(e) => onOptionChange(letter, e.target.value)}
-                  className="flex-1 min-h-[60px] p-3 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                  style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
-                />
-              ) : (
-                <div 
-                  className="flex-1 text-white/90 font-serif text-sm leading-relaxed"
-                  style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
-                >
-                  <MathContent content={question.options[letter]} />
+          {optionLetters.map((letter) => {
+            const isCorrect = letter === question.correct_option;
+            const distractorText = question.distractor_map?.[letter];
+            const showDistractor = showAnswer && distractorText && !isCorrect;
+            
+            return (
+              <div key={letter} className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <div className={cn(
+                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-colors",
+                    showAnswer && isCorrect
+                      ? "bg-[#85BC82]/40 text-white"
+                      : "bg-white/10 text-white/70"
+                  )}>
+                    {letter}
+                  </div>
+                  {isEditMode ? (
+                    <textarea
+                      value={question.options[letter] || ''}
+                      onChange={(e) => onOptionChange(letter, e.target.value)}
+                      className={cn(
+                        "flex-1 min-h-[60px] p-3 rounded-organic-md bg-white/5 border text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
+                        showAnswer && isCorrect
+                          ? "border-[#85BC82]/50 bg-[#85BC82]/10"
+                          : "border-white/10"
+                      )}
+                      style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
+                    />
+                  ) : (
+                    <div 
+                      className={cn(
+                        "flex-1 text-white/90 font-serif text-sm leading-relaxed p-3 rounded-organic-md transition-colors",
+                        showAnswer && isCorrect
+                          ? "bg-[#85BC82]/10 border border-[#85BC82]/30"
+                          : ""
+                      )}
+                      style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
+                    >
+                      <MathContent content={question.options[letter]} />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+                {showDistractor && (
+                  <div className="ml-13 p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
+                    <div className="text-xs font-mono text-white/50 mb-1">Why this is incorrect:</div>
+                    <MathContent content={distractorText} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Show Answer Button - Bottom Right */}
+      {!isEditMode && (
+        <div className="p-4 border-t border-white/10 flex-shrink-0 flex justify-end">
+          <button
+            onClick={() => setShowAnswer(!showAnswer)}
+            className="px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10"
+          >
+            <Eye className="w-4 h-4" strokeWidth={2.5} />
+            <span>{showAnswer ? 'Hide Answer' : 'Show Answer'}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ interface SolutionPanelProps {
   onSolutionReasoningChange: (value: string) => void;
   onKeyInsightChange: (value: string) => void;
   onDistractorChange: (letter: string, value: string) => void;
+  showAnswer?: boolean;
 }
 
 export function SolutionPanel({
@@ -22,7 +23,6 @@ export function SolutionPanel({
   onDistractorChange,
 }: SolutionPanelProps) {
   const [keyInsightExpanded, setKeyInsightExpanded] = useState(true);
-  const optionLetters = Object.keys(question.options || {}).sort();
 
   return (
     <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
@@ -112,38 +112,6 @@ export function SolutionPanel({
           </div>
         )}
 
-        {/* Distractor Map */}
-        {question.distractor_map && Object.keys(question.distractor_map).length > 0 && (
-          <div className="space-y-3">
-            <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
-              Distractor Analysis
-            </label>
-            {optionLetters
-              .filter(letter => letter !== question.correct_option && question.distractor_map?.[letter])
-              .map((letter) => (
-                <div key={letter} className="space-y-1">
-                  <div className="text-xs font-mono text-white/50">
-                    Option {letter} (Incorrect)
-                  </div>
-                  {isEditMode ? (
-                    <textarea
-                      value={question.distractor_map?.[letter] || ''}
-                      onChange={(e) => onDistractorChange(letter, e.target.value)}
-                      className="w-full min-h-[60px] p-3 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                      style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
-                    />
-                  ) : (
-                    <div 
-                      className="p-3 rounded-organic-md bg-white/5 text-sm text-white/70 leading-relaxed font-serif"
-                      style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
-                    >
-                      <MathContent content={question.distractor_map?.[letter]} />
-                    </div>
-                  )}
-                </div>
-              ))}
-          </div>
-        )}
       </div>
     </div>
   );

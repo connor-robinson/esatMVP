@@ -10,11 +10,12 @@ export const dynamic = 'force-dynamic';
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
     const supabase = createServerClient();
-    const { id } = params;
+    const resolvedParams = await Promise.resolve(params);
+    const { id } = resolvedParams;
     const body = await request.json();
 
     // Get current user
@@ -72,6 +73,12 @@ export async function PATCH(
       );
     }
 
+    // Validate that we have at least one field to update
+    if (Object.keys(updates).length === 1 && updates.updated_at) {
+      console.warn('[Review API] No fields to update');
+      // Still proceed to update updated_at timestamp
+    }
+
     // Update the question
     const { data, error } = await supabase
       .from('ai_generated_questions')
@@ -81,9 +88,28 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error('[Review API] Error updating question:', error);
+      console.error('[Review API] Error updating question:', {
+        error,
+        id,
+        updates: Object.keys(updates),
+        errorCode: error.code,
+        errorMessage: error.message,
+        errorDetails: error.details,
+      });
       return NextResponse.json(
-        { error: 'Failed to update question', details: error.message },
+        { 
+          error: 'Failed to update question', 
+          details: error.message,
+          code: error.code,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!data) {
+      console.error('[Review API] No data returned after update');
+      return NextResponse.json(
+        { error: 'Question was updated but could not be retrieved' },
         { status: 500 }
       );
     }

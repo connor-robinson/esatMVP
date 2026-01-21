@@ -69,8 +69,10 @@ export default function ReviewPage() {
         // Refresh the question
         await fetchNextQuestion();
       }
-    } catch (err) {
-      setNotification({ type: 'error', message: 'Failed to save changes' });
+    } catch (err: any) {
+      const errorMessage = err?.message || 'Failed to save changes';
+      console.error('[ReviewPage] Save error:', err);
+      setNotification({ type: 'error', message: errorMessage });
     }
   };
 
