@@ -515,68 +515,116 @@ export default function PapersSolvePage() {
   // Handle section summary next button
   const handleSectionSummaryNext = () => {
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:506',message:'handleSectionSummaryNext called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,questionsLength:questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:516',message:'handleSectionSummaryNext called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,questionsLength:questions.length,isSectionMode},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
     // #endregion
-    // Clear the timer to proceed to questions
+    
+    // First, ensure we have valid section data
+    if (!isSectionMode) {
+      console.error('[solve] Section mode not active, cannot navigate from section summary');
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:520',message:'Section mode not active',data:{selectedSectionsLength:selectedSections.length,allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
+    
+    if (allSectionsQuestions.length === 0 || currentSectionIndex >= allSectionsQuestions.length) {
+      console.error('[solve] Invalid section state for navigation', {
+        currentSectionIndex,
+        allSectionsQuestionsLength: allSectionsQuestions.length
+      });
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:525',message:'Invalid section state',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
+    
+    const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+    if (sectionQuestions.length === 0) {
+      console.error('[solve] Section has no questions', { currentSectionIndex });
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:531',message:'Section has no questions',data:{currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
+    
+    // Find and navigate to first question
+    const firstQuestionOfSection = sectionQuestions[0];
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:508',message:'Setting timer to 0',data:{before:sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B5'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:536',message:'Finding first question index',data:{firstQuestionId:firstQuestionOfSection.id,firstQuestionNumber:firstQuestionOfSection.questionNumber,questionsLength:questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
+    // #endregion
+    const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+    
+    if (fullIndex < 0) {
+      console.error('[solve] First question not found in questions array', {
+        questionId: firstQuestionOfSection.id,
+        questionNumber: firstQuestionOfSection.questionNumber,
+        questionsLength: questions.length,
+        currentSectionIndex
+      });
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:540',message:'Question not found in questions array',data:{firstQuestionId:firstQuestionOfSection.id,firstQuestionNumber:firstQuestionOfSection.questionNumber,questionsLength:questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
+    
+    // Navigate first, then clear timer (order matters for proper re-render)
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:548',message:'Calling navigateToQuestion',data:{fullIndex,beforeIndex:currentQuestionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
+    // #endregion
+    navigateToQuestion(fullIndex);
+    
+    // Clear timer after navigation to hide section summary
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:552',message:'Setting timer to 0',data:{before:sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B5'})}).catch(()=>{});
     // #endregion
     setSectionInstructionTimer(0);
-    // Ensure we're on the first question of the current section
-    if (allSectionsQuestions.length > 0) {
-      const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:512',message:'Section questions found',data:{currentSectionIndex,sectionQuestionsLength:sectionQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
-      // #endregion
-      if (sectionQuestions.length > 0) {
-        const firstQuestionOfSection = sectionQuestions[0];
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:514',message:'Finding first question index',data:{firstQuestionId:firstQuestionOfSection.id,firstQuestionNumber:firstQuestionOfSection.questionNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-        // #endregion
-        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:515',message:'Question index lookup result',data:{fullIndex,willNavigate:fullIndex >= 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-        // #endregion
-        if (fullIndex >= 0) {
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:516',message:'Calling navigateToQuestion',data:{fullIndex,beforeIndex:currentQuestionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
-          // #endregion
-          navigateToQuestion(fullIndex);
-        } else {
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:518',message:'Question not found in questions array',data:{firstQuestionId:firstQuestionOfSection.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-          // #endregion
-        }
-      } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:520',message:'Section has no questions',data:{currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
-        // #endregion
-      }
-    } else {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:522',message:'allSectionsQuestions is empty',data:{allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B2'})}).catch(()=>{});
-      // #endregion
-    }
   };
 
   // Handle section summary timer expiry
   const handleSectionSummaryTimerExpire = () => {
     // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:563',message:'handleSectionSummaryTimerExpire called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:563',message:'handleSectionSummaryTimerExpire called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,isSectionMode},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
     // #endregion
-    // Timer expired - proceed to questions
-    setSectionInstructionTimer(0);
-    // Ensure we're on the first question of the current section
-    if (allSectionsQuestions.length > 0) {
-      const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
-      if (sectionQuestions.length > 0) {
-        const firstQuestionOfSection = sectionQuestions[0];
-        const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
-        if (fullIndex >= 0) {
-          navigateToQuestion(fullIndex);
-        }
-      }
+    
+    // Use same navigation logic as handleSectionSummaryNext
+    if (!isSectionMode) {
+      console.error('[solve] Section mode not active, cannot navigate from timer expiry');
+      setSectionInstructionTimer(0);
+      return;
     }
+    
+    if (allSectionsQuestions.length === 0 || currentSectionIndex >= allSectionsQuestions.length) {
+      console.error('[solve] Invalid section state for timer expiry navigation', {
+        currentSectionIndex,
+        allSectionsQuestionsLength: allSectionsQuestions.length
+      });
+      setSectionInstructionTimer(0);
+      return;
+    }
+    
+    const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+    if (sectionQuestions.length === 0) {
+      console.error('[solve] Section has no questions for timer expiry', { currentSectionIndex });
+      setSectionInstructionTimer(0);
+      return;
+    }
+    
+    const firstQuestionOfSection = sectionQuestions[0];
+    const fullIndex = questions.findIndex(q => q.id === firstQuestionOfSection.id);
+    
+    if (fullIndex < 0) {
+      console.error('[solve] First question not found in questions array (timer expiry)', {
+        questionId: firstQuestionOfSection.id,
+        questionNumber: firstQuestionOfSection.questionNumber,
+        questionsLength: questions.length
+      });
+      setSectionInstructionTimer(0);
+      return;
+    }
+    
+    // Navigate first, then clear timer
+    navigateToQuestion(fullIndex);
+    setSectionInstructionTimer(0);
   };
 
   // Handle submit section (show review popup)
@@ -630,6 +678,7 @@ export default function PapersSolvePage() {
   }
   
   // Show section summary if instruction timer is active
+  // The condition properly hides when timer is 0 or null
   if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
     return (
       <Container size="lg" className="min-h-screen">

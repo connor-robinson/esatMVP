@@ -10,9 +10,15 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
 
   // Update edited question when question changes
   useEffect(() => {
-    setEditedQuestion(question);
-    setIsEditMode(false);
-  }, [question]);
+    if (question) {
+      // Only update if it's a different question (different ID)
+      // This prevents overwriting edits when the same question is updated
+      if (!editedQuestion || editedQuestion.id !== question.id) {
+        setEditedQuestion(question);
+        setIsEditMode(false);
+      }
+    }
+  }, [question?.id]); // Only depend on question ID, not the whole question object
 
   const updateField = useCallback((field: keyof ReviewQuestion, value: any) => {
     if (!editedQuestion) return;
@@ -99,7 +105,27 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
       }
 
       const data = await response.json();
+      
+      // Handle case where update succeeded but question couldn't be retrieved
+      if (data.warning) {
+        console.warn('[useQuestionEditor] Update succeeded with warning:', data.warning);
+      }
+      
+      if (!data.question) {
+        // If question is null, we need to refetch it
+        throw new Error(data.message || 'Question updated but could not be retrieved');
+      }
+      
+      // Update local state with the saved question immediately
+      // This ensures the UI reflects the saved changes without needing a refresh
+      setEditedQuestion(data.question);
       setIsEditMode(false);
+      
+      console.log('[useQuestionEditor] Question saved successfully:', {
+        id: data.question.id,
+        questionStemPreview: data.question.question_stem?.substring(0, 50),
+      });
+      
       return data.question;
     } catch (err: any) {
       console.error('[useQuestionEditor] Error saving:', err);

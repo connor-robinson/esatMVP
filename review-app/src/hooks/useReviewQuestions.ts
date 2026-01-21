@@ -8,6 +8,33 @@ export function useReviewQuestions() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<ReviewFilters>({});
+  
+  // Function to refresh the current question
+  const refreshCurrentQuestion = useCallback(async () => {
+    if (!currentQuestion) return;
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/review/questions?id=${currentQuestion.id}&limit=1`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to refresh question');
+      }
+
+      const data = await response.json();
+      
+      if (data.questions && data.questions.length > 0) {
+        setCurrentQuestion(data.questions[0]);
+      }
+    } catch (err: any) {
+      console.error('[useReviewQuestions] Error refreshing question:', err);
+      setError(err.message || 'Failed to refresh question');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentQuestion]);
 
   const fetchNextQuestion = useCallback(async () => {
     setLoading(true);
@@ -71,7 +98,9 @@ export function useReviewQuestions() {
     filters,
     setFilters,
     fetchNextQuestion,
+    refreshCurrentQuestion,
     approveQuestion,
+    setCurrentQuestion, // Allow manual update
   };
 }
 

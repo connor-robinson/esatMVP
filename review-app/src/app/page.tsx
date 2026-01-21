@@ -18,7 +18,9 @@ export default function ReviewPage() {
     filters,
     setFilters,
     fetchNextQuestion,
+    refreshCurrentQuestion,
     approveQuestion,
+    setCurrentQuestion,
   } = useReviewQuestions();
 
   const {
@@ -66,8 +68,13 @@ export default function ReviewPage() {
       const updated = await saveChanges();
       if (updated) {
         setNotification({ type: 'success', message: 'Changes saved successfully!' });
-        // Refresh the question
-        await fetchNextQuestion();
+        // Update the current question state with the saved data
+        // This ensures the UI immediately reflects the saved changes
+        setCurrentQuestion(updated);
+        // Note: We don't refresh from server here because:
+        // 1. The save already returned the updated question
+        // 2. Refreshing might cause a race condition or overwrite the saved data
+        // 3. The updated question from the API is the source of truth
       }
     } catch (err: any) {
       const errorMessage = err?.message || 'Failed to save changes';

@@ -123,39 +123,63 @@ export async function PATCH(
       }, {} as any),
     });
 
-    const { data, error } = await supabase
+    // First, perform the update without select
+    const { error: updateError } = await supabase
       .from('ai_generated_questions')
       .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
+      .eq('id', id);
 
-    if (error) {
+    if (updateError) {
       console.error('[Review API] Supabase error updating question:', {
-        error,
+        error: updateError,
         id,
         updates: Object.keys(updates),
-        errorCode: error.code,
-        errorMessage: error.message,
-        errorDetails: error.details,
-        errorHint: error.hint,
-        fullError: JSON.stringify(error, null, 2),
+        errorCode: updateError.code,
+        errorMessage: updateError.message,
+        errorDetails: updateError.details,
+        errorHint: updateError.hint,
+        fullError: JSON.stringify(updateError, null, 2),
       });
       return NextResponse.json(
         { 
           error: 'Failed to update question', 
-          details: error.message || 'Unknown error',
-          code: error.code,
-          hint: error.hint,
+          details: updateError.message || 'Unknown error',
+          code: updateError.code,
+          hint: updateError.hint,
         },
         { status: 500 }
       );
     }
 
-    if (!data) {
-      console.error('[Review API] No data returned after update');
+    // Then, fetch the updated question separately
+    const { data, error: fetchError } = await supabase
+      .from('ai_generated_questions')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('[Review API] Error fetching updated question:', {
+        error: fetchError,
+        id,
+        errorCode: fetchError.code,
+        errorMessage: fetchError.message,
+      });
+      // Update succeeded but fetch failed - still return success with a note
       return NextResponse.json(
-        { error: 'Question was updated but could not be retrieved' },
+        { 
+          question: null,
+          message: 'Question updated successfully but could not be retrieved',
+          warning: fetchError.message,
+        },
+        { status: 200 }
+      );
+    }
+
+    if (!data) {
+      console.error('[Review API] Question not found after update');
+      return NextResponse.json(
+        { error: 'Question was updated but could not be found' },
         { status: 500 }
       );
     }

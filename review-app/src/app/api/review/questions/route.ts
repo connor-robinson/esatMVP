@@ -15,15 +15,22 @@ export async function GET(request: NextRequest) {
 
     const paperType = searchParams.get('paperType') as PaperType | null;
     const subject = searchParams.get('subject') as string | null;
+    const questionId = searchParams.get('id') as string | null;
     const limit = parseInt(searchParams.get('limit') || '1', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
 
-    // Build query - only fetch pending_review questions
+    // Build query
     let query = supabase
       .from('ai_generated_questions')
-      .select('*', { count: 'exact' })
-      .eq('status', 'pending_review')
-      .order('created_at', { ascending: true });
+      .select('*', { count: 'exact' });
+
+    // If specific question ID is requested, fetch that one (regardless of status)
+    if (questionId) {
+      query = query.eq('id', questionId);
+    } else {
+      // Only fetch pending_review questions if no specific ID requested
+      query = query.eq('status', 'pending_review').order('created_at', { ascending: true });
+    }
 
     // Apply paper type filter
     if (paperType === 'ESAT' && subject) {
