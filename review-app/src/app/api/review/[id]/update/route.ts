@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { normalizeReviewQuestion } from '@/lib/utils';
 import type { ReviewQuestion } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
@@ -197,24 +198,36 @@ export async function PATCH(
     // Get the first (and should be only) result
     const updatedQuestion = Array.isArray(data) ? data[0] : data;
 
-    // Parse JSONB fields if they're strings (shouldn't happen but handle it)
-    const question = {
-      ...updatedQuestion,
-      options: typeof updatedQuestion.options === 'string' 
-        ? JSON.parse(updatedQuestion.options) 
-        : updatedQuestion.options,
-      distractor_map: updatedQuestion.distractor_map && typeof updatedQuestion.distractor_map === 'string' 
-        ? JSON.parse(updatedQuestion.distractor_map) 
-        : updatedQuestion.distractor_map,
-    };
+    if (!updatedQuestion) {
+      console.error('[Review API] No question data returned after update');
+      return NextResponse.json(
+        { 
+          error: 'Question not found',
+          details: `Update succeeded but no question data was returned`,
+          code: 'NO_DATA',
+        },
+        { status: 404 }
+      );
+    }
+
+    // Normalize the question to ensure all fields are present and JSONB fields are parsed
+    const normalizedQuestion = normalizeReviewQuestion(updatedQuestion);
+
+    // Validate that options is an object (not null)
+    if (!normalizedQuestion.options || typeof normalizedQuestion.options !== 'object') {
+      console.warn('[Review API] Options is not an object after normalization, setting to empty object');
+      normalizedQuestion.options = {};
+    }
 
     console.log('[Review API] Update successful:', { 
       id, 
       updatedFields: Object.keys(updates),
-      questionStemPreview: question.question_stem?.substring(0, 50),
+      questionStemPreview: normalizedQuestion.question_stem?.substring(0, 50),
+      hasOptions: !!normalizedQuestion.options,
+      optionsKeys: Object.keys(normalizedQuestion.options || {}),
     });
     
-    return NextResponse.json({ question: question as ReviewQuestion });
+    return NextResponse.json({ question: normalizedQuestion });
   } catch (error: any) {
     console.error('[Review API] Unexpected error:', {
       error,

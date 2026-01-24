@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
+import { normalizeReviewQuestion } from '@/lib/utils';
 import type { ReviewQuestion, PaperType, ESATSubject, TMUASubject } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
@@ -65,8 +66,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Normalize and validate all questions
+    const normalizedQuestions: ReviewQuestion[] = (data || []).map((row: any) => {
+      try {
+        return normalizeReviewQuestion(row);
+      } catch (err) {
+        console.error('[Review API] Error normalizing question:', err, row);
+        // Return a minimal valid question structure if normalization fails
+        return normalizeReviewQuestion({
+          id: row.id || '',
+          generation_id: row.generation_id || '',
+          schema_id: row.schema_id || '',
+          difficulty: row.difficulty || 'Medium',
+          question_stem: row.question_stem || '',
+          options: row.options || {},
+          correct_option: row.correct_option || 'A',
+          status: row.status || 'pending_review',
+        });
+      }
+    });
+
     return NextResponse.json({
-      questions: (data || []) as ReviewQuestion[],
+      questions: normalizedQuestions,
       total: count || 0,
     });
   } catch (error: any) {

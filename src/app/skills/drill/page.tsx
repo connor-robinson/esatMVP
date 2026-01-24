@@ -50,7 +50,8 @@ export default function BuilderPage() {
   // Navigate to session route when session starts
   useEffect(() => {
     if (builder.view === "running" && builder.currentSession) {
-      router.push("/skills/drill/session");
+      // Use replace to avoid adding to history
+      router.replace("/skills/drill/session");
     }
   }, [builder.view, builder.currentSession, router]);
 

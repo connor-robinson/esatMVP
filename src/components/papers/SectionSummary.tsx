@@ -81,7 +81,7 @@ export function SectionSummary({
           setSectionInstructionTimer(newSeconds);
           return newSeconds;
         } else {
-          // Timer expired
+          // Timer expired - set to 0 to indicate timer is done
           setSectionInstructionTimer(0);
           onTimerExpire();
           return 0;

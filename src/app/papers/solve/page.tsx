@@ -168,6 +168,9 @@ export default function PapersSolvePage() {
     }
   }, [sessionId, paperId, questions.length, questionsLoading]);
   
+  // Track if we've started answering questions for current section (to prevent re-initializing timer)
+  const sectionStartedRef = useRef<Set<number>>(new Set());
+  
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
   useEffect(() => {
     // Only initialize if:
@@ -175,14 +178,16 @@ export default function PapersSolvePage() {
     // 2. Questions are loaded (questions.length > 0 and not loading)
     // 3. Questions are grouped (allSectionsQuestions.length > 0)
     // 4. Current section has questions
-    // 5. Timer is not already set (null or 0)
+    // 5. Timer is null (not set yet) - don't re-initialize if it's been set to 0 or we've started
+    // 6. We haven't already started this section
     const shouldInit = selectedSections.length > 0 && 
         questions.length > 0 && 
         !questionsLoading &&
         allSectionsQuestions.length > 0 && 
         currentSectionIndex < allSectionsQuestions.length &&
         allSectionsQuestions[currentSectionIndex]?.length > 0 &&
-        (sectionInstructionTimer === null || sectionInstructionTimer === 0);
+        (sectionInstructionTimer === null || sectionInstructionTimer === 0) &&
+        !sectionStartedRef.current.has(currentSectionIndex);
     if (shouldInit) {
       console.log('[solve] Initializing section instruction timer for section', currentSectionIndex);
       setSectionInstructionTimer(60);
@@ -581,12 +586,14 @@ export default function PapersSolvePage() {
     
     if (targetIndex >= 0) {
       console.log('[solve] Navigating to question', targetIndex);
+      // Mark this section as started
+      sectionStartedRef.current.add(currentSectionIndex);
       // Set section start time when starting to answer questions
       if (isSectionMode && sectionDeadlines.length <= currentSectionIndex) {
         setSectionStartTime(currentSectionIndex, Date.now());
       }
       navigateToQuestion(targetIndex);
-      setSectionInstructionTimer(0);
+      setSectionInstructionTimer(0); // Set to 0 to indicate timer is done
     } else {
       console.error('[solve] Cannot navigate: no valid question index found');
     }
@@ -630,13 +637,15 @@ export default function PapersSolvePage() {
       return;
     }
     
+    // Mark this section as started
+    sectionStartedRef.current.add(currentSectionIndex);
     // Set section start time when starting to answer questions
     if (sectionDeadlines.length <= currentSectionIndex) {
       setSectionStartTime(currentSectionIndex, Date.now());
     }
     // Navigate first, then clear timer
     navigateToQuestion(fullIndex);
-    setSectionInstructionTimer(0);
+    setSectionInstructionTimer(0); // Set to 0 to indicate timer is done
   };
 
   // Handle submit section (show review popup)
@@ -701,6 +710,30 @@ export default function PapersSolvePage() {
       </Container>
     );
   }
+  
+  // Update URL based on current state for better tracking
+  useEffect(() => {
+    if (!sessionId) return;
+    
+    const currentPath = window.location.pathname;
+    let newPath = currentPath;
+    
+    if (showMarkIntro) {
+      newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
+    } else if (showCompletionPage) {
+      newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
+    } else if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
+      newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
+    } else if (isSectionMode && !showCompletionPage && !showMarkIntro && (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
+      newPath = currentPath.replace(/\/info$|\/session$/, '') + '/session';
+    } else {
+      newPath = currentPath.replace(/\/info$|\/session$/, '');
+    }
+    
+    if (newPath !== currentPath && newPath !== window.location.pathname) {
+      window.history.replaceState({}, '', newPath);
+    }
+  }, [sessionId, showMarkIntro, showCompletionPage, sectionInstructionTimer, isSectionMode]);
   
   // Show mark intro if active
   if (showMarkIntro) {

@@ -1,32 +1,40 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { normalizeReviewQuestion } from "@/lib/utils";
 import type { ReviewQuestion } from "@/types/review";
 
 export function useQuestionEditor(question: ReviewQuestion | null) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [editedQuestion, setEditedQuestion] = useState<ReviewQuestion | null>(question);
+  
+  // Normalize question to ensure it has all required fields
+  const normalizedQuestion = question ? normalizeReviewQuestion(question) : null;
+  const [editedQuestion, setEditedQuestion] = useState<ReviewQuestion | null>(normalizedQuestion);
 
   // Update edited question when question changes
   // Only update if it's a different question (different ID) to prevent overwriting edits
   useEffect(() => {
-    if (question) {
+    if (normalizedQuestion) {
       // Only update if it's a different question (different ID)
       // This prevents overwriting edits when the same question is updated after save
-      if (!editedQuestion || editedQuestion.id !== question.id) {
-        console.log('[useQuestionEditor] Loading new question:', question.id);
-        setEditedQuestion(question);
+      if (!editedQuestion || editedQuestion.id !== normalizedQuestion.id) {
+        console.log('[useQuestionEditor] Loading new question:', normalizedQuestion.id);
+        setEditedQuestion(normalizedQuestion);
         setIsEditMode(false);
       }
       // If same question ID but different data and not in edit mode, sync the data
       // This handles cases where the question was updated externally (e.g., after save)
-      else if (!isEditMode && JSON.stringify(editedQuestion) !== JSON.stringify(question)) {
-        console.log('[useQuestionEditor] Syncing question data (same ID, not in edit mode):', question.id);
-        setEditedQuestion(question);
+      else if (!isEditMode && JSON.stringify(editedQuestion) !== JSON.stringify(normalizedQuestion)) {
+        console.log('[useQuestionEditor] Syncing question data (same ID, not in edit mode):', normalizedQuestion.id);
+        setEditedQuestion(normalizedQuestion);
       }
+    } else if (question === null && editedQuestion !== null) {
+      // If question becomes null, clear edited question
+      setEditedQuestion(null);
+      setIsEditMode(false);
     }
-  }, [question?.id, isEditMode]); // Depend on ID and edit mode
+  }, [normalizedQuestion?.id, isEditMode, question]); // Depend on ID, edit mode, and question
 
   const updateField = useCallback((field: keyof ReviewQuestion, value: any) => {
     if (!editedQuestion) return;
@@ -44,10 +52,13 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
   const updateOption = useCallback((letter: string, value: string) => {
     if (!editedQuestion) return;
     
+    // Ensure options is always an object
+    const currentOptions = editedQuestion.options || {};
+    
     setEditedQuestion({
       ...editedQuestion,
       options: {
-        ...editedQuestion.options,
+        ...currentOptions,
         [letter]: value,
       },
     });
@@ -193,18 +204,21 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
         });
       }
       
+      // Normalize the saved question to ensure all fields are present
+      const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
+      
       // Update local state with the saved question immediately
       // This ensures the UI reflects the saved changes without needing a refresh
-      setEditedQuestion(data.question);
+      setEditedQuestion(normalizedSavedQuestion);
       setIsEditMode(false);
       
       console.log('[useQuestionEditor] Question saved successfully:', {
-        id: data.question.id,
-        questionStemPreview: data.question.question_stem?.substring(0, 50),
+        id: normalizedSavedQuestion.id,
+        questionStemPreview: normalizedSavedQuestion.question_stem?.substring(0, 50),
         savedMatches,
       });
       
-      return data.question;
+      return normalizedSavedQuestion;
     } catch (err: any) {
       console.error('[useQuestionEditor] Error saving:', err);
       throw err;
@@ -219,13 +233,19 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
 
   const exitEditMode = useCallback(() => {
     setIsEditMode(false);
-    setEditedQuestion(question);
-  }, [question]);
+    if (normalizedQuestion) {
+      setEditedQuestion(normalizedQuestion);
+    }
+  }, [normalizedQuestion]);
 
+  // Always return a valid question object if one exists, never null
+  // This prevents "Cannot convert undefined or null to object" errors
+  const safeEditedQuestion = editedQuestion || normalizedQuestion;
+  
   return {
     isEditMode,
     isSaving,
-    editedQuestion: editedQuestion || question,
+    editedQuestion: safeEditedQuestion,
     updateQuestionStem,
     updateOption,
     updateSolutionReasoning,

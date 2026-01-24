@@ -20,7 +20,19 @@ export function QuestionPanel({
   onOptionChange,
 }: QuestionPanelProps) {
   const [showAnswer, setShowAnswer] = useState(false);
-  const optionLetters = Object.keys(question.options).sort();
+  
+  // Null safety: ensure options is always an object
+  const options = question.options || {};
+  const optionLetters = Object.keys(options).sort();
+  
+  // Early return if question is invalid
+  if (!question || !question.id) {
+    return (
+      <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
+        <div className="text-white/60 font-mono">Invalid question data</div>
+      </div>
+    );
+  }
 
   const getSubjectColor = (paper: string | null): string => {
     if (!paper) return 'bg-white/10 text-white/70';
@@ -101,7 +113,9 @@ export function QuestionPanel({
           </label>
           {optionLetters.map((letter) => {
             const isCorrect = letter === question.correct_option;
-            const distractorText = question.distractor_map?.[letter];
+            const distractorText = question.distractor_map && typeof question.distractor_map === 'object' 
+              ? question.distractor_map[letter] 
+              : null;
             const showDistractor = showAnswer && distractorText && !isCorrect;
             
             return (
@@ -117,7 +131,7 @@ export function QuestionPanel({
                   </div>
                   {isEditMode ? (
                     <textarea
-                      value={question.options[letter] || ''}
+                      value={options[letter] || ''}
                       onChange={(e) => onOptionChange(letter, e.target.value)}
                       className={cn(
                         "flex-1 min-h-[60px] p-3 rounded-organic-md bg-white/5 border text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
@@ -137,7 +151,7 @@ export function QuestionPanel({
                       )}
                       style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
                     >
-                      <MathContent content={question.options[letter]} />
+                      <MathContent content={options[letter] || ''} />
                     </div>
                   )}
                 </div>
