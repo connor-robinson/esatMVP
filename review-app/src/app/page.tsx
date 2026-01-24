@@ -164,6 +164,7 @@ export default function ReviewPage() {
               onQuestionStemChange={updateQuestionStem}
               onOptionChange={updateOption}
               onDistractorChange={updateDistractor}
+              onAnswerShown={() => setHasShownAnswer(true)}
             />
           ) : null}
         </div>

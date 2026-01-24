@@ -12,6 +12,7 @@ interface QuestionPanelProps {
   onQuestionStemChange: (value: string) => void;
   onOptionChange: (letter: string, value: string) => void;
   onDistractorChange?: (letter: string, value: string) => void;
+  onAnswerShown?: () => void;
 }
 
 export function QuestionPanel({
@@ -20,6 +21,7 @@ export function QuestionPanel({
   onQuestionStemChange,
   onOptionChange,
   onDistractorChange,
+  onAnswerShown,
 }: QuestionPanelProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   
@@ -185,7 +187,14 @@ export function QuestionPanel({
       {!isEditMode && (
         <div className="p-4 border-t border-white/10 flex-shrink-0 flex justify-end">
           <button
-            onClick={() => setShowAnswer(!showAnswer)}
+            onClick={() => {
+              const wasHidden = !showAnswer;
+              setShowAnswer(!showAnswer);
+              // Notify parent when answer is shown for the first time
+              if (wasHidden && onAnswerShown) {
+                onAnswerShown();
+              }
+            }}
             className="px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10"
           >
             <Eye className="w-4 h-4" strokeWidth={2.5} />

@@ -67,11 +67,6 @@ export function QuestionDetailView({ question }: QuestionDetailViewProps) {
         <div className="flex items-center gap-2">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
-          {question.paper && question.paper.trim() && (
-            <Badge variant="default" className={cn(getSubjectColor(question.paper))}>
-              {question.paper}
-            </Badge>
-          )}
           <Badge variant="default">{question.status}</Badge>
         </div>
         <div className="text-sm text-neutral-400">

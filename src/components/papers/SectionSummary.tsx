@@ -58,17 +58,22 @@ export function SectionSummary({
     sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Sync displaySeconds with store timer when it changes
+  // Initialize displaySeconds when timer is set or section changes
   useEffect(() => {
-    if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
-      setDisplaySeconds(sectionInstructionTimer);
-    }
-  }, [sectionInstructionTimer, currentSectionIndex]); // Re-initialize when section or timer changes
+    const initialValue = sectionInstructionTimer !== null && sectionInstructionTimer > 0 
+      ? sectionInstructionTimer 
+      : 60;
+    setDisplaySeconds(initialValue);
+  }, [sectionInstructionTimer, currentSectionIndex]);
 
   // Timer countdown effect - sync with store timer
   useEffect(() => {
-    // Only run countdown if timer is active
-    if (sectionInstructionTimer === null || sectionInstructionTimer <= 0) {
+    // Only run countdown if timer should be active
+    // If sectionInstructionTimer is null, use 60 as default
+    // If it's 0 or less, don't run
+    const shouldRun = sectionInstructionTimer === null || (sectionInstructionTimer !== null && sectionInstructionTimer > 0);
+    
+    if (!shouldRun) {
       return;
     }
     
