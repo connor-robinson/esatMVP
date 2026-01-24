@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useState, useRef, useEffect, KeyboardEvent, forwardRef, useImperativeHandle } from "react";
 import { cn } from "@/lib/utils";
 import { renderMath } from "@/hooks/useKaTeX";
 import { Eye } from "lucide-react";
@@ -19,9 +19,10 @@ interface KatexInputProps {
   disabled?: boolean;
   showReveal?: boolean;
   hasError?: boolean;
+  autoFocus?: boolean;
 }
 
-export function KatexInput({
+export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function KatexInput({
   value,
   onChange,
   onSubmit,
@@ -30,8 +31,19 @@ export function KatexInput({
   disabled = false,
   showReveal = false,
   hasError = false,
-}: KatexInputProps) {
+  autoFocus = false,
+}, ref) {
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Expose the input ref to parent
+  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  
+  // Auto-focus when requested
+  useEffect(() => {
+    if (autoFocus && inputRef.current && !disabled) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus, disabled]);
   const previewRef = useRef<HTMLDivElement>(null);
   const [previewHtml, setPreviewHtml] = useState<string>("");
 
@@ -122,10 +134,10 @@ export function KatexInput({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            "w-full h-16 text-2xl font-semibold rounded-2xl border-2 outline-none transition-all duration-75",
+            "w-full h-16 text-2xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
             hasError
-              ? "bg-red-500/20 border-red-500/50 text-red-100 focus:ring-0 focus:outline-none focus:border-red-500/50"
-              : "bg-white/5 border-white/10 text-white/90 focus:border-primary/50 focus:ring-4 focus:ring-primary/20",
+              ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
+              : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
             "placeholder:text-white/20 placeholder:text-base placeholder:font-medium",
             disabled && "opacity-50 cursor-not-allowed"
           )}
@@ -176,5 +188,5 @@ export function KatexInput({
       </div>
     </div>
   );
-}
+});
 

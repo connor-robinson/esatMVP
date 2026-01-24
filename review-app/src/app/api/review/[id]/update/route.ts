@@ -91,21 +91,50 @@ export async function PATCH(
       // Still proceed to update updated_at timestamp
     }
 
-    // Update the question and return the updated data in one operation
-    // This matches the pattern used in the main app exactly
-    console.log('[Review API] Attempting update:', {
+    // First, check if the question exists
+    const { data: existingQuestion, error: checkError } = await supabase
+      .from('ai_generated_questions')
+      .select('id, status')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('[Review API] Error checking question:', checkError);
+      return NextResponse.json(
+        { 
+          error: 'Failed to check question', 
+          details: checkError.message,
+          code: checkError.code,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!existingQuestion) {
+      console.error('[Review API] Question not found:', id);
+      return NextResponse.json(
+        { 
+          error: 'Question not found',
+          details: `No question found with ID: ${id}`,
+        },
+        { status: 404 }
+      );
+    }
+
+    console.log('[Review API] Question exists, proceeding with update:', {
       id,
+      currentStatus: existingQuestion.status,
       updateKeys: Object.keys(updates),
       hasUserId: !!userId,
     });
 
-    // Use the exact same pattern as main app
+    // Update the question and return the updated data in one operation
+    // Use .select() (returns array) to match main app pattern
     const { data, error: updateError } = await supabase
       .from('ai_generated_questions')
       .update(updates)
       .eq('id', id)
-      .select()
-      .single();
+      .select();
 
     if (updateError) {
       console.error('[Review API] Supabase error updating question:', {
@@ -147,43 +176,45 @@ export async function PATCH(
       );
     }
 
-    if (!data) {
-      console.error('[Review API] No data returned after update');
+    if (!data || data.length === 0) {
+      console.error('[Review API] No question found after update - possible RLS issue or ID mismatch:', {
+        id,
+        questionExists: !!existingQuestion,
+        updateKeys: Object.keys(updates),
+        dataLength: data?.length || 0,
+      });
+      
       return NextResponse.json(
-        { error: 'Question was updated but could not be retrieved' },
-        { status: 500 }
+        { 
+          error: 'Question not found',
+          details: `No question found with ID: ${id}. Update may have been blocked by RLS policies.`,
+          code: 'NOT_FOUND',
+        },
+        { status: 404 }
       );
     }
 
-    // Verify that the update actually persisted by checking key fields
-    const updateVerified = Object.keys(updates).every(key => {
-      if (key === 'updated_at' || key === 'reviewed_by') return true; // These always change
-      const dbValue = data[key as keyof typeof data];
-      const expectedValue = updates[key as keyof typeof updates];
-      // For JSONB fields, compare stringified versions
-      if (typeof dbValue === 'object' && typeof expectedValue === 'object') {
-        return JSON.stringify(dbValue) === JSON.stringify(expectedValue);
-      }
-      return dbValue === expectedValue;
-    });
+    // Get the first (and should be only) result
+    const updatedQuestion = Array.isArray(data) ? data[0] : data;
 
-    if (!updateVerified) {
-      console.warn('[Review API] Update may not have persisted correctly:', {
-        id,
-        expected: updates,
-        actual: Object.fromEntries(
-          Object.keys(updates).map(key => [key, data[key as keyof typeof data]])
-        ),
-      });
-    }
+    // Parse JSONB fields if they're strings (shouldn't happen but handle it)
+    const question = {
+      ...updatedQuestion,
+      options: typeof updatedQuestion.options === 'string' 
+        ? JSON.parse(updatedQuestion.options) 
+        : updatedQuestion.options,
+      distractor_map: updatedQuestion.distractor_map && typeof updatedQuestion.distractor_map === 'string' 
+        ? JSON.parse(updatedQuestion.distractor_map) 
+        : updatedQuestion.distractor_map,
+    };
 
     console.log('[Review API] Update successful:', { 
       id, 
       updatedFields: Object.keys(updates),
-      updateVerified,
-      questionStemPreview: data.question_stem?.substring(0, 50),
+      questionStemPreview: question.question_stem?.substring(0, 50),
     });
-    return NextResponse.json({ question: data as ReviewQuestion });
+    
+    return NextResponse.json({ question: question as ReviewQuestion });
   } catch (error: any) {
     console.error('[Review API] Unexpected error:', {
       error,

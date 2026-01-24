@@ -20,6 +20,8 @@ import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
 import { NavigatorPopup } from "@/components/papers/NavigatorPopup";
 import { SectionSummary } from "@/components/papers/SectionSummary";
 import { SubmitSectionReview } from "@/components/papers/SubmitSectionReview";
+import { SectionCompletionSummary } from "@/components/papers/SectionCompletionSummary";
+import { MarkPageIntro } from "@/components/papers/MarkPageIntro";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import type { Letter, PaperType } from "@/types/papers";
@@ -67,7 +69,10 @@ export default function PapersSolvePage() {
     allSectionsQuestions,
     getCurrentSectionQuestions,
     setCurrentSectionIndex,
-    calculateSectionTimeLimits
+    calculateSectionTimeLimits,
+    sectionDeadlines,
+    getSectionRemainingTime,
+    setSectionStartTime
   } = usePaperSessionStore();
   
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -78,24 +83,68 @@ export default function PapersSolvePage() {
   const [showUnseenWarning, setShowUnseenWarning] = useState(false);
   const [showSubmitReview, setShowSubmitReview] = useState(false);
   const [hasViewedContent, setHasViewedContent] = useState<Record<number, boolean>>({});
+  const [showCompletionPage, setShowCompletionPage] = useState(false);
+  const [showMarkIntro, setShowMarkIntro] = useState(false);
+  
+  // Track if we've loaded questions for the current paperId to prevent reload loops
+  const loadedPaperIdRef = useRef<number | null>(null);
+  
+  // Determine if section mode is active (needed for timer effect)
+  const isSectionMode = selectedSections.length > 0 && allSectionsQuestions.length > 0;
+  
+  // Handle section time expired
+  const handleSectionTimeExpired = useCallback(() => {
+    const isLastSection = currentSectionIndex === selectedSections.length - 1;
+    
+    if (isLastSection) {
+      // Last section - show completion page
+      setShowCompletionPage(true);
+    } else {
+      // Move to next section - show section summary first
+      const nextSectionIndex = currentSectionIndex + 1;
+      setCurrentSectionIndex(nextSectionIndex);
+      // Show section summary for next section (60 second timer)
+      setSectionInstructionTimer(60);
+    }
+  }, [currentSectionIndex, selectedSections.length, setCurrentSectionIndex, setSectionInstructionTimer]);
   
   // Timer effect
   useEffect(() => {
     if (!startedAt || !deadline) return;
     
     const interval = setInterval(() => {
+      const state = usePaperSessionStore.getState();
+      
+      // Check section deadline if in section mode and not showing intro/completion/mark intro
+      if (isSectionMode && 
+          sectionInstructionTimer === null && 
+          !showCompletionPage && 
+          !showMarkIntro &&
+          sectionDeadlines.length > 0 &&
+          currentSectionIndex < sectionDeadlines.length) {
+        const sectionDeadline = sectionDeadlines[currentSectionIndex];
+        if (sectionDeadline && Date.now() >= sectionDeadline) {
+          // Section time expired
+          handleSectionTimeExpired();
+          clearInterval(interval);
+          return;
+        }
+      }
+      
       const remaining = getRemainingTime();
       if (remaining <= 0) {
         handleSubmit();
+        clearInterval(interval);
         return;
       }
       
-      // Increment time for current question
-      incrementTime(currentQuestionIndex);
+      // Increment time for current question - use currentQuestionIndex from store directly
+      const currentIdx = state.currentQuestionIndex;
+      incrementTime(currentIdx);
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [startedAt, deadline, currentQuestionIndex, getRemainingTime, incrementTime]);
+  }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionDeadlines, currentSectionIndex, showCompletionPage, showMarkIntro, handleSectionTimeExpired, getRemainingTime, incrementTime]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
   
   // Load questions when session starts
   useEffect(() => {
@@ -103,8 +152,10 @@ export default function PapersSolvePage() {
     // 1. We have sessionId and paperId
     // 2. Either no questions loaded yet, OR questions don't match current paperId
     // 3. Not currently loading
+    // 4. We haven't already loaded questions for this paperId (prevent reload loops)
     const shouldLoad = sessionId && paperId && !questionsLoading && 
-                      (questions.length === 0 || questions[0]?.paperId !== paperId);
+                      (questions.length === 0 || questions[0]?.paperId !== paperId) &&
+                      loadedPaperIdRef.current !== paperId;
     
     if (shouldLoad) {
       console.log('=== Loading questions ===');
@@ -112,15 +163,13 @@ export default function PapersSolvePage() {
       console.log('paperId:', paperId);
       console.log('questions.length:', questions.length);
       console.log('questions[0]?.paperId:', questions[0]?.paperId);
+      loadedPaperIdRef.current = paperId;
       loadQuestions(paperId);
     }
-  }, [sessionId, paperId, questions.length, questionsLoading, loadQuestions]);
+  }, [sessionId, paperId, questions.length, questionsLoading]);
   
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:127',message:'Timer init useEffect',data:{selectedSectionsLength:selectedSections.length,questionsLength:questions.length,questionsLoading,allSectionsQuestionsLength:allSectionsQuestions.length,currentSectionIndex,sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
-    // #endregion
     // Only initialize if:
     // 1. Section mode is active (selectedSections.length > 0)
     // 2. Questions are loaded (questions.length > 0 and not loading)
@@ -134,14 +183,8 @@ export default function PapersSolvePage() {
         currentSectionIndex < allSectionsQuestions.length &&
         allSectionsQuestions[currentSectionIndex]?.length > 0 &&
         (sectionInstructionTimer === null || sectionInstructionTimer === 0);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:137',message:'Timer init check result',data:{shouldInit,willInit:shouldInit},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
-    // #endregion
     if (shouldInit) {
       console.log('[solve] Initializing section instruction timer for section', currentSectionIndex);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:140',message:'Calling setSectionInstructionTimer(60)',data:{currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
-      // #endregion
       setSectionInstructionTimer(60);
     }
   }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
@@ -220,9 +263,6 @@ export default function PapersSolvePage() {
   }, [showNavigator]);
   
   const totalQuestions = getTotalQuestions();
-  
-  // Determine if section mode is active
-  const isSectionMode = selectedSections.length > 0 && allSectionsQuestions.length > 0;
   
   // Debug logging for section mode state
   useEffect(() => {
@@ -509,7 +549,7 @@ export default function PapersSolvePage() {
   
   const handleSubmit = () => {
     setEndedAt(Date.now());
-    router.push("/papers/mark");
+    router.push("/papers/submit");
   };
 
   // Handle section summary next button
@@ -521,9 +561,6 @@ export default function PapersSolvePage() {
       isSectionMode,
       sectionInstructionTimer
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:516',message:'handleSectionSummaryNext called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,questionsLength:questions.length,isSectionMode,sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
-    // #endregion
     
     // Try navigation even if section mode check fails (defensive)
     let targetIndex = -1;
@@ -533,9 +570,6 @@ export default function PapersSolvePage() {
       if (sectionQuestions.length > 0) {
         const firstQuestion = sectionQuestions[0];
         targetIndex = questions.findIndex(q => q.id === firstQuestion.id);
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:530',message:'Section-based navigation attempt',data:{targetIndex,firstQuestionId:firstQuestion.id,firstQuestionNumber:firstQuestion.questionNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-        // #endregion
       }
     }
     
@@ -543,35 +577,23 @@ export default function PapersSolvePage() {
     if (targetIndex < 0 && questions.length > 0) {
       targetIndex = 0;
       console.warn('[solve] Section-based navigation failed, using fallback to first question');
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:537',message:'Using fallback navigation to first question',data:{targetIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-      // #endregion
     }
     
     if (targetIndex >= 0) {
       console.log('[solve] Navigating to question', targetIndex);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:542',message:'Calling navigateToQuestion',data:{targetIndex,beforeIndex:currentQuestionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
-      // #endregion
+      // Set section start time when starting to answer questions
+      if (isSectionMode && sectionDeadlines.length <= currentSectionIndex) {
+        setSectionStartTime(currentSectionIndex, Date.now());
+      }
       navigateToQuestion(targetIndex);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:545',message:'Setting timer to 0',data:{before:sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B5'})}).catch(()=>{});
-      // #endregion
       setSectionInstructionTimer(0);
     } else {
       console.error('[solve] Cannot navigate: no valid question index found');
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:549',message:'Navigation failed - no valid question index',data:{questionsLength:questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B3'})}).catch(()=>{});
-      // #endregion
     }
   };
 
   // Handle section summary timer expiry
   const handleSectionSummaryTimerExpire = () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'solve/page.tsx:563',message:'handleSectionSummaryTimerExpire called',data:{currentSectionIndex,allSectionsQuestionsLength:allSectionsQuestions.length,isSectionMode},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
-    // #endregion
-    
     // Use same navigation logic as handleSectionSummaryNext
     if (!isSectionMode) {
       console.error('[solve] Section mode not active, cannot navigate from timer expiry');
@@ -608,6 +630,10 @@ export default function PapersSolvePage() {
       return;
     }
     
+    // Set section start time when starting to answer questions
+    if (sectionDeadlines.length <= currentSectionIndex) {
+      setSectionStartTime(currentSectionIndex, Date.now());
+    }
     // Navigate first, then clear timer
     navigateToQuestion(fullIndex);
     setSectionInstructionTimer(0);
@@ -624,16 +650,29 @@ export default function PapersSolvePage() {
     const isLastSection = currentSectionIndex === selectedSections.length - 1;
     
     if (isLastSection) {
-      // Last section - go to marking
-      handleSubmit();
+      // Last section - show completion page instead of submitting
+      setShowCompletionPage(true);
     } else {
       // Move to next section - show section summary first
       const nextSectionIndex = currentSectionIndex + 1;
       setCurrentSectionIndex(nextSectionIndex);
       // Show section summary for next section (60 second timer)
       setSectionInstructionTimer(60);
-      // Don't navigate to questions yet - wait for user to click "Next" on summary
+      // Reset current question index to prepare for next section
+      // The section summary will handle navigation to first question when user clicks Next
     }
+  };
+
+  // Handle completion page next
+  const handleCompletionPageNext = () => {
+    setShowCompletionPage(false);
+    setShowMarkIntro(true);
+  };
+
+  // Handle mark intro next
+  const handleMarkIntroNext = () => {
+    setEndedAt(Date.now());
+    router.push("/papers/mark");
   };
 
   const getTimerVariant = () => {
@@ -663,6 +702,27 @@ export default function PapersSolvePage() {
     );
   }
   
+  // Show mark intro if active
+  if (showMarkIntro) {
+    return (
+      <Container size="lg" className="min-h-screen">
+        <MarkPageIntro onNext={handleMarkIntroNext} />
+      </Container>
+    );
+  }
+
+  // Show completion page if active
+  if (showCompletionPage) {
+    return (
+      <Container size="lg" className="min-h-screen">
+        <SectionCompletionSummary
+          selectedSections={selectedSections}
+          onNext={handleCompletionPageNext}
+        />
+      </Container>
+    );
+  }
+
   // Show section summary if instruction timer is active
   // The condition properly hides when timer is 0 or null
   if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {

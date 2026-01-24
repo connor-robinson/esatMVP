@@ -46,8 +46,8 @@ export function MentalMathSession({
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
   const [answerRevealed, setAnswerRevealed] = useState(false);
-  const [useKatexInput, setUseKatexInput] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [useKatexInput, setUseKatexInput] = useState(true);
+  const katexInputRef = useRef<HTMLInputElement>(null);
   const simpleInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate accuracy
@@ -77,10 +77,15 @@ export function MentalMathSession({
     
     if (!showFeedback) {
       // Focus the active input based on mode
-      if (!isMultiAnswer && useKatexInput && inputRef.current) {
-        inputRef.current.focus();
+      if (!isMultiAnswer && useKatexInput && katexInputRef.current) {
+        // Small delay to ensure the component is mounted
+        setTimeout(() => {
+          katexInputRef.current?.focus();
+        }, 0);
       } else if (simpleInputRef.current) {
-        simpleInputRef.current.focus();
+        setTimeout(() => {
+          simpleInputRef.current?.focus();
+        }, 0);
       }
     }
   }, [currentQuestion.id, currentQuestion.answer, showFeedback, useKatexInput, isMultiAnswer]);
@@ -179,7 +184,7 @@ export function MentalMathSession({
           <div className="w-full max-w-2xl flex flex-col items-center gap-12">
             {/* Topic badge */}
             <div className="flex justify-center">
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/40 text-xs font-medium">
+              <span className="text-white/30 text-xs font-mono uppercase tracking-wider">
                 {displayTopicName}
               </span>
             </div>
@@ -241,12 +246,12 @@ export function MentalMathSession({
                         onKeyDown={handleKeyDown}
                         placeholder={index === 0 ? "First root" : "Second root"}
                         className={cn(
-                          "w-32 h-14 text-xl font-semibold rounded-2xl border-2 outline-none transition-all duration-75",
+                          "w-32 h-14 text-xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
                           showFeedback && lastAttempt?.isCorrect
-                            ? "bg-primary/20 border-primary/50 text-primary focus:ring-0 focus:outline-none focus:border-primary/50"
+                            ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
                             : showFeedback && !lastAttempt?.isCorrect
-                            ? "bg-red-500/20 border-red-500/50 text-red-100 focus:ring-0 focus:outline-none focus:border-red-500/50"
-                            : "bg-white/5 border-white/10 text-white/90 focus:border-primary/50 focus:ring-4 focus:ring-primary/20",
+                            ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
+                            : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
                           "placeholder:text-white/20 placeholder:text-sm placeholder:font-medium",
                           (showFeedback && lastAttempt?.isCorrect) || answerRevealed ? "cursor-not-allowed" : ""
                         )}
@@ -298,6 +303,7 @@ export function MentalMathSession({
               ) : useKatexInput ? (
                 <>
                   <KatexInput
+                    ref={katexInputRef}
                     value={answer}
                     onChange={setAnswer}
                     onSubmit={handleSubmit}
@@ -310,6 +316,7 @@ export function MentalMathSession({
                     disabled={showFeedback && lastAttempt?.isCorrect}
                     showReveal={!answerRevealed && showFeedback && !lastAttempt?.isCorrect}
                     hasError={showFeedback && !lastAttempt?.isCorrect}
+                    autoFocus={!showFeedback}
                   />
                   {/* Input mode toggle */}
                   <button
@@ -330,12 +337,12 @@ export function MentalMathSession({
                       onKeyDown={handleKeyDown}
                       placeholder="Type your answer"
                       className={cn(
-                        "w-full h-16 text-2xl font-semibold rounded-2xl border-2 outline-none transition-all duration-75",
+                        "w-full h-16 text-2xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
                         showFeedback && lastAttempt?.isCorrect
-                          ? "bg-primary/20 border-primary/50 text-primary focus:ring-0 focus:outline-none focus:border-primary/50"
+                          ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
                           : showFeedback && !lastAttempt?.isCorrect
-                          ? "bg-red-500/20 border-red-500/50 text-red-100 focus:ring-0 focus:outline-none focus:border-red-500/50"
-                          : "bg-white/5 border-white/10 text-white/90 focus:border-primary/50 focus:ring-4 focus:ring-primary/20",
+                          ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
+                          : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
                         "placeholder:text-white/20 placeholder:text-base placeholder:font-medium",
                         (showFeedback && lastAttempt?.isCorrect) || answerRevealed ? "cursor-not-allowed" : ""
                       )}

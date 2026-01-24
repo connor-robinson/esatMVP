@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import type { PaperSection, Question } from "@/types/papers";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
+import { getSectionColor } from "@/config/colors";
 
 interface SectionSummaryProps {
   currentSectionIndex: number;
@@ -32,15 +33,14 @@ export function SectionSummary({
   sectionInstructionTimer,
   setSectionInstructionTimer,
 }: SectionSummaryProps) {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:35',message:'SectionSummary render',data:{currentSectionIndex,sectionInstructionTimer,hasOnNext:!!onNext,hasOnTimerExpire:!!onTimerExpire},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A1'})}).catch(()=>{});
-  // #endregion
   const [displaySeconds, setDisplaySeconds] = useState(sectionInstructionTimer || 60);
 
   const currentSection = selectedSections[currentSectionIndex];
   const currentSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
   const questionCount = currentSectionQuestions.length;
   const timeLimit = sectionTimeLimits[currentSectionIndex] || 60;
+  const totalSections = selectedSections.length;
+  const completedSections = currentSectionIndex; // Sections completed before current one
 
   // Get section info from first question
   const firstQuestion = currentSectionQuestions[0];
@@ -60,54 +60,28 @@ export function SectionSummary({
 
   // Sync displaySeconds with store timer when it changes
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:62',message:'Timer sync effect',data:{sectionInstructionTimer,currentSectionIndex,willSet:sectionInstructionTimer !== null && sectionInstructionTimer > 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A4'})}).catch(()=>{});
-    // #endregion
     if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:66',message:'Syncing displaySeconds with store timer',data:{sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A4'})}).catch(()=>{});
-      // #endregion
       setDisplaySeconds(sectionInstructionTimer);
     }
   }, [sectionInstructionTimer, currentSectionIndex]); // Re-initialize when section or timer changes
 
   // Timer countdown effect - sync with store timer
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:75',message:'Timer countdown effect entry',data:{sectionInstructionTimer,displaySeconds,willStart:sectionInstructionTimer !== null && sectionInstructionTimer > 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
-    // #endregion
-    
     // Only run countdown if timer is active
     if (sectionInstructionTimer === null || sectionInstructionTimer <= 0) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:79',message:'Timer countdown effect early return',data:{sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
-      // #endregion
       return;
     }
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:85',message:'Starting timer interval',data:{sectionInstructionTimer,displaySeconds},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
-    // #endregion
     
     const interval = setInterval(() => {
       setDisplaySeconds((prev) => {
         const newSeconds = Math.max(0, prev - 1);
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:90',message:'Timer tick',data:{prev,newSeconds,willExpire:newSeconds === 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
-        // #endregion
         
         // Update store immediately when countdown changes
         if (newSeconds > 0) {
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:95',message:'Updating store timer',data:{newSeconds},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
-          // #endregion
           setSectionInstructionTimer(newSeconds);
           return newSeconds;
         } else {
           // Timer expired
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:101',message:'Timer expired',data:{hasOnTimerExpire:!!onTimerExpire},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A5'})}).catch(()=>{});
-          // #endregion
           setSectionInstructionTimer(0);
           onTimerExpire();
           return 0;
@@ -116,9 +90,6 @@ export function SectionSummary({
     }, 1000);
 
     return () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:110',message:'Cleaning up timer interval',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A2'})}).catch(()=>{});
-      // #endregion
       clearInterval(interval);
     };
   }, [sectionInstructionTimer, onTimerExpire, setSectionInstructionTimer]);
@@ -136,6 +107,30 @@ export function SectionSummary({
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-8 py-16">
       <div className="w-full max-w-3xl space-y-8">
+        {/* Progress Indicator */}
+        {totalSections > 1 && (
+          <div className="w-full space-y-3">
+            <div className="flex items-center justify-between text-sm text-neutral-400">
+              <span>Section {currentSectionIndex + 1} of {totalSections}</span>
+              <span>{completedSections}/{totalSections} sections completed</span>
+            </div>
+            {/* Completed Sections Display */}
+            {completedSections > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedSections.slice(0, completedSections).map((section, idx) => (
+                  <div
+                    key={idx}
+                    className="px-3 py-1 rounded-md text-sm font-medium text-white"
+                    style={{ backgroundColor: getSectionColor(section) }}
+                  >
+                    {section}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Header: Title and Clock (Top Right) */}
         <div className="flex items-start justify-between w-full">
           {/* Section Title - Left */}
@@ -143,7 +138,7 @@ export function SectionSummary({
             {cleanPartLetter && partName ? (
               <h2 className="text-xl font-semibold text-neutral-100">
                 This is{' '}
-                <span style={{ color: '#5075a4' }}>Part {cleanPartLetter}</span>
+                <span style={{ color: getSectionColor(currentSection) }}>Part {cleanPartLetter}</span>
                 {`: ${partName} of the ${paperName}${examYear ? ` ${examYear}` : ''} paper`}
               </h2>
             ) : (
@@ -213,9 +208,6 @@ export function SectionSummary({
         <div className="flex justify-center pt-4">
           <Button
             onClick={() => {
-              // #region agent log
-              fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SectionSummary.tsx:180',message:'Next button clicked',data:{hasOnNext:!!onNext,currentSectionIndex},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B1'})}).catch(()=>{});
-              // #endregion
               onNext();
             }}
             variant="primary"

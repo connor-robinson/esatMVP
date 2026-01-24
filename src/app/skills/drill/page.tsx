@@ -4,7 +4,8 @@
 
 "use client";
 
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
@@ -44,6 +45,14 @@ const QuizLoadingSkeleton = () => (
 export default function BuilderPage() {
   const allTopics = getAllTopics();
   const builder = useBuilderSession();
+  const router = useRouter();
+
+  // Navigate to session route when session starts
+  useEffect(() => {
+    if (builder.view === "running" && builder.currentSession) {
+      router.push("/skills/drill/session");
+    }
+  }, [builder.view, builder.currentSession, router]);
 
   // Save preset with name prompt
   const handleSavePreset = () => {
@@ -116,30 +125,10 @@ export default function BuilderPage() {
     );
   }
 
-  // Running session view
+  // Running session view - redirect to session page
   if (builder.view === "running") {
-    // Show loading if questions are being generated or session is initializing
-    if (!builder.currentSession || !builder.currentQuestion) {
-      return <QuizLoadingSkeleton />;
-    }
-    
-    // Use MentalMathSession for all modes
-    return (
-      <Suspense fallback={<QuizLoadingSkeleton />}>
-        <MentalMathSession
-          currentQuestion={builder.currentQuestion}
-          questionNumber={builder.currentQuestionIndex + 1}
-          totalQuestions={builder.totalQuestions}
-          progress={builder.progress}
-          showFeedback={builder.showFeedback}
-          lastAttempt={builder.lastAttempt}
-          correctCount={builder.correctCount}
-          onSubmitAnswer={builder.submitAnswer}
-          onContinueAfterIncorrect={builder.continueAfterIncorrect}
-          onExit={builder.exitSession}
-        />
-      </Suspense>
-    );
+    // Show loading while navigating
+    return <QuizLoadingSkeleton />;
   }
 
   // Results view

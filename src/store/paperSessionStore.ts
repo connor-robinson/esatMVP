@@ -43,6 +43,8 @@ interface PaperSessionState {
   sectionInstructionTimer: number | null;
   sectionInstructionDeadline: number | null;
   allSectionsQuestions: Question[][];
+  sectionDeadlines: number[]; // Deadline timestamp for each section
+  sectionStartTimes: number[]; // Start timestamp for each section
   
   // Timing
   startedAt: number | null;
@@ -99,6 +101,8 @@ interface PaperSessionState {
   getCurrentSectionQuestions: () => Question[];
   getSectionTimeLimit: (sectionIndex: number) => number;
   calculateSectionTimeLimits: () => void;
+  setSectionStartTime: (sectionIndex: number, startTime: number) => void;
+  getSectionRemainingTime: (sectionIndex: number) => number;
 
   schedulePersist: () => void;
   persistSessionToServer: (options?: { immediate?: boolean }) => Promise<void>;
@@ -146,6 +150,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       sectionInstructionTimer: null,
       sectionInstructionDeadline: null,
       allSectionsQuestions: [],
+      sectionDeadlines: [],
+      sectionStartTimes: [],
       
       startedAt: null,
       endedAt: null,
@@ -195,6 +201,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sectionInstructionDeadline: null,
           allSectionsQuestions: [],
           sectionTimeLimits: [],
+          sectionDeadlines: [],
+          sectionStartTimes: [],
           sectionStarts: {},
         });
 
@@ -640,16 +648,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
       
       navigateToQuestion: (index) => {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:611',message:'navigateToQuestion called',data:{index,currentState:get().currentQuestionIndex,questionsLength:get().questions.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
-        // #endregion
         set((state) => {
           const newVisitedQuestions = [...state.visitedQuestions];
           newVisitedQuestions[index] = true;
           const newState = { currentQuestionIndex: index, visitedQuestions: newVisitedQuestions };
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:616',message:'navigateToQuestion state update',data:{index,before:state.currentQuestionIndex,after:index},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B4'})}).catch(()=>{});
-          // #endregion
           return newState;
         });
       },
@@ -966,25 +968,31 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
         }
         
+        // Set section start time and deadline
+        const now = Date.now();
+        const sectionTimeLimit = state.sectionTimeLimits[index] || 60;
+        const sectionDeadline = now + sectionTimeLimit * 60 * 1000;
+        
+        // Update arrays to ensure they're long enough
+        const newSectionStartTimes = [...state.sectionStartTimes];
+        const newSectionDeadlines = [...state.sectionDeadlines];
+        newSectionStartTimes[index] = now;
+        newSectionDeadlines[index] = sectionDeadline;
+        
         set({ 
           currentSectionIndex: index, 
-          currentQuestionIndex: newQuestionIndex 
+          currentQuestionIndex: newQuestionIndex,
+          sectionStartTimes: newSectionStartTimes,
+          sectionDeadlines: newSectionDeadlines
         });
       },
       
       setSectionInstructionTimer: (seconds: number) => {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:968',message:'setSectionInstructionTimer called',data:{seconds,currentState:get().sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
-        // #endregion
         const deadline = seconds > 0 ? Date.now() + seconds * 1000 : null;
-        const stateBefore = get().sectionInstructionTimer;
         set({ 
           sectionInstructionTimer: seconds,
           sectionInstructionDeadline: deadline
         });
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c11e1f2e-5561-46ab-8d60-cb3c5384f2f8',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paperSessionStore.ts:973',message:'setSectionInstructionTimer state updated',data:{seconds,stateBefore,stateAfter:get().sectionInstructionTimer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A3'})}).catch(()=>{});
-        // #endregion
       },
       
       getCurrentSectionQuestions: () => {
@@ -1012,6 +1020,34 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         });
         
         set({ sectionTimeLimits: timeLimits });
+      },
+      
+      setSectionStartTime: (sectionIndex: number, startTime: number) => {
+        const state = get();
+        const newSectionStartTimes = [...state.sectionStartTimes];
+        newSectionStartTimes[sectionIndex] = startTime;
+        
+        // Calculate deadline based on section time limit
+        const sectionTimeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+        const sectionDeadline = startTime + sectionTimeLimit * 60 * 1000;
+        const newSectionDeadlines = [...state.sectionDeadlines];
+        newSectionDeadlines[sectionIndex] = sectionDeadline;
+        
+        set({
+          sectionStartTimes: newSectionStartTimes,
+          sectionDeadlines: newSectionDeadlines
+        });
+      },
+      
+      getSectionRemainingTime: (sectionIndex: number) => {
+        const state = get();
+        const deadline = state.sectionDeadlines[sectionIndex];
+        if (!deadline) {
+          // If no deadline set, return the section time limit
+          const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+          return timeLimit * 60;
+        }
+        return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
       },
     }),
     {
@@ -1041,6 +1077,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         sectionInstructionTimer: state.sectionInstructionTimer,
         sectionInstructionDeadline: state.sectionInstructionDeadline,
         allSectionsQuestions: state.allSectionsQuestions,
+        sectionDeadlines: state.sectionDeadlines,
+        sectionStartTimes: state.sectionStartTimes,
         startedAt: state.startedAt,
         deadline: state.deadline,
         endedAt: state.endedAt,

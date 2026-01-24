@@ -103,12 +103,21 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
       });
 
       if (!response.ok) {
+        // Clone the response before reading it, so we can read it multiple times if needed
+        const responseClone = response.clone();
         let errorData: any = {};
         try {
           errorData = await response.json();
         } catch (e) {
-          console.error('[useQuestionEditor] Failed to parse error response:', e);
-          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+          // If JSON parsing fails, try reading as text
+          try {
+            const text = await responseClone.text();
+            console.error('[useQuestionEditor] Failed to parse error response as JSON, raw text:', text);
+            errorData = { error: `HTTP ${response.status}: ${response.statusText}`, rawText: text };
+          } catch (textError) {
+            console.error('[useQuestionEditor] Failed to parse error response:', e, textError);
+            errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+          }
         }
         
         const errorMessage = errorData.error || errorData.details || errorData.message || 'Failed to save changes';
@@ -129,15 +138,6 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
           // Try to get all properties of errorData
           allErrorKeys: Object.keys(errorData),
         });
-        
-        // Log the raw response text if available
-        try {
-          const responseClone = response.clone();
-          const text = await responseClone.text();
-          console.error('[useQuestionEditor] Raw error response:', text);
-        } catch (e) {
-          console.error('[useQuestionEditor] Could not read response text:', e);
-        }
         
         // Include more details in the error message
         const detailedError = errorData.details 
