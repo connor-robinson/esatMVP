@@ -47,11 +47,17 @@ export default function BuilderPage() {
   const builder = useBuilderSession();
   const router = useRouter();
 
-  // Navigate to session route when session starts
+  // Navigate to session route when session starts (backup navigation)
   useEffect(() => {
     if (builder.view === "running" && builder.currentSession) {
       // Use replace to avoid adding to history
-      router.replace("/skills/drill/session");
+      // Add a small delay to ensure we're not navigating before the direct navigation in onStart
+      const timer = setTimeout(() => {
+        if (window.location.pathname !== "/skills/drill/session") {
+          router.replace("/skills/drill/session");
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [builder.view, builder.currentSession, router]);
 
@@ -93,7 +99,13 @@ export default function BuilderPage() {
                 onRemoveAllTopicVariants={builder.removeAllTopicVariants}
                 onClear={builder.clearTopics}
                 onSave={handleSavePreset}
-                onStart={builder.startSession}
+                onStart={() => {
+                  builder.startSession();
+                  // Navigate immediately after starting - use a small delay to ensure state is set
+                  setTimeout(() => {
+                    router.replace("/skills/drill/session");
+                  }, 50);
+                }}
                 canStart={builder.canStart}
                 presets={builder.presets}
                 onLoadPreset={builder.loadPreset}

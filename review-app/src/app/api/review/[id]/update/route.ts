@@ -79,6 +79,18 @@ export async function PATCH(
     if (body.distractor_map !== undefined) {
       updates.distractor_map = body.distractor_map;
     }
+    if (body.difficulty !== undefined) {
+      updates.difficulty = body.difficulty;
+    }
+    if (body.paper !== undefined) {
+      updates.paper = body.paper;
+    }
+    if (body.primary_tag !== undefined) {
+      updates.primary_tag = body.primary_tag;
+    }
+    if (body.secondary_tags !== undefined) {
+      updates.secondary_tags = body.secondary_tags;
+    }
 
     // Update updated_at and optionally reviewed_by
     updates.updated_at = new Date().toISOString();

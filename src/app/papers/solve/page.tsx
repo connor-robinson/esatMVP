@@ -20,10 +20,10 @@ import { QuestionDisplay } from "@/components/papers/QuestionDisplay";
 import { NavigatorPopup } from "@/components/papers/NavigatorPopup";
 import { SectionSummary } from "@/components/papers/SectionSummary";
 import { SubmitSectionReview } from "@/components/papers/SubmitSectionReview";
-import { SectionCompletionSummary } from "@/components/papers/SectionCompletionSummary";
-import { MarkPageIntro } from "@/components/papers/MarkPageIntro";
+import { MarkingInfoPage } from "@/components/papers/MarkingInfoPage";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
+import { prefetchImages } from "@/lib/papers/prefetch";
 import type { Letter, PaperType } from "@/types/papers";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -80,11 +80,8 @@ export default function PapersSolvePage() {
   const [notesExpanded, setNotesExpanded] = useState(false);
   const [showNotesPopover, setShowNotesPopover] = useState(false);
   const [showNavigator, setShowNavigator] = useState(false);
-  const [showUnseenWarning, setShowUnseenWarning] = useState(false);
   const [showSubmitReview, setShowSubmitReview] = useState(false);
-  const [hasViewedContent, setHasViewedContent] = useState<Record<number, boolean>>({});
-  const [showCompletionPage, setShowCompletionPage] = useState(false);
-  const [showMarkIntro, setShowMarkIntro] = useState(false);
+  const [showMarkingInfo, setShowMarkingInfo] = useState(false);
   
   // Track if we've loaded questions for the current paperId to prevent reload loops
   const loadedPaperIdRef = useRef<number | null>(null);
@@ -97,8 +94,8 @@ export default function PapersSolvePage() {
     const isLastSection = currentSectionIndex === selectedSections.length - 1;
     
     if (isLastSection) {
-      // Last section - show completion page
-      setShowCompletionPage(true);
+      // Last section - show marking info page
+      setShowMarkingInfo(true);
     } else {
       // Move to next section - show section summary first
       const nextSectionIndex = currentSectionIndex + 1;
@@ -115,11 +112,10 @@ export default function PapersSolvePage() {
     const interval = setInterval(() => {
       const state = usePaperSessionStore.getState();
       
-      // Check section deadline if in section mode and not showing intro/completion/mark intro
+      // Check section deadline if in section mode and not showing intro/marking info
       if (isSectionMode && 
           sectionInstructionTimer === null && 
-          !showCompletionPage && 
-          !showMarkIntro &&
+          !showMarkingInfo &&
           sectionDeadlines.length > 0 &&
           currentSectionIndex < sectionDeadlines.length) {
         const sectionDeadline = sectionDeadlines[currentSectionIndex];
@@ -144,7 +140,7 @@ export default function PapersSolvePage() {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionDeadlines, currentSectionIndex, showCompletionPage, showMarkIntro, handleSectionTimeExpired, getRemainingTime, incrementTime]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
+  }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionDeadlines, currentSectionIndex, showMarkingInfo, handleSectionTimeExpired, getRemainingTime, incrementTime]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
   
   // Load questions when session starts
   useEffect(() => {
@@ -193,6 +189,44 @@ export default function PapersSolvePage() {
       setSectionInstructionTimer(60);
     }
   }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
+
+  // Prefetch question images during section intro timer
+  useEffect(() => {
+    if (sectionInstructionTimer !== null && sectionInstructionTimer > 0 && isSectionMode) {
+      const sectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+      const imageUrls = sectionQuestions
+        .map(q => q.questionImage)
+        .filter(Boolean) as string[];
+      
+      if (imageUrls.length > 0) {
+        console.log(`[solve] Prefetching ${imageUrls.length} images for section ${currentSectionIndex + 1}`);
+        // Prefetch in background - don't await to avoid blocking
+        prefetchImages(imageUrls, { cacheName: 'paper-assets-v1', warmDecodeCount: 5 }).catch(err => {
+          console.warn('[solve] Error prefetching images:', err);
+        });
+      }
+    }
+  }, [sectionInstructionTimer, currentSectionIndex, allSectionsQuestions, isSectionMode]);
+
+  // Prefetch images when questions are first loaded (for first section)
+  useEffect(() => {
+    if (questions.length > 0 && !questionsLoading && isSectionMode && allSectionsQuestions.length > 0) {
+      // Prefetch first section's images if timer hasn't started yet
+      if (currentSectionIndex === 0 && (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
+        const firstSectionQuestions = allSectionsQuestions[0] || [];
+        const imageUrls = firstSectionQuestions
+          .map(q => q.questionImage)
+          .filter(Boolean) as string[];
+        
+        if (imageUrls.length > 0) {
+          console.log('[solve] Prefetching images for first section');
+          prefetchImages(imageUrls, { cacheName: 'paper-assets-v1', warmDecodeCount: 5 }).catch(err => {
+            console.warn('[solve] Error prefetching first section images:', err);
+          });
+        }
+      }
+    }
+  }, [questions.length, questionsLoading, isSectionMode, allSectionsQuestions, currentSectionIndex, sectionInstructionTimer]);
   
   // Redirect if no active session
   useEffect(() => {
@@ -230,11 +264,6 @@ export default function PapersSolvePage() {
         });
       });
       previousQuestionIndexRef.current = currentQuestionIndex;
-      // Reset content viewed status for new question if not already viewed
-      // This allows the warning to show if user tries to answer without viewing
-      if (!hasViewedContent[currentQuestionIndex]) {
-        // Content will be marked as viewed when user scrolls to bottom
-      }
     }
     // Always capture current scroll in case we navigate
     scrollPositionRef.current = window.scrollY;
@@ -439,11 +468,6 @@ export default function PapersSolvePage() {
   }, [getCurrentSectionBounds]);
 
   const handleChoiceSelect = (letter: Letter) => {
-    // Check if user has viewed content before allowing answer
-    if (!hasViewedContent[sectionQuestionIndex]) {
-      setShowUnseenWarning(true);
-      return;
-    }
     setAnswer(fullQuestionIndex, letter);
   };
   
@@ -659,8 +683,8 @@ export default function PapersSolvePage() {
     const isLastSection = currentSectionIndex === selectedSections.length - 1;
     
     if (isLastSection) {
-      // Last section - show completion page instead of submitting
-      setShowCompletionPage(true);
+      // Last section - show marking info page instead of submitting
+      setShowMarkingInfo(true);
     } else {
       // Move to next section - show section summary first
       const nextSectionIndex = currentSectionIndex + 1;
@@ -672,14 +696,8 @@ export default function PapersSolvePage() {
     }
   };
 
-  // Handle completion page next
-  const handleCompletionPageNext = () => {
-    setShowCompletionPage(false);
-    setShowMarkIntro(true);
-  };
-
-  // Handle mark intro next
-  const handleMarkIntroNext = () => {
+  // Handle marking info page next
+  const handleMarkingInfoNext = () => {
     setEndedAt(Date.now());
     router.push("/papers/mark");
   };
@@ -718,13 +736,11 @@ export default function PapersSolvePage() {
     const currentPath = window.location.pathname;
     let newPath = currentPath;
     
-    if (showMarkIntro) {
-      newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
-    } else if (showCompletionPage) {
+    if (showMarkingInfo) {
       newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
     } else if (sectionInstructionTimer !== null && sectionInstructionTimer > 0) {
       newPath = currentPath.replace(/\/info$|\/session$/, '') + '/info';
-    } else if (isSectionMode && !showCompletionPage && !showMarkIntro && (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
+    } else if (isSectionMode && !showMarkingInfo && (sectionInstructionTimer === null || sectionInstructionTimer === 0)) {
       newPath = currentPath.replace(/\/info$|\/session$/, '') + '/session';
     } else {
       newPath = currentPath.replace(/\/info$|\/session$/, '');
@@ -733,24 +749,15 @@ export default function PapersSolvePage() {
     if (newPath !== currentPath && newPath !== window.location.pathname) {
       window.history.replaceState({}, '', newPath);
     }
-  }, [sessionId, showMarkIntro, showCompletionPage, sectionInstructionTimer, isSectionMode]);
+  }, [sessionId, showMarkingInfo, sectionInstructionTimer, isSectionMode]);
   
-  // Show mark intro if active
-  if (showMarkIntro) {
+  // Show marking info page if active
+  if (showMarkingInfo) {
     return (
       <Container size="lg" className="min-h-screen">
-        <MarkPageIntro onNext={handleMarkIntroNext} />
-      </Container>
-    );
-  }
-
-  // Show completion page if active
-  if (showCompletionPage) {
-    return (
-      <Container size="lg" className="min-h-screen">
-        <SectionCompletionSummary
+        <MarkingInfoPage
           selectedSections={selectedSections}
-          onNext={handleCompletionPageNext}
+          onNext={handleMarkingInfoNext}
         />
       </Container>
     );
@@ -823,12 +830,6 @@ export default function PapersSolvePage() {
                       onReviewFlagToggle={handleReviewFlagToggle}
                       paperName={paperName}
                       currentQuestion={currentQuestion}
-                      onContentViewed={() => {
-                        setHasViewedContent((prev) => ({
-                          ...prev,
-                          [currentQuestionIndex]: true
-                        }));
-                      }}
                     />
                   </div>
                 ) : (
@@ -1135,43 +1136,6 @@ export default function PapersSolvePage() {
           />
         )}
 
-        {/* Unseen Content Warning Popup */}
-        {showUnseenWarning && (
-          <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
-            role="dialog"
-            aria-modal="true"
-            onClick={() => setShowUnseenWarning(false)}
-          >
-            <div
-              className="w-full max-w-md rounded-lg border-2 shadow-2xl bg-[#0e0f13] border-white/12"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-500/20">
-                    <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-neutral-100">Unseen content</h3>
-                </div>
-                <p className="text-sm text-neutral-400">
-                  You have not yet viewed the entire screen. Make sure you play all multimedia content, select every tab and scroll to every corner.
-                </p>
-                <div className="flex justify-end pt-2">
-                  <button
-                    onClick={() => setShowUnseenWarning(false)}
-                    className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    style={{ backgroundColor: '#5075a4', color: '#ffffff' }}
-                  >
-                    OK
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </Container>
   );

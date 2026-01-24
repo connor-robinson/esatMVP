@@ -23,7 +23,6 @@ interface QuestionDisplayProps {
   onReviewFlagToggle?: () => void;
   paperName?: string;
   currentQuestion?: Question;
-  onContentViewed?: () => void;
 }
 
 export function QuestionDisplay({ 
@@ -37,8 +36,7 @@ export function QuestionDisplay({
   isFlaggedForReview = false,
   onReviewFlagToggle,
   paperName = "",
-  currentQuestion,
-  onContentViewed
+  currentQuestion
 }: QuestionDisplayProps) {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -143,43 +141,6 @@ export function QuestionDisplay({
       setTimeout(checkScrollable, 100); // Small delay to ensure layout is complete
     }
   }, [imageLoading]);
-
-  // Track if user has scrolled to view all content
-  useEffect(() => {
-    if (!scrollContainerRef.current || !onContentViewed) return;
-
-    const container = scrollContainerRef.current;
-    let hasScrolledToBottom = false;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10; // 10px threshold
-      
-      if (isAtBottom && !hasScrolledToBottom) {
-        hasScrolledToBottom = true;
-        onContentViewed();
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll);
-    
-    // Check initial state - if content fits on screen, mark as viewed
-    const checkInitial = () => {
-      const { scrollHeight, clientHeight } = container;
-      if (scrollHeight <= clientHeight + 10) {
-        onContentViewed();
-      }
-    };
-    
-    // Check after image loads
-    if (!imageLoading) {
-      setTimeout(checkInitial, 200);
-    }
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-  }, [imageLoading, onContentViewed]);
 
   // Prevent context menu on image
   const handleContextMenu = (e: React.MouseEvent) => {

@@ -84,6 +84,40 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
     });
   }, [editedQuestion]);
 
+  const updateDifficulty = useCallback((value: 'Easy' | 'Medium' | 'Hard') => {
+    updateField('difficulty', value);
+  }, [updateField]);
+
+  const updatePaper = useCallback((value: string | null) => {
+    updateField('paper', value);
+  }, [updateField]);
+
+  const updatePrimaryTag = useCallback((value: string | null) => {
+    updateField('primary_tag', value);
+  }, [updateField]);
+
+  const addSecondaryTag = useCallback((tag: string) => {
+    if (!editedQuestion) return;
+    
+    const currentTags = editedQuestion.secondary_tags || [];
+    if (!currentTags.includes(tag)) {
+      setEditedQuestion({
+        ...editedQuestion,
+        secondary_tags: [...currentTags, tag],
+      });
+    }
+  }, [editedQuestion]);
+
+  const removeSecondaryTag = useCallback((tag: string) => {
+    if (!editedQuestion) return;
+    
+    const currentTags = editedQuestion.secondary_tags || [];
+    setEditedQuestion({
+      ...editedQuestion,
+      secondary_tags: currentTags.filter(t => t !== tag),
+    });
+  }, [editedQuestion]);
+
   const saveChanges = useCallback(async (): Promise<ReviewQuestion | null> => {
     if (!editedQuestion) return null;
 
@@ -95,6 +129,10 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
       solution_reasoning: editedQuestion.solution_reasoning,
       solution_key_insight: editedQuestion.solution_key_insight,
       distractor_map: editedQuestion.distractor_map,
+      difficulty: editedQuestion.difficulty,
+      paper: editedQuestion.paper,
+      primary_tag: editedQuestion.primary_tag,
+      secondary_tags: editedQuestion.secondary_tags,
     };
 
     try {
@@ -251,6 +289,11 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
     updateSolutionReasoning,
     updateKeyInsight,
     updateDistractor,
+    updateDifficulty,
+    updatePaper,
+    updatePrimaryTag,
+    addSecondaryTag,
+    removeSecondaryTag,
     saveChanges,
     enterEditMode,
     exitEditMode,

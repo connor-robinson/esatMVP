@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MathContent } from "./shared/MathContent";
 import { cn } from "@/lib/utils";
-import { Eye } from "lucide-react";
+import { Eye, Plus, X } from "lucide-react";
 import type { ReviewQuestion } from "@/types/review";
 
 interface QuestionPanelProps {
@@ -13,6 +13,11 @@ interface QuestionPanelProps {
   onOptionChange: (letter: string, value: string) => void;
   onDistractorChange?: (letter: string, value: string) => void;
   onAnswerShown?: () => void;
+  onDifficultyChange?: (value: 'Easy' | 'Medium' | 'Hard') => void;
+  onPaperChange?: (value: string | null) => void;
+  onPrimaryTagChange?: (value: string | null) => void;
+  onAddSecondaryTag?: (tag: string) => void;
+  onRemoveSecondaryTag?: (tag: string) => void;
 }
 
 export function QuestionPanel({
@@ -22,6 +27,11 @@ export function QuestionPanel({
   onOptionChange,
   onDistractorChange,
   onAnswerShown,
+  onDifficultyChange,
+  onPaperChange,
+  onPrimaryTagChange,
+  onAddSecondaryTag,
+  onRemoveSecondaryTag,
 }: QuestionPanelProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   
@@ -59,30 +69,143 @@ export function QuestionPanel({
     return 'bg-white/10 text-white/70';
   };
 
+  const [newSecondaryTag, setNewSecondaryTag] = useState('');
+  const secondaryTags = question.secondary_tags || [];
+
+  // Common subjects/papers
+  const availablePapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+
   return (
     <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
-      {/* Header with badges */}
-      <div className="flex items-center gap-2 p-4 border-b border-white/10 flex-shrink-0">
-        <span className={cn(
-          "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-          question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
-          question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
-          question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]'
-        )}>
-          {question.difficulty}
-        </span>
-        {question.paper && question.paper.trim() && (
-          <span className={cn(
-            "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-            getSubjectColor(question.paper)
-          )}>
-            {question.paper}
-          </span>
-        )}
-        {question.primary_tag && (
-          <span className="px-3 py-1.5 rounded-organic-md text-xs font-mono bg-secondary/20 text-secondary">
-            {question.primary_tag}
-          </span>
+      {/* Header with badges/editable dropdowns */}
+      <div className="flex flex-wrap items-center gap-2 p-4 border-b border-white/10 flex-shrink-0">
+        {isEditMode ? (
+          <>
+            {/* Difficulty Dropdown */}
+            <select
+              value={question.difficulty}
+              onChange={(e) => onDifficultyChange?.(e.target.value as 'Easy' | 'Medium' | 'Hard')}
+              className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
+                question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
+                question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
+                question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]'
+              )}
+            >
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+
+            {/* Paper/Subject Dropdown */}
+            <select
+              value={question.paper || ''}
+              onChange={(e) => onPaperChange?.(e.target.value || null)}
+              className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
+                getSubjectColor(question.paper)
+              )}
+            >
+              <option value="">No Subject</option>
+              {availablePapers.map(paper => (
+                <option key={paper} value={paper}>{paper}</option>
+              ))}
+            </select>
+
+            {/* Primary Tag Input */}
+            <input
+              type="text"
+              value={question.primary_tag || ''}
+              onChange={(e) => onPrimaryTagChange?.(e.target.value || null)}
+              placeholder="Primary tag"
+              className="px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-secondary/20 text-secondary placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]"
+            />
+
+            {/* Secondary Tags */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-mono text-white/60">Secondary:</span>
+              {secondaryTags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20 flex items-center gap-1"
+                >
+                  {tag}
+                  {onRemoveSecondaryTag && (
+                    <button
+                      onClick={() => onRemoveSecondaryTag(tag)}
+                      className="hover:text-white/90 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </span>
+              ))}
+              <div className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={newSecondaryTag}
+                  onChange={(e) => setNewSecondaryTag(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newSecondaryTag.trim() && onAddSecondaryTag) {
+                      onAddSecondaryTag(newSecondaryTag.trim());
+                      setNewSecondaryTag('');
+                    }
+                  }}
+                  placeholder="Add tag"
+                  className="px-2 py-1 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 w-24"
+                />
+                {onAddSecondaryTag && (
+                  <button
+                    onClick={() => {
+                      if (newSecondaryTag.trim()) {
+                        onAddSecondaryTag(newSecondaryTag.trim());
+                        setNewSecondaryTag('');
+                      }
+                    }}
+                    className="p-1 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-colors border border-white/20"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <span className={cn(
+              "px-3 py-1.5 rounded-organic-md text-xs font-mono",
+              question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
+              question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
+              question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]'
+            )}>
+              {question.difficulty}
+            </span>
+            {question.paper && question.paper.trim() && (
+              <span className={cn(
+                "px-3 py-1.5 rounded-organic-md text-xs font-mono",
+                getSubjectColor(question.paper)
+              )}>
+                {question.paper}
+              </span>
+            )}
+            {question.primary_tag && (
+              <span className="px-3 py-1.5 rounded-organic-md text-xs font-mono bg-secondary/20 text-secondary border border-secondary/30">
+                {question.primary_tag}
+              </span>
+            )}
+            {secondaryTags.length > 0 && (
+              <div className="flex items-center gap-1 flex-wrap">
+                {secondaryTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 

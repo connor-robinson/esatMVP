@@ -29,12 +29,13 @@ export default function SessionPage() {
   // Redirect to builder if no active session (but give it a moment for state to update)
   useEffect(() => {
     // Only redirect if we're definitely in builder mode with no session
-    // Add a small delay to allow state updates to propagate
+    // Add a longer delay to allow state updates to propagate after navigation
     const timer = setTimeout(() => {
+      // Only redirect if we're still in builder mode and have no session after waiting
       if (builder.view === "builder" && !builder.currentSession) {
         router.replace("/skills/drill");
       }
-    }, 100);
+    }, 300);
     
     return () => clearTimeout(timer);
   }, [builder.view, builder.currentSession, router]);

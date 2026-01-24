@@ -32,6 +32,11 @@ export default function ReviewPage() {
     updateSolutionReasoning,
     updateKeyInsight,
     updateDistractor,
+    updateDifficulty,
+    updatePaper,
+    updatePrimaryTag,
+    addSecondaryTag,
+    removeSecondaryTag,
     saveChanges,
     enterEditMode,
     exitEditMode,
@@ -165,6 +170,11 @@ export default function ReviewPage() {
               onOptionChange={updateOption}
               onDistractorChange={updateDistractor}
               onAnswerShown={() => setHasShownAnswer(true)}
+              onDifficultyChange={updateDifficulty}
+              onPaperChange={updatePaper}
+              onPrimaryTagChange={updatePrimaryTag}
+              onAddSecondaryTag={addSecondaryTag}
+              onRemoveSecondaryTag={removeSecondaryTag}
             />
           ) : null}
         </div>
