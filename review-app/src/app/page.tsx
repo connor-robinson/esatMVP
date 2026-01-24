@@ -39,6 +39,7 @@ export default function ReviewPage() {
 
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [hasShownAnswer, setHasShownAnswer] = useState(false);
 
   // Show notification and auto-hide
   useEffect(() => {
@@ -48,8 +49,19 @@ export default function ReviewPage() {
     }
   }, [notification]);
 
+  // Reset hasShownAnswer when question changes
+  useEffect(() => {
+    setHasShownAnswer(false);
+  }, [currentQuestion?.id]);
+
   const handleApprove = async () => {
     if (!currentQuestion) return;
+
+    // Check if answer has been shown at least once
+    if (!hasShownAnswer) {
+      alert("You must show the answer at least once before approving this question.");
+      return;
+    }
 
     try {
       await approveQuestion(currentQuestion.id);
@@ -151,6 +163,7 @@ export default function ReviewPage() {
               isEditMode={isEditMode}
               onQuestionStemChange={updateQuestionStem}
               onOptionChange={updateOption}
+              onDistractorChange={updateDistractor}
             />
           ) : null}
         </div>
