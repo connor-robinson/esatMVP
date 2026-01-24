@@ -122,3 +122,4 @@ Check these locations for detailed error information:
 2. Browser Network Tab (F12 → Network → Click failed request)
 3. Vercel Function Logs (Dashboard → Deployment → Functions)
 
+

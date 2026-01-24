@@ -111,15 +111,41 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
           errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
         }
         
-        const errorMessage = errorData.error || errorData.details || 'Failed to save changes';
-        console.error('[useQuestionEditor] API error:', {
+        const errorMessage = errorData.error || errorData.details || errorData.message || 'Failed to save changes';
+        
+        // Log the full error object with all properties
+        console.error('[useQuestionEditor] API error - Full Details:', {
           status: response.status,
           statusText: response.statusText,
           url: response.url,
-          error: errorData,
+          errorData: errorData,
+          errorCode: errorData.code,
+          errorHint: errorData.hint,
+          errorDetails: errorData.details,
+          errorMessage: errorData.message,
+          authInfo: errorData.authInfo,
+          errorType: errorData.type,
           fullErrorData: JSON.stringify(errorData, null, 2),
+          // Try to get all properties of errorData
+          allErrorKeys: Object.keys(errorData),
         });
-        throw new Error(errorMessage);
+        
+        // Log the raw response text if available
+        try {
+          const responseClone = response.clone();
+          const text = await responseClone.text();
+          console.error('[useQuestionEditor] Raw error response:', text);
+        } catch (e) {
+          console.error('[useQuestionEditor] Could not read response text:', e);
+        }
+        
+        // Include more details in the error message
+        const detailedError = errorData.details 
+          ? `${errorMessage}: ${errorData.details}`
+          : errorData.code 
+          ? `${errorMessage} (${errorData.code})`
+          : errorMessage;
+        throw new Error(detailedError);
       }
 
       const data = await response.json();

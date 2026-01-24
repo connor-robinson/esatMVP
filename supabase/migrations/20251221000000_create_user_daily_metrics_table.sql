@@ -98,3 +98,4 @@ COMMENT ON COLUMN user_daily_metrics.sessions_count IS 'Number of sessions compl
 
 
 
+

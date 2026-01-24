@@ -45,12 +45,19 @@ export async function PATCH(
       hasOptions: 'options' in body,
     });
 
-    // Get current user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    // Get current user session (optional - for logging reviewer)
+    let userId: string | null = null;
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      userId = session?.user?.id || null;
+    } catch (authError) {
+      console.warn('[Review API] Could not get user session (non-critical):', authError);
+      // Continue without user - RLS policies will handle auth requirements
+    }
 
-    // Extract updatable fields
+    // Extract updatable fields (matching main app pattern)
     const updates: any = {};
     
     if (body.question_stem !== undefined) {
@@ -74,30 +81,8 @@ export async function PATCH(
 
     // Update updated_at and optionally reviewed_by
     updates.updated_at = new Date().toISOString();
-    if (user) {
-      updates.reviewed_by = user.id;
-    }
-
-    // Check if question exists
-    const { data: existingQuestion, error: checkError } = await supabase
-      .from('ai_generated_questions')
-      .select('id')
-      .eq('id', id)
-      .maybeSingle();
-
-    if (checkError) {
-      console.error('[Review API] Error checking question:', checkError);
-      return NextResponse.json(
-        { error: 'Failed to check question', details: checkError.message },
-        { status: 500 }
-      );
-    }
-
-    if (!existingQuestion) {
-      return NextResponse.json(
-        { error: 'Question not found' },
-        { status: 404 }
-      );
+    if (userId) {
+      updates.reviewed_by = userId;
     }
 
     // Validate that we have at least one field to update
@@ -107,24 +92,14 @@ export async function PATCH(
     }
 
     // Update the question and return the updated data in one operation
-    // This matches the pattern used in the main app and ensures atomicity
+    // This matches the pattern used in the main app exactly
     console.log('[Review API] Attempting update:', {
       id,
       updateKeys: Object.keys(updates),
-      updatesPreview: Object.keys(updates).reduce((acc, key) => {
-        const value = updates[key];
-        if (typeof value === 'string') {
-          acc[key] = value.substring(0, 50) + (value.length > 50 ? '...' : '');
-        } else if (typeof value === 'object') {
-          acc[key] = `[Object with ${Object.keys(value || {}).length} keys]`;
-        } else {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as any),
+      hasUserId: !!userId,
     });
 
-    // Perform update and select in one operation (like main app)
+    // Use the exact same pattern as main app
     const { data, error: updateError } = await supabase
       .from('ai_generated_questions')
       .update(updates)
@@ -136,19 +111,37 @@ export async function PATCH(
       console.error('[Review API] Supabase error updating question:', {
         error: updateError,
         id,
-        updates: Object.keys(updates),
+        updateKeys: Object.keys(updates),
         errorCode: updateError.code,
         errorMessage: updateError.message,
         errorDetails: updateError.details,
         errorHint: updateError.hint,
-        fullError: JSON.stringify(updateError, null, 2),
+        // Try to get PostgREST error code
+        postgrestCode: (updateError as any).code,
+        postgrestMessage: (updateError as any).message,
+        // Serialize error with all properties
+        fullError: JSON.stringify(updateError, Object.getOwnPropertyNames(updateError), 2),
+        hasUserId: !!userId,
+        userId: userId,
       });
+      
+      // Provide more detailed error information
+      const errorDetails = updateError.details || updateError.message || 'Unknown database error';
+      const errorHint = updateError.hint || '';
+      const errorCode = updateError.code || (updateError as any).code || 'UNKNOWN';
+      
       return NextResponse.json(
         { 
           error: 'Failed to update question', 
-          details: updateError.message || 'Unknown error',
-          code: updateError.code,
-          hint: updateError.hint,
+          details: errorDetails,
+          code: errorCode,
+          hint: errorHint,
+          message: updateError.message,
+          // Include auth info for debugging
+          authInfo: {
+            hasUserId: !!userId,
+            userId: userId,
+          },
         },
         { status: 500 }
       );

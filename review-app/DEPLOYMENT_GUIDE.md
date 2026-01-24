@@ -236,3 +236,4 @@ Vercel will automatically detect the push and deploy a new version.
 - Next.js Docs: https://nextjs.org/docs
 - Supabase Docs: https://supabase.com/docs
 
+
