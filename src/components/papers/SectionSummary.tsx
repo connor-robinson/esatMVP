@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import type { PaperSection, Question } from "@/types/papers";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
@@ -33,7 +33,9 @@ export function SectionSummary({
   sectionInstructionTimer,
   setSectionInstructionTimer,
 }: SectionSummaryProps) {
-  const [displaySeconds, setDisplaySeconds] = useState(sectionInstructionTimer || 60);
+  const [displaySeconds, setDisplaySeconds] = useState(60);
+  const timerInitializedRef = useRef<number>(-1);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentSection = selectedSections[currentSectionIndex];
   const currentSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
@@ -58,35 +60,40 @@ export function SectionSummary({
     sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Initialize displaySeconds when timer is set or section changes
+  // Initialize timer when section changes or component mounts
   useEffect(() => {
-    const initialValue = sectionInstructionTimer !== null && sectionInstructionTimer > 0 
-      ? sectionInstructionTimer 
-      : 60;
-    setDisplaySeconds(initialValue);
-  }, [sectionInstructionTimer, currentSectionIndex]);
+    // Only initialize if this is a new section (not already initialized for this section)
+    if (timerInitializedRef.current !== currentSectionIndex) {
+      // Reset to 60 seconds and mark as initialized
+      setDisplaySeconds(60);
+      setSectionInstructionTimer(60);
+      timerInitializedRef.current = currentSectionIndex;
+    }
+  }, [currentSectionIndex, setSectionInstructionTimer]);
 
-  // Timer countdown effect - sync with store timer
+  // Timer countdown effect - runs independently of store updates
   useEffect(() => {
-    // Only run countdown if timer should be active
-    // If sectionInstructionTimer is null, use 60 as default
-    // If it's 0 or less, don't run
-    const shouldRun = sectionInstructionTimer === null || (sectionInstructionTimer !== null && sectionInstructionTimer > 0);
-    
-    if (!shouldRun) {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Only start countdown if this section has been initialized
+    if (timerInitializedRef.current !== currentSectionIndex) {
       return;
     }
-    
-    const interval = setInterval(() => {
+
+    // Start countdown interval - always starts from current displaySeconds
+    intervalRef.current = setInterval(() => {
       setDisplaySeconds((prev) => {
         const newSeconds = Math.max(0, prev - 1);
         
-        // Update store immediately when countdown changes
+        // Update store periodically (every second) but don't cause re-render loop
         if (newSeconds > 0) {
           setSectionInstructionTimer(newSeconds);
           return newSeconds;
         } else {
-          // Timer expired - set to 0 to indicate timer is done
+          // Timer expired
           setSectionInstructionTimer(0);
           onTimerExpire();
           return 0;
@@ -95,9 +102,12 @@ export function SectionSummary({
     }, 1000);
 
     return () => {
-      clearInterval(interval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, [sectionInstructionTimer, onTimerExpire, setSectionInstructionTimer]);
+  }, [currentSectionIndex, onTimerExpire, setSectionInstructionTimer]); // Only depend on section change, not timer value
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -211,15 +221,23 @@ export function SectionSummary({
 
         {/* Next Button */}
         <div className="flex justify-center pt-4">
-          <Button
+          <button
             onClick={() => {
               onNext();
             }}
-            variant="primary"
-            className="px-8 py-3 text-base font-medium"
+            className="px-8 py-3 text-base font-medium rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview transition-all duration-fast ease-signature"
+            style={{
+              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+            }}
           >
             Next (N)
-          </Button>
+          </button>
         </div>
       </div>
     </div>

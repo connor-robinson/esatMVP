@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MathContent } from "./shared/MathContent";
 import { cn } from "@/lib/utils";
 import { Eye, Plus, X } from "lucide-react";
+import { getQuestionTagText, formatTagDisplay, getPaperType } from "@/lib/curriculum";
 import type { ReviewQuestion } from "@/types/review";
 
 interface QuestionPanelProps {
@@ -65,15 +66,26 @@ export function QuestionPanel({
     if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
       return 'bg-[#854952]/20 text-[#ef7d7d]';
     }
+    if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
+      return 'bg-[#506141]/20 text-[#85BC82]';
+    }
     
     return 'bg-white/10 text-white/70';
   };
 
   const [newSecondaryTag, setNewSecondaryTag] = useState('');
   const secondaryTags = question.secondary_tags || [];
+  const paperType = getPaperType(question);
 
   // Common subjects/papers
   const availablePapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+
+  // Helper to get tag display text
+  const getTagDisplay = (tag: string | null): string => {
+    if (!tag) return '';
+    const text = getQuestionTagText(question, tag);
+    return formatTagDisplay(tag, text);
+  };
 
   return (
     <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
@@ -113,32 +125,41 @@ export function QuestionPanel({
             </select>
 
             {/* Primary Tag Input */}
-            <input
-              type="text"
-              value={question.primary_tag || ''}
-              onChange={(e) => onPrimaryTagChange?.(e.target.value || null)}
-              placeholder="Primary tag"
-              className="px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-secondary/20 text-secondary placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]"
-            />
+            <div className="flex flex-col gap-1">
+              <input
+                type="text"
+                value={question.primary_tag || ''}
+                onChange={(e) => onPrimaryTagChange?.(e.target.value || null)}
+                placeholder="Primary tag"
+                className="px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-secondary/20 text-secondary placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]"
+              />
+              {question.primary_tag && (
+                <span className="text-xs font-mono text-white/50 px-1">
+                  {getTagDisplay(question.primary_tag)}
+                </span>
+              )}
+            </div>
 
             {/* Secondary Tags */}
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-mono text-white/60">Secondary:</span>
               {secondaryTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20 flex items-center gap-1"
-                >
-                  {tag}
-                  {onRemoveSecondaryTag && (
-                    <button
-                      onClick={() => onRemoveSecondaryTag(tag)}
-                      className="hover:text-white/90 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                </span>
+                <div key={tag} className="flex flex-col gap-1">
+                  <span className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20 flex items-center gap-1">
+                    {tag}
+                    {onRemoveSecondaryTag && (
+                      <button
+                        onClick={() => onRemoveSecondaryTag(tag)}
+                        className="hover:text-white/90 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </span>
+                  <span className="text-xs font-mono text-white/50 px-1">
+                    {getTagDisplay(tag)}
+                  </span>
+                </div>
               ))}
               <div className="flex items-center gap-1">
                 <input
@@ -189,19 +210,26 @@ export function QuestionPanel({
               </span>
             )}
             {question.primary_tag && (
-              <span className="px-3 py-1.5 rounded-organic-md text-xs font-mono bg-secondary/20 text-secondary border border-secondary/30">
-                {question.primary_tag}
-              </span>
+              <div className="flex flex-col gap-1">
+                <span className="px-3 py-1.5 rounded-organic-md text-xs font-mono bg-secondary/20 text-secondary border border-secondary/30">
+                  {question.primary_tag}
+                </span>
+                <span className="text-xs font-mono text-white/50 px-1">
+                  {getTagDisplay(question.primary_tag)}
+                </span>
+              </div>
             )}
             {secondaryTags.length > 0 && (
-              <div className="flex items-center gap-1 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
                 {secondaryTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20"
-                  >
-                    {tag}
-                  </span>
+                  <div key={tag} className="flex flex-col gap-1">
+                    <span className="px-2 py-1 rounded-organic-md text-xs font-mono bg-white/10 text-white/70 border border-white/20">
+                      {tag}
+                    </span>
+                    <span className="text-xs font-mono text-white/50 px-1">
+                      {getTagDisplay(tag)}
+                    </span>
+                  </div>
                 ))}
               </div>
             )}

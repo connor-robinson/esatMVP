@@ -4,8 +4,7 @@
 
 "use client";
 
-import { Suspense, lazy, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, lazy } from "react";
 import { Container } from "@/components/layout/Container";
 import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
@@ -45,21 +44,6 @@ const QuizLoadingSkeleton = () => (
 export default function BuilderPage() {
   const allTopics = getAllTopics();
   const builder = useBuilderSession();
-  const router = useRouter();
-
-  // Navigate to session route when session starts (backup navigation)
-  useEffect(() => {
-    if (builder.view === "running" && builder.currentSession) {
-      // Use replace to avoid adding to history
-      // Add a small delay to ensure we're not navigating before the direct navigation in onStart
-      const timer = setTimeout(() => {
-        if (window.location.pathname !== "/skills/drill/session") {
-          router.replace("/skills/drill/session");
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [builder.view, builder.currentSession, router]);
 
   // Save preset with name prompt
   const handleSavePreset = () => {
@@ -101,10 +85,6 @@ export default function BuilderPage() {
                 onSave={handleSavePreset}
                 onStart={() => {
                   builder.startSession();
-                  // Navigate immediately after starting - use a small delay to ensure state is set
-                  setTimeout(() => {
-                    router.replace("/skills/drill/session");
-                  }, 50);
                 }}
                 canStart={builder.canStart}
                 presets={builder.presets}
@@ -138,10 +118,32 @@ export default function BuilderPage() {
     );
   }
 
-  // Running session view - redirect to session page
+  // Running session view - show session component directly
   if (builder.view === "running") {
-    // Show loading while navigating
-    return <QuizLoadingSkeleton />;
+    // Show loading if questions are being generated or session is initializing
+    if (!builder.currentSession || !builder.currentQuestion) {
+      return <QuizLoadingSkeleton />;
+    }
+    
+    // Use MentalMathSession for all modes
+    return (
+      <Suspense fallback={<QuizLoadingSkeleton />}>
+        <MentalMathSession
+          currentQuestion={builder.currentQuestion}
+          questionNumber={builder.currentQuestionIndex + 1}
+          totalQuestions={builder.totalQuestions}
+          progress={builder.progress}
+          showFeedback={builder.showFeedback}
+          lastAttempt={builder.lastAttempt}
+          correctCount={builder.correctCount}
+          onSubmitAnswer={builder.submitAnswer}
+          onContinueAfterIncorrect={builder.continueAfterIncorrect}
+          onExit={() => {
+            builder.exitSession();
+          }}
+        />
+      </Suspense>
+    );
   }
 
   // Results view

@@ -176,13 +176,21 @@ export function MarkingInfoPage({
 
         {/* Next Button */}
         <div className="flex justify-center pt-6">
-          <Button
+          <button
             onClick={onNext}
-            variant="primary"
-            className="px-8 py-3 text-base font-medium"
+            className="px-8 py-3 text-base font-medium rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview transition-all duration-fast ease-signature"
+            style={{
+              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+            }}
           >
             Start Marking
-          </Button>
+          </button>
         </div>
       </div>
     </div>

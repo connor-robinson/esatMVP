@@ -154,11 +154,6 @@ export default function PapersSolvePage() {
                       loadedPaperIdRef.current !== paperId;
     
     if (shouldLoad) {
-      console.log('=== Loading questions ===');
-      console.log('sessionId:', sessionId);
-      console.log('paperId:', paperId);
-      console.log('questions.length:', questions.length);
-      console.log('questions[0]?.paperId:', questions[0]?.paperId);
       loadedPaperIdRef.current = paperId;
       loadQuestions(paperId);
     }
@@ -185,7 +180,6 @@ export default function PapersSolvePage() {
         (sectionInstructionTimer === null || sectionInstructionTimer === 0) &&
         !sectionStartedRef.current.has(currentSectionIndex);
     if (shouldInit) {
-      console.log('[solve] Initializing section instruction timer for section', currentSectionIndex);
       setSectionInstructionTimer(60);
     }
   }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
@@ -199,7 +193,6 @@ export default function PapersSolvePage() {
         .filter(Boolean) as string[];
       
       if (imageUrls.length > 0) {
-        console.log(`[solve] Prefetching ${imageUrls.length} images for section ${currentSectionIndex + 1}`);
         // Prefetch in background - don't await to avoid blocking
         prefetchImages(imageUrls, { cacheName: 'paper-assets-v1', warmDecodeCount: 5 }).catch(err => {
           console.warn('[solve] Error prefetching images:', err);
@@ -219,7 +212,6 @@ export default function PapersSolvePage() {
           .filter(Boolean) as string[];
         
         if (imageUrls.length > 0) {
-          console.log('[solve] Prefetching images for first section');
           prefetchImages(imageUrls, { cacheName: 'paper-assets-v1', warmDecodeCount: 5 }).catch(err => {
             console.warn('[solve] Error prefetching first section images:', err);
           });
@@ -298,20 +290,6 @@ export default function PapersSolvePage() {
   
   const totalQuestions = getTotalQuestions();
   
-  // Debug logging for section mode state
-  useEffect(() => {
-    if (selectedSections.length > 0) {
-      console.log('[solve] Section mode state:', {
-        selectedSections,
-        allSectionsQuestionsLength: allSectionsQuestions.length,
-        currentSectionIndex,
-        sectionInstructionTimer,
-        questionsLoaded: questions.length > 0,
-        questionsLoading,
-        isSectionMode
-      });
-    }
-  }, [selectedSections.length, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, questions.length, questionsLoading, isSectionMode]);
   
   // Validate section mode state
   if (selectedSections.length > 0 && allSectionsQuestions.length === 0 && questions.length > 0 && !questionsLoading) {
@@ -328,7 +306,15 @@ export default function PapersSolvePage() {
     ? currentSectionQuestions.length 
     : (questions.length > 0 ? questions.length : totalQuestions);
   
-  const remainingTime = getRemainingTime();
+  // Calculate remaining time - use section-specific time in section mode
+  const remainingTime = isSectionMode && sectionDeadlines.length > currentSectionIndex
+    ? getSectionRemainingTime(currentSectionIndex)
+    : getRemainingTime();
+  
+  // Calculate total time minutes - use section time limit in section mode
+  const totalTimeMinutes = isSectionMode && sectionTimeLimits.length > currentSectionIndex
+    ? sectionTimeLimits[currentSectionIndex]
+    : timeLimitMinutes;
   
   // Get current question first - find it in the full questions array
   const currentQuestion = questions[currentQuestionIndex];
@@ -392,31 +378,6 @@ export default function PapersSolvePage() {
   
   // Get the actual question number from the question object
   const currentQuestionNumber = currentQuestion?.questionNumber ?? (questionRange.start + currentQuestionIndex);
-  
-  // Debug logging
-  console.log('=== DEBUG QUESTION LOADING ===');
-  console.log('paperId:', paperId);
-  console.log('questions.length:', questions.length);
-  console.log('questionsLoading:', questionsLoading);
-  console.log('questionsError:', questionsError);
-  console.log('currentQuestionIndex:', currentQuestionIndex);
-  console.log('currentQuestionNumber:', currentQuestionNumber);
-  console.log('currentQuestion:', currentQuestion);
-  console.log('All questions:', questions);
-  console.log('First 3 questions:', questions.slice(0, 3));
-  console.log('Last 3 questions:', questions.slice(-3));
-  
-  // Log the question image URL if currentQuestion exists
-  if (currentQuestion) {
-    console.log('Current question image URL:', currentQuestion.questionImage);
-    console.log('Current question partName:', currentQuestion.partName);
-    console.log('Current question paper info:', {
-      examName: currentQuestion.examName,
-      examYear: currentQuestion.examYear,
-      paperName: currentQuestion.paperName,
-      examType: currentQuestion.examType
-    });
-  }
   
   // Get current section boundaries
   const getCurrentSectionBounds = useCallback(() => {
@@ -583,14 +544,6 @@ export default function PapersSolvePage() {
 
   // Handle section summary next button
   const handleSectionSummaryNext = () => {
-    console.log('[solve] Next button clicked', {
-      currentSectionIndex,
-      allSectionsQuestionsLength: allSectionsQuestions.length,
-      questionsLength: questions.length,
-      isSectionMode,
-      sectionInstructionTimer
-    });
-    
     // Try navigation even if section mode check fails (defensive)
     let targetIndex = -1;
     
@@ -609,7 +562,6 @@ export default function PapersSolvePage() {
     }
     
     if (targetIndex >= 0) {
-      console.log('[solve] Navigating to question', targetIndex);
       // Mark this section as started
       sectionStartedRef.current.add(currentSectionIndex);
       // Set section start time when starting to answer questions
@@ -704,8 +656,7 @@ export default function PapersSolvePage() {
 
   const getTimerVariant = () => {
     const remainingMinutes = remainingTime / 60;
-    const totalMinutes = timeLimitMinutes;
-    const percentage = remainingMinutes / totalMinutes;
+    const percentage = remainingMinutes / totalTimeMinutes;
     
     if (percentage <= 0.1) return "critical";
     if (percentage <= 0.5) return "warning";
@@ -823,7 +774,7 @@ export default function PapersSolvePage() {
                       question={currentQuestion}
                       questionNumber={currentQuestionNumber}
                       remainingTime={remainingTime}
-                      totalTimeMinutes={timeLimitMinutes}
+                      totalTimeMinutes={totalTimeMinutes}
                       isGuessed={isGuessed}
                       onGuessToggle={handleGuessToggle}
                       isFlaggedForReview={isFlaggedForReview}
@@ -869,10 +820,18 @@ export default function PapersSolvePage() {
               onClick={handleSubmitSection}
               className="
                 flex items-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
-                hover:bg-white/10 hover:border-white/20
+                rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
                 active:scale-95 flex-shrink-0
               "
+              style={{
+                boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+              }}
               title="Submit section"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -892,9 +851,22 @@ export default function PapersSolvePage() {
                     flex items-center justify-center flex-1 min-w-0 max-w-[120px]
                     ${currentAnswer?.choice === letter
                       ? 'bg-[#5075a4] text-white border border-[#5075a4]'
-                      : 'bg-white/5 border border-white/10 text-neutral-100 hover:bg-white/10 hover:border-white/20'
+                      : 'bg-interview/40 hover:bg-interview/60 text-interview'
                     }
                   `}
+                  style={{
+                    boxShadow: currentAnswer?.choice === letter
+                      ? 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                      : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentAnswer?.choice !== letter) {
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                  }}
                 >
                   {letter}
                 </button>
@@ -909,11 +881,25 @@ export default function PapersSolvePage() {
                 disabled={sectionQuestionIndex === 0}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
-                  hover:bg-white/10 hover:border-white/20
+                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
                   active:scale-95
-                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-interview/40
                 "
+                style={{
+                  boxShadow: sectionQuestionIndex === 0 
+                    ? 'none'
+                    : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                }}
+                onMouseEnter={(e) => {
+                  if (sectionQuestionIndex !== 0) {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (sectionQuestionIndex !== 0) {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                  }
+                }}
                 title="Previous question"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -927,10 +913,18 @@ export default function PapersSolvePage() {
                 onClick={() => setShowNavigator(true)}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
-                  hover:bg-white/10 hover:border-white/20
+                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
                   active:scale-95
                 "
+                style={{
+                  boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                }}
                 title="Open navigator"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -947,11 +941,33 @@ export default function PapersSolvePage() {
                   : sectionQuestionIndex >= actualQuestionCount - 1}
                 className="
                   flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-white/5 border border-white/10 text-neutral-100
-                  hover:bg-white/10 hover:border-white/20
+                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
                   active:scale-95
-                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-interview/40
                 "
+                style={{
+                  boxShadow: (allSectionsQuestions.length > 0 
+                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                    : sectionQuestionIndex >= actualQuestionCount - 1)
+                    ? 'none'
+                    : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                }}
+                onMouseEnter={(e) => {
+                  const isDisabled = allSectionsQuestions.length > 0 
+                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                    : sectionQuestionIndex >= actualQuestionCount - 1;
+                  if (!isDisabled) {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  const isDisabled = allSectionsQuestions.length > 0 
+                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                    : sectionQuestionIndex >= actualQuestionCount - 1;
+                  if (!isDisabled) {
+                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                  }
+                }}
                 title="Next question"
               >
                 <span>Next</span>

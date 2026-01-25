@@ -25,7 +25,7 @@ export interface ReviewQuestion {
 
 export type PaperType = 'TMUA' | 'ESAT';
 
-export type ESATSubject = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry';
+export type ESATSubject = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology';
 export type TMUASubject = 'Paper 1' | 'Paper 2';
 
 export interface ReviewFilters {

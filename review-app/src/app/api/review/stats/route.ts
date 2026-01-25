@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         'Math 2': ['Math 2'],
         'Physics': ['Physics'],
         'Chemistry': ['Chemistry'],
+        'Biology': ['Biology'],
       };
       const papers = subjectMap[subject] || [];
       if (papers.length > 0) {

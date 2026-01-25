@@ -48,7 +48,7 @@ export function AnalyticsPanel({
 
   if (!isOpen) return null;
 
-  const esatSubjects: ESATSubject[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry'];
+  const esatSubjects: ESATSubject[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
   const tmuaSubjects: TMUASubject[] = ['Paper 1', 'Paper 2'];
 
   const progressPercentage = stats && stats.total > 0

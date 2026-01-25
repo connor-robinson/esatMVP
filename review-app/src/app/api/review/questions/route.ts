@@ -35,12 +35,13 @@ export async function GET(request: NextRequest) {
 
     // Apply paper type filter
     if (paperType === 'ESAT' && subject) {
-      // ESAT subjects: Math 1, Math 2, Physics, Chemistry
+      // ESAT subjects: Math 1, Math 2, Physics, Chemistry, Biology
       const subjectMap: Record<string, string[]> = {
         'Math 1': ['Math 1'],
         'Math 2': ['Math 2'],
         'Physics': ['Physics'],
         'Chemistry': ['Chemistry'],
+        'Biology': ['Biology'],
       };
       const papers = subjectMap[subject] || [];
       if (papers.length > 0) {
