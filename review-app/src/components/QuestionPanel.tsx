@@ -396,9 +396,28 @@ export function QuestionPanel({
 
         {/* Options */}
         <div className="space-y-3">
-          <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
-            Options
-          </label>
+          {/* Column Headers */}
+          <div className="flex items-start gap-3">
+            <div className="w-10"></div> {/* Spacer for letter column */}
+            <div className="flex-1 flex items-start gap-3">
+              <div className="flex-[0.2]">
+                <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
+                  Options
+                </label>
+              </div>
+              {showAnswer && (
+                <div className="flex-[0.8]">
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
+                      Why this could be incorrect
+                    </label>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Options List */}
           {optionLetters.map((letter) => {
             const isCorrect = letter === question.correct_option;
             const distractorText = question.distractor_map && typeof question.distractor_map === 'object' 
@@ -473,43 +492,52 @@ export function QuestionPanel({
                       )}
                     </div>
                     
-                    {/* Distractor explanation - Inline with option */}
-                    {showDistractor && (
-                      <div className="flex-[0.8] p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-mono text-white/50">Why this could be incorrect:</span>
-                          {onStartEditingField && (
-                            <button
-                              onClick={() => {
-                                if (isEditingDistractor) {
-                                  onStopEditingField?.();
-                                } else {
-                                  onStartEditingField(`distractor_${letter}`);
-                                }
-                              }}
-                              className={cn(
-                                "p-1 rounded-organic-md transition-colors",
-                                isEditingDistractor
-                                  ? "bg-primary/20 hover:bg-primary/30 text-primary"
-                                  : "bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80"
-                              )}
-                              title={isEditingDistractor ? "Stop editing" : "Edit explanation"}
-                            >
-                              <Pencil className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
-                        {isEditingDistractor && onDistractorChange ? (
-                          <textarea
-                            value={distractorText || ''}
-                            onChange={(e) => onDistractorChange(letter, e.target.value)}
-                            onBlur={() => onStopEditingField?.()}
-                            autoFocus
-                            className="w-full min-h-[60px] p-2 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-                            style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
-                          />
+                    {/* Distractor explanation - Right column */}
+                    {showAnswer && (
+                      <div className="flex-[0.8]">
+                        {showDistractor ? (
+                          <div className="p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
+                            {isEditingDistractor && onDistractorChange ? (
+                              <textarea
+                                value={distractorText || ''}
+                                onChange={(e) => onDistractorChange(letter, e.target.value)}
+                                onBlur={() => onStopEditingField?.()}
+                                autoFocus
+                                className="w-full min-h-[60px] p-2 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                                style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
+                              />
+                            ) : (
+                              <div className="flex items-start gap-2">
+                                <div className="flex-1">
+                                  <MathContent content={distractorText} />
+                                </div>
+                                {onStartEditingField && (
+                                  <button
+                                    onClick={() => {
+                                      if (isEditingDistractor) {
+                                        onStopEditingField?.();
+                                      } else {
+                                        onStartEditingField(`distractor_${letter}`);
+                                      }
+                                    }}
+                                    className={cn(
+                                      "p-1 rounded-organic-md transition-colors flex-shrink-0",
+                                      isEditingDistractor
+                                        ? "bg-primary/20 hover:bg-primary/30 text-primary"
+                                        : "bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80"
+                                    )}
+                                    title={isEditingDistractor ? "Stop editing" : "Edit explanation"}
+                                  >
+                                    <Pencil className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         ) : (
-                          distractorText && <MathContent content={distractorText} />
+                          <div className="p-3 text-sm text-white/30 font-serif italic">
+                            {isCorrect ? "Correct answer" : "—"}
+                          </div>
                         )}
                       </div>
                     )}

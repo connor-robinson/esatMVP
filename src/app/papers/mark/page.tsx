@@ -94,6 +94,9 @@ export default function PapersMarkPage() {
   const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
   // NSAA: averaged percentile across all subjects
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
+  // Conversion table popup state
+  const [showConversionPopup, setShowConversionPopup] = useState(false);
+  const conversionPopupRef = useRef<HTMLDivElement>(null);
   
   // Compute values needed for hooks (with safe defaults if no session)
   const totalQuestions = sessionId ? getTotalQuestions() : 0;
@@ -212,6 +215,34 @@ export default function PapersMarkPage() {
       mounted = false;
     };
   }, [paperId]);
+
+  // Close conversion popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!showConversionPopup) return;
+      
+      const target = event.target as HTMLElement;
+      // Don't close if clicking the info button or inside the popup
+      if (target.closest('button[title="View conversion table"]') || 
+          conversionPopupRef.current?.contains(target)) {
+        return;
+      }
+      
+      setShowConversionPopup(false);
+    };
+
+    if (showConversionPopup) {
+      // Use a small delay to avoid closing immediately when opening
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 100);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showConversionPopup]);
   
   // Shared bubble utility (analytics-style)
   const bubbleClass = "rounded-xl bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4";
@@ -637,6 +668,24 @@ export default function PapersMarkPage() {
       else if (/B/.test(letter)) candidateNames.push('Section 1B');
       else if (/2/.test(letter)) candidateNames.push('Section 2');
     }
+    if (examName === 'NSAA') {
+      // NSAA Section 1 typically uses Part A, B, C, D, E
+      // Part A = Mathematics, Part B = Physics, Part C = Chemistry, Part D = Biology, Part E = Advanced Mathematics and Advanced Physics
+      if (letter === 'A' || letter === '1') candidateNames.push('Part A');
+      if (letter === 'B' || letter === '2') candidateNames.push('Part B');
+      if (letter === 'C' || letter === '3') candidateNames.push('Part C');
+      if (letter === 'D' || letter === '4') candidateNames.push('Part D');
+      if (letter === 'E' || letter === '5') candidateNames.push('Part E');
+      // Also check if partName contains section names
+      if (partName) {
+        const partLower = partName.toLowerCase();
+        if (partLower.includes('math') && !partLower.includes('advanced')) candidateNames.push('Part A');
+        if (partLower.includes('phys') && !partLower.includes('advanced')) candidateNames.push('Part B');
+        if (partLower.includes('chem')) candidateNames.push('Part C');
+        if (partLower.includes('biol')) candidateNames.push('Part D');
+        if (partLower.includes('advanced')) candidateNames.push('Part E');
+      }
+    }
     // Generic patterns commonly used in tables
     if (letter) candidateNames.push(`Part ${letter}`);
     if (raw) candidateNames.push(raw); // e.g., 'PART A' or 'Part A'
@@ -740,10 +789,13 @@ export default function PapersMarkPage() {
         const out: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }> = {};
         const nsaaPercentiles: number[] = [];
         
+        // Determine the display exam name for labels (ENGAA/NSAA -> ESAT, TMUA -> TMUA)
+        const displayExamName = (isNSAA || isENGAA) ? 'ESAT' : examName;
+        
         for (const [section, info] of Object.entries(needed)) {
           // Always include the score
           if (!info.score) {
-            out[section] = { percentile: null, score: null, table: info.tableKey, label: info.label || `${examName} Score` };
+            out[section] = { percentile: null, score: null, table: info.tableKey, label: info.label || `${displayExamName} Score` };
             continue;
           }
           
@@ -773,7 +825,7 @@ export default function PapersMarkPage() {
             }
           } else {
             // No percentile table available, but still show the score
-            out[section] = { percentile: null, score: info.score, table: info.tableKey, label: info.label || `${examName} Score` };
+            out[section] = { percentile: null, score: info.score, table: info.tableKey, label: info.label || `${displayExamName} Score` };
           }
         }
         
@@ -1034,12 +1086,6 @@ export default function PapersMarkPage() {
                           {startedAt && (
                             <div className="text-xs text-neutral-500">{new Date(startedAt).toLocaleDateString()}</div>
                           )}
-                          <span
-                            className={`text-[10px] px-2 py-0.5 rounded-full ${hasConversion ? 'bg-[rgba(80,97,65,0.25)] text-neutral-200' : 'bg-neutral-800 text-neutral-400'}`}
-                            title={hasConversion ? 'Conversion table found' : 'No conversion table'}
-                          >
-                            {hasConversion ? 'Conversion: Found' : 'Conversion: None'}
-                          </span>
             </div>
                     </div>
                   </div>
@@ -1052,9 +1098,106 @@ export default function PapersMarkPage() {
                         <div className="text-xs text-neutral-400">{correctCountDerived}/{totalQuestions} correct</div>
                       </div>
                       {/* Predicted Score (exam-specific) */}
-                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px]`}>
+                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px] relative`}>
+                        {/* Info button */}
+                        {(examName === 'ENGAA' || examName === 'NSAA') && (
+                          <button
+                            onClick={() => setShowConversionPopup(!showConversionPopup)}
+                            className="absolute top-2 right-2 w-5 h-5 rounded-full bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center transition-colors"
+                            title="View conversion table"
+                          >
+                            <svg className="w-3 h-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </button>
+                        )}
                         <div className="text-4xl font-bold text-neutral-100 leading-tight">{predictedScore !== null && predictedScore !== undefined ? predictedScore.toFixed(1) : '—'}</div>
-                        <div className="text-xs text-neutral-400">Predicted {examName || 'score'}</div>
+                        <div className="text-xs text-neutral-400 flex items-center gap-1">
+                          Predicted {(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : (examName || 'score')}
+                        </div>
+                        {/* Conversion table popup */}
+                        {showConversionPopup && (examName === 'ENGAA' || examName === 'NSAA') && (
+                          <div
+                            ref={conversionPopupRef}
+                            className="absolute top-full right-0 mt-2 w-80 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl z-50 p-4"
+                            style={{ maxHeight: '400px', overflowY: 'auto' }}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="text-sm font-semibold text-neutral-100">Conversion Table</div>
+                              <button
+                                onClick={() => setShowConversionPopup(false)}
+                                className="text-neutral-400 hover:text-neutral-200"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                            <div className="space-y-3">
+                              {(() => {
+                                const qs = usePaperSessionStore.getState().questions;
+                                const sections = Object.entries(sectionAnalytics);
+                                
+                                if (sections.length === 0) {
+                                  return <div className="text-xs text-neutral-400">No sections found</div>;
+                                }
+                                
+                                return sections.map(([section, data]) => {
+                                  const match = qs.find(q => (q.partLetter || '').trim() === section);
+                                  const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
+                                  const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
+                                  const convPartName = resolved.name;
+                                  const partRows = (conversionRows as any[]).filter((r: any) => 
+                                    (r.partName || '').toString().toLowerCase() === convPartName.toLowerCase()
+                                  );
+                                  
+                                  const hasConversion = partRows.length > 0;
+                                  const sectionName = mapPartToSection(
+                                    { partLetter: partLetterRaw, partName: match?.partName || '' },
+                                    examName as any
+                                  );
+                                  
+                                  if (partRows.length > 0) {
+                                    const sortedRows = [...partRows].sort((a, b) => a.rawScore - b.rawScore);
+                                    const minRaw = sortedRows[0].rawScore;
+                                    const maxRaw = sortedRows[sortedRows.length - 1].rawScore;
+                                    const minScaled = sortedRows[0].scaledScore;
+                                    const maxScaled = sortedRows[sortedRows.length - 1].scaledScore;
+                                    
+                                    return (
+                                      <div key={section} className="border-b border-neutral-700 pb-2 last:border-0 last:pb-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                          <div className="text-xs font-medium text-neutral-200">{sectionName}</div>
+                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-900/30 text-green-300">
+                                            Found
+                                          </span>
+                                        </div>
+                                        <div className="text-[10px] text-neutral-400 space-y-0.5">
+                                          <div>Raw: {minRaw === maxRaw ? minRaw : `${minRaw} - ${maxRaw}`}</div>
+                                          <div>ESAT: {minScaled === maxScaled ? minScaled.toFixed(1) : `${minScaled.toFixed(1)} - ${maxScaled.toFixed(1)}`}</div>
+                                        </div>
+                                      </div>
+                                    );
+                                  } else {
+                                    return (
+                                      <div key={section} className="border-b border-neutral-700 pb-2 last:border-0 last:pb-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                          <div className="text-xs font-medium text-neutral-200">{sectionName}</div>
+                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-700 text-neutral-400">
+                                            Not Found
+                                          </span>
+                                        </div>
+                                        <div className="text-[10px] text-neutral-400">
+                                          No conversion data available
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                });
+                              })()}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       {/* Avg per Question */}
                       <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px]`}>
