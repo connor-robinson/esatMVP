@@ -14,29 +14,38 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const paperType = searchParams.get('paperType') as PaperType | null;
-    const subject = searchParams.get('subject') as string | null;
+    const subjectsParam = searchParams.get('subjects');
+    const subjects = subjectsParam ? subjectsParam.split(',').filter(s => s.trim()) : [];
 
     // Build base query
     let baseQuery = supabase
       .from('ai_generated_questions')
       .select('id, status, paper', { count: 'exact' });
 
-    // Apply paper type filter
-    if (paperType === 'ESAT' && subject) {
-      const subjectMap: Record<string, string[]> = {
-        'Math 1': ['Math 1'],
-        'Math 2': ['Math 2'],
-        'Physics': ['Physics'],
-        'Chemistry': ['Chemistry'],
-        'Biology': ['Biology'],
-      };
-      const papers = subjectMap[subject] || [];
-      if (papers.length > 0) {
-        baseQuery = baseQuery.in('paper', papers);
+    // Apply filters based on paper type
+    if (paperType === 'All') {
+      // Show all questions, optionally filter by subjects
+      if (subjects.length > 0) {
+        baseQuery = baseQuery.in('paper', subjects);
       }
-    } else if (paperType === 'TMUA' && subject) {
-      if (subject === 'Paper 1' || subject === 'Paper 2') {
-        baseQuery = baseQuery.eq('paper', subject);
+    } else if (paperType === 'TMUA') {
+      // TMUA: Show Paper 1 and Paper 2
+      if (subjects.length > 0) {
+        // Filter by selected TMUA subjects
+        baseQuery = baseQuery.in('paper', subjects);
+      } else {
+        // Show all TMUA (Paper 1 and Paper 2)
+        baseQuery = baseQuery.in('paper', ['Paper 1', 'Paper 2']);
+      }
+    } else if (paperType === 'ESAT') {
+      // ESAT subjects: Math 1, Math 2, Physics, Chemistry, Biology
+      const esatPapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+      if (subjects.length > 0) {
+        // Filter by selected ESAT subjects
+        baseQuery = baseQuery.in('paper', subjects);
+      } else {
+        // Show all ESAT subjects
+        baseQuery = baseQuery.in('paper', esatPapers);
       }
     }
 
@@ -51,9 +60,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get approved count
-    const { count: approved, error: approvedError } = await baseQuery
+    // Get approved count (need to rebuild query for each count)
+    let approvedQuery = supabase
+      .from('ai_generated_questions')
+      .select('id, status, paper', { count: 'exact' })
       .eq('status', 'approved');
+
+    if (paperType === 'All') {
+      if (subjects.length > 0) {
+        approvedQuery = approvedQuery.in('paper', subjects);
+      }
+    } else if (paperType === 'TMUA') {
+      if (subjects.length > 0) {
+        approvedQuery = approvedQuery.in('paper', subjects);
+      } else {
+        approvedQuery = approvedQuery.in('paper', ['Paper 1', 'Paper 2']);
+      }
+    } else if (paperType === 'ESAT') {
+      const esatPapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+      if (subjects.length > 0) {
+        approvedQuery = approvedQuery.in('paper', subjects);
+      } else {
+        approvedQuery = approvedQuery.in('paper', esatPapers);
+      }
+    }
+
+    const { count: approved, error: approvedError } = await approvedQuery;
 
     if (approvedError) {
       console.error('[Review API] Error fetching approved count:', approvedError);
@@ -64,8 +96,31 @@ export async function GET(request: NextRequest) {
     }
 
     // Get pending count
-    const { count: pending, error: pendingError } = await baseQuery
+    let pendingQuery = supabase
+      .from('ai_generated_questions')
+      .select('id, status, paper', { count: 'exact' })
       .eq('status', 'pending_review');
+
+    if (paperType === 'All') {
+      if (subjects.length > 0) {
+        pendingQuery = pendingQuery.in('paper', subjects);
+      }
+    } else if (paperType === 'TMUA') {
+      if (subjects.length > 0) {
+        pendingQuery = pendingQuery.in('paper', subjects);
+      } else {
+        pendingQuery = pendingQuery.in('paper', ['Paper 1', 'Paper 2']);
+      }
+    } else if (paperType === 'ESAT') {
+      const esatPapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+      if (subjects.length > 0) {
+        pendingQuery = pendingQuery.in('paper', subjects);
+      } else {
+        pendingQuery = pendingQuery.in('paper', esatPapers);
+      }
+    }
+
+    const { count: pending, error: pendingError } = await pendingQuery;
 
     if (pendingError) {
       console.error('[Review API] Error fetching pending count:', pendingError);
@@ -90,6 +145,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-
-

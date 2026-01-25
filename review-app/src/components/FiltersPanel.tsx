@@ -5,19 +5,19 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ReviewStats, PaperType, ESATSubject, TMUASubject, ReviewFilters } from "@/types/review";
 
-interface AnalyticsPanelProps {
+interface FiltersPanelProps {
   isOpen: boolean;
   onClose: () => void;
   filters: ReviewFilters;
   onFiltersChange: (filters: ReviewFilters) => void;
 }
 
-export function AnalyticsPanel({
+export function FiltersPanel({
   isOpen,
   onClose,
   filters,
   onFiltersChange,
-}: AnalyticsPanelProps) {
+}: FiltersPanelProps) {
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,9 @@ export function AnalyticsPanel({
     try {
       const params = new URLSearchParams();
       if (filters.paperType) params.append('paperType', filters.paperType);
-      if (filters.subject) params.append('subject', filters.subject);
+      if (filters.subjects && filters.subjects.length > 0) {
+        params.append('subjects', filters.subjects.join(','));
+      }
 
       const response = await fetch(`/api/review/stats?${params.toString()}`);
       if (response.ok) {
@@ -40,7 +42,7 @@ export function AnalyticsPanel({
         setStats(data);
       }
     } catch (error) {
-      console.error('[Analytics] Error fetching stats:', error);
+      console.error('[Filters] Error fetching stats:', error);
     } finally {
       setLoading(false);
     }
@@ -50,6 +52,38 @@ export function AnalyticsPanel({
 
   const esatSubjects: ESATSubject[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
   const tmuaSubjects: TMUASubject[] = ['Paper 1', 'Paper 2'];
+  const allSubjects: (ESATSubject | TMUASubject)[] = [...esatSubjects, ...tmuaSubjects];
+
+  // Get available subjects based on paper type
+  const getAvailableSubjects = (): (ESATSubject | TMUASubject)[] => {
+    if (!filters.paperType || filters.paperType === 'All') {
+      return allSubjects;
+    } else if (filters.paperType === 'ESAT') {
+      return esatSubjects;
+    } else {
+      return tmuaSubjects;
+    }
+  };
+
+  const availableSubjects = getAvailableSubjects();
+  const selectedSubjects = filters.subjects || [];
+
+  const toggleSubject = (subject: ESATSubject | TMUASubject) => {
+    const currentSubjects = selectedSubjects;
+    if (currentSubjects.includes(subject)) {
+      // Remove subject
+      onFiltersChange({
+        ...filters,
+        subjects: currentSubjects.filter(s => s !== subject),
+      });
+    } else {
+      // Add subject
+      onFiltersChange({
+        ...filters,
+        subjects: [...currentSubjects, subject],
+      });
+    }
+  };
 
   const progressPercentage = stats && stats.total > 0
     ? (stats.approved / stats.total) * 100
@@ -63,7 +97,7 @@ export function AnalyticsPanel({
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white/90">Analytics & Filters</h2>
+          <h2 className="text-xl font-semibold text-white/90">Filters</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all"
@@ -80,14 +114,14 @@ export function AnalyticsPanel({
               Paper Type
             </label>
             <div className="flex gap-2">
-              {(['TMUA', 'ESAT'] as PaperType[]).map((type) => (
+              {(['All', 'TMUA', 'ESAT'] as PaperType[]).map((type) => (
                 <button
                   key={type}
                   onClick={() => {
                     onFiltersChange({
                       ...filters,
                       paperType: filters.paperType === type ? undefined : type,
-                      subject: undefined, // Reset subject when changing paper type
+                      subjects: [], // Reset subjects when changing paper type
                     });
                   }}
                   className={cn(
@@ -103,35 +137,31 @@ export function AnalyticsPanel({
             </div>
           </div>
 
-          {/* Subject */}
-          {filters.paperType && (
-            <div>
-              <label className="text-sm font-mono text-white/70 mb-2 block">
-                Subject
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {(filters.paperType === 'ESAT' ? esatSubjects : tmuaSubjects).map((subject) => (
+          {/* Subject - Multi-select */}
+          <div>
+            <label className="text-sm font-mono text-white/70 mb-2 block">
+              Subject {selectedSubjects.length > 0 && `(${selectedSubjects.length} selected)`}
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {availableSubjects.map((subject) => {
+                const isSelected = selectedSubjects.includes(subject);
+                return (
                   <button
                     key={subject}
-                    onClick={() => {
-                      onFiltersChange({
-                        ...filters,
-                        subject: filters.subject === subject ? undefined : subject,
-                      });
-                    }}
+                    onClick={() => toggleSubject(subject)}
                     className={cn(
                       "px-4 py-2 rounded-organic-md text-sm font-mono transition-all",
-                      filters.subject === subject
+                      isSelected
                         ? "bg-primary/30 text-primary border border-primary/50"
                         : "bg-white/5 text-white/60 hover:bg-white/10 border border-white/10"
                     )}
                   >
                     {subject}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Stats */}
@@ -178,5 +208,4 @@ export function AnalyticsPanel({
     </div>
   );
 }
-
 

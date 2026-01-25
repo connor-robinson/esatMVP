@@ -8,7 +8,7 @@ interface ReviewSidebarProps {
   checklistItems: boolean[];
   onChecklistChange: (index: number, checked: boolean) => void;
   onApprove: () => void;
-  onAnalytics: () => void;
+  onFilters: () => void;
   canApprove: boolean;
   isApproving?: boolean;
 }
@@ -25,7 +25,7 @@ export function ReviewSidebar({
   checklistItems,
   onChecklistChange,
   onApprove,
-  onAnalytics,
+  onFilters,
   canApprove,
   isApproving = false,
 }: ReviewSidebarProps) {
@@ -80,10 +80,10 @@ export function ReviewSidebar({
         </button>
       </div>
 
-      {/* Analytics Button */}
+      {/* Filters Button */}
       <div className="p-4 border-t border-white/10 flex-shrink-0">
         <button
-          onClick={onAnalytics}
+          onClick={onFilters}
           disabled={isApproving}
           className={cn(
             "w-full px-4 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium border border-white/10",
@@ -93,7 +93,7 @@ export function ReviewSidebar({
           )}
         >
           <BarChart3 className="w-4 h-4" strokeWidth={2.5} />
-          <span>Analytics</span>
+          <span>Filters</span>
         </button>
       </div>
     </div>

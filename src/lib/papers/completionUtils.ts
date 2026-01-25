@@ -222,8 +222,10 @@ export async function loadAllCompletedSessionsByPaperName(
     }
 
     // Group sessions by paper_name for faster lookup
-    const sessionsByPaperName = new Map<string, typeof data>();
-    for (const session of data) {
+    type SessionType = Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant'>;
+    const sessionsByPaperName = new Map<string, SessionType[]>();
+    const typedData = data as SessionType[];
+    for (const session of typedData) {
       const paperName = session.paper_name;
       if (!sessionsByPaperName.has(paperName)) {
         sessionsByPaperName.set(paperName, []);

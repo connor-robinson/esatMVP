@@ -37,8 +37,8 @@ export function MarkingInfoPage({
       }
       
       // Extract part info
-      let partLetter = section;
-      let partName = section;
+      let partLetter: string = section;
+      let partName: string = section;
       
       if (firstQuestion) {
         const letter = (firstQuestion.partLetter || '').toString().trim();

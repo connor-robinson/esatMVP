@@ -23,14 +23,14 @@ export interface ReviewQuestion {
   updated_at: string;
 }
 
-export type PaperType = 'TMUA' | 'ESAT';
+export type PaperType = 'All' | 'TMUA' | 'ESAT';
 
 export type ESATSubject = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology';
 export type TMUASubject = 'Paper 1' | 'Paper 2';
 
 export interface ReviewFilters {
   paperType?: PaperType;
-  subject?: ESATSubject | TMUASubject;
+  subjects?: (ESATSubject | TMUASubject)[];
 }
 
 export interface ReviewStats {

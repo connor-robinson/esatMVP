@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase';
 import { normalizeReviewQuestion } from '@/lib/utils';
-import type { ReviewQuestion, PaperType, ESATSubject, TMUASubject } from '@/types/review';
+import type { ReviewQuestion, PaperType } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
 
 /**
+ * Fisher-Yates shuffle algorithm for randomizing array
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
  * GET /api/review/questions
- * Fetches pending review questions with optional filtering
+ * Fetches pending review questions with optional filtering and random ordering
  */
 export async function GET(request: NextRequest) {
   try {
@@ -15,10 +27,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const paperType = searchParams.get('paperType') as PaperType | null;
-    const subject = searchParams.get('subject') as string | null;
+    const subjectsParam = searchParams.get('subjects');
+    const subjects = subjectsParam ? subjectsParam.split(',').filter(s => s.trim()) : [];
     const questionId = searchParams.get('id') as string | null;
     const limit = parseInt(searchParams.get('limit') || '1', 10);
     const offset = parseInt(searchParams.get('offset') || '0', 10);
+    const random = searchParams.get('random') === 'true';
 
     // Build query
     let query = supabase
@@ -30,28 +44,82 @@ export async function GET(request: NextRequest) {
       query = query.eq('id', questionId);
     } else {
       // Only fetch pending_review questions if no specific ID requested
-      query = query.eq('status', 'pending_review').order('created_at', { ascending: true });
+      query = query.eq('status', 'pending_review');
     }
 
-    // Apply paper type filter
-    if (paperType === 'ESAT' && subject) {
+    // Apply filters based on paper type
+    if (paperType === 'All') {
+      // Show all questions, optionally filter by subjects
+      if (subjects.length > 0) {
+        query = query.in('paper', subjects);
+      }
+    } else if (paperType === 'TMUA') {
+      // TMUA: Show Paper 1 and Paper 2
+      if (subjects.length > 0) {
+        // Filter by selected TMUA subjects
+        query = query.in('paper', subjects);
+      } else {
+        // Show all TMUA (Paper 1 and Paper 2)
+        query = query.in('paper', ['Paper 1', 'Paper 2']);
+      }
+    } else if (paperType === 'ESAT') {
       // ESAT subjects: Math 1, Math 2, Physics, Chemistry, Biology
-      const subjectMap: Record<string, string[]> = {
-        'Math 1': ['Math 1'],
-        'Math 2': ['Math 2'],
-        'Physics': ['Physics'],
-        'Chemistry': ['Chemistry'],
-        'Biology': ['Biology'],
-      };
-      const papers = subjectMap[subject] || [];
-      if (papers.length > 0) {
-        query = query.in('paper', papers);
+      const esatPapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+      if (subjects.length > 0) {
+        // Filter by selected ESAT subjects
+        query = query.in('paper', subjects);
+      } else {
+        // Show all ESAT subjects
+        query = query.in('paper', esatPapers);
       }
-    } else if (paperType === 'TMUA' && subject) {
-      // TMUA subjects: Paper 1, Paper 2
-      if (subject === 'Paper 1' || subject === 'Paper 2') {
-        query = query.eq('paper', subject);
+    }
+
+    // For random ordering, fetch all matching questions first, then shuffle
+    if (random && !questionId) {
+      const { data: allData, error: allError } = await query;
+      
+      if (allError) {
+        console.error('[Review API] Error fetching questions:', allError);
+        return NextResponse.json(
+          { error: 'Failed to fetch questions', details: allError.message },
+          { status: 500 }
+        );
       }
+
+      // Shuffle the results
+      const shuffled = shuffleArray(allData || []);
+      
+      // Apply pagination to shuffled results
+      const paginated = shuffled.slice(offset, offset + limit);
+
+      // Normalize questions
+      const normalizedQuestions: ReviewQuestion[] = paginated.map((row: any) => {
+        try {
+          return normalizeReviewQuestion(row);
+        } catch (err) {
+          console.error('[Review API] Error normalizing question:', err, row);
+          return normalizeReviewQuestion({
+            id: row.id || '',
+            generation_id: row.generation_id || '',
+            schema_id: row.schema_id || '',
+            difficulty: row.difficulty || 'Medium',
+            question_stem: row.question_stem || '',
+            options: row.options || {},
+            correct_option: row.correct_option || 'A',
+            status: row.status || 'pending_review',
+          });
+        }
+      });
+
+      return NextResponse.json({
+        questions: normalizedQuestions,
+        total: shuffled.length,
+      });
+    }
+
+    // Non-random ordering: use database ordering
+    if (!questionId) {
+      query = query.order('created_at', { ascending: true });
     }
 
     // Apply pagination
@@ -73,7 +141,6 @@ export async function GET(request: NextRequest) {
         return normalizeReviewQuestion(row);
       } catch (err) {
         console.error('[Review API] Error normalizing question:', err, row);
-        // Return a minimal valid question structure if normalization fails
         return normalizeReviewQuestion({
           id: row.id || '',
           generation_id: row.generation_id || '',
@@ -99,5 +166,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
-

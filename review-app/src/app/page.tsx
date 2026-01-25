@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { QuestionPanel } from "@/components/QuestionPanel";
 import { SolutionPanel } from "@/components/SolutionPanel";
 import { ReviewSidebar } from "@/components/ReviewSidebar";
-import { AnalyticsPanel } from "@/components/AnalyticsPanel";
+import { FiltersPanel } from "@/components/FiltersPanel";
 import { useReviewQuestions } from "@/hooks/useReviewQuestions";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
 import type { ReviewFilters } from "@/types/review";
@@ -23,7 +23,7 @@ export default function ReviewPage() {
   } = useReviewQuestions();
 
   const [checklistItems, setChecklistItems] = useState<boolean[]>([false, false, false, false, false]);
-  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [hasShownAnswer, setHasShownAnswer] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -102,8 +102,8 @@ export default function ReviewPage() {
     }
   };
 
-  const handleAnalytics = () => {
-    setShowAnalytics(true);
+  const handleFilters = () => {
+    setShowFilters(true);
   };
 
   const handleFiltersChange = (newFilters: ReviewFilters) => {
@@ -117,8 +117,8 @@ export default function ReviewPage() {
         checklistItems={checklistItems}
         onChecklistChange={handleChecklistChange}
         onApprove={handleApprove}
-        onAnalytics={handleAnalytics}
-        canApprove={allChecked && hasShownAnswer}
+        onFilters={handleFilters}
+        canApprove={allChecked}
         isApproving={isApproving}
       />
 
@@ -191,10 +191,10 @@ export default function ReviewPage() {
         </div>
       </div>
 
-      {/* Analytics Panel */}
-      <AnalyticsPanel
-        isOpen={showAnalytics}
-        onClose={() => setShowAnalytics(false)}
+      {/* Filters Panel */}
+      <FiltersPanel
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
       />
