@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { QuestionPanel } from "@/components/QuestionPanel";
 import { SolutionPanel } from "@/components/SolutionPanel";
-import { ReviewActionsBar } from "@/components/ReviewActionsBar";
+import { ReviewSidebar } from "@/components/ReviewSidebar";
 import { AnalyticsPanel } from "@/components/AnalyticsPanel";
 import { useReviewQuestions } from "@/hooks/useReviewQuestions";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
@@ -18,13 +18,18 @@ export default function ReviewPage() {
     filters,
     setFilters,
     fetchNextQuestion,
-    refreshCurrentQuestion,
     approveQuestion,
     setCurrentQuestion,
   } = useReviewQuestions();
 
+  const [checklistItems, setChecklistItems] = useState<boolean[]>([false, false, false, false, false]);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [hasShownAnswer, setHasShownAnswer] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+
   const {
-    isEditMode,
+    editingField,
     isSaving,
     editedQuestion,
     updateQuestionStem,
@@ -37,14 +42,19 @@ export default function ReviewPage() {
     updatePrimaryTag,
     addSecondaryTag,
     removeSecondaryTag,
-    saveChanges,
-    enterEditMode,
-    exitEditMode,
-  } = useQuestionEditor(currentQuestion);
+    startEditingField,
+    stopEditingField,
+  } = useQuestionEditor(currentQuestion, (updated) => {
+    // Callback when save completes
+    setCurrentQuestion(updated);
+    setNotification({ type: 'success', message: 'Changes saved automatically!' });
+  });
 
-  const [showAnalytics, setShowAnalytics] = useState(false);
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [hasShownAnswer, setHasShownAnswer] = useState(false);
+  // Reset checklist when question changes
+  useEffect(() => {
+    setChecklistItems([false, false, false, false, false]);
+    setHasShownAnswer(false);
+  }, [currentQuestion?.id]);
 
   // Show notification and auto-hide
   useEffect(() => {
@@ -54,10 +64,15 @@ export default function ReviewPage() {
     }
   }, [notification]);
 
-  // Reset hasShownAnswer when question changes
-  useEffect(() => {
-    setHasShownAnswer(false);
-  }, [currentQuestion?.id]);
+  const handleChecklistChange = (index: number, checked: boolean) => {
+    setChecklistItems(prev => {
+      const newItems = [...prev];
+      newItems[index] = checked;
+      return newItems;
+    });
+  };
+
+  const allChecked = checklistItems.every(item => item === true);
 
   const handleApprove = async () => {
     if (!currentQuestion) return;
@@ -68,56 +83,22 @@ export default function ReviewPage() {
       return;
     }
 
+    // Check if all checklist items are checked
+    if (!allChecked) {
+      alert("Please complete all checklist items before approving this question.");
+      return;
+    }
+
+    setIsApproving(true);
     try {
       await approveQuestion(currentQuestion.id);
       setNotification({ type: 'success', message: 'Question approved successfully!' });
+      setHasShownAnswer(false);
+      setChecklistItems([false, false, false, false, false]);
     } catch (err) {
       setNotification({ type: 'error', message: 'Failed to approve question' });
-    }
-  };
-
-  const handleEdit = () => {
-    enterEditMode();
-  };
-
-  const handleSave = async () => {
-    try {
-      console.log('[ReviewPage] Starting save...', {
-        currentQuestionId: currentQuestion?.id,
-        editedQuestionId: editedQuestion?.id,
-      });
-      
-      const updated = await saveChanges();
-      
-      if (updated) {
-        console.log('[ReviewPage] Save completed, updating state:', {
-          updatedId: updated.id,
-          questionStemPreview: updated.question_stem?.substring(0, 50),
-        });
-        
-        setNotification({ type: 'success', message: 'Changes saved successfully!' });
-        
-        // Update the current question state with the saved data
-        // This ensures the UI immediately reflects the saved changes
-        setCurrentQuestion(updated);
-        
-        // Force a small delay to ensure state updates propagate
-        // This helps with React's batching
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        console.log('[ReviewPage] State updated after save');
-      } else {
-        console.warn('[ReviewPage] Save returned null/undefined');
-        setNotification({ type: 'error', message: 'Save completed but no data was returned' });
-      }
-    } catch (err: any) {
-      const errorMessage = err?.message || 'Failed to save changes';
-      console.error('[ReviewPage] Save error:', {
-        error: err,
-        message: errorMessage,
-        stack: err?.stack,
-      });
-      setNotification({ type: 'error', message: errorMessage });
+    } finally {
+      setIsApproving(false);
     }
   };
 
@@ -130,23 +111,33 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Notification */}
-      {notification && (
-        <div className={cn(
-          "fixed top-4 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300",
-          notification.type === 'success'
-            ? "bg-[#85BC82]/20 text-[#85BC82] border border-[#85BC82]/30"
-            : "bg-[#ef7d7d]/20 text-[#ef7d7d] border border-[#ef7d7d]/30"
-        )}>
-          <div className="text-sm font-mono">{notification.message}</div>
-        </div>
-      )}
+    <div className="min-h-screen flex">
+      {/* Left Sidebar */}
+      <ReviewSidebar
+        checklistItems={checklistItems}
+        onChecklistChange={handleChecklistChange}
+        onApprove={handleApprove}
+        onAnalytics={handleAnalytics}
+        canApprove={allChecked && hasShownAnswer}
+        isApproving={isApproving}
+      />
 
-      {/* Main Content */}
-      <div className="flex-1 flex gap-4 p-4 pb-24 max-w-[1920px] mx-auto w-full">
-        {/* Left Panel - Question */}
-        <div className="flex-1 h-[calc(100vh-8rem)]">
+      {/* Main Content Area - Stacked Layout with Scroll */}
+      <div className="flex-1 flex flex-col gap-4 p-4 h-screen overflow-y-auto">
+        {/* Notification */}
+        {notification && (
+          <div className={cn(
+            "fixed top-4 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300",
+            notification.type === 'success'
+              ? "bg-[#85BC82]/20 text-[#85BC82] border border-[#85BC82]/30"
+              : "bg-[#ef7d7d]/20 text-[#ef7d7d] border border-[#ef7d7d]/30"
+          )}>
+            <div className="text-sm font-mono">{notification.message}</div>
+          </div>
+        )}
+
+        {/* Question Panel - Top (slightly reduced height) */}
+        <div className="h-[45%] min-h-[400px] flex-shrink-0">
           {loading ? (
             <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
               <div className="text-white/60 font-mono">Loading question...</div>
@@ -165,7 +156,7 @@ export default function ReviewPage() {
           ) : editedQuestion ? (
             <QuestionPanel
               question={editedQuestion}
-              isEditMode={isEditMode}
+              editingField={editingField}
               onQuestionStemChange={updateQuestionStem}
               onOptionChange={updateOption}
               onDistractorChange={updateDistractor}
@@ -175,12 +166,14 @@ export default function ReviewPage() {
               onPrimaryTagChange={updatePrimaryTag}
               onAddSecondaryTag={addSecondaryTag}
               onRemoveSecondaryTag={removeSecondaryTag}
+              onStartEditingField={startEditingField}
+              onStopEditingField={stopEditingField}
             />
           ) : null}
         </div>
 
-        {/* Right Panel - Solution */}
-        <div className="flex-1 h-[calc(100vh-8rem)]">
+        {/* Solution Panel - Bottom */}
+        <div className="flex-1 min-h-[500px]">
           {loading || !currentQuestion ? (
             <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
               <div className="text-white/60 font-mono">Loading solution...</div>
@@ -188,26 +181,15 @@ export default function ReviewPage() {
           ) : editedQuestion ? (
             <SolutionPanel
               question={editedQuestion}
-              isEditMode={isEditMode}
+              editingField={editingField}
               onSolutionReasoningChange={updateSolutionReasoning}
               onKeyInsightChange={updateKeyInsight}
-              onDistractorChange={updateDistractor}
+              onStartEditingField={startEditingField}
+              onStopEditingField={stopEditingField}
             />
           ) : null}
         </div>
       </div>
-
-      {/* Bottom Action Bar */}
-      {currentQuestion && !loading && (
-        <ReviewActionsBar
-          isEditMode={isEditMode}
-          isSaving={isSaving}
-          onApprove={handleApprove}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onAnalytics={handleAnalytics}
-        />
-      )}
 
       {/* Analytics Panel */}
       <AnalyticsPanel
@@ -219,4 +201,3 @@ export default function ReviewPage() {
     </div>
   );
 }
-

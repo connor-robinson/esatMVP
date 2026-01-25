@@ -263,15 +263,14 @@ export function QuestionDisplay({
                     <button
                       onClick={toggleFullscreen}
                       className="
-                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
+                        flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
+                        backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
                       "
                       title="Enter fullscreen mode"
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                       </svg>
-                      <span className="hidden sm:inline">Fullscreen</span>
                     </button>
                   </div>
 
@@ -333,28 +332,23 @@ export function QuestionDisplay({
                   {/* Mark-as-Guess - Bottom Left */}
                   <div className="absolute bottom-8 left-8 pointer-events-auto" style={{ bottom: '32px' }}>
                     {onGuessToggle && (
-                      <div className={`flex items-center gap-2 px-3 py-1 rounded-lg backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}`}>
-                        <label className={`text-xs font-semibold uppercase tracking-wider ${isGuessed ? 'text-yellow-600' : isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`}>
-                          Mark as Guess
-                        </label>
-                        <button
-                          onClick={onGuessToggle}
-                          className={`
-                            relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-transparent
-                            ${isGuessed 
-                              ? 'bg-yellow-500' 
-                              : 'bg-neutral-600'
-                            }
-                          `}
-                        >
-                          <span
-                            className={`
-                              inline-block h-3 w-3 transform rounded-full bg-white transition-transform
-                              ${isGuessed ? 'translate-x-5' : 'translate-x-1'}
-                            `}
-                          />
-                        </button>
-                      </div>
+                      <button
+                        onClick={onGuessToggle}
+                        className={`
+                          flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200
+                          backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}
+                          ${isGuessed 
+                            ? 'text-yellow-500' 
+                            : `${isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`
+                          }
+                        `}
+                        title={isGuessed ? "Remove guess mark" : "Mark as guess"}
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 16.5h.008v.008H12v-.008z" />
+                        </svg>
+                        <span>Mark as Guess</span>
+                      </button>
                     )}
                   </div>
 
@@ -367,14 +361,15 @@ export function QuestionDisplay({
                           flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200
                           backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}
                           ${isFlaggedForReview 
-                            ? `text-blue-600`
+                            ? `text-[#5B8D94]`
                             : `${isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`
                           }
                         `}
                         title={isFlaggedForReview ? "Remove flag for review" : "Flag for review"}
                       >
-                        <svg className="w-3.5 h-3.5" fill={isFlaggedForReview ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        <svg className="w-5 h-5" fill={isFlaggedForReview ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 21V3h12l-4 6 4 6H5z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v18" />
                         </svg>
                         <span>Flag</span>
                       </button>
@@ -457,10 +452,10 @@ export function QuestionDisplay({
                   </div>
                 </div>
 
-                {/* Exit Fullscreen Button - Top Right */}
+                {/* Exit Fullscreen Button - Top Left */}
                 <button
                   onClick={toggleFullscreen}
-                  className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm border shadow-lg bg-black/90 border-white/30 text-white hover:bg-black/95 z-10"
+                  className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm border shadow-lg bg-black/90 border-white/30 text-white hover:bg-black/95 z-10"
                   title="Exit fullscreen mode"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

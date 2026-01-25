@@ -1,149 +1,46 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { normalizeReviewQuestion } from "@/lib/utils";
 import type { ReviewQuestion } from "@/types/review";
 
-export function useQuestionEditor(question: ReviewQuestion | null) {
-  const [isEditMode, setIsEditMode] = useState(false);
+export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplete?: (updated: ReviewQuestion) => void) {
+  const [editingField, setEditingField] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Normalize question to ensure it has all required fields
   const normalizedQuestion = question ? normalizeReviewQuestion(question) : null;
   const [editedQuestion, setEditedQuestion] = useState<ReviewQuestion | null>(normalizedQuestion);
 
-  // Update edited question when question changes
-  // Only update if it's a different question (different ID) to prevent overwriting edits
-  useEffect(() => {
-    if (normalizedQuestion) {
-      // Only update if it's a different question (different ID)
-      // This prevents overwriting edits when the same question is updated after save
-      if (!editedQuestion || editedQuestion.id !== normalizedQuestion.id) {
-        console.log('[useQuestionEditor] Loading new question:', normalizedQuestion.id);
-        setEditedQuestion(normalizedQuestion);
-        setIsEditMode(false);
-      }
-      // If same question ID but different data and not in edit mode, sync the data
-      // This handles cases where the question was updated externally (e.g., after save)
-      else if (!isEditMode && JSON.stringify(editedQuestion) !== JSON.stringify(normalizedQuestion)) {
-        console.log('[useQuestionEditor] Syncing question data (same ID, not in edit mode):', normalizedQuestion.id);
-        setEditedQuestion(normalizedQuestion);
-      }
-    } else if (question === null && editedQuestion !== null) {
-      // If question becomes null, clear edited question
-      setEditedQuestion(null);
-      setIsEditMode(false);
-    }
-  }, [normalizedQuestion?.id, isEditMode, question]); // Depend on ID, edit mode, and question
-
-  const updateField = useCallback((field: keyof ReviewQuestion, value: any) => {
-    if (!editedQuestion) return;
-    
-    setEditedQuestion({
-      ...editedQuestion,
-      [field]: value,
-    });
-  }, [editedQuestion]);
-
-  const updateQuestionStem = useCallback((value: string) => {
-    updateField('question_stem', value);
-  }, [updateField]);
-
-  const updateOption = useCallback((letter: string, value: string) => {
-    if (!editedQuestion) return;
-    
-    // Ensure options is always an object
-    const currentOptions = editedQuestion.options || {};
-    
-    setEditedQuestion({
-      ...editedQuestion,
-      options: {
-        ...currentOptions,
-        [letter]: value,
-      },
-    });
-  }, [editedQuestion]);
-
-  const updateSolutionReasoning = useCallback((value: string) => {
-    updateField('solution_reasoning', value);
-  }, [updateField]);
-
-  const updateKeyInsight = useCallback((value: string) => {
-    updateField('solution_key_insight', value);
-  }, [updateField]);
-
-  const updateDistractor = useCallback((letter: string, value: string) => {
-    if (!editedQuestion) return;
-    
-    setEditedQuestion({
-      ...editedQuestion,
-      distractor_map: {
-        ...(editedQuestion.distractor_map || {}),
-        [letter]: value,
-      },
-    });
-  }, [editedQuestion]);
-
-  const updateDifficulty = useCallback((value: 'Easy' | 'Medium' | 'Hard') => {
-    updateField('difficulty', value);
-  }, [updateField]);
-
-  const updatePaper = useCallback((value: string | null) => {
-    updateField('paper', value);
-  }, [updateField]);
-
-  const updatePrimaryTag = useCallback((value: string | null) => {
-    updateField('primary_tag', value);
-  }, [updateField]);
-
-  const addSecondaryTag = useCallback((tag: string) => {
-    if (!editedQuestion) return;
-    
-    const currentTags = editedQuestion.secondary_tags || [];
-    if (!currentTags.includes(tag)) {
-      setEditedQuestion({
-        ...editedQuestion,
-        secondary_tags: [...currentTags, tag],
-      });
-    }
-  }, [editedQuestion]);
-
-  const removeSecondaryTag = useCallback((tag: string) => {
-    if (!editedQuestion) return;
-    
-    const currentTags = editedQuestion.secondary_tags || [];
-    setEditedQuestion({
-      ...editedQuestion,
-      secondary_tags: currentTags.filter(t => t !== tag),
-    });
-  }, [editedQuestion]);
-
-  const saveChanges = useCallback(async (): Promise<ReviewQuestion | null> => {
-    if (!editedQuestion) return null;
+  // Save function - defined first so other functions can use it
+  const saveChanges = useCallback(async (questionToSave?: ReviewQuestion): Promise<ReviewQuestion | null> => {
+    const question = questionToSave || editedQuestion;
+    if (!question) return null;
 
     setIsSaving(true);
     
     const payload = {
-      question_stem: editedQuestion.question_stem,
-      options: editedQuestion.options,
-      solution_reasoning: editedQuestion.solution_reasoning,
-      solution_key_insight: editedQuestion.solution_key_insight,
-      distractor_map: editedQuestion.distractor_map,
-      difficulty: editedQuestion.difficulty,
-      paper: editedQuestion.paper,
-      primary_tag: editedQuestion.primary_tag,
-      secondary_tags: editedQuestion.secondary_tags,
+      question_stem: question.question_stem,
+      options: question.options,
+      solution_reasoning: question.solution_reasoning,
+      solution_key_insight: question.solution_key_insight,
+      distractor_map: question.distractor_map,
+      difficulty: question.difficulty,
+      paper: question.paper,
+      primary_tag: question.primary_tag,
+      secondary_tags: question.secondary_tags,
     };
 
     try {
       console.log('[useQuestionEditor] Saving changes:', {
-        id: editedQuestion.id,
+        id: question.id,
         payloadKeys: Object.keys(payload),
         questionStemPreview: payload.question_stem?.substring(0, 50),
         optionsCount: Object.keys(payload.options || {}).length,
       });
 
-      const response = await fetch(`/api/review/${editedQuestion.id}/update`, {
+      const response = await fetch(`/api/review/${question.id}/update`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -152,13 +49,11 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
       });
 
       if (!response.ok) {
-        // Clone the response before reading it, so we can read it multiple times if needed
         const responseClone = response.clone();
         let errorData: any = {};
         try {
           errorData = await response.json();
         } catch (e) {
-          // If JSON parsing fails, try reading as text
           try {
             const text = await responseClone.text();
             console.error('[useQuestionEditor] Failed to parse error response as JSON, raw text:', text);
@@ -171,7 +66,6 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
         
         const errorMessage = errorData.error || errorData.details || errorData.message || 'Failed to save changes';
         
-        // Log the full error object with all properties
         console.error('[useQuestionEditor] API error - Full Details:', {
           status: response.status,
           statusText: response.statusText,
@@ -184,11 +78,9 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
           authInfo: errorData.authInfo,
           errorType: errorData.type,
           fullErrorData: JSON.stringify(errorData, null, 2),
-          // Try to get all properties of errorData
           allErrorKeys: Object.keys(errorData),
         });
         
-        // Include more details in the error message
         const detailedError = errorData.details 
           ? `${errorMessage}: ${errorData.details}`
           : errorData.code 
@@ -206,13 +98,11 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
         questionId: data.question?.id,
       });
       
-      // Handle case where update succeeded but question couldn't be retrieved
       if (data.warning) {
         console.warn('[useQuestionEditor] Update succeeded with warning:', data.warning);
       }
       
       if (!data.question) {
-        // If question is null, we need to refetch it
         const errorMsg = data.message || data.error || 'Question updated but could not be retrieved';
         console.error('[useQuestionEditor] No question in response:', {
           data,
@@ -221,39 +111,20 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
         throw new Error(errorMsg);
       }
       
-      // Verify the saved data matches what we sent
-      const savedMatches = 
-        data.question.question_stem === payload.question_stem &&
-        JSON.stringify(data.question.options) === JSON.stringify(payload.options) &&
-        data.question.solution_reasoning === payload.solution_reasoning &&
-        data.question.solution_key_insight === payload.solution_key_insight &&
-        JSON.stringify(data.question.distractor_map) === JSON.stringify(payload.distractor_map);
-      
-      if (!savedMatches) {
-        console.warn('[useQuestionEditor] Saved data may not match sent data:', {
-          sent: {
-            questionStem: payload.question_stem?.substring(0, 50),
-            optionsKeys: Object.keys(payload.options || {}),
-          },
-          received: {
-            questionStem: data.question.question_stem?.substring(0, 50),
-            optionsKeys: Object.keys(data.question.options || {}),
-          },
-        });
-      }
-      
       // Normalize the saved question to ensure all fields are present
       const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
       
       // Update local state with the saved question immediately
-      // This ensures the UI reflects the saved changes without needing a refresh
       setEditedQuestion(normalizedSavedQuestion);
-      setIsEditMode(false);
+      
+      // Notify parent component of save completion
+      if (onSaveComplete) {
+        onSaveComplete(normalizedSavedQuestion);
+      }
       
       console.log('[useQuestionEditor] Question saved successfully:', {
         id: normalizedSavedQuestion.id,
         questionStemPreview: normalizedSavedQuestion.question_stem?.substring(0, 50),
-        savedMatches,
       });
       
       return normalizedSavedQuestion;
@@ -263,25 +134,181 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
     } finally {
       setIsSaving(false);
     }
-  }, [editedQuestion]);
+  }, [editedQuestion, onSaveComplete]);
 
-  const enterEditMode = useCallback(() => {
-    setIsEditMode(true);
+  // Update edited question when question changes
+  useEffect(() => {
+    if (normalizedQuestion) {
+      if (!editedQuestion || editedQuestion.id !== normalizedQuestion.id) {
+        console.log('[useQuestionEditor] Loading new question:', normalizedQuestion.id);
+        setEditedQuestion(normalizedQuestion);
+        setEditingField(null);
+      }
+      else if (!editingField && JSON.stringify(editedQuestion) !== JSON.stringify(normalizedQuestion)) {
+        console.log('[useQuestionEditor] Syncing question data (same ID, not editing):', normalizedQuestion.id);
+        setEditedQuestion(normalizedQuestion);
+      }
+    } else if (question === null && editedQuestion !== null) {
+      setEditedQuestion(null);
+      setEditingField(null);
+    }
+  }, [normalizedQuestion?.id, editingField, question, editedQuestion]);
+
+  const updateField = useCallback((field: keyof ReviewQuestion, value: any, autoSave: boolean = true) => {
+    if (!editedQuestion) return;
+    
+    const updated = {
+      ...editedQuestion,
+      [field]: value,
+    };
+    
+    setEditedQuestion(updated);
+    
+    if (autoSave) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+  }, [editedQuestion, saveChanges]);
+
+  const updateQuestionStem = useCallback((value: string, autoSave: boolean = true) => {
+    updateField('question_stem', value, autoSave);
+  }, [updateField]);
+
+  const updateOption = useCallback((letter: string, value: string, autoSave: boolean = true) => {
+    if (!editedQuestion) return;
+    
+    const currentOptions = editedQuestion.options || {};
+    const updated = {
+      ...editedQuestion,
+      options: {
+        ...currentOptions,
+        [letter]: value,
+      },
+    };
+    
+    setEditedQuestion(updated);
+    
+    if (autoSave) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+  }, [editedQuestion, saveChanges]);
+
+  const updateSolutionReasoning = useCallback((value: string, autoSave: boolean = true) => {
+    updateField('solution_reasoning', value, autoSave);
+  }, [updateField]);
+
+  const updateKeyInsight = useCallback((value: string, autoSave: boolean = true) => {
+    updateField('solution_key_insight', value, autoSave);
+  }, [updateField]);
+
+  const updateDistractor = useCallback((letter: string, value: string, autoSave: boolean = true) => {
+    if (!editedQuestion) return;
+    
+    const updated = {
+      ...editedQuestion,
+      distractor_map: {
+        ...(editedQuestion.distractor_map || {}),
+        [letter]: value,
+      },
+    };
+    
+    setEditedQuestion(updated);
+    
+    if (autoSave) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+  }, [editedQuestion, saveChanges]);
+
+  const updateDifficulty = useCallback((value: 'Easy' | 'Medium' | 'Hard') => {
+    updateField('difficulty', value, true);
+  }, [updateField]);
+
+  const updatePaper = useCallback((value: string | null) => {
+    updateField('paper', value, true);
+  }, [updateField]);
+
+  const updatePrimaryTag = useCallback((value: string | null) => {
+    updateField('primary_tag', value, true);
+  }, [updateField]);
+
+  const addSecondaryTag = useCallback((tag: string) => {
+    if (!editedQuestion) return;
+    
+    const currentTags = editedQuestion.secondary_tags || [];
+    if (!currentTags.includes(tag)) {
+      const updated = {
+        ...editedQuestion,
+        secondary_tags: [...currentTags, tag],
+      };
+      setEditedQuestion(updated);
+      
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+  }, [editedQuestion, saveChanges]);
+
+  const removeSecondaryTag = useCallback((tag: string) => {
+    if (!editedQuestion) return;
+    
+    const currentTags = editedQuestion.secondary_tags || [];
+    const updated = {
+      ...editedQuestion,
+      secondary_tags: currentTags.filter(t => t !== tag),
+    };
+    setEditedQuestion(updated);
+    
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveChanges(updated).catch(err => {
+      console.error('[useQuestionEditor] Auto-save failed:', err);
+    });
+  }, [editedQuestion, saveChanges]);
+
+  const startEditingField = useCallback((fieldName: string) => {
+    setEditingField(fieldName);
   }, []);
 
-  const exitEditMode = useCallback(() => {
-    setIsEditMode(false);
-    if (normalizedQuestion) {
-      setEditedQuestion(normalizedQuestion);
+  const stopEditingField = useCallback(() => {
+    if (editedQuestion && editingField) {
+      saveChanges(editedQuestion).catch(err => {
+        console.error('[useQuestionEditor] Auto-save on blur failed:', err);
+      });
     }
-  }, [normalizedQuestion]);
+    setEditingField(null);
+  }, [editedQuestion, editingField, saveChanges]);
 
-  // Always return a valid question object if one exists, never null
-  // This prevents "Cannot convert undefined or null to object" errors
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const safeEditedQuestion = editedQuestion || normalizedQuestion;
   
   return {
-    isEditMode,
+    editingField,
     isSaving,
     editedQuestion: safeEditedQuestion,
     updateQuestionStem,
@@ -295,8 +322,7 @@ export function useQuestionEditor(question: ReviewQuestion | null) {
     addSecondaryTag,
     removeSecondaryTag,
     saveChanges,
-    enterEditMode,
-    exitEditMode,
+    startEditingField,
+    stopEditingField,
   };
 }
-

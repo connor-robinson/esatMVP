@@ -1,5 +1,26 @@
 /**
  * Zustand store for paper session state management
+ * 
+ * SECTION TRACKING:
+ * =================
+ * Each paper session tracks which sections were attempted via the `selectedSections` array.
+ * This array is saved to the database in the `selected_sections` field when the session is persisted.
+ * 
+ * Completion Detection:
+ * - A section is considered "completed" if there exists a session where:
+ *   1. `ended_at IS NOT NULL` (session was finished)
+ *   2. The section name appears in the `selected_sections` array
+ *   3. The session's `paper_variant` matches the paper being checked
+ * 
+ * Session ID:
+ * - Each session gets a unique UUID via `crypto.randomUUID()` when started
+ * - This ensures multiple attempts of the same paper are tracked separately
+ * - The session ID is used as the primary key in the database
+ * 
+ * Persistence:
+ * - Sessions are automatically persisted to the server via `persistSessionToServer()`
+ * - This happens on a debounced schedule (800ms) or immediately when the session ends
+ * - The `selectedSections` array is included in every persistence call
  */
 
 import { create } from 'zustand';
@@ -10,14 +31,14 @@ import type { Answer, Letter, MistakeTag, PaperSection, Question } from '@/types
 
 interface PaperSessionState {
   // Session data
-  sessionId: string | null;
+  sessionId: string | null; // Unique UUID for this session attempt
   paperId: number | null;
   paperName: string;
-  paperVariant: string;
+  paperVariant: string; // Format: "{year}-{paperName}-{examType}"
   sessionName: string;
   timeLimitMinutes: number;
   questionRange: { start: number; end: number };
-  selectedSections: PaperSection[];
+  selectedSections: PaperSection[]; // Array of section names attempted in this session
   
   // Questions data
   questions: Question[];
@@ -162,21 +183,33 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       persistTimer: null,
       
       // Actions
+      /**
+       * Start a new paper session
+       * 
+       * Creates a unique session ID and initializes all session state.
+       * The selectedSections array is set from the config and will be
+       * persisted to track which sections were attempted.
+       * 
+       * @param config.selectedSections - Array of section names to track for this session
+       *                                  This is used later to determine completion status
+       */
       startSession: (config) => {
         const totalQuestions = config.questionRange.end - config.questionRange.start + 1;
+        // Generate unique UUID for this session attempt
+        // This ensures multiple attempts of the same paper are tracked separately
         const sessionId = crypto.randomUUID();
         const startedAt = Date.now();
         const deadline = startedAt + config.timeLimitMinutes * 60 * 1000;
         
         set({
-          sessionId,
+          sessionId, // Unique identifier for this session
           paperId: config.paperId,
           paperName: config.paperName,
           paperVariant: config.paperVariant,
           sessionName: config.sessionName,
           timeLimitMinutes: config.timeLimitMinutes,
           questionRange: config.questionRange,
-          selectedSections: config.selectedSections || [],
+          selectedSections: config.selectedSections || [], // Sections attempted in this session
           questionOrder: config.questionOrder || Array.from({ length: totalQuestions }, (_, i) => i + 1),
           currentQuestionIndex: 0,
           answers: Array.from({ length: totalQuestions }, initialAnswer),
@@ -233,15 +266,25 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include", // Ensure cookies are sent
           body: JSON.stringify(payload),
         })
-          .then((response) => {
+          .then(async (response) => {
             if (!response.ok) {
-              throw new Error("Failed to create paper session");
+              const errorData = await response.json().catch(() => ({}));
+              if (response.status === 401) {
+                // User not authenticated - session will work locally but won't be saved to server
+                console.warn("[papers] Session creation skipped: User not authenticated. Session will work locally.");
+                return;
+              }
+              throw new Error(errorData.error || "Failed to create paper session");
             }
           })
           .catch((error) => {
-            console.error("[papers] failed to create session", error);
+            // Only log non-401 errors as errors, 401 is expected for unauthenticated users
+            if (!error.message?.includes("401") && !error.message?.includes("not authenticated")) {
+              console.error("[papers] failed to create session", error);
+            }
           })
           .finally(() => {
             set((state) => {
@@ -826,6 +869,21 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }
       },
 
+      /**
+       * Persist session data to the server
+       * 
+       * This saves the current session state including:
+       * - All answers, flags, and timing data
+       * - selectedSections array (used for completion tracking)
+       * - Session metadata (start/end times, scores, etc.)
+       * 
+       * The selectedSections array is critical for completion tracking:
+       * - It records which sections were attempted in this session
+       * - When endedAt is set, these sections are marked as "completed"
+       * - Used by roadmap and library to show completion status
+       * 
+       * @param options.immediate - If true, persist immediately instead of debouncing
+       */
       persistSessionToServer: async ({ immediate = false } = {}) => {
         const state = get();
         if (!state.sessionId) return;
@@ -848,13 +906,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const totalQuestions = state.questionRange.end - state.questionRange.start + 1;
 
         const payload = {
-          id: state.sessionId,
+          id: state.sessionId, // Unique session ID (UUID)
           paperId: state.paperId,
           paperName: state.paperName,
           paperVariant: state.paperVariant,
           sessionName: state.sessionName,
           questionRange: state.questionRange,
-          selectedSections: state.selectedSections,
+          selectedSections: state.selectedSections, // Critical: tracks which sections were attempted
           questionOrder: state.questionOrder,
           timeLimitMinutes: state.timeLimitMinutes,
           startedAt: state.startedAt,

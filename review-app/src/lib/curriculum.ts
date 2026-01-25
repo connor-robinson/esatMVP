@@ -277,13 +277,119 @@ export function getQuestionTagText(question: ReviewQuestion, tag: string | null)
 }
 
 /**
- * Format tag for display: shows code and text if available
+ * Format tag for display: shows only human-readable text (no curriculum codes)
  */
 export function formatTagDisplay(tag: string | null, text: string | null): string {
   if (!tag) return '';
   if (text) {
-    return `${tag} (${text})`;
+    return text;
   }
   return tag;
+}
+
+/**
+ * Convert paper name to ESAT paper_id
+ */
+function getESATPaperId(paper: string | null): string | null {
+  if (!paper) return null;
+  const paperLower = paper.toLowerCase().trim();
+  
+  if (paperLower.includes('math 1') || paperLower === 'math1' || paperLower === 'm1') {
+    return 'math1';
+  }
+  if (paperLower.includes('math 2') || paperLower === 'math2' || paperLower === 'm2') {
+    return 'math2';
+  }
+  if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2') {
+    return 'physics';
+  }
+  if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2') {
+    return 'chemistry';
+  }
+  if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2') {
+    return 'biology';
+  }
+  
+  return null;
+}
+
+/**
+ * Get ESAT prefix for a paper_id
+ */
+function getESATPrefix(paperId: string): string {
+  const prefixMap: Record<string, string> = {
+    'math1': 'M1-',
+    'math2': 'M2-',
+    'physics': 'P-',
+    'chemistry': 'C-',
+    'biology': 'biology-'
+  };
+  return prefixMap[paperId] || '';
+}
+
+/**
+ * Topic option for dropdowns
+ */
+export interface TopicOption {
+  code: string;        // Storage code (e.g., "M2-MM1" for ESAT, "MM1" for TMUA)
+  title: string;       // Display title (e.g., "Algebra and functions")
+  fullCode: string;   // Full prefixed code for ESAT
+}
+
+/**
+ * Get all topics for a given exam type and paper
+ */
+export function getTopicsForPaper(examType: 'ESAT' | 'TMUA' | null, paper: string | null): TopicOption[] {
+  if (examType === 'ESAT') {
+    const paperId = getESATPaperId(paper);
+    if (!paperId) return [];
+    
+    const paperData = ESAT_CURRICULUM.papers.find(p => p.paper_id === paperId);
+    if (!paperData) return [];
+    
+    const prefix = getESATPrefix(paperId);
+    return paperData.topics.map(topic => ({
+      code: topic.code,
+      title: topic.title,
+      fullCode: `${prefix}${topic.code}`
+    }));
+  } else if (examType === 'TMUA') {
+    // TMUA topics - return all topics
+    return Object.entries(TMUA_CURRICULUM).map(([code, title]) => ({
+      code,
+      title,
+      fullCode: code
+    }));
+  }
+  
+  return [];
+}
+
+/**
+ * Get all topics for an exam type (all papers combined)
+ */
+export function getAllTopicsForExam(examType: 'ESAT' | 'TMUA' | null): TopicOption[] {
+  if (examType === 'ESAT') {
+    const allTopics: TopicOption[] = [];
+    ESAT_CURRICULUM.papers.forEach(paper => {
+      const prefix = getESATPrefix(paper.paper_id);
+      paper.topics.forEach(topic => {
+        allTopics.push({
+          code: topic.code,
+          title: topic.title,
+          fullCode: `${prefix}${topic.code}`
+        });
+      });
+    });
+    return allTopics;
+  } else if (examType === 'TMUA') {
+    return Object.entries(TMUA_CURRICULUM).map(([code, title]) => ({
+      code,
+      title,
+      fullCode: code
+    }));
+  }
+  
+  return [];
 }
 

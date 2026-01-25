@@ -813,50 +813,26 @@ export default function PapersSolvePage() {
           zIndex: 10
         }}>
           
-          {/* Unified Bottom Bar: Submit Section | Multiple Choice | Previous, Navigator, Next */}
-          <div className="flex items-center gap-3 w-full">
-            {/* Submit Section Button - Left */}
-            <button
-              onClick={handleSubmitSection}
-              className="
-                flex items-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
-                active:scale-95 flex-shrink-0
-              "
-              style={{
-                boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-              }}
-              title="Submit section"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              <span>Submit Section</span>
-            </button>
-
-            {/* Answer Choices - Middle (takes remaining space) */}
-            <div className="flex items-center justify-center gap-3 flex-1 min-w-0">
+          {/* Two-Row Button Layout */}
+          <div className="space-y-4 w-full">
+            {/* First Row: A-H Buttons */}
+            <div className="flex items-center justify-between gap-2 w-full">
               {LETTERS.map((letter) => (
                 <button
                   key={letter}
                   onClick={() => handleChoiceSelect(letter)}
                   className={`
-                    h-[50px] rounded-organic-md font-medium transition-all duration-fast ease-signature text-base
-                    flex items-center justify-center flex-1 min-w-0 max-w-[120px]
+                    h-[50px] rounded-organic-md font-medium text-base
+                    flex items-center justify-center flex-1
+                    transition-all duration-300 ease-out
                     ${currentAnswer?.choice === letter
-                      ? 'bg-[#5075a4] text-white border border-[#5075a4]'
-                      : 'bg-interview/40 hover:bg-interview/60 text-interview'
+                      ? 'bg-neutral-500 text-white border-2 border-neutral-400'
+                      : 'bg-neutral-700 text-neutral-100 hover:bg-neutral-600 border-2 border-transparent'
                     }
                   `}
                   style={{
                     boxShadow: currentAnswer?.choice === letter
-                      ? 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                      ? 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.15)'
                       : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
                   }}
                   onMouseEnter={(e) => {
@@ -865,7 +841,11 @@ export default function PapersSolvePage() {
                     }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    if (currentAnswer?.choice === letter) {
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.15)';
+                    } else {
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    }
                   }}
                 >
                   {letter}
@@ -873,108 +853,151 @@ export default function PapersSolvePage() {
               ))}
             </div>
 
-            {/* Previous, Navigator, Next Buttons - Right (close together) */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {/* Previous Button */}
-              <button
-                onClick={() => handleNavigation(-1)}
-                disabled={sectionQuestionIndex === 0}
-                className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
-                  active:scale-95
-                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-interview/40
-                "
-                style={{
-                  boxShadow: sectionQuestionIndex === 0 
-                    ? 'none'
-                    : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                }}
-                onMouseEnter={(e) => {
-                  if (sectionQuestionIndex !== 0) {
+            {/* Second Row: Navigation Buttons */}
+            <div className="flex items-center justify-between w-full">
+              {/* Left Group: Submit Section */}
+              <div className="flex items-center gap-2">
+                {/* Submit Section Button */}
+                <button
+                  onClick={handleSubmitSection}
+                  className="
+                    flex items-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                    rounded-organic-md active:scale-95
+                  "
+                  style={{
+                    backgroundColor: '#3d6064',
+                    color: '#ffffff',
+                    boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#345155';
                     e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (sectionQuestionIndex !== 0) {
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#3d6064';
                     e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                  }
-                }}
-                title="Previous question"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span>Prev</span>
-              </button>
+                  }}
+                  title="Submit section"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  <span>Submit Section</span>
+                </button>
+              </div>
 
-              {/* Navigator Button */}
-              <button
-                onClick={() => setShowNavigator(true)}
-                className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
-                  active:scale-95
-                "
-                style={{
-                  boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                }}
-                title="Open navigator"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                <span>Navigator</span>
-              </button>
+              {/* Right Group: Prev + Navigator + Next */}
+              <div className="flex items-center gap-2">
+                {/* Previous Button */}
+                <button
+                  onClick={() => handleNavigation(-1)}
+                  disabled={sectionQuestionIndex === 0}
+                  className="
+                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                    rounded-organic-md active:scale-95
+                    disabled:opacity-30 disabled:cursor-not-allowed
+                  "
+                  style={{
+                    backgroundColor: '#3d6064',
+                    color: '#ffffff',
+                    boxShadow: sectionQuestionIndex === 0 
+                      ? 'none'
+                      : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (sectionQuestionIndex !== 0) {
+                      e.currentTarget.style.backgroundColor = '#345155';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (sectionQuestionIndex !== 0) {
+                      e.currentTarget.style.backgroundColor = '#3d6064';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    }
+                  }}
+                  title="Previous question"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>Prev</span>
+                </button>
 
-              {/* Next Button */}
-              <button
-                onClick={() => handleNavigation(1)}
-                disabled={allSectionsQuestions.length > 0 
-                  ? sectionQuestionIndex >= currentSectionQuestions.length - 1
-                  : sectionQuestionIndex >= actualQuestionCount - 1}
-                className="
-                  flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                  rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview
-                  active:scale-95
-                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-interview/40
-                "
-                style={{
-                  boxShadow: (allSectionsQuestions.length > 0 
-                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
-                    : sectionQuestionIndex >= actualQuestionCount - 1)
-                    ? 'none'
-                    : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                }}
-                onMouseEnter={(e) => {
-                  const isDisabled = allSectionsQuestions.length > 0 
-                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
-                    : sectionQuestionIndex >= actualQuestionCount - 1;
-                  if (!isDisabled) {
+                {/* Navigator Button */}
+                <button
+                  onClick={() => setShowNavigator(true)}
+                  className="
+                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                    rounded-organic-md active:scale-95
+                  "
+                  style={{
+                    backgroundColor: '#3d6064',
+                    color: '#ffffff',
+                    boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#345155';
                     e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  const isDisabled = allSectionsQuestions.length > 0 
-                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
-                    : sectionQuestionIndex >= actualQuestionCount - 1;
-                  if (!isDisabled) {
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#3d6064';
                     e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                  }
-                }}
-                title="Next question"
-              >
-                <span>Next</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                  }}
+                  title="Open navigator"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  <span>Navigator</span>
+                </button>
+
+                {/* Next Button */}
+                <button
+                  onClick={() => handleNavigation(1)}
+                  disabled={allSectionsQuestions.length > 0 
+                    ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                    : sectionQuestionIndex >= actualQuestionCount - 1}
+                  className="
+                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
+                    rounded-organic-md active:scale-95
+                    disabled:opacity-30 disabled:cursor-not-allowed
+                  "
+                  style={{
+                    backgroundColor: '#3d6064',
+                    color: '#ffffff',
+                    boxShadow: (allSectionsQuestions.length > 0 
+                      ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                      : sectionQuestionIndex >= actualQuestionCount - 1)
+                      ? 'none'
+                      : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                  }}
+                  onMouseEnter={(e) => {
+                    const isDisabled = allSectionsQuestions.length > 0 
+                      ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                      : sectionQuestionIndex >= actualQuestionCount - 1;
+                    if (!isDisabled) {
+                      e.currentTarget.style.backgroundColor = '#345155';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    const isDisabled = allSectionsQuestions.length > 0 
+                      ? sectionQuestionIndex >= currentSectionQuestions.length - 1
+                      : sectionQuestionIndex >= actualQuestionCount - 1;
+                    if (!isDisabled) {
+                      e.currentTarget.style.backgroundColor = '#3d6064';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    }
+                  }}
+                  title="Next question"
+                >
+                  <span>Next</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1071,15 +1094,39 @@ export default function PapersSolvePage() {
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     onClick={() => setShowConfirmModal(false)}
-                    className="px-4 py-2 rounded-organic-md text-sm font-medium"
-                    style={{ backgroundColor: 'transparent', color: '#e5e7eb' }}
+                    className="px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature
+                             active:scale-95"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: '#e5e7eb',
+                      boxShadow: 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => { setShowConfirmModal(false); handleSubmit(); }}
-                    className="px-4 py-2 rounded-organic-md text-sm font-semibold"
-                    style={{ backgroundColor: '#506141', color: '#ffffff', border: '2px solid #506141' }}
+                    className="px-4 py-2 rounded-organic-md text-sm font-semibold transition-all duration-fast ease-signature
+                           active:scale-95"
+                    style={{
+                      backgroundColor: '#3d6064',
+                      color: '#ffffff',
+                      boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#345155';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#3d6064';
+                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                    }}
                     autoFocus
                   >
                     Submit & Mark

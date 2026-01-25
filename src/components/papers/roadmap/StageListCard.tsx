@@ -7,7 +7,7 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ChevronDown, ChevronRight, CheckCircle2, Play, Check } from "lucide-react";
+import { Lock, ChevronDown, ChevronRight, CheckCircle2, ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
@@ -44,17 +44,23 @@ export function StageListCard({
     const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
     const examColor = getPaperTypeColor(stage.examName);
 
-    // Initialize selected parts to all parts when stage changes
+    // Initialize selected parts to only incomplete parts when stage changes
+    // This ensures users don't accidentally re-attempt completed sections
     useMemo(() => {
         if (stage) {
-            const allPartKeys = new Set(
-                stage.parts.map(
-                    (part) => `${part.paperName}-${part.partLetter}-${part.examType}`
-                )
+            // Filter to only include parts that are NOT completed
+            const incompletePartKeys = new Set(
+                stage.parts
+                    .filter((part) => {
+                        const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+                        const isCompleted = completionData.get(partKey) || false;
+                        return !isCompleted; // Only include incomplete parts
+                    })
+                    .map((part) => `${part.paperName}-${part.partLetter}-${part.examType}`)
             );
-            setSelectedParts(allPartKeys);
+            setSelectedParts(incompletePartKeys);
         }
-    }, [stage]);
+    }, [stage, completionData]);
 
     const handleCardClick = () => {
         if (!isUnlocked) return;
@@ -85,15 +91,24 @@ export function StageListCard({
 
     const handleSelectAll = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (selectedParts.size === stage.parts.length) {
+        // Get all incomplete parts
+        const incompleteParts = stage.parts.filter((part) => {
+            const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+            const isCompleted = completionData.get(partKey) || false;
+            return !isCompleted;
+        });
+        
+        if (selectedParts.size === incompleteParts.length && incompleteParts.length > 0) {
+            // Deselect all if all incomplete parts are selected
             setSelectedParts(new Set());
         } else {
-            const allPartKeys = new Set(
-                stage.parts.map(
+            // Select all incomplete parts
+            const allIncompletePartKeys = new Set(
+                incompleteParts.map(
                     (part) => `${part.paperName}-${part.partLetter}-${part.examType}`
                 )
             );
-            setSelectedParts(allPartKeys);
+            setSelectedParts(allIncompletePartKeys);
         }
     };
 
@@ -245,7 +260,15 @@ export function StageListCard({
                                             onClick={handleSelectAll}
                                             className="text-xs text-white/40 hover:text-white/50 transition-colors"
                                         >
-                                            {selectedParts.size === stage.parts.length ? "Deselect All" : "Select All"}
+                                            {(() => {
+                                                const incompleteCount = stage.parts.filter((part) => {
+                                                    const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+                                                    return !(completionData.get(partKey) || false);
+                                                }).length;
+                                                return selectedParts.size === incompleteCount && incompleteCount > 0
+                                                    ? "Deselect All"
+                                                    : "Select All Incomplete";
+                                            })()}
                                         </button>
                                     </div>
 
@@ -306,8 +329,8 @@ export function StageListCard({
                                          )}
                                          style={{ border: "none", outline: "none" }}
                                      >
-                                         <Play className="w-4 h-4" />
                                          <span>Start Practice Session</span>
+                                         <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
                                      </button>
                                 </div>
                             </div>

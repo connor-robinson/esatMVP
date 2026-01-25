@@ -1,29 +1,32 @@
 /**
  * Completion tracking utilities for roadmap
- * Queries paper_sessions to determine completion status
+ * Queries paper_sessions to determine completion status for roadmap parts
+ * 
+ * A part is considered completed if:
+ * - There exists a completed session (ended_at IS NOT NULL)
+ * - The session's paper_variant matches the part's paper
+ * - The session's selected_sections array includes the section for this part
  */
 
-import { supabase } from '@/lib/supabase/client';
-import type { ExamName, ExamType, PaperSection } from '@/types/papers';
+import type { ExamName, ExamType } from '@/types/papers';
 import type { RoadmapPart, RoadmapStage } from './roadmapConfig';
 import { getSectionForRoadmapPart } from './roadmapConfig';
-import type { PaperSessionRow } from '@/lib/supabase/types';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
+import {
+  constructPaperVariant,
+  queryCompletedSessions,
+  isSectionInSessions,
+  loadAllCompletedSessionsByPaperName,
+} from './completionUtils';
 
 /**
- * Construct paper variant string from components
- * Format: "{year}-{paperName}-{examType}"
- */
-function constructPaperVariant(
-  year: number,
-  paperName: string,
-  examType: ExamType
-): string {
-  return `${year}-${paperName}-${examType}`;
-}
-
-/**
- * Check if a specific part is completed by a user
+ * Check if a specific roadmap part is completed by a user
+ * 
+ * @param userId - User ID to check completion for
+ * @param examName - Exam name (e.g., "NSAA", "TMUA")
+ * @param year - Exam year
+ * @param part - Roadmap part to check
+ * @returns true if the part has been completed in any session
  */
 export async function isPartCompleted(
   userId: string,
@@ -34,104 +37,29 @@ export async function isPartCompleted(
   try {
     const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
     const section = getSectionForRoadmapPart(part, examName);
-    // paper_name in sessions is stored as PaperType (from examNameToPaperType)
     const paperTypeName = examNameToPaperType(examName);
 
-    // Query for ALL completed sessions matching this paper
-    // paper_name is stored as PaperType (from examNameToPaperType), so we check both
-    // We filter by year in the variant for better performance
-    let data: any[] = [];
-    let error: any = null;
-    
-    // Try querying with PaperType first (how it's actually stored)
-    const { data: data1, error: error1 } = await supabase
-      .from('paper_sessions')
-      .select('id, ended_at, selected_sections, paper_name, paper_variant')
-      .eq('user_id', userId)
-      .eq('paper_name', paperTypeName)
-      .not('ended_at', 'is', null)
-      .ilike('paper_variant', `${year}-%`);
-    
-    if (!error1 && data1) {
-      data = data1 as any[];
-    }
-    
-    // Also check with ExamName (for backwards compatibility or data inconsistencies)
-    if (paperTypeName !== examName) {
-      const { data: data2, error: error2 } = await supabase
-        .from('paper_sessions')
-        .select('id, ended_at, selected_sections, paper_name, paper_variant')
-        .eq('user_id', userId)
-        .eq('paper_name', examName)
-        .not('ended_at', 'is', null)
-        .ilike('paper_variant', `${year}-%`);
-      
-      if (!error2 && data2) {
-        // Merge results, avoiding duplicates
-        const existingIds = new Set(data.map(s => s.id));
-        const typedData2 = data2 as any[];
-        data = [...data, ...typedData2.filter(s => !existingIds.has(s.id))];
-      }
-      
-      error = error2 || error1;
-    } else {
-      error = error1;
-    }
+    // Query completed sessions matching this paper
+    const sessions = await queryCompletedSessions(
+      userId,
+      paperTypeName,
+      examName,
+      `${year}-%`
+    );
 
-    if (error) {
-      console.error('[roadmapCompletion] Error checking part completion:', error);
+    if (sessions.length === 0) {
       return false;
     }
 
-    if (!data || data.length === 0) {
-      return false;
-    }
-
-    // Filter sessions that match our paper variant (flexible matching)
-    const matchingSessions = data.filter((session) => {
-      const sessionVariant = session.paper_variant || '';
-      
-      // Exact match first
-      if (sessionVariant === paperVariant) {
-        return true;
-      }
-      
-      // Flexible matching: check if variant parts match
-      const variantParts = sessionVariant.split('-');
-      if (variantParts.length >= 3) {
-        const sessionYear = variantParts[0];
-        const sessionExamType = variantParts[variantParts.length - 1];
-        const sessionPaperName = variantParts.slice(1, -1).join('-');
-        
-        // Match if year and examType match
-        if (sessionYear === String(year) && 
-            sessionExamType === part.examType) {
-          // Flexible paper name matching
-          const normalizedSessionName = sessionPaperName.toLowerCase().trim();
-          const normalizedPartName = part.paperName.toLowerCase().trim();
-          
-          return normalizedSessionName === normalizedPartName || 
-                 normalizedSessionName.includes(normalizedPartName) || 
-                 normalizedPartName.includes(normalizedSessionName);
-        }
-      }
-      
-      return false;
-    });
-
-    // Check if ANY matching session includes our section
-    // This handles cases where user completes different parts in different sessions
-    for (const session of matchingSessions as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant'>[]) {
-      const selectedSections = session.selected_sections as string[] | null;
-      
-      if (selectedSections && selectedSections.length > 0) {
-        if (selectedSections.includes(section)) {
-          return true; // Found a completed session with this section
-        }
-      }
-    }
-
-    return false; // No completed session found with this section
+    // Check if section exists in any matching session
+    return isSectionInSessions(
+      sessions,
+      section,
+      paperVariant,
+      year,
+      part.paperName,
+      part.examType
+    );
   } catch (error) {
     console.error('[roadmapCompletion] Error in isPartCompleted:', error);
     return false;
@@ -139,47 +67,24 @@ export async function isPartCompleted(
 }
 
 /**
- * Batch load all completed sessions for a user (optimized for roadmap)
+ * Batch load all completed sessions for a user, grouped by paper_name
+ * Optimized for roadmap to avoid hundreds of sequential queries
+ * 
+ * @param userId - User ID to load sessions for
+ * @returns Map of paper_name -> sessions array
  */
 export async function loadAllCompletedSessions(userId: string): Promise<Map<string, any[]>> {
-  try {
-    // Load ALL completed sessions at once, grouped by paper_name
-    const { data, error } = await supabase
-      .from('paper_sessions')
-      .select('id, ended_at, selected_sections, paper_name, paper_variant')
-      .eq('user_id', userId)
-      .not('ended_at', 'is', null)
-      .order('paper_variant');
-
-    if (error) {
-      console.error('[roadmapCompletion] Error loading all sessions:', error);
-      return new Map();
-    }
-
-    if (!data || data.length === 0) {
-      return new Map();
-    }
-
-    // Group sessions by paper_name for faster lookup
-    const sessionsByPaperName = new Map<string, any[]>();
-    const typedData = data as any[];
-    for (const session of typedData) {
-      const paperName = session.paper_name;
-      if (!sessionsByPaperName.has(paperName)) {
-        sessionsByPaperName.set(paperName, []);
-      }
-      sessionsByPaperName.get(paperName)!.push(session);
-    }
-
-    return sessionsByPaperName;
-  } catch (error) {
-    console.error('[roadmapCompletion] Error in loadAllCompletedSessions:', error);
-    return new Map();
-  }
+  return loadAllCompletedSessionsByPaperName(userId);
 }
 
 /**
- * Check if a part is completed using pre-loaded sessions
+ * Check if a part is completed using pre-loaded sessions (optimized for batch processing)
+ * 
+ * @param sessions - Pre-loaded sessions to check
+ * @param examName - Exam name
+ * @param year - Exam year
+ * @param part - Roadmap part to check
+ * @returns true if the part has been completed
  */
 function checkPartCompletedFromSessions(
   sessions: any[],
@@ -191,59 +96,33 @@ function checkPartCompletedFromSessions(
   const section = getSectionForRoadmapPart(part, examName);
   const paperTypeName = examNameToPaperType(examName);
 
-  // Filter sessions by paper type/name and year
-  const matchingSessions = sessions.filter((session) => {
-    // Match paper_name (should be PaperType, but check both)
+  // Filter sessions by paper type/name
+  const relevantSessions = sessions.filter((session) => {
+    // Match paper_name (should be PaperType, but check both for compatibility)
     if (session.paper_name !== paperTypeName && session.paper_name !== examName) {
       return false;
     }
-
-    const sessionVariant = session.paper_variant || '';
-    
-    // Exact match first
-    if (sessionVariant === paperVariant) {
-      return true;
-    }
-    
-    // Flexible matching: check if variant parts match
-    const variantParts = sessionVariant.split('-');
-    if (variantParts.length >= 3) {
-      const sessionYear = variantParts[0];
-      const sessionExamType = variantParts[variantParts.length - 1];
-      const sessionPaperName = variantParts.slice(1, -1).join('-');
-      
-      // Match if year and examType match
-      if (sessionYear === String(year) && 
-          sessionExamType === part.examType) {
-        // Flexible paper name matching
-        const normalizedSessionName = sessionPaperName.toLowerCase().trim();
-        const normalizedPartName = part.paperName.toLowerCase().trim();
-        
-        return normalizedSessionName === normalizedPartName || 
-               normalizedSessionName.includes(normalizedPartName) || 
-               normalizedPartName.includes(normalizedSessionName);
-      }
-    }
-    
-    return false;
+    return true;
   });
 
-  // Check if ANY matching session includes our section
-  for (const session of matchingSessions) {
-    const selectedSections = session.selected_sections as string[] | null;
-    
-    if (selectedSections && selectedSections.length > 0) {
-      if (selectedSections.includes(section)) {
-        return true; // Found a completed session with this section
-      }
-    }
-  }
-
-  return false;
+  // Check if section exists in any matching session
+  return isSectionInSessions(
+    relevantSessions,
+    section,
+    paperVariant,
+    year,
+    part.paperName,
+    part.examType
+  );
 }
 
 /**
- * Get completion status for all parts in a stage (optimized with batch loading)
+ * Get completion status for all parts in a stage
+ * Note: For better performance, use getStageCompletionFromSessions with pre-loaded sessions
+ * 
+ * @param userId - User ID to check completion for
+ * @param stage - Roadmap stage to check
+ * @returns Map of partKey -> isCompleted
  */
 export async function getStageCompletion(
   userId: string,
@@ -266,7 +145,12 @@ export async function getStageCompletion(
 }
 
 /**
- * Get completion status for all parts in a stage using pre-loaded sessions (FAST)
+ * Get completion status for all parts in a stage using pre-loaded sessions
+ * This is the FAST version - use this when loading multiple stages
+ * 
+ * @param sessionsByPaperName - Pre-loaded sessions grouped by paper_name
+ * @param stage - Roadmap stage to check
+ * @returns Map of partKey -> isCompleted
  */
 export function getStageCompletionFromSessions(
   sessionsByPaperName: Map<string, any[]>,
@@ -275,7 +159,7 @@ export function getStageCompletionFromSessions(
   const completionMap = new Map<string, boolean>();
   const paperTypeName = examNameToPaperType(stage.examName);
   
-  // Get relevant sessions (check both PaperType and ExamName)
+  // Get relevant sessions (check both PaperType and ExamName for compatibility)
   const relevantSessions: any[] = [];
   if (sessionsByPaperName.has(paperTypeName)) {
     relevantSessions.push(...sessionsByPaperName.get(paperTypeName)!);
@@ -300,6 +184,10 @@ export function getStageCompletionFromSessions(
 
 /**
  * Check if a stage is fully completed (all parts done)
+ * 
+ * @param userId - User ID to check completion for
+ * @param stage - Roadmap stage to check
+ * @returns true if all parts in the stage are completed
  */
 export async function isStageCompleted(
   userId: string,
@@ -322,6 +210,10 @@ export async function isStageCompleted(
  * A stage is unlocked if:
  * - It's the first stage, OR
  * - All previous stages are completed
+ * 
+ * @param userId - User ID to check unlock status for
+ * @param stages - Array of roadmap stages
+ * @returns Set of unlocked stage IDs
  */
 export async function getUnlockedStages(
   userId: string,
@@ -354,6 +246,10 @@ export async function getUnlockedStages(
 
 /**
  * Get completion count for a stage (X / Y parts completed)
+ * 
+ * @param userId - User ID to check completion for
+ * @param stage - Roadmap stage to check
+ * @returns Object with completed count and total count
  */
 export async function getStageCompletionCount(
   userId: string,
@@ -377,6 +273,12 @@ export async function getStageCompletionCount(
 /**
  * Mark a part as completed by creating a minimal session record
  * This allows users to manually mark papers/sections they've done outside the app
+ * 
+ * @param userId - User ID (not used directly, but required for consistency)
+ * @param examName - Exam name
+ * @param year - Exam year
+ * @param part - Roadmap part to mark as completed
+ * @returns true if successfully marked as completed
  */
 export async function markPartAsCompleted(
   userId: string,
@@ -396,7 +298,6 @@ export async function markPartAsCompleted(
 
     // Create minimal session record via API
     const sessionId = crypto.randomUUID();
-    const now = new Date().toISOString();
     
     const response = await fetch('/api/papers/sessions', {
       method: 'POST',

@@ -5,6 +5,7 @@
 import { cn } from "@/lib/utils";
 import type { PaperSection } from "@/types/papers";
 import { getSectionColor, PAPER_COLORS } from "@/config/colors";
+import { CheckCircle2 } from "lucide-react";
 
 interface SectionSelectorProps {
   sections: PaperSection[];
@@ -114,9 +115,11 @@ export function SectionSelector({
                 <div className={cn("text-sm", isSelected ? "text-white" : "text-neutral-400")}>{displaySubtitle}</div>
               )}
               
+              {/* Completion indicator */}
               {isCompleted && (
-                <div className="text-xs font-medium" style={{ color: "#ffffff", backgroundColor: "#506141" }}>
-                  Completed
+                <div className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-md bg-green-500/20 border border-green-500/30">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-400" strokeWidth={2.5} />
+                  <span className="text-xs font-medium text-green-400">Completed</span>
                 </div>
               )}
             </div>
