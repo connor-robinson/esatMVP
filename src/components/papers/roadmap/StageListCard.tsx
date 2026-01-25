@@ -298,8 +298,16 @@ export function StageListCard({
                                                          )}
                                                      </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="font-medium text-white/70">{part.partLetter}: {part.partName}</div>
-                                                        <div className="text-xs text-white/35">{part.paperName}</div>
+                                                        {stage.examName === 'TMUA' ? (
+                                                            // TMUA: Just show "Paper 1" or "Paper 2"
+                                                            <div className="font-medium text-white/70">{part.paperName}</div>
+                                                        ) : (
+                                                            // NSAA/ENGAA: Show "Section 1 - Part A: Mathematics"
+                                                            <>
+                                                                <div className="font-medium text-white/70">{part.paperName} - {part.partLetter}: {part.partName}</div>
+                                                                <div className="text-xs text-white/35">{part.examType}</div>
+                                                            </>
+                                                        )}
                                                     </div>
                                                     {isPartCompleted && (
                                                         <div className="flex-shrink-0 flex items-center gap-1.5">

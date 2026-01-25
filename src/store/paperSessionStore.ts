@@ -27,8 +27,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
-import type { Answer, Letter, MistakeTag, PaperSection, Question } from '@/types/papers';
+import type { Answer, Letter, MistakeTag, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
 import { saveSession, loadSession, deleteSession } from '@/lib/storage/sessionStorage';
+import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
+import { examNameToPaperType } from '@/lib/papers/paperConfig';
 
 interface PaperSessionState {
   // Session data
@@ -40,6 +42,7 @@ interface PaperSessionState {
   timeLimitMinutes: number;
   questionRange: { start: number; end: number };
   selectedSections: PaperSection[]; // Array of section names attempted in this session
+  selectedPartIds: string[]; // Array of part IDs for granular tracking
   
   // Questions data
   questions: Question[];
@@ -62,8 +65,10 @@ interface PaperSessionState {
   // Section-based flow state
   currentSectionIndex: number;
   sectionTimeLimits: number[];
-  sectionInstructionTimer: number | null;
-  sectionInstructionDeadline: number | null;
+  sectionInstructionTimer: number | null; // Remaining seconds on instruction timer
+  sectionInstructionDeadline: number | null; // When instruction timer expires
+  instructionTimerStartedAt: number | null; // When current instruction timer started
+  currentPipelineState: "instruction" | "section"; // Current pipeline position
   allSectionsQuestions: Question[][];
   sectionDeadlines: number[]; // Deadline timestamp for each section
   sectionStartTimes: number[]; // Start timestamp for each section
@@ -75,7 +80,7 @@ interface PaperSessionState {
   
   // Session persistence state
   lastActiveTimestamp: number | null; // When user was last active
-  sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds
+  sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds (only active time, not instruction pages)
   isPaused: boolean; // Whether session is currently paused
   pausedAt: number | null; // Timestamp when paused
   
@@ -94,6 +99,7 @@ interface PaperSessionState {
     timeLimitMinutes: number;
     questionRange: { start: number; end: number };
     selectedSections?: PaperSection[];
+    selectedPartIds?: string[]; // Optional: if provided, use directly; otherwise generate from selectedSections
     questionOrder?: number[];
   }) => void;
   
@@ -139,6 +145,7 @@ interface PaperSessionState {
   
   // Session persistence actions
   updateLastActiveTimestamp: () => void;
+  updateTimerState: () => void;
   pauseSession: () => void;
   resumeSession: () => void;
   saveSessionToIndexedDB: () => Promise<void>;
@@ -165,6 +172,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       timeLimitMinutes: 60,
       questionRange: { start: 1, end: 20 },
       selectedSections: [],
+      selectedPartIds: [],
       
       questions: [],
       questionsLoading: false,
@@ -184,6 +192,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       sectionTimeLimits: [],
       sectionInstructionTimer: null,
       sectionInstructionDeadline: null,
+      instructionTimerStartedAt: null,
+      currentPipelineState: "section",
       allSectionsQuestions: [],
       sectionDeadlines: [],
       sectionStartTimes: [],
@@ -221,6 +231,31 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const deadline = startedAt + config.timeLimitMinutes * 60 * 1000;
         const selectedSections = config.selectedSections || [];
         
+        // Generate part IDs from selected sections or use provided ones
+        let selectedPartIds: string[] = [];
+        if (config.selectedPartIds) {
+          // Use provided part IDs (from roadmap)
+          selectedPartIds = config.selectedPartIds;
+        } else if (selectedSections.length > 0) {
+          // Generate part IDs from selected sections (from library)
+          // Parse paperVariant: "{year}-{paperName}-{examType}"
+          const variantParts = config.paperVariant.split('-');
+          if (variantParts.length >= 3) {
+            const year = variantParts[0];
+            const paperName = variantParts.slice(1, -1).join('-'); // Handle multi-part paper names
+            const examType = variantParts[variantParts.length - 1] as ExamType;
+            const examName = config.paperName as ExamName;
+            
+            selectedPartIds = generatePartIdsFromSections(
+              examName,
+              year,
+              paperName,
+              selectedSections,
+              examType
+            );
+          }
+        }
+        
         set({
           sessionId, // Unique identifier for this session
           paperId: config.paperId,
@@ -230,6 +265,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           timeLimitMinutes: config.timeLimitMinutes,
           questionRange: config.questionRange,
           selectedSections, // Sections attempted in this session
+          selectedPartIds, // Part IDs for granular tracking
           questionOrder: config.questionOrder || Array.from({ length: totalQuestions }, (_, i) => i + 1),
           currentQuestionIndex: 0,
           answers: Array.from({ length: totalQuestions }, initialAnswer),
@@ -256,6 +292,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           currentSectionIndex: 0,
           sectionInstructionTimer: null,
           sectionInstructionDeadline: null,
+          instructionTimerStartedAt: null,
+          currentPipelineState: "section",
           allSectionsQuestions: [],
           sectionTimeLimits: [],
           sectionDeadlines: [],
@@ -271,6 +309,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionName: config.sessionName,
           questionRange: config.questionRange,
           selectedSections: config.selectedSections || [],
+          selectedPartIds: selectedPartIds, // Part IDs for granular tracking
           questionOrder: config.questionOrder || Array.from({ length: totalQuestions }, (_, i) => i + 1),
           timeLimitMinutes: config.timeLimitMinutes,
           startedAt,
@@ -779,6 +818,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           timeLimitMinutes: 60,
           questionRange: { start: 1, end: 20 },
           selectedSections: [],
+          selectedPartIds: [],
           questions: [],
           questionsLoading: false,
           questionsError: null,
@@ -858,6 +898,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             timeLimitMinutes: sessionData.time_limit_minutes || 60,
             questionRange: questionRange,
             selectedSections: (sessionData.selected_sections as PaperSection[]) || [],
+            selectedPartIds: (sessionData.selected_part_ids as string[]) || [],
             questionOrder: (sessionData.question_order as number[]) || Array.from({ length: totalQuestions }, (_, i) => i + 1),
             currentQuestionIndex: 0,
             startedAt: sessionData.started_at ? new Date(sessionData.started_at).getTime() : null,
@@ -964,6 +1005,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionName: state.sessionName,
           questionRange: state.questionRange,
           selectedSections: state.selectedSections, // Critical: tracks which sections were attempted
+          selectedPartIds: state.selectedPartIds, // Critical: tracks which part IDs were attempted
           questionOrder: state.questionOrder,
           timeLimitMinutes: state.timeLimitMinutes,
           startedAt: state.startedAt,
@@ -1113,10 +1155,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
       
       setSectionInstructionTimer: (seconds: number) => {
-        const deadline = seconds > 0 ? Date.now() + seconds * 1000 : null;
+        const now = Date.now();
+        const deadline = seconds > 0 ? now + seconds * 1000 : null;
         set({ 
           sectionInstructionTimer: seconds,
-          sectionInstructionDeadline: deadline
+          sectionInstructionDeadline: deadline,
+          instructionTimerStartedAt: seconds > 0 ? now : null,
+          currentPipelineState: seconds > 0 ? "instruction" : "section"
         });
       },
       
@@ -1152,6 +1197,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const newSectionStartTimes = [...state.sectionStartTimes];
         newSectionStartTimes[sectionIndex] = startTime;
         
+        // Reset instruction timer when section starts (transitioning from instruction to section)
+        const newSectionInstructionTimer = null;
+        const newSectionInstructionDeadline = null;
+        const newInstructionTimerStartedAt = null;
+        
         // Calculate deadline based on section time limit and elapsed time
         const sectionTimeLimit = state.sectionTimeLimits[sectionIndex] || 60;
         const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
@@ -1162,12 +1212,25 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         
         set({
           sectionStartTimes: newSectionStartTimes,
-          sectionDeadlines: newSectionDeadlines
+          sectionDeadlines: newSectionDeadlines,
+          sectionInstructionTimer: newSectionInstructionTimer,
+          sectionInstructionDeadline: newSectionInstructionDeadline,
+          instructionTimerStartedAt: newInstructionTimerStartedAt,
+          currentPipelineState: "section"
         });
       },
       
       getSectionRemainingTime: (sectionIndex: number) => {
         const state = get();
+        
+        // Don't count time if on instruction page
+        const isOnInstruction = state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0;
+        if (isOnInstruction) {
+          // Return full time limit if still on instruction page
+          const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+          return timeLimit * 60;
+        }
+        
         if (state.isPaused) {
           // If paused, calculate remaining time based on elapsed time
           const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
@@ -1184,12 +1247,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         }
         
         // Account for elapsed time when calculating remaining time
+        // Only count time when not on instruction page
         const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
         const sectionStartTime = state.sectionStartTimes[sectionIndex];
         let currentElapsed = elapsedMs;
         
         if (sectionStartTime && !state.isPaused) {
-          // Add time since section started (if not paused)
+          // Add time since section started (if not paused and not on instruction page)
           currentElapsed += Date.now() - sectionStartTime;
         }
         
@@ -1211,9 +1275,20 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const currentSectionIndex = state.currentSectionIndex;
         const sectionStartTime = state.sectionStartTimes[currentSectionIndex];
         
-        // Calculate elapsed time for current section
+        // Determine current pipeline state
+        const isOnInstruction = state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0;
+        const pipelineState: "instruction" | "section" = isOnInstruction ? "instruction" : "section";
+        
+        // Calculate instruction timer remaining if on instruction page
+        let instructionTimerRemaining = state.sectionInstructionTimer;
+        if (isOnInstruction && state.sectionInstructionDeadline) {
+          const remainingMs = Math.max(0, state.sectionInstructionDeadline - now);
+          instructionTimerRemaining = Math.floor(remainingMs / 1000);
+        }
+        
+        // Calculate elapsed time for current section (only if in active section, not instruction page)
         let currentSectionElapsed = state.sectionElapsedTimes[currentSectionIndex] || 0;
-        if (sectionStartTime && state.sectionInstructionTimer === null) {
+        if (sectionStartTime && !isOnInstruction) {
           // Only count time if not on instruction page
           currentSectionElapsed += now - sectionStartTime;
         }
@@ -1226,6 +1301,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           isPaused: true,
           pausedAt: now,
           sectionElapsedTimes: newSectionElapsedTimes,
+          sectionInstructionTimer: instructionTimerRemaining,
+          currentPipelineState: pipelineState,
           lastActiveTimestamp: now,
         });
       },
@@ -1236,26 +1313,100 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         
         const now = Date.now();
         const currentSectionIndex = state.currentSectionIndex;
-        const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
-        const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
         
-        // Calculate new deadline based on remaining time
-        const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
-        const newDeadline = now + remainingMs;
+        // Restore pipeline state
+        const wasOnInstruction = state.currentPipelineState === "instruction";
         
-        // Update section start time and deadline
-        const newSectionStartTimes = [...state.sectionStartTimes];
-        const newSectionDeadlines = [...state.sectionDeadlines];
-        newSectionStartTimes[currentSectionIndex] = now;
-        newSectionDeadlines[currentSectionIndex] = newDeadline;
+        if (wasOnInstruction && state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0) {
+          // Restore instruction timer - recalculate deadline based on remaining time
+          const remainingSeconds = state.sectionInstructionTimer;
+          const newDeadline = now + (remainingSeconds * 1000);
+          
+          set({
+            isPaused: false,
+            pausedAt: null,
+            sectionInstructionTimer: remainingSeconds,
+            sectionInstructionDeadline: newDeadline,
+            instructionTimerStartedAt: now - ((60 - remainingSeconds) * 1000), // Approximate start time
+            currentPipelineState: "instruction",
+            lastActiveTimestamp: now,
+          });
+        } else {
+          // Resume active section
+          const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
+          const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
+          
+          // Calculate new deadline based on remaining time
+          const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
+          const newDeadline = now + remainingMs;
+          
+          // Update section start time and deadline
+          const newSectionStartTimes = [...state.sectionStartTimes];
+          const newSectionDeadlines = [...state.sectionDeadlines];
+          newSectionStartTimes[currentSectionIndex] = now;
+          newSectionDeadlines[currentSectionIndex] = newDeadline;
+          
+          set({
+            isPaused: false,
+            pausedAt: null,
+            sectionStartTimes: newSectionStartTimes,
+            sectionDeadlines: newSectionDeadlines,
+            currentPipelineState: "section",
+            lastActiveTimestamp: now,
+          });
+        }
+      },
+      
+      updateTimerState: () => {
+        const state = get();
+        if (!state.sessionId || state.isPaused) return;
         
-        set({
-          isPaused: false,
-          pausedAt: null,
-          sectionStartTimes: newSectionStartTimes,
-          sectionDeadlines: newSectionDeadlines,
-          lastActiveTimestamp: now,
-        });
+        const now = Date.now();
+        const currentSectionIndex = state.currentSectionIndex;
+        
+        // Determine if on instruction page
+        const isOnInstruction = state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0;
+        
+        if (isOnInstruction && state.sectionInstructionDeadline) {
+          // Update instruction timer remaining based on deadline
+          const remainingMs = Math.max(0, state.sectionInstructionDeadline - now);
+          const remainingSeconds = Math.floor(remainingMs / 1000);
+          
+          set({
+            sectionInstructionTimer: remainingSeconds,
+            currentPipelineState: remainingSeconds > 0 ? "instruction" : "section"
+          });
+        } else if (!isOnInstruction) {
+          // Update section elapsed time if in active section
+          const sectionStartTime = state.sectionStartTimes[currentSectionIndex];
+          if (sectionStartTime) {
+            let currentSectionElapsed = state.sectionElapsedTimes[currentSectionIndex] || 0;
+            // Add time since section started
+            currentSectionElapsed += now - sectionStartTime;
+            
+            // Update section elapsed times and reset start time
+            const newSectionElapsedTimes = [...state.sectionElapsedTimes];
+            newSectionElapsedTimes[currentSectionIndex] = currentSectionElapsed;
+            
+            // Reset section start time to now (we've accumulated the elapsed time)
+            const newSectionStartTimes = [...state.sectionStartTimes];
+            newSectionStartTimes[currentSectionIndex] = now;
+            
+            // Recalculate deadline based on updated elapsed time
+            const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
+            const remainingMs = (sectionTimeLimit * 60 * 1000) - currentSectionElapsed;
+            const newDeadline = now + remainingMs;
+            const newSectionDeadlines = [...state.sectionDeadlines];
+            newSectionDeadlines[currentSectionIndex] = newDeadline;
+            
+            set({
+              sectionElapsedTimes: newSectionElapsedTimes,
+              sectionStartTimes: newSectionStartTimes,
+              sectionDeadlines: newSectionDeadlines,
+              currentPipelineState: "section"
+            });
+          }
+        }
       },
       
       saveSessionToIndexedDB: async () => {
@@ -1263,45 +1414,53 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (!state.sessionId) return;
         
         try {
+          // Update timer state before saving to ensure accuracy
+          get().updateTimerState();
+          const updatedState = get();
+          
           // Get current state snapshot
           const stateSnapshot = {
-            sessionId: state.sessionId,
-            paperId: state.paperId,
-            paperName: state.paperName,
-            paperVariant: state.paperVariant,
-            sessionName: state.sessionName,
-            timeLimitMinutes: state.timeLimitMinutes,
-            questionRange: state.questionRange,
-            selectedSections: state.selectedSections,
-            questionOrder: state.questionOrder,
-            currentQuestionIndex: state.currentQuestionIndex,
-            answers: state.answers,
-            perQuestionSec: state.perQuestionSec,
-            correctFlags: state.correctFlags,
-            guessedFlags: state.guessedFlags,
-            reviewFlags: state.reviewFlags,
-            mistakeTags: state.mistakeTags,
-            visitedQuestions: state.visitedQuestions,
-            sectionStarts: state.sectionStarts,
-            currentSectionIndex: state.currentSectionIndex,
-            sectionTimeLimits: state.sectionTimeLimits,
-            sectionInstructionTimer: state.sectionInstructionTimer,
-            sectionInstructionDeadline: state.sectionInstructionDeadline,
-            allSectionsQuestions: state.allSectionsQuestions,
-            sectionDeadlines: state.sectionDeadlines,
-            sectionStartTimes: state.sectionStartTimes,
-            startedAt: state.startedAt,
-            endedAt: state.endedAt,
-            deadline: state.deadline,
-            notes: state.notes,
-            questions: state.questions, // Store questions for resume
+            sessionId: updatedState.sessionId,
+            paperId: updatedState.paperId,
+            paperName: updatedState.paperName,
+            paperVariant: updatedState.paperVariant,
+            sessionName: updatedState.sessionName,
+            timeLimitMinutes: updatedState.timeLimitMinutes,
+            questionRange: updatedState.questionRange,
+            selectedSections: updatedState.selectedSections,
+            selectedPartIds: updatedState.selectedPartIds,
+            questionOrder: updatedState.questionOrder,
+            currentQuestionIndex: updatedState.currentQuestionIndex,
+            answers: updatedState.answers,
+            perQuestionSec: updatedState.perQuestionSec,
+            correctFlags: updatedState.correctFlags,
+            guessedFlags: updatedState.guessedFlags,
+            reviewFlags: updatedState.reviewFlags,
+            mistakeTags: updatedState.mistakeTags,
+            visitedQuestions: updatedState.visitedQuestions,
+            sectionStarts: updatedState.sectionStarts,
+            currentSectionIndex: updatedState.currentSectionIndex,
+            sectionTimeLimits: updatedState.sectionTimeLimits,
+            sectionInstructionTimer: updatedState.sectionInstructionTimer,
+            sectionInstructionDeadline: updatedState.sectionInstructionDeadline,
+            instructionTimerStartedAt: updatedState.instructionTimerStartedAt,
+            currentPipelineState: updatedState.currentPipelineState,
+            allSectionsQuestions: updatedState.allSectionsQuestions,
+            sectionDeadlines: updatedState.sectionDeadlines,
+            sectionStartTimes: updatedState.sectionStartTimes,
+            startedAt: updatedState.startedAt,
+            endedAt: updatedState.endedAt,
+            deadline: updatedState.deadline,
+            notes: updatedState.notes,
+            questions: updatedState.questions, // Store questions for resume
           };
           
-          await saveSession(state.sessionId, stateSnapshot, {
-            lastActiveTimestamp: state.lastActiveTimestamp || Date.now(),
-            sectionElapsedTimes: state.sectionElapsedTimes,
-            isPaused: state.isPaused,
-            pausedAt: state.pausedAt,
+          if (!updatedState.sessionId) return;
+          await saveSession(updatedState.sessionId, stateSnapshot, {
+            lastActiveTimestamp: updatedState.lastActiveTimestamp || Date.now(),
+            sectionElapsedTimes: updatedState.sectionElapsedTimes,
+            isPaused: updatedState.isPaused,
+            pausedAt: updatedState.pausedAt,
           });
         } catch (error) {
           console.error('[paperSessionStore] Failed to save session to IndexedDB:', error);
@@ -1341,6 +1500,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             sectionTimeLimits: state.sectionTimeLimits || [],
             sectionInstructionTimer: state.sectionInstructionTimer ?? null,
             sectionInstructionDeadline: state.sectionInstructionDeadline ?? null,
+            instructionTimerStartedAt: state.instructionTimerStartedAt ?? null,
+            currentPipelineState: state.currentPipelineState || "section",
             allSectionsQuestions: state.allSectionsQuestions || [],
             sectionDeadlines: state.sectionDeadlines || [],
             sectionStartTimes: state.sectionStartTimes || [],
@@ -1358,6 +1519,70 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             sessionPersistPromise: null,
             persistTimer: null,
           });
+          
+          // Recalculate timers based on time passed
+          const restoredState = get();
+          const now = Date.now();
+          const timePassed = now - (sessionData.lastActiveTimestamp || now);
+          const currentSectionIndex = restoredState.currentSectionIndex;
+          
+          // Determine if was on instruction page
+          const wasOnInstruction = restoredState.currentPipelineState === "instruction" && 
+                                   restoredState.sectionInstructionTimer !== null && 
+                                   restoredState.sectionInstructionTimer > 0;
+          
+          if (wasOnInstruction) {
+            // Recalculate instruction timer remaining
+            const savedRemaining = restoredState.sectionInstructionTimer || 0;
+            const remainingAfterTimePassed = Math.max(0, savedRemaining - Math.floor(timePassed / 1000));
+            
+            if (remainingAfterTimePassed > 0) {
+              // Still have time on instruction timer
+              const newDeadline = now + (remainingAfterTimePassed * 1000);
+              set({
+                sectionInstructionTimer: remainingAfterTimePassed,
+                sectionInstructionDeadline: newDeadline,
+                instructionTimerStartedAt: now - ((60 - remainingAfterTimePassed) * 1000),
+                currentPipelineState: "instruction"
+              });
+            } else {
+              // Instruction timer expired - transition to section
+              set({
+                sectionInstructionTimer: 0,
+                sectionInstructionDeadline: null,
+                instructionTimerStartedAt: null,
+                currentPipelineState: "section"
+              });
+              
+              // Start section timer if not already started
+              const finalState = get();
+              if (!finalState.sectionStartTimes[currentSectionIndex]) {
+                finalState.setSectionStartTime(currentSectionIndex, now);
+              }
+            }
+          } else {
+            // Was in active section - don't count time passed as active time
+            // Just recalculate deadlines based on remaining time
+            const sectionTimeLimit = restoredState.sectionTimeLimits[currentSectionIndex] || 60;
+            const elapsedMs = restoredState.sectionElapsedTimes[currentSectionIndex] || 0;
+            const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
+            
+            if (remainingMs > 0) {
+              const newDeadline = now + remainingMs;
+              const newSectionDeadlines = [...restoredState.sectionDeadlines];
+              newSectionDeadlines[currentSectionIndex] = newDeadline;
+              
+              // Reset section start time to now (we've accounted for elapsed time)
+              const newSectionStartTimes = [...restoredState.sectionStartTimes];
+              newSectionStartTimes[currentSectionIndex] = now;
+              
+              set({
+                sectionDeadlines: newSectionDeadlines,
+                sectionStartTimes: newSectionStartTimes,
+                currentPipelineState: "section"
+              });
+            }
+          }
           
           // If questions are not loaded, load them
           const finalState = get();
@@ -1396,6 +1621,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         sectionTimeLimits: state.sectionTimeLimits,
         sectionInstructionTimer: state.sectionInstructionTimer,
         sectionInstructionDeadline: state.sectionInstructionDeadline,
+        instructionTimerStartedAt: state.instructionTimerStartedAt,
+        currentPipelineState: state.currentPipelineState,
         allSectionsQuestions: state.allSectionsQuestions,
         sectionDeadlines: state.sectionDeadlines,
         sectionStartTimes: state.sectionStartTimes,

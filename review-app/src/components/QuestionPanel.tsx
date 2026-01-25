@@ -400,7 +400,7 @@ export function QuestionPanel({
           <div className="flex items-start gap-3">
             <div className="w-10"></div> {/* Spacer for letter column */}
             <div className="flex-1 flex items-start gap-3">
-              <div className="flex-[0.2]">
+              <div className={showAnswer ? "flex-[0.2]" : "flex-1"}>
                 <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
                   Options
                 </label>
@@ -440,7 +440,7 @@ export function QuestionPanel({
                   </div>
                   <div className="flex-1 flex items-start gap-3">
                     {/* Option */}
-                    <div className="flex-[0.2] flex items-start gap-2">
+                    <div className={cn(showAnswer ? "flex-[0.2]" : "flex-1", "flex items-start gap-2")}>
                       {isEditingOption ? (
                         <textarea
                           value={options[letter] || ''}

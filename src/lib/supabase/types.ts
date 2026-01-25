@@ -17,6 +17,7 @@ export type PaperSessionRow = {
   question_start: number | null;
   question_end: number | null;
   selected_sections: string[] | null;
+  selected_part_ids: string[] | null;
   question_order: number[] | null;
   time_limit_minutes: number;
   started_at: string | null;
@@ -43,6 +44,7 @@ export type PaperSessionInsert = {
   question_start?: number | null;
   question_end?: number | null;
   selected_sections?: string[] | null;
+  selected_part_ids?: string[] | null;
   question_order?: number[] | null;
   time_limit_minutes?: number;
   started_at?: string | null;

@@ -89,7 +89,7 @@ export default function PapersRoadmapPage() {
 
           // Process all stages (now async due to part-level checking)
           for (const stage of stages) {
-            const parts = await getStageCompletionFromSessions(sessionsByPaperName, stage);
+            const parts = await getStageCompletionFromSessions(session.user.id, sessionsByPaperName, stage);
             
             let completed = 0;
             for (const [_, isCompleted] of parts) {
@@ -316,6 +316,10 @@ export default function PapersRoadmapPage() {
       >();
 
       if (session?.user?.id) {
+        // Sync cache with database on refresh (will use cache if valid)
+        const { syncWithDatabase } = await import('@/lib/papers/completionCache');
+        await syncWithDatabase(session.user.id);
+        
         for (const stage of stages) {
           const count = await getStageCompletionCount(session.user.id, stage);
           const parts = await getStageCompletion(session.user.id, stage);

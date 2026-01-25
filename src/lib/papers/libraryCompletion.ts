@@ -16,13 +16,16 @@ import {
   isSectionInSessions,
   isPartCompletedFromSessions,
   checkMultiplePartsCompleted,
+  isPartIdCompleted,
 } from './completionUtils';
 import { getQuestions } from '@/lib/supabase/questions';
 import { mapPartToSection } from './sectionMapping';
+import { generateSectionId, generatePartId } from './partIdUtils';
+import { getCompletedPartIdsFromCache } from './completionCache';
 
 /**
  * Check if a specific section is completed for a paper
- * Uses part-level checking: a section is completed if ALL parts within it are completed
+ * Uses part ID tracking: a section is completed if ALL parts within it are completed
  * 
  * @param userId - User ID to check completion for
  * @param paper - Paper to check
@@ -35,31 +38,25 @@ export async function isSectionCompleted(
   section: PaperSection
 ): Promise<boolean> {
   try {
-    const paperVariant = constructPaperVariant(
-      paper.examYear,
-      paper.paperName,
-      paper.examType || 'Official'
-    );
-    const paperTypeName = examNameToPaperType(paper.examName);
-
-    // Query completed sessions matching this paper
-    const sessions = await queryCompletedSessions(
-      userId,
-      paperTypeName,
-      paper.examName,
-      `${paper.examYear}-%`
-    );
-
-    if (sessions.length === 0) {
-      return false;
+    const paperType = examNameToPaperType(paper.examName);
+    
+    // For TMUA: section is "Paper 1" or "Paper 2", check directly
+    if (paperType === 'TMUA') {
+      const sectionId = generateSectionId(
+        paper.examName,
+        paper.examYear,
+        paper.paperName,
+        section,
+        paper.examType || 'Official'
+      );
+      return await isPartIdCompleted(userId, sectionId);
     }
-
-    // Get all questions for this paper to find parts
+    
+    // For NSAA/ENGAA: Check all parts within the section
     const questions = await getQuestions(paper.id);
     
     // Find all parts that map to this section
     const partsInSection = new Set<{ partLetter: string | null; partName: string | null }>();
-    const paperType = examNameToPaperType(paper.examName);
     
     for (const question of questions) {
       const mappedSection = mapPartToSection(
@@ -76,31 +73,34 @@ export async function isSectionCompleted(
     }
     
     if (partsInSection.size === 0) {
-      // No parts found for this section - fallback to section-level check
-      return isSectionInSessions(
-        sessions,
-        section,
-        paperVariant,
+      // No parts found - generate section ID and check
+      const sectionId = generateSectionId(
+        paper.examName,
         paper.examYear,
         paper.paperName,
+        section,
         paper.examType || 'Official'
       );
+      return await isPartIdCompleted(userId, sectionId);
     }
+    
+    // Get completed part IDs from cache
+    const completedPartIds = await getCompletedPartIdsFromCache(userId);
     
     // Check if ALL parts in this section are completed
     for (const part of partsInSection) {
-      const isPartCompleted = await isPartCompletedFromSessions(
-        sessions,
-        part.partLetter,
-        part.partName,
-        paperVariant,
+      // Generate part ID for this part
+      const partId = generatePartId(
+        paper.examName,
         paper.examYear,
         paper.paperName,
+        part.partLetter,
+        part.partName,
         paper.examType || 'Official'
       );
       
-      if (!isPartCompleted) {
-        // At least one part is not completed, so section is not completed
+      if (!completedPartIds.has(partId)) {
+        // At least one part is not completed
         return false;
       }
     }
@@ -181,71 +181,41 @@ export async function getPaperSectionCompletion(
       }
     }
     
-    // Prepare all parts for batch checking
-    const allParts = Array.from(sectionToParts.entries()).flatMap(([section, parts]) =>
-      Array.from(parts).map(part => ({
-        partLetter: part.partLetter,
-        partName: part.partName,
-        paperVariant,
-        year: paper.examYear,
-        paperName: paper.paperName,
-        examType: paper.examType || 'Official',
-        paperId: paper.id,
-        section, // Keep track of which section this part belongs to
-      }))
-    );
+    // Get completed part IDs from cache
+    const completedPartIds = await getCompletedPartIdsFromCache(userId);
     
-    // Batch check all parts
-    const partCompletionMap = await checkMultiplePartsCompleted(sessions, allParts);
-    
-    // Aggregate part completion to section level
-    // A section is completed if ALL its parts are completed
+    // Check completion for each section
     for (const section of sections) {
       const parts = sectionToParts.get(section);
       
       if (!parts || parts.size === 0) {
-        // No parts found - fallback to section-level check
-        const completed = isSectionInSessions(
-          sessions,
-          section,
-          paperVariant,
+        // No parts found - generate section ID and check
+        const sectionId = generateSectionId(
+          paper.examName,
           paper.examYear,
           paper.paperName,
+          section,
           paper.examType || 'Official'
         );
-        completionMap.set(section, completed);
+        const isCompleted = completedPartIds.has(sectionId);
+        completionMap.set(section, isCompleted);
         continue;
       }
       
       // Check if all parts in this section are completed
       let allPartsCompleted = true;
       for (const part of parts) {
-        // Generate partKey matching the format used in checkMultiplePartsCompleted
-        const partKey = `${paper.paperName}-${part.partLetter}-${paper.examType || 'Official'}`;
-        const isPartCompleted = partCompletionMap.get(partKey);
+        // Generate part ID for this part
+        const partId = generatePartId(
+          paper.examName,
+          paper.examYear,
+          paper.paperName,
+          part.partLetter,
+          part.partName,
+          paper.examType || 'Official'
+        );
         
-        // If not found in map, check directly (fallback)
-        if (isPartCompleted === undefined) {
-          // Try direct check for this part
-          const paperVariant = constructPaperVariant(
-            paper.examYear,
-            paper.paperName,
-            paper.examType || 'Official'
-          );
-          const directCheck = await isPartCompletedFromSessions(
-            sessions,
-            part.partLetter,
-            part.partName,
-            paperVariant,
-            paper.examYear,
-            paper.paperName,
-            paper.examType || 'Official'
-          );
-          if (!directCheck) {
-            allPartsCompleted = false;
-            break;
-          }
-        } else if (!isPartCompleted) {
+        if (!completedPartIds.has(partId)) {
           allPartsCompleted = false;
           break;
         }

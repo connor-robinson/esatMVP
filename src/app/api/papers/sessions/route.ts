@@ -13,6 +13,7 @@ type SessionPayload = {
   sessionName: string;
   questionRange: { start: number; end: number };
   selectedSections?: string[];
+  selectedPartIds?: string[]; // Part IDs for granular tracking
   questionOrder?: number[];
   timeLimitMinutes: number;
   startedAt: number;
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
       question_start: payload.questionRange?.start ?? null,
       question_end: payload.questionRange?.end ?? null,
       selected_sections: payload.selectedSections ?? [],
+      selected_part_ids: payload.selectedPartIds ?? [],
       question_order: payload.questionOrder ?? [],
       time_limit_minutes: payload.timeLimitMinutes,
       started_at: toIso(payload.startedAt),
@@ -113,6 +115,7 @@ export async function PATCH(request: Request) {
       question_start: payload.questionRange?.start ?? null,
       question_end: payload.questionRange?.end ?? null,
       selected_sections: payload.selectedSections ?? [],
+      selected_part_ids: payload.selectedPartIds ?? [],
       question_order: payload.questionOrder ?? [],
       time_limit_minutes: payload.timeLimitMinutes,
       started_at: toIso(payload.startedAt),

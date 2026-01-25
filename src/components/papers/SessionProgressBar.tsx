@@ -9,13 +9,11 @@
 
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { UserIcon, LogInIcon } from "@/components/icons";
-import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 const PAST_PAPERS_COLOR = "#5B8D94";
@@ -27,6 +25,8 @@ export function SessionProgressBar() {
   const {
     sessionId,
     sessionName,
+    paperName,
+    paperVariant,
     selectedSections,
     currentSectionIndex,
     sectionTimeLimits,
@@ -38,12 +38,35 @@ export function SessionProgressBar() {
     resetSession,
   } = usePaperSessionStore();
 
-  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
-
   if (!sessionId) return null;
 
   const totalSections = selectedSections.length;
   const isOnInstructionPage = sectionInstructionTimer !== null && sectionInstructionTimer > 0;
+
+  // Format paper display name
+  const getPaperDisplayName = (): string => {
+    if (!paperName) return 'Custom';
+    
+    // Extract year from paperVariant if available (format: "{year}-{paperName}-{examType}")
+    const yearMatch = paperVariant?.match(/^(\d{4})-/);
+    const year = yearMatch ? yearMatch[1] : null;
+    
+    // Check if sessionName indicates it's a custom session (not from roadmap)
+    const isCustom = sessionName && (
+      sessionName.includes('Custom') || 
+      sessionName.includes('custom') ||
+      !sessionName.match(/\d{4}/) // No year in session name suggests custom
+    );
+    
+    if (isCustom) {
+      return 'Custom';
+    }
+    
+    // Return paper name with year if available
+    return year ? `${paperName} ${year}` : paperName;
+  };
+
+  const paperDisplayName = getPaperDisplayName();
 
   // Calculate progress for current section
   const getCurrentSectionProgress = (): number => {
@@ -66,24 +89,73 @@ export function SessionProgressBar() {
 
   const overallProgress = getCurrentSectionProgress();
 
-  const handleResume = async () => {
-    await resumeSession();
-    // Navigate to solve page if not already there
-    if (typeof window !== 'undefined' && !window.location.pathname.includes('/papers/solve')) {
-      router.push('/papers/solve');
+  // Calculate progress segments - only between filled nodes, with gaps at empty nodes
+  const getProgressSegments = (): Array<{ start: number; end: number }> => {
+    const segments: Array<{ start: number; end: number }> = [];
+    
+    // Find all filled nodes (completed or currently active)
+    const filledNodes: number[] = [];
+    for (let i = 0; i < selectedSections.length; i++) {
+      const isCompleted = i < currentSectionIndex;
+      const isCurrent = i === currentSectionIndex;
+      const isFilled = isCompleted || (isCurrent && !isOnInstructionPage);
+      
+      if (isFilled) {
+        filledNodes.push(i);
+      }
     }
+    
+    // If no filled nodes, return empty segments
+    if (filledNodes.length === 0) {
+      return [];
+    }
+    
+    // Create segments between consecutive filled nodes
+    for (let i = 0; i < filledNodes.length - 1; i++) {
+      const startNodeIndex = filledNodes[i];
+      const endNodeIndex = filledNodes[i + 1];
+      
+      const startPosition = (startNodeIndex / totalSections) * 100;
+      const endPosition = (endNodeIndex / totalSections) * 100;
+      
+      segments.push({ start: startPosition, end: endPosition });
+    }
+    
+    // Add segment for current active section if it's being worked on
+    const lastFilledIndex = filledNodes[filledNodes.length - 1];
+    if (lastFilledIndex === currentSectionIndex && !isOnInstructionPage && !isPaused) {
+      const sectionIndex = currentSectionIndex;
+      const timeLimit = sectionTimeLimits[sectionIndex] || 60;
+      const remainingSeconds = getSectionRemainingTime(sectionIndex);
+      const elapsedSeconds = timeLimit * 60 - remainingSeconds;
+      const sectionProgress = Math.min(1, Math.max(0, elapsedSeconds / (timeLimit * 60)));
+      
+      const sectionStartPosition = (sectionIndex / totalSections) * 100;
+      const nextNodePosition = sectionIndex < totalSections - 1 
+        ? ((sectionIndex + 1) / totalSections) * 100 
+        : 100; // MARK node at 100%
+      const sectionWidth = nextNodePosition - sectionStartPosition;
+      
+      segments.push({
+        start: sectionStartPosition,
+        end: sectionStartPosition + (sectionProgress * sectionWidth)
+      });
+    } else if (filledNodes.length > 0) {
+      // If we're paused or on instruction page, show full segments up to last filled node
+      // Segments between nodes are already added above
+    }
+    
+    return segments;
   };
 
-  const handleQuit = async () => {
-    if (!showQuitConfirm) {
-      setShowQuitConfirm(true);
-      return;
-    }
+  const progressSegments = getProgressSegments();
 
-    // Confirm quit
-    await resetSession();
-    setShowQuitConfirm(false);
-    router.push('/papers/library');
+  const handleQuit = async () => {
+    // Show confirmation dialog
+    if (window.confirm('Are you sure you want to quit? Your progress will be saved.')) {
+      await resetSession();
+      router.push('/papers/library');
+    }
   };
 
   const loginHref = typeof window !== 'undefined' && window.location.pathname && window.location.pathname !== "/login" && window.location.pathname !== "/"
@@ -104,102 +176,134 @@ export function SessionProgressBar() {
           </div>
 
           {/* Progress Bar Section */}
-          <div className="flex-1 mx-8">
-            {isPaused ? (
-              // Paused state: Show resume/quit buttons
-              <div className="flex items-center justify-center gap-4">
-                <Button
-                  onClick={handleResume}
-                  className="px-6 py-2 bg-[#5B8D94] hover:bg-[#5B8D94]/80 text-white rounded-lg font-semibold transition-colors"
-                >
-                  Resume Session
-                </Button>
-                <Button
-                  onClick={handleQuit}
-                  className="px-6 py-2 bg-white/10 hover:bg-white/20 text-white/70 rounded-lg font-semibold transition-colors"
-                >
-                  {showQuitConfirm ? "Confirm Quit" : "Quit"}
-                </Button>
-                {showQuitConfirm && (
-                  <span className="text-xs text-white/50">
-                    Your progress will be saved
-                  </span>
-                )}
-              </div>
-            ) : (
-              // Active state: Show progress bar
-              <div className="flex flex-col items-center gap-2">
-                {/* Session name */}
-                <div className="text-xs text-white/60 font-medium uppercase tracking-wider">
-                  {sessionName}
-                </div>
+          <div className="flex-1 mx-8 relative">
+            {/* Progress bar with nodes - completely restructured for perfect alignment */}
+            <div className="w-full relative" style={{ height: '24px' }}>
+              {/* Shared center line - both progress bar and nodes align to this */}
+              <div className="absolute left-0 right-0" style={{ top: '12px', height: '0px' }}>
+                {/* Progress bar track - positioned relative to center line */}
+                <div 
+                  className="absolute left-0 right-0 bg-white/10 rounded-full overflow-hidden"
+                  style={{ 
+                    top: '-2.5px', // Half of 5px height to center on the line
+                    height: '5px'
+                  }}
+                />
+                
+                {/* Progress segments - only between filled nodes */}
+                {progressSegments.map((segment, index) => (
+                  <div
+                    key={`segment-${index}`}
+                    className="absolute bg-[#5B8D94] transition-all duration-300 ease-out rounded-full"
+                    style={{
+                      left: `${segment.start}%`,
+                      width: `${segment.end - segment.start}%`,
+                      top: '-2.5px', // Half of 5px height to center on the line
+                      height: '5px'
+                    }}
+                  />
+                ))}
 
-                {/* Progress bar with nodes */}
-                <div className="w-full relative">
-                  {/* Background track */}
-                  <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                    {/* Progress fill */}
+                {/* Section nodes - positioned relative to same center line */}
+                {selectedSections.map((section, index) => {
+                  const isCompleted = index < currentSectionIndex;
+                  const isCurrent = index === currentSectionIndex;
+                  // Space nodes evenly including MARK node
+                  const nodePosition = (index / totalSections) * 100;
+
+                  return (
                     <div
-                      className="h-full bg-[#5B8D94] transition-all duration-300 ease-out rounded-full"
-                      style={{ width: `${overallProgress * 100}%` }}
-                    />
-                  </div>
-
-                  {/* Section nodes */}
-                  <div className="absolute inset-0 flex items-center justify-between mt-0.5">
-                    {selectedSections.map((section, index) => {
-                      const isCompleted = index < currentSectionIndex;
-                      const isCurrent = index === currentSectionIndex;
-                      const nodeProgress = index / totalSections;
-
-                      return (
-                        <div
-                          key={index}
-                          className="relative flex flex-col items-center"
-                          style={{ left: `${nodeProgress * 100}%`, transform: 'translateX(-50%)' }}
-                        >
-                          {/* Node */}
-                          <div
-                            className={cn(
-                              "w-3 h-3 rounded-full border-2 transition-all",
-                              isCompleted
-                                ? "bg-[#5B8D94] border-[#5B8D94]"
-                                : isCurrent && !isOnInstructionPage
-                                ? "bg-[#5B8D94] border-[#5B8D94]"
-                                : "bg-transparent border-white/30"
-                            )}
-                          />
-                          {/* Section label (optional, minimal) */}
-                          {index < 3 && (
-                            <span className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">
-                              {index === 0 ? "A" : index === 1 ? "B" : "C"}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {/* MARK node */}
-                    <div
-                      className="relative flex flex-col items-center"
-                      style={{ left: '100%', transform: 'translateX(-50%)' }}
+                      key={index}
+                      className="absolute flex flex-col items-center"
+                      style={{ 
+                        left: `${nodePosition}%`, 
+                        top: '-6px', // Half of 12px (w-3 h-3) to center on the line
+                        transform: 'translateX(-50%)'
+                      }}
                     >
+                      {/* Node - 12px x 12px */}
                       <div
                         className={cn(
                           "w-3 h-3 rounded-full border-2 transition-all",
-                          currentSectionIndex >= totalSections
+                          isCompleted
+                            ? "bg-[#5B8D94] border-[#5B8D94]"
+                            : isCurrent && !isOnInstructionPage
                             ? "bg-[#5B8D94] border-[#5B8D94]"
                             : "bg-transparent border-white/30"
                         )}
                       />
-                      <span className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">
-                        MARK
-                      </span>
+                      {/* Section label - positioned below node, doesn't affect centering */}
+                      {index < 3 && (
+                        <span className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">
+                          {index === 0 ? "A" : index === 1 ? "B" : "C"}
+                        </span>
+                      )}
                     </div>
-                  </div>
+                  );
+                })}
+                
+                {/* MARK node - positioned at the end, relative to same center line */}
+                <div
+                  className="absolute flex flex-col items-center"
+                  style={{ 
+                    left: '100%', 
+                    top: '-6px', // Half of 12px (w-3 h-3) to center on the line
+                    transform: 'translateX(-50%)'
+                  }}
+                >
+                  <div
+                    className={cn(
+                      "w-3 h-3 rounded-full border-2 transition-all",
+                      currentSectionIndex >= totalSections
+                        ? "bg-[#5B8D94] border-[#5B8D94]"
+                        : "bg-transparent border-white/30"
+                    )}
+                  />
+                  <span className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">
+                    MARK
+                  </span>
                 </div>
               </div>
-            )}
+
+              {/* Text overlay with blurred background - centered independently */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
+                <button
+                  onClick={() => {
+                    if (typeof window !== 'undefined' && !window.location.pathname.includes('/papers/solve')) {
+                      router.push('/papers/solve');
+                    }
+                  }}
+                  className="px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap hover:bg-white/5 transition-colors cursor-pointer"
+                >
+                  Paper in progress - {paperDisplayName}
+                </button>
+              </div>
+            </div>
           </div>
+
+          {/* Quit button (X) - positioned between progress bar and user icon */}
+          <button
+            onClick={handleQuit}
+            className="ml-4 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-red-500/20 group"
+            title="Quit paper session"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-red-400/80 group-hover:text-red-400 transition-colors"
+            >
+              <path
+                d="M18 6L6 18M6 6L18 18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
 
           {/* User icon / Login */}
           <div className="flex items-center">

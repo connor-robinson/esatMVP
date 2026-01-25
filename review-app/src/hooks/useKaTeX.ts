@@ -194,63 +194,152 @@ export function renderMath(
 }
 
 /**
+ * Checks if a line is a markdown table separator row (contains dashes and pipes)
+ */
+function isTableSeparator(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith('|') || !trimmed.endsWith('|')) return false;
+  // Check if it contains mostly dashes, colons, spaces, and pipes
+  const content = trimmed.slice(1, -1); // Remove leading and trailing |
+  return /^[\s\-:|]+$/.test(content) && content.includes('-');
+}
+
+/**
+ * Converts a markdown table string to HTML
+ */
+function convertTableToHTML(tableLines: string[]): string {
+  if (tableLines.length < 2) return tableLines.join('\n'); // Need at least header and separator
+  
+  // Find separator row index
+  let separatorIndex = -1;
+  for (let i = 0; i < tableLines.length; i++) {
+    const trimmed = tableLines[i].trim();
+    if (isTableSeparator(trimmed)) {
+      separatorIndex = i;
+      break;
+    }
+  }
+  
+  if (separatorIndex === -1 || separatorIndex === 0) return tableLines.join('\n'); // No valid separator
+  
+  // Parse header row
+  const headerRow = tableLines[0].trim();
+  const headerCells = headerRow.split('|').map(h => h.trim());
+  const headers = headerCells.slice(1, headerCells.length - 1);
+  
+  if (headers.length === 0) return tableLines.join('\n'); // No valid headers
+  
+  // Parse data rows (everything after separator)
+  const dataRows = tableLines.slice(separatorIndex + 1).filter(row => row.trim());
+  
+  // Build HTML table
+  let html = '<table style="border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em;">';
+  
+  // Header
+  html += '<thead><tr>';
+  headers.forEach(header => {
+    html += `<th style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em; text-align: left; background-color: rgba(255, 255, 255, 0.05); font-weight: 600;">${escapeHtml(header)}</th>`;
+  });
+  html += '</tr></thead>';
+  
+  // Body
+  if (dataRows.length > 0) {
+    html += '<tbody>';
+    dataRows.forEach(row => {
+      const trimmedRow = row.trim();
+      const rowCells = trimmedRow.split('|').map(c => c.trim());
+      const cells = rowCells.slice(1, rowCells.length - 1);
+      html += '<tr>';
+      cells.forEach((cell) => {
+        // Process markdown formatting: bold (**text**)
+        let processedCell = cell.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        // Process italic (*text* or _text_) - but not if it's part of **text**
+        processedCell = processedCell.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
+        processedCell = processedCell.replace(/(?<!_)_([^_]+?)_(?!_)/g, '<em>$1</em>');
+        html += `<td style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em;">${processedCell}</td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody>';
+  }
+  
+  html += '</table>';
+  return html;
+}
+
+/**
  * Parses markdown table syntax and converts it to HTML
  */
 function parseMarkdownTable(text: string): string {
-  // Match markdown table pattern
-  // Example: | Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |
-  // More flexible regex that handles empty cells and various separators
-  const tableRegex = /(\|.+\|(?:\r?\n\|[:\s\-|]+\|(?:\r?\n\|.+\|)+)+)/g;
+  // More flexible approach: find table blocks by looking for patterns
+  // A table starts with a row of pipes, followed by a separator, then data rows
+  const lines = text.split(/\r?\n/);
+  const tables: Array<{ start: number; end: number; lines: string[] }> = [];
   
-  return text.replace(tableRegex, (match) => {
-    const lines = match.trim().split(/\r?\n/).filter(line => line.trim() && line.includes('|'));
-    if (lines.length < 2) return match; // Need at least header and separator
+  let currentTable: { start: number; lines: string[] } | null = null;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
     
-    // Parse header row
-    const headerRow = lines[0];
-    const headerCells = headerRow.split('|').map(h => h.trim());
-    // Remove empty cells at start and end (from leading/trailing |)
-    const headers = headerCells.slice(1, headerCells.length - 1);
-    
-    // Skip separator row (lines[1])
-    const dataRows = lines.slice(2);
-    
-    if (headers.length === 0) return match; // No valid headers
-    
-    // Build HTML table
-    let html = '<table style="border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em;">';
-    
-    // Header
-    html += '<thead><tr>';
-    headers.forEach(header => {
-      html += `<th style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em; text-align: left; background-color: rgba(255, 255, 255, 0.05); font-weight: 600;">${escapeHtml(header)}</th>`;
-    });
-    html += '</tr></thead>';
-    
-    // Body
-    if (dataRows.length > 0) {
-      html += '<tbody>';
-      dataRows.forEach(row => {
-        const rowCells = row.split('|').map(c => c.trim());
-        // Remove empty cells at start and end (from leading/trailing |)
-        const cells = rowCells.slice(1, rowCells.length - 1);
-        html += '<tr>';
-        cells.forEach((cell) => {
-          // Process markdown formatting: bold (**text**)
-          let processedCell = cell.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-          // Process italic (*text* or _text_) - but not if it's part of **text**
-          processedCell = processedCell.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
-          processedCell = processedCell.replace(/(?<!_)_([^_]+?)_(?!_)/g, '<em>$1</em>');
-          html += `<td style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em;">${processedCell}</td>`;
+    // Check if line looks like a table row (starts and ends with |)
+    if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 2) {
+      if (!currentTable) {
+        // Start a new table
+        currentTable = { start: i, lines: [line] };
+      } else {
+        // Check if this is a separator row
+        if (isTableSeparator(trimmed)) {
+          // This is the separator - add it to current table
+          currentTable.lines.push(line);
+        } else {
+          // This is a data row - add it
+          currentTable.lines.push(line);
+        }
+      }
+    } else {
+      // Not a table row - finalize current table if exists
+      if (currentTable && currentTable.lines.length >= 2) {
+        // Need at least header + separator
+        tables.push({
+          start: currentTable.start,
+          end: i - 1,
+          lines: currentTable.lines
         });
-        html += '</tr>';
-      });
-      html += '</tbody>';
+      }
+      currentTable = null;
     }
+  }
+  
+  // Finalize last table if exists
+  if (currentTable && currentTable.lines.length >= 2) {
+    tables.push({
+      start: currentTable.start,
+      end: lines.length - 1,
+      lines: currentTable.lines
+    });
+  }
+  
+  // If no tables found, return original text
+  if (tables.length === 0) {
+    return text;
+  }
+  
+  // Process tables in reverse order to maintain indices when replacing
+  // Build a new array with replacements
+  const resultLines = [...lines];
+  
+  for (let i = tables.length - 1; i >= 0; i--) {
+    const table = tables[i];
+    const html = convertTableToHTML(table.lines);
     
-    html += '</table>';
-    return html;
-  });
+    // Replace the table lines with HTML
+    // Calculate how many lines to remove
+    const numLinesToRemove = table.end - table.start + 1;
+    resultLines.splice(table.start, numLinesToRemove, html);
+  }
+  
+  return resultLines.join('\n');
 }
 
 /**

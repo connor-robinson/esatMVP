@@ -264,6 +264,20 @@ export default function PapersMarkPage() {
     
     try {
       await persistSessionToServer({ immediate: true });
+      
+      // Mark part IDs as completed in cache
+      const state = usePaperSessionStore.getState();
+      if (state.selectedPartIds && state.selectedPartIds.length > 0) {
+        // Get user ID from Supabase
+        const { data: { session: supabaseSession } } = await supabase.auth.getSession();
+        if (supabaseSession?.user?.id) {
+          const { markPartIdsAsCompleted, invalidateCache } = await import('@/lib/papers/completionCache');
+          markPartIdsAsCompleted(supabaseSession.user.id, state.selectedPartIds);
+          // Invalidate cache to force refresh on next load
+          invalidateCache(supabaseSession.user.id);
+        }
+      }
+      
       router.push("/papers/archive");
     } catch (error) {
       console.error("Failed to save session:", error);

@@ -57,7 +57,15 @@ export function PaperPartItem({
   const sectionColor = getSectionColor(section);
   const subjectIds = getSubjectIds(section);
 
-  const partLabel = `${part.partLetter}: ${part.partName}`;
+  // Format part label to show section name for NSAA/ENGAA
+  let partLabel: string;
+  if (examName === 'TMUA') {
+    // TMUA: Just show "Paper 1" or "Paper 2"
+    partLabel = part.paperName;
+  } else {
+    // NSAA/ENGAA: Show "Section 1 - Part A: Mathematics"
+    partLabel = `${part.paperName} - ${part.partLetter}: ${part.partName}`;
+  }
   const paperLabel = part.paperName;
   const examTypeLabel = part.examType === "Specimen" ? " (Specimen)" : "";
 

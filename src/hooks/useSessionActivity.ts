@@ -18,6 +18,7 @@ export function useSessionActivity() {
     updateLastActiveTimestamp,
     pauseSession,
     saveSessionToIndexedDB,
+    updateTimerState,
   } = usePaperSessionStore();
 
   const activityIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -56,12 +57,16 @@ export function useSessionActivity() {
     
     saveDebounceTimerRef.current = setTimeout(async () => {
       try {
+        // Update timer state before saving to ensure accuracy
+        if (!isPaused) {
+          updateTimerState();
+        }
         await saveSessionToIndexedDB();
       } catch (error) {
         console.error('[useSessionActivity] Failed to save session:', error);
       }
     }, 800); // 800ms debounce, same as server persistence
-  }, [sessionId, saveSessionToIndexedDB]);
+  }, [sessionId, isPaused, saveSessionToIndexedDB, updateTimerState]);
 
   // Handle visibility change (tab switch)
   useEffect(() => {

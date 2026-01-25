@@ -222,6 +222,16 @@ export default function PapersPlanPage() {
       const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
       const paperTypeName = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
+      // Generate part IDs for selected sections
+      const { generatePartIdsFromSections } = await import('@/lib/papers/partIdUtils');
+      const selectedPartIds = generatePartIdsFromSections(
+        paper.examName,
+        paper.examYear,
+        paper.paperName,
+        selectedSections,
+        paper.examType || 'Official'
+      );
+
       // Start session
       startSession({
         paperId: paper.id,
@@ -234,6 +244,7 @@ export default function PapersPlanPage() {
           end: questionEnd,
         },
         selectedSections: selectedSections.length > 0 ? selectedSections : undefined,
+        selectedPartIds: selectedPartIds,
       });
 
       // Load questions and navigate

@@ -60,7 +60,23 @@ export function SectionSummary({
     sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Initialize and start timer when section changes or component mounts
+  // Sync display with store value (which is deadline-based and updated by updateTimerState)
+  useEffect(() => {
+    if (sectionInstructionTimer !== null) {
+      setDisplaySeconds(sectionInstructionTimer);
+      
+      // Check if timer expired
+      if (sectionInstructionTimer <= 0) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+        onTimerExpire();
+      }
+    }
+  }, [sectionInstructionTimer, onTimerExpire]);
+
+  // Initialize timer display when section changes
   useEffect(() => {
     // Only initialize if this is a new section (not already initialized for this section)
     if (timerInitializedRef.current !== currentSectionIndex) {
@@ -70,32 +86,10 @@ export function SectionSummary({
         intervalRef.current = null;
       }
 
-      // Reset to 60 seconds and mark as initialized
-      setDisplaySeconds(60);
-      setSectionInstructionTimer(60);
+      // Use store value if available, otherwise default to 60
+      const initialSeconds = sectionInstructionTimer !== null ? sectionInstructionTimer : 60;
+      setDisplaySeconds(initialSeconds);
       timerInitializedRef.current = currentSectionIndex;
-
-      // Start countdown interval
-      intervalRef.current = setInterval(() => {
-        setDisplaySeconds((prev) => {
-          const newSeconds = Math.max(0, prev - 1);
-          
-          // Update store periodically (every second) but don't cause re-render loop
-          if (newSeconds > 0) {
-            setSectionInstructionTimer(newSeconds);
-            return newSeconds;
-          } else {
-            // Timer expired
-            setSectionInstructionTimer(0);
-            if (intervalRef.current) {
-              clearInterval(intervalRef.current);
-              intervalRef.current = null;
-            }
-            onTimerExpire();
-            return 0;
-          }
-        });
-      }, 1000);
     }
 
     return () => {
@@ -104,7 +98,7 @@ export function SectionSummary({
         intervalRef.current = null;
       }
     };
-  }, [currentSectionIndex, onTimerExpire, setSectionInstructionTimer]);
+  }, [currentSectionIndex, sectionInstructionTimer]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

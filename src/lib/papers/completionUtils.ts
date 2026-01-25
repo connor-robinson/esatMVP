@@ -9,6 +9,7 @@ import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import type { ExamName, ExamType } from '@/types/papers';
 import { getQuestions } from '@/lib/supabase/questions';
 import { getPaper } from '@/lib/supabase/questions';
+import { getCompletedPartIds as getCompletedPartIdsFromCache, markPartIdsAsCompleted } from './completionCache';
 
 /**
  * Paper variant format: "{year}-{paperName}-{examType}"

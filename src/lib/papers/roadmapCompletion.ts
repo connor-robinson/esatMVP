@@ -19,12 +19,14 @@ import {
   loadAllCompletedSessionsByPaperName,
   isPartCompletedFromSessions,
   checkMultiplePartsCompleted,
+  isPartIdCompleted,
 } from './completionUtils';
 import { getPaper } from '@/lib/supabase/questions';
+import { generatePartIdFromRoadmapPart } from './partIdUtils';
 
 /**
  * Check if a specific roadmap part is completed by a user
- * Uses part-level checking by examining questions, not just section names
+ * Uses part ID tracking for efficient completion detection
  * 
  * @param userId - User ID to check completion for
  * @param examName - Exam name (e.g., "NSAA", "TMUA")
@@ -39,31 +41,11 @@ export async function isPartCompleted(
   part: RoadmapPart
 ): Promise<boolean> {
   try {
-    const paperVariant = constructPaperVariant(year, part.paperName, part.examType);
-    const paperTypeName = examNameToPaperType(examName);
-
-    // Query completed sessions matching this paper
-    const sessions = await queryCompletedSessions(
-      userId,
-      paperTypeName,
-      examName,
-      `${year}-%`
-    );
-
-    if (sessions.length === 0) {
-      return false;
-    }
-
-    // Use part-level checking (checks actual questions, not just section names)
-    return await isPartCompletedFromSessions(
-      sessions,
-      part.partLetter,
-      part.partName,
-      paperVariant,
-      year,
-      part.paperName,
-      part.examType
-    );
+    // Generate part ID
+    const partId = generatePartIdFromRoadmapPart(examName, year, part);
+    
+    // Check using part ID (uses cache first, then database)
+    return await isPartIdCompleted(userId, partId);
   } catch (error) {
     console.error('[roadmapCompletion] Error in isPartCompleted:', error);
     return false;
@@ -154,11 +136,13 @@ export async function getStageCompletion(
  * This is the FAST version - use this when loading multiple stages
  * Uses part-level checking for accurate completion detection
  * 
+ * @param userId - User ID to check completion for
  * @param sessionsByPaperName - Pre-loaded sessions grouped by paper_name
  * @param stage - Roadmap stage to check
  * @returns Map of partKey -> isCompleted
  */
 export async function getStageCompletionFromSessions(
+  userId: string,
   sessionsByPaperName: Map<string, any[]>,
   stage: RoadmapStage
 ): Promise<Map<string, boolean>> {
@@ -173,48 +157,18 @@ export async function getStageCompletionFromSessions(
     relevantSessions.push(...sessionsByPaperName.get(stage.examName)!);
   }
 
-  // Prepare parts with paper_id for batch checking
-  const partsWithPaperId = await Promise.all(
-    stage.parts.map(async (part) => {
-      const paperVariant = constructPaperVariant(stage.year, part.paperName, part.examType);
-      
-      // Try to get paper_id from sessions first (faster)
-      let paperId: number | null = null;
-      for (const session of relevantSessions) {
-        const sessionVariant = session.paper_variant || '';
-        if (sessionVariant === paperVariant || 
-            (sessionVariant.includes(String(stage.year)) && 
-             sessionVariant.includes(part.paperName) &&
-             sessionVariant.includes(part.examType))) {
-          paperId = session.paper_id;
-          break;
-        }
-      }
-      
-      // If not found in sessions, fetch from database
-      if (!paperId) {
-        try {
-          const paper = await getPaper(stage.examName, stage.year, part.paperName, part.examType);
-          paperId = paper?.id || null;
-        } catch (error) {
-          console.error(`[roadmapCompletion] Error fetching paper for ${stage.examName} ${stage.year} ${part.paperName}:`, error);
-        }
-      }
-      
-      return {
-        partLetter: part.partLetter,
-        partName: part.partName,
-        paperVariant,
-        year: stage.year,
-        paperName: part.paperName,
-        examType: part.examType,
-        paperId,
-      };
-    })
-  );
-
-  // Use batch checking for better performance
-  const completionMap = await checkMultiplePartsCompleted(relevantSessions, partsWithPaperId);
+  // Get completed part IDs from cache (which will fetch from DB if needed)
+  const completedPartIds = await getCompletedPartIdsFromCache(userId);
+  
+  // Generate part IDs and check completion
+  const completionMap = new Map<string, boolean>();
+  
+  for (const part of stage.parts) {
+    const partId = generatePartIdFromRoadmapPart(stage.examName, stage.year, part);
+    const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+    const isCompleted = completedPartIds.has(partId);
+    completionMap.set(partKey, isCompleted);
+  }
   
   return completionMap;
 }

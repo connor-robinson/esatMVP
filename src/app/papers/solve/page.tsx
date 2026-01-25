@@ -74,7 +74,9 @@ export default function PapersSolvePage() {
     calculateSectionTimeLimits,
     sectionDeadlines,
     getSectionRemainingTime,
-    setSectionStartTime
+    setSectionStartTime,
+    updateTimerState,
+    sectionInstructionDeadline
   } = usePaperSessionStore();
   
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -114,11 +116,31 @@ export default function PapersSolvePage() {
   useEffect(() => {
     if (!startedAt || !deadline) return;
     
+    let updateTimerStateInterval: ReturnType<typeof setInterval> | null = null;
+    
+    // Update timer state every 5 seconds to keep it accurate
+    if (!isPaused) {
+      updateTimerStateInterval = setInterval(() => {
+        updateTimerState();
+      }, 5000);
+    }
+    
     const interval = setInterval(() => {
       const state = usePaperSessionStore.getState();
       
       // Don't run timer if paused
       if (state.isPaused) return;
+      
+      // Check instruction timer deadline if on instruction page
+      if (isSectionMode && sectionInstructionDeadline) {
+        const now = Date.now();
+        if (now >= sectionInstructionDeadline) {
+          // Instruction timer expired - transition to section
+          setSectionInstructionTimer(0);
+          // Section will start automatically
+          return;
+        }
+      }
       
       // Check section deadline if in section mode and not showing intro/marking info
       if (isSectionMode && 
@@ -131,6 +153,7 @@ export default function PapersSolvePage() {
           // Section time expired
           handleSectionTimeExpired();
           clearInterval(interval);
+          if (updateTimerStateInterval) clearInterval(updateTimerStateInterval);
           return;
         }
       }
@@ -139,6 +162,7 @@ export default function PapersSolvePage() {
       if (remaining <= 0) {
         handleSubmit();
         clearInterval(interval);
+        if (updateTimerStateInterval) clearInterval(updateTimerStateInterval);
         return;
       }
       
@@ -147,8 +171,11 @@ export default function PapersSolvePage() {
       incrementTime(currentIdx);
     }, 1000);
     
-    return () => clearInterval(interval);
-  }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionDeadlines, currentSectionIndex, showMarkingInfo, handleSectionTimeExpired, getRemainingTime, incrementTime]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
+    return () => {
+      clearInterval(interval);
+      if (updateTimerStateInterval) clearInterval(updateTimerStateInterval);
+    };
+  }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionInstructionDeadline, sectionDeadlines, currentSectionIndex, showMarkingInfo, isPaused, handleSectionTimeExpired, getRemainingTime, incrementTime, updateTimerState, setSectionInstructionTimer]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
   
   // Load questions when session starts
   useEffect(() => {
