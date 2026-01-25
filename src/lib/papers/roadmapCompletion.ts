@@ -19,10 +19,10 @@ import {
   loadAllCompletedSessionsByPaperName,
   isPartCompletedFromSessions,
   checkMultiplePartsCompleted,
-  isPartIdCompleted,
 } from './completionUtils';
 import { getPaper } from '@/lib/supabase/questions';
 import { generatePartIdFromRoadmapPart } from './partIdUtils';
+import { isPartIdCompleted, getCompletedPartIds } from './completionCache';
 
 /**
  * Check if a specific roadmap part is completed by a user
@@ -158,7 +158,7 @@ export async function getStageCompletionFromSessions(
   }
 
   // Get completed part IDs from cache (which will fetch from DB if needed)
-  const completedPartIds = await getCompletedPartIdsFromCache(userId);
+  const completedPartIds = await getCompletedPartIds(userId);
   
   // Generate part IDs and check completion
   const completionMap = new Map<string, boolean>();

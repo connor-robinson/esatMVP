@@ -16,12 +16,11 @@ import {
   isSectionInSessions,
   isPartCompletedFromSessions,
   checkMultiplePartsCompleted,
-  isPartIdCompleted,
 } from './completionUtils';
 import { getQuestions } from '@/lib/supabase/questions';
 import { mapPartToSection } from './sectionMapping';
 import { generateSectionId, generatePartId } from './partIdUtils';
-import { getCompletedPartIdsFromCache } from './completionCache';
+import { getCompletedPartIds, isPartIdCompleted } from './completionCache';
 
 /**
  * Check if a specific section is completed for a paper
@@ -85,7 +84,7 @@ export async function isSectionCompleted(
     }
     
     // Get completed part IDs from cache
-    const completedPartIds = await getCompletedPartIdsFromCache(userId);
+    const completedPartIds = await getCompletedPartIds(userId);
     
     // Check if ALL parts in this section are completed
     for (const part of partsInSection) {
@@ -182,7 +181,7 @@ export async function getPaperSectionCompletion(
     }
     
     // Get completed part IDs from cache
-    const completedPartIds = await getCompletedPartIdsFromCache(userId);
+    const completedPartIds = await getCompletedPartIds(userId);
     
     // Check completion for each section
     for (const section of sections) {
