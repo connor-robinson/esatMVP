@@ -111,6 +111,7 @@ export function convertSessionRow(row: PaperSessionRow): PaperSession {
   const correctFlags = (row.correct_flags as (boolean | null)[]) || [];
   const guessedFlags = (row.guessed_flags as boolean[]) || [];
   const mistakeTags = (row.mistake_tags as MistakeTag[]) || [];
+  const sectionPercentiles = row.section_percentiles as Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> | null;
 
   return {
     id: row.id,
@@ -137,6 +138,8 @@ export function convertSessionRow(row: PaperSessionRow): PaperSession {
     guessedFlags,
     mistakeTags,
     score: score || undefined,
+    predictedScore: row.predicted_score ?? undefined,
+    sectionPercentiles: sectionPercentiles || undefined,
     notes: row.notes || undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

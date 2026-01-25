@@ -50,6 +50,8 @@ export interface PaperSession {
   guessedFlags: boolean[];
   mistakeTags: MistakeTag[];
   score?: { correct: number; total: number };
+  predictedScore?: number | null;
+  sectionPercentiles?: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> | null;
   notes?: string;
   createdAt?: string;
   updatedAt?: string;

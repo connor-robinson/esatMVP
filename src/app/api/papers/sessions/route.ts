@@ -26,6 +26,8 @@ type SessionPayload = {
   mistakeTags: string[];
   notes?: string;
   score?: { correct: number; total: number } | null;
+  predictedScore?: number | null;
+  sectionPercentiles?: Record<string, { percentile: number | null; score: number | null; table: string | null; label: string }> | null;
   pinnedInsights?: any;
 };
 
@@ -76,6 +78,8 @@ export async function POST(request: Request) {
       mistake_tags: payload.mistakeTags ?? [],
       notes: payload.notes ?? null,
       score: payload.score ?? null,
+      predicted_score: payload.predictedScore ?? null,
+      section_percentiles: payload.sectionPercentiles ?? null,
       pinned_insights: payload.pinnedInsights ?? null,
     })
     .select("*")
@@ -128,6 +132,8 @@ export async function PATCH(request: Request) {
       mistake_tags: payload.mistakeTags ?? [],
       notes: payload.notes ?? null,
       score: payload.score ?? null,
+      predicted_score: payload.predictedScore ?? null,
+      section_percentiles: payload.sectionPercentiles ?? null,
       pinned_insights: payload.pinnedInsights ?? null,
       updated_at: new Date().toISOString(),
     })

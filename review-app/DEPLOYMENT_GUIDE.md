@@ -237,3 +237,5 @@ Vercel will automatically detect the push and deploy a new version.
 - Supabase Docs: https://supabase.com/docs
 
 
+
+

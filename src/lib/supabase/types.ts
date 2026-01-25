@@ -30,6 +30,8 @@ export type PaperSessionRow = {
   mistake_tags: Json | null;
   notes: string | null;
   score: Json | null;
+  predicted_score: number | null;
+  section_percentiles: Json | null;
   pinned_insights: Json | null;
   created_at: string;
   updated_at: string;
@@ -57,6 +59,8 @@ export type PaperSessionInsert = {
   mistake_tags?: Json | null;
   notes?: string | null;
   score?: Json | null;
+  predicted_score?: number | null;
+  section_percentiles?: Json | null;
   pinned_insights?: Json | null;
 };
 export type PaperSessionUpdate = Partial<PaperSessionRow>;
