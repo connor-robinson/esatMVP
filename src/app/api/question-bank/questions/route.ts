@@ -52,90 +52,110 @@ export async function GET(request: NextRequest) {
       .from('ai_generated_questions')
       .select('*', { count: 'exact' });
     
-    // 1. Apply subject filter (OR logic for multiple subject conditions)
+    // 1. Apply subject filter following the hierarchy:
+    //    - test_type (ESAT or TMUA)
+    //    - If TMUA: paper column (Paper1 or Paper2)
+    //    - If ESAT: schema_id first character (P=Physics, C=Chemistry, B=Biology, M=Maths)
+    //    - If ESAT Maths: paper column (Math 1 or Math 2)
+    
+    // Helper function to check if a question matches ESAT subject filters
+    const matchesESATSubject = (row: any, subjects: string[]): boolean => {
+      if (subjects.length === 0) return true;
+      
+      const testType = row.test_type;
+      // Must be ESAT (not TMUA)
+      if (testType === 'TMUA') return false;
+      
+      const schemaId = (row.schema_id || '').toUpperCase();
+      const firstChar = schemaId.charAt(0);
+      const paper = row.paper;
+      
+      return subjects.some(subject => {
+        if (subject === 'Physics' && firstChar === 'P') return true;
+        if (subject === 'Chemistry' && firstChar === 'C') return true;
+        if (subject === 'Biology' && firstChar === 'B') return true;
+        if (subject === 'Math 1' && firstChar === 'M' && paper === 'Math 1') return true;
+        if (subject === 'Math 2' && firstChar === 'M' && paper === 'Math 2') return true;
+        return false;
+      });
+    };
+    
+    // Helper function to check if a question matches TMUA paper filters
+    const matchesTMUAPaper = (row: any, subjects: string[]): boolean => {
+      if (subjects.length === 0) return true;
+      
+      const testType = row.test_type;
+      // Must be TMUA
+      if (testType !== 'TMUA') return false;
+      
+      const paper = row.paper;
+      return subjects.some(subject => {
+        if (subject === 'TMUA Paper 1' && paper === 'Paper1') return true;
+        if (subject === 'TMUA Paper 2' && paper === 'Paper2') return true;
+        return false;
+      });
+    };
+    
     if (subjects.length > 0) {
       console.log('[Question Bank API] Incoming subject filters:', subjects);
       
-      const subjectConditions: string[] = [];
-      subjects.forEach(subject => {
-        if (subject === 'Math 1') {
-          // Math 1: paper column is "Math 1" OR primary_tag starts with "M1-"
-          // Note: We rely on paper field and primary_tag, not schema_id patterns
-          // because schema_id like M41, M71 are not predictable (M1 would match only exact "M1")
-          // Use double quotes for values with spaces in .or()
-          subjectConditions.push('paper.eq."Math 1"');
-          subjectConditions.push('primary_tag.ilike.M1-%');
-        } else if (subject === 'Math 2') {
-          // Math 2: paper column is "Math 2" OR primary_tag starts with "M2-" OR schema_id matches Math 2 patterns
-          // Primary: paper="Math 2" (most reliable) - this should be set for all Math 2 questions
-          // Secondary: primary_tag starts with "M2-"
-          // Fallback: schema_id patterns for Math 2 (M2-M9, M10-M99, M100+)
-          // We avoid M1% to prevent matching M1 (Math 1)
-          subjectConditions.push('paper.eq."Math 2"');
-          subjectConditions.push('primary_tag.ilike.M2-%');
-          // Match M2-M9 explicitly
-          subjectConditions.push('schema_id.in.(M2,M3,M4,M5,M6,M7,M8,M9)');
-          // For M10-M19, match explicitly (excluding M1)
-          subjectConditions.push('schema_id.in.(M10,M11,M12,M13,M14,M15,M16,M17,M18,M19)');
-          // For M20+, use pattern matching: M2% matches M20-M29, M3% matches M30-M39, etc.
-          // This covers M20-M99. For M100+, we rely on paper/primary_tag as those should be set correctly
-          subjectConditions.push('schema_id.ilike.M2%');
-          subjectConditions.push('schema_id.ilike.M3%');
-          subjectConditions.push('schema_id.ilike.M4%');
-          subjectConditions.push('schema_id.ilike.M5%');
-          subjectConditions.push('schema_id.ilike.M6%');
-          subjectConditions.push('schema_id.ilike.M7%');
-          subjectConditions.push('schema_id.ilike.M8%');
-          subjectConditions.push('schema_id.ilike.M9%');
-          // Note: M1% pattern would match M1 (Math 1), so we don't include it
-          // Questions with schema_id like M108 should have paper="Math 2" set, so they'll match via paper condition
-        } else if (subject === 'Physics') {
-          // Physics: schema_id starts with P OR primary_tag starts with P-
-          // Exclude TMUA questions (M_ and R_ prefixes) - only ESAT Physics
-          subjectConditions.push('schema_id.ilike.P%');
-          subjectConditions.push('primary_tag.ilike.P-%');
-          // Also filter by test_type to ensure only ESAT Physics questions
-          // (TMUA questions have test_type='TMUA', ESAT Physics have test_type='ESAT' or NULL)
-        } else if (subject === 'Chemistry') {
-          // Chemistry: schema_id starts with C OR primary_tag starts with chemistry-
-          subjectConditions.push('schema_id.ilike.C%');
-          subjectConditions.push('primary_tag.ilike.chemistry-%');
-        } else if (subject === 'Biology') {
-          // Biology: schema_id starts with B OR primary_tag starts with biology-
-          subjectConditions.push('schema_id.ilike.B%');
-          subjectConditions.push('primary_tag.ilike.biology-%');
-        } else if (subject === 'TMUA Paper 1') {
-          // TMUA Paper 1: test_type='TMUA' AND (paper='Paper1' OR schema_id starts with 'M_')
-          subjectConditions.push('paper.eq.Paper1');
-          subjectConditions.push('schema_id.ilike.M_%');
-          // Ensure test_type is TMUA (will filter after)
-        } else if (subject === 'TMUA Paper 2') {
-          // TMUA Paper 2: test_type='TMUA' AND (paper='Paper2' OR schema_id starts with 'R_')
-          subjectConditions.push('paper.eq.Paper2');
-          subjectConditions.push('schema_id.ilike.R_%');
-          // Ensure test_type is TMUA (will filter after)
-        }
-      });
-      
-      // Apply test_type filtering to separate ESAT and TMUA questions
+      // Check if we have mixed ESAT and TMUA subjects
       const hasTmuaSubject = subjects.some(s => s === 'TMUA Paper 1' || s === 'TMUA Paper 2');
       const hasEsatSubject = subjects.some(s => 
         s === 'Math 1' || s === 'Math 2' || s === 'Physics' || s === 'Chemistry' || s === 'Biology'
       );
       
-      // Apply test_type filter BEFORE subject conditions
-      if (hasEsatSubject && !hasTmuaSubject) {
-        // Only ESAT subjects selected - exclude TMUA questions
-        query = query.or('test_type.neq.TMUA,test_type.is.null');
-      } else if (hasTmuaSubject && !hasEsatSubject) {
-        // Only TMUA subjects selected - filter for TMUA only
-        query = query.eq('test_type', 'TMUA');
-      }
-      // If both ESAT and TMUA are selected, don't filter by test_type (show both)
+      // For complex filtering (mixed ESAT/TMUA or ESAT with Math + other subjects),
+      // we need to fetch and filter in memory
+      const needsMemoryFilter = (hasEsatSubject && hasTmuaSubject) ||
+        (hasEsatSubject && (subjects.includes('Math 1') || subjects.includes('Math 2')) &&
+         subjects.some(s => ['Physics', 'Chemistry', 'Biology'].includes(s)));
       
-      // Apply subject conditions
-      if (subjectConditions.length > 0) {
-        query = query.or(subjectConditions.join(','));
+      if (needsMemoryFilter) {
+        // Fetch all questions first, then filter in memory
+        // We'll handle this after other filters are applied
+      } else {
+        // Can use database filters
+        if (hasEsatSubject && !hasTmuaSubject) {
+          // Only ESAT subjects - exclude TMUA
+          query = query.or('test_type.eq.ESAT,test_type.is.null');
+        } else if (hasTmuaSubject && !hasEsatSubject) {
+          // Only TMUA subjects - filter for TMUA only
+          query = query.eq('test_type', 'TMUA');
+        }
+        
+        // Apply subject-specific filters
+        const subjectConditions: string[] = [];
+        subjects.forEach(subject => {
+          if (subject === 'Physics') {
+            subjectConditions.push('schema_id.ilike.P%');
+          } else if (subject === 'Chemistry') {
+            subjectConditions.push('schema_id.ilike.C%');
+          } else if (subject === 'Biology') {
+            subjectConditions.push('schema_id.ilike.B%');
+          } else if (subject === 'Math 1') {
+            // Math 1: schema_id starts with M AND paper = 'Math 1'
+            // Note: We can't easily do AND in PostgREST, so we'll filter in memory if needed
+            subjectConditions.push('schema_id.ilike.M%,paper.eq.Math 1');
+          } else if (subject === 'Math 2') {
+            // Math 2: schema_id starts with M AND paper = 'Math 2'
+            subjectConditions.push('schema_id.ilike.M%,paper.eq.Math 2');
+          } else if (subject === 'TMUA Paper 1') {
+            subjectConditions.push('paper.eq.Paper1');
+          } else if (subject === 'TMUA Paper 2') {
+            subjectConditions.push('paper.eq.Paper2');
+          }
+        });
+        
+        // For Math subjects, we need AND conditions, so filter in memory
+        const hasMathOnly = (subjects.includes('Math 1') || subjects.includes('Math 2')) &&
+          !subjects.some(s => ['Physics', 'Chemistry', 'Biology'].includes(s));
+        
+        if (hasMathOnly) {
+          // Fetch and filter in memory for Math (need AND condition)
+        } else if (subjectConditions.length > 0) {
+          query = query.or(subjectConditions.join(','));
+        }
       }
     }
 
@@ -251,8 +271,48 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Apply attempted status and attempt result filters after fetching
+    // Apply subject filtering in memory if needed (for complex OR conditions)
     let filteredQuestions = allQuestions || [];
+    
+    // Check if we need in-memory subject filtering
+    const hasTmuaSubject = subjects.some(s => s === 'TMUA Paper 1' || s === 'TMUA Paper 2');
+    const hasEsatSubject = subjects.some(s => 
+      s === 'Math 1' || s === 'Math 2' || s === 'Physics' || s === 'Chemistry' || s === 'Biology'
+    );
+    const needsMemoryFilter = subjects.length > 0 && (
+      (hasEsatSubject && hasTmuaSubject) ||
+      (hasEsatSubject && (subjects.includes('Math 1') || subjects.includes('Math 2')) &&
+       subjects.some(s => ['Physics', 'Chemistry', 'Biology'].includes(s)))
+    );
+    
+    if (needsMemoryFilter) {
+      filteredQuestions = filteredQuestions.filter((q: any) => {
+        if (q.test_type === 'TMUA') {
+          return matchesTMUAPaper(q, subjects);
+        } else {
+          // ESAT or NULL
+          return matchesESATSubject(q, subjects);
+        }
+      });
+    } else if (subjects.length > 0 && (subjects.includes('Math 1') || subjects.includes('Math 2')) &&
+               !subjects.some(s => ['Physics', 'Chemistry', 'Biology'].includes(s))) {
+      // Math only - need AND condition (schema_id starts with M AND paper matches)
+      filteredQuestions = filteredQuestions.filter((q: any) => {
+        const schemaId = (q.schema_id || '').toUpperCase();
+        const firstChar = schemaId.charAt(0);
+        const paper = q.paper;
+        const testType = q.test_type;
+        
+        // Must be ESAT (not TMUA)
+        if (testType === 'TMUA') return false;
+        
+        if (subjects.includes('Math 1') && firstChar === 'M' && paper === 'Math 1') return true;
+        if (subjects.includes('Math 2') && firstChar === 'M' && paper === 'Math 2') return true;
+        return false;
+      });
+    }
+
+    // Apply attempted status and attempt result filters after fetching
     const beforeFilterCount = filteredQuestions.length;
     
     // Apply attemptedStatus filter first

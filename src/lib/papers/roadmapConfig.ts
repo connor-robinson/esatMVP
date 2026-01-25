@@ -449,45 +449,86 @@ async function generateTmuaPaper1Stages(): Promise<RoadmapStage[]> {
   }));
 }
 
+// Cache for roadmap stages to prevent duplicate generation
+let cachedStages: RoadmapStage[] | null = null;
+let cachePromise: Promise<RoadmapStage[]> | null = null;
+
 /**
  * Get all stages with proper ordering and dynamic TMUA stages
  * Order: NSAA 2016-2022, ENGAA, TMUA Paper 1, NSAA 2023 at the end
+ * 
+ * Cached to prevent duplicate generation on multiple calls
  */
 export async function getRoadmapStages(): Promise<RoadmapStage[]> {
-  // Separate NSAA stages
-  const nsaaStages = ROADMAP_STAGES.filter(s => s.examName === 'NSAA' && s.year !== 2023);
-  const nsaa2023 = ROADMAP_STAGES.find(s => s.examName === 'NSAA' && s.year === 2023);
-  
-  // Get ENGAA stages
-  const engaaStages = ROADMAP_STAGES.filter(s => s.examName === 'ENGAA');
-  
-  // Generate TMUA Paper 1 stages
-  const tmuaStages = await generateTmuaPaper1Stages();
-  
-  // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023
-  const orderedStages: RoadmapStage[] = [
-    ...nsaaStages,
-    ...engaaStages,
-    ...tmuaStages,
-  ];
-  
-  // Add NSAA 2023 at the very end if it exists
-  if (nsaa2023) {
-    orderedStages.push(nsaa2023);
+  // Return cached result if available
+  if (cachedStages !== null) {
+    return cachedStages;
   }
   
-  // Remove any duplicates by stage ID
-  const seenIds = new Set<string>();
-  const uniqueStages = orderedStages.filter(stage => {
-    if (seenIds.has(stage.id)) {
-      console.warn(`[roadmapConfig] Duplicate stage detected: ${stage.id}`);
-      return false;
-    }
-    seenIds.add(stage.id);
-    return true;
-  });
+  // If a request is already in progress, wait for it
+  if (cachePromise !== null) {
+    return cachePromise;
+  }
   
-  return uniqueStages;
+  // Create new request
+  cachePromise = (async () => {
+    try {
+      // Separate NSAA stages
+      const nsaaStages = ROADMAP_STAGES.filter(s => s.examName === 'NSAA' && s.year !== 2023);
+      const nsaa2023 = ROADMAP_STAGES.find(s => s.examName === 'NSAA' && s.year === 2023);
+      
+      // Get ENGAA stages
+      const engaaStages = ROADMAP_STAGES.filter(s => s.examName === 'ENGAA');
+      
+      // Generate TMUA Paper 1 stages
+      const tmuaStages = await generateTmuaPaper1Stages();
+      
+      // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023
+      const orderedStages: RoadmapStage[] = [
+        ...nsaaStages,
+        ...engaaStages,
+        ...tmuaStages,
+      ];
+      
+      // Add NSAA 2023 at the very end if it exists
+      if (nsaa2023) {
+        orderedStages.push(nsaa2023);
+      }
+      
+      // Remove any duplicates by stage ID (shouldn't happen, but safety check)
+      const seenIds = new Set<string>();
+      const duplicateIds = new Set<string>();
+      const uniqueStages = orderedStages.filter(stage => {
+        if (seenIds.has(stage.id)) {
+          duplicateIds.add(stage.id);
+          return false;
+        }
+        seenIds.add(stage.id);
+        return true;
+      });
+      
+      // Log duplicates only once if any were found
+      if (duplicateIds.size > 0) {
+        console.warn(`[roadmapConfig] Duplicate stage(s) detected and removed: ${Array.from(duplicateIds).join(', ')}`);
+      }
+      
+      cachedStages = uniqueStages;
+      return uniqueStages;
+    } finally {
+      // Clear promise after completion (but keep cached result)
+      cachePromise = null;
+    }
+  })();
+  
+  return cachePromise;
+}
+
+/**
+ * Clear the roadmap stages cache (useful for testing or forced refresh)
+ */
+export function clearRoadmapStagesCache(): void {
+  cachedStages = null;
+  cachePromise = null;
 }
 
 /**

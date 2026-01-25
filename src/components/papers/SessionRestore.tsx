@@ -8,17 +8,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { hasActiveSession } from "@/lib/storage/sessionStorage";
 
 export function SessionRestore() {
-  const { sessionId, loadSessionFromIndexedDB } = usePaperSessionStore();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { sessionId, isPaused, loadSessionFromIndexedDB } = usePaperSessionStore();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     // Only check if we don't already have a session
     if (sessionId) {
       setIsChecking(false);
+      
+      // If we have a session and we're on the solve page, check if we should redirect
+      if (pathname === '/papers/solve' && isPaused) {
+        router.push('/papers/solve/resume');
+      }
       return;
     }
 
@@ -28,6 +36,13 @@ export function SessionRestore() {
         if (activeSessionId) {
           // Load the session from IndexedDB
           await loadSessionFromIndexedDB(activeSessionId);
+          
+          // After loading, check if we should redirect
+          // Get state directly from the store
+          const state = usePaperSessionStore.getState();
+          if (pathname === '/papers/solve' && state.isPaused) {
+            router.push('/papers/solve/resume');
+          }
         }
       } catch (error) {
         console.error('[SessionRestore] Failed to restore session:', error);
@@ -37,7 +52,7 @@ export function SessionRestore() {
     };
 
     checkAndRestore();
-  }, [sessionId, loadSessionFromIndexedDB]);
+  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB]);
 
   return null; // This component doesn't render anything
 }

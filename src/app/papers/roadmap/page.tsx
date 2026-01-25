@@ -318,11 +318,21 @@ export default function PapersRoadmapPage() {
       if (session?.user?.id) {
         // Sync cache with database on refresh (will use cache if valid)
         const { syncWithDatabase } = await import('@/lib/papers/completionCache');
-        await syncWithDatabase(session.user.id);
+        console.log('[roadmap] Refreshing completion data for user:', session.user.id);
+        const completedIds = await syncWithDatabase(session.user.id);
+        console.log('[roadmap] Completed part IDs after sync:', completedIds.size, Array.from(completedIds));
         
         for (const stage of stages) {
+          console.log('[roadmap] Processing stage:', stage.id, stage.examName, stage.year);
           const count = await getStageCompletionCount(session.user.id, stage);
           const parts = await getStageCompletion(session.user.id, stage);
+
+          console.log('[roadmap] Stage completion:', {
+            stageId: stage.id,
+            completed: count.completed,
+            total: count.total,
+            parts: Object.fromEntries(parts)
+          });
 
           completionMap.set(stage.id, {
             completed: count.completed,

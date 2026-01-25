@@ -177,8 +177,22 @@ export default function PapersSolvePage() {
     };
   }, [startedAt, deadline, isSectionMode, sectionInstructionTimer, sectionInstructionDeadline, sectionDeadlines, currentSectionIndex, showMarkingInfo, isPaused, handleSectionTimeExpired, getRemainingTime, incrementTime, updateTimerState, setSectionInstructionTimer]); // Minimal dependencies - getRemainingTime and incrementTime are stable from Zustand
   
+  // Check if session is paused and redirect to resume page
+  useEffect(() => {
+    if (sessionId && isPaused) {
+      // If paused, redirect to resume page
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/papers/solve/resume')) {
+        router.push('/papers/solve/resume');
+      }
+    }
+  }, [sessionId, isPaused, router]);
+
   // Load questions when session starts
   useEffect(() => {
+    // Don't load if paused (will be handled by resume page)
+    if (isPaused) return;
+    
     // Load questions if:
     // 1. We have sessionId and paperId
     // 2. Either no questions loaded yet, OR questions don't match current paperId
@@ -190,9 +204,15 @@ export default function PapersSolvePage() {
     
     if (shouldLoad) {
       loadedPaperIdRef.current = paperId;
-      loadQuestions(paperId);
+      loadQuestions(paperId).then(() => {
+        // After questions load, ensure we're on the correct question
+        const state = usePaperSessionStore.getState();
+        if (state.currentQuestionIndex >= 0 && state.currentQuestionIndex < state.questions.length) {
+          navigateToQuestion(state.currentQuestionIndex);
+        }
+      });
     }
-  }, [sessionId, paperId, questions.length, questionsLoading]);
+  }, [sessionId, paperId, questions.length, questionsLoading, isPaused, loadQuestions, navigateToQuestion]);
   
   // Track if we've started answering questions for current section (to prevent re-initializing timer)
   const sectionStartedRef = useRef<Set<number>>(new Set());
@@ -255,6 +275,17 @@ export default function PapersSolvePage() {
     }
   }, [questions.length, questionsLoading, isSectionMode, allSectionsQuestions, currentSectionIndex, sectionInstructionTimer]);
   
+  // Check if session is paused and redirect to resume page
+  useEffect(() => {
+    if (sessionId && isPaused) {
+      // If paused, redirect to resume page
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/papers/solve/resume')) {
+        router.push('/papers/solve/resume');
+      }
+    }
+  }, [sessionId, isPaused, router]);
+
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId) {

@@ -269,8 +269,13 @@ export function SessionProgressBar() {
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
                 <button
                   onClick={() => {
-                    if (typeof window !== 'undefined' && !window.location.pathname.includes('/papers/solve')) {
-                      router.push('/papers/solve');
+                    if (typeof window !== 'undefined') {
+                      // If paused, navigate to resume page; otherwise navigate to solve page
+                      if (isPaused) {
+                        router.push('/papers/solve/resume');
+                      } else {
+                        router.push('/papers/solve');
+                      }
                     }
                   }}
                   className="px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap hover:bg-white/5 transition-colors cursor-pointer"

@@ -103,7 +103,7 @@ export async function queryCompletedSessions(
   // Query with PaperType first (how it's actually stored)
   const query1 = supabase
     .from('paper_sessions')
-    .select('id, ended_at, selected_sections, paper_name, paper_variant, paper_id, question_start, question_end')
+    .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
     .eq('user_id', userId)
     .eq('paper_name', paperTypeName)
     .not('ended_at', 'is', null);
@@ -122,7 +122,7 @@ export async function queryCompletedSessions(
   if (paperTypeName !== examName) {
     const query2 = supabase
       .from('paper_sessions')
-      .select('id, ended_at, selected_sections, paper_name, paper_variant, paper_id, question_start, question_end')
+      .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
       .eq('user_id', userId)
       .eq('paper_name', examName)
       .not('ended_at', 'is', null);
@@ -150,7 +150,7 @@ export async function queryCompletedSessions(
     return [];
   }
   
-  return data as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[];
+  return data as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[];
 }
 
 /**
@@ -206,11 +206,12 @@ export function isSectionInSessions(
  */
 export async function loadAllCompletedSessionsByPaperName(
   userId: string
-): Promise<Map<string, Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[]>> {
+): Promise<Map<string, Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[]>> {
   try {
+    console.log('[completionUtils] loadAllCompletedSessionsByPaperName for user:', userId);
     const { data, error } = await supabase
       .from('paper_sessions')
-      .select('id, ended_at, selected_sections, paper_name, paper_variant, paper_id, question_start, question_end')
+      .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
       .eq('user_id', userId)
       .not('ended_at', 'is', null)
       .order('paper_variant');
@@ -220,21 +221,35 @@ export async function loadAllCompletedSessionsByPaperName(
       return new Map();
     }
 
+    console.log('[completionUtils] Loaded sessions:', data?.length || 0);
+    
     if (!data || data.length === 0) {
+      console.log('[completionUtils] No completed sessions found');
       return new Map();
     }
 
     // Group sessions by paper_name for faster lookup
-    type SessionType = Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>;
+    type SessionType = Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>;
     const sessionsByPaperName = new Map<string, SessionType[]>();
     const typedData = data as SessionType[];
+    
     for (const session of typedData) {
+      console.log('[completionUtils] Processing session:', {
+        id: session.id,
+        paperName: session.paper_name,
+        paperVariant: session.paper_variant,
+        selectedPartIds: session.selected_part_ids || [],
+        selectedSections: session.selected_sections || []
+      });
+      
       const paperName = session.paper_name;
       if (!sessionsByPaperName.has(paperName)) {
         sessionsByPaperName.set(paperName, []);
       }
       sessionsByPaperName.get(paperName)!.push(session);
     }
+
+    console.log('[completionUtils] Grouped sessions by paper name:', Array.from(sessionsByPaperName.keys()));
 
     return sessionsByPaperName;
   } catch (error) {

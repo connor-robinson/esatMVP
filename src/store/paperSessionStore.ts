@@ -614,20 +614,40 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               console.log('Final filtered questions count:', processedQuestions.length);
               console.log('Final questions first 3:', processedQuestions.slice(0, 3).map(q => ({ num: q.questionNumber, part: q.partName })));
               
-              // Update questionRange to match actual loaded questions count
+              // Calculate questionRange from actual loaded questions (based on question numbers, not count)
               const currentState = get();
               const actualQuestionCount = processedQuestions.length;
-              const expectedCount = currentState.questionRange.end - currentState.questionRange.start + 1;
               
-              if (actualQuestionCount !== expectedCount) {
-                console.warn(`[loadQuestions] Question count mismatch: expected ${expectedCount}, got ${actualQuestionCount}. Updating questionRange.`);
+              // Calculate actual question number range from loaded questions
+              let actualQuestionStart = 1;
+              let actualQuestionEnd = actualQuestionCount;
+              
+              if (processedQuestions.length > 0) {
+                const questionNumbers = processedQuestions.map(q => q.questionNumber).sort((a, b) => a - b);
+                actualQuestionStart = questionNumbers[0];
+                actualQuestionEnd = questionNumbers[questionNumbers.length - 1];
+              }
+              
+              // Always update questionRange to match actual loaded questions
+              // This ensures consistency regardless of how questions were filtered
+              const expectedCount = currentState.questionRange.end - currentState.questionRange.start + 1;
+              const needsUpdate = actualQuestionCount !== expectedCount || 
+                                  currentState.questionRange.start !== actualQuestionStart ||
+                                  currentState.questionRange.end !== actualQuestionEnd;
+              
+              if (needsUpdate) {
+                // Only log if there's a significant mismatch (more than just rounding differences)
+                if (Math.abs(actualQuestionCount - expectedCount) > 1) {
+                  console.log(`[loadQuestions] Question range updated: expected ${expectedCount} (${currentState.questionRange.start}-${currentState.questionRange.end}), got ${actualQuestionCount} (${actualQuestionStart}-${actualQuestionEnd})`);
+                }
+                
                 set({
                   questions: processedQuestions,
                   sectionStarts,
                   questionsLoading: false,
                   questionRange: {
-                    start: 1,
-                    end: actualQuestionCount,
+                    start: actualQuestionStart,
+                    end: actualQuestionEnd,
                   },
                   // Resize arrays to match actual question count
                   answers: Array.from({ length: actualQuestionCount }, (_, i) => currentState.answers[i] || initialAnswer()),
@@ -1520,67 +1540,71 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             persistTimer: null,
           });
           
-          // Recalculate timers based on time passed
-          const restoredState = get();
-          const now = Date.now();
-          const timePassed = now - (sessionData.lastActiveTimestamp || now);
-          const currentSectionIndex = restoredState.currentSectionIndex;
-          
-          // Determine if was on instruction page
-          const wasOnInstruction = restoredState.currentPipelineState === "instruction" && 
-                                   restoredState.sectionInstructionTimer !== null && 
-                                   restoredState.sectionInstructionTimer > 0;
-          
-          if (wasOnInstruction) {
-            // Recalculate instruction timer remaining
-            const savedRemaining = restoredState.sectionInstructionTimer || 0;
-            const remainingAfterTimePassed = Math.max(0, savedRemaining - Math.floor(timePassed / 1000));
+          // If session was paused, keep it paused - don't recalculate timers
+          // Timer recalculation will happen when user resumes via resumeSession()
+          if (!sessionData.isPaused) {
+            // Only recalculate timers if session was active
+            const restoredState = get();
+            const now = Date.now();
+            const timePassed = now - (sessionData.lastActiveTimestamp || now);
+            const currentSectionIndex = restoredState.currentSectionIndex;
             
-            if (remainingAfterTimePassed > 0) {
-              // Still have time on instruction timer
-              const newDeadline = now + (remainingAfterTimePassed * 1000);
-              set({
-                sectionInstructionTimer: remainingAfterTimePassed,
-                sectionInstructionDeadline: newDeadline,
-                instructionTimerStartedAt: now - ((60 - remainingAfterTimePassed) * 1000),
-                currentPipelineState: "instruction"
-              });
-            } else {
-              // Instruction timer expired - transition to section
-              set({
-                sectionInstructionTimer: 0,
-                sectionInstructionDeadline: null,
-                instructionTimerStartedAt: null,
-                currentPipelineState: "section"
-              });
+            // Determine if was on instruction page
+            const wasOnInstruction = restoredState.currentPipelineState === "instruction" && 
+                                     restoredState.sectionInstructionTimer !== null && 
+                                     restoredState.sectionInstructionTimer > 0;
+            
+            if (wasOnInstruction) {
+              // Recalculate instruction timer remaining
+              const savedRemaining = restoredState.sectionInstructionTimer || 0;
+              const remainingAfterTimePassed = Math.max(0, savedRemaining - Math.floor(timePassed / 1000));
               
-              // Start section timer if not already started
-              const finalState = get();
-              if (!finalState.sectionStartTimes[currentSectionIndex]) {
-                finalState.setSectionStartTime(currentSectionIndex, now);
+              if (remainingAfterTimePassed > 0) {
+                // Still have time on instruction timer
+                const newDeadline = now + (remainingAfterTimePassed * 1000);
+                set({
+                  sectionInstructionTimer: remainingAfterTimePassed,
+                  sectionInstructionDeadline: newDeadline,
+                  instructionTimerStartedAt: now - ((60 - remainingAfterTimePassed) * 1000),
+                  currentPipelineState: "instruction"
+                });
+              } else {
+                // Instruction timer expired - transition to section
+                set({
+                  sectionInstructionTimer: 0,
+                  sectionInstructionDeadline: null,
+                  instructionTimerStartedAt: null,
+                  currentPipelineState: "section"
+                });
+                
+                // Start section timer if not already started
+                const finalState = get();
+                if (!finalState.sectionStartTimes[currentSectionIndex]) {
+                  finalState.setSectionStartTime(currentSectionIndex, now);
+                }
               }
-            }
-          } else {
-            // Was in active section - don't count time passed as active time
-            // Just recalculate deadlines based on remaining time
-            const sectionTimeLimit = restoredState.sectionTimeLimits[currentSectionIndex] || 60;
-            const elapsedMs = restoredState.sectionElapsedTimes[currentSectionIndex] || 0;
-            const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
-            
-            if (remainingMs > 0) {
-              const newDeadline = now + remainingMs;
-              const newSectionDeadlines = [...restoredState.sectionDeadlines];
-              newSectionDeadlines[currentSectionIndex] = newDeadline;
+            } else {
+              // Was in active section - don't count time passed as active time
+              // Just recalculate deadlines based on remaining time
+              const sectionTimeLimit = restoredState.sectionTimeLimits[currentSectionIndex] || 60;
+              const elapsedMs = restoredState.sectionElapsedTimes[currentSectionIndex] || 0;
+              const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
               
-              // Reset section start time to now (we've accounted for elapsed time)
-              const newSectionStartTimes = [...restoredState.sectionStartTimes];
-              newSectionStartTimes[currentSectionIndex] = now;
-              
-              set({
-                sectionDeadlines: newSectionDeadlines,
-                sectionStartTimes: newSectionStartTimes,
-                currentPipelineState: "section"
-              });
+              if (remainingMs > 0) {
+                const newDeadline = now + remainingMs;
+                const newSectionDeadlines = [...restoredState.sectionDeadlines];
+                newSectionDeadlines[currentSectionIndex] = newDeadline;
+                
+                // Reset section start time to now (we've accounted for elapsed time)
+                const newSectionStartTimes = [...restoredState.sectionStartTimes];
+                newSectionStartTimes[currentSectionIndex] = now;
+                
+                set({
+                  sectionDeadlines: newSectionDeadlines,
+                  sectionStartTimes: newSectionStartTimes,
+                  currentPipelineState: "section"
+                });
+              }
             }
           }
           
@@ -1588,6 +1612,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           const finalState = get();
           if (finalState.questions.length === 0 && finalState.paperId) {
             await finalState.loadQuestions(finalState.paperId);
+          }
+          
+          // After questions load, ensure currentQuestionIndex is preserved
+          // Don't reset to 0 - use the restored index
+          const stateAfterLoad = get();
+          if (stateAfterLoad.questions.length > 0 && 
+              stateAfterLoad.currentQuestionIndex >= 0 && 
+              stateAfterLoad.currentQuestionIndex < stateAfterLoad.questions.length) {
+            // Index is valid, no need to change it
+          } else if (stateAfterLoad.questions.length > 0 && stateAfterLoad.currentQuestionIndex >= stateAfterLoad.questions.length) {
+            // Index is out of bounds, clamp to last question
+            set({ currentQuestionIndex: stateAfterLoad.questions.length - 1 });
           }
         } catch (error) {
           console.error('[paperSessionStore] Failed to load session from IndexedDB:', error);

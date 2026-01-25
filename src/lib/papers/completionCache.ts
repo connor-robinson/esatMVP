@@ -122,11 +122,17 @@ export async function syncWithDatabase(userId: string): Promise<Set<string>> {
   try {
     const response = await fetch('/api/papers/sessions');
     if (!response.ok) {
+      console.error('[completionCache] Failed to fetch sessions:', response.status, response.statusText);
       throw new Error(`Failed to fetch sessions: ${response.statusText}`);
     }
 
     const data = await response.json();
     const sessions = data.sessions || [];
+
+    console.log('[completionCache] Syncing with database:', {
+      totalSessions: sessions.length,
+      completedSessions: sessions.filter((s: any) => s.ended_at).length
+    });
 
     // Extract all completed part IDs from finished sessions
     const completedIds = new Set<string>();
@@ -140,12 +146,29 @@ export async function syncWithDatabase(userId: string): Promise<Set<string>> {
       // Get part IDs from session
       const partIds = session.selected_part_ids || [];
       
+      console.log('[completionCache] Processing session:', {
+        sessionId: session.id,
+        paperVariant: session.paper_variant,
+        partIds: partIds,
+        selectedSections: session.selected_sections
+      });
+      
       // If no part IDs but has selected_sections, we'll need to generate them
       // For now, just use the part IDs if available
       if (partIds && partIds.length > 0) {
-        partIds.forEach((id: string) => completedIds.add(id));
+        partIds.forEach((id: string) => {
+          completedIds.add(id);
+          console.log('[completionCache] Added part ID:', id);
+        });
+      } else {
+        console.warn('[completionCache] Session has no part IDs:', {
+          sessionId: session.id,
+          selectedSections: session.selected_sections
+        });
       }
     }
+
+    console.log('[completionCache] Total completed part IDs:', completedIds.size, Array.from(completedIds));
 
     // Update cache
     setCachedCompletedIds(userId, completedIds);
@@ -168,12 +191,18 @@ export async function getCompletedPartIds(
   userId: string,
   forceRefresh: boolean = false
 ): Promise<Set<string>> {
+  console.log('[completionCache] getCompletedPartIds:', { userId, forceRefresh });
+  
   // Check cache first (unless forcing refresh)
   if (!forceRefresh) {
     const cached = getCachedCompletedIds(userId);
     if (cached !== null) {
+      console.log('[completionCache] Using cached data:', cached.size, Array.from(cached));
       return cached;
     }
+    console.log('[completionCache] Cache miss, fetching from database');
+  } else {
+    console.log('[completionCache] Force refresh, fetching from database');
   }
 
   // Cache miss or force refresh: fetch from database
@@ -211,6 +240,16 @@ export function markPartIdsAsCompleted(userId: string, partIds: string[]): void 
  */
 export async function isPartIdCompleted(userId: string, partId: string): Promise<boolean> {
   const completedIds = await getCompletedPartIds(userId);
-  return completedIds.has(partId);
+  const isCompleted = completedIds.has(partId);
+  
+  console.log('[completionCache] isPartIdCompleted:', {
+    userId,
+    partId,
+    isCompleted,
+    totalCompletedIds: completedIds.size,
+    allCompletedIds: Array.from(completedIds)
+  });
+  
+  return isCompleted;
 }
 

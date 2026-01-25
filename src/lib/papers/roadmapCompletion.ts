@@ -44,8 +44,28 @@ export async function isPartCompleted(
     // Generate part ID
     const partId = generatePartIdFromRoadmapPart(examName, year, part);
     
+    console.log('[roadmapCompletion] isPartCompleted:', {
+      userId,
+      examName,
+      year,
+      part: {
+        partLetter: part.partLetter,
+        partName: part.partName,
+        paperName: part.paperName,
+        examType: part.examType
+      },
+      generatedPartId: partId
+    });
+    
     // Check using part ID (uses cache first, then database)
-    return await isPartIdCompleted(userId, partId);
+    const completed = await isPartIdCompleted(userId, partId);
+    
+    console.log('[roadmapCompletion] Part completion result:', {
+      partId,
+      completed
+    });
+    
+    return completed;
   } catch (error) {
     console.error('[roadmapCompletion] Error in isPartCompleted:', error);
     return false;
@@ -160,6 +180,16 @@ export async function getStageCompletionFromSessions(
   // Get completed part IDs from cache (which will fetch from DB if needed)
   const completedPartIds = await getCompletedPartIds(userId);
   
+  console.log('[roadmapCompletion] getStageCompletionFromSessions:', {
+    userId,
+    stageId: stage.id,
+    examName: stage.examName,
+    year: stage.year,
+    totalParts: stage.parts.length,
+    completedPartIdsCount: completedPartIds.size,
+    completedPartIds: Array.from(completedPartIds)
+  });
+  
   // Generate part IDs and check completion
   const completionMap = new Map<string, boolean>();
   
@@ -167,8 +197,22 @@ export async function getStageCompletionFromSessions(
     const partId = generatePartIdFromRoadmapPart(stage.examName, stage.year, part);
     const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
     const isCompleted = completedPartIds.has(partId);
+    
+    console.log('[roadmapCompletion] Checking part:', {
+      partKey,
+      partId,
+      partLetter: part.partLetter,
+      partName: part.partName,
+      paperName: part.paperName,
+      examType: part.examType,
+      isCompleted,
+      inCompletedSet: completedPartIds.has(partId)
+    });
+    
     completionMap.set(partKey, isCompleted);
   }
+  
+  console.log('[roadmapCompletion] Completion map:', Object.fromEntries(completionMap));
   
   return completionMap;
 }
