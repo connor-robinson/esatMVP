@@ -1011,9 +1011,9 @@ export default function PapersMarkPage() {
                           const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                           const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
                           const indicatorColor = guessed
-                            ? PAPER_COLORS.advanced
+                            ? '#b89f5a'
                             : (correct === true
-                                ? PAPER_COLORS.biology
+                                ? "#6c9e69"
                                 : (correct === false ? PAPER_COLORS.chemistry : PAPER_COLORS.mathematics));
               return (
                             <button
@@ -1036,7 +1036,7 @@ export default function PapersMarkPage() {
                     </div>
                                   {/* Guess pill if guessed */}
                                   {guessed && (
-                                    <div className="px-2 py-0.5 rounded-full text-white text-[11px]" style={{ backgroundColor: PAPER_COLORS.advanced }}>
+                                    <div className="px-2 py-0.5 rounded-full text-white text-[11px]" style={{ backgroundColor: '#b89f5a' }}>
                                       Guess
                                     </div>
                                   )}
@@ -1044,7 +1044,7 @@ export default function PapersMarkPage() {
                                 <div className="flex items-center gap-2">
                                   <div className="text-[11px] text-neutral-500">{formatTime(timeSpent)}</div>
                                   {correct === true && (
-                                    <div className="px-1.5 py-0.5 rounded-full text-white flex items-center justify-center" style={{ backgroundColor: PAPER_COLORS.biology }}>
+                                    <div className="px-1.5 py-0.5 rounded-full text-white flex items-center justify-center" style={{ backgroundColor: "#6c9e69" }}>
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                     </div>
                                   )}
@@ -1271,7 +1271,7 @@ export default function PapersMarkPage() {
                             const wrongPct = Math.max(0, 100 - correctPct);
                             return (
                               <div className="flex w-full h-full">
-                                <div style={{ width: `${correctPct}%`, backgroundColor: PAPER_COLORS.biology }} />
+                                <div style={{ width: `${correctPct}%`, backgroundColor: "#6c9e69" }} />
                                 <div style={{ width: `${wrongPct}%`, backgroundColor: PAPER_COLORS.chemistry }} />
                               </div>
                             );
@@ -1366,31 +1366,34 @@ export default function PapersMarkPage() {
                             <div key={section} className="p-3 rounded-md bg-neutral-900">
                               <div className="flex items-start justify-between mb-2">
                                 <div>
-                                  <div className="flex items-center gap-2">
-                                  <div className="text-sm font-medium text-neutral-200">{section}</div>
+                                  <div className="flex items-center gap-2 flex-wrap">
                                     {sectionNameForColor && (
-                                      <span className="text-[10px] px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
+                                      <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
                                         {sectionNameForColor}
                                       </span>
                                     )}
+                                    <div className="text-sm font-medium text-neutral-200">{section}</div>
                                   </div>
                                   {hasConversion && (
-                                    <div className="mt-1 flex items-center gap-2">
-                                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${ (data as any).__convRowsFound ? 'bg-[rgba(80,97,65,0.25)] text-neutral-200' : 'bg-[rgba(239,68,68,0.2)] text-neutral-300' }`}>
-                                        {(data as any).__convRowsFound ? 'Mapped' : 'Not mapped'}{(data as any).__convPartName ? ` • ${(data as any).__convPartName}` : ''}
+                                    <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                                      <span className={`text-xs px-2 py-0.5 rounded-md ${ (data as any).__convRowsFound ? 'bg-[rgba(80,97,65,0.25)] text-neutral-200' : 'bg-[rgba(239,68,68,0.2)] text-neutral-300' }`}>
+                                        {(data as any).__convRowsFound ? 'Mapped' : 'Not mapped'}
                                       </span>
-                                      <span className="text-[10px] text-neutral-500">{data.correct}/{data.total} raw</span>
+                                      {(data as any).__convPartName && (
+                                        <span className="text-xs text-neutral-400">{((data as any).__convPartName as string)}</span>
+                                      )}
+                                      <span className="text-xs text-neutral-500">{data.correct}/{data.total} raw</span>
                                     </div>
                                   )}
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-xs text-neutral-400">{examName}</div>
+                                  <div className="text-xs text-neutral-400">{(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName}</div>
                                   <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 mb-2">
                                 <div className="flex-1 h-2 bg-neutral-700 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full" style={{ width: `${accuracy}%`, backgroundColor: accuracy >= 80 ? PAPER_COLORS.biology : accuracy >= 60 ? PAPER_COLORS.advanced : PAPER_COLORS.chemistry }} />
+                                  <div className="h-full rounded-full" style={{ width: `${accuracy}%`, backgroundColor: getSectionColor(sectionNameForColor) }} />
                                 </div>
                                 <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
                               </div>
@@ -1422,7 +1425,7 @@ export default function PapersMarkPage() {
                               onChange={(e) => setShowIndividualNSAASubjects(e.target.checked)}
                               className="sr-only"
                             />
-                            <div className={`block w-11 h-6 rounded-full transition-colors ${showIndividualNSAASubjects ? 'bg-[#85BC82]' : 'bg-neutral-700'}`}>
+                            <div className={`block w-11 h-6 rounded-full transition-colors ${showIndividualNSAASubjects ? 'bg-[#6c9e69]' : 'bg-neutral-700'}`}>
                               <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showIndividualNSAASubjects ? 'translate-x-5' : ''}`}></div>
                             </div>
                           </div>
@@ -1436,7 +1439,7 @@ export default function PapersMarkPage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full bg-[#85BC82]">
+                              <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full bg-[#6c9e69]">
                                 Average (All Subjects)
                               </span>
                             </div>
@@ -1459,6 +1462,7 @@ export default function PapersMarkPage() {
                         const entries = Object.entries(sectionAnalytics);
                         // For NSAA, only show individual if toggle is on
                         const displayEntries = (examName === 'NSAA' && !showIndividualNSAASubjects) ? [] : entries;
+                        const isSingleGraph = displayEntries.length === 1;
                         return displayEntries.map(([section, data], idx) => {
                           const isLastSingle = displayEntries.length % 2 === 1 && idx === displayEntries.length - 1;
                         const sp = sectionPercentiles[section];
@@ -1474,20 +1478,20 @@ export default function PapersMarkPage() {
                         const examYear = qs?.[0]?.examYear as number | undefined;
                         const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
                         return (
-                          <div key={section} className={`p-3 rounded-md bg-neutral-900 ${isLastSingle ? 'md:col-span-2 md:max-w-[560px] md:mx-auto' : ''}`}>
+                          <div key={section} className={`p-3 rounded-md bg-neutral-900 ${isLastSingle || isSingleGraph ? 'md:col-span-2 md:mx-auto' : ''} ${isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : ''}`}>
                             <div className="flex items-start justify-between">
                               <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
                                     {section}
                                   </span>
                                 </div>
-                                <div className="text-xs text-neutral-400">
-                                  {typeof score === 'number' ? `${examName} score: ${score.toFixed(1)}` : '—'}
+                                <div className="text-xs text-neutral-400 mt-1">
+                                  {typeof score === 'number' ? `${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} score: ${score.toFixed(1)}` : '—'}
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-300">Table: {label}</span>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-xs px-2 py-1 rounded-md bg-neutral-800 text-neutral-300">Table: {label}</span>
                                 {/* Tooltip for methodology */}
                                 <div className="relative group">
                                   <button className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center" title="How this is calculated">
@@ -1500,7 +1504,7 @@ export default function PapersMarkPage() {
                                   <div className="absolute right-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
                                     {sp?.table && percentileTables[sp.table] 
                                       ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
-                                      : `We use ${examName} conversion tables to convert your raw score to a scaled score.`}
+                                      : `We use ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} conversion tables to convert your raw score to a scaled score.`}
                                   </div>
                                 </div>
                               </div>
@@ -1535,7 +1539,7 @@ export default function PapersMarkPage() {
                             {/* Explanation moved to tooltip above */}
                             {/* Mini percentile chart */}
                             {sp?.table && percentileTables[sp.table] && (
-                              <div className="mt-3 w-full max-w-[460px] mx-auto">
+                              <div className={`mt-3 w-full mx-auto ${isSingleGraph ? 'min-w-[80%]' : 'max-w-[460px]'}`}>
                                 {(() => {
                                   const rows = percentileTables[sp.table] || [];
                                   const w = 400; const h = 175; const pad = 24;
@@ -1601,8 +1605,8 @@ export default function PapersMarkPage() {
                             )}
                             <div className="mt-2 text-xs text-neutral-400">
                               {Number.isFinite(pct as any) 
-                                ? `If you sat the ${examName} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
-                                : `Your ${examName} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
+                                ? `If you sat the ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
+                                : `Your ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
                             </div>
                           </div>
                         );
@@ -1647,7 +1651,7 @@ export default function PapersMarkPage() {
                             <div className="flex w-full h-full">
                               <div
                                 className="h-full flex items-center justify-center text-[11px] font-medium"
-                                style={{ width: `${correctPct}%`, backgroundColor: `${PAPER_COLORS.biology}cc` }}
+                                style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
                                 title={`Correct guesses • ${correctPct}% of guess time`}
                               >
                                 {correctPct >= 12 ? `${correctPct}%` : ''}
@@ -1663,7 +1667,7 @@ export default function PapersMarkPage() {
                           </div>
                           <div className="mt-1 flex items-center justify-between text-[11px] text-neutral-400">
                             <div className="flex items-center gap-2">
-                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: PAPER_COLORS.biology }} />
+                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: "#6c9e69" }} />
                               <span>Correct • {correctCount} qns • avg {formatTime(Math.round(guessExtended.avgTimeCorrectGuess))}</span>
                           </div>
                             <div className="flex items-center gap-2">
@@ -1693,8 +1697,8 @@ export default function PapersMarkPage() {
                         const toY = (v:number) => pad + (plotH - v * plotH);
                         const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
                         const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
-                        const guessColor = PAPER_COLORS.advanced; // amber
-                        const correctBorder = PAPER_COLORS.biology;
+                        const guessColor = '#b89f5a'; // desaturated yellow
+                        const correctBorder = "#6c9e69";
                         const wrongBorder = PAPER_COLORS.chemistry;
                         // Precompute band step so blocks never exceed inner width; avoids right-edge clamping overlap
                         const len = Math.max(1, questionNumbers.length);
@@ -1741,7 +1745,7 @@ export default function PapersMarkPage() {
                       <div className="grid grid-cols-3 gap-3">
                         <div className="p-3 rounded-md bg-neutral-900 text-center">
                           <div className="text-xs text-neutral-400 mb-1">Correct</div>
-                          <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.biology }}>
+                          <div className="text-2xl font-bold" style={{ color: "#6c9e69" }}>
                             {accuracyPatterns.correct}
                           </div>
                           <div className="text-xs text-neutral-500 mt-1">
@@ -1759,7 +1763,7 @@ export default function PapersMarkPage() {
                         </div>
                         <div className="p-3 rounded-md bg-neutral-900 text-center">
                           <div className="text-xs text-neutral-400 mb-1">Guessed</div>
-                          <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.advanced }}>
+                          <div className="text-2xl font-bold" style={{ color: '#b89f5a' }}>
                             {accuracyPatterns.guessed}
                       </div>
                           <div className="text-xs text-neutral-500 mt-1">
@@ -1786,7 +1790,7 @@ export default function PapersMarkPage() {
                         <div className="grid grid-cols-2 gap-2">
                           <div className="p-2 rounded bg-neutral-900 text-center">
                             <div className="text-xs text-neutral-400">Longest Correct</div>
-                            <div className="text-lg font-semibold" style={{ color: PAPER_COLORS.biology }}>
+                            <div className="text-lg font-semibold" style={{ color: "#6c9e69" }}>
                               {streaks.longestCorrect}
                             </div>
                           </div>
@@ -1865,7 +1869,7 @@ export default function PapersMarkPage() {
                               return d;
                             }
 
-                            const accStroke = performanceTrend.trend === 'improving' ? PAPER_COLORS.biology : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
+                            const accStroke = performanceTrend.trend === 'improving' ? "#6c9e69" : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
                             const speedStroke = PAPER_COLORS.mathematics ?? 'rgba(120,180,255,0.9)';
 
                             const accPath = buildSmoothPath(accValues);
@@ -1974,7 +1978,7 @@ export default function PapersMarkPage() {
                     className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
                     }`}
-                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: PAPER_COLORS.biology } : { backgroundColor: "#1f1f1f" }}
+                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
                     onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -1997,7 +2001,7 @@ export default function PapersMarkPage() {
                           : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
                       }`}
                       style={guessedFlags[selectedIndex]
-                        ? { backgroundColor: PAPER_COLORS.advanced }
+                        ? { backgroundColor: '#b89f5a' }
                         : { backgroundColor: '#1f1f1f' }}
                       onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
                     >
@@ -2017,9 +2021,9 @@ export default function PapersMarkPage() {
                   className="p-3 rounded-md border border-white/10"
                   style={{
                     backgroundColor: guessedFlags[selectedIndex]
-                      ? PAPER_COLORS.advanced
+                      ? '#b89f5a'
                       : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
-                          ? PAPER_COLORS.biology
+                          ? "#6c9e69"
                           : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
                               ? PAPER_COLORS.chemistry
                               : '#2b2f36'))
@@ -2030,7 +2034,7 @@ export default function PapersMarkPage() {
                 </div>
                 <div
                   className="p-3 rounded-md"
-                  style={{ backgroundColor: PAPER_COLORS.biology }}
+                  style={{ backgroundColor: "#6c9e69" }}
                 >
                   <div className="text-xs text-white/90">Correct answer</div>
                   <div className="text-white text-sm mt-1">{(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}</div>
@@ -2122,7 +2126,7 @@ export default function PapersMarkPage() {
                       if (isTMUA) {
                         // TMUA: Answer image below question with solution label
                         return (
-                          <div className="relative rounded-lg p-2 pb-12 transition-all duration-300 w-full border-2" style={{ backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: PAPER_COLORS.biology + '40' }}>
+                          <div className="relative rounded-lg p-2 pb-12 transition-all duration-300 w-full border-2" style={{ backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
                             {/* Solution Header */}
                             <div className="absolute top-3 left-8 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border shadow-sm bg-black/30 border-white/10 text-white/80">
                               <div className="text-sm font-normal" style={{ fontFamily: 'Garamond, serif' }}>Official Solution</div>
@@ -2253,14 +2257,14 @@ export default function PapersMarkPage() {
 
               {/* Tip Section - Full Width Below Question/Answer */}
               {currentTip && (
-                <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: PAPER_COLORS.biology + '20' }}>
+                <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: 'rgba(108, 158, 105, 0.12)' }}>
                   <div className="space-y-3">
                     {/* Tip Header */}
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5" style={{ color: PAPER_COLORS.biology }} fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5" style={{ color: "#6c9e69" }} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
-                      <div className="text-base font-bold" style={{ color: PAPER_COLORS.biology }}>Tip</div>
+                      <div className="text-base font-bold" style={{ color: "#6c9e69" }}>Tip</div>
                   </div>
                     {/* Tip Content */}
                     <div className="text-sm text-neutral-200 leading-relaxed">
@@ -2453,7 +2457,7 @@ export default function PapersMarkPage() {
                         className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs transition ${include ? 'bg-[rgba(80,97,65,0.25)] text-neutral-100' : 'bg-[#141820] text-neutral-300 hover:bg-[#161a21]'}`}
                         title="Include in drill"
                       >
-                        <span className={`inline-block w-3 h-3 rounded-[4px]`} style={{ backgroundColor: include ? PAPER_COLORS.biology : 'rgba(255,255,255,0.08)' }} />
+                        <span className={`inline-block w-3 h-3 rounded-[4px]`} style={{ backgroundColor: include ? "#6c9e69" : 'rgba(255,255,255,0.08)' }} />
                         Include
                       </button>
                     </div>
@@ -2522,7 +2526,7 @@ export default function PapersMarkPage() {
           <Button
             variant="primary"
             className="px-4 py-2 text-sm rounded-md text-white shadow-glow"
-            style={{ backgroundColor: PAPER_COLORS.biology, borderColor: 'rgba(255,255,255,0.15)' }}
+            style={{ backgroundColor: "#6c9e69", borderColor: 'rgba(255,255,255,0.15)' }}
             onClick={handleSaveAndContinue}
             disabled={isSubmitting}
           >

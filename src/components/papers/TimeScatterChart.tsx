@@ -58,7 +58,7 @@ export function TimeScatterChart({
 
   const getPointColor = (data: typeof chartData[0]) => {
     if (!data.answered) return "#737373"; // unanswered neutral
-    if (data.correct === true) return PAPER_COLORS.biology; // correct
+    if (data.correct === true) return "#6c9e69"; // correct
     if (data.correct === false) return PAPER_COLORS.chemistry; // wrong
     return "#a3a3a3"; // unmarked
   };
@@ -313,7 +313,7 @@ export function TimeScatterChart({
         {/* Legend */}
         <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-neutral-400">
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full" style={{ background: PAPER_COLORS.biology }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: "#6c9e69" }} />
             <span>Correct</span>
           </div>
           <div className="flex items-center gap-1">

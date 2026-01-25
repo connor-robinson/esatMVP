@@ -11,63 +11,6 @@ import type {
 } from "@/types/questionBank";
 import type { TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 
-// ============================================================================
-// TEMPORARY TEST CODE - REMOVE THIS SECTION WHEN DONE TESTING
-// 
-// TO REMOVE: 
-// 1. Set FORCE_TEST_QUESTION to false (or delete this entire section)
-// 2. Delete the TEST_QUESTION constant
-// 3. Remove the test override block in fetchQuestion (lines ~327-340)
-// 4. Remove the test override block in the mount useEffect (lines ~75-84)
-// ============================================================================
-const FORCE_TEST_QUESTION = true; // Set to false to disable test question override
-
-const TEST_QUESTION: QuestionBankQuestion = {
-  id: "tmua_e_function_test_01",
-  generation_id: "test-e-function-001",
-  schema_id: "M1",
-  difficulty: "Medium",
-  question_stem: `For any function $f$ defined for all real numbers, let the quantity $E(f)$ be defined by:
-$$ E(f) = \\int_0^1 f(x) \\,\\mathrm{d}x - \\frac{1}{2}\\bigl(f(0) + f(1)\\bigr) $$
-It is given that, for a particular function $f$, $E(f) < 0$.
-
-Which one of the following functions $g$ necessarily satisfies $E(g) > 0$?`,
-  options: {
-    A: "$g(x) = f(x) + 1$",
-    B: "$g(x) = f(x+1)$",
-    C: "$g(x) = 2f(x)$",
-    D: "$g(x) = f(1-x)$",
-    E: "$g(x) = 1 - f(x)$",
-    F: "$g(x) = (f(x))^2$",
-  },
-  correct_option: "E",
-  solution_reasoning: `The quantity $E(f)$ represents the difference between the integral of $f$ and the single-strip trapezium estimate. The operator is linear, meaning $E(af+b) = aE(f) + E(b)$.
-
-First, note that for any constant $k$, the integral $\\int_0^1 k \\,\\mathrm{d}x = k$ and the average of endpoints $\\frac{1}{2}(k+k) = k$, so $E(k) = 0$.
-
-Now check the transformation in option E, $g(x) = 1 - f(x)$:
-$$ E(g) = E(1 - f) = E(1) - E(f) = 0 - E(f) = -E(f) $$
-Since it is given that $E(f) < 0$, it follows that $E(g) > 0$.`,
-  solution_key_insight: "The operator $E$ is linear: $E(1 - f) = E(1) - E(f) = 0 - E(f) = -E(f)$. Since $E(f) < 0$, we have $E(g) = -E(f) > 0$.",
-  distractor_map: {
-    A: "$E(f+1) = E(f) + E(1) = E(f) < 0$",
-    B: "$E(f(x+1))$ depends on the values of $f$ in the interval $[1,2]$, which are unknown",
-    C: "$E(2f) = 2E(f) < 0$ (since multiplying by a positive scalar preserves the sign)",
-    D: "$g(x) = f(1-x)$ is a reflection in $x=0.5$. The area is identical, and the endpoints $f(1)$ and $f(0)$ are swapped but their sum remains the same. Thus $E(g) = E(f) < 0$",
-    F: "Squaring a function does not guarantee the sign of the error term (e.g. if $f$ is linear, $E(f)=0$, but $E(f^2) \\neq 0$)",
-  },
-  paper: "Paper 1",
-  primary_tag: "M1-Integration",
-  secondary_tags: ["M1-LinearAlgebra", "M1-Functions"],
-  status: "approved",
-  created_at: new Date().toISOString(),
-  graph_spec: null,
-  graph_specs: null,
-};
-// ============================================================================
-// END TEMPORARY TEST CODE
-// ============================================================================
-
 interface UseQuestionBankReturn {
   // State
   currentQuestion: QuestionBankQuestion | null;
@@ -127,19 +70,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Restore unanswered question from localStorage on mount
   useEffect(() => {
-    // ============================================================================
-    // TEMPORARY TEST CODE - Skip localStorage restoration if test mode is enabled
-    // ============================================================================
-    if (FORCE_TEST_QUESTION) {
-      console.log("[TEST] Skipping localStorage restoration - test mode enabled");
-      setIsLoading(false);
-      hasRestoredFromStorage.current = false;
-      return; // Let the filter effect handle fetching the test question
-    }
-    // ============================================================================
-    // END TEMPORARY TEST CODE
-    // ============================================================================
-
     try {
       // Restore filters first
       const storedFilters = localStorage.getItem(FILTERS_STORAGE_KEY);
@@ -326,27 +256,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Fetch a new question (with caching)
   const fetchQuestion = useCallback(async (useCache: boolean = true) => {
-    // ============================================================================
-    // TEMPORARY TEST CODE - REMOVE THIS BLOCK WHEN DONE TESTING
-    // ============================================================================
-    if (FORCE_TEST_QUESTION) {
-      console.log("[TEST] Forcing test question with graph");
-      setCurrentQuestion(TEST_QUESTION);
-      setIsAnswered(false);
-      setSelectedAnswer(null);
-      setIsCorrect(null);
-      setQuestionStartTime(Date.now());
-      setViewedSolution(false);
-      setQuestionCount(prev => prev + 1);
-      setHasBeenAttempted(false);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
-    // ============================================================================
-    // END TEMPORARY TEST CODE
-    // ============================================================================
-
     // Check if filters changed - if so, clear cache
     const currentFiltersHash = getFiltersHash();
     if (currentFiltersHash !== lastFiltersHash.current) {

@@ -1,82 +1,88 @@
 /**
- * Resume Session Page
- * 
- * Shows when a session is paused, allowing user to resume or quit
+ * Resume Page - Shows when session is paused
+ * Allows user to resume or quit the session
  */
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { getSectionColor } from "@/config/colors";
 
-export default function ResumeSessionPage() {
+export default function ResumePage() {
   const router = useRouter();
   const {
     sessionId,
-    sessionName,
     paperName,
     paperVariant,
-    paperId,
+    sessionName,
     currentQuestionIndex,
     questions,
     selectedSections,
     currentSectionIndex,
-    sectionElapsedTimes,
-    sectionTimeLimits,
     isPaused,
-    pausedAt,
     lastActiveTimestamp,
+    sectionTimeLimits,
+    sectionElapsedTimes,
     getSectionRemainingTime,
     resumeSession,
     resetSession,
-    loadSessionFromIndexedDB,
   } = usePaperSessionStore();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isResuming, setIsResuming] = useState(false);
-
-  // Check session state on mount
+  // Redirect if no session or not paused
   useEffect(() => {
-    const checkSession = async () => {
-      // If no session, redirect to library
-      if (!sessionId) {
-        router.push("/papers/library");
-        return;
-      }
+    if (!sessionId) {
+      router.push("/papers/library");
+      return;
+    }
+    if (!isPaused) {
+      // If not paused, redirect to solve page
+      router.push("/papers/solve");
+      return;
+    }
+  }, [sessionId, isPaused, router]);
 
-      // If session is not paused, redirect to solve page
-      if (!isPaused) {
-        router.push("/papers/solve");
-        return;
-      }
+  // Don't render if redirecting
+  if (!sessionId || !isPaused) {
+    return null;
+  }
 
-      // If questions not loaded, try to restore from IndexedDB
-      if (questions.length === 0 && paperId) {
-        try {
-          await loadSessionFromIndexedDB(sessionId);
-          // After loading, check again if still paused
-          const updatedState = usePaperSessionStore.getState();
-          if (!updatedState.isPaused) {
-            router.push("/papers/solve");
-            return;
-          }
-        } catch (error) {
-          console.error("[resume] Failed to load session:", error);
-          router.push("/papers/library");
-          return;
-        }
-      }
+  // Get current question info
+  const currentQuestion = questions[currentQuestionIndex];
+  const currentQuestionNumber = currentQuestion?.questionNumber ?? (currentQuestionIndex >= 0 ? currentQuestionIndex + 1 : 1);
+  const currentSection = selectedSections[currentSectionIndex] || "Section";
+  
+  // Format last active timestamp
+  const formatLastActive = () => {
+    if (!lastActiveTimestamp) return "Unknown";
+    const date = new Date(lastActiveTimestamp);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+  };
 
-      setIsLoading(false);
-    };
-
-    checkSession();
-  }, [sessionId, isPaused, questions.length, router, loadSessionFromIndexedDB]);
+  // Format time remaining
+  const formatTimeRemaining = () => {
+    if (selectedSections.length > 0 && sectionTimeLimits.length > currentSectionIndex && currentSectionIndex >= 0) {
+      const remainingSeconds = getSectionRemainingTime(currentSectionIndex);
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return "N/A";
+  };
 
   // Format paper display name
   const getPaperDisplayName = (): string => {
@@ -98,155 +104,98 @@ export default function ResumeSessionPage() {
     return year ? `${paperName} ${year}` : paperName;
   };
 
-  // Format last active time
-  const formatLastActiveTime = (): string => {
-    if (!lastActiveTimestamp && !pausedAt) return 'Unknown';
-    
-    const timestamp = pausedAt || lastActiveTimestamp || Date.now();
-    const date = new Date(timestamp);
-    
-    const timeString = date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-    
-    const dateString = date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-    
-    return `${timeString} on ${dateString}`;
-  };
-
-  // Get current question info
-  const getCurrentQuestionInfo = (): { number: number; section: string } => {
-    const currentQuestion = questions[currentQuestionIndex];
-    const questionNumber = currentQuestion?.questionNumber ?? (currentQuestionIndex + 1);
-    
-    let sectionName = 'Unknown';
-    if (selectedSections.length > 0 && currentSectionIndex < selectedSections.length) {
-      sectionName = selectedSections[currentSectionIndex] as string;
-    } else if (currentQuestion) {
-      // Try to get section from question
-      const partLetter = (currentQuestion as any)?.partLetter || '';
-      const partName = currentQuestion?.partName || '';
-      if (partLetter || partName) {
-        sectionName = partLetter ? `Part ${partLetter}` : partName;
-      }
-    }
-    
-    return { number: questionNumber, section: sectionName };
-  };
-
-  // Calculate time remaining
-  const getTimeRemaining = (): string => {
-    if (selectedSections.length > 0 && currentSectionIndex < sectionTimeLimits.length) {
-      const remainingSeconds = getSectionRemainingTime(currentSectionIndex);
-      const minutes = Math.floor(remainingSeconds / 60);
-      const seconds = remainingSeconds % 60;
-      return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
-    return 'N/A';
-  };
-
-  // Handle resume
-  const handleResume = async () => {
-    if (!sessionId || isResuming) return;
-    
-    setIsResuming(true);
-    try {
-      // Resume the session
-      resumeSession();
-      
-      // Navigate to solve page
-      router.push("/papers/solve");
-    } catch (error) {
-      console.error("[resume] Failed to resume session:", error);
-      setIsResuming(false);
-    }
-  };
-
-  // Handle quit
-  const handleQuit = () => {
-    if (!window.confirm("Are you sure you want to quit this paper session? All progress will be saved.")) {
-      return;
-    }
-    
-    resetSession();
-    router.push("/papers/library");
-  };
-
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="flex items-center justify-center min-h-screen">
-          <LoadingSpinner />
-        </div>
-      </Container>
-    );
-  }
-
   const paperDisplayName = getPaperDisplayName();
-  const lastActiveTime = formatLastActiveTime();
-  const questionInfo = getCurrentQuestionInfo();
-  const timeRemaining = getTimeRemaining();
+
+  const handleResume = async () => {
+    await resumeSession();
+    router.push("/papers/solve");
+  };
+
+  const handleQuit = async () => {
+    if (window.confirm('Are you sure you want to quit? Your progress will be saved.')) {
+      await resetSession();
+      router.push("/papers/library");
+    }
+  };
 
   return (
-    <Container>
-      <div className="flex items-center justify-center min-h-screen py-12">
-        <Card className="w-full max-w-2xl p-8 space-y-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl font-bold text-white">Paper in Progress</h1>
-            <p className="text-white/70 text-lg">{paperDisplayName}</p>
+    <Container size="lg" className="min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen px-8 py-8">
+        <div className="w-full max-w-3xl space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-semibold text-neutral-100">
+              Session Paused
+            </h1>
+            <p className="text-lg text-neutral-400">
+              {paperDisplayName}
+            </p>
           </div>
 
-          <div className="space-y-6">
-            {/* Question Info */}
-            <div className="bg-white/5 rounded-lg p-6 space-y-2">
-              <div className="text-sm text-white/50 uppercase tracking-wider">Current Question</div>
-              <div className="text-2xl font-semibold text-white">
-                Question {questionInfo.number}
-                {questionInfo.section !== 'Unknown' && (
-                  <span className="text-white/70 text-xl ml-2">- {questionInfo.section}</span>
-                )}
-              </div>
+          {/* Session Info Card */}
+          <div className="bg-neutral-900/50 border border-white/10 rounded-lg p-6 space-y-4">
+            {/* Current Question */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-neutral-400">Current Question</span>
+              <span className="text-lg font-semibold text-neutral-100">
+                Question {currentQuestionNumber}
+              </span>
             </div>
 
-            {/* Last Active Time */}
-            <div className="bg-white/5 rounded-lg p-6 space-y-2">
-              <div className="text-sm text-white/50 uppercase tracking-wider">Last Active</div>
-              <div className="text-xl font-medium text-white">{lastActiveTime}</div>
+            {/* Section */}
+            {selectedSections.length > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-neutral-400">Section</span>
+                <span 
+                  className="text-lg font-semibold px-3 py-1 rounded-md"
+                  style={{ 
+                    backgroundColor: getSectionColor(currentSection),
+                    color: '#ffffff'
+                  }}
+                >
+                  {currentSection}
+                </span>
+              </div>
+            )}
+
+            {/* Last Active */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-neutral-400">Last Active</span>
+              <span className="text-lg font-semibold text-neutral-100">
+                {formatLastActive()}
+              </span>
             </div>
 
             {/* Time Remaining */}
-            <div className="bg-white/5 rounded-lg p-6 space-y-2">
-              <div className="text-sm text-white/50 uppercase tracking-wider">Time Remaining</div>
-              <div className="text-2xl font-semibold text-white">{timeRemaining}</div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-neutral-400">Time Remaining</span>
+              <span className="text-lg font-semibold text-neutral-100 tabular-nums">
+                {formatTimeRemaining()}
+              </span>
             </div>
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4 pt-4">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button
+              variant="primary"
+              size="lg"
               onClick={handleResume}
-              disabled={isResuming}
-              className="flex-1 bg-[#5B8D94] hover:bg-[#5B8D94]/80 text-white font-semibold py-3"
+              className="flex-1 sm:flex-none px-8 py-3 text-base font-medium"
             >
-              {isResuming ? "Resuming..." : "Resume Paper"}
+              Resume Session
             </Button>
             <Button
+              variant="secondary"
+              size="lg"
               onClick={handleQuit}
-              variant="ghost"
-              className="flex-1 border border-red-500/50 text-red-400 hover:bg-red-500/10 font-semibold py-3"
+              className="flex-1 sm:flex-none px-8 py-3 text-base font-medium"
             >
-              Quit
+              Quit Session
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
     </Container>
   );
 }
-

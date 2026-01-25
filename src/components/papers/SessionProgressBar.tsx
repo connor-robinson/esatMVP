@@ -68,19 +68,25 @@ export function SessionProgressBar() {
 
   const paperDisplayName = getPaperDisplayName();
 
-  // Calculate progress for current section
+  // Helper: Calculate section progress (0-1)
+  const calculateSectionProgress = (sectionIndex: number): number => {
+    if (isPaused || isOnInstructionPage) {
+      return 0; // No time-based progress when paused or on instruction page
+    }
+    const timeLimit = sectionTimeLimits[sectionIndex] || 60;
+    const remainingSeconds = getSectionRemainingTime(sectionIndex);
+    const elapsedSeconds = timeLimit * 60 - remainingSeconds;
+    return Math.min(1, Math.max(0, elapsedSeconds / (timeLimit * 60)));
+  };
+
+  // Calculate overall progress for current section
   const getCurrentSectionProgress = (): number => {
     if (isPaused || isOnInstructionPage) {
       // If paused or on instruction page, show static progress up to current node
       return currentSectionIndex / totalSections;
     }
 
-    const sectionIndex = currentSectionIndex;
-    const timeLimit = sectionTimeLimits[sectionIndex] || 60;
-    const remainingSeconds = getSectionRemainingTime(sectionIndex);
-    const elapsedSeconds = timeLimit * 60 - remainingSeconds;
-    const sectionProgress = Math.min(1, Math.max(0, elapsedSeconds / (timeLimit * 60)));
-
+    const sectionProgress = calculateSectionProgress(currentSectionIndex);
     // Progress = completed sections + current section progress
     const completedSectionsProgress = currentSectionIndex / totalSections;
     const currentSectionProgress = sectionProgress / totalSections;
@@ -124,15 +130,10 @@ export function SessionProgressBar() {
     // Add segment for current active section if it's being worked on
     const lastFilledIndex = filledNodes[filledNodes.length - 1];
     if (lastFilledIndex === currentSectionIndex && !isOnInstructionPage && !isPaused) {
-      const sectionIndex = currentSectionIndex;
-      const timeLimit = sectionTimeLimits[sectionIndex] || 60;
-      const remainingSeconds = getSectionRemainingTime(sectionIndex);
-      const elapsedSeconds = timeLimit * 60 - remainingSeconds;
-      const sectionProgress = Math.min(1, Math.max(0, elapsedSeconds / (timeLimit * 60)));
-      
-      const sectionStartPosition = (sectionIndex / totalSections) * 100;
-      const nextNodePosition = sectionIndex < totalSections - 1 
-        ? ((sectionIndex + 1) / totalSections) * 100 
+      const sectionProgress = calculateSectionProgress(currentSectionIndex);
+      const sectionStartPosition = (currentSectionIndex / totalSections) * 100;
+      const nextNodePosition = currentSectionIndex < totalSections - 1 
+        ? ((currentSectionIndex + 1) / totalSections) * 100 
         : 100; // MARK node at 100%
       const sectionWidth = nextNodePosition - sectionStartPosition;
       
@@ -140,9 +141,6 @@ export function SessionProgressBar() {
         start: sectionStartPosition,
         end: sectionStartPosition + (sectionProgress * sectionWidth)
       });
-    } else if (filledNodes.length > 0) {
-      // If we're paused or on instruction page, show full segments up to last filled node
-      // Segments between nodes are already added above
     }
     
     return segments;
@@ -270,11 +268,17 @@ export function SessionProgressBar() {
                 <button
                   onClick={() => {
                     if (typeof window !== 'undefined') {
-                      // If paused, navigate to resume page; otherwise navigate to solve page
+                      const currentPath = window.location.pathname;
+                      // If paused, always navigate to resume page
                       if (isPaused) {
-                        router.push('/papers/solve/resume');
+                        if (!currentPath.includes('/papers/solve/resume')) {
+                          router.push('/papers/solve/resume');
+                        }
                       } else {
-                        router.push('/papers/solve');
+                        // If active, navigate to solve page (only if not already there)
+                        if (!currentPath.includes('/papers/solve') || currentPath.includes('/papers/solve/resume')) {
+                          router.push('/papers/solve');
+                        }
                       }
                     }
                   }}

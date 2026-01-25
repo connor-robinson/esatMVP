@@ -40,8 +40,14 @@ export function SessionRestore() {
           // After loading, check if we should redirect
           // Get state directly from the store
           const state = usePaperSessionStore.getState();
+          
+          // If on solve page and session is paused, redirect to resume page
           if (pathname === '/papers/solve' && state.isPaused) {
             router.push('/papers/solve/resume');
+          }
+          // If on solve page and session is active, ensure questions are loaded
+          else if (pathname === '/papers/solve' && !state.isPaused && state.questions.length === 0 && state.paperId) {
+            // Questions will be loaded by the solve page's useEffect
           }
         }
       } catch (error) {

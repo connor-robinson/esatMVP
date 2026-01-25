@@ -1496,7 +1496,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           
           const state = sessionData.state;
           
-          // Restore all state
+          // Restore all state including timer-related state
           set({
             sessionId: state.sessionId,
             paperId: state.paperId,
@@ -1506,6 +1506,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             timeLimitMinutes: state.timeLimitMinutes,
             questionRange: state.questionRange,
             selectedSections: state.selectedSections || [],
+            selectedPartIds: state.selectedPartIds || [],
             questionOrder: state.questionOrder || [],
             currentQuestionIndex: state.currentQuestionIndex || 0,
             answers: state.answers || [],
@@ -1612,18 +1613,36 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           const finalState = get();
           if (finalState.questions.length === 0 && finalState.paperId) {
             await finalState.loadQuestions(finalState.paperId);
-          }
-          
-          // After questions load, ensure currentQuestionIndex is preserved
-          // Don't reset to 0 - use the restored index
-          const stateAfterLoad = get();
-          if (stateAfterLoad.questions.length > 0 && 
-              stateAfterLoad.currentQuestionIndex >= 0 && 
-              stateAfterLoad.currentQuestionIndex < stateAfterLoad.questions.length) {
-            // Index is valid, no need to change it
-          } else if (stateAfterLoad.questions.length > 0 && stateAfterLoad.currentQuestionIndex >= stateAfterLoad.questions.length) {
-            // Index is out of bounds, clamp to last question
-            set({ currentQuestionIndex: stateAfterLoad.questions.length - 1 });
+            
+            // After questions load, preserve currentQuestionIndex from restored state
+            const stateAfterLoad = get();
+            const restoredIndex = state.currentQuestionIndex || 0;
+            if (stateAfterLoad.questions.length > 0) {
+              if (restoredIndex >= 0 && restoredIndex < stateAfterLoad.questions.length) {
+                // Index is valid, navigate to it
+                stateAfterLoad.navigateToQuestion(restoredIndex);
+              } else if (restoredIndex >= stateAfterLoad.questions.length) {
+                // Index is out of bounds, clamp to last question
+                const clampedIndex = stateAfterLoad.questions.length - 1;
+                set({ currentQuestionIndex: clampedIndex });
+                stateAfterLoad.navigateToQuestion(clampedIndex);
+              }
+            }
+          } else {
+            // Questions already loaded, just ensure currentQuestionIndex is valid
+            const stateAfterLoad = get();
+            if (stateAfterLoad.questions.length > 0) {
+              const restoredIndex = state.currentQuestionIndex || 0;
+              if (restoredIndex >= 0 && restoredIndex < stateAfterLoad.questions.length) {
+                // Index is valid, navigate to it to ensure UI is in sync
+                stateAfterLoad.navigateToQuestion(restoredIndex);
+              } else if (restoredIndex >= stateAfterLoad.questions.length) {
+                // Index is out of bounds, clamp to last question
+                const clampedIndex = stateAfterLoad.questions.length - 1;
+                set({ currentQuestionIndex: clampedIndex });
+                stateAfterLoad.navigateToQuestion(clampedIndex);
+              }
+            }
           }
         } catch (error) {
           console.error('[paperSessionStore] Failed to load session from IndexedDB:', error);

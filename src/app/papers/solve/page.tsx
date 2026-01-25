@@ -184,6 +184,7 @@ export default function PapersSolvePage() {
       const currentPath = window.location.pathname;
       if (!currentPath.includes('/papers/solve/resume')) {
         router.push('/papers/solve/resume');
+        return;
       }
     }
   }, [sessionId, isPaused, router]);
@@ -206,9 +207,14 @@ export default function PapersSolvePage() {
       loadedPaperIdRef.current = paperId;
       loadQuestions(paperId).then(() => {
         // After questions load, ensure we're on the correct question
+        // Preserve currentQuestionIndex from restored state
         const state = usePaperSessionStore.getState();
-        if (state.currentQuestionIndex >= 0 && state.currentQuestionIndex < state.questions.length) {
-          navigateToQuestion(state.currentQuestionIndex);
+        const targetIndex = state.currentQuestionIndex;
+        if (targetIndex >= 0 && targetIndex < state.questions.length) {
+          navigateToQuestion(targetIndex);
+        } else if (state.questions.length > 0) {
+          // If index is invalid, navigate to first question
+          navigateToQuestion(0);
         }
       });
     }
@@ -275,17 +281,6 @@ export default function PapersSolvePage() {
     }
   }, [questions.length, questionsLoading, isSectionMode, allSectionsQuestions, currentSectionIndex, sectionInstructionTimer]);
   
-  // Check if session is paused and redirect to resume page
-  useEffect(() => {
-    if (sessionId && isPaused) {
-      // If paused, redirect to resume page
-      const currentPath = window.location.pathname;
-      if (!currentPath.includes('/papers/solve/resume')) {
-        router.push('/papers/solve/resume');
-      }
-    }
-  }, [sessionId, isPaused, router]);
-
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId) {

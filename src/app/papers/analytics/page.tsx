@@ -950,7 +950,7 @@ export default function PapersAnalyticsPage() {
                                 <>
                                   <div
                                     className="h-full flex items-center justify-center text-[11px] font-medium"
-                                    style={{ width: `${correctPct}%`, backgroundColor: `rgba(78, 107, 138, 0.8)` }}
+                                    style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
                                   >
                                     {correctPct >= 12 ? `${correctPct}%` : ''}
                                   </div>
@@ -967,7 +967,7 @@ export default function PapersAnalyticsPage() {
                         </div>
                         <div className="mt-1 flex items-center justify-between text-[11px] text-white/40">
                           <div className="flex items-center gap-2">
-                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#4e6b8a' }} />
+                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#6c9e69' }} />
                             <span>Correct • {guessingStats.correctGuesses} qns • avg {Math.round(guessingStats.avgTimeCorrectGuess)}s</span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -1000,7 +1000,7 @@ export default function PapersAnalyticsPage() {
                           const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
                           const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
                           const guessColor = '#9e5974';
-                          const correctBorder = '#4e6b8a';
+                          const correctBorder = '#6c9e69';
                           const wrongBorder = '#8c525a';
                           const len = Math.max(1, questionNumbers.length);
                           const innerW = w - 2*pad;
@@ -1062,7 +1062,7 @@ export default function PapersAnalyticsPage() {
                               <div className="flex w-full h-full">
                                 <div
                                   className="h-full flex items-center justify-center text-[11px] font-medium"
-                                  style={{ width: `${correctPct}%`, backgroundColor: `rgba(78, 107, 138, 0.8)` }}
+                                  style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
                                 >
                                   {correctPct >= 12 ? `${correctPct}%` : ''}
                                 </div>
