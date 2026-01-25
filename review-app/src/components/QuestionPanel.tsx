@@ -111,7 +111,7 @@ export function QuestionPanel({
   }
 
   return (
-    <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
+    <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10">
       {/* Header with editable pills */}
       <div className="flex flex-wrap items-center gap-2 p-4 border-b border-white/10 flex-shrink-0">
         {/* ESAT/TMUA Label - not editable */}
@@ -132,15 +132,21 @@ export function QuestionPanel({
             onBlur={() => setEditingPill(null)}
             autoFocus
             className={cn(
-              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
+              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
               question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
               question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
               question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]'
             )}
+            style={{
+              backgroundColor: question.difficulty === 'Easy' ? 'rgba(80, 97, 65, 0.2)' :
+                              question.difficulty === 'Medium' ? 'rgba(150, 113, 57, 0.2)' :
+                              question.difficulty === 'Hard' ? 'rgba(133, 73, 82, 0.2)' :
+                              '#0f1114'
+            }}
           >
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="Easy" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Easy</option>
+            <option value="Medium" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Medium</option>
+            <option value="Hard" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Hard</option>
           </select>
         ) : (
           <button
@@ -167,13 +173,14 @@ export function QuestionPanel({
             onBlur={() => setEditingPill(null)}
             autoFocus
             className={cn(
-              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
+              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
               getSubjectColor(question.paper)
             )}
+            style={{ backgroundColor: '#0f1114' }}
           >
-            <option value="">No Subject</option>
+            <option value="" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>No Subject</option>
             {availablePapers.map(paper => (
-              <option key={paper} value={paper}>{paper}</option>
+              <option key={paper} value={paper} style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>{paper}</option>
             ))}
           </select>
         ) : (
@@ -201,15 +208,16 @@ export function QuestionPanel({
             onBlur={() => setEditingPill(null)}
             autoFocus
             className={cn(
-              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
+              "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
               getSubjectColor(question.paper)
             )}
+            style={{ backgroundColor: '#0f1114' }}
           >
-            <option value="">Select topic</option>
+            <option value="" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Select topic</option>
             {availableTopics.map(topic => {
               const storageCode = getStorageCode(topic);
               return (
-                <option key={storageCode} value={storageCode || ''}>
+                <option key={storageCode} value={storageCode || ''} style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>
                   {topic.title}
                 </option>
               );
@@ -245,11 +253,12 @@ export function QuestionPanel({
                 onBlur={() => setEditingPill(null)}
                 autoFocus
                 className={cn(
-                  "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
+                  "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
                   getSubjectColor(question.paper)
                 )}
+                style={{ backgroundColor: '#0f1114' }}
               >
-                <option value="">Select topic</option>
+                <option value="" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Select topic</option>
                 {availableTopics.map(topic => {
                   const storageCode = getStorageCode(topic);
                   return (
@@ -310,11 +319,12 @@ export function QuestionPanel({
               }}
               autoFocus
               className={cn(
-                "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-white/5 text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
+                "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
                 getSubjectColor(question.paper)
               )}
+              style={{ backgroundColor: '#0f1114' }}
             >
-              <option value="">Select topic</option>
+              <option value="" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Select topic</option>
               {availableTopics.map(topic => {
                 const storageCode = getStorageCode(topic);
                 return (
@@ -336,8 +346,8 @@ export function QuestionPanel({
         ))}
       </div>
 
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      {/* Content - fully expanded */}
+      <div className="flex-1 overflow-visible p-6 space-y-6">
         {/* Question Stem */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -411,7 +421,7 @@ export function QuestionPanel({
                   </div>
                   <div className="flex-1 flex items-start gap-3">
                     {/* Option */}
-                    <div className="flex-1 flex items-start gap-2">
+                    <div className="flex-[0.2] flex items-start gap-2">
                       {isEditingOption ? (
                         <textarea
                           value={options[letter] || ''}
@@ -419,7 +429,7 @@ export function QuestionPanel({
                           onBlur={() => onStopEditingField?.()}
                           autoFocus
                           className={cn(
-                            "flex-1 min-h-[60px] p-3 rounded-organic-md bg-white/5 border text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
+                            "w-full min-h-[60px] p-3 rounded-organic-md bg-white/5 border text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
                             showAnswer && isCorrect
                               ? "border-[#85BC82]/50 bg-[#85BC82]/10"
                               : "border-white/10"
@@ -430,7 +440,7 @@ export function QuestionPanel({
                         <>
                           <div 
                             className={cn(
-                              "flex-1 text-white/90 font-serif text-sm leading-relaxed p-3 rounded-organic-md transition-colors",
+                              "w-full text-white/90 font-serif text-sm leading-relaxed p-3 rounded-organic-md transition-colors",
                               showAnswer && isCorrect
                                 ? "bg-[#85BC82]/10 border border-[#85BC82]/30"
                                 : ""
@@ -465,7 +475,7 @@ export function QuestionPanel({
                     
                     {/* Distractor explanation - Inline with option */}
                     {showDistractor && (
-                      <div className="flex-shrink-0 w-[300px] p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
+                      <div className="flex-[0.8] p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-xs font-mono text-white/50">Why this could be incorrect:</span>
                           {onStartEditingField && (

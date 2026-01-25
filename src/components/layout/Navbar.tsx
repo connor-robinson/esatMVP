@@ -11,6 +11,8 @@ import { useSupabaseClient, useSupabaseSession } from "@/components/auth/Supabas
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { UserIcon, LogInIcon } from "@/components/icons";
+import { SessionProgressBar } from "@/components/papers/SessionProgressBar";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 const skillsNavItems = [
   { href: "/skills/drill", label: "Drill" },
@@ -36,6 +38,10 @@ export function Navbar() {
   const [activePress, setActivePress] = useState<string | null>(null);
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
+  const { sessionId, endedAt } = usePaperSessionStore();
+  
+  // Show progress bar if there's an active session
+  const hasActiveSession = sessionId !== null && endedAt === null;
 
   const currentSection =
     pathname.startsWith("/skills") ? "skills" 
@@ -91,6 +97,11 @@ export function Navbar() {
     const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/library";
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
+
+  // Render progress bar if session is active
+  if (hasActiveSession) {
+    return <SessionProgressBar />;
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">

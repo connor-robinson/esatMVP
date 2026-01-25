@@ -193,25 +193,105 @@ export function renderMath(
   }
 }
 
+/**
+ * Parses markdown table syntax and converts it to HTML
+ */
+function parseMarkdownTable(text: string): string {
+  // Match markdown table pattern
+  // Example: | Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |
+  // More flexible regex that handles empty cells and various separators
+  const tableRegex = /(\|.+\|(?:\r?\n\|[:\s\-|]+\|(?:\r?\n\|.+\|)+)+)/g;
+  
+  return text.replace(tableRegex, (match) => {
+    const lines = match.trim().split(/\r?\n/).filter(line => line.trim() && line.includes('|'));
+    if (lines.length < 2) return match; // Need at least header and separator
+    
+    // Parse header row
+    const headerRow = lines[0];
+    const headerCells = headerRow.split('|').map(h => h.trim());
+    // Remove empty cells at start and end (from leading/trailing |)
+    const headers = headerCells.slice(1, headerCells.length - 1);
+    
+    // Skip separator row (lines[1])
+    const dataRows = lines.slice(2);
+    
+    if (headers.length === 0) return match; // No valid headers
+    
+    // Build HTML table
+    let html = '<table style="border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em;">';
+    
+    // Header
+    html += '<thead><tr>';
+    headers.forEach(header => {
+      html += `<th style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em; text-align: left; background-color: rgba(255, 255, 255, 0.05); font-weight: 600;">${escapeHtml(header)}</th>`;
+    });
+    html += '</tr></thead>';
+    
+    // Body
+    if (dataRows.length > 0) {
+      html += '<tbody>';
+      dataRows.forEach(row => {
+        const rowCells = row.split('|').map(c => c.trim());
+        // Remove empty cells at start and end (from leading/trailing |)
+        const cells = rowCells.slice(1, rowCells.length - 1);
+        html += '<tr>';
+        cells.forEach((cell) => {
+          // Process markdown formatting: bold (**text**)
+          let processedCell = cell.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+          // Process italic (*text* or _text_) - but not if it's part of **text**
+          processedCell = processedCell.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
+          processedCell = processedCell.replace(/(?<!_)_([^_]+?)_(?!_)/g, '<em>$1</em>');
+          html += `<td style="border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75em;">${processedCell}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody>';
+    }
+    
+    html += '</table>';
+    return html;
+  });
+}
+
+/**
+ * Escapes HTML special characters
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export function renderMathContent(text: string): string {
   if (text == null) return "";
   const textStr = String(text);
   
-  const textWithSpacing = addSpacingAroundInlineMath(textStr);
+  // First, parse and replace markdown tables
+  const textWithTables = parseMarkdownTable(textStr);
+  
+  const textWithSpacing = addSpacingAroundInlineMath(textWithTables);
   const segments = parseMathContent(textWithSpacing);
   const htmlParts: string[] = [];
 
   for (const segment of segments) {
     if (segment.type === "text") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      const escaped = contentStr
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;")
-        .replace(/\n/g, "<br>");
-      htmlParts.push(escaped);
+      // Don't escape HTML if it's already a table (contains <table>)
+      if (contentStr.includes('<table>')) {
+        htmlParts.push(contentStr);
+      } else {
+        const escaped = contentStr
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;")
+          .replace(/\n/g, "<br>");
+        htmlParts.push(escaped);
+      }
     } else if (segment.type === "inline") {
       const contentStr = segment.content != null ? String(segment.content) : "";
       const rendered = renderMath(contentStr, false);

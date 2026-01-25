@@ -11,6 +11,7 @@ import { ServiceWorkerProvider } from "@/components/shared/ServiceWorkerProvider
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { KaTeXLoader } from "@/components/shared/KaTeXLoader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { SessionRestore } from "@/components/papers/SessionRestore";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -80,6 +81,7 @@ export default async function RootLayout({
                   <ServiceWorkerProvider />
                   <BackgroundPrefetcher />
                   <KaTeXLoader />
+                  <SessionRestore />
                   <Navbar />
                   <main className="min-h-full">
                     <Suspense

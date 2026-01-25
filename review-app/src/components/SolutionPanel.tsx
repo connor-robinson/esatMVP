@@ -24,7 +24,7 @@ export function SolutionPanel({
 }: SolutionPanelProps) {
 
   return (
-    <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10 overflow-hidden">
+    <div className="flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10">
       {/* Header */}
       <div className="p-4 border-b border-white/10 flex-shrink-0">
         <h3 className="text-base font-semibold text-white/90">
@@ -32,8 +32,8 @@ export function SolutionPanel({
         </h3>
       </div>
 
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      {/* Content - fully expanded */}
+      <div className="flex-1 overflow-visible p-6 space-y-6 min-h-0">
         {/* Hint */}
         {question.solution_key_insight && (
           <div className="space-y-2">

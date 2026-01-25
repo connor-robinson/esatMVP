@@ -87,9 +87,9 @@ export default function PapersRoadmapPage() {
           const { loadAllCompletedSessions, getStageCompletionFromSessions } = await import('@/lib/papers/roadmapCompletion');
           const sessionsByPaperName = await loadAllCompletedSessions(session.user.id);
 
-          // Process all stages (in-memory operations are fast, no async needed)
+          // Process all stages (now async due to part-level checking)
           for (const stage of stages) {
-            const parts = getStageCompletionFromSessions(sessionsByPaperName, stage);
+            const parts = await getStageCompletionFromSessions(sessionsByPaperName, stage);
             
             let completed = 0;
             for (const [_, isCompleted] of parts) {

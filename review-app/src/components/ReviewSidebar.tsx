@@ -32,7 +32,7 @@ export function ReviewSidebar({
   return (
     <div className="w-[280px] h-screen flex flex-col bg-white/[0.02] border-r border-white/10 flex-shrink-0 overflow-hidden">
       {/* Checklist Section */}
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-4 overflow-hidden">
         <h3 className="text-sm font-mono text-white/60 uppercase tracking-wide mb-4">
           Review Checklist
         </h3>

@@ -28,6 +28,7 @@ import { persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
 import type { Answer, Letter, MistakeTag, PaperSection, Question } from '@/types/papers';
+import { saveSession, loadSession, deleteSession } from '@/lib/storage/sessionStorage';
 
 interface PaperSessionState {
   // Session data
@@ -71,6 +72,12 @@ interface PaperSessionState {
   startedAt: number | null;
   endedAt: number | null;
   deadline: number | null;
+  
+  // Session persistence state
+  lastActiveTimestamp: number | null; // When user was last active
+  sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds
+  isPaused: boolean; // Whether session is currently paused
+  pausedAt: number | null; // Timestamp when paused
   
   // Session notes
   notes: string;
@@ -129,6 +136,13 @@ interface PaperSessionState {
   persistSessionToServer: (options?: { immediate?: boolean }) => Promise<void>;
   
   loadSessionFromDatabase: (sessionId: string) => Promise<void>;
+  
+  // Session persistence actions
+  updateLastActiveTimestamp: () => void;
+  pauseSession: () => void;
+  resumeSession: () => void;
+  saveSessionToIndexedDB: () => Promise<void>;
+  loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
 }
 
 const initialAnswer = (): Answer => ({
@@ -178,6 +192,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       endedAt: null,
       deadline: null,
       
+      lastActiveTimestamp: null,
+      sectionElapsedTimes: [],
+      isPaused: false,
+      pausedAt: null,
+      
       notes: '',
       sessionPersistPromise: null,
       persistTimer: null,
@@ -200,6 +219,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const sessionId = crypto.randomUUID();
         const startedAt = Date.now();
         const deadline = startedAt + config.timeLimitMinutes * 60 * 1000;
+        const selectedSections = config.selectedSections || [];
         
         set({
           sessionId, // Unique identifier for this session
@@ -209,7 +229,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionName: config.sessionName,
           timeLimitMinutes: config.timeLimitMinutes,
           questionRange: config.questionRange,
-          selectedSections: config.selectedSections || [], // Sections attempted in this session
+          selectedSections, // Sections attempted in this session
           questionOrder: config.questionOrder || Array.from({ length: totalQuestions }, (_, i) => i + 1),
           currentQuestionIndex: 0,
           answers: Array.from({ length: totalQuestions }, initialAnswer),
@@ -222,6 +242,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           startedAt,
           endedAt: null,
           deadline,
+          lastActiveTimestamp: startedAt,
+          sectionElapsedTimes: Array.from({ length: selectedSections.length }, () => 0),
+          isPaused: false,
+          pausedAt: null,
           notes: '',
           // Clear questions when starting new session to ensure fresh load
           questions: [],
@@ -711,20 +735,41 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         set({ deadline });
         get().schedulePersist();
       },
-      setEndedAt: (endedAt) => {
+      setEndedAt: async (endedAt) => {
+        const state = get();
         set({ endedAt });
-        get().persistSessionToServer({ immediate: true });
+        
+        // Delete from IndexedDB when session ends
+        if (state.sessionId) {
+          try {
+            await deleteSession(state.sessionId);
+          } catch (error) {
+            console.error('[paperSessionStore] Failed to delete session from IndexedDB:', error);
+          }
+        }
+        
+        await get().persistSessionToServer({ immediate: true });
       },
       setNotes: (notes) => {
         set({ notes });
         get().schedulePersist();
       },
       
-      resetSession: () => {
+      resetSession: async () => {
         const state = get();
         if (state.persistTimer) {
           clearTimeout(state.persistTimer);
         }
+        
+        // Delete from IndexedDB when resetting
+        if (state.sessionId) {
+          try {
+            await deleteSession(state.sessionId);
+          } catch (error) {
+            console.error('[paperSessionStore] Failed to delete session from IndexedDB on reset:', error);
+          }
+        }
+        
         set({
           sessionId: null,
           paperId: null,
@@ -752,9 +797,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sectionInstructionTimer: null,
           sectionInstructionDeadline: null,
           allSectionsQuestions: [],
+          sectionDeadlines: [],
+          sectionStartTimes: [],
           startedAt: null,
           endedAt: null,
           deadline: null,
+          lastActiveTimestamp: null,
+          sectionElapsedTimes: [],
+          isPaused: false,
+          pausedAt: null,
           notes: '',
           persistTimer: null,
           sessionPersistPromise: null,
@@ -1026,10 +1077,26 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
         }
         
-        // Set section start time and deadline
+        // Save elapsed time for previous section before switching
         const now = Date.now();
+        const previousSectionIndex = state.currentSectionIndex;
+        if (previousSectionIndex !== index && previousSectionIndex >= 0 && !state.isPaused) {
+          const previousSectionStartTime = state.sectionStartTimes[previousSectionIndex];
+          if (previousSectionStartTime && state.sectionInstructionTimer === null) {
+            // Calculate elapsed time for previous section
+            const elapsedMs = now - previousSectionStartTime;
+            const currentElapsed = state.sectionElapsedTimes[previousSectionIndex] || 0;
+            const newSectionElapsedTimes = [...state.sectionElapsedTimes];
+            newSectionElapsedTimes[previousSectionIndex] = currentElapsed + elapsedMs;
+            set({ sectionElapsedTimes: newSectionElapsedTimes });
+          }
+        }
+        
+        // Set section start time and deadline for new section
         const sectionTimeLimit = state.sectionTimeLimits[index] || 60;
-        const sectionDeadline = now + sectionTimeLimit * 60 * 1000;
+        const elapsedMs = state.sectionElapsedTimes[index] || 0;
+        const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
+        const sectionDeadline = now + remainingMs;
         
         // Update arrays to ensure they're long enough
         const newSectionStartTimes = [...state.sectionStartTimes];
@@ -1085,9 +1152,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const newSectionStartTimes = [...state.sectionStartTimes];
         newSectionStartTimes[sectionIndex] = startTime;
         
-        // Calculate deadline based on section time limit
+        // Calculate deadline based on section time limit and elapsed time
         const sectionTimeLimit = state.sectionTimeLimits[sectionIndex] || 60;
-        const sectionDeadline = startTime + sectionTimeLimit * 60 * 1000;
+        const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
+        const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
+        const sectionDeadline = startTime + remainingMs;
         const newSectionDeadlines = [...state.sectionDeadlines];
         newSectionDeadlines[sectionIndex] = sectionDeadline;
         
@@ -1099,13 +1168,206 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       
       getSectionRemainingTime: (sectionIndex: number) => {
         const state = get();
+        if (state.isPaused) {
+          // If paused, calculate remaining time based on elapsed time
+          const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+          const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
+          const elapsedSeconds = Math.floor(elapsedMs / 1000);
+          return Math.max(0, timeLimit * 60 - elapsedSeconds);
+        }
+        
         const deadline = state.sectionDeadlines[sectionIndex];
         if (!deadline) {
           // If no deadline set, return the section time limit
           const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
           return timeLimit * 60;
         }
-        return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+        
+        // Account for elapsed time when calculating remaining time
+        const elapsedMs = state.sectionElapsedTimes[sectionIndex] || 0;
+        const sectionStartTime = state.sectionStartTimes[sectionIndex];
+        let currentElapsed = elapsedMs;
+        
+        if (sectionStartTime && !state.isPaused) {
+          // Add time since section started (if not paused)
+          currentElapsed += Date.now() - sectionStartTime;
+        }
+        
+        const timeLimit = state.sectionTimeLimits[sectionIndex] || 60;
+        const totalElapsedSeconds = Math.floor(currentElapsed / 1000);
+        return Math.max(0, timeLimit * 60 - totalElapsedSeconds);
+      },
+      
+      // Session persistence actions
+      updateLastActiveTimestamp: () => {
+        set({ lastActiveTimestamp: Date.now() });
+      },
+      
+      pauseSession: () => {
+        const state = get();
+        if (!state.sessionId || state.isPaused) return;
+        
+        const now = Date.now();
+        const currentSectionIndex = state.currentSectionIndex;
+        const sectionStartTime = state.sectionStartTimes[currentSectionIndex];
+        
+        // Calculate elapsed time for current section
+        let currentSectionElapsed = state.sectionElapsedTimes[currentSectionIndex] || 0;
+        if (sectionStartTime && state.sectionInstructionTimer === null) {
+          // Only count time if not on instruction page
+          currentSectionElapsed += now - sectionStartTime;
+        }
+        
+        // Update section elapsed times
+        const newSectionElapsedTimes = [...state.sectionElapsedTimes];
+        newSectionElapsedTimes[currentSectionIndex] = currentSectionElapsed;
+        
+        set({
+          isPaused: true,
+          pausedAt: now,
+          sectionElapsedTimes: newSectionElapsedTimes,
+          lastActiveTimestamp: now,
+        });
+      },
+      
+      resumeSession: () => {
+        const state = get();
+        if (!state.sessionId || !state.isPaused) return;
+        
+        const now = Date.now();
+        const currentSectionIndex = state.currentSectionIndex;
+        const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
+        const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
+        
+        // Calculate new deadline based on remaining time
+        const remainingMs = (sectionTimeLimit * 60 * 1000) - elapsedMs;
+        const newDeadline = now + remainingMs;
+        
+        // Update section start time and deadline
+        const newSectionStartTimes = [...state.sectionStartTimes];
+        const newSectionDeadlines = [...state.sectionDeadlines];
+        newSectionStartTimes[currentSectionIndex] = now;
+        newSectionDeadlines[currentSectionIndex] = newDeadline;
+        
+        set({
+          isPaused: false,
+          pausedAt: null,
+          sectionStartTimes: newSectionStartTimes,
+          sectionDeadlines: newSectionDeadlines,
+          lastActiveTimestamp: now,
+        });
+      },
+      
+      saveSessionToIndexedDB: async () => {
+        const state = get();
+        if (!state.sessionId) return;
+        
+        try {
+          // Get current state snapshot
+          const stateSnapshot = {
+            sessionId: state.sessionId,
+            paperId: state.paperId,
+            paperName: state.paperName,
+            paperVariant: state.paperVariant,
+            sessionName: state.sessionName,
+            timeLimitMinutes: state.timeLimitMinutes,
+            questionRange: state.questionRange,
+            selectedSections: state.selectedSections,
+            questionOrder: state.questionOrder,
+            currentQuestionIndex: state.currentQuestionIndex,
+            answers: state.answers,
+            perQuestionSec: state.perQuestionSec,
+            correctFlags: state.correctFlags,
+            guessedFlags: state.guessedFlags,
+            reviewFlags: state.reviewFlags,
+            mistakeTags: state.mistakeTags,
+            visitedQuestions: state.visitedQuestions,
+            sectionStarts: state.sectionStarts,
+            currentSectionIndex: state.currentSectionIndex,
+            sectionTimeLimits: state.sectionTimeLimits,
+            sectionInstructionTimer: state.sectionInstructionTimer,
+            sectionInstructionDeadline: state.sectionInstructionDeadline,
+            allSectionsQuestions: state.allSectionsQuestions,
+            sectionDeadlines: state.sectionDeadlines,
+            sectionStartTimes: state.sectionStartTimes,
+            startedAt: state.startedAt,
+            endedAt: state.endedAt,
+            deadline: state.deadline,
+            notes: state.notes,
+            questions: state.questions, // Store questions for resume
+          };
+          
+          await saveSession(state.sessionId, stateSnapshot, {
+            lastActiveTimestamp: state.lastActiveTimestamp || Date.now(),
+            sectionElapsedTimes: state.sectionElapsedTimes,
+            isPaused: state.isPaused,
+            pausedAt: state.pausedAt,
+          });
+        } catch (error) {
+          console.error('[paperSessionStore] Failed to save session to IndexedDB:', error);
+        }
+      },
+      
+      loadSessionFromIndexedDB: async (sessionId: string) => {
+        try {
+          const sessionData = await loadSession(sessionId);
+          if (!sessionData) {
+            throw new Error('Session not found in IndexedDB');
+          }
+          
+          const state = sessionData.state;
+          
+          // Restore all state
+          set({
+            sessionId: state.sessionId,
+            paperId: state.paperId,
+            paperName: state.paperName,
+            paperVariant: state.paperVariant,
+            sessionName: state.sessionName,
+            timeLimitMinutes: state.timeLimitMinutes,
+            questionRange: state.questionRange,
+            selectedSections: state.selectedSections || [],
+            questionOrder: state.questionOrder || [],
+            currentQuestionIndex: state.currentQuestionIndex || 0,
+            answers: state.answers || [],
+            perQuestionSec: state.perQuestionSec || [],
+            correctFlags: state.correctFlags || [],
+            guessedFlags: state.guessedFlags || [],
+            reviewFlags: state.reviewFlags || [],
+            mistakeTags: state.mistakeTags || [],
+            visitedQuestions: state.visitedQuestions || [],
+            sectionStarts: state.sectionStarts || {},
+            currentSectionIndex: state.currentSectionIndex || 0,
+            sectionTimeLimits: state.sectionTimeLimits || [],
+            sectionInstructionTimer: state.sectionInstructionTimer ?? null,
+            sectionInstructionDeadline: state.sectionInstructionDeadline ?? null,
+            allSectionsQuestions: state.allSectionsQuestions || [],
+            sectionDeadlines: state.sectionDeadlines || [],
+            sectionStartTimes: state.sectionStartTimes || [],
+            startedAt: state.startedAt,
+            endedAt: state.endedAt,
+            deadline: state.deadline,
+            notes: state.notes || '',
+            questions: state.questions || [],
+            questionsLoading: false,
+            questionsError: null,
+            lastActiveTimestamp: sessionData.lastActiveTimestamp,
+            sectionElapsedTimes: sessionData.sectionElapsedTimes || [],
+            isPaused: sessionData.isPaused,
+            pausedAt: sessionData.pausedAt,
+            sessionPersistPromise: null,
+            persistTimer: null,
+          });
+          
+          // If questions are not loaded, load them
+          const finalState = get();
+          if (finalState.questions.length === 0 && finalState.paperId) {
+            await finalState.loadQuestions(finalState.paperId);
+          }
+        } catch (error) {
+          console.error('[paperSessionStore] Failed to load session from IndexedDB:', error);
+          throw error;
+        }
       },
     }),
     {
@@ -1140,6 +1402,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         startedAt: state.startedAt,
         deadline: state.deadline,
         endedAt: state.endedAt,
+        lastActiveTimestamp: state.lastActiveTimestamp,
+        sectionElapsedTimes: state.sectionElapsedTimes,
+        isPaused: state.isPaused,
+        pausedAt: state.pausedAt,
         notes: state.notes,
       }),
     }

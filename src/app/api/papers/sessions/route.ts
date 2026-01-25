@@ -185,3 +185,28 @@ export async function GET(request: Request) {
   return NextResponse.json({ sessions: data });
 }
 
+export async function DELETE(request: Request) {
+  const session = await getOptionalSession();
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Authentication required", code: "AUTH_REQUIRED" },
+      { status: 401 }
+    );
+  }
+
+  const supabase = createRouteClient();
+
+  // Delete all sessions for this user
+  const { error } = await (supabase as any)
+    .from("paper_sessions")
+    .delete()
+    .eq("user_id", session.user.id);
+
+  if (error) {
+    console.error("[papers] failed deleting all sessions", error);
+    return NextResponse.json({ error: "Failed to delete sessions" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, message: "All sessions deleted" });
+}
+

@@ -51,8 +51,31 @@ export async function GET(request: NextRequest) {
     if (paperType === 'All') {
       // Show all questions, optionally filter by subjects
       if (subjects.length > 0) {
-        query = query.in('paper', subjects);
+        // Need to check both paper field and primary_tag prefixes for ESAT subjects
+        const paperFilter = subjects.filter(s => ['Math 1', 'Math 2', 'Paper 1', 'Paper 2'].includes(s));
+        const tagPrefixes: string[] = [];
+        if (subjects.includes('Physics')) tagPrefixes.push('P-');
+        if (subjects.includes('Chemistry')) tagPrefixes.push('C-');
+        if (subjects.includes('Biology')) tagPrefixes.push('biology-');
+        if (subjects.includes('Math 1')) tagPrefixes.push('M1-');
+        if (subjects.includes('Math 2')) tagPrefixes.push('M2-');
+        
+        if (paperFilter.length > 0 && tagPrefixes.length > 0) {
+          // Build OR condition: paper IN (...) OR primary_tag starts with any prefix
+          const orConditions = [
+            `paper.in.(${paperFilter.join(',')})`,
+            ...tagPrefixes.map(prefix => `primary_tag.ilike.${prefix}%`)
+          ];
+          query = query.or(orConditions.join(','));
+        } else if (paperFilter.length > 0) {
+          query = query.in('paper', paperFilter);
+        } else if (tagPrefixes.length > 0) {
+          // Use OR with multiple ilike conditions
+          const orConditions = tagPrefixes.map(prefix => `primary_tag.ilike.${prefix}%`).join(',');
+          query = query.or(orConditions);
+        }
       }
+      // If no subjects selected, show all questions (no filter needed)
     } else if (paperType === 'TMUA') {
       // TMUA: Show Paper 1 and Paper 2
       if (subjects.length > 0) {
@@ -64,13 +87,35 @@ export async function GET(request: NextRequest) {
       }
     } else if (paperType === 'ESAT') {
       // ESAT subjects: Math 1, Math 2, Physics, Chemistry, Biology
-      const esatPapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+      // Note: Physics, Chemistry, Biology may have paper=NULL, so check primary_tag prefixes
       if (subjects.length > 0) {
         // Filter by selected ESAT subjects
-        query = query.in('paper', subjects);
+        const paperFilter = subjects.filter(s => ['Math 1', 'Math 2'].includes(s));
+        const tagPrefixes: string[] = [];
+        if (subjects.includes('Physics')) tagPrefixes.push('P-');
+        if (subjects.includes('Chemistry')) tagPrefixes.push('C-');
+        if (subjects.includes('Biology')) tagPrefixes.push('biology-');
+        if (subjects.includes('Math 1')) tagPrefixes.push('M1-');
+        if (subjects.includes('Math 2')) tagPrefixes.push('M2-');
+        
+        if (paperFilter.length > 0 && tagPrefixes.length > 0) {
+          // Build OR condition: paper IN (...) OR primary_tag starts with any prefix
+          const orConditions = [
+            `paper.in.(${paperFilter.join(',')})`,
+            ...tagPrefixes.map(prefix => `primary_tag.ilike.${prefix}%`)
+          ];
+          query = query.or(orConditions.join(','));
+        } else if (paperFilter.length > 0) {
+          query = query.in('paper', paperFilter);
+        } else if (tagPrefixes.length > 0) {
+          // Use OR with multiple ilike conditions
+          const orConditions = tagPrefixes.map(prefix => `primary_tag.ilike.${prefix}%`).join(',');
+          query = query.or(orConditions);
+        }
       } else {
-        // Show all ESAT subjects
-        query = query.in('paper', esatPapers);
+        // Show all ESAT subjects - check both paper field and primary_tag prefixes
+        // Use OR to match: paper='Math 1' OR paper='Math 2' OR primary_tag starts with M1-, M2-, P-, C-, or biology-
+        query = query.or('paper.in.(Math 1,Math 2),primary_tag.ilike.M1-%,primary_tag.ilike.M2-%,primary_tag.ilike.P-%,primary_tag.ilike.C-%,primary_tag.ilike.biology-%');
       }
     }
 

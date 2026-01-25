@@ -13,7 +13,7 @@ import { Container } from "@/components/layout/Container";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { AnalyticsTrendChart } from "@/components/papers/AnalyticsTrendChart";
 import { MistakeChart } from "@/components/papers/MistakeChart";
-import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus, Trash2, X } from "lucide-react";
+import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus, Trash2, X, AlertTriangle } from "lucide-react";
 import type { PaperType, PaperSection } from "@/types/papers";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -44,6 +44,8 @@ export default function PapersAnalyticsPage() {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "all">("all");
   const [sessionSortBy, setSessionSortBy] = useState<"recent" | "percentage" | "percentile">("recent");
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   
   // Filter states for Performance Trends
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -308,6 +310,31 @@ export default function PapersAnalyticsPage() {
     } catch (error) {
       console.error('Failed to delete session:', error);
       alert('Failed to delete session. Please try again.');
+    }
+  };
+
+  // Function to clear all session history
+  const handleClearAllSessions = async () => {
+    if (!session?.user) return;
+    
+    setIsClearing(true);
+    try {
+      const response = await fetch('/api/papers/sessions', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear sessions');
+      }
+
+      // Clear local state
+      setSessions([]);
+      setShowClearConfirm(false);
+    } catch (error) {
+      console.error('Failed to clear all sessions:', error);
+      alert('Failed to clear session history. Please try again.');
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -623,6 +650,15 @@ export default function PapersAnalyticsPage() {
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
             </div>
+            {sessions.length > 0 && (
+              <button
+                onClick={() => setShowClearConfirm(true)}
+                className="px-3 py-2 rounded-organic-md bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Clear All
+              </button>
+            )}
             <button
               onClick={() => toggleSection("sessions")}
               className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group"
@@ -1053,6 +1089,76 @@ export default function PapersAnalyticsPage() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Clear All Confirmation Modal */}
+      <AnimatePresence>
+        {showClearConfirm && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={() => setShowClearConfirm(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+              <div
+                className="bg-[#121418] rounded-organic-lg border border-white/10 shadow-2xl max-w-md w-full p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-white/90 mb-2">
+                      Clear All Session History?
+                    </h3>
+                    <p className="text-sm text-white/60">
+                      This will permanently delete all {sessions.length} session{sessions.length !== 1 ? 's' : ''} from your history. 
+                      This action cannot be undone.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    className="flex-shrink-0 p-1 rounded-lg hover:bg-white/5 text-white/50 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-end gap-3">
+                  <button
+                    onClick={() => setShowClearConfirm(false)}
+                    disabled={isClearing}
+                    className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClearAllSessions}
+                    disabled={isClearing}
+                    className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isClearing ? (
+                      <>
+                        <LoadingSpinner size="sm" />
+                        Clearing...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="w-4 h-4" />
+                        Clear All
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </Container>
   );
 }

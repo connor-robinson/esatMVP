@@ -24,6 +24,7 @@ import { MarkingInfoPage } from "@/components/papers/MarkingInfoPage";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import { prefetchImages } from "@/lib/papers/prefetch";
+import { useSessionActivity } from "@/hooks/useSessionActivity";
 import type { Letter, PaperType } from "@/types/papers";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -48,6 +49,7 @@ export default function PapersSolvePage() {
     reviewFlags,
     startedAt,
     deadline,
+    isPaused,
     loadQuestions,
     navigateToQuestion,
     setAnswer,
@@ -86,6 +88,9 @@ export default function PapersSolvePage() {
   // Track if we've loaded questions for the current paperId to prevent reload loops
   const loadedPaperIdRef = useRef<number | null>(null);
   
+  // Track user activity and handle session persistence
+  useSessionActivity();
+  
   // Determine if section mode is active (needed for timer effect)
   const isSectionMode = selectedSections.length > 0 && allSectionsQuestions.length > 0;
   
@@ -111,6 +116,9 @@ export default function PapersSolvePage() {
     
     const interval = setInterval(() => {
       const state = usePaperSessionStore.getState();
+      
+      // Don't run timer if paused
+      if (state.isPaused) return;
       
       // Check section deadline if in section mode and not showing intro/marking info
       if (isSectionMode && 

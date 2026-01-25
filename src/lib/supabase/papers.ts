@@ -118,6 +118,21 @@ export async function deletePaperSession(id: string) {
   }
 }
 
+export async function deleteAllPaperSessions(userId: string) {
+  try {
+    const { error } = await supabase
+      .from('paper_sessions')
+      .delete()
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    handleSupabaseError(error);
+    throw error;
+  }
+}
+
 export async function getPaperSessionAnalytics(paperName?: string) {
   try {
     let query = supabase

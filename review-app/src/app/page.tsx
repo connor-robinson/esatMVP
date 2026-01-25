@@ -25,6 +25,7 @@ export default function ReviewPage() {
   const [checklistItems, setChecklistItems] = useState<boolean[]>([false, false, false, false, false]);
   const [showFilters, setShowFilters] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [notificationFading, setNotificationFading] = useState(false);
   const [hasShownAnswer, setHasShownAnswer] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
 
@@ -47,7 +48,7 @@ export default function ReviewPage() {
   } = useQuestionEditor(currentQuestion, (updated) => {
     // Callback when save completes
     setCurrentQuestion(updated);
-    setNotification({ type: 'success', message: 'Changes saved automatically!' });
+    setNotification({ type: 'success', message: 'Changes saved' });
   });
 
   // Reset checklist when question changes
@@ -56,11 +57,19 @@ export default function ReviewPage() {
     setHasShownAnswer(false);
   }, [currentQuestion?.id]);
 
-  // Show notification and auto-hide
+  // Show notification and auto-hide with fade out
   useEffect(() => {
     if (notification) {
-      const timer = setTimeout(() => setNotification(null), 3000);
-      return () => clearTimeout(timer);
+      setNotificationFading(false);
+      const fadeOutTimer = setTimeout(() => {
+        setNotificationFading(true);
+        const removeTimer = setTimeout(() => {
+          setNotification(null);
+          setNotificationFading(false);
+        }, 200); // Fade out duration
+        return () => clearTimeout(removeTimer);
+      }, 1800); // Show for 1.8s before starting fade out
+      return () => clearTimeout(fadeOutTimer);
     }
   }, [notification]);
 
@@ -111,7 +120,7 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       {/* Left Sidebar */}
       <ReviewSidebar
         checklistItems={checklistItems}
@@ -123,11 +132,14 @@ export default function ReviewPage() {
       />
 
       {/* Main Content Area - Stacked Layout with Scroll */}
-      <div className="flex-1 flex flex-col gap-4 p-4 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto">
         {/* Notification */}
         {notification && (
           <div className={cn(
-            "fixed top-4 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300",
+            "fixed top-4 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300 ease-out",
+            notificationFading 
+              ? "opacity-0 -translate-y-2 pointer-events-none"
+              : "opacity-100 translate-y-0 animate-[fadeIn_0.3s_ease-out]",
             notification.type === 'success'
               ? "bg-[#85BC82]/20 text-[#85BC82] border border-[#85BC82]/30"
               : "bg-[#ef7d7d]/20 text-[#ef7d7d] border border-[#ef7d7d]/30"
@@ -137,7 +149,7 @@ export default function ReviewPage() {
         )}
 
         {/* Question Panel - Top (slightly reduced height) */}
-        <div className="h-[45%] min-h-[400px] flex-shrink-0">
+        <div className="min-h-[45%] flex-shrink-0">
           {loading ? (
             <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
               <div className="text-white/60 font-mono">Loading question...</div>
