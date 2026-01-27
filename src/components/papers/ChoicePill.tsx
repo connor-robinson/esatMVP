@@ -23,15 +23,15 @@ export function ChoicePill({
   const getVariantStyles = () => {
     switch (variant) {
       case "correct":
-        return "bg-success/20 text-success ring-success/40";
+        return "bg-success/20 text-success border border-success/30 hover:bg-success/25";
       case "wrong":
-        return "bg-error/20 text-error ring-error/40";
+        return "bg-error/20 text-error border border-error/30 hover:bg-error/25";
       case "guessed":
-        return "bg-warning/20 text-warning ring-warning/40";
+        return "bg-warning/20 text-warning border border-warning/30 hover:bg-warning/25";
       default:
         return selected
-          ? "bg-primary text-neutral-900 ring-primary/40"
-          : "bg-white/5 text-neutral-100 ring-white/10 hover:bg-white/10 hover:ring-white/20";
+          ? "bg-secondary/20 text-secondary border border-secondary/30 hover:bg-secondary/30"
+          : "bg-surface-subtle text-text border border-border hover:bg-surface-elevated hover:border-border-subtle";
     }
   };
 
@@ -40,10 +40,10 @@ export function ChoicePill({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "rounded-organic-md px-4 py-3 text-center text-base font-medium ring-1 transition-all duration-fast ease-signature",
+        "rounded-organic-md px-4 py-3 text-center text-base font-medium transition-all duration-fast ease-signature",
         "interaction-scale disabled:opacity-50 disabled:cursor-not-allowed",
         getVariantStyles(),
-        selected && "shadow-glow"
+        selected && "shadow-lg shadow-secondary/10"
       )}
     >
       {letter}

@@ -94,31 +94,33 @@ export async function PATCH(request: NextRequest) {
       dark_mode,
     } = body;
 
-    // Validate ESAT subjects if exam_preference is ESAT
-    if (exam_preference === 'ESAT' && esat_subjects) {
-      if (!Array.isArray(esat_subjects) || esat_subjects.length !== 3) {
+    // Validate exam_preference only if it's being updated
+    if (exam_preference !== undefined) {
+      if (exam_preference !== null && exam_preference !== 'ESAT' && exam_preference !== 'TMUA') {
         return NextResponse.json(
-          { error: 'ESAT requires exactly 3 subjects' },
+          { error: 'exam_preference must be ESAT or TMUA' },
           { status: 400 }
         );
       }
-      
-      const validSubjects = ['Math 1', 'Math 2', 'Chemistry', 'Biology', 'Physics'];
-      const invalidSubjects = esat_subjects.filter((s: string) => !validSubjects.includes(s));
-      if (invalidSubjects.length > 0) {
-        return NextResponse.json(
-          { error: `Invalid subjects: ${invalidSubjects.join(', ')}` },
-          { status: 400 }
-        );
-      }
-    }
 
-    // Validate exam_preference
-    if (exam_preference !== null && exam_preference !== 'ESAT' && exam_preference !== 'TMUA') {
-      return NextResponse.json(
-        { error: 'exam_preference must be ESAT or TMUA' },
-        { status: 400 }
-      );
+      // Validate ESAT subjects if exam_preference is ESAT
+      if (exam_preference === 'ESAT' && esat_subjects !== undefined) {
+        if (!Array.isArray(esat_subjects) || esat_subjects.length !== 3) {
+          return NextResponse.json(
+            { error: 'ESAT requires exactly 3 subjects' },
+            { status: 400 }
+          );
+        }
+        
+        const validSubjects = ['Math 1', 'Math 2', 'Chemistry', 'Biology', 'Physics'];
+        const invalidSubjects = esat_subjects.filter((s: string) => !validSubjects.includes(s));
+        if (invalidSubjects.length > 0) {
+          return NextResponse.json(
+            { error: `Invalid subjects: ${invalidSubjects.join(', ')}` },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     // Validate font_size

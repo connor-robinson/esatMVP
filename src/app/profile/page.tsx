@@ -60,8 +60,7 @@ type SettingSection = {
 
 const SETTING_SECTIONS: SettingSection[] = [
   { id: 'account', title: 'Account', icon: <User className="w-4 h-4" /> },
-  { id: 'exam', title: 'Exam Preferences', icon: <BookOpen className="w-4 h-4" /> },
-  { id: 'practice', title: 'Practice Behavior', icon: <Settings className="w-4 h-4" /> },
+  { id: 'exam', title: 'Exam & Practice', icon: <BookOpen className="w-4 h-4" /> },
   { id: 'data', title: 'Data Management', icon: <Download className="w-4 h-4" /> },
   { id: 'appearance', title: 'Appearance', icon: <Eye className="w-4 h-4" /> },
 ];
@@ -250,13 +249,15 @@ export default function ProfilePage() {
     let newSubjects: string[];
     
     if (current.includes(subject)) {
+      // Deselect if already selected
       newSubjects = current.filter((s) => s !== subject);
     } else {
+      // If already at 3, replace the first one with the new selection
       if (current.length >= 3) {
-        alert("You must select exactly 3 subjects for ESAT");
-        return;
+        newSubjects = [current[1], current[2], subject];
+      } else {
+        newSubjects = [...current, subject];
       }
-      newSubjects = [...current, subject];
     }
 
     setPreferences((prev) => ({ ...prev, esat_subjects: newSubjects }));
@@ -486,9 +487,10 @@ export default function ProfilePage() {
                           variant="secondary"
                           size="sm"
                           onClick={() => setShowChangeEmail(true)}
+                          className="flex items-center gap-2"
                         >
+                          <span>Change</span>
                           <Mail className="w-4 h-4" />
-                          Change
                         </Button>
                       </div>
                     </SettingItem>
@@ -501,43 +503,60 @@ export default function ProfilePage() {
                         variant="secondary"
                         size="sm"
                         onClick={() => setShowChangePassword(true)}
+                        className="flex items-center gap-2"
                       >
+                        <span>Change Password</span>
                         <Lock className="w-4 h-4" />
-                        Change Password
                       </Button>
                     </SettingItem>
 
                     <div className="pt-6 border-t border-border">
                       <div className="space-y-4">
-                        <Button
-                          variant="secondary"
+                        <button
                           onClick={handleLogout}
-                          className="w-full"
+                          className="w-full px-6 py-3 rounded-organic-md bg-interview/30 hover:bg-interview/40 text-interview transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium"
+                          style={{
+                            boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                          }}
                         >
-                          <LogOut className="w-4 h-4" />
-                          Logout
-                        </Button>
+                          <span>Logout</span>
+                          <LogOut className="w-4 h-4" strokeWidth={2.5} />
+                        </button>
 
-                        <Button
-                          variant="danger"
+                        <button
                           onClick={() => setShowDeleteAccount(true)}
-                          className="w-full"
+                          className="w-full px-6 py-3 rounded-organic-md bg-error/30 hover:bg-error/40 text-error transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium"
+                          style={{
+                            boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                          }}
                         >
-                          <Trash2 className="w-4 h-4" />
-                          Delete Account
-                        </Button>
+                          <span>Delete Account</span>
+                          <Trash2 className="w-4 h-4" strokeWidth={2.5} />
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Exam Preferences Section */}
+              {/* Exam & Practice Section */}
               {activeSection === 'exam' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Exam Preferences</h2>
-                    <p className="text-sm text-text-muted">Configure your exam type and subjects</p>
+                    <h2 className="text-lg font-semibold text-text mb-1">Exam & Practice</h2>
+                    <p className="text-sm text-text-muted">Configure your exam type, subjects, and practice behavior</p>
                   </div>
 
                   <div className="space-y-6">
@@ -561,82 +580,62 @@ export default function ProfilePage() {
                         label="ESAT Subjects" 
                         description={`Select exactly 3 subjects (${esatSubjectsSelected}/3 selected)`}
                       >
-                        <div className="space-y-2">
+                        <div className="flex flex-wrap gap-3">
                           {ESAT_SUBJECTS.map((subject) => {
                             const isSelected = (preferences.esat_subjects || []).includes(subject);
                             const isDisabled = !isSelected && esatSubjectsSelected >= 3;
                             
                             return (
-                              <label
+                              <button
                                 key={subject}
+                                onClick={() => !isDisabled && handleESATSubjectToggle(subject)}
+                                disabled={isDisabled}
                                 className={cn(
-                                  "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all",
+                                  "px-4 py-2.5 rounded-organic-md transition-all duration-fast ease-signature",
+                                  "interaction-scale outline-none focus:outline-none",
+                                  "text-sm font-medium",
                                   isSelected
-                                    ? "bg-primary/10 border-primary/30"
+                                    ? "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/25 shadow-lg shadow-primary/10"
                                     : isDisabled
-                                    ? "bg-surface-subtle border-border opacity-50 cursor-not-allowed"
-                                    : "bg-surface-subtle border-border hover:border-border-subtle"
+                                    ? "bg-surface-subtle text-text-muted border border-border opacity-50 cursor-not-allowed"
+                                    : "bg-surface-subtle text-text border border-border hover:bg-surface-elevated hover:border-border-subtle"
                                 )}
                               >
-                                <div className="relative flex-shrink-0">
-                                  <input
-                                    type="checkbox"
-                                    checked={isSelected}
-                                    onChange={() => handleESATSubjectToggle(subject)}
-                                    disabled={isDisabled}
-                                    className="sr-only"
-                                  />
-                                  <div className={cn(
-                                    "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                                    isSelected
-                                      ? "bg-primary border-primary"
-                                      : "bg-surface border-border"
-                                  )}>
-                                    {isSelected && (
-                                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                                    )}
-                                  </div>
+                                <div className="flex items-center gap-2">
+                                  {isSelected && (
+                                    <CheckCircle2 className="w-4 h-4" />
+                                  )}
+                                  <span>{subject}</span>
                                 </div>
-                                <span className="text-sm text-text">{subject}</span>
-                              </label>
+                              </button>
                             );
                           })}
                         </div>
                         {esatSubjectsSelected !== 3 && (
-                          <div className="flex items-center gap-2 text-xs text-warning mt-2">
+                          <div className="flex items-center gap-2 text-xs text-warning mt-3">
                             <AlertCircle className="w-3.5 h-3.5" />
                             <span>Please select exactly 3 subjects</span>
                           </div>
                         )}
                       </SettingItem>
                     )}
-                  </div>
-                </div>
-              )}
 
-              {/* Practice Behavior Section */}
-              {activeSection === 'practice' && (
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Practice Behavior</h2>
-                    <p className="text-sm text-text-muted">Configure how you practice and exam arrangements</p>
-                  </div>
-
-                  <div className="space-y-6">
-                    <SettingItem label="Application Type">
-                      <RadioGroup
-                        value={preferences.is_early_applicant ? 'early' : 'late'}
-                        onChange={(value) => {
-                          const isEarly = value === 'early';
-                          setPreferences((prev) => ({ ...prev, is_early_applicant: isEarly }));
-                          savePreferences({ is_early_applicant: isEarly }, "applicant_type");
-                        }}
-                        options={[
-                          { value: 'early', label: 'Early Applicant' },
-                          { value: 'late', label: 'Late Applicant' },
-                        ]}
-                      />
-                    </SettingItem>
+                    <div className="pt-6 border-t border-border">
+                      <SettingItem label="Application Type">
+                        <RadioGroup
+                          value={preferences.is_early_applicant ? 'early' : 'late'}
+                          onChange={(value) => {
+                            const isEarly = value === 'early';
+                            setPreferences((prev) => ({ ...prev, is_early_applicant: isEarly }));
+                            savePreferences({ is_early_applicant: isEarly }, "applicant_type");
+                          }}
+                          options={[
+                            { value: 'early', label: 'Early Applicant' },
+                            { value: 'late', label: 'Late Applicant' },
+                          ]}
+                        />
+                      </SettingItem>
+                    </div>
 
                     <div className="pt-6 border-t border-border space-y-6">
                       <div>
@@ -714,9 +713,10 @@ export default function ProfilePage() {
                       <Button
                         variant="secondary"
                         onClick={handleExportData}
+                        className="flex items-center gap-2"
                       >
+                        <span>Export Results (CSV)</span>
                         <Download className="w-4 h-4" />
-                        Export Results (CSV)
                       </Button>
                     </SettingItem>
 
@@ -728,9 +728,10 @@ export default function ProfilePage() {
                         <Button
                           variant="danger"
                           onClick={() => setShowResetData(true)}
+                          className="flex items-center gap-2"
                         >
+                          <span>Reset All Data</span>
                           <RotateCcw className="w-4 h-4" />
-                          Reset All Data
                         </Button>
                       </SettingItem>
                     </div>
@@ -780,20 +781,20 @@ export default function ProfilePage() {
                       <button
                         onClick={toggleTheme}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-lg border transition-all",
+                          "flex items-center gap-2 px-4 py-3 rounded-lg border transition-all",
                           "bg-surface-subtle border-border hover:border-border-subtle",
                           "text-text hover:text-text-muted"
                         )}
                       >
                         {isDark ? (
                           <>
-                            <Sun className="w-4 h-4" />
                             <span className="text-sm font-medium">Switch to Light Mode</span>
+                            <Sun className="w-4 h-4" />
                           </>
                         ) : (
                           <>
-                            <Moon className="w-4 h-4" />
                             <span className="text-sm font-medium">Switch to Dark Mode</span>
+                            <Moon className="w-4 h-4" />
                           </>
                         )}
                       </button>

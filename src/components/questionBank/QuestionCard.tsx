@@ -151,17 +151,17 @@ export function QuestionCard({
   const getOptionStyle = (optionLetter: string) => {
     // If answered correctly, show green background (signature green)
     if (isAnswered && isCorrect && optionLetter === correctAnswer) {
-      return "bg-[#85BC82]/20 hover:bg-[#85BC82]/25 text-white cursor-default";
+      return "bg-success/20 hover:bg-success/25 text-success border border-success/30 cursor-default";
     }
     
     // If answer is revealed, show correct answer with green
     if (answerRevealed && optionLetter === correctAnswer) {
-      return "bg-[#85BC82]/20 text-white cursor-default";
+      return "bg-success/20 text-success border border-success/30 cursor-default";
     }
 
     // Always keep all previously wrong answers marked as red
     if (incorrectAnswers.has(optionLetter) && optionLetter !== correctAnswer) {
-      return "bg-[#854952]/25 text-white cursor-default";
+      return "bg-error/20 text-error border border-error/30 cursor-default";
     }
 
     // If wrong answer was selected and not revealed, show only that wrong answer
@@ -169,23 +169,23 @@ export function QuestionCard({
       // Other options remain interactive
       if (allowRetry) {
         if (localSelectedAnswer === optionLetter) {
-          return "bg-interview/20 hover:bg-interview/25 text-white cursor-pointer";
+          return "bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/30 cursor-pointer";
         }
         return cn(
-          "bg-white/5 hover:bg-white/10 text-white/90 cursor-pointer transition-all duration-fast ease-signature",
-          hoveredOption === optionLetter && "bg-white/8"
+          "bg-surface-subtle hover:bg-surface-elevated text-text border border-border hover:border-border-subtle cursor-pointer transition-all duration-fast ease-signature",
+          hoveredOption === optionLetter && "bg-surface-elevated"
         );
       }
-      return "bg-white/5 text-white/40 cursor-default";
+      return "bg-surface-subtle text-text-muted border border-border cursor-default";
     }
 
     // Before answering or after correct answer - subtle lighter background for all, signature purple when selected
     if (localSelectedAnswer === optionLetter) {
-      return "bg-interview/20 hover:bg-interview/25 text-white cursor-pointer";
+      return "bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/30 cursor-pointer";
     }
     return cn(
-      "bg-white/5 hover:bg-white/10 text-white/90 cursor-pointer transition-all duration-fast ease-signature",
-      hoveredOption === optionLetter && "bg-white/8"
+      "bg-surface-subtle hover:bg-surface-elevated text-text border border-border hover:border-border-subtle cursor-pointer transition-all duration-fast ease-signature",
+      hoveredOption === optionLetter && "bg-surface-elevated"
     );
   };
 
@@ -296,23 +296,23 @@ export function QuestionCard({
               className={cn(
                 "w-full py-3 px-4 rounded-organic-md transition-all duration-fast ease-signature text-left relative",
                 getOptionStyle(letter),
-                (!isAnswered || allowRetry) && "hover:shadow-lg hover:shadow-primary/5"
+                (!isAnswered || allowRetry) && "hover:shadow-lg hover:shadow-secondary/10"
               )}
             >
               <div className="flex items-center gap-3">
                 {/* Option letter badge */}
                 <div
                   className={cn(
-                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature",
+                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature border",
                     isAnswered && isCorrect && letter === correctAnswer
-                      ? "bg-[#85BC82]/40 text-white"
+                      ? "bg-success/30 text-success border-success/40"
                       : answerRevealed && letter === correctAnswer
-                      ? "bg-[#85BC82]/40 text-white"
+                      ? "bg-success/30 text-success border-success/40"
                       : incorrectAnswers.has(letter) && letter !== correctAnswer
-                      ? "bg-[#854952]/35 text-white"
+                      ? "bg-error/30 text-error border-error/40"
                       : localSelectedAnswer === letter && (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
-                      ? "bg-interview/30 text-white"
-                      : "bg-white/10 text-white/70"
+                      ? "bg-secondary/30 text-secondary border-secondary/40"
+                      : "bg-surface-elevated text-text-muted border-border"
                   )}
                 >
                   {letter}
