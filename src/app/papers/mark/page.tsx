@@ -384,10 +384,63 @@ export default function PapersMarkPage() {
       indexes: number[];
     }> = [];
     const map: Record<string, number> = {};
+    
+    // Helper to derive partLetter from partName when missing
+    const derivePartLetter = (partLetter: string, partName: string, paperType: string): string => {
+      const trimmedLetter = (partLetter || '').trim();
+      if (trimmedLetter && trimmedLetter !== '—') {
+        return trimmedLetter;
+      }
+      
+      // If partLetter is missing, try to derive it from partName
+      const trimmedName = (partName || '').trim().toLowerCase();
+      if (!trimmedName) return '—';
+      
+      // NSAA mappings: derive partLetter from partName
+      // IMPORTANT: Check for "Advanced" first to avoid misclassifying Advanced Mathematics as Part A
+      if (paperType === 'NSAA') {
+        if (trimmedName.includes('advanced mathematics') && trimmedName.includes('advanced physics')) {
+          return 'Part E';
+        }
+        // Check for "advanced" before regular subjects to avoid false matches
+        if (trimmedName.includes('advanced')) {
+          // If it has "advanced" but didn't match the full pattern above, still likely Part E
+          return 'Part E';
+        }
+        if (trimmedName === 'mathematics' || (trimmedName.includes('mathematics') && !trimmedName.includes('advanced'))) {
+          return 'Part A';
+        }
+        if (trimmedName === 'physics' || (trimmedName.includes('physics') && !trimmedName.includes('advanced'))) {
+          return 'Part B';
+        }
+        if (trimmedName === 'chemistry' || trimmedName.includes('chemistry')) {
+          return 'Part C';
+        }
+        if (trimmedName === 'biology' || trimmedName.includes('biology')) {
+          return 'Part D';
+        }
+      }
+      
+      // ENGAA mappings
+      if (paperType === 'ENGAA') {
+        if (trimmedName.includes('advanced mathematics') && trimmedName.includes('advanced physics')) {
+          return 'Part B';
+        }
+        if (trimmedName.includes('mathematics') && trimmedName.includes('physics')) {
+          return 'Part A';
+        }
+      }
+      
+      return '—';
+    };
+    
     for (let i = 0; i < totalQuestions; i++) {
-      const pl = (qs[i]?.partLetter || '').trim() || '—';
+      const rawPartLetter = qs[i]?.partLetter || '';
+      const partName = qs[i]?.partName || '';
+      const pl = derivePartLetter(rawPartLetter, partName, paperName as string);
+      
       if (map[pl] === undefined) {
-        const section = mapPartToSection({ partLetter: pl, partName: qs[i]?.partName || '' }, paperName as any);
+        const section = mapPartToSection({ partLetter: pl, partName }, paperName as any);
         const color = getSectionColor(section);
         map[pl] = groups.length;
         groups.push({ partLetter: pl, sectionName: section, color, indexes: [i] });

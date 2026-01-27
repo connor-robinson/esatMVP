@@ -393,3 +393,4 @@ COMMENT ON COLUMN ai_generated_questions.subjects IS
 -- Check sample of mapped tags:
 -- SELECT id, primary_tag, secondary_tags, subjects FROM ai_generated_questions LIMIT 10;
 
+

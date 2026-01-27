@@ -9,6 +9,7 @@
 
   html {
     overflow-y: scroll;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   body {
@@ -16,6 +17,7 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--surface-05) transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   body::-webkit-scrollbar {

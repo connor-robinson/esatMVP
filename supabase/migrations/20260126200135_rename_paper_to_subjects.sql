@@ -79,3 +79,4 @@ CREATE INDEX IF NOT EXISTS idx_ai_questions_subjects ON ai_generated_questions(s
 COMMENT ON COLUMN ai_generated_questions.subjects IS 
   'Subject classification: For ESAT: Math 1, Math 2, Physics, Chemistry, or Biology. For TMUA: Paper 1 or Paper 2.';
 
+

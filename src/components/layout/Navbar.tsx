@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { UserIcon, LogInIcon } from "@/components/icons";
 import { SessionProgressBar } from "@/components/papers/SessionProgressBar";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Sun, Moon } from "lucide-react";
 
 const skillsNavItems = [
   { href: "/skills/drill", label: "Drill" },
@@ -39,6 +41,7 @@ export function Navbar() {
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const { sessionId, endedAt } = usePaperSessionStore();
+  const { theme, toggleTheme, isDark } = useTheme();
   
   // Show progress bar if there's an active session
   const hasActiveSession = sessionId !== null && endedAt === null;
@@ -186,7 +189,20 @@ export function Navbar() {
               </div>
             )}
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale"
+                aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+              >
+                {isDark ? (
+                  <Sun className="w-5 h-5 text-text-muted hover:text-text" />
+                ) : (
+                  <Moon className="w-5 h-5 text-text-muted hover:text-text" />
+                )}
+              </button>
+
               {session?.user ? (
                 <Link
                   href="/profile"
@@ -217,7 +233,7 @@ export function Navbar() {
                         strokeWidth="2" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
-                        className="text-white dark:text-neutral-900"
+                        className={isDark ? "text-white" : "text-neutral-900"}
                       />
                     </svg>
                   </div>

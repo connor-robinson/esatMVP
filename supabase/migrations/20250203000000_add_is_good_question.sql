@@ -12,3 +12,4 @@ CREATE INDEX IF NOT EXISTS idx_ai_questions_is_good_question ON ai_generated_que
 COMMENT ON COLUMN ai_generated_questions.is_good_question IS 
   'Marks exceptional questions that are challenging, fitting, interesting with elegant solutions. Should be rare (1 in 10-20 questions).';
 
+

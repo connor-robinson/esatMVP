@@ -12,15 +12,42 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Get initial theme from localStorage or default to dark
+// This runs on the client side only
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  
+  const savedTheme = localStorage.getItem("theme") as Theme;
+  if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
+    return savedTheme;
+  }
+  return "dark";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  // Initialize with the theme from localStorage (or what the script set)
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "dark";
+    // Check if html already has a class set by the script
+    const htmlClass = document.documentElement.classList.contains("light") ? "light" : "dark";
+    return htmlClass;
+  });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme && (savedTheme === "dark" || savedTheme === "light")) {
-      setTheme(savedTheme);
+    // Sync with what might have been set by the initialization script
+    const currentTheme = getInitialTheme();
+    setTheme(currentTheme);
+    
+    // Ensure the class is applied (in case script didn't run)
+    if (currentTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
     }
+    
     setMounted(true);
   }, []);
 
@@ -42,10 +69,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const isDark = theme === "dark";
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>

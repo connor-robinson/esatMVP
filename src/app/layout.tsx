@@ -32,15 +32,34 @@ export default async function RootLayout({
   } = await supabase.auth.getSession();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'light' || theme === 'dark') {
+                    document.documentElement.classList.add(theme);
+                    document.documentElement.classList.remove(theme === 'light' ? 'dark' : 'light');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
         <style
           dangerouslySetInnerHTML={{
             __html: `
             body { 
               margin: 0; 
-              background: #0a0a0a; 
-              color: #ffffff; 
+              background: var(--color-background, #0e0f13); 
+              color: var(--color-text, #e5e7eb); 
               font-family: system-ui, -apple-system, sans-serif;
             }
             .loading { 

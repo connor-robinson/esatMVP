@@ -15,3 +15,4 @@ CREATE POLICY "Anonymous users can delete questions"
 COMMENT ON POLICY "Anonymous users can delete questions" ON ai_generated_questions IS 
   'Allows anonymous users to delete questions in the review app. Use with caution.';
 
+

@@ -30,9 +30,12 @@ import {
   Eye,
   ChevronRight,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Sun,
+  Moon
 } from "lucide-react";
 import type { ExamType } from "@/lib/profile/countdown";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Preferences = {
   nickname: string | null;
@@ -67,6 +70,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const supabase = useSupabaseClient();
   const session = useSupabaseSession();
+  const { theme, toggleTheme, isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('account');
@@ -769,14 +773,31 @@ export default function ProfilePage() {
                       description="Reduce animations for better accessibility"
                     />
 
-                    <div className="opacity-50">
-                      <Toggle
-                        checked={preferences.dark_mode}
-                        onChange={() => {}}
-                        label="Dark Mode"
-                        description="Coming soon"
-                      />
-                    </div>
+                    <SettingItem 
+                      label="Theme" 
+                      description={`Currently using ${isDark ? 'dark' : 'light'} mode`}
+                    >
+                      <button
+                        onClick={toggleTheme}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-lg border transition-all",
+                          "bg-surface-subtle border-border hover:border-border-subtle",
+                          "text-text hover:text-text-muted"
+                        )}
+                      >
+                        {isDark ? (
+                          <>
+                            <Sun className="w-4 h-4" />
+                            <span className="text-sm font-medium">Switch to Light Mode</span>
+                          </>
+                        ) : (
+                          <>
+                            <Moon className="w-4 h-4" />
+                            <span className="text-sm font-medium">Switch to Dark Mode</span>
+                          </>
+                        )}
+                      </button>
+                    </SettingItem>
                   </div>
                 </div>
               )}
