@@ -15,6 +15,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     // Get filter parameters - support comma-separated values for multi-select
+    const testTypeParam = searchParams.get('testType');
+    const testType = testTypeParam && testTypeParam !== 'All' ? testTypeParam as 'ESAT' | 'TMUA' : null;
     const subjectParam = searchParams.get('subject');
     const subjects = subjectParam ? subjectParam.split(',').filter(s => s && s !== 'All') as SubjectFilter[] : [];
     const difficultyParam = searchParams.get('difficulty');
@@ -53,31 +55,26 @@ export async function GET(request: NextRequest) {
       .select('*', { count: 'exact' })
       .eq('status', 'approved');
     
-    // 1. Apply subject filter using subjects column
+    // 1. Apply test_type filter first (ESAT or TMUA)
+    if (testType) {
+      query = query.eq('test_type', testType);
+      console.log('[Question Bank API] Filtering by test_type:', testType);
+    }
+    
+    // 2. Apply subject filter using subjects column
     // Map filter values to database values:
-    // - 'Math 1' -> 'Math 1'
-    // - 'Math 2' -> 'Math 2'
-    // - 'Physics' -> 'Physics'
-    // - 'Chemistry' -> 'Chemistry'
-    // - 'Biology' -> 'Biology'
-    // - 'TMUA Paper 1' -> 'Paper 1'
-    // - 'TMUA Paper 2' -> 'Paper 2'
+    // ESAT subjects: 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'
+    // TMUA subjects: 'Paper 1', 'Paper 2'
     
     if (subjects.length > 0) {
       console.log('[Question Bank API] Incoming subject filters:', subjects);
       
-      // Map filter values to database values
-      const mappedSubjects = subjects.map(s => {
-        if (s === 'TMUA Paper 1') return 'Paper 1';
-        if (s === 'TMUA Paper 2') return 'Paper 2';
-        return s; // ESAT subjects are already correct
-      });
-      
+      // Subjects are already in the correct format (no mapping needed)
       // Filter by subjects column
-      if (mappedSubjects.length === 1) {
-        query = query.eq('subjects', mappedSubjects[0]);
+      if (subjects.length === 1) {
+        query = query.eq('subjects', subjects[0]);
       } else {
-        query = query.in('subjects', mappedSubjects);
+        query = query.in('subjects', subjects);
       }
     }
 
@@ -254,6 +251,7 @@ export async function GET(request: NextRequest) {
       : (totalCount !== null ? totalCount : filteredQuestions.length);
 
     console.log(`[Question Bank API] Final result: ${filteredQuestions.length} questions after all filtering`, {
+      testType: testType || 'All',
       subjects: subjects.length > 0 ? subjects : 'All',
       difficulties: difficulties.length > 0 ? difficulties : 'All',
       attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
@@ -283,7 +281,7 @@ export async function GET(request: NextRequest) {
         primary_tag: sample.primary_tag
       });
     } else {
-      console.warn(`[Question Bank API] NO QUESTIONS FOUND for subjects: ${subjects.length > 0 ? subjects.join(', ') : 'All'}, difficulties: ${difficulties.length > 0 ? difficulties.join(', ') : 'All'}, attemptResults: ${attemptResults.length > 0 ? attemptResults.join(', ') : 'None'}, attemptedStatus: ${attemptedStatus}. Check if questions match the filters.`);
+      console.warn(`[Question Bank API] NO QUESTIONS FOUND for testType: ${testType || 'All'}, subjects: ${subjects.length > 0 ? subjects.join(', ') : 'All'}, difficulties: ${difficulties.length > 0 ? difficulties.join(', ') : 'All'}, attemptResults: ${attemptResults.length > 0 ? attemptResults.join(', ') : 'None'}, attemptedStatus: ${attemptedStatus}. Check if questions match the filters.`);
     }
 
     // Parse options and distractor_map JSONB to proper format

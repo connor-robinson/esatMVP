@@ -45,7 +45,8 @@ export function useQuestionBank(): UseQuestionBankReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<QuestionBankFilters>({
-    subject: 'Math 1', // Default to Math 1
+    testType: 'All', // Default to All (show both ESAT and TMUA)
+    subject: 'All', // Default to All
     difficulty: 'All',
     searchTag: '',
     attemptedStatus: 'Mix',
@@ -197,6 +198,9 @@ export function useQuestionBank(): UseQuestionBankReturn {
     isFetching.current = true;
     try {
       const params = new URLSearchParams();
+      if (filters.testType && filters.testType !== 'All') {
+        params.append('testType', filters.testType);
+      }
       const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
       if (subjects.length > 0) {
         params.append('subject', subjects.join(','));
@@ -299,6 +303,9 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
     try {
       const params = new URLSearchParams();
+      if (filters.testType && filters.testType !== 'All') {
+        params.append('testType', filters.testType);
+      }
       const subjects = Array.isArray(filters.subject) ? filters.subject : (filters.subject !== 'All' ? [filters.subject] : []);
       if (subjects.length > 0) {
         params.append('subject', subjects.join(','));

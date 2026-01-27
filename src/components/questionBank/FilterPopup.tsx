@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, Search, ChevronDown, Play } from "lucide-react";
-import type { SubjectFilter, DifficultyFilter, AttemptedFilter, AttemptResultFilter, QuestionBankFilters } from "@/types/questionBank";
+import type { TestTypeFilter, SubjectFilter, DifficultyFilter, AttemptedFilter, AttemptResultFilter, QuestionBankFilters } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 
 interface FilterPopupProps {
@@ -13,7 +13,9 @@ interface FilterPopupProps {
   onStartSession?: (config: { count: number; topics: string[]; difficulties: string[] }) => void;
 }
 
-const subjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'];
+const testTypes: TestTypeFilter[] = ['All', 'ESAT', 'TMUA'];
+const esatSubjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+const tmuaSubjects: SubjectFilter[] = ['Paper 1', 'Paper 2'];
 const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
 const attemptResults: AttemptResultFilter[] = ['Mixed Results', 'Unseen', 'Incorrect Before'];
@@ -34,8 +36,15 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Physics': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
   'Chemistry': 'bg-[#854952]/20 hover:bg-[#854952]/30 text-[#ef7d7d]',
   'Biology': 'bg-[#506141]/20 hover:bg-[#506141]/30 text-[#85BC82]',
-  'TMUA Paper 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
-  'TMUA Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
+  'Paper 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
+  'Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
+};
+
+// Test type colors
+const testTypeColors: Record<TestTypeFilter, string> = {
+  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
+  'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0]',
+  'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa]',
 };
 
 export function FilterPopup({
@@ -73,6 +82,18 @@ export function FilterPopup({
   const selectedSubjects = getSelectedSubjects();
   const selectedDifficultiesFilter = getSelectedDifficulties();
   const selectedAttemptResults = getSelectedAttemptResults();
+
+  // Get available subjects based on test type
+  const availableSubjects = useMemo(() => {
+    if (filters.testType === 'ESAT') {
+      return esatSubjects;
+    } else if (filters.testType === 'TMUA') {
+      return tmuaSubjects;
+    } else {
+      // If 'All' is selected, show all subjects
+      return [...esatSubjects, ...tmuaSubjects];
+    }
+  }, [filters.testType]);
 
   // Get available attempt result options based on attemptedStatus
   const getAvailableAttemptResults = (): AttemptResultFilter[] => {
@@ -134,6 +155,11 @@ export function FilterPopup({
 
   if (!isOpen) return null;
 
+  const handleTestTypeChange = (testType: TestTypeFilter) => {
+    // Reset subject when test type changes
+    onFilterChange({ ...filters, testType, subject: 'All' });
+  };
+
   const toggleSubject = (subject: SubjectFilter) => {
     const current = getSelectedSubjects();
     const newSubjects = current.includes(subject)
@@ -163,7 +189,7 @@ export function FilterPopup({
   };
 
   const selectAllSubjects = () => {
-    onFilterChange({ ...filters, subject: subjects });
+    onFilterChange({ ...filters, subject: availableSubjects as SubjectFilter[] });
   };
 
   const clearAllSubjects = () => {
@@ -248,6 +274,31 @@ export function FilterPopup({
 
         {/* Content Area - Scrollable */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
+          {/* Test Type Filter */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
+                Test Type
+              </label>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {testTypes.map((testType) => (
+                <button
+                  key={testType}
+                  onClick={() => handleTestTypeChange(testType)}
+                  className={cn(
+                    "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                    filters.testType === testType
+                      ? testTypeColors[testType] + " scale-105"
+                      : "bg-white/5 hover:bg-white/10 text-white/60"
+                  )}
+                >
+                  {testType}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Subject Filter */}
           <div>
             <div className="flex items-center justify-between mb-3">
@@ -264,7 +315,7 @@ export function FilterPopup({
                   </button>
                 ) : (
                   <button
-                    onClick={selectAllSubjects}
+                    onClick={() => onFilterChange({ ...filters, subject: availableSubjects as SubjectFilter[] })}
                     className="px-3 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
                   >
                     Select All
@@ -273,7 +324,7 @@ export function FilterPopup({
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {subjects.map((subject) => (
+              {availableSubjects.map((subject) => (
                 <button
                   key={subject}
                   onClick={() => toggleSubject(subject)}

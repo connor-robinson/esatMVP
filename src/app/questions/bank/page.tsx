@@ -328,7 +328,21 @@ export default function QuestionBankPage() {
 
   // Helper to find topic title from code
   const getTopicTitle = (tagCode: string) => {
-    if (!curriculum || !tagCode) return tagCode;
+    if (!tagCode) return tagCode;
+    
+    // First, check if tag has subject prefix format (e.g., "Chemistry - Oxidation, reduction and redox")
+    // Remove subject prefix before the '-' if present
+    const subjectPrefixes = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
+    for (const prefix of subjectPrefixes) {
+      const prefixPattern = new RegExp(`^${prefix}\\s*-\\s*`, 'i');
+      if (prefixPattern.test(tagCode)) {
+        // Remove the subject prefix and the dash
+        return tagCode.replace(prefixPattern, '').trim();
+      }
+    }
+    
+    // If no subject prefix found, try curriculum lookup
+    if (!curriculum) return tagCode;
     
     // 1. Identify the paper and clean the code
     let paperId = '';
@@ -462,8 +476,8 @@ export default function QuestionBankPage() {
         'Physics': 'bg-[#2f2835]/30 text-[#a78bfa]',
         'Chemistry': 'bg-[#854952]/20 text-[#ef7d7d]',
         'Biology': 'bg-[#506141]/20 text-[#85BC82]',
-        'TMUA Paper 1': 'bg-[#406166]/20 text-[#5da8f0]',
-        'TMUA Paper 2': 'bg-[#2f2835]/30 text-[#a78bfa]',
+        'Paper 1': 'bg-[#406166]/20 text-[#5da8f0]',
+        'Paper 2': 'bg-[#2f2835]/30 text-[#a78bfa]',
       };
       return subjectColors[value] || 'bg-white/10 text-white/70';
     }
@@ -963,14 +977,14 @@ export default function QuestionBankPage() {
               <div className="absolute -bottom-2 left-8 w-4 h-4 bg-background border-b border-r border-white/10 transform rotate-45"></div>
             
             <div className="space-y-2">
-              {(['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'] as SubjectFilter[]).map((subject) => {
+              {(['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'] as SubjectFilter[]).map((subject) => {
                 const isSelected = progressSubjects.includes(subject);
                 const subjectColors: Record<SubjectFilter, { bg: string; text: string; border: string }> = {
                   'Math 1': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
                   'Math 2': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
                   'Physics': { bg: 'bg-[#6B4C93]/30', text: 'text-[#B794F6]', border: 'border-[#B794F6]/30' },
-                  'TMUA Paper 1': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
-                  'TMUA Paper 2': { bg: 'bg-[#6B4C93]/30', text: 'text-[#B794F6]', border: 'border-[#B794F6]/30' },
+                  'Paper 1': { bg: 'bg-[#406166]/20', text: 'text-[#5da8f0]', border: 'border-[#5da8f0]/30' },
+                  'Paper 2': { bg: 'bg-[#6B4C93]/30', text: 'text-[#B794F6]', border: 'border-[#B794F6]/30' },
                   'Chemistry': { bg: 'bg-[#5A7C65]/20', text: 'text-[#85BC82]', border: 'border-[#85BC82]/30' },
                   'Biology': { bg: 'bg-[#5A7C65]/20', text: 'text-[#85BC82]', border: 'border-[#85BC82]/30' },
                   'All': { bg: 'bg-white/10', text: 'text-white/70', border: 'border-white/20' },

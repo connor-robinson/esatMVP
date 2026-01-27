@@ -7,6 +7,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default function TrainSubjectsRedirect() {
   const router = useRouter();
 

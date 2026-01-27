@@ -4,7 +4,8 @@
 
 import type { TMUAGraphSpecV2 as TMUAGraphSpec } from "@/components/shared/TMUAGraph";
 
-export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'TMUA Paper 1' | 'TMUA Paper 2' | 'All';
+export type TestTypeFilter = 'ESAT' | 'TMUA' | 'All';
+export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'Paper 1' | 'Paper 2' | 'All';
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
 export type AttemptResultFilter = 'Mixed Results' | 'Unseen' | 'Incorrect Before';
@@ -22,6 +23,7 @@ export interface QuestionBankQuestion {
   solution_key_insight: string | null;
   distractor_map: Record<string, string> | null;
   subjects: string;
+  test_type?: 'ESAT' | 'TMUA' | null;
   primary_tag: string | null;
   secondary_tags: string[] | null;
   status: 'pending' | 'approved' | 'deleted';
@@ -47,7 +49,8 @@ export interface QuestionAttempt {
 }
 
 export interface QuestionBankFilters {
-  subject: SubjectFilter | SubjectFilter[]; // Support both single and multi-select
+  testType: TestTypeFilter; // First level filter: ESAT or TMUA
+  subject: SubjectFilter | SubjectFilter[]; // Support both single and multi-select - depends on testType
   difficulty: DifficultyFilter | DifficultyFilter[]; // Support both single and multi-select
   searchTag: string;
   attemptedStatus: AttemptedFilter;

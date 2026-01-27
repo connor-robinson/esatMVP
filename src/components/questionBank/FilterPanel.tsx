@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import type { SubjectFilter, DifficultyFilter, AttemptedFilter, ReviewStatusFilter, QuestionBankFilters } from "@/types/questionBank";
+import type { TestTypeFilter, SubjectFilter, DifficultyFilter, AttemptedFilter, ReviewStatusFilter, QuestionBankFilters } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 
 interface FilterPanelProps {
@@ -12,7 +12,9 @@ interface FilterPanelProps {
   showToggle?: boolean;
 }
 
-const subjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'];
+const testTypes: TestTypeFilter[] = ['All', 'ESAT', 'TMUA'];
+const esatSubjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+const tmuaSubjects: SubjectFilter[] = ['All', 'Paper 1', 'Paper 2'];
 const difficulties: DifficultyFilter[] = ['All', 'Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
 const reviewStatuses: ReviewStatusFilter[] = ['All', 'Pending', 'Approved', 'Deleted'];
@@ -33,13 +35,37 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Physics': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
   'Chemistry': 'bg-[#ef7d7d]/20 hover:bg-[#ef7d7d]/30 text-[#ef7d7d] border border-[#ef7d7d]/30',
   'Biology': 'bg-[#85BC82]/20 hover:bg-[#85BC82]/30 text-[#85BC82] border border-[#85BC82]/30',
-  'TMUA Paper 1': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
-  'TMUA Paper 2': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
+  'Paper 1': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
+  'Paper 2': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
+};
+
+// Test type colors
+const testTypeColors: Record<TestTypeFilter, string> = {
+  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
+  'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
+  'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
 };
 
 export function FilterPanel({ filters, onFilterChange, onToggleFilters, showToggle = false }: FilterPanelProps) {
   const [searchInput, setSearchInput] = useState(filters.searchTag);
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
+
+  // Get available subjects based on test type
+  const availableSubjects = useMemo(() => {
+    if (filters.testType === 'ESAT') {
+      return esatSubjects;
+    } else if (filters.testType === 'TMUA') {
+      return tmuaSubjects;
+    } else {
+      // If 'All' is selected, show all subjects
+      return [...esatSubjects.filter(s => s !== 'All'), ...tmuaSubjects.filter(s => s !== 'All'), 'All'];
+    }
+  }, [filters.testType]);
+
+  const handleTestTypeChange = (testType: TestTypeFilter) => {
+    // Reset subject when test type changes
+    onFilterChange({ ...filters, testType, subject: 'All' });
+  };
 
   const handleSubjectChange = (subject: SubjectFilter) => {
     onFilterChange({ ...filters, subject });
@@ -71,11 +97,11 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
 
   return (
     <div className="space-y-4">
-      {/* Subject Filter */}
+      {/* Test Type Filter */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-medium text-white/50 uppercase tracking-wide">
-            Subject
+            Test Type
           </label>
           {showToggle && (
             <button
@@ -87,7 +113,32 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {subjects.map((subject) => (
+          {testTypes.map((testType) => (
+            <button
+              key={testType}
+              onClick={() => handleTestTypeChange(testType)}
+              className={cn(
+                "px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                filters.testType === testType
+                  ? testTypeColors[testType] + " scale-105"
+                  : "bg-white/5 hover:bg-white/10 text-white/60"
+              )}
+            >
+              {testType}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Subject Filter */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-medium text-white/50 uppercase tracking-wide">
+            Subject
+          </label>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {availableSubjects.map((subject) => (
             <button
               key={subject}
               onClick={() => handleSubjectChange(subject)}

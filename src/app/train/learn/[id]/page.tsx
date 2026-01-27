@@ -7,6 +7,8 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default function TrainLearnRedirect() {
   const router = useRouter();
   const params = useParams();

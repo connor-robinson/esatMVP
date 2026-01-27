@@ -98,7 +98,21 @@ export function QuestionLibraryGrid({
 
   // Helper to find topic title from tag code
   const getTopicTitle = (tagCode: string): string => {
-    if (!curriculum || !tagCode) return tagCode;
+    if (!tagCode) return tagCode;
+    
+    // First, check if tag has subject prefix format (e.g., "Chemistry - Oxidation, reduction and redox")
+    // Remove subject prefix before the '-' if present
+    const subjectPrefixes = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
+    for (const prefix of subjectPrefixes) {
+      const prefixPattern = new RegExp(`^${prefix}\\s*-\\s*`, 'i');
+      if (prefixPattern.test(tagCode)) {
+        // Remove the subject prefix and the dash
+        return tagCode.replace(prefixPattern, '').trim();
+      }
+    }
+    
+    // If no subject prefix found, try curriculum lookup
+    if (!curriculum) return tagCode;
     
     // 1. Identify the paper and clean the code
     let paperId = '';
