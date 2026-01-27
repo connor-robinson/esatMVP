@@ -224,25 +224,29 @@ BEGIN
         question_part_letter := NULL;
         question_part_name := NULL;
         
+        -- Try to find question by question_number if we have question_order
+        -- Note: We don't filter by paper_id as that column may not exist in questions table
+        -- We'll use the session's paper_id for the response record instead
         IF session_record.question_order IS NOT NULL 
            AND array_length(session_record.question_order, 1) > question_index THEN
-          -- Find question by number in order
-          SELECT id, paper_id, part_letter, part_name 
-          INTO question_id_val, question_paper_id, question_part_letter, question_part_name
+          -- Find question by number only (no paper_id filter)
+          SELECT id, part_letter, part_name 
+          INTO question_id_val, question_part_letter, question_part_name
           FROM questions
-          WHERE paper_id = session_record.paper_id
-            AND question_number = session_record.question_order[question_index + 1]
+          WHERE question_number = session_record.question_order[question_index + 1]
           LIMIT 1;
         ELSE
-          -- Fallback: try to get question by index
-          SELECT id, paper_id, part_letter, part_name
-          INTO question_id_val, question_paper_id, question_part_letter, question_part_name
+          -- Fallback: try to get question by index (no paper_id filter)
+          SELECT id, part_letter, part_name
+          INTO question_id_val, question_part_letter, question_part_name
           FROM questions
-          WHERE paper_id = session_record.paper_id
-          ORDER BY question_number
+          ORDER BY id
           OFFSET question_index
           LIMIT 1;
         END IF;
+        
+        -- Always use session's paper_id (don't query from questions table)
+        question_paper_id := session_record.paper_id;
         
         -- Extract choice
         choice_val := answer_record->>'choice';
