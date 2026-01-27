@@ -1,6 +1,6 @@
 /**
  * Central color configuration for the papers/library page
- * Edit these 5 colors to update the entire application
+ * Now uses the centralized theme system
  * 
  * SECTION COLOR SCHEME:
  * - Question Bank: Signature Purple (#7b6fa6) - Used for selected states, highlights, and interactive elements
@@ -8,21 +8,24 @@
  * - Mental Maths: Green (#85BC82 - primary color) - Used for mental math practice features
  */
 
+import { getThemeColor } from '@/lib/theme/colors';
+
+// Get colors from theme system (dark mode by default, can be made theme-aware later)
 export const PAPER_COLORS = {
   // Mathematics & ESAT & MAT
-  mathematics: "#3d6064", // Midnight Teal
+  mathematics: getThemeColor('maths', 'dark'), // Unified from theme
 
   // Physics & TMUA & Long Answers  
-  physics: "#6b5e94", // Midnight Purple
+  physics: getThemeColor('physics', 'dark'), // Unified from theme
 
   // Chemistry & PAT
-  chemistry: "#8c525a", // Midnight Rose
+  chemistry: getThemeColor('chemistry', 'dark'), // Unified from theme
 
   // Biology & NSAA & Completed years
-  biology: "#4e6b8a", // Midnight Blue
+  biology: getThemeColor('biology', 'dark'), // Unified from theme
 
   // Advanced Math & ENGAA & Multiple Choice
-  advanced: "#9e5974" // Midnight Pink
+  advanced: getThemeColor('advanced', 'dark') // Unified from theme
 } as const;
 
 /**

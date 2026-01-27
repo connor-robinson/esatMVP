@@ -9,23 +9,58 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0e0f13",
-        surface: "rgba(255, 255, 255, 0.05)",
-        border: "rgba(255, 255, 255, 0.1)",
+        // Theme colors using CSS variables
+        background: "var(--color-background)",
+        surface: "var(--color-surface)",
+        "surface-elevated": "var(--color-surface-elevated)",
+        "surface-subtle": "var(--color-surface-subtle)",
+        border: "var(--color-border)",
+        "border-subtle": "var(--color-border-subtle)",
+        
         primary: {
-          DEFAULT: "#85BC82",
-          hover: "#6c9e69",
-          light: "#9fce9c",
+          DEFAULT: "var(--color-primary)",
+          hover: "var(--color-primary-hover)",
         },
+        secondary: "var(--color-secondary)",
+        accent: "var(--color-accent)",
+        
+        // Subject colors
+        maths: "var(--color-maths)",
+        physics: "var(--color-physics)",
+        chemistry: "var(--color-chemistry)",
+        biology: "var(--color-biology)",
+        advanced: "var(--color-advanced)",
+        
+        // Status colors
+        success: "var(--color-success)",
+        error: "var(--color-error)",
+        warning: "var(--color-warning)",
+        
+        // Text colors
+        text: {
+          DEFAULT: "var(--color-text)",
+          muted: "var(--color-text-muted)",
+          subtle: "var(--color-text-subtle)",
+          disabled: "var(--color-text-disabled)",
+        },
+        
+        // Legacy support (for backward compatibility)
         interview: {
-          DEFAULT: "#7b6fa6",
-          hover: "#6b6194",
-          light: "#8c7fba",
+          DEFAULT: "var(--color-secondary)",
+          hover: "var(--color-secondary)",
+          light: "var(--color-secondary)",
         },
+        cyan: {
+          DEFAULT: "var(--color-accent)",
+          hover: "var(--color-accent)",
+          light: "var(--color-accent)",
+        },
+        
+        // Neutral grays (kept for compatibility, but prefer theme colors)
         neutral: {
           950: "#0a0b0d",
-          900: "#12141a",
-          800: "#1a1d26",
+          900: "var(--color-surface)",
+          800: "var(--color-surface-elevated)",
           700: "#2a2f3d",
           600: "#3d4354",
           500: "#5a6072",
@@ -35,23 +70,18 @@ const config: Config = {
           100: "#e5e7eb",
           50: "#f5f6f7",
         },
+        
+        // Icon colors (using theme colors)
         icon: {
-          base: "rgba(229, 231, 235, 0.8)",
-          shadow: "rgba(156, 163, 175, 0.4)",
-          accent: "#85BC82",
+          base: "var(--color-text-muted)",
+          shadow: "var(--color-text-subtle)",
+          accent: "var(--color-primary)",
         },
+        
+        // Glow effects (using theme colors with opacity)
         glow: {
           primary: "rgba(133, 188, 130, 0.4)",
           focus: "rgba(133, 188, 130, 0.3)",
-        },
-        secondary: "#a855f7",
-        success: "#85BC82",
-        error: "#ef4444",
-        warning: "#f59e0b",
-        cyan: {
-          DEFAULT: "#5a8a8c",
-          hover: "#4d7678",
-          light: "#6a9a9c",
         },
       },
       fontFamily: {

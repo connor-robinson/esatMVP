@@ -16,9 +16,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center rounded-organic-md font-medium transition-all duration-fast ease-signature focus:shadow-glow-focus disabled:opacity-50 disabled:cursor-not-allowed interaction-scale";
 
     const variants = {
-      primary: "bg-primary text-neutral-900 hover:bg-primary-hover hover:shadow-glow font-semibold",
-      secondary: "bg-white/5 border border-white/10 text-neutral-100 hover:bg-white/10 hover:border-white/20",
-      ghost: "text-neutral-300 hover:bg-white/5 hover:text-neutral-100",
+      primary: "bg-primary text-white hover:bg-primary-hover hover:shadow-glow font-semibold dark:text-neutral-900",
+      secondary: "bg-surface-subtle border border-border text-text hover:bg-surface hover:border-border-subtle",
+      ghost: "text-text-muted hover:bg-surface-subtle hover:text-text",
       danger: "bg-error/90 text-white hover:bg-error hover:shadow-[0_0_12px_0_rgba(239,68,68,0.4)]",
     } as const;
 

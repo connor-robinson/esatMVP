@@ -72,7 +72,7 @@ export default async function RootLayout({
         />
         <meta name="theme-color" content="#0a0a0a" />
       </head>
-      <body className="min-h-screen bg-background text-neutral-100 antialiased font-sans">
+      <body className="min-h-screen bg-background text-text antialiased font-sans">
         <SupabaseSessionProvider initialSession={session}>
           <ErrorBoundary>
             <ThemeProvider>

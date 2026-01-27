@@ -18,15 +18,15 @@ export function CountdownCard({ examType, isEarlyApplicant }: CountdownCardProps
 
   if (!examType) {
     return (
-      <Card className="p-6 bg-white/[0.02] border border-white/10">
+      <Card className="p-6 bg-surface border border-border">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-white/60" strokeWidth={2} />
-            <h3 className="text-sm font-mono text-white/60 uppercase tracking-wide">
+            <Calendar className="w-5 h-5 text-text-subtle" strokeWidth={2} />
+            <h3 className="text-sm font-mono text-text-subtle uppercase tracking-wide">
               Exam Countdown
             </h3>
           </div>
-          <div className="text-sm text-white/70 font-mono">
+          <div className="text-sm text-text-muted font-mono">
             Select an exam type in settings to see countdown
           </div>
         </div>
@@ -40,27 +40,27 @@ export function CountdownCard({ examType, isEarlyApplicant }: CountdownCardProps
 
   return (
     <Card className={cn(
-      "p-6 bg-white/[0.02] border transition-all duration-fast ease-signature",
-      isVerySoon ? "border-red-500/30 bg-red-500/5" : isSoon ? "border-yellow-500/30 bg-yellow-500/5" : "border-white/10"
+      "p-6 bg-surface border transition-all duration-fast ease-signature",
+      isVerySoon ? "border-error/30 bg-error/5" : isSoon ? "border-warning/30 bg-warning/5" : "border-border"
     )}>
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <Calendar className={cn(
             "w-5 h-5 transition-colors",
-            isVerySoon ? "text-red-400" : isSoon ? "text-yellow-400" : "text-white/60"
+            isVerySoon ? "text-error" : isSoon ? "text-warning" : "text-text-subtle"
           )} strokeWidth={2} />
-          <h3 className="text-sm font-mono text-white/60 uppercase tracking-wide">
+          <h3 className="text-sm font-mono text-text-subtle uppercase tracking-wide">
             Exam Countdown
           </h3>
         </div>
 
         <div className="space-y-2">
-          <div className="text-xs font-mono text-white/50 uppercase tracking-wide">
+          <div className="text-xs font-mono text-text-subtle uppercase tracking-wide">
             {examType}
           </div>
           
           {dateRange && (
-            <div className="text-sm text-white/70 font-mono">
+            <div className="text-sm text-text-muted font-mono">
               {dateRange}
             </div>
           )}
@@ -69,8 +69,8 @@ export function CountdownCard({ examType, isEarlyApplicant }: CountdownCardProps
             <div className="pt-2">
               {isPast ? (
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-white/50" strokeWidth={2} />
-                  <span className="text-lg font-mono text-white/50">
+                  <Clock className="w-4 h-4 text-text-subtle" strokeWidth={2} />
+                  <span className="text-lg font-mono text-text-subtle">
                     Exam has passed
                   </span>
                 </div>
@@ -78,11 +78,11 @@ export function CountdownCard({ examType, isEarlyApplicant }: CountdownCardProps
                 <div className="flex items-center gap-2">
                   <Clock className={cn(
                     "w-4 h-4 transition-colors",
-                    isVerySoon ? "text-red-400" : isSoon ? "text-yellow-400" : "text-white/70"
+                    isVerySoon ? "text-error" : isSoon ? "text-warning" : "text-text-muted"
                   )} strokeWidth={2} />
                   <span className={cn(
                     "text-2xl font-mono font-semibold transition-colors",
-                    isVerySoon ? "text-red-400" : isSoon ? "text-yellow-400" : "text-white/90"
+                    isVerySoon ? "text-error" : isSoon ? "text-warning" : "text-text"
                   )}>
                     {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
                   </span>
@@ -91,7 +91,7 @@ export function CountdownCard({ examType, isEarlyApplicant }: CountdownCardProps
             </div>
           )}
 
-          <div className="text-xs font-mono text-white/40 pt-2 border-t border-white/10">
+          <div className="text-xs font-mono text-text-disabled pt-2 border-t border-border-subtle">
             {isEarlyApplicant ? 'Early Applicant' : 'Late Applicant'}
           </div>
         </div>

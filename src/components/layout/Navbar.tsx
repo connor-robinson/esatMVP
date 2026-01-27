@@ -104,12 +104,12 @@ export function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
             <Link href="/" className="interaction-scale">
-              <span className="text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white">
+              <span className="text-sm font-semibold uppercase tracking-wider text-text transition-colors duration-fast ease-signature hover:text-text-muted">
                 ChanAcademy
               </span>
             </Link>
@@ -119,27 +119,27 @@ export function Navbar() {
                 href="/skills/drill"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  currentSection === "skills" ? "text-primary" : "text-white/50 hover:text-white/80"
+                  currentSection === "skills" ? "text-primary" : "text-text-muted hover:text-text"
                 )}
               >
                 Mental Maths
               </Link>
-              <span className="text-sm text-white/30">/</span>
+              <span className="text-sm text-text-subtle">/</span>
               <Link
                 href="/papers/library"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  currentSection === "papers" ? "text-[#5B8D94]" : "text-white/50 hover:text-white/80"
+                  currentSection === "papers" ? "text-maths" : "text-text-muted hover:text-text"
                 )}
               >
                 Past Papers
               </Link>
-              <span className="text-sm text-white/30">/</span>
+              <span className="text-sm text-text-subtle">/</span>
               <Link
                 href="/questions/bank"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
-                  pathname.startsWith("/questions") ? "text-interview" : "text-white/50 hover:text-white/80"
+                  pathname.startsWith("/questions") ? "text-secondary" : "text-text-muted hover:text-text"
                 )}
               >
                 Question Bank
@@ -170,10 +170,10 @@ export function Navbar() {
                           ? currentSection === "skills"
                             ? "bg-primary/10 text-primary"
                             : currentSection === "papers"
-                            ? "bg-[#5B8D94]/10 text-[#5B8D94]"
-                            : "bg-interview/10 text-interview"
-                          : "text-white/60 hover:text-white/90 hover:bg-white/5",
-                        isPressed && !isActive && "bg-[#121418] scale-[0.97]"
+                            ? "bg-maths/10 text-maths"
+                            : "bg-secondary/10 text-secondary"
+                          : "text-text-muted hover:text-text hover:bg-surface-subtle",
+                        isPressed && !isActive && "bg-surface-elevated scale-[0.97]"
                       )}
                       style={{
                         transform: isPressed ? "scale(0.97)" : undefined,
@@ -194,13 +194,13 @@ export function Navbar() {
                     "relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale",
                     pathname === "/profile"
                       ? "bg-primary/10"
-                      : "hover:bg-white/5"
+                      : "hover:bg-surface-subtle"
                   )}
                 >
                   <UserIcon 
                     size="md" 
                     className={cn(
-                      pathname === "/profile" ? "text-primary" : "text-white/70 hover:text-white/90"
+                      pathname === "/profile" ? "text-primary" : "text-text-muted hover:text-text"
                     )}
                   />
                   {/* Checkmark badge indicator */}
@@ -217,7 +217,7 @@ export function Navbar() {
                         strokeWidth="2" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
-                        className="text-neutral-900"
+                        className="text-white dark:text-neutral-900"
                       />
                     </svg>
                   </div>
@@ -225,9 +225,9 @@ export function Navbar() {
               ) : (
                 <Link
                   href={loginHref}
-                  className="p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale"
+                  className="p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale"
                 >
-                  <LogInIcon size="md" className="text-white/70 hover:text-white/90" />
+                  <LogInIcon size="md" className="text-text-muted hover:text-text" />
                 </Link>
               )}
             </div>

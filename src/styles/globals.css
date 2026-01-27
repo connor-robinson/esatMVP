@@ -12,10 +12,10 @@
   }
 
   body {
-    @apply bg-background text-gray-100 antialiased;
+    @apply bg-background text-text antialiased;
     overflow-x: hidden;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.05) transparent;
+    scrollbar-color: var(--surface-05) transparent;
   }
 
   body::-webkit-scrollbar {
@@ -28,21 +28,105 @@
   }
 
   body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--surface-05);
     border-radius: 4px;
     border: none;
   }
 
   body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--surface-10);
   }
 
   :root {
-    --subj-maths: #5da8f0;
-    --subj-physics: #a78bfa;
-    --subj-chem: #ef7d7d;
-    --subj-bio: #85BC82;
-    --subj-interview: #7b6fa6;
+    /* Dark mode (default) */
+    --color-primary: #85BC82;
+    --color-primary-hover: #6c9e69;
+    --color-secondary: #7b6fa6;
+    --color-accent: #5a8a8c;
+    
+    --color-background: #0e0f13;
+    --color-surface: #12141a;
+    --color-surface-elevated: #1a1d26;
+    --color-surface-subtle: #0f1114;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-border-subtle: rgba(255, 255, 255, 0.05);
+    
+    --color-text: #e5e7eb;
+    --color-text-muted: rgba(255, 255, 255, 0.7);
+    --color-text-subtle: rgba(255, 255, 255, 0.5);
+    --color-text-disabled: rgba(255, 255, 255, 0.3);
+    
+    /* Subject colors */
+    --color-maths: #3d6064;
+    --color-physics: #6b5e94;
+    --color-chemistry: #8c525a;
+    --color-biology: #4e6b8a;
+    --color-advanced: #9e5974;
+    
+    /* Status colors */
+    --color-success: #85BC82;
+    --color-error: #ef4444;
+    --color-warning: #f59e0b;
+    
+    /* Unified surface opacities */
+    --surface-02: rgba(255, 255, 255, 0.02);
+    --surface-05: rgba(255, 255, 255, 0.05);
+    --surface-10: rgba(255, 255, 255, 0.1);
+    --surface-15: rgba(255, 255, 255, 0.15);
+    --surface-20: rgba(255, 255, 255, 0.2);
+    
+    /* Legacy subject colors (for backward compatibility) */
+    --subj-maths: var(--color-maths);
+    --subj-physics: var(--color-physics);
+    --subj-chem: var(--color-chemistry);
+    --subj-bio: var(--color-biology);
+    --subj-interview: var(--color-secondary);
+  }
+
+  .light {
+    /* Light mode (paper-like) */
+    --color-primary: #6c9e69;
+    --color-primary-hover: #5a8a57;
+    --color-secondary: #6b6194;
+    --color-accent: #4d7678;
+    
+    --color-background: #faf9f6;
+    --color-surface: #ffffff;
+    --color-surface-elevated: #f5f4f1;
+    --color-surface-subtle: #f9f8f5;
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-border-subtle: rgba(0, 0, 0, 0.05);
+    
+    --color-text: #1f2937;
+    --color-text-muted: rgba(0, 0, 0, 0.6);
+    --color-text-subtle: rgba(0, 0, 0, 0.4);
+    --color-text-disabled: rgba(0, 0, 0, 0.3);
+    
+    /* Subject colors - darkened for light mode */
+    --color-maths: #2d4a4e;
+    --color-physics: #5a4e7d;
+    --color-chemistry: #7a424a;
+    --color-biology: #3d5569;
+    --color-advanced: #8d4963;
+    
+    /* Status colors */
+    --color-success: #6c9e69;
+    --color-error: #dc2626;
+    --color-warning: #d97706;
+    
+    /* Surface opacities - inverted for light mode */
+    --surface-02: rgba(0, 0, 0, 0.02);
+    --surface-05: rgba(0, 0, 0, 0.05);
+    --surface-10: rgba(0, 0, 0, 0.1);
+    --surface-15: rgba(0, 0, 0, 0.15);
+    --surface-20: rgba(0, 0, 0, 0.2);
+    
+    /* Legacy subject colors */
+    --subj-maths: var(--color-maths);
+    --subj-physics: var(--color-physics);
+    --subj-chem: var(--color-chemistry);
+    --subj-bio: var(--color-biology);
+    --subj-interview: var(--color-secondary);
   }
 
   .text-underline-accent {
