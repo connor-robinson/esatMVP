@@ -17,6 +17,15 @@ export async function PATCH(
     const resolvedParams = await Promise.resolve(params);
     const { id } = resolvedParams;
 
+    // Parse request body for is_good_question flag
+    let isGoodQuestion = false;
+    try {
+      const body = await request.json();
+      isGoodQuestion = body.is_good_question === true;
+    } catch (e) {
+      // Body might be empty, that's okay - default to false
+    }
+
     // Get current user
     const {
       data: { user },
@@ -47,8 +56,7 @@ export async function PATCH(
     // Update question status to approved
     const updates = {
       status: 'approved' as const,
-      reviewed_at: new Date().toISOString(),
-      ...(user && { reviewed_by: user.id }),
+      is_good_question: isGoodQuestion,
     };
 
     const { data, error } = await supabase

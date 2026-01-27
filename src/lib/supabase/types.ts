@@ -289,10 +289,7 @@ export type AiGeneratedQuestionRow = {
   generation_id: string;
   schema_id: string;
   difficulty: string;
-  status: string;
-  reviewed_by: string | null;
-  reviewed_at: string | null;
-  review_notes: string | null;
+  status: 'pending' | 'approved' | 'deleted';
   question_stem: string;
   options: Json;
   correct_option: string;
@@ -306,7 +303,8 @@ export type AiGeneratedQuestionRow = {
   generation_attempts: number;
   token_usage: Json | null;
   run_id: string | null;
-  paper: string | null;
+  test_type: string | null;
+  subjects: string; // Required: 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Biology' | 'Paper 1' | 'Paper 2'
   primary_tag: string | null;
   secondary_tags: string[] | null;
   tags_confidence: Json | null;
@@ -320,10 +318,7 @@ export type AiGeneratedQuestionInsert = {
   generation_id: string;
   schema_id: string;
   difficulty: string;
-  status?: string;
-  reviewed_by?: string | null;
-  reviewed_at?: string | null;
-  review_notes?: string | null;
+  status?: 'pending' | 'approved' | 'deleted';
   question_stem: string;
   options: Json;
   correct_option: string;
@@ -337,7 +332,8 @@ export type AiGeneratedQuestionInsert = {
   generation_attempts?: number;
   token_usage?: Json | null;
   run_id?: string | null;
-  paper?: string | null;
+  test_type?: string | null;
+  subjects: string; // Required
   primary_tag?: string | null;
   secondary_tags?: string[] | null;
   tags_confidence?: Json | null;
@@ -354,6 +350,16 @@ export type UserProfileRow = {
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
+  nickname: string | null;
+  exam_preference: 'ESAT' | 'TMUA' | null;
+  esat_subjects: string[] | null;
+  is_early_applicant: boolean | null;
+  has_extra_time: boolean | null;
+  extra_time_percentage: number | null;
+  has_rest_breaks: boolean | null;
+  font_size: 'small' | 'medium' | 'large' | null;
+  reduced_motion: boolean | null;
+  dark_mode: boolean | null;
   created_at: string;
   updated_at: string;
 };
@@ -362,6 +368,16 @@ export type UserProfileInsert = {
   display_name?: string | null;
   avatar_url?: string | null;
   bio?: string | null;
+  nickname?: string | null;
+  exam_preference?: 'ESAT' | 'TMUA' | null;
+  esat_subjects?: string[] | null;
+  is_early_applicant?: boolean | null;
+  has_extra_time?: boolean | null;
+  extra_time_percentage?: number | null;
+  has_rest_breaks?: boolean | null;
+  font_size?: 'small' | 'medium' | 'large' | null;
+  reduced_motion?: boolean | null;
+  dark_mode?: boolean | null;
 };
 export type UserProfileUpdate = Partial<UserProfileRow>;
 

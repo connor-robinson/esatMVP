@@ -13,12 +13,12 @@ export interface ReviewQuestion {
   solution_reasoning: string | null;
   solution_key_insight: string | null;
   distractor_map: Record<string, string> | null;
-  paper: string | null;
+  subjects: string | null; // Renamed from 'paper'
   primary_tag: string | null;
   secondary_tags: string[] | null;
-  status: 'pending_review' | 'approved' | 'rejected' | 'needs_revision';
-  reviewed_by: string | null;
-  reviewed_at: string | null;
+  test_type: 'ESAT' | 'TMUA' | null;
+  is_good_question: boolean;
+  status: 'pending' | 'approved' | 'deleted'; // Updated status values
   created_at: string;
   updated_at: string;
 }

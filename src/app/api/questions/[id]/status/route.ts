@@ -19,10 +19,10 @@ export async function PATCH(
 
     // Parse request body
     const body = await request.json();
-    const { status, review_notes } = body;
+    const { status } = body;
 
     // Validate status
-    const validStatuses = ["pending_review", "approved", "rejected", "needs_revision"];
+    const validStatuses = ["pending", "approved", "deleted"];
     if (!status || !validStatuses.includes(status)) {
       return NextResponse.json(
         { error: "Invalid status. Must be one of: " + validStatuses.join(", ") },
@@ -33,9 +33,6 @@ export async function PATCH(
     // Update question status
     const updateData: AiGeneratedQuestionUpdate = {
       status,
-      reviewed_at: new Date().toISOString(),
-      ...(user && { reviewed_by: user.id }),
-      ...(review_notes !== undefined && { review_notes }),
     };
 
     // First, check if the question exists

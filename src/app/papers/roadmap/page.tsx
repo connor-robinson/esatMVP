@@ -40,6 +40,25 @@ export default function PapersRoadmapPage() {
   >(new Map());
   const [loading, setLoading] = useState(true);
   const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(null);
+  const [examPreference, setExamPreference] = useState<'ESAT' | 'TMUA' | null>(null);
+
+  // Load user exam preference
+  useEffect(() => {
+    async function loadExamPreference() {
+      if (!session?.user?.id) return;
+      
+      try {
+        const response = await fetch("/api/profile/preferences");
+        if (response.ok) {
+          const data = await response.json();
+          setExamPreference(data.exam_preference || null);
+        }
+      } catch (error) {
+        console.error("[roadmap] Error loading exam preference:", error);
+      }
+    }
+    loadExamPreference();
+  }, [session]);
 
   // Load stages (including dynamic TMUA stages)
   useEffect(() => {
@@ -59,15 +78,28 @@ export default function PapersRoadmapPage() {
         if (loadedStages.length > 25) {
           console.log("[roadmap] Stage at position 26 (index 25):", loadedStages[25]?.id, loadedStages[25]?.examName, loadedStages[25]?.year);
         }
-        setStages(loadedStages);
+        
+        // Filter stages by exam preference if set
+        let filteredStages = loadedStages;
+        if (examPreference) {
+          filteredStages = loadedStages.filter(stage => stage.examName === examPreference);
+        }
+        
+        setStages(filteredStages);
       } catch (error) {
         console.error("[roadmap] Error loading stages:", error);
         // Fallback to sync version if async fails
-        setStages(getRoadmapStagesSync());
+        const syncStages = getRoadmapStagesSync();
+        if (examPreference) {
+          const filtered = syncStages.filter(stage => stage.examName === examPreference);
+          setStages(filtered);
+        } else {
+          setStages(syncStages);
+        }
       }
     }
     loadStages();
-  }, []);
+  }, [examPreference]);
 
   // Load completion data
   useEffect(() => {
@@ -396,7 +428,12 @@ export default function PapersRoadmapPage() {
 
   return (
     <Container>
-      <PageHeader title="Practice Roadmap" />
+      {/* Custom Title Section with proper padding */}
+      <div className="pt-8 pb-6">
+        <h1 className="text-2xl font-semibold uppercase tracking-wider text-white/90">
+          Practice Roadmap
+        </h1>
+      </div>
 
       {/* Analytics Section - At the top */}
       <RoadmapAnalytics
@@ -406,7 +443,7 @@ export default function PapersRoadmapPage() {
       />
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
-      <div className="py-8">
+      <div className="pt-4 pb-8">
         <div className="flex gap-8 lg:gap-12">
           {/* Left: Timeline (15-20% width, hidden on mobile) */}
           <div className="w-[18%] flex-shrink-0 hidden lg:block">

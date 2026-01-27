@@ -5,46 +5,12 @@ import type { ReviewStats, PaperType } from '@/types/review';
 export const dynamic = 'force-dynamic';
 
 /**
- * Helper function to check if a question matches ESAT subject filters
- * Following hierarchy: test_type (ESAT or NULL) -> schema_id first char -> paper (for Math)
+ * Helper function to check if a question matches subject filters
+ * Now uses the subjects column directly
  */
-function matchesESATSubject(row: any, subjects: string[]): boolean {
+function matchesSubject(row: any, subjects: string[]): boolean {
   if (subjects.length === 0) return true;
-  
-  const testType = row.test_type;
-  // Must be ESAT (not TMUA)
-  if (testType === 'TMUA') return false;
-  
-  const schemaId = (row.schema_id || '').toUpperCase();
-  const firstChar = schemaId.charAt(0);
-  const paper = row.paper;
-  
-  return subjects.some(subject => {
-    if (subject === 'Physics' && firstChar === 'P') return true;
-    if (subject === 'Chemistry' && firstChar === 'C') return true;
-    if (subject === 'Biology' && firstChar === 'B') return true;
-    if (subject === 'Math 1' && firstChar === 'M' && paper === 'Math 1') return true;
-    if (subject === 'Math 2' && firstChar === 'M' && paper === 'Math 2') return true;
-    return false;
-  });
-}
-
-/**
- * Helper function to check if a question matches TMUA paper filters
- */
-function matchesTMUAPaper(row: any, subjects: string[]): boolean {
-  if (subjects.length === 0) return true;
-  
-  const testType = row.test_type;
-  // Must be TMUA
-  if (testType !== 'TMUA') return false;
-  
-  const paper = row.paper;
-  return subjects.some(subject => {
-    if (subject === 'Paper 1' && paper === 'Paper1') return true;
-    if (subject === 'Paper 2' && paper === 'Paper2') return true;
-    return false;
-  });
+  return subjects.includes(row.subjects);
 }
 
 /**
@@ -52,41 +18,35 @@ function matchesTMUAPaper(row: any, subjects: string[]): boolean {
  * Fetches all questions and filters in memory for accurate counting
  */
 async function countQuestions(supabase: any, paperType: string | null, subjects: string[], statusFilter?: string): Promise<number> {
-  // Fetch all questions with the status filter
+  // Build query with filters
   let fetchQuery = supabase
     .from('ai_generated_questions')
-    .select('test_type, schema_id, paper');
+    .select('test_type, subjects', { count: 'exact', head: true });
   
   if (statusFilter) {
     fetchQuery = fetchQuery.eq('status', statusFilter);
   }
   
-  const { data: allData, error: fetchError } = await fetchQuery;
+  // Apply test_type filter if specified
+  if (paperType === 'TMUA') {
+    fetchQuery = fetchQuery.eq('test_type', 'TMUA');
+  } else if (paperType === 'ESAT') {
+    fetchQuery = fetchQuery.or('test_type.eq.ESAT,test_type.is.null');
+  }
+  
+  // Apply subjects filter
+  if (subjects.length > 0) {
+    fetchQuery = fetchQuery.in('subjects', subjects);
+  }
+  
+  const { count, error: fetchError } = await fetchQuery;
   
   if (fetchError) {
     console.error('[Review API] Error fetching for count:', fetchError);
     return 0;
   }
   
-  const filtered = (allData || []).filter((row: any) => {
-    if (paperType === 'All') {
-      // Check if question matches any selected subject
-      if (row.test_type === 'TMUA') {
-        return matchesTMUAPaper(row, subjects);
-      } else {
-        // ESAT or NULL
-        return matchesESATSubject(row, subjects);
-      }
-    } else if (paperType === 'TMUA') {
-      return matchesTMUAPaper(row, subjects);
-    } else if (paperType === 'ESAT') {
-      return matchesESATSubject(row, subjects);
-    }
-    
-    return true;
-  });
-  
-  return filtered.length;
+  return count || 0;
 }
 
 /**
@@ -102,11 +62,10 @@ export async function GET(request: NextRequest) {
     const subjectsParam = searchParams.get('subjects');
     const subjects = subjectsParam ? subjectsParam.split(',').filter(s => s.trim()) : [];
 
-    // Get counts using the new hierarchy
-    // Always use in-memory filtering for accurate counts with complex OR conditions
+    // Get counts using the subjects column
     const total = await countQuestions(supabase, paperType, subjects);
     const approved = await countQuestions(supabase, paperType, subjects, 'approved');
-    const pending = await countQuestions(supabase, paperType, subjects, 'pending_review');
+    const pending = await countQuestions(supabase, paperType, subjects, 'pending');
 
     const stats: ReviewStats = {
       total: total || 0,

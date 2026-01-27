@@ -130,13 +130,30 @@ const TMUA_CURRICULUM: Record<string, string> = {
 };
 
 /**
- * Determine if a question is ESAT based on paper field or primary_tag
+ * Determine if a question is ESAT based on test_type, paper field, schema_id, or primary_tag
  */
 export function isESATQuestion(question: ReviewQuestion): boolean {
-  const paper = question.paper;
-  if (paper === 'Math 1' || paper === 'Math 2' || paper === 'Physics' || 
-      paper === 'Chemistry' || paper === 'Biology') {
+  // First check test_type (most reliable)
+  if (question.test_type === 'ESAT') return true;
+  if (question.test_type === 'TMUA') return false;
+  
+  // If test_type is NULL, check other indicators
+  const subjects = question.subjects;
+  if (subjects === 'Math 1' || subjects === 'Math 2' || subjects === 'Physics' || 
+      subjects === 'Chemistry' || subjects === 'Biology') {
     return true;
+  }
+  
+  // Check schema_id first character (P=Physics, C=Chemistry, B=Biology, M=Maths)
+  if (question.schema_id) {
+    const schemaId = question.schema_id.toUpperCase();
+    const firstChar = schemaId.charAt(0);
+    if (firstChar === 'P' || firstChar === 'C' || firstChar === 'B') {
+      return true; // Physics, Chemistry, or Biology
+    }
+    if (firstChar === 'M' && (subjects === 'Math 1' || subjects === 'Math 2')) {
+      return true; // Math 1 or Math 2
+    }
   }
   
   // Fallback: check primary_tag prefix
@@ -144,18 +161,18 @@ export function isESATQuestion(question: ReviewQuestion): boolean {
     const tag = question.primary_tag;
     return tag.startsWith('M1-') || tag.startsWith('M2-') || 
            tag.startsWith('P-') || tag.startsWith('C-') || 
-           tag.startsWith('biology-');
+           tag.startsWith('chemistry-') || tag.startsWith('biology-');
   }
   
   return false;
 }
 
 /**
- * Determine if a question is TMUA based on paper field or primary_tag
+ * Determine if a question is TMUA based on subjects field or primary_tag
  */
 export function isTMUAQuestion(question: ReviewQuestion): boolean {
-  const paper = question.paper;
-  if (paper === 'Paper 1' || paper === 'Paper 2') {
+  const subjects = question.subjects;
+  if (subjects === 'Paper 1' || subjects === 'Paper 2') {
     return true;
   }
   
@@ -167,7 +184,7 @@ export function isTMUAQuestion(question: ReviewQuestion): boolean {
     const isESATTag = tag.includes('-') && (
       tag.startsWith('M1-') || tag.startsWith('M2-') || 
       tag.startsWith('P-') || tag.startsWith('C-') || 
-      tag.startsWith('biology-')
+      tag.startsWith('chemistry-') || tag.startsWith('biology-')
     );
     
     if (!isESATTag) {
@@ -198,19 +215,24 @@ function getESATTagText(tag: string): string | null {
   if (!tag) return null;
   
   // Map prefixes to paper_id
+  // Note: Support both "C-" and "chemistry-" prefixes for Chemistry
   const prefixMap: Record<string, string> = {
     'M1-': 'math1',
     'M2-': 'math2',
     'P-': 'physics',
     'C-': 'chemistry',
+    'chemistry-': 'chemistry', // Support "chemistry-C4" format
     'biology-': 'biology'
   };
   
-  // Find matching prefix
+  // Find matching prefix (check longer prefixes first to avoid partial matches)
   let paperId: string | null = null;
   let code: string | null = null;
   
-  for (const [prefix, pid] of Object.entries(prefixMap)) {
+  // Sort prefixes by length (longest first) to match "chemistry-" before "C-"
+  const sortedPrefixes = Object.entries(prefixMap).sort((a, b) => b[0].length - a[0].length);
+  
+  for (const [prefix, pid] of sortedPrefixes) {
     if (tag.startsWith(prefix)) {
       paperId = pid;
       code = tag.substring(prefix.length);
@@ -278,10 +300,48 @@ export function getQuestionTagText(question: ReviewQuestion, tag: string | null)
 
 /**
  * Format tag for display: shows only human-readable text (no curriculum codes)
+ * Removes subject prefix (e.g., "Mathematics 1 - ") if subject is already shown separately
  */
-export function formatTagDisplay(tag: string | null, text: string | null): string {
+export function formatTagDisplay(tag: string | null, text: string | null, question?: ReviewQuestion): string {
   if (!tag) return '';
   if (text) {
+    // Always remove subject prefixes from tag text to avoid redundancy
+    // The subject is already shown separately in the UI
+    const prefixes = [
+      'Mathematics 1 - ',
+      'Mathematics 2 - ',
+      'Math 1 - ',
+      'Math 2 - ',
+      'Physics - ',
+      'Chemistry - ',
+      'Biology - ',
+      'Paper 1 - ',
+      'Paper 2 - ',
+    ];
+    
+    // Try exact match first
+    for (const prefix of prefixes) {
+      if (text.startsWith(prefix)) {
+        return text.substring(prefix.length).trim();
+      }
+    }
+    
+    // Try case-insensitive match
+    const textLower = text.toLowerCase();
+    for (const prefix of prefixes) {
+      const prefixLower = prefix.toLowerCase();
+      if (textLower.startsWith(prefixLower)) {
+        return text.substring(prefix.length).trim();
+      }
+    }
+    
+    // Try to find and remove any "Subject - " pattern
+    const subjectPattern = /^(Mathematics\s+[12]|Math\s+[12]|Physics|Chemistry|Biology|Paper\s+[12])\s*-\s*/i;
+    const match = text.match(subjectPattern);
+    if (match) {
+      return text.substring(match[0].length).trim();
+    }
+    
     return text;
   }
   return tag;

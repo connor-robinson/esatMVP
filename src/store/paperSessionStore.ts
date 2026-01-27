@@ -83,6 +83,7 @@ interface PaperSessionState {
   sectionElapsedTimes: number[]; // Elapsed time per section in milliseconds (only active time, not instruction pages)
   isPaused: boolean; // Whether session is currently paused
   pausedAt: number | null; // Timestamp when paused
+  isRestoring: boolean; // Whether session is currently being restored from IndexedDB
   
   // Session notes
   notes: string;
@@ -206,6 +207,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       sectionElapsedTimes: [],
       isPaused: false,
       pausedAt: null,
+      isRestoring: false,
       
       notes: '',
       sessionPersistPromise: null,
@@ -741,7 +743,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         set((state) => {
           const newCorrectFlags = [...state.correctFlags];
           newCorrectFlags[questionIndex] = correct;
-          return { correctFlags: newCorrectFlags };
+          const newAnswers = [...state.answers];
+          // Automatically add to drill pool when marked as wrong
+          if (correct === false) {
+            newAnswers[questionIndex] = { ...newAnswers[questionIndex], addToDrill: true };
+          }
+          return { correctFlags: newCorrectFlags, answers: newAnswers };
         });
         get().schedulePersist();
       },
@@ -1335,11 +1342,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const currentSectionIndex = state.currentSectionIndex;
         
         // Restore pipeline state
-        const wasOnInstruction = state.currentPipelineState === "instruction";
+        const wasOnInstruction = state.currentPipelineState === "instruction" && 
+                                state.sectionInstructionTimer !== null && 
+                                state.sectionInstructionTimer > 0;
         
-        if (wasOnInstruction && state.sectionInstructionTimer !== null && state.sectionInstructionTimer > 0) {
+        if (wasOnInstruction) {
           // Restore instruction timer - recalculate deadline based on remaining time
-          const remainingSeconds = state.sectionInstructionTimer;
+          const remainingSeconds = state.sectionInstructionTimer || 0;
           const newDeadline = now + (remainingSeconds * 1000);
           
           set({
@@ -1352,7 +1361,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             lastActiveTimestamp: now,
           });
         } else {
-          // Resume active section
+          // Resume active section - skip instruction timer
           const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
           const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
           
@@ -1371,6 +1380,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             pausedAt: null,
             sectionStartTimes: newSectionStartTimes,
             sectionDeadlines: newSectionDeadlines,
+            sectionInstructionTimer: null, // Explicitly set to null to skip intro
+            sectionInstructionDeadline: null,
+            instructionTimerStartedAt: null,
             currentPipelineState: "section",
             lastActiveTimestamp: now,
           });
@@ -1609,40 +1621,41 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             }
           }
           
+          // Store the restored question index before loading questions
+          const restoredQuestionIndex = state.currentQuestionIndex || 0;
+          
           // If questions are not loaded, load them
           const finalState = get();
           if (finalState.questions.length === 0 && finalState.paperId) {
             await finalState.loadQuestions(finalState.paperId);
             
-            // After questions load, preserve currentQuestionIndex from restored state
-            const stateAfterLoad = get();
-            const restoredIndex = state.currentQuestionIndex || 0;
-            if (stateAfterLoad.questions.length > 0) {
-              if (restoredIndex >= 0 && restoredIndex < stateAfterLoad.questions.length) {
-                // Index is valid, navigate to it
-                stateAfterLoad.navigateToQuestion(restoredIndex);
-              } else if (restoredIndex >= stateAfterLoad.questions.length) {
-                // Index is out of bounds, clamp to last question
-                const clampedIndex = stateAfterLoad.questions.length - 1;
-                set({ currentQuestionIndex: clampedIndex });
-                stateAfterLoad.navigateToQuestion(clampedIndex);
-              }
-            }
-          } else {
-            // Questions already loaded, just ensure currentQuestionIndex is valid
+            // After questions load, restore currentQuestionIndex
             const stateAfterLoad = get();
             if (stateAfterLoad.questions.length > 0) {
-              const restoredIndex = state.currentQuestionIndex || 0;
-              if (restoredIndex >= 0 && restoredIndex < stateAfterLoad.questions.length) {
-                // Index is valid, navigate to it to ensure UI is in sync
-                stateAfterLoad.navigateToQuestion(restoredIndex);
-              } else if (restoredIndex >= stateAfterLoad.questions.length) {
-                // Index is out of bounds, clamp to last question
-                const clampedIndex = stateAfterLoad.questions.length - 1;
-                set({ currentQuestionIndex: clampedIndex });
-                stateAfterLoad.navigateToQuestion(clampedIndex);
+              // Validate and clamp the restored index
+              let targetIndex = restoredQuestionIndex;
+              if (targetIndex < 0) {
+                targetIndex = 0;
+              } else if (targetIndex >= stateAfterLoad.questions.length) {
+                targetIndex = stateAfterLoad.questions.length - 1;
               }
+              
+              // Set the index and navigate to ensure UI is in sync
+              set({ currentQuestionIndex: targetIndex });
+              stateAfterLoad.navigateToQuestion(targetIndex);
             }
+          } else if (finalState.questions.length > 0) {
+            // Questions already loaded, validate and restore currentQuestionIndex
+            let targetIndex = restoredQuestionIndex;
+            if (targetIndex < 0) {
+              targetIndex = 0;
+            } else if (targetIndex >= finalState.questions.length) {
+              targetIndex = finalState.questions.length - 1;
+            }
+            
+            // Set the index and navigate to ensure UI is in sync
+            set({ currentQuestionIndex: targetIndex });
+            finalState.navigateToQuestion(targetIndex);
           }
         } catch (error) {
           console.error('[paperSessionStore] Failed to load session from IndexedDB:', error);

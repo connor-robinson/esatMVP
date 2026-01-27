@@ -15,7 +15,7 @@ interface Question {
   generation_id: string;
   schema_id: string;
   difficulty: string;
-  status: string;
+  status: 'pending' | 'approved' | 'deleted';
   question_stem: string;
   options: Record<string, string>;
   correct_option: string;
@@ -30,6 +30,8 @@ interface Question {
   tags_confidence?: any;
   tags_labeled_at?: string | null;
   tags_labeled_by?: string | null;
+  subjects?: string | null;
+  test_type?: 'ESAT' | 'TMUA';
   created_at: string;
 }
 
@@ -53,6 +55,7 @@ export default function ReviewPage() {
   const [stats, setStats] = useState<any>(null);
   const [primaryTagFilter, setPrimaryTagFilter] = useState<string>("");
   const [secondaryTagFilter, setSecondaryTagFilter] = useState<string>("");
+  const [subjectsFilter, setSubjectsFilter] = useState<string>("");
   const [generationStatus, setGenerationStatus] = useState<GenerationStatus>({
     status: "idle",
     total: 0,
@@ -113,7 +116,7 @@ export default function ReviewPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        status: "pending_review",
+        status: "pending",
         page: page.toString(),
         limit: "20",
       });
@@ -123,6 +126,9 @@ export default function ReviewPage() {
       }
       if (secondaryTagFilter) {
         params.append("secondary_tag", secondaryTagFilter);
+      }
+      if (subjectsFilter) {
+        params.append("subjects", subjectsFilter);
       }
       
       const response = await fetch(`/api/questions?${params.toString()}`);
@@ -138,7 +144,7 @@ export default function ReviewPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, primaryTagFilter, secondaryTagFilter]);
+  }, [page, primaryTagFilter, secondaryTagFilter, subjectsFilter]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -166,7 +172,7 @@ export default function ReviewPage() {
     }
   }, []);
 
-  const handleStatusUpdate = async (status: string, notes?: string) => {
+  const handleStatusUpdate = async (status: string) => {
     if (!selectedQuestion) return;
 
     try {
@@ -177,7 +183,7 @@ export default function ReviewPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ status, review_notes: notes }),
+          body: JSON.stringify({ status }),
         }
       );
 
@@ -269,7 +275,7 @@ export default function ReviewPage() {
       
       // Wait a moment for state to update, then find next pending question
       setTimeout(async () => {
-        const pendingQuestions = questions.filter(q => q.status === "pending_review" && q.id !== questionId);
+        const pendingQuestions = questions.filter(q => q.status === "pending" && q.id !== questionId);
         
         if (pendingQuestions.length > 0) {
           // Move to first pending question
@@ -277,7 +283,7 @@ export default function ReviewPage() {
           await fetchQuestionDetail(nextQuestion.id);
         } else {
           // No more pending questions, try to fetch fresh list
-          const response = await fetch("/api/questions?status=pending_review&page=1&limit=100");
+          const response = await fetch("/api/questions?status=pending&page=1&limit=100");
           if (response.ok) {
             const data = await response.json();
             if (data.questions && data.questions.length > 0) {
@@ -299,14 +305,14 @@ export default function ReviewPage() {
 
   const handleReject = async (questionId: string) => {
     try {
-      await handleStatusUpdate("rejected");
+      await handleStatusUpdate("deleted");
       
       // Refresh questions to get updated list
       await fetchQuestions();
       
       // Wait a moment for state to update, then find next pending question
       setTimeout(async () => {
-        const pendingQuestions = questions.filter(q => q.status === "pending_review" && q.id !== questionId);
+        const pendingQuestions = questions.filter(q => q.status === "pending" && q.id !== questionId);
         
         if (pendingQuestions.length > 0) {
           // Move to first pending question
@@ -314,7 +320,7 @@ export default function ReviewPage() {
           await fetchQuestionDetail(nextQuestion.id);
         } else {
           // No more pending questions, try to fetch fresh list
-          const response = await fetch("/api/questions?status=pending_review&page=1&limit=100");
+          const response = await fetch("/api/questions?status=pending&page=1&limit=100");
           if (response.ok) {
             const data = await response.json();
             if (data.questions && data.questions.length > 0) {
@@ -662,7 +668,7 @@ export default function ReviewPage() {
           <Card className="p-4">
             <div className="text-sm text-neutral-400">Pending</div>
             <div className="text-2xl font-bold text-yellow-400">
-              {stats.byStatus?.pending_review || 0}
+              {stats.byStatus?.pending || 0}
             </div>
           </Card>
           <Card className="p-4">
@@ -672,9 +678,9 @@ export default function ReviewPage() {
             </div>
           </Card>
           <Card className="p-4">
-            <div className="text-sm text-neutral-400">Rejected</div>
+            <div className="text-sm text-neutral-400">Deleted</div>
             <div className="text-2xl font-bold text-red-400">
-              {stats.byStatus?.rejected || 0}
+              {stats.byStatus?.deleted || 0}
             </div>
           </Card>
         </div>
@@ -688,8 +694,28 @@ export default function ReviewPage() {
               Pending Questions ({questions.length})
             </h2>
             
-            {/* Tag Filters */}
+            {/* Filters */}
             <div className="mb-4 space-y-2">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Filter by Subject</label>
+                <select
+                  value={subjectsFilter}
+                  onChange={(e) => {
+                    setSubjectsFilter(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full px-3 py-2 rounded bg-neutral-800 border border-neutral-700 text-white text-sm"
+                >
+                  <option value="">All Subjects</option>
+                  <option value="Math 1">Math 1</option>
+                  <option value="Math 2">Math 2</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Paper 1">Paper 1 (TMUA)</option>
+                  <option value="Paper 2">Paper 2 (TMUA)</option>
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-semibold mb-1">Filter by Primary Tag</label>
                 <input
@@ -699,7 +725,7 @@ export default function ReviewPage() {
                     setPrimaryTagFilter(e.target.value);
                     setPage(1);
                   }}
-                  placeholder="e.g., M1, MM1, P1"
+                  placeholder="e.g., Biology - Cells, Chemistry - Atomic structure"
                   className="w-full px-3 py-2 rounded bg-neutral-800 border border-neutral-700 text-white text-sm"
                 />
               </div>
@@ -712,15 +738,16 @@ export default function ReviewPage() {
                     setSecondaryTagFilter(e.target.value);
                     setPage(1);
                   }}
-                  placeholder="e.g., M2, M3"
+                  placeholder="e.g., Biology - Enzymes, Chemistry - The Periodic Table"
                   className="w-full px-3 py-2 rounded bg-neutral-800 border border-neutral-700 text-white text-sm"
                 />
               </div>
-              {(primaryTagFilter || secondaryTagFilter) && (
+              {(primaryTagFilter || secondaryTagFilter || subjectsFilter) && (
                 <Button
                   onClick={() => {
                     setPrimaryTagFilter("");
                     setSecondaryTagFilter("");
+                    setSubjectsFilter("");
                     setPage(1);
                   }}
                   variant="secondary"

@@ -267,6 +267,75 @@ class CurriculumParser:
                 for paper in self.curriculum_data["papers"]
             ]
         }
+    
+    def map_tag_code_to_text(self, tag_code: str, paper_id: str) -> str:
+        """
+        Map a tag code to its curriculum text name.
+        
+        Args:
+            tag_code: Tag code (e.g., "M1", "MM1", "P1", "C1", "B1")
+            paper_id: Paper ID (e.g., "math1", "math2", "physics", "chemistry", "biology")
+        
+        Returns:
+            Topic title text (e.g., "Units", "Algebra and functions", "Electricity")
+            Returns the original tag_code if mapping not found
+        """
+        # Get the paper
+        paper = self.papers_by_id.get(paper_id)
+        if not paper:
+            return tag_code
+        
+        # Extract the numeric part from tag code
+        # Handle different formats: M1, MM1, P1, C1, B1
+        numeric_part = None
+        if tag_code.startswith("MM"):
+            numeric_part = tag_code[2:]
+        elif len(tag_code) > 1 and tag_code[0].isalpha():
+            numeric_part = tag_code[1:]
+        
+        if numeric_part is None:
+            return tag_code
+        
+        # For Math 2, handle both M1-M7 and MM1-MM7 formats
+        if paper_id == "math2":
+            # Try MM format first
+            for topic in paper["topics"]:
+                if topic["code"] == numeric_part:
+                    return topic["title"]
+            # If not found, return original
+            return tag_code
+        
+        # For other papers, match by numeric code
+        for topic in paper["topics"]:
+            if topic["code"] == numeric_part:
+                return topic["title"]
+        
+        return tag_code
+    
+    def map_tags_to_text(self, primary_tag: Optional[str], secondary_tags: Optional[List[str]], paper_id: str) -> Tuple[Optional[str], List[str]]:
+        """
+        Map primary and secondary tag codes to their curriculum text names.
+        
+        Args:
+            primary_tag: Primary tag code (e.g., "M1", "MM1", "P1")
+            secondary_tags: List of secondary tag codes
+            paper_id: Paper ID (e.g., "math1", "math2", "physics", "chemistry", "biology")
+        
+        Returns:
+            Tuple of (mapped_primary_tag, mapped_secondary_tags)
+        """
+        mapped_primary = None
+        if primary_tag:
+            mapped_primary = self.map_tag_code_to_text(primary_tag, paper_id)
+        
+        mapped_secondary = []
+        if secondary_tags:
+            mapped_secondary = [
+                self.map_tag_code_to_text(tag, paper_id)
+                for tag in secondary_tags
+            ]
+        
+        return mapped_primary, mapped_secondary
 
 
 # Convenience function for easy import

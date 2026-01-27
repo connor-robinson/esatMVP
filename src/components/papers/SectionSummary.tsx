@@ -5,10 +5,10 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Button } from "@/components/ui/Button";
 import type { PaperSection, Question } from "@/types/papers";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import { getSectionColor } from "@/config/colors";
+import { cn } from "@/lib/utils";
 
 interface SectionSummaryProps {
   currentSectionIndex: number;
@@ -111,12 +111,12 @@ export function SectionSummary({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-8 py-8">
-      <div className="w-full max-w-3xl space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="w-full max-w-2xl space-y-6">
         {/* Progress Indicator */}
         {totalSections > 1 && (
-          <div className="w-full space-y-2">
-            <div className="flex items-center justify-between text-sm text-neutral-400">
+          <div className="w-full space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono text-white/60 uppercase tracking-wide">
               <span>Section {currentSectionIndex + 1} of {totalSections}</span>
               <span>{completedSections}/{totalSections} sections completed</span>
             </div>
@@ -126,7 +126,7 @@ export function SectionSummary({
                 {selectedSections.slice(0, completedSections).map((section, idx) => (
                   <div
                     key={idx}
-                    className="px-3 py-1 rounded-md text-sm font-medium text-white"
+                    className="px-3 py-1.5 rounded-organic-md text-xs font-mono font-medium text-white"
                     style={{ backgroundColor: getSectionColor(section) }}
                   >
                     {section}
@@ -137,83 +137,81 @@ export function SectionSummary({
           </div>
         )}
 
-        {/* Section Title - Full Width Row */}
+        {/* Section Title */}
         <div className="w-full">
           {cleanPartLetter && partName ? (
-            <h2 className="text-2xl font-semibold text-neutral-100 text-center py-2">
+            <h2 className="text-xl font-mono font-semibold text-white/90 text-center py-2">
               This is{' '}
               <span style={{ color: getSectionColor(currentSection) }}>Part {cleanPartLetter}</span>
               {`: ${partName} of the ${paperName}${examYear ? ` ${examYear}` : ''} paper`}
             </h2>
           ) : (
-            <h2 className="text-2xl font-semibold text-neutral-100 text-center py-2">
+            <h2 className="text-xl font-mono font-semibold text-white/90 text-center py-2">
               {sectionTitle}
             </h2>
           )}
         </div>
 
-        {/* Countdown Timer - Centered Below Title */}
-        <div className="flex items-center justify-center gap-2 py-2">
-          <svg className="w-4 h-4 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Countdown Timer */}
+        <div className="flex items-center justify-center gap-3 py-2">
+          <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
             <circle cx="12" cy="12" r="10" strokeWidth="2"/>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2" />
           </svg>
-          <span className="text-lg font-semibold tabular-nums text-neutral-100">
+          <span className="text-lg font-mono font-semibold tabular-nums text-white/90">
             {formatTime(displaySeconds)}
           </span>
-          <span className="text-xs text-neutral-400 whitespace-nowrap">
+          <span className="text-xs font-mono text-white/60 whitespace-nowrap">
             You have 1 minute to read these instructions
           </span>
         </div>
 
-        {/* Instructions Table */}
-        <div className="space-y-2">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left py-2 px-4 text-sm font-semibold text-neutral-300 uppercase tracking-wider">
-                  Number of questions
-                </th>
-                <th className="text-left py-2 px-4 text-sm font-semibold text-neutral-300 uppercase tracking-wider">
-                  Time
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-white/5">
-                <td className="py-2 px-4 text-sm text-neutral-200">
-                  {questionCount}
-                </td>
-                <td className="py-2 px-4 text-sm text-neutral-200">
-                  {formatMinutes(timeLimit)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {/* Instructions Card */}
+        <div className="bg-white/[0.02] border border-white/10 rounded-organic-lg p-6 space-y-4">
+          {/* Instructions Table */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Number of questions</span>
+              <span className="text-base font-mono font-semibold text-white/90">
+                {questionCount}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Time</span>
+              <span className="text-base font-mono font-semibold text-white/90">
+                {formatMinutes(timeLimit)}
+              </span>
+            </div>
+          </div>
 
-        {/* Instructions Text */}
-        <div className="space-y-2 text-neutral-300">
-          <p className="text-sm leading-relaxed">
-            For each question, choose the one answer you consider correct.
-          </p>
-          
-          <p className="text-sm leading-relaxed">
-            There are no penalties for incorrect responses, only marks for correct answers, so you should attempt all {questionCount} questions. Each question is worth one mark.
-          </p>
-          
-          <p className="text-sm leading-relaxed font-medium">
-            Please click the Next (N) button to proceed.
-          </p>
+          {/* Instructions Text */}
+          <div className="space-y-3 pt-2 border-t border-white/5">
+            <p className="text-sm font-mono text-white/80 leading-relaxed">
+              For each question, choose the one answer you consider correct.
+            </p>
+            
+            <p className="text-sm font-mono text-white/80 leading-relaxed">
+              There are no penalties for incorrect responses, only marks for correct answers, so you should attempt all {questionCount} questions. Each question is worth one mark.
+            </p>
+            
+            <p className="text-sm font-mono text-white/90 leading-relaxed font-semibold">
+              Please click the Next (N) button to proceed.
+            </p>
+          </div>
         </div>
 
         {/* Next Button */}
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-center">
           <button
             onClick={() => {
               onNext();
             }}
-            className="px-8 py-3 text-base font-medium rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview transition-all duration-fast ease-signature"
+            className={cn(
+              "px-8 py-3 rounded-organic-md transition-all duration-fast ease-signature",
+              "flex items-center justify-center gap-2 font-mono text-sm font-medium",
+              "bg-[#85BC82]/30 hover:bg-[#85BC82]/40 text-[#85BC82] cursor-pointer",
+              "border border-[#85BC82]/30"
+            )}
             style={{
               boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
             }}

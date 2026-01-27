@@ -27,7 +27,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
       solution_key_insight: question.solution_key_insight,
       distractor_map: question.distractor_map,
       difficulty: question.difficulty,
-      paper: question.paper,
+      subjects: question.subjects,
       primary_tag: question.primary_tag,
       secondary_tags: question.secondary_tags,
     };
@@ -182,6 +182,40 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
     if (!editedQuestion) return;
     
     const currentOptions = editedQuestion.options || {};
+    
+    // If value is blank/empty, remove the option (unless it's the correct option)
+    if (!value || value.trim() === '') {
+      // Don't allow removing the correct option
+      if (letter === editedQuestion.correct_option) {
+        console.warn('[useQuestionEditor] Cannot remove the correct option');
+        return;
+      }
+      
+      // Remove the option
+      const { [letter]: removed, ...remainingOptions } = currentOptions;
+      const currentDistractorMap = editedQuestion.distractor_map || {};
+      const { [letter]: removedDistractor, ...remainingDistractors } = currentDistractorMap;
+      
+      const updated = {
+        ...editedQuestion,
+        options: remainingOptions,
+        distractor_map: Object.keys(remainingDistractors).length > 0 ? remainingDistractors : null,
+      };
+      
+      setEditedQuestion(updated);
+      
+      if (autoSave) {
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+        saveChanges(updated).catch(err => {
+          console.error('[useQuestionEditor] Auto-save failed:', err);
+        });
+      }
+      return;
+    }
+    
+    // Otherwise, update the option normally
     const updated = {
       ...editedQuestion,
       options: {
@@ -209,6 +243,77 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
   const updateKeyInsight = useCallback((value: string, autoSave: boolean = true) => {
     updateField('solution_key_insight', value, autoSave);
   }, [updateField]);
+
+  const addOption = useCallback((autoSave: boolean = true) => {
+    if (!editedQuestion) return null;
+    
+    const currentOptions = editedQuestion.options || {};
+    const existingLetters = Object.keys(currentOptions).sort();
+    
+    // Find next available letter (A-Z)
+    let nextLetter = 'A';
+    for (let i = 0; i < 26; i++) {
+      const letter = String.fromCharCode(65 + i); // A=65, B=66, etc.
+      if (!existingLetters.includes(letter)) {
+        nextLetter = letter;
+        break;
+      }
+    }
+    
+    const updated = {
+      ...editedQuestion,
+      options: {
+        ...currentOptions,
+        [nextLetter]: '', // Empty option text
+      },
+    };
+    
+    setEditedQuestion(updated);
+    
+    if (autoSave) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+    
+    return nextLetter;
+  }, [editedQuestion, saveChanges]);
+
+  const removeOption = useCallback((letter: string, autoSave: boolean = true) => {
+    if (!editedQuestion) return;
+    
+    const currentOptions = editedQuestion.options || {};
+    const currentDistractorMap = editedQuestion.distractor_map || {};
+    
+    // Don't allow removing the correct option
+    if (letter === editedQuestion.correct_option) {
+      console.warn('[useQuestionEditor] Cannot remove the correct option');
+      return;
+    }
+    
+    const { [letter]: removed, ...remainingOptions } = currentOptions;
+    const { [letter]: removedDistractor, ...remainingDistractors } = currentDistractorMap;
+    
+    const updated = {
+      ...editedQuestion,
+      options: remainingOptions,
+      distractor_map: Object.keys(remainingDistractors).length > 0 ? remainingDistractors : null,
+    };
+    
+    setEditedQuestion(updated);
+    
+    if (autoSave) {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      saveChanges(updated).catch(err => {
+        console.error('[useQuestionEditor] Auto-save failed:', err);
+      });
+    }
+  }, [editedQuestion, saveChanges]);
 
   const updateDistractor = useCallback((letter: string, value: string, autoSave: boolean = true) => {
     if (!editedQuestion) return;
@@ -238,7 +343,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
   }, [updateField]);
 
   const updatePaper = useCallback((value: string | null) => {
-    updateField('paper', value, true);
+    updateField('subjects', value, true);
   }, [updateField]);
 
   const updatePrimaryTag = useCallback((value: string | null) => {
@@ -313,6 +418,8 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
     editedQuestion: safeEditedQuestion,
     updateQuestionStem,
     updateOption,
+    addOption,
+    removeOption,
     updateSolutionReasoning,
     updateKeyInsight,
     updateDistractor,

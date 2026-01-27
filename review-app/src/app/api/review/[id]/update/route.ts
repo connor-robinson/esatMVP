@@ -82,8 +82,8 @@ export async function PATCH(
     if (body.difficulty !== undefined) {
       updates.difficulty = body.difficulty;
     }
-    if (body.paper !== undefined) {
-      updates.paper = body.paper;
+    if (body.subjects !== undefined) {
+      updates.subjects = body.subjects;
     }
     if (body.primary_tag !== undefined) {
       updates.primary_tag = body.primary_tag;
@@ -92,11 +92,8 @@ export async function PATCH(
       updates.secondary_tags = body.secondary_tags;
     }
 
-    // Update updated_at and optionally reviewed_by
+    // Update updated_at
     updates.updated_at = new Date().toISOString();
-    if (userId) {
-      updates.reviewed_by = userId;
-    }
 
     // Validate that we have at least one field to update
     if (Object.keys(updates).length === 1 && updates.updated_at) {

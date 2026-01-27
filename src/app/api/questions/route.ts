@@ -6,13 +6,14 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status") || "pending_review";
+    const status = searchParams.get("status") || "pending";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const schema = searchParams.get("schema");
     const difficulty = searchParams.get("difficulty");
     const primaryTag = searchParams.get("primary_tag");
     const secondaryTag = searchParams.get("secondary_tag");
+    const subjects = searchParams.get("subjects");
 
     const supabase = createServerClient();
     
@@ -38,6 +39,9 @@ export async function GET(request: Request) {
     }
     if (secondaryTag) {
       query = query.contains("secondary_tags", [secondaryTag]);
+    }
+    if (subjects) {
+      query = query.eq("subjects", subjects);
     }
 
     // Apply pagination
@@ -70,7 +74,7 @@ export async function GET(request: Request) {
         schema_id: q.schema_id,
         primary_tag: q.primary_tag,
         secondary_tags: q.secondary_tags,
-        paper: q.paper,
+        subjects: q.subjects,
         tags_labeled_by: q.tags_labeled_by,
       })));
     }

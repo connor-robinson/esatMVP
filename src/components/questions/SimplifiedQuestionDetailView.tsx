@@ -27,7 +27,8 @@ interface Question {
   tags_confidence?: any;
   tags_labeled_at?: string | null;
   tags_labeled_by?: string | null;
-  paper?: string | null;
+  subjects?: string | null;
+  test_type?: 'ESAT' | 'TMUA';
   created_at: string;
 }
 
@@ -38,33 +39,41 @@ interface SimplifiedQuestionDetailViewProps {
   onReject?: (questionId: string) => Promise<void>;
 }
 
-// Helper function to get subject color based on paper name
-const getSubjectColor = (paper: string | null): string => {
-  if (!paper) return 'bg-white/10 text-white/70';
+// Helper function to get subject color based on subjects name
+const getSubjectColor = (subjects: string | null | undefined): string => {
+  if (!subjects) return 'bg-white/10 text-white/70';
   
-  const paperLower = paper.toLowerCase().trim();
+  const subjectsLower = subjects.toLowerCase().trim();
   
-  // Math matching - check for math 1, math 2, m1, m2, etc.
-  if (paperLower.includes('math 1') || paperLower.includes('math1') || paperLower === 'm1' || paperLower.startsWith('m1')) {
+  // Math matching
+  if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
-  if (paperLower.includes('math 2') || paperLower.includes('math2') || paperLower === 'm2' || paperLower.startsWith('m2')) {
+  if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
   
-  // Physics matching - check for physics, p1, p2, etc.
-  if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2' || paperLower.startsWith('p1') || paperLower.startsWith('p2')) {
+  // Physics matching
+  if (subjectsLower === 'physics') {
     return 'bg-[#2f2835]/30 text-[#a78bfa]';
   }
   
-  // Chemistry matching - check for chemistry, c1, c2, etc.
-  if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
+  // Chemistry matching
+  if (subjectsLower === 'chemistry') {
     return 'bg-[#854952]/20 text-[#ef7d7d]';
   }
   
-  // Biology matching - check for biology, b1, b2, etc.
-  if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
+  // Biology matching
+  if (subjectsLower === 'biology') {
     return 'bg-[#506141]/20 text-[#85BC82]';
+  }
+  
+  // TMUA Paper matching
+  if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
   }
   
   // Default fallback
@@ -138,10 +147,18 @@ export function SimplifiedQuestionDetailView({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
           <Badge variant="default">{question.status}</Badge>
+          {question.subjects && (
+            <Badge className={getSubjectColor(question.subjects)}>
+              {question.subjects}
+            </Badge>
+          )}
+          {question.test_type && (
+            <Badge variant="secondary">{question.test_type}</Badge>
+          )}
         </div>
         <div className="text-sm text-neutral-400">
           {new Date(question.created_at).toLocaleString()}
@@ -471,7 +488,7 @@ export function SimplifiedQuestionDetailView({
                 type="text"
                 value={editedContent.primary_tag || question.primary_tag || ""}
                 onChange={(e) => setEditedContent(prev => ({ ...prev, primary_tag: e.target.value }))}
-                placeholder="e.g., M1, MM1, P1"
+                placeholder="e.g., Biology - Cells, Chemistry - Atomic structure"
                 className="w-full px-3 py-2 rounded bg-neutral-800 border border-neutral-700 text-white"
               />
             </div>
@@ -484,7 +501,7 @@ export function SimplifiedQuestionDetailView({
                   const tags = e.target.value.split(",").map(t => t.trim()).filter(t => t);
                   setEditedContent(prev => ({ ...prev, secondary_tags: tags }));
                 }}
-                placeholder="e.g., M2, M3"
+                placeholder="e.g., Biology - Enzymes, Chemistry - The Periodic Table"
                 className="w-full px-3 py-2 rounded bg-neutral-800 border border-neutral-700 text-white"
               />
             </div>

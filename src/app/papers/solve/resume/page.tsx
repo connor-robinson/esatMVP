@@ -8,9 +8,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { Container } from "@/components/layout/Container";
-import { Button } from "@/components/ui/Button";
 import { getSectionColor } from "@/config/colors";
+import { cn } from "@/lib/utils";
 
 export default function ResumePage() {
   const router = useRouter();
@@ -119,83 +118,96 @@ export default function ResumePage() {
   };
 
   return (
-    <Container size="lg" className="min-h-screen">
-      <div className="flex flex-col items-center justify-center min-h-screen px-8 py-8">
-        <div className="w-full max-w-3xl space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-semibold text-neutral-100">
-              Session Paused
-            </h1>
-            <p className="text-lg text-neutral-400">
-              {paperDisplayName}
-            </p>
+    <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="w-full max-w-2xl space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <h1 className="text-2xl font-mono font-semibold text-white/90">
+            Session Paused
+          </h1>
+          <p className="text-sm font-mono text-white/60">
+            {paperDisplayName}
+          </p>
+        </div>
+
+        {/* Session Info Card */}
+        <div className="bg-white/[0.02] border border-white/10 rounded-organic-lg p-6 space-y-4">
+          {/* Current Question */}
+          <div className="flex items-center justify-between py-2 border-b border-white/5">
+            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Current Question</span>
+            <span className="text-base font-mono font-semibold text-white/90">
+              Question {currentQuestionNumber}
+            </span>
           </div>
 
-          {/* Session Info Card */}
-          <div className="bg-neutral-900/50 border border-white/10 rounded-lg p-6 space-y-4">
-            {/* Current Question */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-400">Current Question</span>
-              <span className="text-lg font-semibold text-neutral-100">
-                Question {currentQuestionNumber}
+          {/* Section */}
+          {selectedSections.length > 0 && (
+            <div className="flex items-center justify-between py-2 border-b border-white/5">
+              <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Section</span>
+              <span 
+                className="text-base font-mono font-semibold px-3 py-1.5 rounded-organic-md"
+                style={{ 
+                  backgroundColor: getSectionColor(currentSection),
+                  color: '#ffffff'
+                }}
+              >
+                {currentSection}
               </span>
             </div>
+          )}
 
-            {/* Section */}
-            {selectedSections.length > 0 && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-neutral-400">Section</span>
-                <span 
-                  className="text-lg font-semibold px-3 py-1 rounded-md"
-                  style={{ 
-                    backgroundColor: getSectionColor(currentSection),
-                    color: '#ffffff'
-                  }}
-                >
-                  {currentSection}
-                </span>
-              </div>
-            )}
-
-            {/* Last Active */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-400">Last Active</span>
-              <span className="text-lg font-semibold text-neutral-100">
-                {formatLastActive()}
-              </span>
-            </div>
-
-            {/* Time Remaining */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-400">Time Remaining</span>
-              <span className="text-lg font-semibold text-neutral-100 tabular-nums">
-                {formatTimeRemaining()}
-              </span>
-            </div>
+          {/* Last Active */}
+          <div className="flex items-center justify-between py-2 border-b border-white/5">
+            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Last Active</span>
+            <span className="text-base font-mono font-semibold text-white/90">
+              {formatLastActive()}
+            </span>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleResume}
-              className="flex-1 sm:flex-none px-8 py-3 text-base font-medium"
-            >
-              Resume Session
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={handleQuit}
-              className="flex-1 sm:flex-none px-8 py-3 text-base font-medium"
-            >
-              Quit Session
-            </Button>
+          {/* Time Remaining */}
+          <div className="flex items-center justify-between py-2">
+            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Time Remaining</span>
+            <span className="text-base font-mono font-semibold text-white/90 tabular-nums">
+              {formatTimeRemaining()}
+            </span>
           </div>
         </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleResume}
+            className={cn(
+              "flex-1 sm:flex-none px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature",
+              "flex items-center justify-center gap-2 font-mono text-sm font-medium",
+              "bg-[#85BC82]/30 hover:bg-[#85BC82]/40 text-[#85BC82] cursor-pointer",
+              "border border-[#85BC82]/30"
+            )}
+            style={{
+              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+            }}
+          >
+            Resume Session
+          </button>
+          <button
+            onClick={handleQuit}
+            className={cn(
+              "flex-1 sm:flex-none px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature",
+              "flex items-center justify-center gap-2 font-mono text-sm font-medium",
+              "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 cursor-pointer",
+              "border border-white/10"
+            )}
+          >
+            Quit Session
+          </button>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 }

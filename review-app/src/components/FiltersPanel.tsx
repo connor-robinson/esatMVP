@@ -120,7 +120,8 @@ export function FiltersPanel({
                   onClick={() => {
                     onFiltersChange({
                       ...filters,
-                      paperType: filters.paperType === type ? undefined : type,
+                      // Always keep a paperType selected; clicking just selects this type
+                      paperType: type,
                       subjects: [], // Reset subjects when changing paper type
                     });
                   }}

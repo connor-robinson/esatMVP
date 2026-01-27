@@ -27,32 +27,40 @@ interface QuestionCardProps {
 }
 
 // Helper function to get subject color based on paper name
-const getSubjectColor = (paper: string | null): string => {
-  if (!paper) return 'bg-white/10 text-white/70';
+const getSubjectColor = (subjects: string | null | undefined): string => {
+  if (!subjects) return 'bg-white/10 text-white/70';
   
-  const paperLower = paper.toLowerCase().trim();
+  const subjectsLower = subjects.toLowerCase().trim();
   
-  // Math matching - check for math 1, math 2, m1, m2, etc.
-  if (paperLower.includes('math 1') || paperLower.includes('math1') || paperLower === 'm1' || paperLower.startsWith('m1')) {
+  // Math matching
+  if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
-  if (paperLower.includes('math 2') || paperLower.includes('math2') || paperLower === 'm2' || paperLower.startsWith('m2')) {
+  if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
     return 'bg-[#406166]/20 text-[#5da8f0]';
   }
   
-  // Physics matching - check for physics, p1, p2, etc.
-  if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2' || paperLower.startsWith('p1') || paperLower.startsWith('p2')) {
+  // Physics matching
+  if (subjectsLower === 'physics') {
     return 'bg-[#2f2835]/30 text-[#a78bfa]';
   }
   
-  // Chemistry matching - check for chemistry, c1, c2, etc.
-  if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
+  // Chemistry matching
+  if (subjectsLower === 'chemistry') {
     return 'bg-[#854952]/20 text-[#ef7d7d]';
   }
   
-  // Biology matching - check for biology, b1, b2, etc.
-  if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
+  // Biology matching
+  if (subjectsLower === 'biology') {
     return 'bg-[#506141]/20 text-[#85BC82]';
+  }
+  
+  // TMUA Paper matching
+  if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
   }
   
   // Default fallback
@@ -206,16 +214,16 @@ export function QuestionCard({
             )}>
               {question.difficulty}
             </span>
-            {question.paper && question.paper.trim() && (
+            {question.subjects && question.subjects.trim() && (
               <span className={cn(
                 "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-                getSubjectColor(question.paper)
+                getSubjectColor(question.subjects)
               )}>
-                {question.paper}
+                {question.subjects}
               </span>
             )}
             {/* TMUA variation mode label (FAR/SIBLINGS) */}
-            {question.paper && (question.paper === 'Paper1' || question.paper === 'Paper2') && question.idea_plan && question.idea_plan.variation_mode && (
+            {question.subjects && (question.subjects === 'Paper 1' || question.subjects === 'Paper 2') && question.idea_plan && question.idea_plan.variation_mode && (
               <span className={cn(
                 "px-3 py-1.5 rounded-organic-md text-xs font-mono",
                 question.idea_plan.variation_mode === 'FAR' 

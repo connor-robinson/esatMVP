@@ -12,6 +12,8 @@ interface QuestionPanelProps {
   editingField: string | null;
   onQuestionStemChange: (value: string) => void;
   onOptionChange: (letter: string, value: string) => void;
+  onAddOption?: () => string | null;
+  onRemoveOption?: (letter: string) => void;
   onDistractorChange?: (letter: string, value: string) => void;
   onAnswerShown?: () => void;
   onDifficultyChange?: (value: 'Easy' | 'Medium' | 'Hard') => void;
@@ -28,6 +30,8 @@ export function QuestionPanel({
   editingField,
   onQuestionStemChange,
   onOptionChange,
+  onAddOption,
+  onRemoveOption,
   onDistractorChange,
   onAnswerShown,
   onDifficultyChange,
@@ -50,26 +54,32 @@ export function QuestionPanel({
   const availablePapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
   
   const availableTopics = useMemo(() => {
-    return getTopicsForPaper(paperType, question.paper);
-  }, [paperType, question.paper]);
+    return getTopicsForPaper(paperType, question.subjects);
+  }, [paperType, question.subjects]);
 
-  const getSubjectColor = (paper: string | null): string => {
-    if (!paper) return 'bg-white/10 text-white/70';
-    const paperLower = paper.toLowerCase().trim();
-    if (paperLower.includes('math 1') || paperLower.includes('math1') || paperLower === 'm1' || paperLower.startsWith('m1')) {
+  const getSubjectColor = (subjects: string | null): string => {
+    if (!subjects) return 'bg-white/10 text-white/70';
+    const subjectsLower = subjects.toLowerCase().trim();
+    if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
       return 'bg-[#406166]/20 text-[#5da8f0]';
     }
-    if (paperLower.includes('math 2') || paperLower.includes('math2') || paperLower === 'm2' || paperLower.startsWith('m2')) {
+    if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
       return 'bg-[#406166]/20 text-[#5da8f0]';
     }
-    if (paperLower.includes('physics') || paperLower === 'physics' || paperLower === 'p1' || paperLower === 'p2' || paperLower.startsWith('p1') || paperLower.startsWith('p2')) {
+    if (subjectsLower === 'physics') {
       return 'bg-[#2f2835]/30 text-[#a78bfa]';
     }
-    if (paperLower.includes('chemistry') || paperLower === 'chemistry' || paperLower === 'c1' || paperLower === 'c2' || paperLower.startsWith('c1') || paperLower.startsWith('c2')) {
+    if (subjectsLower === 'chemistry') {
       return 'bg-[#854952]/20 text-[#ef7d7d]';
     }
-    if (paperLower.includes('biology') || paperLower === 'biology' || paperLower === 'b1' || paperLower === 'b2' || paperLower.startsWith('b1') || paperLower.startsWith('b2')) {
+    if (subjectsLower === 'biology') {
       return 'bg-[#506141]/20 text-[#85BC82]';
+    }
+    if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
+      return 'bg-[#406166]/20 text-[#5da8f0]';
+    }
+    if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
+      return 'bg-[#406166]/20 text-[#5da8f0]';
     }
     return 'bg-white/10 text-white/70';
   };
@@ -77,7 +87,7 @@ export function QuestionPanel({
   const getTagDisplay = (tag: string | null): string => {
     if (!tag) return '';
     const text = getQuestionTagText(question, tag);
-    return formatTagDisplay(tag, text);
+    return formatTagDisplay(tag, text, question);
   };
 
   const findTopicOption = (tagCode: string | null): TopicOption | null => {
@@ -162,10 +172,10 @@ export function QuestionPanel({
           </button>
         )}
 
-        {/* Paper/Subject - Editable Pill */}
-        {editingPill === 'paper' ? (
+        {/* Subjects - Editable Pill */}
+        {editingPill === 'subjects' ? (
           <select
-            value={question.paper || ''}
+            value={question.subjects || ''}
             onChange={(e) => {
               onPaperChange?.(e.target.value || null);
               setEditingPill(null);
@@ -174,7 +184,7 @@ export function QuestionPanel({
             autoFocus
             className={cn(
               "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
-              getSubjectColor(question.paper)
+              getSubjectColor(question.subjects)
             )}
             style={{ backgroundColor: '#0f1114' }}
           >
@@ -184,15 +194,15 @@ export function QuestionPanel({
             ))}
           </select>
         ) : (
-          question.paper && question.paper.trim() && (
+          question.subjects && question.subjects.trim() && (
             <button
-              onClick={() => setEditingPill('paper')}
+              onClick={() => setEditingPill('subjects')}
               className={cn(
                 "px-3 py-1.5 rounded-organic-md text-xs font-mono cursor-pointer hover:opacity-80 transition-opacity",
-                getSubjectColor(question.paper)
+                getSubjectColor(question.subjects)
               )}
             >
-              {question.paper}
+              {question.subjects}
             </button>
           )
         )}
@@ -209,7 +219,7 @@ export function QuestionPanel({
             autoFocus
             className={cn(
               "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
-              getSubjectColor(question.paper)
+              getSubjectColor(question.subjects)
             )}
             style={{ backgroundColor: '#0f1114' }}
           >
@@ -254,7 +264,7 @@ export function QuestionPanel({
                 autoFocus
                 className={cn(
                   "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
-                  getSubjectColor(question.paper)
+                  getSubjectColor(question.subjects)
                 )}
                 style={{ backgroundColor: '#0f1114' }}
               >
@@ -320,7 +330,7 @@ export function QuestionPanel({
               autoFocus
               className={cn(
                 "px-3 py-1.5 rounded-organic-md text-xs font-mono border border-white/20 bg-[#0f1114] text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[120px]",
-                getSubjectColor(question.paper)
+                getSubjectColor(question.subjects)
               )}
               style={{ backgroundColor: '#0f1114' }}
             >
@@ -419,6 +429,7 @@ export function QuestionPanel({
 
           {/* Options List */}
           {optionLetters.map((letter) => {
+            const canRemove = optionLetters.length > 2 && letter !== question.correct_option;
             const isCorrect = letter === question.correct_option;
             const distractorText = question.distractor_map && typeof question.distractor_map === 'object' 
               ? question.distractor_map[letter] 
@@ -445,7 +456,11 @@ export function QuestionPanel({
                         <textarea
                           value={options[letter] || ''}
                           onChange={(e) => onOptionChange(letter, e.target.value)}
-                          onBlur={() => onStopEditingField?.()}
+                          onBlur={(e) => {
+                            // Auto-remove if blank (handled in updateOption)
+                            onOptionChange(letter, e.target.value);
+                            onStopEditingField?.();
+                          }}
                           autoFocus
                           className={cn(
                             "w-full min-h-[60px] p-3 rounded-organic-md bg-white/5 border text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
@@ -546,6 +561,29 @@ export function QuestionPanel({
               </div>
             );
           })}
+          
+          {/* Add Option Button */}
+          {onAddOption && optionLetters.length < 26 && (
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <button
+                onClick={() => {
+                  if (onAddOption) {
+                    const newLetter = onAddOption();
+                    if (newLetter !== null && newLetter !== undefined && onStartEditingField) {
+                      // Start editing the new option immediately
+                      setTimeout(() => {
+                        onStartEditingField(`option_${newLetter}`);
+                      }, 100);
+                    }
+                  }
+                }}
+                className="w-full px-4 py-3 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm border border-white/20 border-dashed"
+              >
+                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                <span>Add Option</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

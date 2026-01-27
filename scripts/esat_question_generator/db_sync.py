@@ -246,14 +246,81 @@ class DatabaseSync:
             
             # Extract tags if available
             tags_data = question_item.get("tags", {})
-            primary_tag = tags_data.get("primary_tag") if tags_data else None
-            secondary_tags = tags_data.get("secondary_tags", []) if tags_data else []
-            tags_confidence = tags_data.get("confidence") if tags_data else None
+            primary_tag_code = tags_data.get("primary_tag") if tags_data else None
+            secondary_tags_codes = tags_data.get("secondary_tags", []) if tags_data else []
+            tags_confidence_raw = tags_data.get("confidence") if tags_data else None
             tags_labeled_at = tags_data.get("labeled_at") if tags_data else None
             tags_labeled_by = tags_data.get("labeled_by") if tags_data else None
             
-            # NEW: Extract paper field (Math 1 / Math 2) for math questions
+            # Extract paper field (Math 1 / Math 2) for math questions
             paper = tags_data.get("paper") if tags_data else None
+            
+            # Map tag codes to curriculum text names
+            # Determine paper_id for ESAT based on schema_id and paper value
+            schema_id = question_item.get("schema_id", "")
+            paper_id = None
+            if schema_id:
+                first_char = schema_id[0].upper()
+                if first_char == "M":
+                    if paper == "Math 1":
+                        paper_id = "math1"
+                    elif paper == "Math 2":
+                        paper_id = "math2"
+                    else:
+                        paper_id = "math1"  # Default to math1
+                elif first_char == "P":
+                    paper_id = "physics"
+                elif first_char == "C":
+                    paper_id = "chemistry"
+                elif first_char == "B":
+                    paper_id = "biology"
+            
+            # Map tags to text if we have a paper_id and curriculum parser
+            primary_tag = primary_tag_code
+            secondary_tags = secondary_tags_codes
+            tags_confidence = tags_confidence_raw
+            
+            if paper_id and (primary_tag_code or secondary_tags_codes):
+                try:
+                    from curriculum_parser import CurriculumParser
+                    parser = CurriculumParser()
+                    if primary_tag_code:
+                        primary_tag = parser.map_tag_code_to_text(primary_tag_code, paper_id)
+                    if secondary_tags_codes:
+                        secondary_tags = [
+                            parser.map_tag_code_to_text(tag, paper_id)
+                            for tag in secondary_tags_codes
+                        ]
+                    # Map tags_confidence keys if it's a dict
+                    if tags_confidence_raw and isinstance(tags_confidence_raw, dict):
+                        tags_confidence = {
+                            parser.map_tag_code_to_text(k, paper_id): v
+                            for k, v in tags_confidence_raw.items()
+                        }
+                except Exception as e:
+                    print(f"[DB_SYNC] Warning: Could not map tags to text: {e}")
+                    # Fall back to original codes
+                    primary_tag = primary_tag_code
+                    secondary_tags = secondary_tags_codes
+                    tags_confidence = tags_confidence_raw
+            
+            # Determine subjects field based on schema_id and paper
+            subjects = None
+            if schema_id:
+                first_char = schema_id[0].upper()
+                if first_char == "M":
+                    if paper == "Math 1":
+                        subjects = "Math 1"
+                    elif paper == "Math 2":
+                        subjects = "Math 2"
+                    else:
+                        subjects = "Math 1"  # Default to Math 1
+                elif first_char == "P":
+                    subjects = "Physics"
+                elif first_char == "C":
+                    subjects = "Chemistry"
+                elif first_char == "B":
+                    subjects = "Biology"
             
             # Prepare database record
             db_record = {
@@ -291,8 +358,24 @@ class DatabaseSync:
                 db_record["tags_labeled_at"] = tags_labeled_at
             if tags_labeled_by:
                 db_record["tags_labeled_by"] = tags_labeled_by
-            if paper:  # NEW: Add paper field for Math questions
-                db_record["paper"] = paper
+            # Add subjects field (required)
+            if subjects:
+                db_record["subjects"] = subjects
+            else:
+                # Fallback: try to infer from schema_id
+                schema_id = question_item.get("schema_id", "")
+                if schema_id:
+                    first_char = schema_id[0].upper()
+                    if first_char == "M":
+                        db_record["subjects"] = "Math 1"  # Default
+                    elif first_char == "P":
+                        db_record["subjects"] = "Physics"
+                    elif first_char == "C":
+                        db_record["subjects"] = "Chemistry"
+                    elif first_char == "B":
+                        db_record["subjects"] = "Biology"
+                else:
+                    db_record["subjects"] = "Math 1"  # Ultimate fallback
             
             # Insert into database
             result = self.client.table("ai_generated_questions").insert(db_record).execute()
@@ -330,17 +413,13 @@ class DatabaseSync:
                 print(f"[DB_SYNC] Exception syncing {question_item.get('id', 'unknown')}: {error_str[:200]}")
                 return None
     
-    def update_question_status(self, generation_id: str, status: str, 
-                              reviewed_by: Optional[str] = None,
-                              review_notes: Optional[str] = None) -> bool:
+    def update_question_status(self, generation_id: str, status: str) -> bool:
         """
         Update the status of a question in the database.
         
         Args:
             generation_id: Generation ID of the question
-            status: New status
-            reviewed_by: User ID who reviewed (optional)
-            review_notes: Review notes (optional)
+            status: New status (pending, approved, or deleted)
             
         Returns:
             True if successful, False otherwise
@@ -351,13 +430,7 @@ class DatabaseSync:
         try:
             update_data = {
                 "status": status,
-                "reviewed_at": datetime.now().isoformat(),
             }
-            
-            if reviewed_by:
-                update_data["reviewed_by"] = reviewed_by
-            if review_notes:
-                update_data["review_notes"] = review_notes
             
             result = self.client.table("ai_generated_questions")\
                 .update(update_data)\

@@ -8,7 +8,7 @@ export type SubjectFilter = 'Math 1' | 'Math 2' | 'Physics' | 'Chemistry' | 'Bio
 export type DifficultyFilter = 'Easy' | 'Medium' | 'Hard' | 'All';
 export type AttemptedFilter = 'New' | 'Attempted' | 'Mix';
 export type AttemptResultFilter = 'Mixed Results' | 'Unseen' | 'Incorrect Before';
-export type ReviewStatusFilter = 'All' | 'Pending Review' | 'Approved' | 'Needs Revision';
+export type ReviewStatusFilter = 'All' | 'Pending' | 'Approved' | 'Deleted';
 
 export interface QuestionBankQuestion {
   id: string;
@@ -21,10 +21,10 @@ export interface QuestionBankQuestion {
   solution_reasoning: string | null;
   solution_key_insight: string | null;
   distractor_map: Record<string, string> | null;
-  paper: string | null;
+  subjects: string;
   primary_tag: string | null;
   secondary_tags: string[] | null;
-  status: 'pending_review' | 'approved' | 'rejected' | 'needs_revision';
+  status: 'pending' | 'approved' | 'deleted';
   created_at: string;
   graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs (deprecated, use graph_specs)
   graph_specs?: Record<string, TMUAGraphSpec> | null; // Map of graph ID to graph spec for questions/solutions with multiple graphs

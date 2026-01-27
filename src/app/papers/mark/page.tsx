@@ -2405,32 +2405,13 @@ export default function PapersMarkPage() {
                 {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
               </div>
             </div>
-            <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake, and check include to add to your drill pool.</div>
-            <div className="flex items-center gap-2 flex-wrap">
-              {(() => {
-                const wrongIdx = questionNumbers.map((_, i) => i).filter(i => (derivedCorrectFlags[i] ?? correctFlags[i]) === false);
-                const allSelected = wrongIdx.length > 0 && wrongIdx.every(i => answers[i]?.addToDrill === true);
-                return (
-                  <button
-                    className="px-3 py-1.5 text-xs rounded-md ring-1 transition bg-[#0f1114] text-neutral-300 ring-white/10 hover:bg-[#121418]"
-                    onClick={() => {
-                      setNoteStatus('typing');
-                      wrongIdx.forEach(i => setAddToDrill(i, !allSelected));
-                      setTimeout(() => setNoteStatus('saved'), 700);
-                    }}
-                  >
-                    {allSelected ? 'Deselect all' : 'Select all'}
-                  </button>
-                );
-              })()}
-            </div>
+            <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {questionNumbers.map((qn, index) => {
                 const isWrong = (derivedCorrectFlags[index] ?? correctFlags[index]) === false;
                 if (!isWrong) return null;
                 const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
-                const include = answers[index]?.addToDrill === true;
-                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing','Didn’t review options'];
+                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing','Didn't review options'];
                 const customKey = 'paper.customMistakeTags';
                 const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
                 const opts = Array.from(new Set([...preset, ...custom]));
@@ -2451,15 +2432,6 @@ export default function PapersMarkPage() {
                           setTimeout(() => setNoteStatus('saved'), 700);
                         }}
                       />
-                      <button
-                        aria-pressed={include}
-                        onClick={() => { setNoteStatus('typing'); setAddToDrill(index, !include); setTimeout(() => setNoteStatus('saved'), 700); }}
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs transition ${include ? 'bg-[rgba(80,97,65,0.25)] text-neutral-100' : 'bg-[#141820] text-neutral-300 hover:bg-[#161a21]'}`}
-                        title="Include in drill"
-                      >
-                        <span className={`inline-block w-3 h-3 rounded-[4px]`} style={{ backgroundColor: include ? "#6c9e69" : 'rgba(255,255,255,0.08)' }} />
-                        Include
-                      </button>
                     </div>
                   </div>
                 );

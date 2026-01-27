@@ -36,6 +36,9 @@ export function SessionProgressBar() {
     getSectionRemainingTime,
     resumeSession,
     resetSession,
+    answers,
+    allSectionsQuestions,
+    questions,
   } = usePaperSessionStore();
 
   if (!sessionId) return null;
@@ -68,15 +71,32 @@ export function SessionProgressBar() {
 
   const paperDisplayName = getPaperDisplayName();
 
-  // Helper: Calculate section progress (0-1)
+  // Helper: Calculate section progress by question count (0-1)
   const calculateSectionProgress = (sectionIndex: number): number => {
     if (isPaused || isOnInstructionPage) {
-      return 0; // No time-based progress when paused or on instruction page
+      return 0; // No progress when paused or on instruction page
     }
-    const timeLimit = sectionTimeLimits[sectionIndex] || 60;
-    const remainingSeconds = getSectionRemainingTime(sectionIndex);
-    const elapsedSeconds = timeLimit * 60 - remainingSeconds;
-    return Math.min(1, Math.max(0, elapsedSeconds / (timeLimit * 60)));
+    
+    // Get questions for this section
+    if (!allSectionsQuestions || allSectionsQuestions.length <= sectionIndex) {
+      return 0;
+    }
+    
+    const sectionQuestions = allSectionsQuestions[sectionIndex] || [];
+    if (sectionQuestions.length === 0) {
+      return 0;
+    }
+    
+    // Count answered questions in this section
+    let answeredCount = 0;
+    sectionQuestions.forEach((question) => {
+      const globalIndex = questions.findIndex(q => q.id === question.id);
+      if (globalIndex >= 0 && answers[globalIndex]?.choice !== null && answers[globalIndex]?.choice !== undefined) {
+        answeredCount++;
+      }
+    });
+    
+    return Math.min(1, Math.max(0, answeredCount / sectionQuestions.length));
   };
 
   // Calculate overall progress for current section
@@ -84,6 +104,19 @@ export function SessionProgressBar() {
     if (isPaused || isOnInstructionPage) {
       // If paused or on instruction page, show static progress up to current node
       return currentSectionIndex / totalSections;
+    }
+
+    // Check if last section is completed (all questions answered)
+    const isLastSection = currentSectionIndex >= totalSections - 1;
+    if (isLastSection && allSectionsQuestions && allSectionsQuestions.length > currentSectionIndex) {
+      const lastSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+      if (lastSectionQuestions.length > 0) {
+        const lastSectionProgress = calculateSectionProgress(currentSectionIndex);
+        // If last section is 100% complete, return 1.0 (full progress to MARK)
+        if (lastSectionProgress >= 1.0) {
+          return 1.0;
+        }
+      }
     }
 
     const sectionProgress = calculateSectionProgress(currentSectionIndex);
@@ -137,9 +170,15 @@ export function SessionProgressBar() {
         : 100; // MARK node at 100%
       const sectionWidth = nextNodePosition - sectionStartPosition;
       
+      // If this is the last section and it's complete, extend all the way to MARK
+      const isLastSection = currentSectionIndex >= totalSections - 1;
+      const endPosition = isLastSection && sectionProgress >= 1.0
+        ? 100 // Extend to MARK
+        : sectionStartPosition + (sectionProgress * sectionWidth);
+      
       segments.push({
         start: sectionStartPosition,
-        end: sectionStartPosition + (sectionProgress * sectionWidth)
+        end: endPosition
       });
     }
     
@@ -192,7 +231,7 @@ export function SessionProgressBar() {
                 {progressSegments.map((segment, index) => (
                   <div
                     key={`segment-${index}`}
-                    className="absolute bg-[#5B8D94] transition-all duration-300 ease-out rounded-full"
+                    className="absolute bg-[#5B8D94] transition-all duration-500 ease-out rounded-full"
                     style={{
                       left: `${segment.start}%`,
                       width: `${segment.end - segment.start}%`,
@@ -251,8 +290,25 @@ export function SessionProgressBar() {
                 >
                   <div
                     className={cn(
-                      "w-3 h-3 rounded-full border-2 transition-all",
-                      currentSectionIndex >= totalSections
+                      "w-3 h-3 rounded-full border-2 transition-all duration-500",
+                      (() => {
+                        // Mark as filled if all sections are completed
+                        // Check if we're past the last section OR if last section is 100% complete
+                        if (currentSectionIndex >= totalSections) {
+                          return true;
+                        }
+                        // If we're on the last section, check if it's complete
+                        if (currentSectionIndex >= totalSections - 1 && allSectionsQuestions && allSectionsQuestions.length > currentSectionIndex) {
+                          const lastSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
+                          if (lastSectionQuestions.length > 0) {
+                            const lastSectionProgress = calculateSectionProgress(currentSectionIndex);
+                            if (lastSectionProgress >= 1.0) {
+                              return true;
+                            }
+                          }
+                        }
+                        return false;
+                      })()
                         ? "bg-[#5B8D94] border-[#5B8D94]"
                         : "bg-transparent border-white/30"
                     )}

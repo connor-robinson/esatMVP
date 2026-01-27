@@ -15,13 +15,15 @@ import { hasActiveSession } from "@/lib/storage/sessionStorage";
 export function SessionRestore() {
   const router = useRouter();
   const pathname = usePathname();
-  const { sessionId, isPaused, loadSessionFromIndexedDB } = usePaperSessionStore();
-  const [isChecking, setIsChecking] = useState(true);
-
+  const { sessionId, isPaused, loadSessionFromIndexedDB, isRestoring } = usePaperSessionStore();
+  
   useEffect(() => {
     // Only check if we don't already have a session
     if (sessionId) {
-      setIsChecking(false);
+      // Clear restoring flag if we already have a session
+      if (isRestoring) {
+        usePaperSessionStore.setState({ isRestoring: false });
+      }
       
       // If we have a session and we're on the solve page, check if we should redirect
       if (pathname === '/papers/solve' && isPaused) {
@@ -31,6 +33,9 @@ export function SessionRestore() {
     }
 
     const checkAndRestore = async () => {
+      // Set restoring flag
+      usePaperSessionStore.setState({ isRestoring: true });
+      
       try {
         const activeSessionId = await hasActiveSession();
         if (activeSessionId) {
@@ -53,12 +58,13 @@ export function SessionRestore() {
       } catch (error) {
         console.error('[SessionRestore] Failed to restore session:', error);
       } finally {
-        setIsChecking(false);
+        // Clear restoring flag
+        usePaperSessionStore.setState({ isRestoring: false });
       }
     };
 
     checkAndRestore();
-  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB]);
+  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB, isRestoring]);
 
   return null; // This component doesn't render anything
 }

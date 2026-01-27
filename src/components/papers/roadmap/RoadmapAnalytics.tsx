@@ -142,7 +142,7 @@ export function RoadmapAnalytics({
   const allOfficial = nextStage && nextStage.parts.length > 0 && nextStage.parts.every(part => part.examType === 'Official');
 
   return (
-    <div className="mb-8">
+    <div className="mb-4">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Progress */}
@@ -173,10 +173,10 @@ export function RoadmapAnalytics({
               </div>
             </div>
           </div>
-          <div className="flex items-baseline gap-1.5 mb-1">
+          <div className="flex items-baseline gap-1.5 mb-1 flex-wrap">
             <span className="text-2xl font-bold text-white/90">{Math.round(stats.completedMinutes)}</span>
             <span className="text-lg font-light text-white/20">/</span>
-            <span className="text-2xl font-bold text-white/90">{Math.round(stats.totalMinutes)}</span>
+            <span className="text-sm font-medium text-white/50">{Math.round(stats.totalMinutes)}</span>
             <span className="text-xs font-medium text-white/40 uppercase tracking-wide ml-1">
               minutes practiced
             </span>

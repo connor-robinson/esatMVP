@@ -14,10 +14,42 @@ interface QuestionReviewCardProps {
     correct_option: string;
     primary_tag?: string | null;
     secondary_tags?: string[] | null;
+    subjects?: string | null;
     created_at: string;
   };
   onClick: () => void;
 }
+
+// Helper function to get subject color
+const getSubjectColor = (subjects: string | null | undefined): string => {
+  if (!subjects) return 'bg-white/10 text-white/70';
+  
+  const subjectsLower = subjects.toLowerCase().trim();
+  
+  if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (subjectsLower === 'physics') {
+    return 'bg-[#2f2835]/30 text-[#a78bfa]';
+  }
+  if (subjectsLower === 'chemistry') {
+    return 'bg-[#854952]/20 text-[#ef7d7d]';
+  }
+  if (subjectsLower === 'biology') {
+    return 'bg-[#506141]/20 text-[#85BC82]';
+  }
+  if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
+    return 'bg-[#406166]/20 text-[#5da8f0]';
+  }
+  
+  return 'bg-white/10 text-white/70';
+};
 
 export function QuestionReviewCard({ question, onClick }: QuestionReviewCardProps) {
   return (
@@ -29,8 +61,17 @@ export function QuestionReviewCard({ question, onClick }: QuestionReviewCardProp
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant="default">{question.schema_id}</Badge>
           <Badge variant="default">{question.difficulty}</Badge>
+          {question.subjects && (
+            <Badge className={getSubjectColor(question.subjects)}>
+              {question.subjects}
+            </Badge>
+          )}
           {question.primary_tag ? (
-            <Badge className="bg-blue-500">{question.primary_tag}</Badge>
+            <Badge className="bg-blue-500" title={question.primary_tag}>
+              {question.primary_tag.length > 30 
+                ? question.primary_tag.substring(0, 30) + '...' 
+                : question.primary_tag}
+            </Badge>
           ) : (
             <Badge variant="default" className="text-neutral-400 border-neutral-600">
               No tag

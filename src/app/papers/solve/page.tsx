@@ -50,6 +50,7 @@ export default function PapersSolvePage() {
     startedAt,
     deadline,
     isPaused,
+    isRestoring,
     loadQuestions,
     navigateToQuestion,
     setAnswer,
@@ -224,6 +225,7 @@ export default function PapersSolvePage() {
   const sectionStartedRef = useRef<Set<number>>(new Set());
   
   // Initialize section instruction timer if needed (e.g., when session is restored from persistence)
+  // BUT: Don't initialize if we just resumed from a paused state (resumeSession sets it to null intentionally)
   useEffect(() => {
     // Only initialize if:
     // 1. Section mode is active (selectedSections.length > 0)
@@ -232,18 +234,23 @@ export default function PapersSolvePage() {
     // 4. Current section has questions
     // 5. Timer is null (not set yet) - don't re-initialize if it's been set to 0 or we've started
     // 6. We haven't already started this section
+    // 7. Session is not paused (if paused, we're on resume page)
+    // 8. Pipeline state is "instruction" (if "section", user was already working, don't show intro)
+    const state = usePaperSessionStore.getState();
     const shouldInit = selectedSections.length > 0 && 
         questions.length > 0 && 
         !questionsLoading &&
+        !isPaused &&
         allSectionsQuestions.length > 0 && 
         currentSectionIndex < allSectionsQuestions.length &&
         allSectionsQuestions[currentSectionIndex]?.length > 0 &&
-        (sectionInstructionTimer === null || sectionInstructionTimer === 0) &&
+        sectionInstructionTimer === null &&
+        state.currentPipelineState === "instruction" &&
         !sectionStartedRef.current.has(currentSectionIndex);
     if (shouldInit) {
       setSectionInstructionTimer(60);
     }
-  }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer]);
+  }, [selectedSections.length, questions.length, questionsLoading, allSectionsQuestions.length, currentSectionIndex, sectionInstructionTimer, setSectionInstructionTimer, isPaused]);
 
   // Prefetch question images during section intro timer
   useEffect(() => {
@@ -281,12 +288,26 @@ export default function PapersSolvePage() {
     }
   }, [questions.length, questionsLoading, isSectionMode, allSectionsQuestions, currentSectionIndex, sectionInstructionTimer]);
   
+  // Show loading if session is being restored
+  if (isRestoring) {
+    return (
+      <Container size="lg">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center space-y-4">
+            <LoadingSpinner size="md" />
+            <p className="text-sm text-white/60">Restoring session...</p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
   // Redirect if no active session
   useEffect(() => {
-    if (!sessionId) {
+    if (!sessionId && !isRestoring) {
       router.push("/papers/library");
     }
-  }, [sessionId, router]);
+  }, [sessionId, isRestoring, router]);
 
   // Apply background color to body with smooth transition
   useEffect(() => {

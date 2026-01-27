@@ -63,12 +63,12 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     solution_reasoning: data.solution_reasoning || null,
     solution_key_insight: data.solution_key_insight || null,
     distractor_map: distractor_map,
-    paper: data.paper || null,
+    subjects: data.subjects || null, // Renamed from 'paper'
     primary_tag: data.primary_tag || null,
     secondary_tags: data.secondary_tags || null,
-    status: data.status || 'pending_review',
-    reviewed_by: data.reviewed_by || null,
-    reviewed_at: data.reviewed_at || null,
+    test_type: data.test_type || null, // ESAT, TMUA, or NULL
+    is_good_question: data.is_good_question === true, // Default to false
+    status: data.status || 'pending', // Updated default status
     created_at: data.created_at || new Date().toISOString(),
     updated_at: data.updated_at || new Date().toISOString(),
   };
@@ -93,7 +93,7 @@ export function validateReviewQuestion(question: any): question is ReviewQuestio
   if (!validDifficulties.includes(question.difficulty)) return false;
   
   // Validate status
-  const validStatuses = ['pending_review', 'approved', 'rejected', 'needs_revision'];
+  const validStatuses = ['pending', 'approved', 'deleted'];
   if (!validStatuses.includes(question.status)) return false;
   
   return true;

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Pencil, BarChart3, Save } from "lucide-react";
+import { CheckCircle2, Pencil, BarChart3, Save, SkipForward } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ReviewActionsBarProps {
@@ -10,6 +10,7 @@ interface ReviewActionsBarProps {
   onEdit: () => void;
   onSave: () => void;
   onAnalytics: () => void;
+  onSkip: () => void;
 }
 
 export function ReviewActionsBar({
@@ -19,6 +20,7 @@ export function ReviewActionsBar({
   onEdit,
   onSave,
   onAnalytics,
+  onSkip,
 }: ReviewActionsBarProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-white/10">
@@ -90,20 +92,35 @@ export function ReviewActionsBar({
           </button>
         )}
 
-        {/* Analytics Button - Right */}
-        <button
-          onClick={onAnalytics}
-          disabled={isEditMode || isSaving}
-          className={cn(
-            "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium",
-            isEditMode || isSaving
-              ? "bg-white/5 text-white/40 cursor-not-allowed"
-              : "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 cursor-pointer border border-white/10"
-          )}
-        >
-          <BarChart3 className="w-4 h-4" strokeWidth={2.5} />
-          <span>Analytics</span>
-        </button>
+        {/* Skip and Analytics Buttons - Right */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onSkip}
+            disabled={isEditMode || isSaving}
+            className={cn(
+              "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium",
+              isEditMode || isSaving
+                ? "bg-white/5 text-white/40 cursor-not-allowed"
+                : "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 cursor-pointer border border-white/10"
+            )}
+          >
+            <SkipForward className="w-4 h-4" strokeWidth={2.5} />
+            <span>Skip</span>
+          </button>
+          <button
+            onClick={onAnalytics}
+            disabled={isEditMode || isSaving}
+            className={cn(
+              "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium",
+              isEditMode || isSaving
+                ? "bg-white/5 text-white/40 cursor-not-allowed"
+                : "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 cursor-pointer border border-white/10"
+            )}
+          >
+            <BarChart3 className="w-4 h-4" strokeWidth={2.5} />
+            <span>Analytics</span>
+          </button>
+        </div>
       </div>
     </div>
   );

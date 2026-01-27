@@ -36,8 +36,12 @@ const difficultyColors: Record<string, string> = {
 };
 
 function getSubjectFromQuestion(question: QuestionBankQuestion): string {
-  if (question.paper === 'Math 1') return 'Math 1';
-  if (question.paper === 'Math 2') return 'Math 2';
+  // Use subjects field directly if available
+  if (question.subjects) return question.subjects;
+  
+  // Fallback logic for backwards compatibility
+  if (question.subjects === 'Math 1') return 'Math 1';
+  if (question.subjects === 'Math 2') return 'Math 2';
   if (question.schema_id?.startsWith('P')) return 'Physics';
   if (question.schema_id?.startsWith('C')) return 'Chemistry';
   if (question.schema_id?.startsWith('B')) return 'Biology';

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { QuestionPanel } from "@/components/QuestionPanel";
 import { SolutionPanel } from "@/components/SolutionPanel";
 import { ReviewSidebar } from "@/components/ReviewSidebar";
@@ -9,6 +9,7 @@ import { useReviewQuestions } from "@/hooks/useReviewQuestions";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
 import type { ReviewFilters } from "@/types/review";
 import { cn } from "@/lib/utils";
+import { RotateCcw } from "lucide-react";
 
 export default function ReviewPage() {
   const {
@@ -19,15 +20,22 @@ export default function ReviewPage() {
     setFilters,
     fetchNextQuestion,
     approveQuestion,
+    deleteQuestion,
+    skipQuestion,
     setCurrentQuestion,
   } = useReviewQuestions();
 
   const [checklistItems, setChecklistItems] = useState<boolean[]>([false, false, false, false, false]);
+  const [optionalChecklistItem, setOptionalChecklistItem] = useState(false);
+  const [isGoodQuestion, setIsGoodQuestion] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [notificationFading, setNotificationFading] = useState(false);
   const [hasShownAnswer, setHasShownAnswer] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const {
     editingField,
@@ -35,6 +43,8 @@ export default function ReviewPage() {
     editedQuestion,
     updateQuestionStem,
     updateOption,
+    addOption,
+    removeOption,
     updateSolutionReasoning,
     updateKeyInsight,
     updateDistractor,
@@ -51,11 +61,48 @@ export default function ReviewPage() {
     setNotification({ type: 'success', message: 'Changes saved' });
   });
 
-  // Reset checklist when question changes
+  // Reset checklist and good question flag when question changes
   useEffect(() => {
     setChecklistItems([false, false, false, false, false]);
+    setOptionalChecklistItem(false);
     setHasShownAnswer(false);
+    setIsGoodQuestion(false);
   }, [currentQuestion?.id]);
+
+  // Timer: Reset when question changes
+  useEffect(() => {
+    // Reset timer when question changes
+    setTimerSeconds(0);
+    
+    // Clear existing interval
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+    
+    // Start new timer
+    timerIntervalRef.current = setInterval(() => {
+      setTimerSeconds(prev => prev + 1);
+    }, 1000);
+    
+    // Cleanup on unmount or question change
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [currentQuestion?.id]);
+
+  // Format timer as MM:SS
+  const formatTimer = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Reset timer manually
+  const resetTimer = () => {
+    setTimerSeconds(0);
+  };
 
   // Show notification and auto-hide with fade out
   useEffect(() => {
@@ -100,14 +147,34 @@ export default function ReviewPage() {
 
     setIsApproving(true);
     try {
-      await approveQuestion(currentQuestion.id);
+      await approveQuestion(currentQuestion.id, isGoodQuestion);
       setNotification({ type: 'success', message: 'Question approved successfully!' });
       setHasShownAnswer(false);
       setChecklistItems([false, false, false, false, false]);
+      setOptionalChecklistItem(false);
+      setIsGoodQuestion(false);
     } catch (err) {
       setNotification({ type: 'error', message: 'Failed to approve question' });
     } finally {
       setIsApproving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!currentQuestion) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteQuestion(currentQuestion.id);
+      setNotification({ type: 'success', message: 'Question deleted successfully!' });
+      setHasShownAnswer(false);
+      setChecklistItems([false, false, false, false, false]);
+      setOptionalChecklistItem(false);
+      setIsGoodQuestion(false);
+    } catch (err) {
+      setNotification({ type: 'error', message: 'Failed to delete question' });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -119,24 +186,56 @@ export default function ReviewPage() {
     setFilters(newFilters);
   };
 
+  const handleSkip = async () => {
+    if (!currentQuestion) return;
+    try {
+      await skipQuestion();
+      setNotification({ type: 'success', message: 'Question skipped' });
+    } catch (err) {
+      setNotification({ type: 'error', message: 'Failed to skip question' });
+    }
+  };
+
   return (
     <div className="h-screen flex overflow-hidden">
       {/* Left Sidebar */}
       <ReviewSidebar
         checklistItems={checklistItems}
+        optionalChecklistItem={optionalChecklistItem}
         onChecklistChange={handleChecklistChange}
+        onOptionalChecklistChange={setOptionalChecklistItem}
         onApprove={handleApprove}
+        onDelete={handleDelete}
+        onSkip={handleSkip}
         onFilters={handleFilters}
+        currentQuestionId={currentQuestion?.id}
         canApprove={allChecked}
         isApproving={isApproving}
+        isDeleting={isDeleting}
+        isGoodQuestion={isGoodQuestion}
+        onGoodQuestionChange={setIsGoodQuestion}
       />
 
       {/* Main Content Area - Stacked Layout with Scroll */}
-      <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto">
-        {/* Notification */}
+      <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto relative">
+        {/* Timer - Top Right */}
+        <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
+          <span className="text-sm font-mono text-white/90 tabular-nums">
+            {formatTimer(timerSeconds)}
+          </span>
+          <button
+            onClick={resetTimer}
+            className="p-1.5 rounded-organic-md hover:bg-white/10 text-white/70 hover:text-white/90 transition-colors"
+            title="Reset timer"
+          >
+            <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
+          </button>
+        </div>
+
+        {/* Notification - Positioned below timer */}
         {notification && (
           <div className={cn(
-            "fixed top-4 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300 ease-out",
+            "fixed top-20 right-4 z-50 px-4 py-3 rounded-organic-md shadow-lg transition-all duration-300 ease-out",
             notificationFading 
               ? "opacity-0 -translate-y-2 pointer-events-none"
               : "opacity-100 translate-y-0 animate-[fadeIn_0.3s_ease-out]",
@@ -171,6 +270,8 @@ export default function ReviewPage() {
               editingField={editingField}
               onQuestionStemChange={updateQuestionStem}
               onOptionChange={updateOption}
+              onAddOption={addOption}
+              onRemoveOption={removeOption}
               onDistractorChange={updateDistractor}
               onAnswerShown={() => setHasShownAnswer(true)}
               onDifficultyChange={updateDifficulty}
