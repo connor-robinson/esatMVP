@@ -27,6 +27,7 @@ import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTa
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { Letter, MistakeTag } from "@/types/papers";
 import { PageHeader } from "@/components/shared/PageHeader";
+import type { QuestionStats } from "@/types/questionStats";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -97,6 +98,9 @@ export default function PapersMarkPage() {
   // Conversion table popup state
   const [showConversionPopup, setShowConversionPopup] = useState(false);
   const conversionPopupRef = useRef<HTMLDivElement>(null);
+  // Community stats state
+  const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
+  const [statsLoading, setStatsLoading] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
   const totalQuestions = sessionId ? getTotalQuestions() : 0;
@@ -243,6 +247,55 @@ export default function PapersMarkPage() {
       };
     }
   }, [showConversionPopup]);
+
+  // Fetch community stats for all questions in session
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        if (!sessionId || totalQuestions === 0) return;
+        
+        const qs = usePaperSessionStore.getState().questions;
+        const questionIds = qs.map((q) => q.id).filter((id) => id != null);
+        
+        if (questionIds.length === 0) return;
+        
+        setStatsLoading(true);
+        const response = await fetch("/api/papers/questions/stats", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questionIds }),
+        });
+        
+        if (!mounted) return;
+        
+        if (!response.ok) {
+          console.warn("[mark] Failed to fetch question stats:", response.statusText);
+          return;
+        }
+        
+        const data = await response.json();
+        if (!mounted) return;
+        
+        // Create a map by question ID
+        const statsMap: Record<number, QuestionStats> = {};
+        (data.stats || []).forEach((stat: QuestionStats) => {
+          statsMap[stat.questionId] = stat;
+        });
+        
+        setQuestionStats(statsMap);
+      } catch (error) {
+        console.error("[mark] Error fetching question stats:", error);
+      } finally {
+        if (mounted) {
+          setStatsLoading(false);
+        }
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [sessionId, totalQuestions]);
   
   // Shared bubble utility (analytics-style)
   const bubbleClass = "rounded-xl bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4";
@@ -937,7 +990,7 @@ export default function PapersMarkPage() {
     router.push("/papers/library");
     return null;
   }
-  
+
   return (
     <Container size="lg">
       <div className="space-y-8">
@@ -2044,6 +2097,93 @@ export default function PapersMarkPage() {
                   <div className="text-neutral-50 text-sm mt-1">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
                 </div>
               </div>
+
+              {/* Community Stats */}
+              {(() => {
+                const question = usePaperSessionStore.getState().questions[selectedIndex];
+                const stats = question ? questionStats[question.id] : null;
+                
+                if (!stats) {
+                  if (statsLoading) {
+                    return (
+                      <div className="mb-4 p-3 rounded-md border border-white/10 bg-[#0f1114]">
+                        <div className="text-xs text-neutral-400">Loading community stats...</div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }
+
+                return (
+                  <div className="mb-4 p-4 rounded-md border border-white/10 bg-[#0f1114]">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-semibold text-neutral-200">Community Stats</div>
+                      {!stats.hasSufficientData && (
+                        <div className="text-xs text-neutral-500">Insufficient data</div>
+                      )}
+                    </div>
+                    
+                    {stats.hasSufficientData ? (
+                      <div className="space-y-3">
+                        {/* Average Time */}
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-neutral-400">Average time</div>
+                          <div className="text-sm text-neutral-200 font-medium">
+                            {stats.avgTimeSeconds.toFixed(1)}s
+                          </div>
+                        </div>
+                        
+                        {/* Answer Distribution */}
+                        <div>
+                          <div className="text-xs text-neutral-400 mb-2">Answer distribution</div>
+                          <div className="space-y-1.5">
+                            {LETTERS.map((letter) => {
+                              const percentage = stats.optionPercentages[letter] || 0;
+                              const count = stats.optionCounts[letter] || 0;
+                              const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
+                              const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
+                              
+                              return (
+                                <div key={letter} className="flex items-center gap-2">
+                                  <div className="w-6 text-xs text-neutral-300 font-medium">{letter}</div>
+                                  <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full rounded-full transition-all"
+                                      style={{
+                                        width: `${percentage}%`,
+                                        backgroundColor: isCorrect
+                                          ? "#6c9e69"
+                                          : isUserChoice
+                                          ? "#b89f5a"
+                                          : "#4a5568",
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="w-12 text-xs text-neutral-400 text-right">
+                                    {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
+                                  </div>
+                                  {count > 0 && (
+                                    <div className="w-8 text-xs text-neutral-500 text-right">
+                                      ({count})
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-2 text-xs text-neutral-500">
+                            {stats.attempts} total attempts
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-neutral-500">
+                        Stats will appear after {30 - stats.attempts} more attempts
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Question and Answer - Side by Side (normal) or Stacked (TMUA) */}
               {(() => {

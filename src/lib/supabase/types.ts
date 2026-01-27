@@ -428,6 +428,70 @@ export type QuestionBankAttemptInsert = {
 };
 export type QuestionBankAttemptUpdate = Partial<QuestionBankAttemptRow>;
 
+// paper_session_responses
+export type PaperSessionResponseRow = {
+  id: string;
+  session_id: string;
+  user_id: string;
+  question_id: number;
+  paper_id: number | null;
+  section_code: string | null;
+  choice: string | null;
+  is_correct: boolean | null;
+  time_spent_seconds: number | null;
+  created_at: string;
+};
+export type PaperSessionResponseInsert = {
+  id?: string;
+  session_id: string;
+  user_id: string;
+  question_id: number;
+  paper_id?: number | null;
+  section_code?: string | null;
+  choice?: string | null;
+  is_correct?: boolean | null;
+  time_spent_seconds?: number | null;
+  created_at?: string;
+};
+export type PaperSessionResponseUpdate = Partial<PaperSessionResponseRow>;
+
+// question_choice_stats
+export type QuestionChoiceStatsRow = {
+  question_id: number;
+  paper_id: number | null;
+  section_code: string | null;
+  attempts: number;
+  correct: number;
+  time_sum_seconds: number;
+  a_count: number;
+  b_count: number;
+  c_count: number;
+  d_count: number;
+  e_count: number;
+  f_count: number;
+  g_count: number;
+  h_count: number;
+  updated_at: string;
+};
+export type QuestionChoiceStatsInsert = {
+  question_id: number;
+  paper_id?: number | null;
+  section_code?: string | null;
+  attempts?: number;
+  correct?: number;
+  time_sum_seconds?: number;
+  a_count?: number;
+  b_count?: number;
+  c_count?: number;
+  d_count?: number;
+  e_count?: number;
+  f_count?: number;
+  g_count?: number;
+  h_count?: number;
+  updated_at?: string;
+};
+export type QuestionChoiceStatsUpdate = Partial<QuestionChoiceStatsRow>;
+
 export type Database = {
   public: {
     Tables: {
@@ -495,6 +559,16 @@ export type Database = {
         Row: QuestionBankAttemptRow;
         Insert: QuestionBankAttemptInsert;
         Update: QuestionBankAttemptUpdate;
+      };
+      paper_session_responses: {
+        Row: PaperSessionResponseRow;
+        Insert: PaperSessionResponseInsert;
+        Update: PaperSessionResponseUpdate;
+      };
+      question_choice_stats: {
+        Row: QuestionChoiceStatsRow;
+        Insert: QuestionChoiceStatsInsert;
+        Update: QuestionChoiceStatsUpdate;
       };
     };
     Views: {
