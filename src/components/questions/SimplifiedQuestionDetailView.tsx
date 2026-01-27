@@ -157,7 +157,7 @@ export function SimplifiedQuestionDetailView({
             </Badge>
           )}
           {question.test_type && (
-            <Badge variant="secondary">{question.test_type}</Badge>
+            <Badge variant="default">{question.test_type}</Badge>
           )}
         </div>
         <div className="text-sm text-neutral-400">
