@@ -15,7 +15,7 @@ interface FilterPanelProps {
 const subjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'TMUA Paper 1', 'TMUA Paper 2'];
 const difficulties: DifficultyFilter[] = ['All', 'Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
-const reviewStatuses: ReviewStatusFilter[] = ['All', 'Pending Review', 'Approved', 'Needs Revision'];
+const reviewStatuses: ReviewStatusFilter[] = ['All', 'Pending', 'Approved', 'Deleted'];
 
 // Common curriculum topics for dropdown
 const curriculumTopics = [
@@ -165,7 +165,7 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
                 className={cn(
                   "flex-1 px-2 py-2 rounded-organic-md text-xs font-medium transition-all duration-fast ease-signature",
                   filters.reviewStatus === status
-                    ? (status === 'Pending Review' || status === 'Needs Revision')
+                    ? (status === 'Pending' || status === 'Deleted')
                       ? "bg-error/20 text-error border border-error/30"
                       : status === 'Approved'
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
@@ -173,7 +173,7 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
                     : "bg-white/5 hover:bg-white/10 text-white/60"
                 )}
               >
-                {status === 'Pending Review' ? 'Pending' : status === 'Needs Revision' ? 'Revision' : status}
+                {status}
               </button>
             ))}
           </div>

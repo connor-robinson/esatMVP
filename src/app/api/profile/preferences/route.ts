@@ -150,8 +150,8 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Update profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
+    const { data: profile, error: profileError } = await (supabase
+      .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
       .select('nickname, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')

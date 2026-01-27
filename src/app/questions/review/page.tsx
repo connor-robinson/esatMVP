@@ -205,7 +205,7 @@ export default function ReviewPage() {
     }
   };
 
-  const handleQuestionUpdate = async (questionId: string, updates: Partial<Question>) => {
+  const handleQuestionUpdate = async (questionId: string, updates: Partial<Question & { status?: string }>) => {
     try {
       // Check if this is a tag update
       if (updates.primary_tag !== undefined || updates.secondary_tags !== undefined) {
@@ -806,7 +806,7 @@ export default function ReviewPage() {
             <div className="space-y-4">
               <SimplifiedQuestionDetailView
                 question={selectedQuestion}
-                onUpdate={handleQuestionUpdate}
+                onUpdate={handleQuestionUpdate as any}
                 onApprove={handleApprove}
                 onReject={handleReject}
               />

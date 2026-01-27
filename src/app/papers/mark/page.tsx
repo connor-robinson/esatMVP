@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -992,7 +992,8 @@ export default function PapersMarkPage() {
   }
 
   return (
-    <Container size="lg">
+    <Fragment>
+      <Container size="lg">
       <div className="space-y-8">
         {/* Header */}
         <PageHeader title="Mark Session" description="Review answers, mark correctness, and study solutions." />
@@ -2551,7 +2552,7 @@ export default function PapersMarkPage() {
                 const isWrong = (derivedCorrectFlags[index] ?? correctFlags[index]) === false;
                 if (!isWrong) return null;
                 const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
-                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing','Didn't review options'];
+                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing',"Didn't review options"];
                 const customKey = 'paper.customMistakeTags';
                 const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
                 const opts = Array.from(new Set([...preset, ...custom]));
@@ -2647,6 +2648,7 @@ export default function PapersMarkPage() {
         </div>
       </div>
     </Container>
+    </Fragment>
   );
 }
 
