@@ -225,7 +225,7 @@ export function Navbar() {
                       viewBox="0 0 12 12" 
                       fill="none" 
                       xmlns="http://www.w3.org/2000/svg"
-                      className="w-2.5 h-2.5"
+                      className="w-2.5 h-2.5 text-text"
                     >
                       <path 
                         d="M2.5 6L5 8.5L9.5 3.5" 
@@ -233,7 +233,6 @@ export function Navbar() {
                         strokeWidth="2" 
                         strokeLinecap="round" 
                         strokeLinejoin="round"
-                        className={isDark ? "text-white" : "text-neutral-900"}
                       />
                     </svg>
                   </div>

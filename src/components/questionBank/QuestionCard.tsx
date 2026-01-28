@@ -28,7 +28,7 @@ interface QuestionCardProps {
 
 // Helper function to get subject color based on paper name
 const getSubjectColor = (subjects: string | null | undefined): string => {
-  if (!subjects) return 'bg-white/10 text-white/70';
+  if (!subjects) return 'bg-surface-subtle text-text-muted';
   
   const subjectsLower = subjects.toLowerCase().trim();
   
@@ -64,7 +64,7 @@ const getSubjectColor = (subjects: string | null | undefined): string => {
   }
   
   // Default fallback
-  return 'bg-white/10 text-white/70';
+  return 'bg-surface-subtle text-text-muted';
 };
 
 export function QuestionCard({
@@ -192,14 +192,14 @@ export function QuestionCard({
   return (
     <div className="space-y-6">
       {/* Question stem - in its own card */}
-      <Card className="px-8 pt-0 pb-0 relative group bg-white/[0.03]">
+      <Card className="px-8 pt-0 pb-0 relative group bg-surface-subtle">
         {onEditQuestionStem && (
           <button
             onClick={onEditQuestionStem}
-            className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+            className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-surface-elevated hover:bg-surface flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
             title="Edit question"
           >
-            <Pencil className="w-4 h-4 text-white/60" />
+            <Pencil className="w-4 h-4 text-text-muted" />
           </button>
         )}
         
@@ -230,7 +230,7 @@ export function QuestionCard({
                   ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                   : question.idea_plan.variation_mode === 'SIBLINGS'
                   ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                  : 'bg-white/10 text-white/70'
+                  : 'bg-surface-subtle text-text-muted'
               )}>
                 {question.idea_plan.variation_mode}
               </span>
@@ -252,8 +252,8 @@ export function QuestionCard({
                   <span 
                     key={tag} 
                     className={cn(
-                      "px-3 py-1.5 text-xs text-white/40 font-mono bg-white/10",
-                      index === question.secondary_tags!.length - 1 ? "rounded-r-organic-md" : "border-r border-white/20"
+                      "px-3 py-1.5 text-xs text-text-muted font-mono bg-surface-subtle",
+                      index === question.secondary_tags!.length - 1 ? "rounded-r-organic-md" : "border-r border-border"
                     )}
                   >
                     {getTopicTitle(tag)}
@@ -270,19 +270,19 @@ export function QuestionCard({
               questionText={question.question_stem}
               graphSpec={question.graph_spec}
               graphSpecs={question.graph_specs}
-              className="text-white/95"
+              className="text-text"
             />
           ) : (
             <MathContent
               content={question.question_stem}
-              className="text-white/95"
+              className="text-text"
             />
           )}
         </div>
       </Card>
 
       {/* Options - in a container */}
-      <Card className="p-6 bg-white/[0.03]">
+      <Card className="p-6 bg-surface-subtle">
         <div className="space-y-2">
           {optionLetters.map((letter) => {
           const hasDistractor = question.distractor_map && question.distractor_map[letter] && letter !== correctAnswer;
@@ -333,13 +333,13 @@ export function QuestionCard({
                             e.stopPropagation();
                             setRevealedDistractors(prev => new Set(prev).add(letter));
                           }}
-                          className="flex items-center gap-2 px-3 h-10 rounded-organic-md bg-white/10 hover:bg-white/15 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature text-sm font-mono"
+                          className="flex items-center gap-2 px-3 h-10 rounded-organic-md bg-surface-elevated hover:bg-surface text-text-muted hover:text-text transition-all duration-fast ease-signature text-sm font-mono"
                         >
                           <HelpCircle className="w-4 h-4" strokeWidth={2.5} />
                           <span>Reveal why this answer is wrong</span>
                         </button>
                       ) : (
-                        <span className="text-white/60" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
+                        <span className="text-text-muted" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
                           <MathContent content={question.distractor_map[letter]} className="text-inherit" />
                         </span>
                       )}
@@ -395,10 +395,10 @@ export function QuestionCard({
                     e.stopPropagation();
                     onEditOption(letter);
                   }}
-                  className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10"
+                  className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-surface-elevated hover:bg-surface flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10"
                   title={`Edit option ${letter}`}
                 >
-                  <Pencil className="w-3.5 h-3.5 text-white/60" style={{ transform: 'scaleX(-1)' }} />
+                  <Pencil className="w-3.5 h-3.5 text-text-muted" style={{ transform: 'scaleX(-1)' }} />
                 </button>
               )}
             </button>
