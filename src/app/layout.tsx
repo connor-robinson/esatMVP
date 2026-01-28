@@ -14,6 +14,8 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import "@/styles/globals.css";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "CantabPrep | Premium ESAT & TMUA Mastery",
   description:
