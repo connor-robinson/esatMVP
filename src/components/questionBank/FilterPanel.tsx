@@ -12,7 +12,7 @@ interface FilterPanelProps {
   showToggle?: boolean;
 }
 
-const testTypes: TestTypeFilter[] = ['All', 'ESAT', 'TMUA'];
+const subjectTypeOptions: ('ESAT' | 'TMUA' | 'BOTH')[] = ['ESAT', 'TMUA', 'BOTH'];
 const esatSubjects: SubjectFilter[] = ['All', 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
 const tmuaSubjects: SubjectFilter[] = ['All', 'Paper 1', 'Paper 2'];
 const difficulties: DifficultyFilter[] = ['All', 'Easy', 'Medium', 'Hard'];
@@ -39,31 +39,39 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Paper 2': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
 };
 
-// Test type colors
-const testTypeColors: Record<TestTypeFilter, string> = {
-  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
+// Subject type colors (ESAT/TMUA/BOTH)
+const subjectTypeColors: Record<'ESAT' | 'TMUA' | 'BOTH', string> = {
   'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
   'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
+  'BOTH': 'bg-white/10 hover:bg-white/15 text-white/90',
 };
 
 export function FilterPanel({ filters, onFilterChange, onToggleFilters, showToggle = false }: FilterPanelProps) {
   const [searchInput, setSearchInput] = useState(filters.searchTag);
   const [showTopicDropdown, setShowTopicDropdown] = useState(false);
 
-  // Get available subjects based on test type
-  const availableSubjects = useMemo(() => {
-    if (filters.testType === 'ESAT') {
-      return esatSubjects;
-    } else if (filters.testType === 'TMUA') {
-      return tmuaSubjects;
-    } else {
-      // If 'All' is selected, show all subjects
-      return [...esatSubjects.filter(s => s !== 'All'), ...tmuaSubjects.filter(s => s !== 'All'), 'All'];
-    }
-  }, [filters.testType]);
+  // Determine subject type from testType filter
+  const subjectType: 'ESAT' | 'TMUA' | 'BOTH' = filters.testType === 'ESAT' ? 'ESAT' : filters.testType === 'TMUA' ? 'TMUA' : 'BOTH';
 
-  const handleTestTypeChange = (testType: TestTypeFilter) => {
-    // Reset subject when test type changes
+  // Get available subjects based on subject type
+  const availableSubjects = useMemo((): { subjects: SubjectFilter[]; showSeparator: boolean } => {
+    if (subjectType === 'ESAT') {
+      return { subjects: esatSubjects, showSeparator: false };
+    } else if (subjectType === 'TMUA') {
+      return { subjects: tmuaSubjects, showSeparator: false };
+    } else {
+      // If 'BOTH' is selected, show all subjects with separator
+      return { 
+        subjects: [...esatSubjects.filter(s => s !== 'All'), ...tmuaSubjects.filter(s => s !== 'All'), 'All'] as SubjectFilter[],
+        showSeparator: true
+      };
+    }
+  }, [subjectType]);
+
+  const handleSubjectTypeChange = (type: 'ESAT' | 'TMUA' | 'BOTH') => {
+    // Map BOTH to 'All', ESAT to 'ESAT', TMUA to 'TMUA'
+    const testType: TestTypeFilter = type === 'BOTH' ? 'All' : type;
+    // Reset subject when subject type changes
     onFilterChange({ ...filters, testType, subject: 'All' });
   };
 
@@ -95,13 +103,18 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
     setShowTopicDropdown(false);
   };
 
+  // Find where to insert separator (after ESAT subjects, before TMUA subjects)
+  const separatorIndex = availableSubjects.showSeparator 
+    ? esatSubjects.filter(s => s !== 'All').length 
+    : -1;
+
   return (
     <div className="space-y-4">
-      {/* Test Type Filter */}
+      {/* Subject Type Filter (ESAT/TMUA/BOTH) */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-medium text-white/50 uppercase tracking-wide">
-            Test Type
+            Subject
           </label>
           {showToggle && (
             <button
@@ -113,45 +126,52 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {testTypes.map((testType) => (
+          {subjectTypeOptions.map((type) => (
             <button
-              key={testType}
-              onClick={() => handleTestTypeChange(testType)}
+              key={type}
+              onClick={() => handleSubjectTypeChange(type)}
               className={cn(
                 "px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
-                filters.testType === testType
-                  ? testTypeColors[testType] + " scale-105"
+                subjectType === type
+                  ? subjectTypeColors[type] + " scale-105"
                   : "bg-white/5 hover:bg-white/10 text-white/60"
               )}
             >
-              {testType}
+              {type}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Subject Filter */}
+      {/* Subject Filter (Math 1, Math 2, etc.) */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-medium text-white/50 uppercase tracking-wide">
-            Subject
+            Topics
           </label>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {availableSubjects.map((subject) => (
-            <button
-              key={subject}
-              onClick={() => handleSubjectChange(subject)}
-              className={cn(
-                "px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
-                filters.subject === subject
-                  ? subjectColors[subject] + " scale-105"
-                  : "bg-white/5 hover:bg-white/10 text-white/60"
-              )}
-            >
-              {subject}
-            </button>
-          ))}
+        <div className="flex flex-wrap gap-2 items-center">
+          {availableSubjects.subjects.map((subject, index) => {
+            const showSeparator = availableSubjects.showSeparator && index === separatorIndex;
+            return (
+              <div key={subject} className="flex items-center gap-2">
+                {showSeparator && (
+                  <span className="text-white/30 text-lg font-bold">|</span>
+                )}
+                <button
+                  onClick={() => handleSubjectChange(subject)}
+                  className={cn(
+                    "px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                    filters.subject === subject || (Array.isArray(filters.subject) && filters.subject.includes(subject))
+                      ? subjectColors[subject] + " scale-105"
+                      : "bg-white/5 hover:bg-white/10 text-white/60"
+                  )}
+                >
+                  {subject}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 

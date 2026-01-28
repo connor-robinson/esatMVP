@@ -64,24 +64,116 @@ export function useQuestionBank(): UseQuestionBankReturn {
   const questionCache = useRef<QuestionBankQuestion[]>([]);
   const isFetching = useRef(false);
   const lastFiltersHash = useRef<string>('');
+  const filtersInitialized = useRef(false);
+  const hasInitialFetched = useRef(false);
 
   // localStorage key for persisting unanswered questions
   const STORAGE_KEY = 'questionBank:currentUnansweredQuestion';
   const FILTERS_STORAGE_KEY = 'questionBank:filters';
+  const FILTERS_MANUAL_CHANGE_KEY = 'questionBank:filtersManuallyChanged';
+  const USER_PREFERENCES_KEY = 'questionBank:userPreferences';
+
+  // Helper to get default filters from user preferences
+  const getDefaultFiltersFromPreferences = useCallback(async (): Promise<QuestionBankFilters | null> => {
+    if (!session?.user) return null;
+    
+    try {
+      const response = await fetch('/api/profile/preferences');
+      if (!response.ok) return null;
+      
+      const preferences = await response.json();
+      const { exam_preference, esat_subjects } = preferences;
+      
+      // Store preferences for later comparison
+      localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify({ exam_preference, esat_subjects }));
+      
+      if (!exam_preference) return null;
+      
+      if (exam_preference === 'TMUA') {
+        return {
+          testType: 'TMUA',
+          subject: ['Paper 1', 'Paper 2'],
+          difficulty: 'All',
+          searchTag: '',
+          attemptedStatus: 'Mix',
+          attemptResult: [],
+        };
+      } else if (exam_preference === 'ESAT' && esat_subjects && Array.isArray(esat_subjects) && esat_subjects.length === 3) {
+        return {
+          testType: 'ESAT',
+          subject: esat_subjects,
+          difficulty: 'All',
+          searchTag: '',
+          attemptedStatus: 'Mix',
+          attemptResult: [],
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('[useQuestionBank] Error fetching preferences:', error);
+      return null;
+    }
+  }, [session?.user]);
+
+  // Restore unanswered question from localStorage on mount
+  useEffect(() => {
+    const initializeFilters = async () => {
+      try {
+        // Check if filters were manually changed
+        const manuallyChanged = localStorage.getItem(FILTERS_MANUAL_CHANGE_KEY) === 'true';
+        
+        // Restore filters from localStorage if they exist and were manually changed
+        const storedFilters = localStorage.getItem(FILTERS_STORAGE_KEY);
+        if (storedFilters && manuallyChanged) {
+          try {
+            const parsedFilters = JSON.parse(storedFilters);
+            setFilters(parsedFilters);
+          } catch (e) {
+            console.error('[useQuestionBank] Error restoring filters:', e);
+          }
+        } else {
+          // If not manually changed, get defaults from preferences
+          const defaultFilters = await getDefaultFiltersFromPreferences();
+          if (defaultFilters) {
+            setFilters(defaultFilters);
+            localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(defaultFilters));
+            filtersInitialized.current = true;
+          } else if (storedFilters) {
+            // Fallback to stored filters if preferences not available
+            try {
+              const parsedFilters = JSON.parse(storedFilters);
+              setFilters(parsedFilters);
+              filtersInitialized.current = true;
+            } catch (e) {
+              console.error('[useQuestionBank] Error restoring filters:', e);
+              filtersInitialized.current = true;
+            }
+          } else {
+            // No stored filters and no preferences, use defaults (already set in useState)
+            filtersInitialized.current = true;
+          }
+        }
+        
+        if (storedFilters && manuallyChanged) {
+          filtersInitialized.current = true;
+        }
+        
+        // Ensure filters are initialized even if nothing was set
+        if (!filtersInitialized.current) {
+          filtersInitialized.current = true;
+        }
+      } catch (err) {
+        console.error('[useQuestionBank] Error initializing filters:', err);
+      }
+    };
+
+    initializeFilters();
+  }, [getDefaultFiltersFromPreferences]);
 
   // Restore unanswered question from localStorage on mount
   useEffect(() => {
     try {
-      // Restore filters first
-      const storedFilters = localStorage.getItem(FILTERS_STORAGE_KEY);
-      if (storedFilters) {
-        try {
-          const parsedFilters = JSON.parse(storedFilters);
-          setFilters(parsedFilters);
-        } catch (e) {
-          console.error('[useQuestionBank] Error restoring filters:', e);
-        }
-      }
 
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -180,11 +272,80 @@ export function useQuestionBank(): UseQuestionBankReturn {
   // Save filters to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+      // Only save and mark as manually changed if filters have been initialized
+      if (filtersInitialized.current) {
+        localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(filters));
+        // Mark filters as manually changed when user changes them
+        // (This will be set when filters change, not on initial load)
+        if (hasInitialFetched.current) {
+          localStorage.setItem(FILTERS_MANUAL_CHANGE_KEY, 'true');
+        }
+      }
     } catch (err) {
       console.error('[useQuestionBank] Error saving filters to localStorage:', err);
     }
   }, [filters]);
+
+  // Listen for preference changes and update defaults if filters weren't manually changed
+  useEffect(() => {
+    if (!session?.user) return;
+    
+    const checkPreferencesUpdate = async () => {
+      try {
+        const manuallyChanged = localStorage.getItem(FILTERS_MANUAL_CHANGE_KEY) === 'true';
+        if (manuallyChanged) return; // Don't update if user manually changed filters
+        
+        const storedPrefs = localStorage.getItem(USER_PREFERENCES_KEY);
+        const response = await fetch('/api/profile/preferences');
+        if (!response.ok) return;
+        
+        const preferences = await response.json();
+        const { exam_preference, esat_subjects } = preferences;
+        
+        // Compare with stored preferences
+        if (storedPrefs) {
+          const oldPrefs = JSON.parse(storedPrefs);
+          if (oldPrefs.exam_preference === exam_preference && 
+              JSON.stringify(oldPrefs.esat_subjects) === JSON.stringify(esat_subjects)) {
+            return; // No change
+          }
+        }
+        
+        // Preferences changed, update filters
+        if (exam_preference === 'TMUA') {
+          const newFilters: QuestionBankFilters = {
+            testType: 'TMUA',
+            subject: ['Paper 1', 'Paper 2'],
+            difficulty: filters.difficulty,
+            searchTag: filters.searchTag,
+            attemptedStatus: filters.attemptedStatus,
+            attemptResult: filters.attemptResult,
+          };
+          setFilters(newFilters);
+          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(newFilters));
+          localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify({ exam_preference, esat_subjects }));
+        } else if (exam_preference === 'ESAT' && esat_subjects && Array.isArray(esat_subjects) && esat_subjects.length === 3) {
+          const newFilters: QuestionBankFilters = {
+            testType: 'ESAT',
+            subject: esat_subjects,
+            difficulty: filters.difficulty,
+            searchTag: filters.searchTag,
+            attemptedStatus: filters.attemptedStatus,
+            attemptResult: filters.attemptResult,
+          };
+          setFilters(newFilters);
+          localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(newFilters));
+          localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify({ exam_preference, esat_subjects }));
+        }
+      } catch (error) {
+        console.error('[useQuestionBank] Error checking preferences update:', error);
+      }
+    };
+    
+    // Check preferences periodically (every 5 seconds) when user is logged in
+    const interval = setInterval(checkPreferencesUpdate, 5000);
+    return () => clearInterval(interval);
+  }, [session?.user, filters.difficulty, filters.searchTag, filters.attemptedStatus, filters.attemptResult]);
 
   // Get a hash of current filters for cache invalidation
   const getFiltersHash = useCallback(() => {
@@ -523,12 +684,27 @@ export function useQuestionBank(): UseQuestionBankReturn {
     setCurrentQuestion(question);
   }, [currentQuestion?.id]);
 
-  // Track if we've done initial fetch
-  const hasInitialFetched = useRef(false);
   const lastFiltersRef = useRef<string>('');
   
-  // Fetch question on mount (if we didn't restore) or when filters change
+  // Wait for filters to be initialized before fetching questions
   useEffect(() => {
+    if (!filtersInitialized.current) {
+      // Check if filters have been set (not just default empty state)
+      const currentFiltersHash = getFiltersHash();
+      if (currentFiltersHash !== JSON.stringify({
+        testType: 'All',
+        subject: 'All',
+        difficulty: 'All',
+        searchTag: '',
+        attemptedStatus: 'Mix',
+        attemptResult: [],
+      })) {
+        filtersInitialized.current = true;
+      } else {
+        return; // Wait for filters to be initialized
+      }
+    }
+    
     const currentFiltersHash = getFiltersHash();
     
     // On initial mount, if we didn't restore from storage, fetch a question
@@ -554,7 +730,7 @@ export function useQuestionBank(): UseQuestionBankReturn {
       lastFiltersRef.current = currentFiltersHash;
       fetchQuestion(false);
     }
-  }, [filters, currentQuestion]); // Depend on filters and currentQuestion, but use refs to prevent loops
+  }, [filters, currentQuestion, getFiltersHash, fetchQuestion, prefetchQuestions]); // Depend on filters and currentQuestion, but use refs to prevent loops
 
   return {
     // State

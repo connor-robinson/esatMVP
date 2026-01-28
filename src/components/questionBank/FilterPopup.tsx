@@ -13,7 +13,7 @@ interface FilterPopupProps {
   onStartSession?: (config: { count: number; topics: string[]; difficulties: string[] }) => void;
 }
 
-const testTypes: TestTypeFilter[] = ['All', 'ESAT', 'TMUA'];
+const subjectTypeOptions: ('ESAT' | 'TMUA' | 'BOTH')[] = ['ESAT', 'TMUA', 'BOTH'];
 const esatSubjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
 const tmuaSubjects: SubjectFilter[] = ['Paper 1', 'Paper 2'];
 const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
@@ -40,11 +40,11 @@ const subjectColors: Record<SubjectFilter, string> = {
   'Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
 };
 
-// Test type colors
-const testTypeColors: Record<TestTypeFilter, string> = {
-  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
+// Subject type colors (ESAT/TMUA/BOTH)
+const subjectTypeColors: Record<'ESAT' | 'TMUA' | 'BOTH', string> = {
   'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0]',
   'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa]',
+  'BOTH': 'bg-white/10 hover:bg-white/15 text-white/90',
 };
 
 export function FilterPopup({
@@ -83,17 +83,20 @@ export function FilterPopup({
   const selectedDifficultiesFilter = getSelectedDifficulties();
   const selectedAttemptResults = getSelectedAttemptResults();
 
-  // Get available subjects based on test type
+  // Determine subject type from testType filter
+  const subjectType: 'ESAT' | 'TMUA' | 'BOTH' = filters.testType === 'ESAT' ? 'ESAT' : filters.testType === 'TMUA' ? 'TMUA' : 'BOTH';
+
+  // Get available subjects based on subject type
   const availableSubjects = useMemo(() => {
-    if (filters.testType === 'ESAT') {
+    if (subjectType === 'ESAT') {
       return esatSubjects;
-    } else if (filters.testType === 'TMUA') {
+    } else if (subjectType === 'TMUA') {
       return tmuaSubjects;
     } else {
-      // If 'All' is selected, show all subjects
+      // If 'BOTH' is selected, show all subjects
       return [...esatSubjects, ...tmuaSubjects];
     }
-  }, [filters.testType]);
+  }, [subjectType]);
 
   // Get available attempt result options based on attemptedStatus
   const getAvailableAttemptResults = (): AttemptResultFilter[] => {
@@ -155,8 +158,10 @@ export function FilterPopup({
 
   if (!isOpen) return null;
 
-  const handleTestTypeChange = (testType: TestTypeFilter) => {
-    // Reset subject when test type changes
+  const handleSubjectTypeChange = (type: 'ESAT' | 'TMUA' | 'BOTH') => {
+    // Map BOTH to 'All', ESAT to 'ESAT', TMUA to 'TMUA'
+    const testType: TestTypeFilter = type === 'BOTH' ? 'All' : type;
+    // Reset subject when subject type changes
     onFilterChange({ ...filters, testType, subject: 'All' });
   };
 
@@ -274,36 +279,36 @@ export function FilterPopup({
 
         {/* Content Area - Scrollable */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
-          {/* Test Type Filter */}
+          {/* Subject Type Filter (ESAT/TMUA/BOTH) */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
-                Test Type
+                Subject
               </label>
             </div>
             <div className="flex flex-wrap gap-2">
-              {testTypes.map((testType) => (
+              {subjectTypeOptions.map((type) => (
                 <button
-                  key={testType}
-                  onClick={() => handleTestTypeChange(testType)}
+                  key={type}
+                  onClick={() => handleSubjectTypeChange(type)}
                   className={cn(
                     "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
-                    filters.testType === testType
-                      ? testTypeColors[testType] + " scale-105"
+                    subjectType === type
+                      ? subjectTypeColors[type] + " scale-105"
                       : "bg-white/5 hover:bg-white/10 text-white/60"
                   )}
                 >
-                  {testType}
+                  {type}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Subject Filter */}
+          {/* Topics Filter (Math 1, Math 2, etc.) */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
-                Subject
+                Topics
               </label>
               <div className="flex gap-2">
                 {selectedSubjects.length > 0 ? (
@@ -323,21 +328,29 @@ export function FilterPopup({
                 )}
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {availableSubjects.map((subject) => (
-                <button
-                  key={subject}
-                  onClick={() => toggleSubject(subject)}
-                  className={cn(
-                    "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
-                    selectedSubjects.includes(subject)
-                      ? subjectColors[subject] + " scale-105"
-                      : "bg-white/5 hover:bg-white/10 text-white/60"
-                  )}
-                >
-                  {subject}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-2 items-center">
+              {availableSubjects.map((subject, index) => {
+                // Show separator after ESAT subjects when BOTH is selected
+                const showSeparator = subjectType === 'BOTH' && index === esatSubjects.length;
+                return (
+                  <div key={subject} className="flex items-center gap-2">
+                    {showSeparator && (
+                      <span className="text-white/30 text-lg font-bold">|</span>
+                    )}
+                    <button
+                      onClick={() => toggleSubject(subject)}
+                      className={cn(
+                        "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                        selectedSubjects.includes(subject)
+                          ? subjectColors[subject] + " scale-105"
+                          : "bg-white/5 hover:bg-white/10 text-white/60"
+                      )}
+                    >
+                      {subject}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
