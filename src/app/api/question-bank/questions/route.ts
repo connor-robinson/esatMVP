@@ -113,6 +113,7 @@ export async function GET(request: NextRequest) {
     let attemptedQuestionIds: string[] = [];
     let incorrectQuestionIds: string[] = [];
     let correctQuestionIds: string[] = [];
+    let questionResults: Map<string, { hasCorrect: boolean; hasIncorrect: boolean }> = new Map();
     
     // Fetch user attempts if needed (for attemptedStatus or attemptResult filtering)
     if ((attemptedStatus && attemptedStatus !== 'Mix' && userId) || (attemptResults.length > 0 && userId)) {
@@ -132,7 +133,7 @@ export async function GET(request: NextRequest) {
           
           // Separate correct and incorrect questions
           // For each question, check if user has ever gotten it correct
-          const questionResults = new Map<string, { hasCorrect: boolean; hasIncorrect: boolean }>();
+          questionResults = new Map<string, { hasCorrect: boolean; hasIncorrect: boolean }>();
           attempts.forEach((a: any) => {
             const existing = questionResults.get(a.question_id) || { hasCorrect: false, hasIncorrect: false };
             if (a.is_correct) {
@@ -153,8 +154,13 @@ export async function GET(request: NextRequest) {
             .filter(([_, result]) => result.hasCorrect)
             .map(([id, _]) => id);
           
+          // Questions with mixed results (both correct AND incorrect attempts)
+          const mixedResultsQuestionIds = Array.from(questionResults.entries())
+            .filter(([_, result]) => result.hasCorrect && result.hasIncorrect)
+            .map(([id, _]) => id);
+          
           console.log(`[Question Bank API] Found ${attempts.length} total attempts, ${attemptedQuestionIds.length} unique questions attempted by user ${userId}`);
-          console.log(`[Question Bank API] Incorrect: ${incorrectQuestionIds.length}, Correct: ${correctQuestionIds.length}`);
+          console.log(`[Question Bank API] Incorrect: ${incorrectQuestionIds.length}, Correct: ${correctQuestionIds.length}, Mixed Results: ${mixedResultsQuestionIds.length}`);
         } else {
           console.log(`[Question Bank API] No attempts found for user ${userId}`);
         }
@@ -218,14 +224,24 @@ export async function GET(request: NextRequest) {
       const attemptedSet = new Set(attemptedQuestionIds);
       const incorrectSet = new Set(incorrectQuestionIds);
       
+      // Get mixed results questions (both correct AND incorrect attempts)
+      const mixedResultsSet = new Set(
+        Array.from(questionResults?.entries() || [])
+          .filter(([_, result]) => result.hasCorrect && result.hasIncorrect)
+          .map(([id, _]) => id)
+      );
+      
       const resultFilters: ((q: any) => boolean)[] = [];
       
       attemptResults.forEach(result => {
         if (result === 'Unseen') {
+          // Questions the user has never attempted
           resultFilters.push((q: any) => !attemptedSet.has(q.id));
         } else if (result === 'Mixed Results') {
-          resultFilters.push((q: any) => attemptedSet.has(q.id));
+          // Questions where user has BOTH correct AND incorrect attempts
+          resultFilters.push((q: any) => mixedResultsSet.has(q.id));
         } else if (result === 'Incorrect Before') {
+          // Questions where user has at least one incorrect attempt
           resultFilters.push((q: any) => incorrectSet.has(q.id));
         }
       });
