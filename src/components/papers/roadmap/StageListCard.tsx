@@ -120,7 +120,7 @@ export function StageListCard({
     };
 
     return (
-        <div className="relative">
+        <div className="relative overflow-visible">
             {/* Connector line from card to timeline node */}
             {timelineNodeY !== undefined && (
                 <div
