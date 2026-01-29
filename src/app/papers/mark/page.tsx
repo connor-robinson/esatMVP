@@ -350,7 +350,8 @@ export default function PapersMarkPage() {
   const sectionBreakdown = useMemo(() => {
     const bySection: Record<string, { correct: number; total: number }> = {};
     const qs = usePaperSessionStore.getState().questions;
-    for (let i = 0; i < totalQuestions; i++) {
+    if (!qs || qs.length === 0) return bySection;
+    for (let i = 0; i < qs.length; i++) {
       let part = (qs[i]?.partLetter || "").trim();
       const partUpper = part.toUpperCase();
       
@@ -366,7 +367,7 @@ export default function PapersMarkPage() {
       bySection[key].total += 1;
     }
     return bySection;
-  }, [totalQuestions, correctFlags]);
+  }, [correctFlags]);
 
   // Auto-derive correctness if not manually set
   const derivedCorrectFlags = useMemo(() => {
@@ -443,7 +444,8 @@ export default function PapersMarkPage() {
       return '—';
     };
     
-    for (let i = 0; i < totalQuestions; i++) {
+    if (!qs || qs.length === 0) return groups;
+    for (let i = 0; i < qs.length; i++) {
       const rawPartLetter = qs[i]?.partLetter || '';
       const partName = qs[i]?.partName || '';
       const pl = derivePartLetter(rawPartLetter, partName, paperName as string);
@@ -458,7 +460,7 @@ export default function PapersMarkPage() {
       }
     }
     return groups;
-  }, [totalQuestions, paperName, questionNumbers]);
+  }, [paperName, questionNumbers]);
 
   // Derived meta for header pills
   const sessionYear = useMemo(() => {
@@ -488,7 +490,8 @@ export default function PapersMarkPage() {
   const sectionBreakdownDerived = useMemo(() => {
     const bySection: Record<string, { correct: number; total: number }> = {};
     const qs = usePaperSessionStore.getState().questions;
-    for (let i = 0; i < totalQuestions; i++) {
+    if (!qs || qs.length === 0) return bySection;
+    for (let i = 0; i < qs.length; i++) {
       let part = (qs[i]?.partLetter || "").trim();
       const partUpper = part.toUpperCase();
       
@@ -504,7 +507,7 @@ export default function PapersMarkPage() {
       bySection[key].total += 1;
     }
     return bySection;
-  }, [totalQuestions, derivedCorrectFlags]);
+  }, [derivedCorrectFlags]);
 
   // Session duration
   const sessionDuration = useMemo(() => {
@@ -554,10 +557,12 @@ export default function PapersMarkPage() {
 
   // Guessing metrics
   const guessStats = useMemo(() => {
+    const qs = usePaperSessionStore.getState().questions;
+    const actualQuestionCount = qs?.length || 0;
     let count = 0;
     let timeTotal = 0;
     let correctGuesses = 0;
-    for (let i = 0; i < totalQuestions; i++) {
+    for (let i = 0; i < actualQuestionCount; i++) {
       if (guessedFlags[i]) {
         count += 1;
         timeTotal += perQuestionSec[i] || 0;
@@ -568,7 +573,7 @@ export default function PapersMarkPage() {
     const accuracy = count > 0 ? (correctGuesses / count) * 100 : 0;
     // Non-guess average for comparison
     let ngCount = 0; let ngTime = 0;
-    for (let i = 0; i < totalQuestions; i++) {
+    for (let i = 0; i < actualQuestionCount; i++) {
       if (!guessedFlags[i] && (derivedCorrectFlags[i] !== null)) {
         ngCount += 1;
         ngTime += perQuestionSec[i] || 0;
@@ -667,7 +672,7 @@ export default function PapersMarkPage() {
     }
     
     // Find all questions with "SECTION" partLetter
-    const sectionQuestions = qs.slice(0, totalQuestions).filter((q, idx) => {
+    const sectionQuestions = (qs || []).filter((q, idx) => {
       const partUpper = (q.partLetter || '').toUpperCase();
       return partUpper === 'SECTION' || partUpper.startsWith('SECTION ');
     });
@@ -687,7 +692,12 @@ export default function PapersMarkPage() {
     // Track questions with invalid parts
     const invalidParts: Array<{ index: number; questionNumber: number; partLetter: string; partName: string }> = [];
     
-    for (let i = 0; i < totalQuestions; i++) {
+    if (!qs || qs.length === 0) {
+      console.warn('[mark:sectionAnalytics] No questions available');
+      return { bySection: {}, invalidParts: [] };
+    }
+    
+    for (let i = 0; i < qs.length; i++) {
       const question = qs[i];
       if (!question) {
         console.warn(`[mark:sectionAnalytics] Question ${i} is undefined`);
