@@ -14,6 +14,7 @@ const config: Config = {
         surface: "var(--color-surface)",
         "surface-elevated": "var(--color-surface-elevated)",
         "surface-subtle": "var(--color-surface-subtle)",
+        "surface-mid": "var(--color-surface-mid)",
         border: "var(--color-border)",
         "border-subtle": "var(--color-border-subtle)",
         
