@@ -714,7 +714,7 @@ export function PaperSessionSummary({
           "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
           !canStart
             ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
-            : "bg-primary/60 hover:bg-primary/70 text-white cursor-pointer"
+            : "bg-primary/40 hover:bg-primary/50 text-text cursor-pointer border border-primary/50"
         )}
         style={
           canStart

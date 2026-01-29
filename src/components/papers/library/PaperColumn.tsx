@@ -310,7 +310,7 @@ export function PaperColumn({
           "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
           isSelected
             ? "bg-surface-elevated"
-            : "bg-surface-subtle hover:bg-surface-mid"
+            : "bg-surface-mid hover:bg-surface"
         )}
       >
         {/* Left: Dropdown icon for papers */}
@@ -393,8 +393,8 @@ export function PaperColumn({
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
                       isSelected
-                        ? "bg-surface-mid"
-                        : "bg-surface-subtle hover:bg-surface-mid"
+                        ? "bg-surface-elevated"
+                        : "bg-surface hover:bg-surface-mid"
                     )}
                   >
                     {/* Left: Number badge for sections */}
