@@ -694,7 +694,7 @@ export default function PapersMarkPage() {
     
     if (!qs || qs.length === 0) {
       console.warn('[mark:sectionAnalytics] No questions available');
-      return { bySection: {}, invalidParts: [] };
+      return analytics;
     }
     
     for (let i = 0; i < qs.length; i++) {
@@ -1045,7 +1045,13 @@ export default function PapersMarkPage() {
   // Predicted overall score (weighted by section totals) - exam-specific
   const predictedScore = useMemo(() => {
     if (!hasConversion || (conversionRows as any[])?.length === 0) return null;
-    const entries = Object.entries(sectionAnalytics);
+    const entries = Object.entries(sectionAnalytics) as Array<[string, {
+      correct: number;
+      total: number;
+      avgTime: number;
+      totalTime: number;
+      guessed: number;
+    }]>;
     if (entries.length === 0) return null;
     const qs = usePaperSessionStore.getState().questions;
     let weightedSum = 0;
