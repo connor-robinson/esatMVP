@@ -12,10 +12,13 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   // Collect all debug logs to send to client
   const debugLogs: string[] = [];
-  const debug = (message: string, data?: any) => {
-    const logMsg = data ? `${message} ${JSON.stringify(data)}` : message;
+  const debug = (...args: any[]) => {
+    // Handle multiple arguments by joining them
+    const logMsg = args.map(arg => 
+      typeof arg === 'object' && arg !== null ? JSON.stringify(arg) : String(arg)
+    ).join(' ');
     debugLogs.push(logMsg);
-    debug(logMsg); // Also log to server terminal
+    console.log(...args); // Also log to server terminal with original format
   };
 
   debug('🚀 [Question Bank API] ROUTE CALLED - Request received at:', new Date().toISOString());
