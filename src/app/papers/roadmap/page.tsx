@@ -292,6 +292,13 @@ export default function PapersRoadmapPage() {
 
               if (!partMatches) return false;
 
+              // Apply question range filter if specified (for ENGAA Section 1 Part A split)
+              if (part.questionRange) {
+                const inRange = q.questionNumber >= part.questionRange.start && 
+                               q.questionNumber <= part.questionRange.end;
+                if (!inRange) return false;
+              }
+
               // Apply question filter if specified (for ENGAA Section 1 Part B)
               if (part.questionFilter && part.questionFilter.length > 0) {
                 return part.questionFilter.includes(q.questionNumber);

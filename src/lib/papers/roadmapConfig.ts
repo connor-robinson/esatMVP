@@ -50,9 +50,20 @@ function getSectionForPart(part: RoadmapPart, examName: ExamName): PaperSection 
 
 /**
  * All roadmap stages in order
+ * 
+ * IMPORTANT: Parts must match exact database values for part_letter and part_name
+ * Library shows ALL parts from database, roadmap shows only relevant Math 1/Math 2/Physics parts
+ * 
+ * Structure:
+ * - NSAA 2016-2019: Section 1 (Parts A, B, E), Section 2 (empty)
+ * - NSAA 2020-2023: Section 1 (Parts A, B), Section 2 (Part B Physics)
+ * - ENGAA 2016-2018: Section 1 (Part A split into Math 1/Math 2, Part B), Section 2 (Part A)
+ * - ENGAA 2019-2023: Section 1 (Part A, Part B), Section 2 (Part A)
+ * - TMUA: Generated dynamically (Paper 1 and Paper 2)
  */
 export const ROADMAP_STAGES: RoadmapStage[] = [
-  // NSAA 2016-2019: Section 1 only, Parts A, B, E
+  // NSAA 2016-2019: Section 1 only, Parts A (Maths), B (Physics), E (Advanced)
+  // Section 2: No parts applicable (shown as empty in UI)
   {
     id: 'nsaa-2016',
     year: 2016,
@@ -157,7 +168,7 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
       },
     ],
   },
-  // NSAA 2020-2023: Section 1 Parts A, B; Section 2 Part B
+  // NSAA 2020-2023: Section 1 Parts A (Maths), B (Physics); Section 2 Part B (Physics)
   {
     id: 'nsaa-2020',
     year: 2020,
@@ -263,12 +274,39 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     ],
   },
   // ENGAA stages
+  // ENGAA 2016-2018: Section 1 Part A split into Math 1 (first half) and Math 2 (second half)
+  // Section 1 Part B (Advanced), Section 2 Part A (Physics)
   {
     id: 'engaa-2016',
     year: 2016,
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A split - Math 1 (first half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 1, end: 20 }, // First half for Math 1
+      },
+      // Section 1: Part A split - Math 2 (second half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 21, end: 40 }, // Second half for Math 2
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
+      {
+        partLetter: 'Part B',
+        partName: 'Advanced Mathematics and Advanced Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2016],
+      },
+      // Section 2: Part A (Physics)
       {
         partLetter: 'Part A',
         partName: 'Physics',
@@ -283,6 +321,23 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A split - Math 1 (first half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 1, end: 20 }, // First half for Math 1
+      },
+      // Section 1: Part A split - Math 2 (second half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 21, end: 40 }, // Second half for Math 2
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
@@ -290,6 +345,7 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         examType: 'Official',
         questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2017],
       },
+      // Section 2: Part A (Physics)
       {
         partLetter: 'Part A',
         partName: 'Physics',
@@ -304,6 +360,23 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A split - Math 1 (first half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 1, end: 20 }, // First half for Math 1
+      },
+      // Section 1: Part A split - Math 2 (second half)
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        questionRange: { start: 21, end: 40 }, // Second half for Math 2
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
@@ -311,6 +384,7 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         examType: 'Official',
         questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2018],
       },
+      // Section 2: Part A (Physics)
       {
         partLetter: 'Part A',
         partName: 'Physics',
@@ -319,12 +393,22 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
       },
     ],
   },
+  // ENGAA 2019-2023: Section 1 Part A (Maths), Part B (Advanced), Section 2 Part A (Physics)
   {
     id: 'engaa-2019',
     year: 2019,
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+        // Note: This will match all Part A questions, filtering by section mapping will handle Maths vs Physics
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
@@ -332,6 +416,7 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
         examType: 'Official',
         questionFilter: ENGAA_SECTION1_PARTB_FILTERS[2019],
       },
+      // Section 2: Part A (Physics)
       {
         partLetter: 'Part A',
         partName: 'Physics',
@@ -346,12 +431,27 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
         paperName: 'Section 1',
         examType: 'Official',
         // All questions (no filter)
+      },
+      // Section 2: Part A (Physics)
+      {
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Section 2',
+        examType: 'Official',
       },
     ],
   },
@@ -361,12 +461,27 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
         paperName: 'Section 1',
         examType: 'Official',
         // All questions (no filter)
+      },
+      // Section 2: Part A (Physics)
+      {
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Section 2',
+        examType: 'Official',
       },
     ],
   },
@@ -376,12 +491,27 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
         paperName: 'Section 1',
         examType: 'Official',
         // All questions (no filter)
+      },
+      // Section 2: Part A (Physics)
+      {
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Section 2',
+        examType: 'Official',
       },
     ],
   },
@@ -391,12 +521,27 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
     examName: 'ENGAA',
     label: 'Advanced Practice',
     parts: [
+      // Section 1: Part A (Mathematics and Physics) - extract Maths portion
+      {
+        partLetter: 'Part A',
+        partName: 'Mathematics and Physics',
+        paperName: 'Section 1',
+        examType: 'Official',
+      },
+      // Section 1: Part B (Advanced Mathematics and Advanced Physics)
       {
         partLetter: 'Part B',
         partName: 'Advanced Mathematics and Advanced Physics',
         paperName: 'Section 1',
         examType: 'Official',
         // All questions (no filter)
+      },
+      // Section 2: Part A (Physics)
+      {
+        partLetter: 'Part A',
+        partName: 'Physics',
+        paperName: 'Section 2',
+        examType: 'Official',
       },
     ],
   },

@@ -44,6 +44,15 @@ export function StageListCard({
     const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
     const examColor = getPaperTypeColor(stage.examName);
 
+    // Helper function to generate part key (includes questionRange if present for uniqueness)
+    const getPartKey = (part: RoadmapPart): string => {
+        const baseKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+        if (part.questionRange) {
+            return `${baseKey}-${part.questionRange.start}-${part.questionRange.end}`;
+        }
+        return baseKey;
+    };
+
     // Initialize selected parts to only incomplete parts when stage changes
     // This ensures users don't accidentally re-attempt completed sections
     useMemo(() => {
@@ -52,11 +61,11 @@ export function StageListCard({
             const incompletePartKeys = new Set(
                 stage.parts
                     .filter((part) => {
-                        const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+                        const partKey = getPartKey(part);
                         const isCompleted = completionData.get(partKey) || false;
                         return !isCompleted; // Only include incomplete parts
                     })
-                    .map((part) => `${part.paperName}-${part.partLetter}-${part.examType}`)
+                    .map((part) => getPartKey(part))
             );
             setSelectedParts(incompletePartKeys);
         }
@@ -82,7 +91,7 @@ export function StageListCard({
         e.stopPropagation();
         if (isUnlocked && selectedParts.size > 0) {
             const selectedPartsList = stage.parts.filter((part) => {
-                const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+                const partKey = getPartKey(part);
                 return selectedParts.has(partKey);
             });
             onStartSession(stage, selectedPartsList);
@@ -93,7 +102,7 @@ export function StageListCard({
         e.stopPropagation();
         // Get all incomplete parts
         const incompleteParts = stage.parts.filter((part) => {
-            const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+            const partKey = getPartKey(part);
             const isCompleted = completionData.get(partKey) || false;
             return !isCompleted;
         });
@@ -104,9 +113,7 @@ export function StageListCard({
         } else {
             // Select all incomplete parts
             const allIncompletePartKeys = new Set(
-                incompleteParts.map(
-                    (part) => `${part.paperName}-${part.partLetter}-${part.examType}`
-                )
+                incompleteParts.map((part) => getPartKey(part))
             );
             setSelectedParts(allIncompletePartKeys);
         }
@@ -262,7 +269,7 @@ export function StageListCard({
                                         >
                                             {(() => {
                                                 const incompleteCount = stage.parts.filter((part) => {
-                                                    const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+                                                    const partKey = getPartKey(part);
                                                     return !(completionData.get(partKey) || false);
                                                 }).length;
                                                 return selectedParts.size === incompleteCount && incompleteCount > 0
@@ -272,58 +279,113 @@ export function StageListCard({
                                         </button>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        {stage.parts.map((part) => {
-                                            const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-                                            const isPartCompleted = completionData.get(partKey) || false;
-                                            const isSelected = selectedParts.has(partKey);
+                                    <div className="space-y-3">
+                                        {(() => {
+                                            // Group parts by paperName (Section 1, Section 2, Paper 1, Paper 2)
+                                            const partsBySection = new Map<string, RoadmapPart[]>();
+                                            stage.parts.forEach(part => {
+                                                const sectionKey = part.paperName;
+                                                if (!partsBySection.has(sectionKey)) {
+                                                    partsBySection.set(sectionKey, []);
+                                                }
+                                                partsBySection.get(sectionKey)!.push(part);
+                                            });
 
-                                            return (
-                                                <div
-                                                    key={partKey}
-                                                    className="flex items-center gap-3 p-3 rounded-md text-sm cursor-pointer hover:bg-white/[0.03] transition-colors bg-white/[0.02]"
-                                                    style={{ border: "none", outline: "none" }}
-                                                    onClick={(e) => handlePartToggle(partKey, e)}
-                                                >
-                                                     <div
-                                                         className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
-                                                         style={{ 
-                                                             border: "none", 
-                                                             outline: "none", 
-                                                             backgroundColor: isSelected ? examColor : "rgba(255, 255, 255, 0.05)"
-                                                         }}
-                                                     >
-                                                         {isSelected && (
-                                                             <Check className="w-3.5 h-3.5 text-white stroke-[2.5]" />
-                                                         )}
-                                                     </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        {stage.examName === 'TMUA' ? (
-                                                            // TMUA: Just show "Paper 1" or "Paper 2"
-                                                            <div className="font-medium text-white/70">{part.paperName}</div>
-                                                        ) : (
-                                                            // NSAA/ENGAA: Show "Section 1 - Part A: Mathematics"
-                                                            <>
-                                                                <div className="font-medium text-white/70">{part.paperName} - {part.partLetter}: {part.partName}</div>
-                                                                <div className="text-xs text-white/35">{part.examType}</div>
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                    {isPartCompleted && (
-                                                        <div className="flex-shrink-0 flex items-center gap-1.5">
-                                                            <CheckCircle2 
-                                                                className="w-5 h-5" 
-                                                                style={{ color: examColor }} 
-                                                                strokeWidth={2.5}
-                                                            />
-                                                            <span className="text-xs font-medium" style={{ color: examColor + "CC" }}>
-                                                                Done
+                                            // Get all unique sections in order (Section 1, Section 2, Paper 1, Paper 2)
+                                            const sections = Array.from(partsBySection.keys()).sort((a, b) => {
+                                                // Sort: Section 1, Section 2, Paper 1, Paper 2
+                                                const order = ['Section 1', 'Section 2', 'Paper 1', 'Paper 2'];
+                                                const aIndex = order.indexOf(a);
+                                                const bIndex = order.indexOf(b);
+                                                if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+                                                if (aIndex !== -1) return -1;
+                                                if (bIndex !== -1) return 1;
+                                                return a.localeCompare(b);
+                                            });
+
+                                            return sections.map((sectionName) => {
+                                                const sectionParts = partsBySection.get(sectionName) || [];
+                                                
+                                                return (
+                                                    <div key={sectionName} className="space-y-2">
+                                                        {/* Section Header */}
+                                                        <div className="flex items-center gap-2 px-2 py-1.5">
+                                                            <ChevronRight className="w-4 h-4 text-white/40" />
+                                                            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">
+                                                                {sectionName}
                                                             </span>
                                                         </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+                                                        
+                                                        {/* Parts in this section */}
+                                                        {sectionParts.length > 0 ? (
+                                                            <div className="pl-4 space-y-2">
+                                                                {sectionParts.map((part) => {
+                                                                    const partKey = getPartKey(part);
+                                                                    const isPartCompleted = completionData.get(partKey) || false;
+                                                                    const isSelected = selectedParts.has(partKey);
+
+                                                                    // Build display label
+                                                                    let displayLabel = '';
+                                                                    if (stage.examName === 'TMUA') {
+                                                                        displayLabel = part.paperName;
+                                                                    } else {
+                                                                        // For parts with questionRange, show range info
+                                                                        if (part.questionRange) {
+                                                                            displayLabel = `${part.partLetter}: ${part.partName} (Q${part.questionRange.start}-${part.questionRange.end})`;
+                                                                        } else {
+                                                                            displayLabel = `${part.partLetter}: ${part.partName}`;
+                                                                        }
+                                                                    }
+
+                                                                    return (
+                                                                        <div
+                                                                            key={partKey}
+                                                                            className="flex items-center gap-3 p-3 rounded-md text-sm cursor-pointer hover:bg-white/[0.03] transition-colors bg-white/[0.02]"
+                                                                            style={{ border: "none", outline: "none" }}
+                                                                            onClick={(e) => handlePartToggle(partKey, e)}
+                                                                        >
+                                                                            <div
+                                                                                className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
+                                                                                style={{ 
+                                                                                    border: "none", 
+                                                                                    outline: "none", 
+                                                                                    backgroundColor: isSelected ? examColor : "rgba(255, 255, 255, 0.05)"
+                                                                                }}
+                                                                            >
+                                                                                {isSelected && (
+                                                                                    <Check className="w-3.5 h-3.5 text-white stroke-[2.5]" />
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <div className="font-medium text-white/70">{displayLabel}</div>
+                                                                                <div className="text-xs text-white/35">{part.examType}</div>
+                                                                            </div>
+                                                                            {isPartCompleted && (
+                                                                                <div className="flex-shrink-0 flex items-center gap-1.5">
+                                                                                    <CheckCircle2 
+                                                                                        className="w-5 h-5" 
+                                                                                        style={{ color: examColor }} 
+                                                                                        strokeWidth={2.5}
+                                                                                    />
+                                                                                    <span className="text-xs font-medium" style={{ color: examColor + "CC" }}>
+                                                                                        Done
+                                                                                    </span>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        ) : (
+                                                            // Empty section message
+                                                            <div className="pl-4 py-2 text-xs text-white/30 italic">
+                                                                No Parts from {sectionName.toLowerCase()} applicable
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
                                     </div>
 
                                      <button
