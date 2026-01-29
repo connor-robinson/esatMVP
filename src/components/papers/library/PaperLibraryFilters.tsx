@@ -143,7 +143,7 @@ export function PaperLibraryFilters({
   };
 
   return (
-    <Card variant="flat" className="p-3">
+    <Card variant="flat" className="p-3 bg-surface-subtle">
       <div className="mb-4">
         <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text mb-1">
           Filters

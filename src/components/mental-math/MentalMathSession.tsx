@@ -158,7 +158,7 @@ export function MentalMathSession({
               </div>
               <button
                 onClick={onExit}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-all text-sm font-medium flex-shrink-0 z-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-elevated border border-border text-text-muted hover:bg-error/10 hover:border-error/30 hover:text-error transition-all text-sm font-medium flex-shrink-0 z-50"
               >
                 <LogOut className="h-4 w-4" strokeWidth={2} />
                 <span>Exit</span>
@@ -169,7 +169,7 @@ export function MentalMathSession({
                 {questionNumber} / {totalQuestions}
               </span>
               {accuracy > 0 && (
-                <span className="text-white/40 text-sm">
+                <span className="text-text-subtle text-sm">
                   {accuracy}% accurate
                 </span>
               )}
@@ -184,7 +184,7 @@ export function MentalMathSession({
           <div className="w-full max-w-2xl flex flex-col items-center gap-12">
             {/* Topic badge */}
             <div className="flex justify-center">
-              <span className="text-white/30 text-xs font-mono uppercase tracking-wider">
+              <span className="text-text-subtle text-xs font-mono uppercase tracking-wider">
                 {displayTopicName}
               </span>
             </div>
@@ -199,7 +199,7 @@ export function MentalMathSession({
                 transition={{ duration: 0.1, ease: "easeInOut" }}
                 className="text-center"
               >
-                <div className="text-lg md:text-xl font-semibold text-white/80 tracking-tight leading-tight">
+                <div className="text-lg md:text-xl font-semibold text-text-muted tracking-tight leading-tight">
                   <MathContent content={currentQuestion.question} />
                 </div>
               </motion.div>
@@ -250,9 +250,9 @@ export function MentalMathSession({
                           showFeedback && lastAttempt?.isCorrect
                             ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
                             : showFeedback && !lastAttempt?.isCorrect
-                            ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
-                            : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
-                          "placeholder:text-white/20 placeholder:text-sm placeholder:font-medium",
+                            ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+                            : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+                          "placeholder:text-text-disabled placeholder:text-sm placeholder:font-medium",
                           (showFeedback && lastAttempt?.isCorrect) || answerRevealed ? "cursor-not-allowed" : ""
                         )}
                         style={{
@@ -272,7 +272,7 @@ export function MentalMathSession({
                     {!answerRevealed && showFeedback && !lastAttempt?.isCorrect && (
                       <button
                         onClick={handleRevealAnswer}
-                        className="px-3 py-2 rounded-xl bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/90 transition-all text-xs"
+                        className="px-3 py-2 rounded-xl bg-surface-elevated text-text-muted hover:bg-surface hover:text-text transition-all text-xs"
                         title="Reveal answer"
                       >
                         <Eye className="h-4 w-4" strokeWidth={2} />
@@ -287,12 +287,12 @@ export function MentalMathSession({
                       className={cn(
                         "px-4 py-2 rounded-xl transition-all text-sm font-medium flex items-center gap-1",
                         showFeedback && !lastAttempt?.isCorrect
-                          ? "bg-red-500/20 text-red-100 hover:bg-red-500/30"
+                          ? "bg-error/20 text-error hover:bg-error/30"
                           : multiAnswers.some((p) => p.trim().length > 0) && !showFeedback
                           ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
                           : answerRevealed
                           ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
-                          : "bg-white/5 text-white/20 cursor-not-allowed"
+                          : "bg-surface-elevated text-text-disabled cursor-not-allowed"
                       )}
                     >
                       <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -341,9 +341,9 @@ export function MentalMathSession({
                         showFeedback && lastAttempt?.isCorrect
                           ? "bg-primary/20 text-primary focus:ring-0 focus:outline-none"
                           : showFeedback && !lastAttempt?.isCorrect
-                          ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
-                          : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
-                        "placeholder:text-white/20 placeholder:text-base placeholder:font-medium",
+                          ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+                          : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+                        "placeholder:text-text-disabled placeholder:text-base placeholder:font-medium",
                         (showFeedback && lastAttempt?.isCorrect) || answerRevealed ? "cursor-not-allowed" : ""
                       )}
                       style={{ 
@@ -363,7 +363,7 @@ export function MentalMathSession({
                         {!answerRevealed && showFeedback && !lastAttempt?.isCorrect && (
                           <button
                             onClick={handleRevealAnswer}
-                            className="p-2 rounded-xl bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/90 transition-all"
+                            className="p-2 rounded-xl bg-surface-elevated text-text-muted hover:bg-surface hover:text-text transition-all"
                             title="Reveal answer"
                           >
                             <Eye className="h-5 w-5" strokeWidth={2} />
@@ -378,12 +378,12 @@ export function MentalMathSession({
                           className={cn(
                             "p-3 rounded-xl transition-all",
                             showFeedback && !lastAttempt?.isCorrect
-                              ? "bg-red-500/20 text-red-100 hover:bg-red-500/30"
+                              ? "bg-error/20 text-error hover:bg-error/30"
                               : answer.trim() && !showFeedback
                               ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
                               : answerRevealed
                               ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
-                              : "bg-white/5 text-white/20 cursor-not-allowed"
+                              : "bg-surface-elevated text-text-disabled cursor-not-allowed"
                           )}
                         >
                           <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
@@ -394,7 +394,7 @@ export function MentalMathSession({
                   {/* Input mode toggle */}
                   <button
                     onClick={() => setUseKatexInput(!useKatexInput)}
-                    className="text-xs text-white/40 hover:text-white/60 transition-colors"
+                    className="text-xs text-text-subtle hover:text-text-muted transition-colors"
                   >
                     {useKatexInput ? "Switch to simple input" : "Switch to math input"}
                   </button>
@@ -405,9 +405,9 @@ export function MentalMathSession({
 
           {/* Explanation display (shown when answer is revealed) */}
           {answerRevealed && currentQuestion.explanation && (
-            <div className="mt-6 p-4 rounded-xl bg-white/5 border border-white/10">
-              <p className="text-sm font-medium text-white/70 mb-2">Explanation:</p>
-              <p className="text-sm text-white/60 whitespace-pre-line">{currentQuestion.explanation}</p>
+            <div className="mt-6 p-4 rounded-xl bg-surface-elevated border border-border">
+              <p className="text-sm font-medium text-text-muted mb-2">Explanation:</p>
+              <p className="text-sm text-text-subtle whitespace-pre-line">{currentQuestion.explanation}</p>
             </div>
           )}
         </Container>

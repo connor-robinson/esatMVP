@@ -11,10 +11,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, error, type = "text", ...props }, ref) => {
-    const baseStyles = "w-full px-4 py-3 bg-surface-subtle text-text rounded-organic-md border border-border transition-all duration-fast ease-signature outline-none backdrop-blur-sm placeholder:text-text-subtle";
+    const baseStyles = "w-full px-4 py-3 bg-white/5 text-text rounded-xl transition-all duration-fast ease-signature outline-none backdrop-blur-sm placeholder:text-text-subtle";
     const stateStyles = error
-      ? "border-error focus:shadow-[0_0_0_3px_rgba(239,68,68,0.3)]"
-      : "focus:border-primary focus:shadow-glow-focus";
+      ? "ring-1 ring-error focus:ring-2 focus:ring-error"
+      : "ring-0 focus:ring-1 focus:ring-primary/50";
     
     return (
       <input

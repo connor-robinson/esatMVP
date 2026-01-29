@@ -349,8 +349,9 @@ export default function ProfilePage() {
   // Debounce timer ref
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle username input change with debounce
-  const handleUsernameChange = useCallback((value: string) => {
+  // Handle username input change with debounce - stable handler
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
     setUsernameInput(value);
     setUsernameError(null);
     
@@ -514,17 +515,21 @@ export default function ProfilePage() {
           onChange={(e) => onChange(e.target.checked)}
           className="sr-only"
         />
-        <div className={cn(
-          "w-11 h-6 rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          checked ? "bg-primary shadow-lg shadow-primary/30" : "bg-surface-elevated"
-        )}>
+        <div 
+          className={cn(
+            "w-11 h-6 rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+            checked ? "bg-primary shadow-lg shadow-primary/30" : "bg-surface-elevated"
+          )}
+          style={{
+            transition: 'background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
           <div 
-            className={cn(
-              "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow-md",
-              "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-            )}
+            className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-lg transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
             style={{
-              transform: checked ? 'translateX(1.25rem)' : 'translateX(0.125rem)',
+              transform: checked ? 'translateX(1.25rem) scale(1)' : 'translateX(0.125rem) scale(1)',
+              left: checked ? 'auto' : '0.125rem',
+              right: checked ? '0.125rem' : 'auto',
             }}
           />
         </div>
@@ -549,34 +554,29 @@ export default function ProfilePage() {
     onChange: (value: string) => void;
     options: { value: string; label: string }[];
   }) => (
-    <div className="flex gap-6">
-      {options.map((option) => (
-        <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
-          <div className="relative">
-            <input
-              type="radio"
-              name="radio-group"
-              value={option.value}
-              checked={value === option.value}
-              onChange={() => onChange(option.value)}
-              className="sr-only"
-            />
-            <div className={cn(
-              "w-3.5 h-3.5 rounded-full border transition-colors",
-              value === option.value 
-                ? "border-primary" 
-                : "border-text-muted group-hover:border-text"
-            )}>
-              {value === option.value && (
-                <div className="absolute inset-1 rounded-full bg-primary" />
-              )}
-            </div>
-          </div>
-          <span className="text-sm text-text group-hover:text-text-muted transition-colors">
-            {option.label}
-          </span>
-        </label>
-      ))}
+    <div className="flex gap-3">
+      {options.map((option) => {
+        const isSelected = value === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+              "relative overflow-hidden",
+              isSelected
+                ? "bg-primary text-white shadow-lg shadow-primary/30"
+                : "bg-white/5 text-text-muted hover:bg-white/10 hover:text-text"
+            )}
+            style={{
+              transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+            }}
+          >
+            <span className="relative z-10">{option.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 
@@ -674,13 +674,13 @@ export default function ProfilePage() {
                                 ref={usernameInputRef}
                                 type="text"
                                 value={usernameInput}
-                                onChange={(e) => handleUsernameChange(e.target.value)}
+                                onChange={handleUsernameChange}
                                 placeholder="Enter your username"
                                 className={cn(
                                   "pr-10",
-                                  usernameAvailability.available === true && "border-success",
-                                  usernameAvailability.available === false && "border-error",
-                                  usernameError && "border-error"
+                                  usernameAvailability.available === true && "ring-1 ring-success focus:ring-2 focus:ring-success",
+                                  usernameAvailability.available === false && "ring-1 ring-error focus:ring-2 focus:ring-error",
+                                  usernameError && "ring-1 ring-error focus:ring-2 focus:ring-error"
                                 )}
                                 disabled={saving === "username"}
                                 autoComplete="username"
@@ -770,7 +770,7 @@ export default function ProfilePage() {
                         />
                         <button
                           onClick={() => setShowChangeEmail(true)}
-                          className="px-5 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 hover:scale-[1.02] transition-all font-medium flex items-center gap-2"
+                          className="px-4 py-2 rounded-xl bg-surface-neutral hover:bg-surface-elevated text-text hover:text-text-muted transition-all font-medium flex items-center gap-2"
                         >
                           <span>Change</span>
                           <Mail className="w-4 h-4" />
@@ -782,49 +782,34 @@ export default function ProfilePage() {
                       label="Password" 
                       description="Change your account password"
                     >
-                      <button
-                        onClick={() => setShowChangePassword(true)}
-                        className="px-5 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 hover:scale-[1.02] transition-all font-medium flex items-center gap-2"
-                      >
-                        <span>Change Password</span>
-                        <Lock className="w-4 h-4" />
-                      </button>
+                      <div className="flex gap-3">
+                        <div className="flex-1" />
+                        <button
+                          onClick={() => setShowChangePassword(true)}
+                          className="px-4 py-2 rounded-xl bg-surface-neutral hover:bg-surface-elevated text-text hover:text-text-muted transition-all font-medium flex items-center gap-2"
+                        >
+                          <span>Change Password</span>
+                          <Lock className="w-4 h-4" />
+                        </button>
+                      </div>
                     </SettingItem>
 
                     <div className="pt-6">
-                      <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-3">
                         <button
                           onClick={handleLogout}
-                          className="w-full px-6 py-3 rounded-organic-md bg-interview/30 hover:bg-interview/40 text-interview transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium"
-                          style={{
-                            boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                          }}
+                          className="px-4 py-2.5 rounded-xl bg-surface-neutral hover:bg-surface-elevated text-text hover:text-text-muted transition-all font-medium flex items-center justify-center gap-2"
                         >
                           <span>Logout</span>
-                          <LogOut className="w-4 h-4" strokeWidth={2.5} />
+                          <LogOut className="w-4 h-4" strokeWidth={2} />
                         </button>
 
                         <button
                           onClick={() => setShowDeleteAccount(true)}
-                          className="w-full px-6 py-3 rounded-organic-md bg-error/30 hover:bg-error/40 text-error transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium"
-                          style={{
-                            boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                          }}
+                          className="px-4 py-2.5 rounded-xl bg-surface-neutral hover:bg-error/20 text-error hover:text-error transition-all font-medium flex items-center justify-center gap-2"
                         >
                           <span>Delete Account</span>
-                          <Trash2 className="w-4 h-4" strokeWidth={2.5} />
+                          <Trash2 className="w-4 h-4" strokeWidth={2} />
                         </button>
                       </div>
                     </div>

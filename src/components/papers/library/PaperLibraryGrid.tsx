@@ -111,7 +111,7 @@ export function PaperLibraryGrid({
   }, [papers]);
 
   return (
-    <Card variant="flat" className="p-5 h-full bg-transparent">
+    <Card variant="flat" className="p-5 h-full bg-surface-mid">
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">

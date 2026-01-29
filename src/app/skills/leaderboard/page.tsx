@@ -146,7 +146,7 @@ export default function LeaderboardPage() {
 
   return (
     <Container size="lg" className="py-10 space-y-8">
-      <Suspense fallback={<div className="h-96 bg-white/5 rounded-lg animate-pulse" />}>
+      <Suspense fallback={<div className="h-96 bg-surface-elevated rounded-lg animate-pulse" />}>
         <GlobalView
           leaderboardData={leaderboardData}
           currentUserId={session?.user?.id || ""}

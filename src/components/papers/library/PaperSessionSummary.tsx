@@ -608,7 +608,7 @@ export function PaperSessionSummary({
   const totalItems = selectedPapers.length;
 
   return (
-    <Card variant="flat" className="p-5 h-full space-y-4 bg-transparent">
+    <Card variant="flat" className="p-5 h-full space-y-4 bg-surface">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

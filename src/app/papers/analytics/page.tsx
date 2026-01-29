@@ -375,20 +375,20 @@ export default function PapersAnalyticsPage() {
     <Container size="lg">
       <div className="space-y-8">
         {/* 1. Overview Section with Performance Summary */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
+        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6">
           <button
             onClick={() => toggleSection("overview")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
                 Quick Overview
               </h2>
-              <p className="text-sm text-white/60 mt-1 text-left">Your performance at a glance</p>
+              <p className="text-sm text-text-muted mt-1 text-left">Your performance at a glance</p>
             </div>
             <ChevronDown 
               className={cn(
-                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
                 collapsedSections.has("overview") && "rotate-180"
               )}
             />
@@ -404,21 +404,21 @@ export default function PapersAnalyticsPage() {
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Average Score</div>
-                    <div className="text-2xl font-bold text-white/95 leading-none">{Math.round(analytics.averageScore)}%</div>
+                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Average Score</div>
+                    <div className="text-2xl font-bold text-text leading-none">{Math.round(analytics.averageScore)}%</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Sessions Completed</div>
-                    <div className="text-2xl font-bold text-white/95 leading-none">{analytics.totalSessions}</div>
+                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Sessions Completed</div>
+                    <div className="text-2xl font-bold text-text leading-none">{analytics.totalSessions}</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Avg Time</div>
-                    <div className="text-2xl font-bold text-white/95 leading-none">{Math.round(analytics.averageTime)} min</div>
+                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Avg Time</div>
+                    <div className="text-2xl font-bold text-text leading-none">{Math.round(analytics.averageTime)} min</div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Sections Practiced</div>
-                    <div className="text-2xl font-bold text-white/95 leading-none">{sectionsPracticed}</div>
+                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Sections Practiced</div>
+                    <div className="text-2xl font-bold text-text leading-none">{sectionsPracticed}</div>
                   </div>
                 </div>
               </motion.div>
@@ -427,22 +427,22 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 2. Performance Chart with Percentiles */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
+        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
           <button
             onClick={() => toggleSection("performance")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
                 Performance Trends
               </h2>
-              <p className="text-sm text-white/60 mt-1 text-left">
+              <p className="text-sm text-text-muted mt-1 text-left">
                 Track your percentile progression over time
               </p>
             </div>
             <ChevronDown 
               className={cn(
-                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
                 collapsedSections.has("performance") && "rotate-180"
               )}
             />
@@ -467,14 +467,14 @@ export default function PapersAnalyticsPage() {
                         setTopicDropdownOpen(!topicDropdownOpen);
                         setPaperTypeDropdownOpen(false);
                       }}
-                      className="h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between min-w-[160px]"
+                      className="h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border"
                     >
                       <span className="truncate text-left">
                         {selectedTopics.length === 0 ? "By Topic" : `${selectedTopics.length} selected`}
                       </span>
                       <ChevronDown
                         className={cn(
-                          "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
+                          "absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform",
                           topicDropdownOpen && "rotate-180"
                         )}
                       />
@@ -492,7 +492,7 @@ export default function PapersAnalyticsPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px]"
+                            className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border"
                           >
                             <div className="max-h-60 overflow-y-auto">
                               {["Math 1", "Math 2", "All maths", "Physics", "Chemistry", "Biology"].map((topic) => (
@@ -509,18 +509,18 @@ export default function PapersAnalyticsPage() {
                                   className={cn(
                                     "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
                                     selectedTopics.includes(topic)
-                                      ? "bg-white/10 text-white"
-                                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                                      ? "bg-surface-mid text-text"
+                                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
                                   )}
                                 >
                                   <div className={cn(
                                     "w-4 h-4 rounded border-2 flex items-center justify-center",
                                     selectedTopics.includes(topic)
                                       ? "bg-primary border-primary"
-                                      : "border-white/30"
+                                      : "border-border"
                                   )}>
                                     {selectedTopics.includes(topic) && (
-                                      <div className="w-2 h-2 bg-white rounded-sm" />
+                                      <div className="w-2 h-2 bg-text rounded-sm" />
                                     )}
                                   </div>
                                   {topic}
@@ -541,14 +541,14 @@ export default function PapersAnalyticsPage() {
                         setPaperTypeDropdownOpen(!paperTypeDropdownOpen);
                         setTopicDropdownOpen(false);
                       }}
-                      className="h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between min-w-[160px]"
+                      className="h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border"
                     >
                       <span className="truncate text-left">
                         {selectedPaperTypes.length === 0 ? "By Paper Type" : `${selectedPaperTypes.length} selected`}
                       </span>
                       <ChevronDown
                         className={cn(
-                          "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
+                          "absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform",
                           paperTypeDropdownOpen && "rotate-180"
                         )}
                       />
@@ -566,7 +566,7 @@ export default function PapersAnalyticsPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px]"
+                            className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border"
                           >
                             <div className="max-h-60 overflow-y-auto">
                               {(["TMUA", "ESAT", "NSAA", "ENGAA", "PAT", "MAT", "OTHER"] as PaperType[]).map((paperType) => (
@@ -583,18 +583,18 @@ export default function PapersAnalyticsPage() {
                                   className={cn(
                                     "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
                                     selectedPaperTypes.includes(paperType)
-                                      ? "bg-white/10 text-white"
-                                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                                      ? "bg-surface-mid text-text"
+                                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
                                   )}
                                 >
                                   <div className={cn(
                                     "w-4 h-4 rounded border-2 flex items-center justify-center",
                                     selectedPaperTypes.includes(paperType)
                                       ? "bg-primary border-primary"
-                                      : "border-white/30"
+                                      : "border-border"
                                   )}>
                                     {selectedPaperTypes.includes(paperType) && (
-                                      <div className="w-2 h-2 bg-white rounded-sm" />
+                                      <div className="w-2 h-2 bg-text rounded-sm" />
                                     )}
                                   </div>
                                   {paperType}
@@ -615,8 +615,8 @@ export default function PapersAnalyticsPage() {
                     selectedFilters={[]}
                   />
                 ) : (
-                  <div className="h-64 bg-white/5 rounded-organic-md border border-white/10 flex items-center justify-center">
-                    <div className="text-center text-neutral-500">
+                  <div className="h-64 bg-surface-elevated rounded-organic-md border border-border flex items-center justify-center">
+                    <div className="text-center text-text-disabled">
                       <div className="text-sm">No trend data available</div>
                     </div>
                   </div>
@@ -627,13 +627,13 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 3. Session History - Scrollable with 5 visible */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
+        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="flex-1">
-              <h2 className="text-base font-bold uppercase tracking-wider text-white/90">
+              <h2 className="text-base font-bold uppercase tracking-wider text-text">
                 Session History
               </h2>
-              <p className="text-sm text-white/60 mt-1">
+              <p className="text-sm text-text-muted mt-1">
                 Your past paper sessions
               </p>
             </div>
@@ -641,14 +641,14 @@ export default function PapersAnalyticsPage() {
               <select
                 value={sessionSortBy}
                 onChange={(e) => setSessionSortBy(e.target.value as "recent" | "percentage" | "percentile")}
-                className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0"
+                className="appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0"
                 style={{ colorScheme: "dark" }}
               >
-                <option value="recent" className="bg-neutral-800 text-white">Sort by Recent</option>
-                <option value="percentage" className="bg-neutral-800 text-white">Sort by Percentage</option>
-                <option value="percentile" className="bg-neutral-800 text-white">Sort by Percentile</option>
+                <option value="recent" className="bg-neutral-800 text-text">Sort by Recent</option>
+                <option value="percentage" className="bg-neutral-800 text-text">Sort by Percentage</option>
+                <option value="percentile" className="bg-neutral-800 text-text">Sort by Percentile</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none" />
             </div>
             {sessions.length > 0 && (
               <button
@@ -661,11 +661,11 @@ export default function PapersAnalyticsPage() {
             )}
             <button
               onClick={() => toggleSection("sessions")}
-              className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group"
+              className="p-2 rounded-organic-md hover:bg-surface-elevated transition-colors group"
             >
               <ChevronDown 
                 className={cn(
-                  "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                  "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
                   collapsedSections.has("sessions") && "rotate-180"
                 )}
               />
@@ -684,7 +684,7 @@ export default function PapersAnalyticsPage() {
                 {visibleSessions.length > 0 ? (
                   <div className="max-h-[600px] overflow-y-auto pr-2">
                     {/* Column Headers */}
-                    <div className="grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 sticky top-0 bg-[#121418] z-10">
+                    <div className="grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-text-subtle border-b border-border sticky top-0 bg-surface z-10">
                       <div className="col-span-4">Paper</div>
                       <div className="col-span-1 text-center">%</div>
                       <div className="col-span-1 text-center">Score</div>
@@ -741,7 +741,7 @@ export default function PapersAnalyticsPage() {
                           <button
                             key={session.id}
                             onClick={() => handleViewMarkPage(session.id)}
-                            className="w-full text-left grid grid-cols-12 gap-4 px-5 py-4 bg-white/5 rounded-organic-md hover:bg-white/10 transition-colors items-center"
+                            className="w-full text-left grid grid-cols-12 gap-4 px-5 py-4 bg-surface-elevated rounded-organic-md hover:bg-surface-mid transition-colors items-center"
                           >
                             {/* Paper Name & Sections */}
                             <div className="col-span-4 flex items-center gap-3">
@@ -749,13 +749,13 @@ export default function PapersAnalyticsPage() {
                                 className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
                                 style={{ backgroundColor: desaturateColor(iconColor, 0.3) }}
                               >
-                                <FileText className="w-4 h-4 text-white" />
+                                <FileText className="w-4 h-4 text-text" />
                               </div>
                               <div className="min-w-0">
-                                <div className="font-medium text-white/90 truncate">
+                                <div className="font-medium text-text truncate">
                                   {mainTitle}
                                 </div>
-                                <div className="text-xs text-white/60 truncate mt-0.5">
+                                <div className="text-xs text-text-muted truncate mt-0.5">
                                   {sectionInfo}
                                 </div>
                               </div>
@@ -764,44 +764,44 @@ export default function PapersAnalyticsPage() {
                             {/* Percentage */}
                             <div className="col-span-1 flex items-center justify-center">
                               {scorePercentage !== null ? (
-                                <span className="text-sm text-white/80">
+                                <span className="text-sm text-text-muted">
                                   {scorePercentage.toFixed(1)}%
                                 </span>
                               ) : (
-                                <span className="text-xs text-white/40">—</span>
+                                <span className="text-xs text-text-subtle">—</span>
                               )}
                             </div>
 
                             {/* Score (converted for ENGAA/NSAA/TMUA) */}
                             <div className="col-span-1 flex items-center justify-center">
                               {scorePercentage !== null && (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA") ? (
-                                <span className="text-xs text-white/40 italic">—</span>
+                                <span className="text-xs text-text-subtle italic">—</span>
                               ) : (
-                                <span className="text-xs text-white/40">—</span>
+                                <span className="text-xs text-text-subtle">—</span>
                               )}
                             </div>
 
                             {/* Percentile */}
                             <div className="col-span-1 flex items-center justify-center">
                               {percentile !== null ? (
-                                <span className="text-sm text-white/80 font-medium">
+                                <span className="text-sm text-text-muted font-medium">
                                   {percentile.toFixed(1)}th
                                 </span>
                               ) : (
-                                <span className="text-xs text-white/40">—</span>
+                                <span className="text-xs text-text-subtle">—</span>
                               )}
                             </div>
 
                             {/* Time */}
                             <div className="col-span-1 flex items-center justify-center">
-                              <span className="text-sm text-white/60">
+                              <span className="text-sm text-text-muted">
                                 {minutes}m
                               </span>
                             </div>
 
                             {/* Date */}
                             <div className="col-span-2 flex items-center justify-center">
-                              <span className="text-sm text-white/60">
+                              <span className="text-sm text-text-muted">
                                 {date}
                               </span>
                             </div>
@@ -821,7 +821,7 @@ export default function PapersAnalyticsPage() {
                               </Button>
                               <button
                                 onClick={(e) => handleDeleteSession(session.id, e)}
-                                className="p-1.5 rounded-lg hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-colors flex-shrink-0"
+                                className="p-1.5 rounded-lg hover:bg-red-500/20 text-text-subtle hover:text-red-400 transition-colors flex-shrink-0"
                                 aria-label="Delete session"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -843,22 +843,22 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 4. Mistake Breakdown Chart */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
+        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
           <button
             onClick={() => toggleSection("mistakes")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
                 Mistake Breakdown
               </h2>
-              <p className="text-sm text-white/60 mt-1 text-left">
+              <p className="text-sm text-text-muted mt-1 text-left">
                 Common mistake patterns across all sessions
               </p>
             </div>
             <ChevronDown 
               className={cn(
-                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
                 collapsedSections.has("mistakes") && "rotate-180"
               )}
             />
@@ -880,22 +880,22 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 5. Guess Distribution & Time Distribution */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
+        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
           <button
             onClick={() => toggleSection("distribution")}
             className="w-full flex items-center justify-between mb-4 group"
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
                 Guessing Behavior & Time Distribution
               </h2>
-              <p className="text-sm text-white/60 mt-1 text-left">
+              <p className="text-sm text-text-muted mt-1 text-left">
                 Analyze guessing patterns and time allocation
               </p>
             </div>
             <ChevronDown 
               className={cn(
-                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
+                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
                 collapsedSections.has("distribution") && "rotate-180"
               )}
             />
@@ -913,30 +913,30 @@ export default function PapersAnalyticsPage() {
                 <div className="space-y-6">
                   {/* Guessing Stats */}
                   <div className="space-y-4">
-                    <div className="text-sm font-semibold text-white/90">Guessing Behavior</div>
+                    <div className="text-sm font-semibold text-text">Guessing Behavior</div>
                     <div className="grid grid-cols-4 gap-3">
                       <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-white/40 mb-1">Total Guessed</div>
-                        <div className="text-lg font-semibold text-white/90">{guessingStats.totalGuessed}</div>
+                        <div className="text-xs text-text-subtle mb-1">Total Guessed</div>
+                        <div className="text-lg font-semibold text-text">{guessingStats.totalGuessed}</div>
                       </div>
                       <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-white/40 mb-1">Correct Guesses</div>
-                        <div className="text-lg font-semibold text-white/90">{guessingStats.correctGuesses}</div>
+                        <div className="text-xs text-text-subtle mb-1">Correct Guesses</div>
+                        <div className="text-lg font-semibold text-text">{guessingStats.correctGuesses}</div>
                       </div>
                       <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-white/40 mb-1">Guess Accuracy</div>
-                        <div className="text-lg font-semibold text-white/90">{guessingStats.accuracy}%</div>
+                        <div className="text-xs text-text-subtle mb-1">Guess Accuracy</div>
+                        <div className="text-lg font-semibold text-text">{guessingStats.accuracy}%</div>
                       </div>
                       <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-white/40 mb-1">Time on Guesses</div>
-                        <div className="text-lg font-semibold text-white/90">{guessingStats.shareOfTotalTime}%</div>
+                        <div className="text-xs text-text-subtle mb-1">Time on Guesses</div>
+                        <div className="text-lg font-semibold text-text">{guessingStats.shareOfTotalTime}%</div>
                       </div>
                     </div>
 
                     {/* Guess Time Split */}
                     {guessingStats.totalGuessed > 0 && (
                       <div>
-                        <div className="text-xs text-white/40 mb-2">Guess time split: correct vs wrong</div>
+                        <div className="text-xs text-text-subtle mb-2">Guess time split: correct vs wrong</div>
                         <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
                           <div className="flex w-full h-full">
                             {(() => {
@@ -965,7 +965,7 @@ export default function PapersAnalyticsPage() {
                             })()}
                           </div>
                         </div>
-                        <div className="mt-1 flex items-center justify-between text-[11px] text-white/40">
+                        <div className="mt-1 flex items-center justify-between text-[11px] text-text-subtle">
                           <div className="flex items-center gap-2">
                             <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#6c9e69' }} />
                             <span>Correct • {guessingStats.correctGuesses} qns • avg {Math.round(guessingStats.avgTimeCorrectGuess)}s</span>
@@ -981,7 +981,7 @@ export default function PapersAnalyticsPage() {
                     {/* Guess Distribution Chart */}
                     {guessingStats.allGuessedFlags.length > 0 && (
                       <div>
-                        <div className="text-sm font-semibold text-white/200 mb-2">Guess Distribution</div>
+                        <div className="text-sm font-semibold text-text/200 mb-2">Guess Distribution</div>
                         {(() => {
                           const questionNumbers = Array.from({ length: guessingStats.allGuessedFlags.length }, (_, i) => i + 1);
                           const w = Math.max(420, questionNumbers.length * 14 + 16);
@@ -1039,7 +1039,7 @@ export default function PapersAnalyticsPage() {
                   {/* Time Distribution */}
                   {guessingStats.allPerQuestionSec.length > 0 && (
                     <div className="space-y-4">
-                      <div className="text-sm font-semibold text-white/90">Time Distribution</div>
+                      <div className="text-sm font-semibold text-text">Time Distribution</div>
                       {(() => {
                         const times = guessingStats.allPerQuestionSec;
                         const total = times.reduce((a, b) => a + b, 0);
@@ -1057,7 +1057,7 @@ export default function PapersAnalyticsPage() {
                         
                         return (
                           <div>
-                            <div className="text-xs text-white/40 mb-2">Time split: correct vs wrong answers</div>
+                            <div className="text-xs text-text-subtle mb-2">Time split: correct vs wrong answers</div>
                             <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
                               <div className="flex w-full h-full">
                                 <div
@@ -1074,7 +1074,7 @@ export default function PapersAnalyticsPage() {
                                 </div>
                               </div>
                             </div>
-                            <div className="mt-1 flex items-center justify-between text-[11px] text-white/40">
+                            <div className="mt-1 flex items-center justify-between text-[11px] text-text-subtle">
                               <span>Correct {correctPct}%</span>
                               <span>Wrong {wrongPct}%</span>
                             </div>
@@ -1105,7 +1105,7 @@ export default function PapersAnalyticsPage() {
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
               <div
-                className="bg-[#121418] rounded-organic-lg border border-white/10 shadow-2xl max-w-md w-full p-6"
+                className="bg-surface rounded-organic-lg border border-border shadow-2xl max-w-md w-full p-6"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start gap-4 mb-6">
@@ -1113,17 +1113,17 @@ export default function PapersAnalyticsPage() {
                     <AlertTriangle className="w-6 h-6 text-red-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-white/90 mb-2">
+                    <h3 className="text-lg font-semibold text-text mb-2">
                       Clear All Session History?
                     </h3>
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-text-muted">
                       This will permanently delete all {sessions.length} session{sessions.length !== 1 ? 's' : ''} from your history. 
                       This action cannot be undone.
                     </p>
                   </div>
                   <button
                     onClick={() => setShowClearConfirm(false)}
-                    className="flex-shrink-0 p-1 rounded-lg hover:bg-white/5 text-white/50 hover:text-white transition-colors"
+                    className="flex-shrink-0 p-1 rounded-lg hover:bg-surface-elevated text-text-subtle hover:text-text transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -1132,7 +1132,7 @@ export default function PapersAnalyticsPage() {
                   <button
                     onClick={() => setShowClearConfirm(false)}
                     disabled={isClearing}
-                    className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 rounded-lg bg-surface-elevated hover:bg-surface-mid text-text-muted text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>

@@ -51,6 +51,7 @@
     --color-surface-elevated: #1a1d26;
     --color-surface-subtle: #0f1114;
     --color-surface-mid: #111318;
+    --color-surface-neutral: #151821;
     --color-border: rgba(255, 255, 255, 0.1);
     --color-border-subtle: rgba(255, 255, 255, 0.05);
     
@@ -98,6 +99,7 @@
     --color-surface-elevated: #f5f4f1;
     --color-surface-subtle: #f9f8f5;
     --color-surface-mid: #fefdfa;
+    --color-surface-neutral: #f7f6f3;
     --color-border: rgba(0, 0, 0, 0.1);
     --color-border-subtle: rgba(0, 0, 0, 0.05);
     

@@ -109,7 +109,9 @@ export async function queryCompletedSessions(
     .not('ended_at', 'is', null);
   
   if (yearFilter) {
-    query1.ilike('paper_variant', yearFilter);
+    // Use filter with ilike operator to avoid URL encoding issues with %
+    // yearFilter should be like "2019-%" for pattern matching
+    query1.filter('paper_variant', 'ilike', yearFilter);
   }
   
   const { data: data1, error: error1 } = await query1;
@@ -128,7 +130,8 @@ export async function queryCompletedSessions(
       .not('ended_at', 'is', null);
     
     if (yearFilter) {
-      query2.ilike('paper_variant', yearFilter);
+      // Use filter with ilike operator to avoid URL encoding issues with %
+      query2.filter('paper_variant', 'ilike', yearFilter);
     }
     
     const { data: data2, error: error2 } = await query2;

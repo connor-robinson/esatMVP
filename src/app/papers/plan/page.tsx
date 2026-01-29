@@ -114,20 +114,55 @@ export default function PapersPlanPage() {
 
   // Derive filtered papers for grid
   const filteredPapers = useMemo(() => {
-    return papers.filter((paper) => {
+    // First, filter by exam and year
+    let filtered = papers.filter((paper) => {
       if (examFilter !== "ALL" && paper.examName !== examFilter) return false;
       if (yearFilter !== "ALL" && paper.examYear !== yearFilter) return false;
-      if (typeFilter !== "ALL" && paper.examType !== typeFilter) return false;
-
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.toLowerCase();
-      return (
-        paper.examName.toLowerCase().includes(q) ||
-        paper.paperName.toLowerCase().includes(q) ||
-        paper.examYear.toString().includes(q) ||
-        paper.examType.toLowerCase().includes(q)
-      );
+      return true;
     });
+
+    // Handle type filter: if a year has both Official and Specimen, show both
+    if (typeFilter !== "ALL") {
+      // Group papers by exam + year to check for dual types
+      const papersByExamYear = new Map<string, Paper[]>();
+      filtered.forEach((paper) => {
+        const key = `${paper.examName}-${paper.examYear}`;
+        if (!papersByExamYear.has(key)) {
+          papersByExamYear.set(key, []);
+        }
+        papersByExamYear.get(key)!.push(paper);
+      });
+
+      // Filter: if year has both types, include both; otherwise filter by type
+      filtered = filtered.filter((paper) => {
+        const key = `${paper.examName}-${paper.examYear}`;
+        const yearPapers = papersByExamYear.get(key) || [];
+        const hasOfficial = yearPapers.some((p) => p.examType === "Official");
+        const hasSpecimen = yearPapers.some((p) => p.examType === "Specimen");
+
+        // If year has both types, show both regardless of filter
+        if (hasOfficial && hasSpecimen) {
+          return true;
+        }
+
+        // Otherwise, filter by selected type
+        return paper.examType === typeFilter;
+      });
+    }
+
+    // Apply search query filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (paper) =>
+          paper.examName.toLowerCase().includes(q) ||
+          paper.paperName.toLowerCase().includes(q) ||
+          paper.examYear.toString().includes(q) ||
+          paper.examType.toLowerCase().includes(q)
+      );
+    }
+
+    return filtered;
   }, [papers, examFilter, yearFilter, typeFilter, searchQuery]);
 
 

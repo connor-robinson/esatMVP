@@ -99,9 +99,9 @@ export function GlobalView({
       className="space-y-6"
     >
       {/* Leaderboard Container */}
-      <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0">
+      <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border">
         {/* Header with tabs and filters */}
-        <div className="p-6 border-b border-white/10">
+        <div className="p-6 border-b border-border">
           {/* Tabs */}
           <div className="flex items-center justify-center gap-3 mb-6">
             <button
@@ -110,7 +110,7 @@ export function GlobalView({
                 "px-6 py-2.5 rounded-xl text-sm font-medium transition-all",
                 activeTab === "topScores"
                   ? "bg-success/20 text-success border border-success/40"
-                  : "bg-white/5 text-white/60 hover:text-white/90 hover:bg-white/10 border border-white/10"
+                  : "bg-surface-elevated text-text-muted hover:text-text hover:bg-surface-mid border border-border"
               )}
             >
               Top Scores
@@ -121,7 +121,7 @@ export function GlobalView({
                 "px-6 py-2.5 rounded-xl text-sm font-medium transition-all",
                 activeTab === "mostPracticed"
                   ? "bg-success/20 text-success border border-success/40"
-                  : "bg-white/5 text-white/60 hover:text-white/90 hover:bg-white/10 border border-white/10"
+                  : "bg-surface-elevated text-text-muted hover:text-text hover:bg-surface-mid border border-border"
               )}
             >
               Most Practiced
@@ -132,13 +132,13 @@ export function GlobalView({
           <div className="flex items-center gap-3">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle" />
               <input
                 type="text"
                 placeholder="Search users..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2 bg-surface-elevated rounded-organic-md text-sm text-text placeholder:text-text-disabled focus:outline-none border border-border transition-all duration-200"
               />
             </div>
 
@@ -148,17 +148,16 @@ export function GlobalView({
                 <select
                   value={selectedTopic}
                   onChange={(e) => onTopicChange(e.target.value)}
-                  className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200"
-                  style={{ colorScheme: "dark" }}
+                  className="appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2 pr-10 text-sm font-medium text-text-muted focus:outline-none border border-border transition-all duration-200"
                 >
-                  <option value="all" className="bg-neutral-800 text-white">All Topics</option>
+                  <option value="all">All Topics</option>
                   {availableTopics.map((topic) => (
-                    <option key={topic.id} value={topic.id} className="bg-neutral-800 text-white">
+                    <option key={topic.id} value={topic.id}>
                       {topic.name}
                     </option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none" />
               </div>
             )}
 
@@ -168,15 +167,14 @@ export function GlobalView({
                 <select
                   value={timeRange}
                   onChange={(e) => onTimeRangeChange(e.target.value as TimeRange)}
-                  className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200"
-                  style={{ colorScheme: "dark" }}
+                  className="appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2 pr-10 text-sm font-medium text-text-muted focus:outline-none border border-border transition-all duration-200"
                 >
-                  <option value="7d" className="bg-neutral-800 text-white">Last 7 Days</option>
-                  <option value="30d" className="bg-neutral-800 text-white">Last 30 Days</option>
-                  <option value="90d" className="bg-neutral-800 text-white">Last 90 Days</option>
-                  <option value="all" className="bg-neutral-800 text-white">All Time</option>
+                  <option value="7d">Last 7 Days</option>
+                  <option value="30d">Last 30 Days</option>
+                  <option value="90d">Last 90 Days</option>
+                  <option value="all">All Time</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none" />
               </div>
             )}
           </div>
@@ -185,7 +183,7 @@ export function GlobalView({
         {/* Leaderboard Content */}
         <div className="p-6">
           {/* Table Header */}
-          <div className="grid grid-cols-12 gap-4 px-4 py-3 mb-2 text-xs font-semibold text-white/40 border-b border-white/10">
+          <div className="grid grid-cols-12 gap-4 px-4 py-3 mb-2 text-xs font-semibold text-text-subtle border-b border-border">
             <div className="col-span-1 text-center">Rank</div>
             <div className="col-span-4">Player</div>
             <div className="col-span-2 text-right">Score</div>
@@ -206,7 +204,7 @@ export function GlobalView({
                     "grid grid-cols-12 gap-4 px-4 py-3 rounded-organic-md transition-colors",
                     isCurrentUser
                       ? "bg-success/10 ring-1 ring-success/20"
-                      : "bg-white/[0.02] hover:bg-white/[0.04]"
+                      : "bg-surface-subtle hover:bg-surface-mid"
                   )}
                 >
                   {/* Rank */}
@@ -218,7 +216,7 @@ export function GlobalView({
                           ? "text-success"
                           : isCurrentUser
                           ? "text-success"
-                          : "text-white/60"
+                          : "text-text-muted"
                       )}
                     >
                       {entry.rank}
@@ -227,7 +225,7 @@ export function GlobalView({
 
                   {/* Avatar + Name */}
                   <div className="col-span-4 flex items-center gap-3 min-w-0">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-surface-elevated flex items-center justify-center overflow-hidden">
                       {entry.avatar ? (
                         <img
                           src={entry.avatar}
@@ -235,7 +233,7 @@ export function GlobalView({
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-xs font-medium text-white/70">
+                        <span className="text-xs font-medium text-text-muted">
                           {getInitials(entry.username)}
                         </span>
                       )}
@@ -243,7 +241,7 @@ export function GlobalView({
                     <span
                       className={cn(
                         "text-sm font-medium truncate",
-                        isCurrentUser ? "text-success" : "text-white/80"
+                        isCurrentUser ? "text-success" : "text-text-muted"
                       )}
                     >
                       {entry.username}
@@ -253,10 +251,10 @@ export function GlobalView({
                   {/* Score */}
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                      <div className="text-base font-bold text-text tabular-nums font-mono">
                         {entry.score.toFixed(0)}
                       </div>
-                      <div className="text-xs text-white/40 font-mono">/ 1000</div>
+                      <div className="text-xs text-text-subtle font-mono">/ 1000</div>
                     </div>
                   </div>
 
@@ -266,24 +264,24 @@ export function GlobalView({
                       <div className="text-base font-bold font-mono text-success">
                         {entry.accuracy.toFixed(0)}%
                       </div>
-                      <div className="text-xs text-white/40 font-mono">accuracy</div>
+                      <div className="text-xs text-text-subtle font-mono">accuracy</div>
                     </div>
                   </div>
 
                   {/* Speed */}
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                      <div className="text-base font-bold text-text tabular-nums font-mono">
                         {entry.avgSpeed > 0 ? (entry.avgSpeed / 1000).toFixed(1) : "0.0"}s
                       </div>
-                      <div className="text-xs text-white/40 font-mono">per question</div>
+                      <div className="text-xs text-text-subtle font-mono">per question</div>
                     </div>
                   </div>
 
                   {/* Questions */}
                   <div className="col-span-1 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-sm font-semibold text-white/80 tabular-nums font-mono">
+                      <div className="text-sm font-semibold text-text-muted tabular-nums font-mono">
                         {entry.questionsAnswered}
                       </div>
                     </div>
@@ -309,8 +307,8 @@ export function GlobalView({
                     </span>
                   </div>
                   <div className="col-span-4 flex items-center gap-3 min-w-0">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
-                      <span className="text-xs font-medium text-white/70">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-surface-elevated flex items-center justify-center overflow-hidden">
+                      <span className="text-xs font-medium text-text-muted">
                         {getInitials(currentUserEntry.username)}
                       </span>
                     </div>
@@ -320,10 +318,10 @@ export function GlobalView({
                   </div>
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                      <div className="text-base font-bold text-text tabular-nums font-mono">
                         {currentUserEntry.score.toFixed(0)}
                       </div>
-                      <div className="text-xs text-white/40 font-mono">/ 1000</div>
+                      <div className="text-xs text-text-subtle font-mono">/ 1000</div>
                     </div>
                   </div>
                   <div className="col-span-2 flex items-center justify-end">
@@ -331,20 +329,20 @@ export function GlobalView({
                       <div className="text-base font-bold font-mono text-success">
                         {currentUserEntry.accuracy.toFixed(0)}%
                       </div>
-                      <div className="text-xs text-white/40 font-mono">accuracy</div>
+                      <div className="text-xs text-text-subtle font-mono">accuracy</div>
                     </div>
                   </div>
                   <div className="col-span-2 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                      <div className="text-base font-bold text-text tabular-nums font-mono">
                         {currentUserEntry.avgSpeed > 0 ? (currentUserEntry.avgSpeed / 1000).toFixed(1) : "0.0"}s
                       </div>
-                      <div className="text-xs text-white/40 font-mono">per question</div>
+                      <div className="text-xs text-text-subtle font-mono">per question</div>
                     </div>
                   </div>
                   <div className="col-span-1 flex items-center justify-end">
                     <div className="text-right">
-                      <div className="text-sm font-semibold text-white/80 tabular-nums font-mono">
+                      <div className="text-sm font-semibold text-text-muted tabular-nums font-mono">
                         {currentUserEntry.questionsAnswered}
                       </div>
                     </div>

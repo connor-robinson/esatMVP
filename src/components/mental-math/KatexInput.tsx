@@ -118,7 +118,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
       {previewHtml && (
         <div
           ref={previewRef}
-          className="absolute bottom-full mb-2 left-0 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-sm"
+          className="absolute bottom-full mb-2 left-0 px-3 py-1.5 rounded-lg bg-surface-elevated border border-border text-text-muted text-sm"
           dangerouslySetInnerHTML={{ __html: previewHtml }}
         />
       )}
@@ -136,9 +136,9 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
           className={cn(
             "w-full h-16 text-2xl font-semibold rounded-2xl border-0 outline-none transition-all duration-75",
             hasError
-              ? "bg-red-500/20 text-red-100 focus:ring-0 focus:outline-none"
-              : "bg-white/5 text-white/90 focus:ring-0 focus:outline-none",
-            "placeholder:text-white/20 placeholder:text-base placeholder:font-medium",
+              ? "bg-error/20 text-error focus:ring-0 focus:outline-none"
+              : "bg-surface-elevated text-text focus:ring-0 focus:outline-none",
+            "placeholder:text-text-disabled placeholder:text-base placeholder:font-medium",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           style={{
@@ -156,7 +156,7 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
           {showReveal && onReveal && (
             <button
               onClick={onReveal}
-              className="p-2 rounded-xl bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/90 transition-all"
+              className="p-2 rounded-xl bg-surface-elevated text-text-muted hover:bg-surface hover:text-text transition-all"
               title="Reveal answer"
             >
               <Eye className="h-5 w-5" strokeWidth={2} />
@@ -168,10 +168,10 @@ export const KatexInput = forwardRef<HTMLInputElement, KatexInputProps>(function
             className={cn(
               "p-3 rounded-xl transition-all",
               hasError
-                ? "bg-red-500/20 text-red-100 hover:bg-red-500/30"
+                ? "bg-error/20 text-error hover:bg-error/30"
                 : value.trim() && !disabled
                 ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-110"
-                : "bg-white/5 text-white/20 cursor-not-allowed"
+                : "bg-surface-elevated text-text-disabled cursor-not-allowed"
             )}
           >
             <svg
