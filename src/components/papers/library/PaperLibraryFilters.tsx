@@ -89,7 +89,7 @@ export function PaperLibraryFilters({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between border border-border"
+          className="w-full h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text font-mono focus:outline-none transition-all cursor-pointer flex items-center justify-between border-0"
         >
           <span className="truncate text-left">{selectedLabel}</span>
           <ChevronDown
@@ -112,7 +112,7 @@ export function PaperLibraryFilters({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden border border-border"
+                className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-[100] overflow-hidden border-0"
               >
                 <div className="max-h-60 overflow-y-auto">
                   {options.map((option) => (
@@ -124,7 +124,7 @@ export function PaperLibraryFilters({
                         setIsOpen(false);
                       }}
                       className={cn(
-                        "w-full px-4 py-2.5 text-left text-sm transition-all",
+                        "w-full px-4 py-2.5 text-left text-sm font-mono transition-all",
                         value === option.value
                           ? "bg-surface-mid text-text"
                           : "text-text-muted hover:bg-surface-subtle hover:text-text"
@@ -160,13 +160,7 @@ export function PaperLibraryFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by exam, paper, or year..."
-            className="w-full h-10 px-4 rounded-lg bg-surface-elevated outline-none border border-border placeholder:text-text-disabled text-text text-sm transition-all focus:border-border-subtle"
-            onFocus={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(64, 97, 102, 0.3)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.boxShadow = '';
-            }}
+            className="w-full h-10 px-4 rounded-lg bg-surface-elevated outline-none border-0 placeholder:text-text-disabled text-text text-sm font-mono transition-all"
           />
         </div>
 

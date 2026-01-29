@@ -50,11 +50,11 @@ function GroupedTopicChip({
   return (
     <div className="space-y-1">
       {/* Parent topic header */}
-      <div className="flex items-center gap-3 px-4 py-3 rounded-organic-md bg-primary/10 text-white/90 transition-colors">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-organic-md bg-surface-mid text-text transition-colors">
         {/* Expand/collapse button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors flex-shrink-0"
+          className="p-1 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors flex-shrink-0"
           aria-label={isExpanded ? "Collapse" : "Expand"}
           type="button"
         >
@@ -67,7 +67,7 @@ function GroupedTopicChip({
 
         <div className="flex flex-col gap-0.5 flex-1 min-w-0">
           <span className="truncate font-semibold text-base">{topic.name}</span>
-          <span className="truncate text-xs text-white/40">
+          <span className="truncate text-xs text-text-subtle">
             {variantCount} of {allVariantsCount} variants
           </span>
         </div>
@@ -75,7 +75,7 @@ function GroupedTopicChip({
         {/* Remove all button */}
         <button
           onClick={() => onRemoveAll?.(topicId)}
-          className="p-1 rounded-lg hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all flex-shrink-0"
+          className="p-1 rounded-lg hover:bg-error/20 text-text-muted hover:text-error transition-all flex-shrink-0"
           aria-label={`Remove all ${topic.name} variants`}
           type="button"
           title="Remove all variants"
@@ -118,7 +118,7 @@ function VariantChip({
   const displayText = `${variantName}`;
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 rounded-organic-md bg-white/5 text-white/80 hover:bg-white/[0.07] transition-colors">
+    <div className="flex items-center gap-2 px-3 py-2 rounded-organic-md bg-surface-mid text-text hover:bg-surface transition-colors">
       <div className="flex flex-col gap-0.5 flex-1 min-w-0">
         <span className="truncate font-medium text-sm">{displayText}</span>
       </div>
@@ -129,7 +129,7 @@ function VariantChip({
           e.stopPropagation();
           onRemove(topicVariantId);
         }}
-        className="p-0.5 rounded hover:bg-red-500/20 text-white/50 hover:text-red-400 transition-all flex-shrink-0"
+        className="p-0.5 rounded hover:bg-error/20 text-text-muted hover:text-error transition-all flex-shrink-0"
         aria-label={`Remove ${displayText}`}
         type="button"
       >
@@ -141,11 +141,11 @@ function VariantChip({
 
 function EmptyState() {
   return (
-    <div className="w-full h-full min-h-[240px] rounded-organic-lg text-white/60 p-12 flex flex-col items-center justify-center gap-3">
-      <div className="text-base text-white/40">
+    <div className="w-full h-full min-h-[240px] rounded-organic-lg text-text-subtle p-12 flex flex-col items-center justify-center gap-3">
+      <div className="text-base text-text-subtle">
         <span className="font-semibold">No topics added yet</span>
       </div>
-      <div className="text-sm text-white/40">Click the + button to add topics</div>
+      <div className="text-sm text-text-subtle">Click the + button to add topics</div>
     </div>
   );
 }
@@ -180,24 +180,24 @@ export function SessionFolder({
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-lg font-semibold uppercase tracking-wider text-white/90">
+          <h2 className="text-lg font-semibold uppercase tracking-wider text-text">
             Session Folder
           </h2>
-          <p className="text-sm font-mono text-white/50 mt-1">
+          <p className="text-sm font-mono text-text-subtle mt-1">
             Click the + button to add topics.
           </p>
         </div>
-        <span className="text-xs text-white/50">
+        <span className="text-xs text-text-subtle">
           {totalItems} {totalItems === 1 ? 'item' : 'items'}
         </span>
       </div>
 
         {/* Topics list */}
-        <div className="min-h-[260px] rounded-organic-lg p-5 mb-5 bg-white/[0.03]">
+        <div className="min-h-[260px] rounded-organic-lg p-4 mb-5 bg-surface-subtle">
           {selectedTopicVariants.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {Object.entries(groupedByTopic).map(([topicId, variants]) => {
                 // If topic has multiple variants, show as grouped
                 if (variants.length > 1) {
@@ -230,15 +230,15 @@ export function SessionFolder({
         {/* Question count on left, Save and Clear on right */}
         <div className="flex items-stretch gap-3">
           {/* Question count input - bubble style, expanded */}
-          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-organic-md bg-white/5 hover:bg-white/[0.07] transition-colors flex-1">
-            <span className="text-white/50 text-sm font-mono whitespace-nowrap">Questions:</span>
+          <div className="flex items-center justify-center gap-2 px-4 py-3 rounded-organic-md bg-surface-elevated hover:bg-surface transition-colors flex-1">
+            <span className="text-text-subtle text-sm font-mono whitespace-nowrap">Questions:</span>
             <input
               type="number"
               value={questionCount}
               onChange={(e) => onQuestionCountChange(Number(e.target.value) || 1)}
               min="1"
               max="100"
-              className="bg-transparent border-0 outline-none focus:outline-none focus:ring-0 w-16 text-white text-sm text-center font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-0 m-0"
+              className="bg-transparent border-0 outline-none focus:outline-none focus:ring-0 w-16 text-text text-sm text-center font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-0 m-0"
               style={{ boxShadow: 'none' }}
             />
           </div>
@@ -249,10 +249,10 @@ export function SessionFolder({
             disabled={totalItems === 0}
             variant="secondary"
             size="sm"
-            className="flex items-center gap-2 border-0"
+            className="flex items-center gap-2 border-0 whitespace-nowrap"
           >
             <Save className="h-4 w-4" strokeWidth={2} />
-            <span>Save as preset</span>
+            <span className="whitespace-nowrap">Save as preset</span>
           </Button>
           
           <Button
@@ -260,7 +260,7 @@ export function SessionFolder({
             disabled={totalItems === 0}
             variant="secondary"
             size="sm"
-            className="flex items-center gap-2 border-0 text-white/60 hover:text-white/80 hover:bg-white/10"
+            className="flex items-center gap-2 border-0 text-text-muted hover:text-text hover:bg-surface-elevated"
           >
             <Trash2 className="h-4 w-4" strokeWidth={2} />
             <span>Clear</span>
@@ -274,8 +274,8 @@ export function SessionFolder({
           className={cn(
             "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
             canStart
-              ? "bg-primary/30 hover:bg-primary/40 text-primary cursor-pointer"
-              : "bg-white/5 text-white/40 cursor-not-allowed"
+              ? "bg-primary/40 hover:bg-primary/50 text-text cursor-pointer border border-primary/50"
+              : "bg-surface-elevated text-text-disabled cursor-not-allowed"
           )}
           style={
             canStart
@@ -300,7 +300,7 @@ export function SessionFolder({
         </button>
 
           {!canStart && totalItems === 0 && (
-            <div className="text-sm text-white/40 text-center">
+            <div className="text-sm text-text-subtle text-center">
               Add at least one topic to start
             </div>
           )}

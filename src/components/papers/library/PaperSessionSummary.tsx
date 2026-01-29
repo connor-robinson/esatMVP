@@ -132,7 +132,7 @@ function PaperItemComponent({
   return (
     <div className="space-y-2">
       {/* Main paper row */}
-      <div className="flex items-center gap-3 p-3 rounded-lg transition-all h-14 bg-surface-mid">
+      <div className="flex items-center gap-3 p-3 rounded-lg transition-all h-14 bg-surface-mid hover:bg-surface">
         {/* Exam Name and Year */}
         <div className="flex-1 min-w-0">
           <div className="text-base font-mono font-bold text-text">
@@ -185,7 +185,7 @@ function PaperItemComponent({
                 <div
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
-                    "bg-surface-subtle hover:bg-surface-mid"
+                    "bg-surface-elevated hover:bg-surface-subtle"
                   )}
                 >
                   {/* Left: Chevron for expand/collapse */}
@@ -714,7 +714,7 @@ export function PaperSessionSummary({
           "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
           !canStart
             ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
-            : "bg-primary/30 hover:bg-primary/40 text-primary cursor-pointer"
+            : "bg-primary/50 hover:bg-primary/60 text-white cursor-pointer"
         )}
         style={
           canStart

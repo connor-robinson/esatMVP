@@ -230,7 +230,7 @@ export function RoadmapList({
   }, [nodes.length]);
 
   return (
-    <div ref={containerRef} className="w-full space-y-4 relative overflow-x-hidden">
+    <div ref={containerRef} className="w-full space-y-4 relative overflow-visible">
       {nodes.map((node, index) => {
         const stageCompletionData =
           completionData.get(node.stage.id)?.parts || new Map();

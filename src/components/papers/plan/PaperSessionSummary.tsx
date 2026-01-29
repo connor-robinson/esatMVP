@@ -182,7 +182,7 @@ export function PaperSessionSummary({
           "w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-2xl font-semibold text-sm transition-all duration-fast ease-signature",
           !canStart
             ? "bg-white/5 text-white/30 cursor-not-allowed"
-            : "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary-light interaction-scale"
+            : "bg-primary/50 hover:bg-primary/60 text-white interaction-scale"
         )}
       >
         <Play className="w-4 h-4" />

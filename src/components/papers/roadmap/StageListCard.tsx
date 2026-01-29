@@ -137,7 +137,7 @@ export function StageListCard({
             {/* Card - borderless glassy design */}
             <motion.div
                 className={cn(
-                    "relative flex flex-col rounded-organic-lg overflow-hidden overflow-x-hidden transform-gpu backdrop-blur-md",
+                    "relative flex flex-col rounded-organic-lg overflow-visible transform-gpu backdrop-blur-md",
                     isUnlocked ? "cursor-pointer" : "opacity-60 cursor-not-allowed"
                 )}
                 style={{ 
@@ -162,7 +162,7 @@ export function StageListCard({
                 onClick={handleCardClick}
             >
                 {/* Main Header Content */}
-                <div className="flex items-center gap-4 p-5 w-full max-w-full overflow-x-hidden">
+                <div className="flex items-center gap-4 p-5 w-full max-w-full overflow-visible">
                     {/* Left: Numbered rounded square */}
                     <div
                         className={cn(
@@ -255,11 +255,11 @@ export function StageListCard({
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden overflow-x-hidden w-full"
+                            className="overflow-visible w-full"
                         >
                             <div className="px-5 pb-5 pt-0 w-full max-w-full">
                                 <div
-                                    className="space-y-2.5 rounded-organic-lg p-3 w-full max-w-full overflow-x-hidden"
+                                    className="space-y-2.5 rounded-organic-lg p-3 w-full max-w-full overflow-visible"
                                 >
                                     <div className="flex items-center justify-between mb-1">
                                         <span className="text-xs font-medium text-white/30">Select parts to practice</span>
