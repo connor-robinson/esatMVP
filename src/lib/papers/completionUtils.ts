@@ -98,7 +98,39 @@ export async function queryCompletedSessions(
   yearFilter?: string
 ): Promise<Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[]> {
   let data: any[] = [];
-  let error: any = null;
+  
+  // Helper function to check if an error is "expected" (no data found - not a real error)
+  const isExpectedError = (err: any): boolean => {
+    if (!err) return false;
+    
+    // Check for HTTP 404 status (no data found)
+    const is404 = err.status === 404 || 
+                  err.statusCode === 404 || 
+                  err.code === 404 ||
+                  String(err.message || '').includes('404') ||
+                  String(err.message || '').includes('not found');
+    
+    // Check for PostgREST "no rows found" error code
+    const isNoRowsFound = err.code === 'PGRST116';
+    
+    return is404 || isNoRowsFound;
+  };
+  
+  // Helper function to handle unexpected errors
+  const handleUnexpectedError = (err: any): void => {
+    if (!err) return;
+    
+    // Check for table/relation doesn't exist error
+    if (err.code === '42P01') {
+      if (err.message?.includes('user_profiles')) {
+        console.warn('[completionUtils] user_profiles table missing (likely from trigger), continuing without it');
+      } else {
+        console.warn('[completionUtils] Table does not exist:', err.message);
+      }
+    } else {
+      console.error('[completionUtils] Error querying completed sessions:', err);
+    }
+  };
   
   // Query with PaperType first (how it's actually stored)
   const query1 = supabase
@@ -118,6 +150,8 @@ export async function queryCompletedSessions(
   
   if (!error1 && data1) {
     data = data1 as any[];
+  } else if (error1 && !isExpectedError(error1)) {
+    handleUnexpectedError(error1);
   }
   
   // Also check with ExamName (for backwards compatibility or data inconsistencies)
@@ -141,36 +175,13 @@ export async function queryCompletedSessions(
       const existingIds = new Set(data.map(s => s.id));
       const typedData2 = data2 as any[];
       data = [...data, ...typedData2.filter(s => !existingIds.has(s.id))];
-    }
-    
-    error = error2 || error1;
-  } else {
-    error = error1;
-  }
-  
-  // Only log errors that aren't expected (like 404s for missing data)
-  // PGRST116 means no rows found, which is expected if user hasn't completed sessions
-  // 42P01 means relation doesn't exist - could be user_profiles table missing (from trigger/function)
-  if (error) {
-    if (error.code === 'PGRST116') {
-      // No rows found - this is expected, not an error
-      return [];
-    } else if (error.code === '42P01') {
-      // Table/relation doesn't exist - suppress user_profiles errors (likely from trigger)
-      if (error.message?.includes('user_profiles')) {
-        console.warn('[completionUtils] user_profiles table missing (likely from trigger), continuing without it');
-        return [];
-      } else {
-        console.warn('[completionUtils] Table does not exist:', error.message);
-        return [];
-      }
-    } else {
-      // Other errors - log them
-      console.error('[completionUtils] Error querying completed sessions:', error);
-      return [];
+    } else if (error2 && !isExpectedError(error2)) {
+      handleUnexpectedError(error2);
     }
   }
   
+  // Return data if we have any, otherwise return empty array
+  // Expected errors (404/no rows found) are silently ignored
   return data as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[];
 }
 

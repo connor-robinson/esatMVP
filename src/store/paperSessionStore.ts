@@ -384,6 +384,23 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               console.log('First question:', allQuestions[0]);
               console.log('Sample question partNames:', allQuestions.slice(0, 5).map(q => ({ num: q.questionNumber, part: q.partName })));
               
+              // Verify exam_type - warn if Specimen when we expect Official
+              if (allQuestions.length > 0) {
+                const examType = allQuestions[0].examType?.toLowerCase();
+                const examName = allQuestions[0].examName;
+                const examYear = allQuestions[0].examYear;
+                console.log('[loadQuestions] Paper type check:', { examName, examYear, examType, paperId });
+                
+                if (examType === 'specimen') {
+                  console.warn('[loadQuestions] ⚠️ WARNING: Loading Specimen paper instead of Official!', {
+                    examName,
+                    examYear,
+                    paperId,
+                    paperName: state.paperName
+                  });
+                }
+              }
+              
               const isTmuaPaper = state.paperName === 'TMUA';
               const totalQuestions = allQuestions.length;
               const sectionByQuestionId = new Map<number, string>();
@@ -429,6 +446,74 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   q.questionNumber <= state.questionRange.end
                 );
                 console.log('Filtered by range:', filteredQuestions.length);
+              }
+              
+              // CRITICAL: Filter out invalid parts BEFORE section filtering
+              // For NSAA 2019: should only have Part A, B, E (not C, D, or SECTION)
+              // Also filter out "SECTION" parts which are invalid for all papers
+              const isNSAA2019 = state.paperName === 'NSAA' && 
+                                  allQuestions.length > 0 && 
+                                  allQuestions[0].examYear === 2019 &&
+                                  allQuestions[0].examType?.toLowerCase() === 'official';
+              
+              if (isNSAA2019) {
+                console.log('[loadQuestions] NSAA 2019 detected - filtering to only Part A, B, E');
+                console.log('[loadQuestions] Checking exam_type:', allQuestions[0].examType);
+                const beforeCount = filteredQuestions.length;
+                const validParts = ['PART A', 'PART B', 'PART E', 'A', 'B', 'E'];
+                filteredQuestions = filteredQuestions.filter(q => {
+                  const partLetter = (q.partLetter || '').toString().trim().toUpperCase();
+                  
+                  // Check if partLetter matches valid parts
+                  let isValid = validParts.some(valid => {
+                    if (partLetter === valid) return true;
+                    if (partLetter === `PART ${valid}`) return true;
+                    // Handle cases like "PART A: Mathematics"
+                    if (partLetter.includes(valid) && !partLetter.includes('SECTION')) {
+                      // Make sure it's not "PART C" or "PART D"
+                      if (valid === 'A' && (partLetter.includes('PART C') || partLetter.includes('PART D'))) return false;
+                      if (valid === 'B' && (partLetter.includes('PART C') || partLetter.includes('PART D'))) return false;
+                      return true;
+                    }
+                    return false;
+                  });
+                  
+                  // Also check partName for advanced math/physics (Part E)
+                  if (!isValid && q.partName) {
+                    const partNameLower = (q.partName || '').toString().toLowerCase();
+                    if (partNameLower.includes('advanced mathematics') && partNameLower.includes('advanced physics')) {
+                      isValid = true; // This is Part E
+                    }
+                  }
+                  
+                  if (!isValid) {
+                    console.log(`[loadQuestions] Filtering out question ${q.questionNumber}: partLetter="${partLetter}", partName="${q.partName}", examType="${q.examType}"`);
+                  }
+                  return isValid;
+                });
+                console.log(`[loadQuestions] NSAA 2019 filtering: ${beforeCount} -> ${filteredQuestions.length} questions`);
+                
+                // Log part distribution after filtering
+                const partDistribution = new Map<string, number>();
+                filteredQuestions.forEach(q => {
+                  const part = (q.partLetter || '').toString().trim() || 'Unknown';
+                  partDistribution.set(part, (partDistribution.get(part) || 0) + 1);
+                });
+                console.log('[loadQuestions] NSAA 2019 part distribution after filtering:', Object.fromEntries(partDistribution));
+              } else {
+                // For other papers, still filter out "SECTION" parts as they're invalid
+                const beforeCount = filteredQuestions.length;
+                filteredQuestions = filteredQuestions.filter(q => {
+                  const partLetter = (q.partLetter || '').toString().trim().toUpperCase();
+                  const isSection = partLetter === 'SECTION' || partLetter.startsWith('SECTION ');
+                  if (isSection) {
+                    console.log(`[loadQuestions] Filtering out invalid "SECTION" part: question ${q.questionNumber}, partLetter="${partLetter}", examType="${q.examType}"`);
+                  }
+                  return !isSection;
+                });
+                if (beforeCount !== filteredQuestions.length) {
+                  console.log(`[loadQuestions] Filtered out ${beforeCount - filteredQuestions.length} questions with invalid "SECTION" parts`);
+                }
               }
               
               // Then filter by selected sections using systematic mapping
@@ -1005,10 +1090,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
        */
       persistSessionToServer: async ({ immediate = false } = {}) => {
         const state = get();
-        if (!state.sessionId) return;
+        if (!state.sessionId) {
+          console.log('[persistSessionToServer] No sessionId, skipping persist');
+          return;
+        }
+
+        console.log('[persistSessionToServer] Starting persist', { 
+          sessionId: state.sessionId, 
+          immediate, 
+          paperId: state.paperId,
+          paperName: state.paperName,
+          endedAt: state.endedAt 
+        });
 
         if (state.sessionPersistPromise) {
           try {
+            console.log('[persistSessionToServer] Waiting for existing persist promise');
             await state.sessionPersistPromise;
           } catch {
             // Error already logged when creating session
@@ -1019,6 +1116,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           clearTimeout(state.persistTimer);
           set({ persistTimer: null });
         } else if (state.persistTimer && !immediate) {
+          console.log('[persistSessionToServer] Persist timer active, skipping (not immediate)');
           return;
         }
 
@@ -1051,6 +1149,14 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           },
         };
 
+        console.log('[persistSessionToServer] Payload prepared', {
+          sessionId: payload.id,
+          paperId: payload.paperId,
+          score: payload.score,
+          answersCount: payload.answers.length,
+          correctFlagsCount: payload.correctFlags.filter(f => f === true).length
+        });
+
         try {
           const response = await fetch("/api/papers/sessions", {
             method: "PATCH",
@@ -1060,9 +1166,24 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             body: JSON.stringify(payload),
           });
 
+          console.log('[persistSessionToServer] Response received', {
+            status: response.status,
+            ok: response.ok,
+            statusText: response.statusText
+          });
+
           if (!response.ok) {
-            throw new Error(`Persist failed with status ${response.status}`);
+            const errorText = await response.text();
+            console.error('[persistSessionToServer] Persist failed', {
+              status: response.status,
+              statusText: response.statusText,
+              errorText
+            });
+            throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
           }
+          
+          const responseData = await response.json().catch(() => null);
+          console.log('[persistSessionToServer] Persist successful', { responseData });
 
           const latest = get();
           if (latest.endedAt) {

@@ -757,7 +757,15 @@ export default function PapersMarkPage() {
   // Key insights removed per product direction
 
   // Resolve the canonical conversion table part name for a given exam and part
+  // Cache to avoid duplicate logs
+  const resolveCache = useRef<Map<string, { name: string; matched: boolean }>>(new Map());
   const resolveConversionPartName = useCallback((examName: string, partLetterRaw: string, partName: string | undefined, rows: any[]): { name: string; matched: boolean } => {
+    const cacheKey = `${examName}:${partLetterRaw}:${partName || ''}`;
+    if (resolveCache.current.has(cacheKey)) {
+      return resolveCache.current.get(cacheKey)!;
+    }
+    
+    // Only log once per unique combination
     console.log('[mark:resolve] Resolving conversion part name', { examName, partLetterRaw, partName, availableRows: rows.map(r => ({ partName: r.partName })) });
     const raw = (partLetterRaw || '').toString().trim();
     const upperRaw = raw.toUpperCase();
@@ -813,9 +821,11 @@ export default function PapersMarkPage() {
 
     const rowsLower = rows.map((r: any) => (r.partName || '').toString().toLowerCase());
     const match = candidateNames.find(n => rowsLower.includes(n.toLowerCase()));
-    if (match) return { name: match, matched: true };
-    // Fallback to first candidate
-    return { name: candidateNames[0] || (partName || letter || 'Section'), matched: false };
+    const result = match ? { name: match, matched: true } : { name: candidateNames[0] || (partName || letter || 'Section'), matched: false };
+    
+    // Cache the result
+    resolveCache.current.set(cacheKey, result);
+    return result;
   }, []);
 
   // Get exam name for determining scoring method

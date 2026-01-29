@@ -381,10 +381,25 @@ export function useQuestionBank(): UseQuestionBankReturn {
       params.append('limit', String(count));
       params.append('random', 'true');
 
-      const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
+      const prefetchUrl = `/api/question-bank/questions?${params.toString()}`;
+      console.log('[useQuestionBank] 🚀 PREFETCHING from API:', prefetchUrl);
+      
+      const response = await fetch(prefetchUrl);
+      
+      // Parse response to get debug logs
+      const responseData = await response.json().catch(() => ({}));
+      
+      // Log all server-side debug logs in browser console
+      if (responseData.debugLogs && Array.isArray(responseData.debugLogs)) {
+        console.group('🔍 [Question Bank API] Prefetch Server Debug Logs');
+        responseData.debugLogs.forEach((log: string) => {
+          console.log(log);
+        });
+        console.groupEnd();
+      }
       
       if (response.ok) {
-        const data = await response.json();
+        const data = responseData;
         if (data.questions && data.questions.length > 0) {
           // Filter out already answered questions and add to cache
           const newQuestions = data.questions.filter(
@@ -495,15 +510,26 @@ export function useQuestionBank(): UseQuestionBankReturn {
       
       const response = await fetch(apiUrl);
       
+      // Log all server-side debug logs in browser console
+      const responseData = await response.json().catch(() => ({}));
+      
+      if (responseData.debugLogs && Array.isArray(responseData.debugLogs)) {
+        console.group('🔍 [Question Bank API] Server Debug Logs');
+        responseData.debugLogs.forEach((log: string) => {
+          console.log(log);
+        });
+        console.groupEnd();
+      }
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = responseData;
         if (response.status === 401) {
           throw new Error(errorData.error || 'Please log in to use attempt status filters');
         }
         throw new Error(errorData.error || 'Failed to fetch question');
       }
 
-      const data = await response.json();
+      const data = responseData;
       
       if (data.questions && data.questions.length > 0) {
         const unansweredQuestions = data.questions.filter(

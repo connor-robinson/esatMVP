@@ -198,9 +198,20 @@ export async function getQuestions(paperId: number) {
       .order('question_number');
 
     console.log('Supabase query result:');
-    console.log('data:', data);
-    console.log('error:', error);
     console.log('data length:', data?.length);
+    console.log('error:', error);
+    
+    // Log exam info from first question to verify paper type
+    if (data && data.length > 0) {
+      const firstQ = data[0];
+      console.log('[getQuestions] Paper info from questions:', {
+        examName: firstQ.exam_name,
+        examYear: firstQ.exam_year,
+        paperName: firstQ.paper_name,
+        examType: firstQ.exam_type,
+        samplePartLetters: data.slice(0, 10).map((q: any) => ({ num: q.question_number, partLetter: q.part_letter, partName: q.part_name }))
+      });
+    }
 
     if (error) throw error;
     
