@@ -10,6 +10,10 @@ export const dynamic = 'force-dynamic';
  * Query params: subject, difficulty, tags, limit, offset, random, reviewStatus, attemptedStatus
  */
 export async function GET(request: NextRequest) {
+  // IMMEDIATE LOG - This should appear first if route is being called
+  console.log('🚀 [Question Bank API] ROUTE CALLED - Request received at:', new Date().toISOString());
+  console.log('🚀 [Question Bank API] Request URL:', request.url);
+  
   try {
     const supabase = createServerClient();
     const { searchParams } = new URL(request.url);

@@ -421,6 +421,8 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Fetch a new question (with caching)
   const fetchQuestion = useCallback(async (useCache: boolean = true) => {
+    console.log('[useQuestionBank] fetchQuestion called', { useCache, filters });
+    
     // Check if filters changed - if so, clear cache
     const currentFiltersHash = getFiltersHash();
     if (currentFiltersHash !== lastFiltersHash.current) {
@@ -487,7 +489,11 @@ export function useQuestionBank(): UseQuestionBankReturn {
       params.append('limit', requestedLimit);
       params.append('random', 'true');
 
-      const response = await fetch(`/api/question-bank/questions?${params.toString()}`);
+      const apiUrl = `/api/question-bank/questions?${params.toString()}`;
+      console.log('[useQuestionBank] 🚀 FETCHING from API:', apiUrl);
+      console.log('[useQuestionBank] Filters being sent:', filters);
+      
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

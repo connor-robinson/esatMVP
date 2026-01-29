@@ -625,7 +625,7 @@ export function PaperSessionSummary({
       </div>
 
       {/* Selected papers */}
-      <div className="min-h-[300px] rounded-lg p-4 bg-surface-subtle space-y-3 overflow-y-auto">
+      <div className="min-h-[300px] rounded-lg p-4 bg-surface-mid space-y-3 overflow-y-auto">
         {selectedPapers.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-text-disabled text-sm">
             <div>No papers selected yet.</div>
@@ -649,7 +649,7 @@ export function PaperSessionSummary({
 
       {/* Session Name & Stats */}
       {totalItems > 0 && (
-        <div className="rounded-lg p-4 bg-surface-subtle space-y-4">
+        <div className="rounded-lg p-4 bg-surface-mid space-y-4">
           {/* Session Name */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
@@ -714,7 +714,7 @@ export function PaperSessionSummary({
           "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
           !canStart
             ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
-            : "bg-primary/50 hover:bg-primary/60 text-white cursor-pointer"
+            : "bg-primary/60 hover:bg-primary/70 text-white cursor-pointer"
         )}
         style={
           canStart
