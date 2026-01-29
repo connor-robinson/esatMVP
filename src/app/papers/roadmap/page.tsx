@@ -235,7 +235,16 @@ export default function PapersRoadmapPage() {
         const paper = await getPaper(stage.examName, stage.year, firstPart.paperName, firstPart.examType);
 
         if (!paper) {
-          console.error("[roadmap] Paper not found for stage");
+          console.error("[roadmap] Paper not found for stage", {
+            examName: stage.examName,
+            year: stage.year,
+            paperName: firstPart.paperName,
+            examType: firstPart.examType,
+            stageId: stage.id
+          });
+          
+          // Show user-friendly error message
+          alert(`Paper not found: ${stage.examName} ${stage.year} ${firstPart.paperName} (${firstPart.examType}). Please check if this paper exists in the database.`);
           return;
         }
 

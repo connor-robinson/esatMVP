@@ -350,7 +350,9 @@ export type UserProfileRow = {
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
-  nickname: string | null;
+  nickname: string | null; // Keep for backward compatibility
+  username: string | null;
+  last_username_change: string | null;
   exam_preference: 'ESAT' | 'TMUA' | null;
   esat_subjects: string[] | null;
   is_early_applicant: boolean | null;
@@ -368,7 +370,9 @@ export type UserProfileInsert = {
   display_name?: string | null;
   avatar_url?: string | null;
   bio?: string | null;
-  nickname?: string | null;
+  nickname?: string | null; // Keep for backward compatibility
+  username?: string | null;
+  last_username_change?: string | null;
   exam_preference?: 'ESAT' | 'TMUA' | null;
   esat_subjects?: string[] | null;
   is_early_applicant?: boolean | null;

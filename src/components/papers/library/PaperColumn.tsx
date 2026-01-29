@@ -309,14 +309,14 @@ export function PaperColumn({
         className={cn(
           "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
           isSelected
-            ? "bg-white/[0.08]"
-            : "bg-white/[0.03] hover:bg-white/[0.05]"
+            ? "bg-surface-mid"
+            : "bg-surface-subtle hover:bg-surface-mid"
         )}
       >
         {/* Left: Dropdown icon for papers */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-white/60 hover:text-white/80 transition-colors"
+          className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-text-muted hover:text-text transition-colors"
         >
           <ChevronDown
             className={cn(
@@ -330,7 +330,7 @@ export function PaperColumn({
         {/* Exam Name and Year */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <div className="text-base font-mono font-bold text-white/90">
+            <div className="text-base font-mono font-bold text-text">
               {paper.examName} {paper.examYear}
             </div>
             {/* Completion status badge for paper */}
@@ -350,7 +350,7 @@ export function PaperColumn({
 
         {/* Right: Official/Specimen Tag */}
         {paper.examType && (
-          <div className="px-2 py-1 rounded-md bg-white/5 text-[10px] uppercase font-mono tracking-wider text-white/30 mr-2 border border-white/5">
+          <div className="px-2 py-1 rounded-md bg-surface-elevated text-[10px] uppercase font-mono tracking-wider text-text-subtle mr-2 border border-border">
             {paper.examType}
           </div>
         )}
@@ -360,8 +360,7 @@ export function PaperColumn({
           onClick={handleAddPaperClick}
           className={cn(
             "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-            "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90",
-            "shadow-md shadow-black/20"
+            "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
           )}
           aria-label="Add paper to session"
         >
@@ -380,9 +379,9 @@ export function PaperColumn({
             className="space-y-2 pl-11 overflow-hidden"
           >
             {loadingSections ? (
-              <div className="text-xs text-white/40 py-2">Loading sections...</div>
+              <div className="text-xs text-text-disabled py-2">Loading sections...</div>
             ) : mainSections.length === 0 ? (
-              <div className="text-xs text-white/40 py-2">No sections available</div>
+              <div className="text-xs text-text-disabled py-2">No sections available</div>
             ) : (
               mainSections.map((mainSection) => {
                 const sectionNumber = mainSection.name === "Section 1" || mainSection.name === "Paper 1" ? "1" :
@@ -394,14 +393,14 @@ export function PaperColumn({
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
                       isSelected
-                        ? "bg-white/[0.06]"
-                        : "bg-white/[0.02] hover:bg-white/[0.04]"
+                        ? "bg-surface-mid"
+                        : "bg-surface-subtle hover:bg-surface-mid"
                     )}
                   >
                     {/* Left: Number badge for sections */}
                     {sectionNumber ? (
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-sm text-white"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-sm text-text"
                         style={{ backgroundColor: paperColor }}
                       >
                         {sectionNumber}
@@ -413,7 +412,7 @@ export function PaperColumn({
                     {/* Section name */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <div className="text-sm font-mono font-semibold text-white/80">
+                        <div className="text-sm font-mono font-semibold text-text-muted">
                           {mainSection.name}
                         </div>
                         {/* Check if all sections in this main section are completed */}
@@ -458,8 +457,7 @@ export function PaperColumn({
                       onClick={() => handleAddSectionClick(mainSection.name, mainSection.subjectParts)}
                       className={cn(
                         "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-                        "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90",
-                        "shadow-md shadow-black/20"
+                        "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
                       )}
                       aria-label={`Add ${mainSection.name} to session`}
                     >

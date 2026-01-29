@@ -114,20 +114,20 @@ export function PaperLibraryGrid({
     <Card variant="flat" className="p-5 h-full bg-transparent">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
+          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">
             Paper Library
           </h2>
-          <p className="text-sm font-mono text-white/50 mt-1">
+          <p className="text-sm font-mono text-text-subtle mt-1">
             Browse past papers and add them to your practice session.
           </p>
         </div>
-        <div className="text-xs text-white/50">
+        <div className="text-xs text-text-subtle">
           {papers.length} result{papers.length === 1 ? "" : "s"}
         </div>
       </div>
 
       {papers.length === 0 ? (
-        <div className="h-[220px] flex items-center justify-center text-sm text-white/40">
+        <div className="h-[220px] flex items-center justify-center text-sm text-text-disabled">
           No papers found with the current filters.
         </div>
       ) : (
@@ -143,15 +143,12 @@ export function PaperLibraryGrid({
             return (
               <div
                 key={examName}
-                className="rounded-xl overflow-hidden transition-all duration-300"
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
-                }}
+                className="rounded-xl overflow-hidden transition-all duration-300 bg-surface-subtle"
               >
                 {/* Color-coded header */}
                 <button
                   onClick={() => toggleExam(examName)}
-                  className="w-full px-6 py-7 flex items-center justify-between bg-white/[0.04] hover:bg-white/[0.06] transition-colors group"
+                  className="w-full px-6 py-7 flex items-center justify-between bg-surface-mid hover:bg-surface transition-colors group"
                 >
                   <div className="flex items-center gap-3">
                     <ChevronDown
@@ -166,7 +163,7 @@ export function PaperLibraryGrid({
                       {examName} Papers
                     </h3>
                   </div>
-                  <div className="text-xs opacity-40 font-mono tracking-tight group-hover:opacity-60 transition-opacity">
+                  <div className="text-xs text-text-subtle font-mono tracking-tight group-hover:text-text-muted transition-colors">
                     {examPapers.length} papers available
                   </div>
                 </button>

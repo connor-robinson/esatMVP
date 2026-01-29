@@ -16,6 +16,7 @@ import { DeleteAccountModal } from "@/components/profile/DeleteAccountModal";
 import { ChangePasswordModal } from "@/components/profile/ChangePasswordModal";
 import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
+import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
 import { cn } from "@/lib/utils";
 import { 
   LogOut, 
@@ -38,7 +39,8 @@ import type { ExamType } from "@/lib/profile/countdown";
 import { useTheme } from "@/contexts/ThemeContext";
 
 type Preferences = {
-  nickname: string | null;
+  username: string | null;
+  last_username_change: string | null;
   exam_preference: ExamType | null;
   esat_subjects: string[];
   is_early_applicant: boolean;
@@ -74,7 +76,8 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>('account');
   const [preferences, setPreferences] = useState<Preferences>({
-    nickname: null,
+    username: null,
+    last_username_change: null,
     exam_preference: null,
     esat_subjects: [],
     is_early_applicant: true,
@@ -85,7 +88,16 @@ export default function ProfilePage() {
     reduced_motion: false,
     dark_mode: false,
   });
+  const [showUsernameSetup, setShowUsernameSetup] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [usernameChecking, setUsernameChecking] = useState(false);
+  const [usernameAvailability, setUsernameAvailability] = useState<{
+    available: boolean | null;
+    message: string | null;
+  }>({ available: null, message: null });
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
+  const [localESATSubjects, setLocalESATSubjects] = useState<string[]>([]);
   
   // Modal states
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
@@ -108,7 +120,8 @@ export default function ProfilePage() {
         if (response.ok) {
           const data = await response.json();
           setPreferences({
-            nickname: data.nickname || null,
+            username: data.username || null,
+            last_username_change: data.last_username_change || null,
             exam_preference: data.exam_preference || null,
             esat_subjects: data.esat_subjects || [],
             is_early_applicant: data.is_early_applicant ?? true,
@@ -119,6 +132,11 @@ export default function ProfilePage() {
             reduced_motion: data.reduced_motion ?? false,
             dark_mode: data.dark_mode ?? false,
           });
+          
+          // Show username setup if username is missing
+          if (!data.username) {
+            setShowUsernameSetup(true);
+          }
         }
       } catch (error) {
         console.error("[profile] Error loading preferences:", error);
@@ -244,8 +262,21 @@ export default function ProfilePage() {
     router.refresh();
   };
 
+  // Initialize local ESAT subjects when preferences load or exam preference changes
+  useEffect(() => {
+    if (preferences.exam_preference === 'ESAT') {
+      if (preferences.esat_subjects) {
+        setLocalESATSubjects(preferences.esat_subjects);
+      } else {
+        setLocalESATSubjects([]);
+      }
+    } else {
+      setLocalESATSubjects([]);
+    }
+  }, [preferences.esat_subjects, preferences.exam_preference]);
+
   const handleESATSubjectToggle = (subject: string) => {
-    const current = preferences.esat_subjects || [];
+    const current = localESATSubjects || [];
     let newSubjects: string[];
     
     if (current.includes(subject)) {
@@ -260,8 +291,15 @@ export default function ProfilePage() {
       }
     }
 
-    setPreferences((prev) => ({ ...prev, esat_subjects: newSubjects }));
-    savePreferences({ esat_subjects: newSubjects }, "esat_subjects");
+    setLocalESATSubjects(newSubjects);
+  };
+
+  const handleSaveESATSubjects = async () => {
+    if (localESATSubjects.length !== 3) {
+      alert("Please select exactly 3 subjects");
+      return;
+    }
+    await savePreferences({ esat_subjects: localESATSubjects }, "esat_subjects");
   };
 
   if (!session?.user) {
@@ -278,8 +316,6 @@ export default function ProfilePage() {
     );
   }
 
-  const esatSubjectsSelected = (preferences.esat_subjects || []).length;
-  const canSaveESAT = preferences.exam_preference !== 'ESAT' || esatSubjectsSelected === 3;
 
   const getTimeWithExtraTime = () => {
     if (!preferences.has_extra_time) return null;
@@ -346,7 +382,7 @@ export default function ProfilePage() {
           checked ? "bg-primary" : "bg-surface-elevated"
         )}>
           <div className={cn(
-            "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-200",
+            "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface transition-transform duration-200 ease-in-out",
             checked ? "translate-x-5" : "translate-x-0"
           )} />
         </div>
@@ -390,7 +426,7 @@ export default function ProfilePage() {
                 : "border-border bg-surface-subtle group-hover:border-border-subtle"
             )}>
               {value === option.value && (
-                <div className="absolute inset-0.5 rounded-full bg-white" />
+                <div className="absolute inset-0.5 rounded-full bg-surface" />
               )}
             </div>
           </div>
@@ -456,20 +492,145 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-6">
-                    <SettingItem label="Nickname">
-                      <div className="flex gap-3">
-                        <Input
-                          value={preferences.nickname || ""}
-                          onChange={(e) => setPreferences((prev) => ({ ...prev, nickname: e.target.value }))}
-                          onBlur={() => savePreferences({ nickname: preferences.nickname }, "nickname")}
-                          placeholder="Enter your nickname"
-                          className="flex-1"
-                        />
-                        {saving === "nickname" && (
-                          <div className="flex items-center px-4">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    <SettingItem 
+                      label="Username" 
+                      description={preferences.last_username_change ? (() => {
+                        const lastChange = new Date(preferences.last_username_change);
+                        const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+                        const daysRemaining = Math.max(0, Math.ceil(14 - daysSinceChange));
+                        return daysRemaining > 0 
+                          ? `You can change your username in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
+                          : 'You can change your username now';
+                      })() : undefined}
+                    >
+                      <div className="space-y-3">
+                        <div className="flex gap-3">
+                          <div className="relative flex-1">
+                            <Input
+                              type="text"
+                              value={usernameInput || preferences.username || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setUsernameInput(value);
+                                setUsernameError(null);
+                                
+                                // Check availability with debounce
+                                if (value && value !== preferences.username) {
+                                  const usernameRegex = /^[a-zA-Z0-9_-]{0,20}$/;
+                                  if (!usernameRegex.test(value)) {
+                                    setUsernameAvailability({
+                                      available: false,
+                                      message: 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens'
+                                    });
+                                    return;
+                                  }
+                                  
+                                  if (value.length < 3) {
+                                    setUsernameAvailability({ available: null, message: null });
+                                    return;
+                                  }
+                                  
+                                  // Debounce API call
+                                  setUsernameChecking(true);
+                                  setTimeout(async () => {
+                                    try {
+                                      const response = await fetch(`/api/profile/username/check?username=${encodeURIComponent(value)}`);
+                                      const data = await response.json();
+                                      if (response.ok) {
+                                        setUsernameAvailability({
+                                          available: data.available,
+                                          message: data.message
+                                        });
+                                      }
+                                    } catch (err) {
+                                      setUsernameAvailability({ available: null, message: null });
+                                    } finally {
+                                      setUsernameChecking(false);
+                                    }
+                                  }, 500);
+                                } else {
+                                  setUsernameAvailability({ available: null, message: null });
+                                }
+                              }}
+                              onBlur={async () => {
+                                if (!usernameInput || usernameInput === preferences.username) {
+                                  setUsernameInput("");
+                                  return;
+                                }
+                                
+                                if (usernameAvailability.available !== true) {
+                                  setUsernameError('Please choose an available username');
+                                  return;
+                                }
+                                
+                                setSaving("username");
+                                setUsernameError(null);
+                                
+                                try {
+                                  await savePreferences({ username: usernameInput.trim() }, "username");
+                                  setUsernameInput("");
+                                } catch (err: any) {
+                                  setUsernameError(err.message || 'Failed to save username');
+                                } finally {
+                                  setSaving(null);
+                                }
+                              }}
+                              placeholder="Enter your username"
+                              className={cn(
+                                "flex-1 pr-10",
+                                usernameAvailability.available === true && "border-success",
+                                usernameAvailability.available === false && "border-error",
+                                usernameError && "border-error"
+                              )}
+                              disabled={saving === "username" || (preferences.last_username_change ? (() => {
+                                const lastChange = new Date(preferences.last_username_change);
+                                const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+                                return daysSinceChange < 14;
+                              })() : false)}
+                              autoComplete="username"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              {usernameChecking && (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                              )}
+                              {!usernameChecking && usernameAvailability.available === true && (
+                                <CheckCircle2 className="w-4 h-4 text-success" />
+                              )}
+                              {!usernameChecking && usernameAvailability.available === false && (
+                                <AlertCircle className="w-4 h-4 text-error" />
+                              )}
+                            </div>
                           </div>
+                          {saving === "username" && (
+                            <div className="flex items-center px-4">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                            </div>
+                          )}
+                        </div>
+                        {usernameAvailability.message && (
+                          <p className={cn(
+                            "text-xs",
+                            usernameAvailability.available === true ? "text-success" : "text-error"
+                          )}>
+                            {usernameAvailability.message}
+                          </p>
                         )}
+                        {usernameError && (
+                          <p className="text-xs text-error flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />
+                            {usernameError}
+                          </p>
+                        )}
+                        {preferences.last_username_change && (() => {
+                          const lastChange = new Date(preferences.last_username_change);
+                          const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+                          const daysRemaining = Math.max(0, Math.ceil(14 - daysSinceChange));
+                          return daysRemaining > 0 ? (
+                            <p className="text-xs text-text-muted">
+                              Username can only be changed once every 14 days. {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} remaining.
+                            </p>
+                          ) : null;
+                        })()}
                       </div>
                     </SettingItem>
 
@@ -578,45 +739,57 @@ export default function ProfilePage() {
                     {preferences.exam_preference === 'ESAT' && (
                       <SettingItem 
                         label="ESAT Subjects" 
-                        description={`Select exactly 3 subjects (${esatSubjectsSelected}/3 selected)`}
+                        description={`Select exactly 3 subjects (${localESATSubjects.length}/3 selected)`}
                       >
-                        <div className="flex flex-wrap gap-3">
+                        <div className="space-y-2">
                           {ESAT_SUBJECTS.map((subject) => {
-                            const isSelected = (preferences.esat_subjects || []).includes(subject);
-                            const isDisabled = !isSelected && esatSubjectsSelected >= 3;
+                            const isSelected = localESATSubjects.includes(subject);
                             
                             return (
                               <button
                                 key={subject}
-                                onClick={() => !isDisabled && handleESATSubjectToggle(subject)}
-                                disabled={isDisabled}
+                                onClick={() => handleESATSubjectToggle(subject)}
                                 className={cn(
-                                  "px-4 py-2.5 rounded-organic-md transition-all duration-fast ease-signature",
+                                  "w-full px-4 py-2.5 rounded-organic-md transition-all duration-fast ease-signature",
                                   "interaction-scale outline-none focus:outline-none",
-                                  "text-sm font-medium",
+                                  "text-sm font-medium flex items-center justify-between",
                                   isSelected
                                     ? "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/25 shadow-lg shadow-primary/10"
-                                    : isDisabled
-                                    ? "bg-surface-subtle text-text-muted border border-border opacity-50 cursor-not-allowed"
                                     : "bg-surface-subtle text-text border border-border hover:bg-surface-elevated hover:border-border-subtle"
                                 )}
                               >
-                                <div className="flex items-center gap-2">
-                                  {isSelected && (
-                                    <CheckCircle2 className="w-4 h-4" />
-                                  )}
-                                  <span>{subject}</span>
-                                </div>
+                                <span>{subject}</span>
+                                {isSelected && (
+                                  <CheckCircle2 className="w-4 h-4" />
+                                )}
                               </button>
                             );
                           })}
                         </div>
-                        {esatSubjectsSelected !== 3 && (
-                          <div className="flex items-center gap-2 text-xs text-warning mt-3">
-                            <AlertCircle className="w-3.5 h-3.5" />
-                            <span>Please select exactly 3 subjects</span>
-                          </div>
-                        )}
+                        <div className="mt-4 space-y-2">
+                          {localESATSubjects.length !== 3 && (
+                            <div className="flex items-center gap-2 text-xs text-warning">
+                              <AlertCircle className="w-3.5 h-3.5" />
+                              <span>Please select exactly 3 subjects</span>
+                            </div>
+                          )}
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={handleSaveESATSubjects}
+                            disabled={localESATSubjects.length !== 3 || saving === "esat_subjects"}
+                            className="w-full"
+                          >
+                            {saving === "esat_subjects" ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <span>Saving...</span>
+                              </div>
+                            ) : (
+                              <span>Save Subjects</span>
+                            )}
+                          </Button>
+                        </div>
                       </SettingItem>
                     )}
 
@@ -828,6 +1001,14 @@ export default function ProfilePage() {
         isOpen={showResetData}
         onClose={() => setShowResetData(false)}
         onConfirm={handleResetData}
+      />
+      <UsernameSetupModal
+        isOpen={showUsernameSetup}
+        onComplete={() => {
+          setShowUsernameSetup(false);
+          // Reload preferences
+          window.location.reload();
+        }}
       />
     </Container>
   );

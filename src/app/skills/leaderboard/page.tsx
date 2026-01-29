@@ -54,12 +54,15 @@ async function fetchLeaderboard(
   const profilesMap = new Map<string, string>();
   
   if (userIds.length > 0) {
-    const { data: profilesData } = await supabase
+    const { data: profilesData, error: profilesError } = await supabase
       .from("profiles")
       .select("id, display_name")
       .in("id", userIds);
     
-    if (profilesData) {
+    // Handle missing table gracefully
+    if (profilesError && profilesError.code === '42P01') {
+      console.warn('[leaderboard] profiles table does not exist, using anonymous names');
+    } else if (profilesData) {
       profilesData.forEach((profile: any) => {
         profilesMap.set(profile.id, profile.display_name || "Anonymous User");
       });

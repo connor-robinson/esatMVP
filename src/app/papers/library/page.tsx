@@ -379,7 +379,7 @@ export default function PapersLibraryPage() {
   if (loading) {
     return (
       <Container>
-        <div className="py-12 text-center text-white/50">Loading papers...</div>
+        <div className="py-12 text-center text-text-subtle">Loading papers...</div>
       </Container>
     );
   }
@@ -387,7 +387,7 @@ export default function PapersLibraryPage() {
   if (error && papers.length === 0) {
     return (
       <Container>
-        <div className="py-12 text-center text-red-400">{error}</div>
+        <div className="py-12 text-center text-error">{error}</div>
       </Container>
     );
   }

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     // Fetch user profile with preferences
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('nickname, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
       .eq('id', session.user.id)
       .single();
 
@@ -32,7 +32,8 @@ export async function GET(request: NextRequest) {
       // If profile doesn't exist, return defaults
       if (profileError.code === 'PGRST116') {
         return NextResponse.json({
-          nickname: null,
+          username: null,
+          last_username_change: null,
           exam_preference: null,
           esat_subjects: [],
           is_early_applicant: true,
@@ -82,7 +83,7 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
     const {
-      nickname,
+      username,
       exam_preference,
       esat_subjects,
       is_early_applicant,
@@ -93,6 +94,56 @@ export async function PATCH(request: NextRequest) {
       reduced_motion,
       dark_mode,
     } = body;
+
+    // Validate username if it's being updated
+    if (username !== undefined) {
+      // Check if username is being changed
+      const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('username, last_username_change')
+        .eq('id', session.user.id)
+        .single() as { data: { username: string | null; last_username_change: string | null } | null };
+
+      // If username is being changed, check 14-day restriction
+      if (currentProfile?.username && username !== currentProfile.username) {
+        if (currentProfile.last_username_change) {
+          const lastChange = new Date(currentProfile.last_username_change);
+          const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+          
+          if (daysSinceChange < 14) {
+            const daysRemaining = Math.ceil(14 - daysSinceChange);
+            return NextResponse.json(
+              { error: `You can only change your username once every 14 days. Please wait ${daysRemaining} more day${daysRemaining !== 1 ? 's' : ''}.` },
+              { status: 400 }
+            );
+          }
+        }
+
+        // Check if new username is available
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .ilike('username', username)
+          .limit(1)
+          .maybeSingle() as { data: { id: string } | null };
+
+        if (existingProfile && existingProfile.id !== session.user.id) {
+          return NextResponse.json(
+            { error: 'This username is already taken' },
+            { status: 400 }
+          );
+        }
+
+        // Validate username format
+        const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+        if (!usernameRegex.test(username)) {
+          return NextResponse.json(
+            { error: 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens' },
+            { status: 400 }
+          );
+        }
+      }
+    }
 
     // Validate exam_preference only if it's being updated
     if (exam_preference !== undefined) {
@@ -133,7 +184,21 @@ export async function PATCH(request: NextRequest) {
 
     // Build update object with only provided fields
     const updateData: Record<string, any> = {};
-    if (nickname !== undefined) updateData.nickname = nickname;
+    if (username !== undefined) {
+      updateData.username = username;
+        // If username is being changed, update last_username_change timestamp
+        if (username) {
+          const { data: currentProfile } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', session.user.id)
+            .single() as { data: { username: string | null } | null };
+          
+          if (currentProfile?.username !== username) {
+            updateData.last_username_change = new Date().toISOString();
+          }
+        }
+    }
     if (exam_preference !== undefined) updateData.exam_preference = exam_preference;
     if (esat_subjects !== undefined) updateData.esat_subjects = esat_subjects;
     if (is_early_applicant !== undefined) updateData.is_early_applicant = is_early_applicant;
@@ -156,7 +221,7 @@ export async function PATCH(request: NextRequest) {
       .from('profiles') as any)
       .update(updateData)
       .eq('id', session.user.id)
-      .select('nickname, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
+      .select('username, last_username_change, exam_preference, esat_subjects, is_early_applicant, has_extra_time, extra_time_percentage, has_rest_breaks, font_size, reduced_motion, dark_mode')
       .single();
 
     if (profileError) {

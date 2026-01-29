@@ -403,21 +403,23 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
 ];
 
 /**
- * Get available TMUA Paper 1 years from database
+ * Get available TMUA years from database (for both Paper 1 and Paper 2)
  */
-async function getAvailableTmuaPaper1Years(): Promise<number[]> {
+async function getAvailableTmuaYears(): Promise<number[]> {
   try {
     // Dynamic import to avoid SSR issues
     const { getPapersByExam } = await import('@/lib/supabase/questions');
     const papers = await getPapersByExam('TMUA');
-    const paper1Years = papers
-      .filter(p => p.paperName === 'Paper 1')
+    // Get all unique years that have either Paper 1 or Paper 2
+    const allYears = papers
+      .filter(p => p.paperName === 'Paper 1' || p.paperName === 'Paper 2')
       .map(p => p.examYear)
-      .filter((year): year is number => typeof year === 'number')
+      .filter((year): year is number => typeof year === 'number');
+    const uniqueYears = [...new Set(allYears)]
       .sort((a, b) => a - b); // Sort ascending (2016 to current year)
-    return paper1Years;
+    return uniqueYears;
   } catch (error) {
-    console.error('[roadmapConfig] Error fetching TMUA Paper 1 years:', error);
+    console.error('[roadmapConfig] Error fetching TMUA years:', error);
     // Fallback to common years if database query fails
     const currentYear = new Date().getFullYear();
     const years: number[] = [];
@@ -429,24 +431,69 @@ async function getAvailableTmuaPaper1Years(): Promise<number[]> {
 }
 
 /**
- * Generate TMUA Paper 1 stages dynamically
+ * Check if a TMUA paper exists in the database
  */
-async function generateTmuaPaper1Stages(): Promise<RoadmapStage[]> {
-  const years = await getAvailableTmuaPaper1Years();
-  return years.map(year => ({
-    id: `tmua-${year}-paper1`,
-    year,
-    examName: 'TMUA' as ExamName,
-    label: 'Advanced Practice',
-    parts: [
-      {
-        partLetter: 'Paper 1',
-        partName: 'Paper 1',
-        paperName: 'Paper 1',
-        examType: 'Official',
-      },
-    ],
-  }));
+async function checkTmuaPaperExists(year: number, paperName: string): Promise<boolean> {
+  try {
+    const { getPaper } = await import('@/lib/supabase/questions');
+    const paper = await getPaper('TMUA', year, paperName, 'Official');
+    return paper !== null;
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Generate TMUA stages dynamically (both Paper 1 and Paper 2)
+ */
+async function generateTmuaStages(): Promise<RoadmapStage[]> {
+  const years = await getAvailableTmuaYears();
+  const stages: RoadmapStage[] = [];
+  
+  for (const year of years) {
+    // Check if Paper 1 exists
+    const paper1Exists = await checkTmuaPaperExists(year, 'Paper 1');
+    // Check if Paper 2 exists
+    const paper2Exists = await checkTmuaPaperExists(year, 'Paper 2');
+    
+    // Generate Paper 1 stage if it exists
+    if (paper1Exists) {
+      stages.push({
+        id: `tmua-${year}-paper1`,
+        year,
+        examName: 'TMUA' as ExamName,
+        label: 'Advanced Practice',
+        parts: [
+          {
+            partLetter: 'Paper 1',
+            partName: 'Paper 1',
+            paperName: 'Paper 1',
+            examType: 'Official',
+          },
+        ],
+      });
+    }
+    
+    // Generate Paper 2 stage if it exists
+    if (paper2Exists) {
+      stages.push({
+        id: `tmua-${year}-paper2`,
+        year,
+        examName: 'TMUA' as ExamName,
+        label: 'Advanced Practice',
+        parts: [
+          {
+            partLetter: 'Paper 2',
+            partName: 'Paper 2',
+            paperName: 'Paper 2',
+            examType: 'Official',
+          },
+        ],
+      });
+    }
+  }
+  
+  return stages;
 }
 
 // Cache for roadmap stages to prevent duplicate generation
@@ -454,10 +501,36 @@ let cachedStages: RoadmapStage[] | null = null;
 let cachePromise: Promise<RoadmapStage[]> | null = null;
 
 /**
+ * Validate that papers exist in the database for a stage
+ * Returns true if at least one paper exists for the stage
+ */
+async function validateStagePapers(stage: RoadmapStage): Promise<boolean> {
+  try {
+    const { getPaper } = await import('@/lib/supabase/questions');
+    
+    // Check if at least one paper exists for this stage
+    for (const part of stage.parts) {
+      const paper = await getPaper(stage.examName, stage.year, part.paperName, part.examType);
+      if (paper) {
+        return true; // At least one paper exists
+      }
+    }
+    
+    return false; // No papers found
+  } catch (error) {
+    console.error(`[roadmapConfig] Error validating papers for stage ${stage.id}:`, error);
+    return false;
+  }
+}
+
+/**
  * Get all stages with proper ordering and dynamic TMUA stages
  * Order: NSAA 2016-2022, ENGAA, TMUA Paper 1, NSAA 2023 at the end
  * 
  * Cached to prevent duplicate generation on multiple calls
+ * 
+ * Note: Stages are included even if papers don't exist in the database,
+ * but starting a session will show an error if the paper is missing.
  */
 export async function getRoadmapStages(): Promise<RoadmapStage[]> {
   // Return cached result if available
@@ -480,8 +553,8 @@ export async function getRoadmapStages(): Promise<RoadmapStage[]> {
       // Get ENGAA stages
       const engaaStages = ROADMAP_STAGES.filter(s => s.examName === 'ENGAA');
       
-      // Generate TMUA Paper 1 stages
-      const tmuaStages = await generateTmuaPaper1Stages();
+      // Generate TMUA stages (both Paper 1 and Paper 2)
+      const tmuaStages = await generateTmuaStages();
       
       // Combine in correct order: NSAA (2016-2022), ENGAA, TMUA, NSAA 2023
       const orderedStages: RoadmapStage[] = [

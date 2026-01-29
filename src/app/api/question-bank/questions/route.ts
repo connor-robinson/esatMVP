@@ -55,10 +55,30 @@ export async function GET(request: NextRequest) {
       .select('*', { count: 'exact' })
       .eq('status', 'approved');
     
+    // DEBUG: First, check how many approved questions exist total
+    const { count: totalApproved } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved');
+    
+    console.log('[Question Bank API] Total approved questions in DB:', totalApproved);
+    
     // 1. Apply test_type filter first (ESAT or TMUA)
     if (testType) {
       query = query.eq('test_type', testType);
       console.log('[Question Bank API] Filtering by test_type:', testType);
+    } else {
+      // When "All" is selected, include questions with any test_type (including null)
+      // No filter needed - query will return all
+      console.log('[Question Bank API] No test_type filter (showing All)');
+      
+      // DEBUG: Check if questions have null test_type
+      const { count: nullTestTypeCount } = await supabase
+        .from('ai_generated_questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'approved')
+        .is('test_type', null);
+      console.log('[Question Bank API] Questions with null test_type:', nullTestTypeCount);
     }
     
     // 2. Apply subject filter using subjects column
@@ -68,6 +88,18 @@ export async function GET(request: NextRequest) {
     
     if (subjects.length > 0) {
       console.log('[Question Bank API] Incoming subject filters:', subjects);
+      
+      // DEBUG: Check what subjects actually exist in the database
+      const { data: sampleQuestions } = await supabase
+        .from('ai_generated_questions')
+        .select('subjects, test_type')
+        .eq('status', 'approved')
+        .limit(100);
+      
+      const uniqueSubjects = [...new Set((sampleQuestions || []).map((q: any) => q.subjects))];
+      const uniqueTestTypes = [...new Set((sampleQuestions || []).map((q: any) => q.test_type))];
+      console.log('[Question Bank API] Sample subjects in DB:', uniqueSubjects);
+      console.log('[Question Bank API] Sample test_types in DB:', uniqueTestTypes);
       
       // Subjects are already in the correct format (no mapping needed)
       // Filter by subjects column
@@ -189,11 +221,60 @@ export async function GET(request: NextRequest) {
     const { data: allQuestions, error: queryError, count: totalCount } = await query;
 
     if (queryError) {
-      console.error('[Question Bank API] Supabase error:', queryError);
+      console.error('[Question Bank API] Supabase query error:', {
+        error: queryError,
+        code: queryError.code,
+        message: queryError.message,
+        details: queryError.details,
+        hint: queryError.hint,
+        filters: {
+          testType,
+          subjects,
+          difficulties,
+          attemptedStatus,
+          attemptResults
+        }
+      });
       return NextResponse.json(
-        { error: 'Failed to fetch questions from database' },
+        { error: 'Failed to fetch questions from database', details: queryError.message },
         { status: 500 }
       );
+    }
+    
+    console.log('[Question Bank API] Query executed successfully:', {
+      questionsReturned: allQuestions?.length || 0,
+      totalCountFromSupabase: totalCount,
+      filters: {
+        testType: testType || 'All',
+        subjects: subjects.length > 0 ? subjects : 'All',
+        difficulties: difficulties.length > 0 ? difficulties : 'All'
+      }
+    });
+    
+    // DEBUG: Show sample of what we got
+    if (allQuestions && allQuestions.length > 0) {
+      const sample = allQuestions[0] as any;
+      console.log('[Question Bank API] Sample question from query:', {
+        id: sample.id,
+        subjects: sample.subjects,
+        test_type: sample.test_type,
+        difficulty: sample.difficulty,
+        status: sample.status
+      });
+    } else {
+      console.warn('[Question Bank API] Query returned 0 questions - checking why...');
+      
+      // Try a simpler query to see if ANY questions exist
+      const { data: anyQuestions, count: anyCount } = await supabase
+        .from('ai_generated_questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'approved')
+        .limit(1);
+      
+      console.log('[Question Bank API] DEBUG: Any approved questions exist?', {
+        count: anyCount,
+        hasData: !!anyQuestions
+      });
     }
 
     // Subject filtering is now done via SQL query above, so no need for in-memory filtering
@@ -285,6 +366,23 @@ export async function GET(request: NextRequest) {
         attemptedQuestionIds: attemptedQuestionIds.slice(0, 10), // Log first 10 for debugging
         totalAttempted: attemptedQuestionIds.length,
         fetchedQuestionIds: allQuestions.slice(0, 5).map((q: any) => q.id) // Log first 5 for debugging
+      });
+    }
+    
+    // Log when no questions found to help debug filter issues
+    if (filteredQuestions.length === 0) {
+      console.warn('[Question Bank API] No questions found matching filters:', {
+        testType: testType || 'All',
+        subjects: subjects.length > 0 ? subjects : 'All',
+        difficulties: difficulties.length > 0 ? difficulties : 'All',
+        attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
+        attemptedStatus,
+        tags: tags || 'None',
+        search: search || 'None',
+        fetchedFromDB: allQuestions?.length || 0,
+        totalCountFromSupabase: totalCount,
+        beforeFilterCount: beforeFilterCount,
+        userId: userId || 'Not authenticated'
       });
     }
     

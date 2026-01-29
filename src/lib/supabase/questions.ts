@@ -95,9 +95,10 @@ export async function getPapersByExamAndYear(examName: ExamName, examYear: numbe
   }
 }
 
-// Get specific paper
+// Get specific paper with fallback to try common name variations
 export async function getPaper(examName: ExamName, examYear: number, paperName: string, examType: ExamType) {
   try {
+    // First try exact match
     const { data, error } = await supabase
       .from('papers')
       .select('*')
@@ -107,21 +108,66 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
       .eq('exam_type', examType)
       .single();
 
-    if (error) throw error;
-    // Convert database format to TypeScript interface format
-    const paper: Paper = {
-      id: data.id,
-      examName: data.exam_name,
-      examYear: data.exam_year,
-      paperName: data.paper_name,
-      examType: data.exam_type,
-      hasConversion: data.has_conversion,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-    };
-    
-    return paper;
+    if (!error && data) {
+      // Convert database format to TypeScript interface format
+      const paper: Paper = {
+        id: data.id,
+        examName: data.exam_name,
+        examYear: data.exam_year,
+        paperName: data.paper_name,
+        examType: data.exam_type,
+        hasConversion: data.has_conversion,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+      };
+      return paper;
+    }
+
+    // If exact match fails, try common variations for NSAA/ENGAA
+    if (examName === 'NSAA' || examName === 'ENGAA') {
+      const variations = [
+        paperName, // Original
+        paperName.replace(/\s+/g, ''), // "Section 1" -> "Section1"
+        paperName.toLowerCase(), // "Section 1" -> "section 1"
+        paperName.toUpperCase(), // "Section 1" -> "SECTION 1"
+        paperName.replace(/\s+/g, '').toLowerCase(), // "Section 1" -> "section1"
+      ];
+
+      for (const variant of variations) {
+        if (variant === paperName) continue; // Already tried
+        
+        const { data: variantData, error: variantError } = await supabase
+          .from('papers')
+          .select('*')
+          .eq('exam_name', examName)
+          .eq('exam_year', examYear)
+          .eq('paper_name', variant)
+          .eq('exam_type', examType)
+          .single();
+
+        if (!variantError && variantData) {
+          console.log(`[getPaper] Found paper using variation: "${variant}" (requested: "${paperName}")`);
+          const paper: Paper = {
+            id: variantData.id,
+            examName: variantData.exam_name,
+            examYear: variantData.exam_year,
+            paperName: variantData.paper_name,
+            examType: variantData.exam_type,
+            hasConversion: variantData.has_conversion,
+            createdAt: variantData.created_at,
+            updatedAt: variantData.updated_at,
+          };
+          return paper;
+        }
+      }
+    }
+
+    // If all variations fail, log and return null
+    console.warn(`[getPaper] Paper not found: ${examName} ${examYear} "${paperName}" (${examType})`);
+    handleSupabaseError(error);
+    return null;
   } catch (error) {
+    console.error(`[getPaper] Error looking up paper: ${examName} ${examYear} "${paperName}" (${examType})`, error);
     handleSupabaseError(error);
     return null;
   }

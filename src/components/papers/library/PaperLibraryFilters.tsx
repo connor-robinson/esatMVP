@@ -89,12 +89,12 @@ export function PaperLibraryFilters({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between"
+          className="w-full h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between border border-border"
         >
           <span className="truncate text-left">{selectedLabel}</span>
           <ChevronDown
             className={cn(
-              "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
+              "absolute right-3 w-4 h-4 text-text-muted pointer-events-none transition-transform",
               isOpen && "rotate-180"
             )}
           />
@@ -112,7 +112,7 @@ export function PaperLibraryFilters({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden"
+                className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden border border-border"
               >
                 <div className="max-h-60 overflow-y-auto">
                   {options.map((option) => (
@@ -126,8 +126,8 @@ export function PaperLibraryFilters({
                       className={cn(
                         "w-full px-4 py-2.5 text-left text-sm transition-all",
                         value === option.value
-                          ? "bg-white/10 text-white"
-                          : "text-white/70 hover:bg-white/5 hover:text-white"
+                          ? "bg-surface-mid text-text"
+                          : "text-text-muted hover:bg-surface-subtle hover:text-text"
                       )}
                     >
                       {option.label}
@@ -145,10 +145,10 @@ export function PaperLibraryFilters({
   return (
     <Card variant="flat" className="p-3">
       <div className="mb-4">
-        <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/90 mb-1">
+        <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text mb-1">
           Filters
         </h2>
-        <p className="text-xs font-mono text-white/50">
+        <p className="text-xs font-mono text-text-subtle">
           Search and filter papers by exam, year, and type to find what you need.
         </p>
       </div>
@@ -160,7 +160,7 @@ export function PaperLibraryFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by exam, paper, or year..."
-            className="w-full h-10 px-4 rounded-lg bg-white/5 outline-none border-0 placeholder:text-white/40 text-white/90 text-sm transition-all backdrop-blur-sm"
+            className="w-full h-10 px-4 rounded-lg bg-surface-elevated outline-none border border-border placeholder:text-text-disabled text-text text-sm transition-all focus:border-border-subtle"
             onFocus={(e) => {
               e.currentTarget.style.boxShadow = '0 0 0 2px rgba(64, 97, 102, 0.3)';
             }}

@@ -134,13 +134,18 @@ export async function fetchTopicRankings(
         .in("id", userIds);
       
       if (profilesError) {
-        console.error("[fetchTopicRankings] ERROR: Failed to fetch profiles:", {
-          error: profilesError,
-          errorCode: profilesError.code,
-          errorMessage: profilesError.message,
-          errorDetails: profilesError.details,
-          userIdCount: userIds.length,
-        });
+        // Handle missing table gracefully
+        if (profilesError.code === '42P01') {
+          console.warn("[fetchTopicRankings] profiles table does not exist, using anonymous names");
+        } else {
+          console.error("[fetchTopicRankings] ERROR: Failed to fetch profiles:", {
+            error: profilesError,
+            errorCode: profilesError.code,
+            errorMessage: profilesError.message,
+            errorDetails: profilesError.details,
+            userIdCount: userIds.length,
+          });
+        }
       } else {
         console.log(`[fetchTopicRankings] DEBUG: Profiles fetched successfully`, {
           profileCount: profilesData?.length || 0,

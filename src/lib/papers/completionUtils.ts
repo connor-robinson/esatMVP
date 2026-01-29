@@ -145,9 +145,27 @@ export async function queryCompletedSessions(
     error = error1;
   }
   
+  // Only log errors that aren't expected (like 404s for missing data)
+  // PGRST116 means no rows found, which is expected if user hasn't completed sessions
+  // 42P01 means relation doesn't exist - could be user_profiles table missing (from trigger/function)
   if (error) {
-    console.error('[completionUtils] Error querying completed sessions:', error);
-    return [];
+    if (error.code === 'PGRST116') {
+      // No rows found - this is expected, not an error
+      return [];
+    } else if (error.code === '42P01') {
+      // Table/relation doesn't exist - suppress user_profiles errors (likely from trigger)
+      if (error.message?.includes('user_profiles')) {
+        console.warn('[completionUtils] user_profiles table missing (likely from trigger), continuing without it');
+        return [];
+      } else {
+        console.warn('[completionUtils] Table does not exist:', error.message);
+        return [];
+      }
+    } else {
+      // Other errors - log them
+      console.error('[completionUtils] Error querying completed sessions:', error);
+      return [];
+    }
   }
   
   return data as Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[];

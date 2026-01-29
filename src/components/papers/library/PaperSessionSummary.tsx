@@ -132,17 +132,17 @@ function PaperItemComponent({
   return (
     <div className="space-y-2">
       {/* Main paper row */}
-      <div className="flex items-center gap-3 p-3 rounded-lg transition-all h-14 bg-white/[0.05]">
+      <div className="flex items-center gap-3 p-3 rounded-lg transition-all h-14 bg-surface-mid">
         {/* Exam Name and Year */}
         <div className="flex-1 min-w-0">
-          <div className="text-base font-mono font-bold text-white/90">
+          <div className="text-base font-mono font-bold text-text">
             {paper.examName} {paper.examYear}
           </div>
         </div>
 
         {/* Right: Official/Specimen Tag */}
         {paper.examType && (
-          <div className="px-2 py-1 rounded-md bg-white/5 text-[10px] uppercase font-mono tracking-wider text-white/30 mr-2 border border-white/5">
+          <div className="px-2 py-1 rounded-md bg-surface-elevated text-[10px] uppercase font-mono tracking-wider text-text-subtle mr-2 border border-border">
             {paper.examType}
           </div>
         )}
@@ -152,8 +152,7 @@ function PaperItemComponent({
           onClick={() => onRemovePaper(paper.id)}
           className={cn(
             "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-            "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90",
-            "shadow-md shadow-black/20"
+            "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
           )}
           aria-label="Remove paper"
         >
@@ -163,9 +162,9 @@ function PaperItemComponent({
 
       {/* Expanded sections */}
       {loading ? (
-        <div className="text-xs text-white/40 py-2 pl-11">Loading sections...</div>
+        <div className="text-xs text-text-disabled py-2 pl-11">Loading sections...</div>
       ) : mainSections.length === 0 ? (
-        <div className="text-xs text-white/40 py-2 pl-11">No sections available</div>
+        <div className="text-xs text-text-disabled py-2 pl-11">No sections available</div>
       ) : (
         <div className="space-y-2 pl-11">
           {mainSections
@@ -186,13 +185,13 @@ function PaperItemComponent({
                 <div
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
-                    "bg-white/[0.02] hover:bg-white/[0.04]"
+                    "bg-surface-subtle hover:bg-surface-mid"
                   )}
                 >
                   {/* Left: Chevron for expand/collapse */}
                   <button
                     onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
-                    className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-white/60 hover:text-white/80 transition-colors"
+                    className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-text-muted hover:text-text transition-colors"
                   >
                     <ChevronDown
                       className={cn(
@@ -205,11 +204,11 @@ function PaperItemComponent({
 
                   {/* Section name */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-mono font-semibold text-white/80">
+                    <div className="text-sm font-mono font-semibold text-text-muted">
                       {mainSection.name}
                     </div>
                     {selectedCount > 0 && (
-                      <div className="text-xs text-white/50 mt-0.5">
+                      <div className="text-xs text-text-subtle mt-0.5">
                         {selectedCount}/{mainSection.subjectParts.length} selected
                       </div>
                     )}
@@ -229,8 +228,7 @@ function PaperItemComponent({
                       }}
                       className={cn(
                         "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-                        "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90",
-                        "shadow-md shadow-black/20"
+                        "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
                       )}
                       aria-label="Deselect all subjects in this section"
                     >
@@ -258,8 +256,8 @@ function PaperItemComponent({
                           className={cn(
                             "w-full flex items-center gap-3 p-2 rounded-lg transition-all text-left",
                             isSelected
-                              ? "bg-white/[0.08]"
-                              : "hover:bg-white/[0.03]"
+                              ? "bg-surface-mid"
+                              : "hover:bg-surface-subtle"
                           )}
                         >
                           {/* Color-coded Checkbox */}
@@ -268,7 +266,7 @@ function PaperItemComponent({
                               "w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-all",
                               isSelected
                                 ? "border-2"
-                                : "bg-white/5 border-2 border-white/10"
+                                : "bg-surface-elevated border-2 border-border"
                             )}
                             style={{
                               backgroundColor: isSelected ? subjectColor : undefined,
@@ -276,7 +274,7 @@ function PaperItemComponent({
                             }}
                           >
                             {isSelected && (
-                              <Check className="w-3 h-3 text-white" />
+                              <Check className="w-3 h-3 text-text" />
                             )}
                           </div>
 
@@ -284,7 +282,7 @@ function PaperItemComponent({
                           <span
                             className={cn(
                               "text-sm font-medium flex-1",
-                              isSelected ? "text-white" : "text-white/70"
+                              isSelected ? "text-text" : "text-text-muted"
                             )}
                           >
                             {subject}
@@ -614,22 +612,22 @@ export function PaperSessionSummary({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
+          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">
             Practice Session
           </h2>
-          <p className="text-sm font-mono text-white/50 mt-1">
+          <p className="text-sm font-mono text-text-subtle mt-1">
             Select subjects for each section.
           </p>
         </div>
-        <span className="text-sm text-white/50 font-medium">
+        <span className="text-sm text-text-subtle font-medium">
           {totalItems} {totalItems === 1 ? "paper" : "papers"}
         </span>
       </div>
 
       {/* Selected papers */}
-      <div className="min-h-[300px] rounded-lg p-4 bg-white/[0.03] space-y-3 overflow-y-auto">
+      <div className="min-h-[300px] rounded-lg p-4 bg-surface-subtle space-y-3 overflow-y-auto">
         {selectedPapers.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-2 text-white/40 text-sm">
+          <div className="h-full flex flex-col items-center justify-center gap-2 text-text-disabled text-sm">
             <div>No papers selected yet.</div>
             <div className="text-xs">Browse the library to add papers.</div>
           </div>
@@ -651,10 +649,10 @@ export function PaperSessionSummary({
 
       {/* Session Name & Stats */}
       {totalItems > 0 && (
-        <div className="rounded-lg p-4 bg-white/[0.03] space-y-4">
+        <div className="rounded-lg p-4 bg-surface-subtle space-y-4">
           {/* Session Name */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-mono text-white/50 uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
               <FileText className="w-3.5 h-3.5" />
               Session Name
             </div>
@@ -665,15 +663,15 @@ export function PaperSessionSummary({
                   onChange={(e) => setSessionName(e.target.value)}
                   onBlur={() => setIsEditingName(false)}
                   onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
-                  className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-white/5 text-white/90 text-sm font-mono"
+                  className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-surface-elevated text-text text-sm font-mono"
                   autoFocus
                 />
               ) : (
                 <>
-                  <span className="font-mono font-medium text-white/90 flex-1 text-sm">{sessionName}</span>
+                  <span className="font-mono font-medium text-text flex-1 text-sm">{sessionName}</span>
                   <button
                     onClick={() => setIsEditingName(true)}
-                    className="p-1.5 rounded-lg hover:bg-white/5 text-white/50 hover:text-white/70 transition-colors"
+                    className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                   </button>
@@ -683,22 +681,22 @@ export function PaperSessionSummary({
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-3 gap-4 pt-2 border-t border-white/10">
+          <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border">
             <div className="space-y-1">
-              <div className="text-xs font-mono text-white/50 uppercase tracking-wider">Subjects</div>
-              <div className="text-lg font-mono font-semibold text-white/90">
+              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Subjects</div>
+              <div className="text-lg font-mono font-semibold text-text">
                 {sessionStats.totalSections}
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xs font-mono text-white/50 uppercase tracking-wider">Questions</div>
-              <div className="text-lg font-mono font-semibold text-white/90">
+              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Questions</div>
+              <div className="text-lg font-mono font-semibold text-text">
                 {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xs font-mono text-white/50 uppercase tracking-wider">Time</div>
-              <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-white/90">
+              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Time</div>
+              <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-text">
                 <Clock className="w-4 h-4" />
                 {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
               </div>
@@ -715,7 +713,7 @@ export function PaperSessionSummary({
         className={cn(
           "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
           !canStart
-            ? "bg-white/5 text-white/40 cursor-not-allowed"
+            ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
             : "bg-primary/30 hover:bg-primary/40 text-primary cursor-pointer"
         )}
         style={

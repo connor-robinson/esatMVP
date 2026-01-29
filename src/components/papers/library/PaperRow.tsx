@@ -107,7 +107,7 @@ export function PaperRow({
         "rounded-xl border transition-all",
         isSelected
           ? "border-2 shadow-sm"
-          : "border border-white/10 hover:border-white/20"
+          : "border border-border hover:border-border-subtle"
       )}
       style={
         isSelected
@@ -115,7 +115,7 @@ export function PaperRow({
               borderColor: paperColor + "80",
               backgroundColor: paperColor + "08",
             }
-          : { backgroundColor: "rgba(16, 18, 22, 0.5)" }
+          : { backgroundColor: "var(--color-surface-subtle)" }
       }
     >
       {/* Main row */}
@@ -123,7 +123,7 @@ export function PaperRow({
         {/* Expand/collapse button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 rounded-lg hover:bg-white/5 text-white/60 hover:text-white/90 transition-colors"
+          className="p-1 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
           aria-label={isExpanded ? "Collapse sections" : "Expand sections"}
         >
           {isExpanded ? (
@@ -137,15 +137,15 @@ export function PaperRow({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
             <div
-              className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide text-white"
+              className="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide text-text"
               style={{ backgroundColor: paperColor + "CC" }}
             >
               {paper.examName} • {paper.examYear}
             </div>
-            <div className="text-sm font-semibold text-white/90">
+            <div className="text-sm font-semibold text-text">
               {paper.paperName}
             </div>
-            <div className="text-xs text-white/50">
+            <div className="text-xs text-text-subtle">
               {paper.examType}
             </div>
             {/* Completion status badge for paper */}
@@ -166,7 +166,7 @@ export function PaperRow({
         {/* Add/Selected indicator */}
         <div className="flex items-center gap-2">
           {isSelected && (
-            <div className="text-xs text-white/60">
+            <div className="text-xs text-text-muted">
               {selectedSections.size > 0
                 ? `${selectedSections.size} section${selectedSections.size === 1 ? "" : "s"} selected`
                 : "Added"}
@@ -177,8 +177,8 @@ export function PaperRow({
             className={cn(
               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
               isSelected
-                ? "text-white"
-                : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                ? "text-text"
+                : "bg-surface-elevated text-text-muted hover:bg-surface hover:text-text"
             )}
             style={
               isSelected
@@ -203,16 +203,16 @@ export function PaperRow({
 
       {/* Expanded sections */}
       {isExpanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-white/10">
+        <div className="px-4 pb-4 pt-2 border-t border-border">
           {loadingSections ? (
-            <div className="text-xs text-white/40 py-4">Loading sections...</div>
+            <div className="text-xs text-text-disabled py-4">Loading sections...</div>
           ) : availableSections.length === 0 ? (
-            <div className="text-xs text-white/40 py-4">No sections available</div>
+            <div className="text-xs text-text-disabled py-4">No sections available</div>
           ) : (
             <div className="space-y-3">
               {/* Add full paper button */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-white/50 uppercase tracking-wide">
+                <span className="text-xs text-text-subtle uppercase tracking-wide">
                   Sections ({selectedSections.size}/{availableSections.length})
                 </span>
                 <button
@@ -221,8 +221,8 @@ export function PaperRow({
                   className={cn(
                     "px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
                     allSectionsSelected
-                      ? "bg-white/5 text-white/30 cursor-not-allowed"
-                      : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
+                      : "bg-surface-elevated text-text-muted hover:bg-surface hover:text-text"
                   )}
                 >
                   {allSectionsSelected ? "All Selected" : "Select All"}
@@ -243,8 +243,8 @@ export function PaperRow({
                       className={cn(
                         "px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5",
                         isSelected
-                          ? "text-white shadow-sm"
-                          : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                          ? "text-text shadow-sm"
+                          : "bg-surface-elevated text-text-muted hover:bg-surface hover:text-text"
                       )}
                       style={
                         isSelected
