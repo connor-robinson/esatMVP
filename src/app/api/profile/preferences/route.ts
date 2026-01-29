@@ -96,7 +96,16 @@ export async function PATCH(request: NextRequest) {
     } = body;
 
     // Validate username if it's being updated
-    if (username !== undefined) {
+    if (username !== undefined && username !== null) {
+      // Validate username format first
+      const usernameRegex = /^[a-zA-Z0-9_-]{2,20}$/;
+      if (!usernameRegex.test(username)) {
+        return NextResponse.json(
+          { error: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens' },
+          { status: 400 }
+        );
+      }
+
       // Check if username is being changed
       const { data: currentProfile } = await supabase
         .from('profiles')
@@ -104,7 +113,7 @@ export async function PATCH(request: NextRequest) {
         .eq('id', session.user.id)
         .single() as { data: { username: string | null; last_username_change: string | null } | null };
 
-      // If username is being changed, check 14-day restriction
+      // If username is being changed (not first time set), check 14-day restriction
       if (currentProfile?.username && username !== currentProfile.username) {
         if (currentProfile.last_username_change) {
           const lastChange = new Date(currentProfile.last_username_change);
@@ -118,30 +127,21 @@ export async function PATCH(request: NextRequest) {
             );
           }
         }
+      }
 
-        // Check if new username is available
-        const { data: existingProfile } = await supabase
-          .from('profiles')
-          .select('id')
-          .ilike('username', username)
-          .limit(1)
-          .maybeSingle() as { data: { id: string } | null };
+      // Check if new username is available (for both first-time set and changes)
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .ilike('username', username)
+        .limit(1)
+        .maybeSingle() as { data: { id: string } | null };
 
-        if (existingProfile && existingProfile.id !== session.user.id) {
-          return NextResponse.json(
-            { error: 'This username is already taken' },
-            { status: 400 }
-          );
-        }
-
-        // Validate username format
-        const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
-        if (!usernameRegex.test(username)) {
-          return NextResponse.json(
-            { error: 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens' },
-            { status: 400 }
-          );
-        }
+      if (existingProfile && existingProfile.id !== session.user.id) {
+        return NextResponse.json(
+          { error: 'This username is already taken' },
+          { status: 400 }
+        );
       }
     }
 
@@ -186,18 +186,19 @@ export async function PATCH(request: NextRequest) {
     const updateData: Record<string, any> = {};
     if (username !== undefined) {
       updateData.username = username;
-        // If username is being changed, update last_username_change timestamp
-        if (username) {
-          const { data: currentProfile } = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('id', session.user.id)
-            .single() as { data: { username: string | null } | null };
-          
-          if (currentProfile?.username !== username) {
-            updateData.last_username_change = new Date().toISOString();
-          }
+      // If username is being set or changed, update last_username_change timestamp
+      if (username) {
+        const { data: currentProfile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', session.user.id)
+          .single() as { data: { username: string | null } | null };
+        
+        // Update timestamp if username is new or changed
+        if (!currentProfile?.username || currentProfile.username !== username) {
+          updateData.last_username_change = new Date().toISOString();
         }
+      }
     }
     if (exam_preference !== undefined) updateData.exam_preference = exam_preference;
     if (esat_subjects !== undefined) updateData.esat_subjects = esat_subjects;
@@ -226,8 +227,17 @@ export async function PATCH(request: NextRequest) {
 
     if (profileError) {
       console.error('[Preferences API] Error updating preferences:', profileError);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to update preferences';
+      if (profileError.code === '23505') {
+        errorMessage = 'This username is already taken';
+      } else if (profileError.message) {
+        errorMessage = profileError.message;
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to update preferences' },
+        { error: errorMessage },
         { status: 500 }
       );
     }

@@ -14,9 +14,10 @@ import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 interface UsernameSetupModalProps {
   isOpen: boolean;
   onComplete: () => void;
+  blocking?: boolean; // If true, prevents dismissal and blocks site access
 }
 
-export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalProps) {
+export function UsernameSetupModal({ isOpen, onComplete, blocking = false }: UsernameSetupModalProps) {
   const [username, setUsername] = useState("");
   const [checking, setChecking] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -35,11 +36,11 @@ export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalPro
     }
 
     // Validate format first
-    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+    const usernameRegex = /^[a-zA-Z0-9_-]{2,20}$/;
     if (!usernameRegex.test(username)) {
       setAvailability({
         available: false,
-        message: 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens'
+        message: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens'
       });
       setError(null);
       return;
@@ -113,19 +114,24 @@ export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalPro
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <Card className="w-full max-w-md p-8 m-4">
+    <div className={cn(
+      "fixed inset-0 z-50 flex items-center justify-center",
+      blocking ? "bg-black/80 backdrop-blur-md" : "bg-black/60 backdrop-blur-sm"
+    )}>
+      <Card className="w-full max-w-md p-8 m-4 bg-white/5 border border-white/10">
         <div className="space-y-6">
           <div>
-            <h2 className="text-2xl font-semibold text-text mb-2">Choose Your Username</h2>
-            <p className="text-sm text-text-muted">
-              You need to set a username before you can continue. This will be your unique identifier on the platform.
+            <h2 className="text-2xl font-semibold text-white/90 mb-2">Choose Your Username</h2>
+            <p className="text-sm text-white/60">
+              {blocking 
+                ? "You need to set a username before you can continue. This will be your unique identifier on the platform."
+                : "You need to set a username before you can continue. This will be your unique identifier on the platform."}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-text">Username</label>
+              <label className="text-sm font-medium text-white/90">Username</label>
               <div className="relative">
                 <Input
                   type="text"
@@ -133,7 +139,7 @@ export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalPro
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
                   className={cn(
-                    "w-full pr-10",
+                    "w-full pr-10 bg-white/5 border-white/10 text-white/90",
                     availability.available === true && "border-success",
                     availability.available === false && "border-error",
                     error && "border-error"
@@ -144,7 +150,7 @@ export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalPro
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   {checking && (
-                    <Loader2 className="w-4 h-4 text-text-muted animate-spin" />
+                    <Loader2 className="w-4 h-4 text-white/40 animate-spin" />
                   )}
                   {!checking && availability.available === true && (
                     <CheckCircle2 className="w-4 h-4 text-success" />
@@ -171,8 +177,8 @@ export function UsernameSetupModal({ isOpen, onComplete }: UsernameSetupModalPro
                 </p>
               )}
               
-              <p className="text-xs text-text-muted mt-2">
-                3-20 characters. Letters, numbers, underscores, and hyphens only.
+              <p className="text-xs text-white/40 mt-2">
+                2-20 characters. Letters, numbers, underscores, and hyphens only.
               </p>
             </div>
 

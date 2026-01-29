@@ -12,6 +12,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { KaTeXLoader } from "@/components/shared/KaTeXLoader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
+import { UsernameGate } from "@/components/auth/UsernameGate";
 import "@/styles/globals.css";
 
 export const dynamic = 'force-dynamic';
@@ -105,15 +106,17 @@ export default async function RootLayout({
                   <SessionRestore />
                   <Navbar />
                   <main className="min-h-full">
-                    <Suspense
-                      fallback={
-                        <div className="min-h-screen flex items-center justify-center">
-                          <LoadingSpinner size="md" />
-                        </div>
-                      }
-                    >
-                      {children}
-                    </Suspense>
+                    <UsernameGate>
+                      <Suspense
+                        fallback={
+                          <div className="min-h-screen flex items-center justify-center">
+                            <LoadingSpinner size="md" />
+                          </div>
+                        }
+                      >
+                        {children}
+                      </Suspense>
+                    </UsernameGate>
                   </main>
                 </QuicklinkProvider>
               </LoadingProvider>

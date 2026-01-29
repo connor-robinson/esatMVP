@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { Card } from "@/components/ui/Card";
@@ -33,7 +33,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Sun,
-  Moon
+  Moon,
+  Edit3,
+  X,
+  Check
 } from "lucide-react";
 import type { ExamType } from "@/lib/profile/countdown";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -53,6 +56,18 @@ type Preferences = {
 };
 
 const ESAT_SUBJECTS = ['Math 1', 'Math 2', 'Chemistry', 'Biology', 'Physics'];
+
+// Subject colors for ESAT
+const getSubjectColor = (subject: string) => {
+  const colors: Record<string, { bg: string; text: string; hover: string }> = {
+    'Math 1': { bg: 'bg-[#5da8f0]/20', text: 'text-[#5da8f0]', hover: 'hover:bg-[#5da8f0]/30' },
+    'Math 2': { bg: 'bg-[#5da8f0]/20', text: 'text-[#5da8f0]', hover: 'hover:bg-[#5da8f0]/30' },
+    'Physics': { bg: 'bg-[#a78bfa]/20', text: 'text-[#a78bfa]', hover: 'hover:bg-[#a78bfa]/30' },
+    'Chemistry': { bg: 'bg-[#ef7d7d]/20', text: 'text-[#ef7d7d]', hover: 'hover:bg-[#ef7d7d]/30' },
+    'Biology': { bg: 'bg-[#85BC82]/20', text: 'text-[#85BC82]', hover: 'hover:bg-[#85BC82]/30' },
+  };
+  return colors[subject] || { bg: 'bg-white/5', text: 'text-white/90', hover: 'hover:bg-white/10' };
+};
 
 type SettingSection = {
   id: string;
@@ -89,6 +104,7 @@ export default function ProfilePage() {
     dark_mode: false,
   });
   const [showUsernameSetup, setShowUsernameSetup] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameChecking, setUsernameChecking] = useState(false);
   const [usernameAvailability, setUsernameAvailability] = useState<{
@@ -96,6 +112,7 @@ export default function ProfilePage() {
     message: string | null;
   }>({ available: null, message: null });
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const usernameInputRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState<string>("");
   const [localESATSubjects, setLocalESATSubjects] = useState<string[]>([]);
   
@@ -275,6 +292,126 @@ export default function ProfilePage() {
     }
   }, [preferences.esat_subjects, preferences.exam_preference]);
 
+  // Focus input when entering edit mode
+  useEffect(() => {
+    if (isEditingUsername && usernameInputRef.current) {
+      usernameInputRef.current.focus();
+    }
+  }, [isEditingUsername]);
+
+  // Check if username can be edited (14-day restriction)
+  const canEditUsername = useCallback(() => {
+    if (!preferences.last_username_change) return true;
+    const lastChange = new Date(preferences.last_username_change);
+    const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceChange >= 14;
+  }, [preferences.last_username_change]);
+
+  // Check if username is valid
+  const isUsernameValid = useCallback((value: string) => {
+    if (value.length < 2) return false;
+    const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+    return usernameRegex.test(value) && value.length <= 20;
+  }, []);
+
+  // Debounced username availability check
+  const checkUsernameAvailability = useCallback(async (value: string) => {
+    if (!value || value === preferences.username) {
+      setUsernameAvailability({ available: null, message: null });
+      return;
+    }
+
+    if (!isUsernameValid(value)) {
+      setUsernameAvailability({
+        available: false,
+        message: 'Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens'
+      });
+      return;
+    }
+
+    setUsernameChecking(true);
+    try {
+      const response = await fetch(`/api/profile/username/check?username=${encodeURIComponent(value)}`);
+      const data = await response.json();
+      if (response.ok) {
+        setUsernameAvailability({
+          available: data.available,
+          message: data.message
+        });
+      }
+    } catch (err) {
+      setUsernameAvailability({ available: null, message: null });
+    } finally {
+      setUsernameChecking(false);
+    }
+  }, [preferences.username, isUsernameValid]);
+
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle username input change with debounce
+  const handleUsernameChange = useCallback((value: string) => {
+    setUsernameInput(value);
+    setUsernameError(null);
+    
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Debounce the availability check
+    debounceTimerRef.current = setTimeout(() => {
+      checkUsernameAvailability(value);
+    }, 500);
+  }, [checkUsernameAvailability]);
+
+  // Handle save username
+  const handleSaveUsername = useCallback(async () => {
+    if (!usernameInput || usernameInput === preferences.username) {
+      setIsEditingUsername(false);
+      setUsernameInput("");
+      return;
+    }
+
+    if (!isUsernameValid(usernameInput)) {
+      setUsernameError('Username must be 2-20 characters and contain only letters, numbers, underscores, or hyphens');
+      return;
+    }
+
+    if (usernameAvailability.available !== true) {
+      setUsernameError('Please choose an available username');
+      return;
+    }
+
+    setSaving("username");
+    setUsernameError(null);
+
+    try {
+      await savePreferences({ username: usernameInput.trim() }, "username");
+      setUsernameInput("");
+      setIsEditingUsername(false);
+    } catch (err: any) {
+      setUsernameError(err.message || 'Failed to save username');
+    } finally {
+      setSaving(null);
+    }
+  }, [usernameInput, preferences.username, isUsernameValid, usernameAvailability, savePreferences]);
+
+  // Handle cancel edit
+  const handleCancelEdit = useCallback(() => {
+    setUsernameInput("");
+    setUsernameAvailability({ available: null, message: null });
+    setUsernameError(null);
+    setIsEditingUsername(false);
+  }, []);
+
+  // Handle start editing
+  const handleStartEdit = useCallback(() => {
+    if (!canEditUsername()) return;
+    setUsernameInput(preferences.username || "");
+    setIsEditingUsername(true);
+  }, [preferences.username, canEditUsername]);
+
   const handleESATSubjectToggle = (subject: string) => {
     const current = localESATSubjects || [];
     let newSubjects: string[];
@@ -378,13 +515,18 @@ export default function ProfilePage() {
           className="sr-only"
         />
         <div className={cn(
-          "w-11 h-6 rounded-full transition-colors duration-200",
-          checked ? "bg-primary" : "bg-surface-elevated"
+          "w-11 h-6 rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          checked ? "bg-primary shadow-lg shadow-primary/30" : "bg-surface-elevated"
         )}>
-          <div className={cn(
-            "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface transition-transform duration-200 ease-in-out",
-            checked ? "translate-x-5" : "translate-x-0"
-          )} />
+          <div 
+            className={cn(
+              "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow-md",
+              "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+            )}
+            style={{
+              transform: checked ? 'translateX(1.25rem)' : 'translateX(0.125rem)',
+            }}
+          />
         </div>
       </div>
       <div className="flex-1 min-w-0">
@@ -407,7 +549,7 @@ export default function ProfilePage() {
     onChange: (value: string) => void;
     options: { value: string; label: string }[];
   }) => (
-    <div className="flex gap-4">
+    <div className="flex gap-6">
       {options.map((option) => (
         <label key={option.value} className="flex items-center gap-2 cursor-pointer group">
           <div className="relative">
@@ -420,13 +562,13 @@ export default function ProfilePage() {
               className="sr-only"
             />
             <div className={cn(
-              "w-4 h-4 rounded-full border-2 transition-colors",
+              "w-3.5 h-3.5 rounded-full border transition-colors",
               value === option.value 
-                ? "border-primary bg-primary" 
-                : "border-border bg-surface-subtle group-hover:border-border-subtle"
+                ? "border-primary" 
+                : "border-text-muted group-hover:border-text"
             )}>
               {value === option.value && (
-                <div className="absolute inset-0.5 rounded-full bg-surface" />
+                <div className="absolute inset-1 rounded-full bg-primary" />
               )}
             </div>
           </div>
@@ -458,7 +600,7 @@ export default function ProfilePage() {
                   className={cn(
                     "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
                     activeSection === section.id
-                      ? "bg-primary/10 text-primary border border-primary/20"
+                      ? "bg-primary/10 text-primary"
                       : "text-text-muted hover:text-text hover:bg-surface-subtle"
                   )}
                 >
@@ -482,7 +624,7 @@ export default function ProfilePage() {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <Card className="p-8">
+            <Card className="p-8 border-0">
               {/* Account Section */}
               {activeSection === 'account' && (
                 <div className="space-y-8">
@@ -504,110 +646,96 @@ export default function ProfilePage() {
                       })() : undefined}
                     >
                       <div className="space-y-3">
-                        <div className="flex gap-3">
-                          <div className="relative flex-1">
-                            <Input
-                              type="text"
-                              value={usernameInput || preferences.username || ""}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                setUsernameInput(value);
-                                setUsernameError(null);
-                                
-                                // Check availability with debounce
-                                if (value && value !== preferences.username) {
-                                  const usernameRegex = /^[a-zA-Z0-9_-]{0,20}$/;
-                                  if (!usernameRegex.test(value)) {
-                                    setUsernameAvailability({
-                                      available: false,
-                                      message: 'Username must be 3-20 characters and contain only letters, numbers, underscores, or hyphens'
-                                    });
-                                    return;
-                                  }
-                                  
-                                  if (value.length < 3) {
-                                    setUsernameAvailability({ available: null, message: null });
-                                    return;
-                                  }
-                                  
-                                  // Debounce API call
-                                  setUsernameChecking(true);
-                                  setTimeout(async () => {
-                                    try {
-                                      const response = await fetch(`/api/profile/username/check?username=${encodeURIComponent(value)}`);
-                                      const data = await response.json();
-                                      if (response.ok) {
-                                        setUsernameAvailability({
-                                          available: data.available,
-                                          message: data.message
-                                        });
-                                      }
-                                    } catch (err) {
-                                      setUsernameAvailability({ available: null, message: null });
-                                    } finally {
-                                      setUsernameChecking(false);
-                                    }
-                                  }, 500);
-                                } else {
-                                  setUsernameAvailability({ available: null, message: null });
-                                }
-                              }}
-                              onBlur={async () => {
-                                if (!usernameInput || usernameInput === preferences.username) {
-                                  setUsernameInput("");
-                                  return;
-                                }
-                                
-                                if (usernameAvailability.available !== true) {
-                                  setUsernameError('Please choose an available username');
-                                  return;
-                                }
-                                
-                                setSaving("username");
-                                setUsernameError(null);
-                                
-                                try {
-                                  await savePreferences({ username: usernameInput.trim() }, "username");
-                                  setUsernameInput("");
-                                } catch (err: any) {
-                                  setUsernameError(err.message || 'Failed to save username');
-                                } finally {
-                                  setSaving(null);
-                                }
-                              }}
-                              placeholder="Enter your username"
+                        {!isEditingUsername ? (
+                          // Default view: Label + Edit button
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-text">
+                              {preferences.username || "Not set"}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleStartEdit}
+                              disabled={!canEditUsername() || saving === "username"}
                               className={cn(
-                                "flex-1 pr-10",
-                                usernameAvailability.available === true && "border-success",
-                                usernameAvailability.available === false && "border-error",
-                                usernameError && "border-error"
+                                "flex items-center gap-2",
+                                !canEditUsername() && "opacity-50 cursor-not-allowed"
                               )}
-                              disabled={saving === "username" || (preferences.last_username_change ? (() => {
-                                const lastChange = new Date(preferences.last_username_change);
-                                const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
-                                return daysSinceChange < 14;
-                              })() : false)}
-                              autoComplete="username"
-                            />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {usernameChecking && (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                              )}
-                              {!usernameChecking && usernameAvailability.available === true && (
-                                <CheckCircle2 className="w-4 h-4 text-success" />
-                              )}
-                              {!usernameChecking && usernameAvailability.available === false && (
-                                <AlertCircle className="w-4 h-4 text-error" />
-                              )}
+                            >
+                              <Edit3 className="w-4 h-4" />
+                              <span>Edit</span>
+                            </Button>
+                          </div>
+                        ) : (
+                          // Edit mode: Input + Save/Cancel buttons
+                          <div className="flex gap-3 items-start">
+                            <div className="relative flex-1">
+                              <Input
+                                ref={usernameInputRef}
+                                type="text"
+                                value={usernameInput}
+                                onChange={(e) => handleUsernameChange(e.target.value)}
+                                placeholder="Enter your username"
+                                className={cn(
+                                  "pr-10",
+                                  usernameAvailability.available === true && "border-success",
+                                  usernameAvailability.available === false && "border-error",
+                                  usernameError && "border-error"
+                                )}
+                                disabled={saving === "username"}
+                                autoComplete="username"
+                              />
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {usernameChecking && (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                )}
+                                {!usernameChecking && usernameAvailability.available === true && (
+                                  <CheckCircle2 className="w-4 h-4 text-success" />
+                                )}
+                                {!usernameChecking && usernameAvailability.available === false && (
+                                  <AlertCircle className="w-4 h-4 text-error" />
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleCancelEdit}
+                                disabled={saving === "username"}
+                                className="p-2"
+                                title="Cancel"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleSaveUsername}
+                                disabled={
+                                  saving === "username" ||
+                                  !isUsernameValid(usernameInput) ||
+                                  usernameAvailability.available !== true ||
+                                  usernameInput === preferences.username
+                                }
+                                className={cn(
+                                  "p-2",
+                                  (isUsernameValid(usernameInput) && usernameAvailability.available === true && usernameInput !== preferences.username)
+                                    ? "text-success hover:text-success/80"
+                                    : "opacity-30 cursor-not-allowed"
+                                )}
+                                title="Save"
+                              >
+                                {saving === "username" ? (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                ) : (
+                                  <Check className="w-4 h-4" />
+                                )}
+                              </Button>
                             </div>
                           </div>
-                          {saving === "username" && (
-                            <div className="flex items-center px-4">
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                            </div>
-                          )}
-                        </div>
-                        {usernameAvailability.message && (
+                        )}
+                        {isEditingUsername && usernameAvailability.message && (
                           <p className={cn(
                             "text-xs",
                             usernameAvailability.available === true ? "text-success" : "text-error"
@@ -621,16 +749,12 @@ export default function ProfilePage() {
                             {usernameError}
                           </p>
                         )}
-                        {preferences.last_username_change && (() => {
-                          const lastChange = new Date(preferences.last_username_change);
-                          const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
-                          const daysRemaining = Math.max(0, Math.ceil(14 - daysSinceChange));
-                          return daysRemaining > 0 ? (
-                            <p className="text-xs text-text-muted">
-                              Username can only be changed once every 14 days. {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} remaining.
-                            </p>
-                          ) : null;
-                        })()}
+                        {!canEditUsername() && (
+                          <p className="text-xs text-error flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />
+                            14 days needed between each change
+                          </p>
+                        )}
                       </div>
                     </SettingItem>
 
@@ -644,15 +768,13 @@ export default function ProfilePage() {
                           disabled
                           className="flex-1"
                         />
-                        <Button
-                          variant="secondary"
-                          size="sm"
+                        <button
                           onClick={() => setShowChangeEmail(true)}
-                          className="flex items-center gap-2"
+                          className="px-5 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 hover:scale-[1.02] transition-all font-medium flex items-center gap-2"
                         >
                           <span>Change</span>
                           <Mail className="w-4 h-4" />
-                        </Button>
+                        </button>
                       </div>
                     </SettingItem>
 
@@ -660,18 +782,16 @@ export default function ProfilePage() {
                       label="Password" 
                       description="Change your account password"
                     >
-                      <Button
-                        variant="secondary"
-                        size="sm"
+                      <button
                         onClick={() => setShowChangePassword(true)}
-                        className="flex items-center gap-2"
+                        className="px-5 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 hover:scale-[1.02] transition-all font-medium flex items-center gap-2"
                       >
                         <span>Change Password</span>
                         <Lock className="w-4 h-4" />
-                      </Button>
+                      </button>
                     </SettingItem>
 
-                    <div className="pt-6 border-t border-border">
+                    <div className="pt-6">
                       <div className="space-y-4">
                         <button
                           onClick={handleLogout}
@@ -745,6 +865,7 @@ export default function ProfilePage() {
                           {ESAT_SUBJECTS.map((subject) => {
                             const isSelected = localESATSubjects.includes(subject);
                             
+                            const subjectColor = getSubjectColor(subject);
                             return (
                               <button
                                 key={subject}
@@ -754,8 +875,8 @@ export default function ProfilePage() {
                                   "interaction-scale outline-none focus:outline-none",
                                   "text-sm font-medium flex items-center justify-between",
                                   isSelected
-                                    ? "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/25 shadow-lg shadow-primary/10"
-                                    : "bg-surface-subtle text-text border border-border hover:bg-surface-elevated hover:border-border-subtle"
+                                    ? `${subjectColor.bg} ${subjectColor.text} ${subjectColor.hover} shadow-lg`
+                                    : "bg-white/5 text-white/60 hover:bg-white/10"
                                 )}
                               >
                                 <span>{subject}</span>
@@ -773,27 +894,30 @@ export default function ProfilePage() {
                               <span>Please select exactly 3 subjects</span>
                             </div>
                           )}
-                          <Button
-                            variant="primary"
-                            size="sm"
+                          <button
                             onClick={handleSaveESATSubjects}
                             disabled={localESATSubjects.length !== 3 || saving === "esat_subjects"}
-                            className="w-full"
+                            className={cn(
+                              "w-full px-5 py-3 rounded-xl transition-all font-medium",
+                              localESATSubjects.length === 3 && !saving
+                                ? "bg-primary/20 text-primary hover:bg-primary/30 hover:scale-[1.02]"
+                                : "bg-white/5 text-white/20 cursor-not-allowed"
+                            )}
                           >
                             {saving === "esat_subjects" ? (
-                              <div className="flex items-center gap-2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              <div className="flex items-center justify-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                                 <span>Saving...</span>
                               </div>
                             ) : (
                               <span>Save Subjects</span>
                             )}
-                          </Button>
+                          </button>
                         </div>
                       </SettingItem>
                     )}
 
-                    <div className="pt-6 border-t border-border">
+                    <div className="pt-6">
                       <SettingItem label="Application Type">
                         <RadioGroup
                           value={preferences.is_early_applicant ? 'early' : 'late'}
@@ -893,7 +1017,7 @@ export default function ProfilePage() {
                       </Button>
                     </SettingItem>
 
-                    <div className="pt-6 border-t border-error/20">
+                    <div className="pt-6">
                       <SettingItem 
                         label="Reset All Data" 
                         description="Permanently delete all your sessions, attempts, and progress. This cannot be undone."
@@ -954,8 +1078,8 @@ export default function ProfilePage() {
                       <button
                         onClick={toggleTheme}
                         className={cn(
-                          "flex items-center gap-2 px-4 py-3 rounded-lg border transition-all",
-                          "bg-surface-subtle border-border hover:border-border-subtle",
+                          "flex items-center gap-2 px-4 py-3 rounded-lg transition-all",
+                          "bg-white/5 hover:bg-white/10",
                           "text-text hover:text-text-muted"
                         )}
                       >
