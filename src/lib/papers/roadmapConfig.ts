@@ -589,7 +589,7 @@ async function checkTmuaPaperExists(year: number, paperName: string): Promise<bo
 }
 
 /**
- * Generate TMUA stages dynamically (both Paper 1 and Paper 2)
+ * Generate TMUA stages dynamically (Paper 1 and Paper 2 grouped in one stage per year)
  */
 async function generateTmuaStages(): Promise<RoadmapStage[]> {
   const years = await getAvailableTmuaYears();
@@ -601,39 +601,37 @@ async function generateTmuaStages(): Promise<RoadmapStage[]> {
     // Check if Paper 2 exists
     const paper2Exists = await checkTmuaPaperExists(year, 'Paper 2');
     
-    // Generate Paper 1 stage if it exists
-    if (paper1Exists) {
+    // Only create stage if at least one paper exists
+    if (paper1Exists || paper2Exists) {
+      const parts: RoadmapPart[] = [];
+      
+      // Add Paper 1 if it exists
+      if (paper1Exists) {
+        parts.push({
+          partLetter: 'Paper 1',
+          partName: 'Paper 1',
+          paperName: 'Paper 1',
+          examType: 'Official',
+        });
+      }
+      
+      // Add Paper 2 if it exists
+      if (paper2Exists) {
+        parts.push({
+          partLetter: 'Paper 2',
+          partName: 'Paper 2',
+          paperName: 'Paper 2',
+          examType: 'Official',
+        });
+      }
+      
+      // Create single stage with both papers (if both exist) or just one
       stages.push({
-        id: `tmua-${year}-paper1`,
+        id: `tmua-${year}`,
         year,
         examName: 'TMUA' as ExamName,
         label: 'Advanced Practice',
-        parts: [
-          {
-            partLetter: 'Paper 1',
-            partName: 'Paper 1',
-            paperName: 'Paper 1',
-            examType: 'Official',
-          },
-        ],
-      });
-    }
-    
-    // Generate Paper 2 stage if it exists
-    if (paper2Exists) {
-      stages.push({
-        id: `tmua-${year}-paper2`,
-        year,
-        examName: 'TMUA' as ExamName,
-        label: 'Advanced Practice',
-        parts: [
-          {
-            partLetter: 'Paper 2',
-            partName: 'Paper 2',
-            paperName: 'Paper 2',
-            examType: 'Official',
-          },
-        ],
+        parts,
       });
     }
   }

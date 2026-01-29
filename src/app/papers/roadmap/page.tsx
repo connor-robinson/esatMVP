@@ -65,37 +65,32 @@ export default function PapersRoadmapPage() {
     async function loadStages() {
       try {
         const loadedStages = await getRoadmapStages();
+        
+        // Debug: Log all stages by exam type
+        const stagesByExam = loadedStages.reduce((acc, stage) => {
+          if (!acc[stage.examName]) acc[stage.examName] = [];
+          acc[stage.examName].push(stage.id);
+          return acc;
+        }, {} as Record<string, string[]>);
+        console.log("[roadmap] Loaded stages by exam:", stagesByExam);
+        console.log("[roadmap] Total stages loaded:", loadedStages.length);
+        
         // Debug: Check for duplicates
         const stageIds = loadedStages.map(s => s.id);
         const duplicates = stageIds.filter((id, index) => stageIds.indexOf(id) !== index);
         if (duplicates.length > 0) {
           console.warn("[roadmap] Duplicate stage IDs found:", duplicates);
         }
-        // Debug: Log stages at positions 8 and 26 (0-indexed: 7 and 25)
-        if (loadedStages.length > 7) {
-          console.log("[roadmap] Stage at position 8 (index 7):", loadedStages[7]?.id, loadedStages[7]?.examName, loadedStages[7]?.year);
-        }
-        if (loadedStages.length > 25) {
-          console.log("[roadmap] Stage at position 26 (index 25):", loadedStages[25]?.id, loadedStages[25]?.examName, loadedStages[25]?.year);
-        }
         
-        // Filter stages by exam preference if set
-        let filteredStages = loadedStages;
-        if (examPreference) {
-          filteredStages = loadedStages.filter(stage => stage.examName === examPreference);
-        }
-        
-        setStages(filteredStages);
+        // Roadmap shows ALL exams regardless of preference (preference only affects other views)
+        // Don't filter by examPreference - users should see all available practice materials
+        setStages(loadedStages);
       } catch (error) {
         console.error("[roadmap] Error loading stages:", error);
         // Fallback to sync version if async fails
         const syncStages = getRoadmapStagesSync();
-        if (examPreference) {
-          const filtered = syncStages.filter(stage => stage.examName === examPreference);
-          setStages(filtered);
-        } else {
-          setStages(syncStages);
-        }
+        // Roadmap shows ALL exams regardless of preference
+        setStages(syncStages);
       }
     }
     loadStages();

@@ -14,7 +14,13 @@ export async function GET(request: NextRequest) {
     const supabase = createServerClient();
     const { searchParams } = new URL(request.url);
 
-    // Get filter parameters - support comma-separated values for multi-select
+    console.log('[Question Bank API] ===== FILTER DEBUG START =====');
+    console.log('[Question Bank API] Request URL:', request.url);
+    console.log('[Question Bank API] All search params:', Object.fromEntries(searchParams.entries()));
+
+    // ============================================================================
+    // STAGE 0: Parse and validate all filter parameters
+    // ============================================================================
     const testTypeParam = searchParams.get('testType');
     const testType = testTypeParam && testTypeParam !== 'All' ? testTypeParam as 'ESAT' | 'TMUA' : null;
     const subjectParam = searchParams.get('subject');
@@ -23,7 +29,9 @@ export async function GET(request: NextRequest) {
     const difficulties = difficultyParam ? difficultyParam.split(',').filter(d => d && d !== 'All') as DifficultyFilter[] : [];
     const attemptResultParam = searchParams.get('attemptResult');
     const attemptResults = attemptResultParam ? attemptResultParam.split(',') as AttemptResultFilter[] : [];
-    const attemptedStatus = searchParams.get('attemptedStatus') as AttemptedFilter | null;
+    const attemptedStatusParam = searchParams.get('attemptedStatus');
+    // Fix: Handle null as "Mix" - when Mix is selected, param is not sent
+    const attemptedStatus: AttemptedFilter | null = attemptedStatusParam as AttemptedFilter | null;
     const tags = searchParams.get('tags') || '';
     const search = searchParams.get('search') || '';
     const idParam = searchParams.get('id') || '';
@@ -35,9 +43,24 @@ export async function GET(request: NextRequest) {
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id;
 
+    console.log('[Question Bank API] Stage 0: Parsed Filters', {
+      testType: testType || 'All',
+      subjects: subjects.length > 0 ? subjects : 'All',
+      difficulties: difficulties.length > 0 ? difficulties : 'All',
+      attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
+      attemptedStatus: attemptedStatus || 'Mix (null)',
+      tags: tags || 'None',
+      search: search || 'None',
+      idParam: idParam || 'None',
+      limit,
+      offset,
+      random,
+      userId: userId || 'Not authenticated'
+    });
+
     // Validate attempted status filter - requires authentication
+    // Note: null attemptedStatus means "Mix" (show all), which doesn't need auth
     if (attemptedStatus && attemptedStatus !== 'Mix' && !userId) {
-      // If user is not logged in but wants to filter by attempt status, return error
       console.warn('[Question Bank API] Attempted status filter requested but user not authenticated');
       return NextResponse.json(
         { 
@@ -49,122 +72,246 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build query - only fetch approved questions
+    // ============================================================================
+    // STAGE 0.5: Database Verification Queries
+    // ============================================================================
+    console.log('[Question Bank API] Stage 0.5: Database Verification');
+    
+    // Check total approved questions
+    const { count: totalApproved } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved');
+    console.log('[Question Bank API] ✓ Total approved questions:', totalApproved);
+
+    // Check questions by test_type
+    const { count: esatCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .eq('test_type', 'ESAT');
+    const { count: tmuaCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .eq('test_type', 'TMUA');
+    const { count: nullTestTypeCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .is('test_type', null);
+    console.log('[Question Bank API] ✓ Questions by test_type:', {
+      ESAT: esatCount,
+      TMUA: tmuaCount,
+      null: nullTestTypeCount
+    });
+
+    // Check unique subjects in database
+    const { data: subjectSample } = await supabase
+      .from('ai_generated_questions')
+      .select('subjects, test_type')
+      .eq('status', 'approved')
+      .limit(500);
+    const uniqueSubjects = [...new Set((subjectSample || []).map((q: any) => q.subjects))];
+    const uniqueTestTypes = [...new Set((subjectSample || []).map((q: any) => q.test_type))];
+    console.log('[Question Bank API] ✓ Unique subjects in DB:', uniqueSubjects);
+    console.log('[Question Bank API] ✓ Unique test_types in DB:', uniqueTestTypes);
+
+    // Check questions by difficulty
+    const { count: easyCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .eq('difficulty', 'Easy');
+    const { count: mediumCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .eq('difficulty', 'Medium');
+    const { count: hardCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .eq('difficulty', 'Hard');
+    console.log('[Question Bank API] ✓ Questions by difficulty:', {
+      Easy: easyCount,
+      Medium: mediumCount,
+      Hard: hardCount
+    });
+
+    // ============================================================================
+    // STAGE 1: Build base query (status = 'approved')
+    // ============================================================================
+    console.log('[Question Bank API] Stage 1: Building base query (status = approved)');
     let query = supabase
       .from('ai_generated_questions')
       .select('*', { count: 'exact' })
       .eq('status', 'approved');
     
-    // DEBUG: First, check how many approved questions exist total
-    const { count: totalApproved } = await supabase
-      .from('ai_generated_questions')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'approved');
-    
-    console.log('[Question Bank API] Total approved questions in DB:', totalApproved);
-    
-    // 1. Apply test_type filter first (ESAT or TMUA)
+    let stageCount = totalApproved || 0;
+    console.log('[Question Bank API] Stage 1: After base query - Count:', stageCount);
+
+    // ============================================================================
+    // STAGE 2: Apply test_type filter
+    // ============================================================================
     if (testType) {
+      console.log('[Question Bank API] Stage 2: Applying test_type filter:', testType);
       query = query.eq('test_type', testType);
-      console.log('[Question Bank API] Filtering by test_type:', testType);
+      stageCount = testType === 'ESAT' ? esatCount || 0 : tmuaCount || 0;
+      console.log('[Question Bank API] Stage 2: After test_type filter - Expected count:', stageCount, 'Filter:', testType);
     } else {
-      // When "All" is selected, include questions with any test_type (including null)
-      // No filter needed - query will return all
-      console.log('[Question Bank API] No test_type filter (showing All)');
-      
-      // DEBUG: Check if questions have null test_type
-      const { count: nullTestTypeCount } = await supabase
-        .from('ai_generated_questions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'approved')
-        .is('test_type', null);
-      console.log('[Question Bank API] Questions with null test_type:', nullTestTypeCount);
+      console.log('[Question Bank API] Stage 2: No test_type filter (showing All)');
+      console.log('[Question Bank API] Stage 2: After test_type filter - Count:', stageCount, '(unchanged)');
     }
-    
-    // 2. Apply subject filter using subjects column
-    // Map filter values to database values:
-    // ESAT subjects: 'Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'
-    // TMUA subjects: 'Paper 1', 'Paper 2'
-    
+
+    // ============================================================================
+    // STAGE 3: Apply subject filter
+    // ============================================================================
     if (subjects.length > 0) {
-      console.log('[Question Bank API] Incoming subject filters:', subjects);
+      console.log('[Question Bank API] Stage 3: Applying subject filter:', subjects);
       
-      // DEBUG: Check what subjects actually exist in the database
-      const { data: sampleQuestions } = await supabase
-        .from('ai_generated_questions')
-        .select('subjects, test_type')
-        .eq('status', 'approved')
-        .limit(100);
+      // Validate subjects exist in database
+      const invalidSubjects = subjects.filter(s => !uniqueSubjects.includes(s));
+      if (invalidSubjects.length > 0) {
+        console.warn('[Question Bank API] ⚠️ Invalid subjects requested:', invalidSubjects);
+        console.warn('[Question Bank API] ⚠️ Valid subjects are:', uniqueSubjects);
+      }
       
-      const uniqueSubjects = [...new Set((sampleQuestions || []).map((q: any) => q.subjects))];
-      const uniqueTestTypes = [...new Set((sampleQuestions || []).map((q: any) => q.test_type))];
-      console.log('[Question Bank API] Sample subjects in DB:', uniqueSubjects);
-      console.log('[Question Bank API] Sample test_types in DB:', uniqueTestTypes);
-      
-      // Subjects are already in the correct format (no mapping needed)
-      // Filter by subjects column
       if (subjects.length === 1) {
         query = query.eq('subjects', subjects[0]);
+        console.log('[Question Bank API] Stage 3: Applied single subject filter:', subjects[0]);
       } else {
         query = query.in('subjects', subjects);
+        console.log('[Question Bank API] Stage 3: Applied multiple subject filter:', subjects);
       }
+    } else {
+      console.log('[Question Bank API] Stage 3: No subject filter (showing All)');
     }
 
-    // 2. Apply difficulty filter (ANDed with subject filter)
+    // ============================================================================
+    // STAGE 4: Apply difficulty filter
+    // ============================================================================
     if (difficulties.length > 0) {
+      console.log('[Question Bank API] Stage 4: Applying difficulty filter:', difficulties);
       if (difficulties.length === 1) {
         query = query.eq('difficulty', difficulties[0]);
+        console.log('[Question Bank API] Stage 4: Applied single difficulty filter:', difficulties[0]);
       } else {
-        // Multiple difficulties: use .in() for clean AND logic with subjects
         query = query.in('difficulty', difficulties);
+        console.log('[Question Bank API] Stage 4: Applied multiple difficulty filter:', difficulties);
       }
+    } else {
+      console.log('[Question Bank API] Stage 4: No difficulty filter (showing All)');
     }
 
-    // 3. Apply ID search filter (if provided)
+    // ============================================================================
+    // STAGE 5: Apply ID search filter
+    // ============================================================================
     if (idParam) {
-      // Search by generation_id or id (UUID)
+      console.log('[Question Bank API] Stage 5: Applying ID search filter:', idParam);
       query = query.or(`generation_id.eq.${idParam},id.eq.${idParam}`);
+    } else {
+      console.log('[Question Bank API] Stage 5: No ID search filter');
     }
 
-    // 4. Apply search filter (question stem content search)
+    // ============================================================================
+    // STAGE 6: Apply search filter (question stem content search)
+    // ============================================================================
     if (search && !idParam) {
+      console.log('[Question Bank API] Stage 6: Applying search filter:', search);
       query = query.ilike('question_stem', `%${search}%`);
+    } else {
+      console.log('[Question Bank API] Stage 6: No search filter');
     }
 
-    // 5. Apply tag filter (ANDed with previous filters)
+    // ============================================================================
+    // STAGE 7: Apply tag filter
+    // ============================================================================
     if (tags) {
+      console.log('[Question Bank API] Stage 7: Applying tag filter:', tags);
       const tagLower = tags.toLowerCase();
-      // If we already have a subject filter (which used .or()), we must use .filter() 
-      // for the second OR group to avoid overwriting the first one.
-      // PostgREST supports multiple OR groups by using the 'or' parameter multiple times.
       query = query.filter('or', 'or', `(primary_tag.ilike.%${tagLower}%,secondary_tags.cs.{${tagLower}})`);
+    } else {
+      console.log('[Question Bank API] Stage 7: No tag filter');
     }
 
-    // Apply attempted status and attempt result filter (server-side)
-    // Note: We'll fetch attempted question data first, then apply the filters
+    // ============================================================================
+    // STAGE 8: Apply ordering and limits (before executing query)
+    // ============================================================================
+    console.log('[Question Bank API] Stage 8: Applying ordering and limits');
+    if (random) {
+      query = query.limit(Math.min(limit * 2, 200));
+      console.log('[Question Bank API] Stage 8: Random mode - limit:', Math.min(limit * 2, 200));
+    } else {
+      const fetchLimit = Math.min(Math.max(limit * 1.5, 20), 300);
+      query = query.limit(fetchLimit).order('created_at', { ascending: false });
+      console.log('[Question Bank API] Stage 8: Sequential mode - limit:', fetchLimit, 'ordered by created_at DESC');
+    }
+
+    // ============================================================================
+    // STAGE 9: Execute base query and log results
+    // ============================================================================
+    console.log('[Question Bank API] Stage 9: Executing database query...');
+    const { data: allQuestions, error: queryError, count: totalCount } = await query;
+
+    if (queryError) {
+      console.error('[Question Bank API] ❌ Database query error:', {
+        error: queryError,
+        code: queryError.code,
+        message: queryError.message,
+        details: queryError.details,
+        hint: queryError.hint
+      });
+      return NextResponse.json(
+        { error: 'Failed to fetch questions from database', details: queryError.message },
+        { status: 500 }
+      );
+    }
+    
+    console.log('[Question Bank API] Stage 9: Query executed successfully', {
+      questionsReturned: allQuestions?.length || 0,
+      totalCountFromSupabase: totalCount,
+      sampleIds: allQuestions?.slice(0, 3).map((q: any) => q.id) || []
+    });
+    
+    if (allQuestions && allQuestions.length > 0) {
+      const sample = allQuestions[0] as any;
+      console.log('[Question Bank API] Stage 9: Sample question from query:', {
+        id: sample.id,
+        subjects: sample.subjects,
+        test_type: sample.test_type,
+        difficulty: sample.difficulty,
+        status: sample.status
+      });
+    } else {
+      console.warn('[Question Bank API] ⚠️ Stage 9: Query returned 0 questions');
+    }
+
+    // ============================================================================
+    // STAGE 10: Prepare attempt-based filtering data (if needed)
+    // ============================================================================
     let attemptedQuestionIds: string[] = [];
     let incorrectQuestionIds: string[] = [];
     let correctQuestionIds: string[] = [];
     let questionResults: Map<string, { hasCorrect: boolean; hasIncorrect: boolean }> = new Map();
     
-    // Fetch user attempts if needed (for attemptedStatus or attemptResult filtering)
-    if ((attemptedStatus && attemptedStatus !== 'Mix' && userId) || (attemptResults.length > 0 && userId)) {
+    // Determine if we need to fetch attempts
+    // Fix: null attemptedStatus means "Mix" - don't fetch attempts
+    const needsAttemptData = (attemptedStatus && attemptedStatus !== 'Mix') || (attemptResults.length > 0);
+    
+    if (needsAttemptData && userId) {
+      console.log('[Question Bank API] Stage 10: Fetching user attempt data (attemptedStatus:', attemptedStatus, 'attemptResults:', attemptResults, ')');
       try {
-        // Fetch ALL attempts with correct/incorrect status
         const { data: attempts, error: attemptsError } = await supabase
           .from('question_bank_attempts')
           .select('question_id, is_correct')
           .eq('user_id', userId);
         
         if (attemptsError) {
-          console.error('[Question Bank API] Error fetching attempts:', attemptsError);
-          // Continue without attempted filter if there's an error
+          console.error('[Question Bank API] ❌ Error fetching attempts:', attemptsError);
         } else if (attempts) {
-          // Get unique question IDs (user might have multiple attempts on same question)
           attemptedQuestionIds = [...new Set(attempts.map((a: any) => a.question_id))];
           
-          // Separate correct and incorrect questions
-          // For each question, check if user has ever gotten it correct
           questionResults = new Map<string, { hasCorrect: boolean; hasIncorrect: boolean }>();
           attempts.forEach((a: any) => {
             const existing = questionResults.get(a.question_id) || { hasCorrect: false, hasIncorrect: false };
@@ -176,153 +323,94 @@ export async function GET(request: NextRequest) {
             questionResults.set(a.question_id, existing);
           });
           
-          // Questions that have at least one incorrect attempt
           incorrectQuestionIds = Array.from(questionResults.entries())
             .filter(([_, result]) => result.hasIncorrect)
             .map(([id, _]) => id);
           
-          // Questions that have at least one correct attempt
           correctQuestionIds = Array.from(questionResults.entries())
             .filter(([_, result]) => result.hasCorrect)
             .map(([id, _]) => id);
           
-          // Questions with mixed results (both correct AND incorrect attempts)
           const mixedResultsQuestionIds = Array.from(questionResults.entries())
             .filter(([_, result]) => result.hasCorrect && result.hasIncorrect)
             .map(([id, _]) => id);
           
-          console.log(`[Question Bank API] Found ${attempts.length} total attempts, ${attemptedQuestionIds.length} unique questions attempted by user ${userId}`);
-          console.log(`[Question Bank API] Incorrect: ${incorrectQuestionIds.length}, Correct: ${correctQuestionIds.length}, Mixed Results: ${mixedResultsQuestionIds.length}`);
+          console.log('[Question Bank API] Stage 10: Attempt data loaded', {
+            totalAttempts: attempts.length,
+            uniqueQuestionsAttempted: attemptedQuestionIds.length,
+            incorrect: incorrectQuestionIds.length,
+            correct: correctQuestionIds.length,
+            mixedResults: mixedResultsQuestionIds.length
+          });
         } else {
-          console.log(`[Question Bank API] No attempts found for user ${userId}`);
+          console.log('[Question Bank API] Stage 10: No attempts found for user');
         }
       } catch (err) {
-        console.error('[Question Bank API] Unexpected error fetching attempts:', err);
-        // Continue without attempted filter if there's an error
+        console.error('[Question Bank API] ❌ Unexpected error fetching attempts:', err);
+      }
+    } else {
+      if (!userId) {
+        console.log('[Question Bank API] Stage 10: Skipping attempt data (user not authenticated)');
+      } else {
+        console.log('[Question Bank API] Stage 10: Skipping attempt data (Mix mode - showing all questions)');
       }
     }
 
-    // Apply ordering and limits
-    // If random is true, we fetch a larger pool and shuffle client-side
-    // We should at least order by something to ensure deterministic but variety-filled results
-    if (random) {
-      // OPTIMIZED: Reduced from 500 to limit * 2 for variety without excessive egress
-      // Using a random-ish sort order by sorting by created_at with a variable limit
-      query = query.limit(Math.min(limit * 2, 200));
-    } else {
-      // Sort by created_at (newer first) for non-random mode
-      // OPTIMIZED: Reduced from limit * 5 to limit * 1.5 to minimize egress
-      // Still ensures enough questions after filtering without fetching excessive data
-      const fetchLimit = Math.min(Math.max(limit * 1.5, 20), 300);
-      query = query.limit(fetchLimit).order('created_at', { ascending: false });
-    }
-
-    // Execute the query to get all matching questions
-    const { data: allQuestions, error: queryError, count: totalCount } = await query;
-
-    if (queryError) {
-      console.error('[Question Bank API] Supabase query error:', {
-        error: queryError,
-        code: queryError.code,
-        message: queryError.message,
-        details: queryError.details,
-        hint: queryError.hint,
-        filters: {
-          testType,
-          subjects,
-          difficulties,
-          attemptedStatus,
-          attemptResults
-        }
-      });
-      return NextResponse.json(
-        { error: 'Failed to fetch questions from database', details: queryError.message },
-        { status: 500 }
-      );
-    }
-    
-    console.log('[Question Bank API] Query executed successfully:', {
-      questionsReturned: allQuestions?.length || 0,
-      totalCountFromSupabase: totalCount,
-      filters: {
-        testType: testType || 'All',
-        subjects: subjects.length > 0 ? subjects : 'All',
-        difficulties: difficulties.length > 0 ? difficulties : 'All'
-      }
-    });
-    
-    // DEBUG: Show sample of what we got
-    if (allQuestions && allQuestions.length > 0) {
-      const sample = allQuestions[0] as any;
-      console.log('[Question Bank API] Sample question from query:', {
-        id: sample.id,
-        subjects: sample.subjects,
-        test_type: sample.test_type,
-        difficulty: sample.difficulty,
-        status: sample.status
-      });
-    } else {
-      console.warn('[Question Bank API] Query returned 0 questions - checking why...');
-      
-      // Try a simpler query to see if ANY questions exist
-      const { data: anyQuestions, count: anyCount } = await supabase
-        .from('ai_generated_questions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'approved')
-        .limit(1);
-      
-      console.log('[Question Bank API] DEBUG: Any approved questions exist?', {
-        count: anyCount,
-        hasData: !!anyQuestions
-      });
-    }
-
-    // Subject filtering is now done via SQL query above, so no need for in-memory filtering
+    // ============================================================================
+    // STAGE 11: Apply attempt-based filters (client-side)
+    // ============================================================================
     let filteredQuestions = allQuestions || [];
-
-    // Apply attempted status and attempt result filters after fetching
-    const beforeFilterCount = filteredQuestions.length;
+    const beforeAttemptFilterCount = filteredQuestions.length;
     
-    // Apply attemptedStatus filter first
+    console.log('[Question Bank API] Stage 11: Applying attempt-based filters', {
+      beforeCount: beforeAttemptFilterCount,
+      attemptedStatus: attemptedStatus || 'Mix (null)',
+      attemptResults: attemptResults.length > 0 ? attemptResults : 'None'
+    });
+
+    // Apply attemptedStatus filter
     if (attemptedStatus && attemptedStatus !== 'Mix' && userId) {
+      const attemptedSet = new Set(attemptedQuestionIds);
+      const beforeCount = filteredQuestions.length;
+      
       if (attemptedStatus === 'New') {
-        // Exclude questions the user has attempted
-        const attemptedSet = new Set(attemptedQuestionIds);
-        filteredQuestions = filteredQuestions.filter(
-          (q: any) => !attemptedSet.has(q.id)
-        );
+        filteredQuestions = filteredQuestions.filter((q: any) => !attemptedSet.has(q.id));
+        console.log('[Question Bank API] Stage 11a: Applied "New" filter', {
+          before: beforeCount,
+          after: filteredQuestions.length,
+          removed: beforeCount - filteredQuestions.length
+        });
       } else if (attemptedStatus === 'Attempted') {
-        // Only include questions the user has attempted
-        const attemptedSet = new Set(attemptedQuestionIds);
-        filteredQuestions = filteredQuestions.filter(
-          (q: any) => attemptedSet.has(q.id)
-        );
+        filteredQuestions = filteredQuestions.filter((q: any) => attemptedSet.has(q.id));
+        console.log('[Question Bank API] Stage 11a: Applied "Attempted" filter', {
+          before: beforeCount,
+          after: filteredQuestions.length,
+          removed: beforeCount - filteredQuestions.length
+        });
       }
+    } else {
+      console.log('[Question Bank API] Stage 11a: No attemptedStatus filter (Mix mode)');
     }
     
     // Apply attemptResult filter
     if (attemptResults.length > 0 && userId) {
       const attemptedSet = new Set(attemptedQuestionIds);
       const incorrectSet = new Set(incorrectQuestionIds);
-      
-      // Get mixed results questions (both correct AND incorrect attempts)
       const mixedResultsSet = new Set(
         Array.from(questionResults?.entries() || [])
           .filter(([_, result]) => result.hasCorrect && result.hasIncorrect)
           .map(([id, _]) => id)
       );
       
+      const beforeCount = filteredQuestions.length;
       const resultFilters: ((q: any) => boolean)[] = [];
       
       attemptResults.forEach(result => {
         if (result === 'Unseen') {
-          // Questions the user has never attempted
           resultFilters.push((q: any) => !attemptedSet.has(q.id));
         } else if (result === 'Mixed Results') {
-          // Questions where user has BOTH correct AND incorrect attempts
           resultFilters.push((q: any) => mixedResultsSet.has(q.id));
         } else if (result === 'Incorrect Before') {
-          // Questions where user has at least one incorrect attempt
           resultFilters.push((q: any) => incorrectSet.has(q.id));
         }
       });
@@ -331,72 +419,46 @@ export async function GET(request: NextRequest) {
         filteredQuestions = filteredQuestions.filter((q: any) => 
           resultFilters.some(filter => filter(q))
         );
+        console.log('[Question Bank API] Stage 11b: Applied attemptResult filter', {
+          before: beforeCount,
+          after: filteredQuestions.length,
+          removed: beforeCount - filteredQuestions.length,
+          filters: attemptResults
+        });
       }
+    } else {
+      console.log('[Question Bank API] Stage 11b: No attemptResult filter');
     }
 
-    // Shuffle BEFORE slicing for random mode
+    // ============================================================================
+    // STAGE 12: Shuffle and paginate
+    // ============================================================================
+    console.log('[Question Bank API] Stage 12: Shuffling and paginating', {
+      beforeShuffle: filteredQuestions.length,
+      random,
+      limit,
+      offset
+    });
+
     if (random) {
       filteredQuestions = shuffleArray(filteredQuestions);
     }
 
-    // Apply pagination after filtering and shuffling
     const paginatedQuestions = filteredQuestions.slice(offset, offset + limit);
     
-    // The count we return should be the total count matching the filters in the database
+    console.log('[Question Bank API] Stage 12: After pagination', {
+      totalFiltered: filteredQuestions.length,
+      paginated: paginatedQuestions.length,
+      offset,
+      limit
+    });
+
+    // ============================================================================
+    // STAGE 13: Final processing and response
+    // ============================================================================
     const count = (attemptedStatus && attemptedStatus !== 'Mix') || attemptResults.length > 0 || tags
       ? filteredQuestions.length
       : (totalCount !== null ? totalCount : filteredQuestions.length);
-
-    console.log(`[Question Bank API] Final result: ${filteredQuestions.length} questions after all filtering`, {
-      testType: testType || 'All',
-      subjects: subjects.length > 0 ? subjects : 'All',
-      difficulties: difficulties.length > 0 ? difficulties : 'All',
-      attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
-      attemptedStatus,
-      tags,
-      fetchedFromDB: allQuestions?.length || 0,
-      afterFilters: filteredQuestions.length,
-      attemptedIdsCount: attemptedQuestionIds.length,
-      totalCountFromSupabase: totalCount
-    });
-    
-    // If filtering by "New" and we got 0 questions, but we fetched questions, it means all were attempted
-    if (attemptedStatus === 'New' && filteredQuestions.length === 0 && allQuestions && allQuestions.length > 0) {
-      console.warn(`[Question Bank API] All ${allQuestions.length} fetched questions were already attempted.`, {
-        attemptedQuestionIds: attemptedQuestionIds.slice(0, 10), // Log first 10 for debugging
-        totalAttempted: attemptedQuestionIds.length,
-        fetchedQuestionIds: allQuestions.slice(0, 5).map((q: any) => q.id) // Log first 5 for debugging
-      });
-    }
-    
-    // Log when no questions found to help debug filter issues
-    if (filteredQuestions.length === 0) {
-      console.warn('[Question Bank API] No questions found matching filters:', {
-        testType: testType || 'All',
-        subjects: subjects.length > 0 ? subjects : 'All',
-        difficulties: difficulties.length > 0 ? difficulties : 'All',
-        attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
-        attemptedStatus,
-        tags: tags || 'None',
-        search: search || 'None',
-        fetchedFromDB: allQuestions?.length || 0,
-        totalCountFromSupabase: totalCount,
-        beforeFilterCount: beforeFilterCount,
-        userId: userId || 'Not authenticated'
-      });
-    }
-    
-    if (paginatedQuestions && paginatedQuestions.length > 0) {
-      const sample = paginatedQuestions[0] as any;
-      console.log('[Question Bank API] Data sample:', {
-        id: sample.id,
-        schema_id: sample.schema_id,
-        paper: sample.paper,
-        primary_tag: sample.primary_tag
-      });
-    } else {
-      console.warn(`[Question Bank API] NO QUESTIONS FOUND for testType: ${testType || 'All'}, subjects: ${subjects.length > 0 ? subjects.join(', ') : 'All'}, difficulties: ${difficulties.length > 0 ? difficulties.join(', ') : 'All'}, attemptResults: ${attemptResults.length > 0 ? attemptResults.join(', ') : 'None'}, attemptedStatus: ${attemptedStatus}. Check if questions match the filters.`);
-    }
 
     // Parse options and distractor_map JSONB to proper format
     const questions = (paginatedQuestions || []).map((q: any) => {
@@ -410,17 +472,13 @@ export async function GET(request: NextRequest) {
         };
       } catch (parseError) {
         console.error('[Question Bank API] Error parsing question data:', parseError, q);
-        // Return question with original data if parsing fails
         return q;
       }
     });
 
     // Sort questions by status priority if not random
     let finalQuestions = questions;
-    if (random) {
-      finalQuestions = shuffleArray(questions).slice(0, limit);
-    } else {
-      // Sort: pending_review and needs_revision first, then approved
+    if (!random) {
       finalQuestions = questions.sort((a: any, b: any) => {
         const statusPriority: Record<string, number> = {
           'pending_review': 1,
@@ -435,10 +493,80 @@ export async function GET(request: NextRequest) {
           return aPriority - bPriority;
         }
         
-        // If same status, sort by created_at (newer first)
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       });
     }
+
+    // ============================================================================
+    // FINAL: Summary and diagnostic queries if needed
+    // ============================================================================
+    console.log('[Question Bank API] ===== FILTER DEBUG SUMMARY =====');
+    console.log('[Question Bank API] Final result:', {
+      questionsReturned: finalQuestions.length,
+      totalCount: count,
+      filters: {
+        testType: testType || 'All',
+        subjects: subjects.length > 0 ? subjects : 'All',
+        difficulties: difficulties.length > 0 ? difficulties : 'All',
+        attemptResults: attemptResults.length > 0 ? attemptResults : 'None',
+        attemptedStatus: attemptedStatus || 'Mix (null)',
+        tags: tags || 'None',
+        search: search || 'None'
+      },
+      stages: {
+        stage1_base: totalApproved,
+        stage9_afterQuery: allQuestions?.length || 0,
+        stage11_afterAttemptFilter: filteredQuestions.length,
+        stage12_afterPagination: paginatedQuestions.length
+      }
+    });
+
+    // If no questions found, run diagnostic queries
+    if (finalQuestions.length === 0) {
+      console.warn('[Question Bank API] ⚠️ NO QUESTIONS FOUND - Running diagnostic queries...');
+      
+      // Diagnostic 1: Just status filter
+      const { count: diag1 } = await supabase
+        .from('ai_generated_questions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'approved');
+      console.log('[Question Bank API] Diagnostic 1 (status=approved):', diag1);
+      
+      // Diagnostic 2: Status + test_type
+      if (testType) {
+        const { count: diag2 } = await supabase
+          .from('ai_generated_questions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'approved')
+          .eq('test_type', testType);
+        console.log('[Question Bank API] Diagnostic 2 (status=approved, test_type=' + testType + '):', diag2);
+      }
+      
+      // Diagnostic 3: Status + test_type + subject
+      if (testType && subjects.length > 0) {
+        const { count: diag3 } = await supabase
+          .from('ai_generated_questions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'approved')
+          .eq('test_type', testType)
+          .in('subjects', subjects);
+        console.log('[Question Bank API] Diagnostic 3 (status=approved, test_type=' + testType + ', subjects=' + subjects.join(',') + '):', diag3);
+      }
+      
+      // Diagnostic 4: Status + test_type + subject + difficulty
+      if (testType && subjects.length > 0 && difficulties.length > 0) {
+        const { count: diag4 } = await supabase
+          .from('ai_generated_questions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'approved')
+          .eq('test_type', testType)
+          .in('subjects', subjects)
+          .in('difficulty', difficulties);
+        console.log('[Question Bank API] Diagnostic 4 (status=approved, test_type=' + testType + ', subjects=' + subjects.join(',') + ', difficulties=' + difficulties.join(',') + '):', diag4);
+      }
+    }
+
+    console.log('[Question Bank API] ===== FILTER DEBUG END =====');
 
     return NextResponse.json({
       questions: finalQuestions,
@@ -446,31 +574,11 @@ export async function GET(request: NextRequest) {
       totalCount: totalCount || 0
     });
   } catch (error) {
-    console.error('[Question Bank API] Unexpected error:', error);
+    console.error('[Question Bank API] ❌ Unexpected error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
-  }
-}
-
-/**
- * Get schema_id prefix for a given subject
- */
-function getSchemaPrefix(subject: SubjectFilter): string | null {
-  switch (subject) {
-    case 'Math 1':
-      return 'MATH1-';
-    case 'Math 2':
-      return 'MATH2-';
-    case 'Physics':
-      return 'PHYS-';
-    case 'Chemistry':
-      return 'CHEM-';
-    case 'Biology':
-      return 'BIO-';
-    default:
-      return null;
   }
 }
 
@@ -485,5 +593,3 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
-
-
