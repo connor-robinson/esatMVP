@@ -97,6 +97,32 @@ export async function GET(request: NextRequest) {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'approved');
     debug('[Question Bank API] ✓ Total approved questions:', totalApproved);
+    
+    // Check if ANY questions exist (any status)
+    const { count: totalAnyStatusInitial } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true });
+    debug('[Question Bank API] ✓ Total questions (any status):', totalAnyStatusInitial);
+    
+    // Check questions by status
+    const { count: pendingCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending_review');
+    const { count: needsRevisionCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'needs_revision');
+    const { count: rejectedCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'rejected');
+    debug('[Question Bank API] ✓ Questions by status:', {
+      approved: totalApproved,
+      pending_review: pendingCount,
+      needs_revision: needsRevisionCount,
+      rejected: rejectedCount
+    });
 
     // Check questions by test_type
     const { count: esatCount } = await supabase
@@ -154,16 +180,21 @@ export async function GET(request: NextRequest) {
     });
 
     // ============================================================================
-    // STAGE 1: Build base query (status = 'approved')
+    // STAGE 1: Build base query (include all statuses - approved, pending, etc.)
     // ============================================================================
-    debug('[Question Bank API] Stage 1: Building base query (status = approved)');
+    debug('[Question Bank API] Stage 1: Building base query (including ALL statuses)');
     let query = supabase
       .from('ai_generated_questions')
-      .select('*', { count: 'exact' })
-      .eq('status', 'approved');
+      .select('*', { count: 'exact' });
+    // Note: Not filtering by status - showing all questions including unapproved
     
-    let stageCount = totalApproved || 0;
-    debug('[Question Bank API] Stage 1: After base query - Count:', stageCount);
+    // Get total count of all questions (any status) for stage count
+    const { count: totalAnyStatusCount } = await supabase
+      .from('ai_generated_questions')
+      .select('*', { count: 'exact', head: true });
+    
+    let stageCount = totalAnyStatusCount || 0;
+    debug('[Question Bank API] Stage 1: After base query - Count (all statuses):', stageCount);
 
     // ============================================================================
     // STAGE 2: Apply test_type filter
@@ -532,7 +563,7 @@ export async function GET(request: NextRequest) {
         search: search || 'None'
       },
       stages: {
-        stage1_base: totalApproved,
+        stage1_base: totalAnyStatusCount || 0,
         stage9_afterQuery: allQuestions?.length || 0,
         stage11_afterAttemptFilter: filteredQuestions.length,
         stage12_afterPagination: paginatedQuestions.length
@@ -549,6 +580,31 @@ export async function GET(request: NextRequest) {
         .select('*', { count: 'exact', head: true })
         .eq('status', 'approved');
       debug('[Question Bank API] Diagnostic 1 (status=approved):', diag1);
+      
+      // If no approved questions, check if there are any questions at all
+      if (diag1 === 0) {
+        const { count: totalAny } = await supabase
+          .from('ai_generated_questions')
+          .select('*', { count: 'exact', head: true });
+        debug('[Question Bank API] ⚠️ CRITICAL: No approved questions found!');
+        debug('[Question Bank API] ⚠️ Total questions in database (any status):', totalAny);
+        
+        if (totalAny === 0) {
+          debug('[Question Bank API] ❌ DATABASE IS EMPTY - No questions exist at all!');
+          debug('[Question Bank API] ❌ SOLUTION: You need to add questions to the database first.');
+        } else {
+          debug('[Question Bank API] ⚠️ Questions exist but none are approved.');
+          debug('[Question Bank API] ⚠️ SOLUTION: Approve questions in the review page or change status filter.');
+          
+          // Check what statuses exist
+          const { data: statusSample } = await supabase
+            .from('ai_generated_questions')
+            .select('status')
+            .limit(100);
+          const statuses = [...new Set((statusSample || []).map((q: any) => q.status))];
+          debug('[Question Bank API] ⚠️ Available question statuses:', statuses);
+        }
+      }
       
       // Diagnostic 2: Status + test_type
       if (testType) {

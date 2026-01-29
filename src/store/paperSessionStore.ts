@@ -495,11 +495,34 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 
                 // Log part distribution after filtering
                 const partDistribution = new Map<string, number>();
+                const partDetails: Array<{ questionNumber: number; partLetter: string; partName: string }> = [];
                 filteredQuestions.forEach(q => {
                   const part = (q.partLetter || '').toString().trim() || 'Unknown';
                   partDistribution.set(part, (partDistribution.get(part) || 0) + 1);
+                  partDetails.push({
+                    questionNumber: q.questionNumber,
+                    partLetter: q.partLetter || '',
+                    partName: q.partName || ''
+                  });
                 });
                 console.log('[loadQuestions] NSAA 2019 part distribution after filtering:', Object.fromEntries(partDistribution));
+                console.log('[loadQuestions] 🔍 DEEP DEBUG - All filtered questions partLetters:', partDetails);
+                
+                // Check for any "SECTION" that might have slipped through
+                const sectionQuestions = filteredQuestions.filter(q => {
+                  const partUpper = (q.partLetter || '').toString().trim().toUpperCase();
+                  return partUpper === 'SECTION' || partUpper.startsWith('SECTION ');
+                });
+                if (sectionQuestions.length > 0) {
+                  console.error(`[loadQuestions] ⚠️⚠️⚠️ CRITICAL: Found ${sectionQuestions.length} questions with "SECTION" after filtering!`, 
+                    sectionQuestions.map(q => ({
+                      questionNumber: q.questionNumber,
+                      partLetter: q.partLetter,
+                      partName: q.partName,
+                      id: q.id
+                    }))
+                  );
+                }
               } else {
                 // For other papers, still filter out "SECTION" parts as they're invalid
                 const beforeCount = filteredQuestions.length;
