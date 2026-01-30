@@ -25,9 +25,11 @@ import { getConversionTable, getConversionRows, scaleScore, findFallbackConversi
 import { supabase } from "@/lib/supabase/client";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
-import type { Letter, MistakeTag } from "@/types/papers";
+import type { Letter, MistakeTag, PaperSession } from "@/types/papers";
 import { PageHeader } from "@/components/shared/PageHeader";
 import type { QuestionStats } from "@/types/questionStats";
+import { fetchInProgressSessions } from "@/lib/papers/analytics";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -68,7 +70,10 @@ export default function PapersMarkPage() {
     getCorrectCount,
     persistSessionToServer,
     setEndedAt,
+    loadSessionFromDatabase,
   } = usePaperSessionStore();
+  
+  const session = useSupabaseSession();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -102,6 +107,9 @@ export default function PapersMarkPage() {
   // Community stats state
   const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
   const [statsLoading, setStatsLoading] = useState(false);
+  // In-progress sessions state
+  const [inProgressSessions, setInProgressSessions] = useState<PaperSession[]>([]);
+  const [checkingInProgress, setCheckingInProgress] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
   const totalQuestions = sessionId ? getTotalQuestions() : 0;
@@ -1255,21 +1263,110 @@ export default function PapersMarkPage() {
     return null;
   }, [selectedIndex]);
   
-  // Redirect if no active session (after all hooks)
+  // Handle resume session
+  const handleResumeSession = async (sessionToResume: PaperSession) => {
+    try {
+      await loadSessionFromDatabase(sessionToResume.id);
+      // After loading, navigate to solve page if session is paused, otherwise stay on mark page
+      const state = usePaperSessionStore.getState();
+      if (state.isPaused) {
+        router.push("/papers/solve/resume");
+      }
+      // If not paused, we're already on mark page which is correct
+    } catch (error) {
+      console.error("[mark] Failed to resume session:", error);
+      alert("Failed to resume session. Please try again.");
+    }
+  };
+
+  // Show resume option if no session but in-progress sessions exist
   if (!sessionId) {
+    if (checkingInProgress) {
+      return (
+        <Container>
+          <PageHeader title="Mark Paper" />
+          <div className="py-12 text-center text-white/50">Checking for papers in progress...</div>
+        </Container>
+      );
+    }
+
+    if (inProgressSessions.length > 0) {
+      const sessionToResume = inProgressSessions[0];
+      const formatDate = (date: string | number | undefined) => {
+        if (!date) return "Unknown date";
+        try {
+          const dateObj = typeof date === 'string' ? new Date(date) : new Date(date);
+          return dateObj.toLocaleString();
+        } catch {
+          return "Unknown date";
+        }
+      };
+
+      return (
+        <Container>
+          <PageHeader title="Mark Paper" />
+          <div className="py-12 max-w-2xl mx-auto">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-white mb-4">Resume Paper Session</h2>
+              <p className="text-white/70 mb-6">
+                You have a paper session in progress. Would you like to resume it?
+              </p>
+              
+              <div className="space-y-4 mb-6">
+                {inProgressSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="p-4 rounded-lg border border-white/10 bg-white/5"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium text-white mb-1">
+                          {session.paperName} {session.paperVariant}
+                        </div>
+                        <div className="text-sm text-white/60">
+                          Started: {formatDate(session.startedAt)}
+                        </div>
+                        {session.selectedSections && session.selectedSections.length > 0 && (
+                          <div className="text-sm text-white/60 mt-1">
+                            Sections: {session.selectedSections.join(", ")}
+                          </div>
+                        )}
+                      </div>
+                      <Button
+                        onClick={() => handleResumeSession(session)}
+                        className="ml-4"
+                      >
+                        Resume
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="secondary"
+                  onClick={() => router.push("/papers/library")}
+                >
+                  Go to Library
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </Container>
+      );
+    }
+
+    // No in-progress sessions, redirect to library
     router.push("/papers/library");
     return null;
   }
 
   return (
     <Fragment>
-      <Container size="lg">
-      <div className="space-y-8">
-        {/* Header */}
-        <PageHeader title="Mark Session" description="Review answers, mark correctness, and study solutions." />
-
-        {/* Main two-column layout - connected container with equal height */}
-        <Card className="p-0 bg-neutral-900 border-0 overflow-hidden lg:h-[156vh]">
+      <Container size="lg" className="h-[calc(100vh-4rem)]">
+        {/* Main two-column layout - fills available space */}
+        <Card className="p-0 bg-neutral-900 border-0 overflow-hidden h-full">
           <div
             className="grid grid-cols-1 lg:[grid-template-columns:var(--left-col)_minmax(0,1fr)] h-full"
             style={{ ['--left-col' as any]: `${LEFT_COLUMN_WIDTH_PX}px` }}
@@ -1322,8 +1419,8 @@ export default function PapersMarkPage() {
           </div>
           </div>
                         </summary>
-                        <div className="mt-1 space-y-1 px-0.5 pb-1 bg-[#0f1114] rounded-md group-open:rounded-b-md group-open:rounded-t-none transition-all duration-200">
-                        {group.indexes.map((index) => {
+                        <div className="mt-1 space-y-1 px-0.5 pb-1 bg-[#0f1114] rounded-md group-open:rounded-b-md group-open:rounded-t-none transition-all duration-200 question-list">
+                        {group.indexes.map((index, qi) => {
                           const qNumber = questionNumbers[index];
               const answer = answers[index];
                           const correct = derivedCorrectFlags[index];
@@ -1334,18 +1431,19 @@ export default function PapersMarkPage() {
                           const partNameFull = (q?.partName || "").trim();
                           const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                           const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
-                          const indicatorColor = guessed
-                            ? '#b89f5a'
-                            : (correct === true
-                                ? "#6c9e69"
-                                : (correct === false ? PAPER_COLORS.chemistry : PAPER_COLORS.mathematics));
+                          // Always use the parent part's color for the indicator
+                          const indicatorColor = getSectionColor(sectionName);
               return (
                             <button
                               key={qNumber}
                               className={`relative w-full text-left pr-3 pl-0 py-2 rounded-md overflow-hidden transition ${
                                 selectedIndex === index ? "bg-[#161a1f]" : "bg-[#0f1114] hover:bg-[#121418]"
                               }`}
-                              style={selectedIndex === index ? { boxShadow: `inset 4px 0 0 0 ${indicatorColor}` } : undefined}
+                              style={{
+                                animationDelay: `${qi * 20}ms`,
+                                animationFillMode: 'both',
+                                ...(selectedIndex === index ? { boxShadow: `inset 4px 0 0 0 ${indicatorColor}` } : {})
+                              }}
                               onClick={() => setSelectedIndex(index)}
                             >
                   <div className="flex items-center justify-between">
@@ -2308,152 +2406,171 @@ export default function PapersMarkPage() {
                     {showAnswer ? "Hide Answer" : "Show Answer"}
                   </button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                    }`}
-                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
-                    onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                    Correct
-                    </button>
-                    <button
-                      className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                      }`}
-                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry } : { backgroundColor: "#1f1f1f" }}
-                    onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
-                    >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                    Wrong
-                    </button>
-                    <button
-                      className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
-                        guessedFlags[selectedIndex]
-                          ? "text-white"
-                          : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                      }`}
-                      style={guessedFlags[selectedIndex]
-                        ? { backgroundColor: '#b89f5a' }
-                        : { backgroundColor: '#1f1f1f' }}
-                      onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={guessedFlags[selectedIndex] ? 'white' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="8.5" />
-                        <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
-                        <path d="M12 16.9h.01" />
-                      </svg>
-                      Guess
-                    </button>
-                </div>
                   </div>
 
-              {/* Answers summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                <div
-                  className="p-3 rounded-md border border-white/10"
-                  style={{
-                    backgroundColor: guessedFlags[selectedIndex]
-                      ? '#b89f5a'
-                      : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
-                          ? "#6c9e69"
-                          : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
-                              ? PAPER_COLORS.chemistry
-                              : '#2b2f36'))
-                  }}
-                >
-                  <div className="text-xs text-white/90">Your answer</div>
-                  <div className="text-white text-sm mt-1">{answers[selectedIndex]?.choice ?? "—"}</div>
-                </div>
-                <div
-                  className="p-3 rounded-md"
-                  style={{ backgroundColor: "#6c9e69" }}
-                >
-                  <div className="text-xs text-white/90">Correct answer</div>
-                  <div className="text-white text-sm mt-1">{(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}</div>
-                </div>
-                <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                  <div className="text-xs text-neutral-200">Time taken</div>
-                  <div className="text-neutral-50 text-sm mt-1">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
+              {/* Compact Stats Section - Two Column Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                {/* Left Column: Community Stats */}
+                {(() => {
+                  const question = usePaperSessionStore.getState().questions[selectedIndex];
+                  const stats = question ? questionStats[question.id] : null;
+                  
+                  return (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Community Stats</div>
+                        {stats && (
+                          <div className="text-xs text-neutral-500">{stats.attempts} attempts</div>
+                        )}
+                      </div>
+                      
+                      {!stats ? (
+                        statsLoading ? (
+                          <div className="text-xs text-neutral-500">Loading...</div>
+                        ) : null
+                      ) : (
+                        <>
+                          {/* Emphasized Average Time */}
+                          <div className="p-3 rounded-md" style={{ backgroundColor: '#1a1f27' }}>
+                            <div className="text-xs text-neutral-400 mb-1">Community average time</div>
+                            <div className="text-lg font-semibold text-neutral-100">
+                              {formatTime(Math.round(stats.avgTimeSeconds))}
+                            </div>
+                          </div>
+                          
+                          {/* Answer Distribution - Compact Grid Layout */}
+                          <div className="space-y-2">
+                            <div className="text-xs text-neutral-400">Answer distribution</div>
+                            <div className="grid grid-cols-4 gap-2">
+                              {LETTERS.map((letter) => {
+                                const percentage = stats.optionPercentages[letter] || 0;
+                                const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
+                                const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
+                                const isUserWrong = isUserChoice && !isCorrect;
+                                
+                                // Show all options, but highlight relevant ones
+                                const shouldShow = percentage > 0 || isCorrect || isUserChoice;
+                                
+                                return (
+                                  <div key={letter} className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                      <div className={`text-xs font-medium ${shouldShow ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                                        {letter}
+                                      </div>
+                                      <div className={`text-xs ${shouldShow ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                                        {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
+                                      </div>
+                                    </div>
+                                    <div className="h-3.5 bg-neutral-800/50 rounded-full overflow-hidden relative">
+                                      {shouldShow && (
+                                        <div
+                                          className="h-full rounded-full transition-all duration-300"
+                                          style={{
+                                            width: `${Math.max(percentage, 2)}%`,
+                                            backgroundColor: isCorrect
+                                              ? "#6c9e69"
+                                              : isUserWrong
+                                              ? PAPER_COLORS.chemistry
+                                              : isUserChoice
+                                              ? "#b89f5a"
+                                              : "#5a6370",
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* Right Column: Your Stats */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">Your Answer</div>
+                  
+                  {/* Your answer */}
+                  <div
+                    className="p-3 rounded-md"
+                    style={{
+                      backgroundColor: guessedFlags[selectedIndex]
+                        ? '#b89f5a'
+                        : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
+                            ? "#6c9e69"
+                            : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
+                                ? PAPER_COLORS.chemistry
+                                : '#2b2f36'))
+                    }}
+                  >
+                    <div className="text-xs text-white/90">Your answer</div>
+                    <div className="text-white text-sm mt-1 font-medium">{answers[selectedIndex]?.choice ?? "—"}</div>
+                  </div>
+                  
+                  {/* Correct answer */}
+                  <div
+                    className="p-3 rounded-md"
+                    style={{ backgroundColor: "#6c9e69" }}
+                  >
+                    <div className="text-xs text-white/90">Correct answer</div>
+                    <div className="text-white text-sm mt-1 font-medium">{(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}</div>
+                  </div>
+                  
+                  {/* Time taken */}
+                  <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
+                    <div className="text-xs text-neutral-200">Time taken</div>
+                    <div className="text-neutral-50 text-sm mt-1 font-medium">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
+                  </div>
+                  
+                  {/* Change your answer buttons */}
+                  <div className="pt-2">
+                    <div className="text-xs text-neutral-400 mb-2">Change your answer</div>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                          (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
+                        }`}
+                        style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
+                        onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                        Correct
+                      </button>
+                      <button
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                          (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
+                        }`}
+                        style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry } : { backgroundColor: "#1f1f1f" }}
+                        onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        Wrong
+                      </button>
+                      <button
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                          guessedFlags[selectedIndex]
+                            ? "text-white"
+                            : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
+                        }`}
+                        style={guessedFlags[selectedIndex]
+                          ? { backgroundColor: '#b89f5a' }
+                          : { backgroundColor: '#1f1f1f' }}
+                        onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={guessedFlags[selectedIndex] ? 'white' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="8.5" />
+                          <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
+                          <path d="M12 16.9h.01" />
+                        </svg>
+                        Guess
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Community Stats */}
-              {(() => {
-                const question = usePaperSessionStore.getState().questions[selectedIndex];
-                const stats = question ? questionStats[question.id] : null;
-                
-                if (!stats) {
-                  if (statsLoading) {
-                    return (
-                      <div className="mb-4 py-3">
-                        <div className="text-xs text-neutral-500">Loading community stats...</div>
-                      </div>
-                    );
-                  }
-                  return null;
-                }
-
-                return (
-                  <div className="mb-4 space-y-3">
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Community Stats</div>
-                      <div className="text-xs text-neutral-500">{stats.attempts} attempts</div>
-                    </div>
-                    
-                    {/* Average Time */}
-                    <div className="flex items-center justify-between py-2">
-                      <div className="text-xs text-neutral-400">Average time</div>
-                      <div className="text-sm text-neutral-200 font-medium">
-                        {formatTime(Math.round(stats.avgTimeSeconds))}
-                      </div>
-                    </div>
-                    
-                    {/* Answer Distribution */}
-                    <div className="space-y-2">
-                      <div className="text-xs text-neutral-400 mb-2">Answer distribution</div>
-                      <div className="space-y-1.5">
-                        {LETTERS.map((letter) => {
-                          const percentage = stats.optionPercentages[letter] || 0;
-                          const count = stats.optionCounts[letter] || 0;
-                          const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
-                          const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
-                          
-                          // Only show options that have some percentage or are the correct/user choice
-                          if (percentage === 0 && !isCorrect && !isUserChoice) {
-                            return null;
-                          }
-                          
-                          return (
-                            <div key={letter} className="flex items-center gap-3">
-                              <div className="w-5 text-xs text-neutral-300 font-medium">{letter}</div>
-                              <div className="flex-1 h-1.5 bg-neutral-800/50 rounded-full overflow-hidden">
-                                <div
-                                  className="h-full rounded-full transition-all duration-300"
-                                  style={{
-                                    width: `${Math.max(percentage, 0.5)}%`,
-                                    backgroundColor: isCorrect
-                                      ? "#6c9e69"
-                                      : isUserChoice
-                                      ? "#b89f5a"
-                                      : "#5a6370",
-                                  }}
-                                />
-                              </div>
-                              <div className="w-10 text-xs text-neutral-400 text-right">
-                                {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
 
               {/* Question and Answer - Side by Side (normal) or Stacked (TMUA) */}
               {(() => {
@@ -2464,7 +2581,7 @@ export default function PapersMarkPage() {
                 return (
                   <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
                     {/* Question image */}
-                    <div className={`relative rounded-lg transition-all duration-300 w-full`} style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff' }}>
+                    <div className={`relative rounded-lg transition-all duration-300 w-full`} style={{ height: '55vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff' }}>
                       {/* Scrollable container for image content */}
                       <div 
                         className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
@@ -2472,7 +2589,7 @@ export default function PapersMarkPage() {
                           backgroundColor: isDarkMode ? '#000000' : '#ffffff'
                         }}
                       >
-                        <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
+                        <div className="flex flex-col items-center justify-center min-h-full pt-8 pb-8 px-6">
                           <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
                             <div
                               className="relative inline-block"
@@ -2567,7 +2684,7 @@ export default function PapersMarkPage() {
                       if (isTMUA) {
                         // TMUA: Answer image below question with solution label
                         return (
-                          <div className="relative rounded-lg transition-all duration-300 w-full border-2" style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
+                          <div className="relative rounded-lg transition-all duration-300 w-full border-2" style={{ height: '55vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
                             {/* Scrollable container for image content */}
                             <div 
                               className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
@@ -2575,7 +2692,7 @@ export default function PapersMarkPage() {
                                 backgroundColor: isDarkMode ? '#000000' : '#ffffff'
                               }}
                             >
-                              <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
+                              <div className="flex flex-col items-center justify-center min-h-full pt-8 pb-8 px-6">
                                 <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
                                   <div
                                     className="relative inline-block"
@@ -2681,14 +2798,18 @@ export default function PapersMarkPage() {
                           </div>
                           <div className="space-y-3">
                             {question?.solutionText && (
-                              <MathContent 
-                                content={(question.solutionText || "")
-                                  .replace(/<tip>.*?<\/tip>/gis, '')
-                                  .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
-                                  .replace(/<question>[\s\S]*?<\/question>/gi, '')
-                                  .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')} 
-                                className="text-neutral-200 text-sm" 
-                              />
+                              <div className="p-4 rounded-md bg-white/5">
+                                <MathContent 
+                                  content={(question.solutionText || "")
+                                    .replace(/<tip>.*?<\/tip>/gis, '')
+                                    .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
+                                    .replace(/<question>[\s\S]*?<\/question>/gi, '')
+                                    .replace(/<solution>[\s\S]*?<\/solution>/gi, '')
+                                    .replace(/<final_answer>[\s\S]*?<\/final_answer>/gi, '')
+                                    .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')} 
+                                  className="text-base text-white/80 leading-relaxed" 
+                                />
+                              </div>
                             )}
                             {question?.solutionImage && (
                               <div className="relative">
@@ -2980,7 +3101,6 @@ export default function PapersMarkPage() {
             {isSubmitting ? "Saving..." : "Save & Continue"}
           </Button>
         </div>
-      </div>
     </Container>
     </Fragment>
   );

@@ -10,16 +10,24 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { hasActiveSession } from "@/lib/storage/sessionStorage";
+import { findActiveSession } from "@/lib/storage/sessionStorage";
+import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { runCleanupOnLoad } from "@/lib/papers/sessionCleanup";
 
 export function SessionRestore() {
   const router = useRouter();
   const pathname = usePathname();
-  const { sessionId, isPaused, loadSessionFromIndexedDB, isRestoring } = usePaperSessionStore();
+  const { sessionId, isPaused, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring } = usePaperSessionStore();
+  const session = useSupabaseSession();
   
   useEffect(() => {
-    // Only check if we don't already have a session
-    if (sessionId) {
+    // Run cleanup on app load (once per session)
+    if (session?.user) {
+      runCleanupOnLoad();
+    }
+
+    // Only check if we don't already have a session and user is authenticated
+    if (sessionId || !session?.user) {
       // Clear restoring flag if we already have a session
       if (isRestoring) {
         usePaperSessionStore.setState({ isRestoring: false });
@@ -37,10 +45,18 @@ export function SessionRestore() {
       usePaperSessionStore.setState({ isRestoring: true });
       
       try {
-        const activeSessionId = await hasActiveSession();
-        if (activeSessionId) {
-          // Load the session from IndexedDB
-          await loadSessionFromIndexedDB(activeSessionId);
+        // Use unified session detection (checks both IndexedDB and database)
+        const activeSession = await findActiveSession();
+        if (activeSession) {
+          const { sessionId: activeSessionId, source } = activeSession;
+          
+          // Load from appropriate source
+          if (source === 'indexeddb') {
+            await loadSessionFromIndexedDB(activeSessionId);
+          } else {
+            // Load from database
+            await loadSessionFromDatabase(activeSessionId);
+          }
           
           // After loading, check if we should redirect
           // Get state directly from the store
@@ -64,7 +80,7 @@ export function SessionRestore() {
     };
 
     checkAndRestore();
-  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB, isRestoring]);
+  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring, session?.user]);
 
   return null; // This component doesn't render anything
 }

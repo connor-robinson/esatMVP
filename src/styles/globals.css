@@ -176,6 +176,23 @@
     }
   }
 
+  /* Smooth appearing animation for questions in expanded parts */
+  @keyframes questionAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Apply animation to question buttons when parent details is open */
+  details.group[open] .question-list > button {
+    animation: questionAppear 0.3s ease-out;
+  }
+
   /* Hide scrollbar utility */
   .scrollbar-hide {
     -ms-overflow-style: none;  /* IE and Edge */

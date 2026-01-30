@@ -12,6 +12,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { KaTeXLoader } from "@/components/shared/KaTeXLoader";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
+import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import "@/styles/globals.css";
 
@@ -104,6 +105,7 @@ export default async function RootLayout({
                   <BackgroundPrefetcher />
                   <KaTeXLoader />
                   <SessionRestore />
+                  <SessionPersistenceHandler />
                   <Navbar />
                   <main className="min-h-full">
                     <UsernameGate>

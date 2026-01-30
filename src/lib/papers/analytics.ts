@@ -173,6 +173,32 @@ export async function fetchUserSessions(): Promise<PaperSession[]> {
 }
 
 /**
+ * Fetch in-progress sessions (sessions with ended_at IS NULL) from the API
+ */
+export async function fetchInProgressSessions(): Promise<PaperSession[]> {
+  try {
+    const response = await fetch('/api/papers/sessions?in_progress=true', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch in-progress sessions: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const sessions = (data.sessions || []) as PaperSessionRow[];
+    
+    return sessions.map(convertSessionRow);
+  } catch (error) {
+    console.error('[analytics] Failed to fetch in-progress sessions', error);
+    return [];
+  }
+}
+
+/**
  * Filter sessions by paper type, section, and time range
  */
 export function filterSessions(

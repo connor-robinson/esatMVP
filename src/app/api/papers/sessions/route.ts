@@ -249,6 +249,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
+  const inProgress = searchParams.get("in_progress") === "true";
 
   if (id) {
     const { data, error } = await (supabase as any)
@@ -266,18 +267,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ session: data ?? null });
   }
 
-  const { data, error } = await (supabase as any)
+  // Build query
+  let query = (supabase as any)
     .from("paper_sessions")
     .select("*")
-    .eq("user_id", session.user.id)
-    .order("started_at", { ascending: false });
+    .eq("user_id", session.user.id);
+
+  // Filter for in-progress sessions (ended_at IS NULL)
+  if (inProgress) {
+    query = query.is("ended_at", null);
+  }
+
+  query = query.order("started_at", { ascending: false });
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("[papers:GET] failed listing sessions", {
       error,
       errorCode: error.code,
       errorMessage: error.message,
-      userId: session.user.id
+      userId: session.user.id,
+      inProgress
     });
     return NextResponse.json({ error: "Failed to load sessions" }, { status: 500 });
   }

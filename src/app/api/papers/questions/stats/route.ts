@@ -16,22 +16,71 @@ const BASELINE_AVG_TIME_SECONDS = 90; // 1:30
 /**
  * Compute stats with baseline data added
  * Combines real database stats with 100 baseline "average" attempts
+ * Baseline distribution: 50% correct answer, remaining 50% split equally among wrong answers
  */
 function computeStatsWithBaseline(
   row: QuestionChoiceStatsRow | null,
   questionId: number,
+  correctAnswer: string | null,
   availableOptions: string[] = ["A", "B", "C", "D", "E", "F", "G", "H"]
 ): QuestionStats {
   // Start with baseline data
   const baselineAttempts = BASELINE_ATTEMPTS;
   const baselineTimeSum = baselineAttempts * BASELINE_AVG_TIME_SECONDS;
   
-  // Equal distribution across all available options
-  const baselinePerOption = Math.floor(baselineAttempts / availableOptions.length);
-  const remainder = baselineAttempts % availableOptions.length;
+  // Normalize correct answer to uppercase
+  const correctAnswerUpper = correctAnswer ? correctAnswer.toUpperCase() : null;
   
-  // Calculate baseline correct answers (assuming average performance = 50% correct)
-  // For simplicity, let's say baseline gets correct answer 50% of the time
+  // Initialize option counts with real data
+  const optionCounts: Record<string, number> = {
+    A: row?.a_count || 0,
+    B: row?.b_count || 0,
+    C: row?.c_count || 0,
+    D: row?.d_count || 0,
+    E: row?.e_count || 0,
+    F: row?.f_count || 0,
+    G: row?.g_count || 0,
+    H: row?.h_count || 0,
+  };
+  
+  // Calculate baseline distribution
+  if (correctAnswerUpper && availableOptions.includes(correctAnswerUpper)) {
+    // 50% of baseline attempts go to correct answer
+    const baselineCorrectCount = Math.floor(baselineAttempts * 0.5);
+    optionCounts[correctAnswerUpper] = (optionCounts[correctAnswerUpper] || 0) + baselineCorrectCount;
+    
+    // Remaining 50% split equally among wrong answers
+    const remainingAttempts = baselineAttempts - baselineCorrectCount;
+    const wrongOptions = availableOptions.filter(opt => opt !== correctAnswerUpper);
+    const wrongOptionsCount = wrongOptions.length;
+    
+    if (wrongOptionsCount > 0) {
+      const baselinePerWrongOption = Math.floor(remainingAttempts / wrongOptionsCount);
+      const remainder = remainingAttempts % wrongOptionsCount;
+      
+      // Distribute equally among wrong options
+      wrongOptions.forEach((option, index) => {
+        optionCounts[option] = (optionCounts[option] || 0) + baselinePerWrongOption;
+        // Distribute remainder to first few wrong options
+        if (index < remainder) {
+          optionCounts[option] = (optionCounts[option] || 0) + 1;
+        }
+      });
+    }
+  } else {
+    // If no correct answer known, fall back to equal distribution
+    const baselinePerOption = Math.floor(baselineAttempts / availableOptions.length);
+    const remainder = baselineAttempts % availableOptions.length;
+    
+    availableOptions.forEach((option, index) => {
+      optionCounts[option] = (optionCounts[option] || 0) + baselinePerOption;
+      if (index < remainder) {
+        optionCounts[option] = (optionCounts[option] || 0) + 1;
+      }
+    });
+  }
+  
+  // Calculate baseline correct answers (50% of baseline attempts)
   const baselineCorrect = Math.floor(baselineAttempts * 0.5);
   
   // Get real data from database
@@ -47,25 +96,6 @@ function computeStatsWithBaseline(
   // Calculate combined averages
   const avgTimeSeconds = totalAttempts > 0 ? totalTimeSum / totalAttempts : BASELINE_AVG_TIME_SECONDS;
   const correctPercentage = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 50;
-  
-  // Combine option counts
-  const optionCounts: Record<string, number> = {
-    A: baselinePerOption + (row?.a_count || 0),
-    B: baselinePerOption + (row?.b_count || 0),
-    C: baselinePerOption + (row?.c_count || 0),
-    D: baselinePerOption + (row?.d_count || 0),
-    E: baselinePerOption + (row?.e_count || 0),
-    F: baselinePerOption + (row?.f_count || 0),
-    G: baselinePerOption + (row?.g_count || 0),
-    H: baselinePerOption + (row?.h_count || 0),
-  };
-  
-  // Distribute remainder to first few options
-  for (let i = 0; i < remainder; i++) {
-    if (availableOptions[i]) {
-      optionCounts[availableOptions[i]] = (optionCounts[availableOptions[i]] || 0) + 1;
-    }
-  }
   
   // Calculate percentages
   const optionPercentages: Record<string, number> = {};
@@ -155,8 +185,9 @@ export async function POST(request: Request) {
     // Compute stats with baseline data for all questions
     const result = questionIds.map((questionId: number) => {
       const row = statsMap.get(questionId) || null;
+      const correctAnswer = questionMap.get(questionId) || null;
       // Use default options A-H, or could be customized based on question type
-      return computeStatsWithBaseline(row, questionId);
+      return computeStatsWithBaseline(row, questionId, correctAnswer);
     });
 
     return NextResponse.json({ stats: result });

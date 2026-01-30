@@ -185,6 +185,94 @@ export async function hasActiveSession(): Promise<string | null> {
 }
 
 /**
+ * Unified session detection - checks both IndexedDB and database
+ * Returns the most recent active session ID, or null if none found
+ * Also reconciles differences (database is source of truth for ended_at)
+ */
+export async function findActiveSession(): Promise<{ sessionId: string; source: 'indexeddb' | 'database' } | null> {
+  try {
+    // Check IndexedDB first (faster, local)
+    const indexedDBSessionId = await hasActiveSession();
+    
+    // Check database for in-progress sessions
+    let databaseSessionId: string | null = null;
+    try {
+      const response = await fetch('/api/papers/sessions?in_progress=true', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const sessions = data.sessions || [];
+        if (sessions.length > 0) {
+          // Sort by started_at descending and take most recent
+          const sorted = sessions.sort((a: any, b: any) => {
+            const aTime = a.started_at ? new Date(a.started_at).getTime() : 0;
+            const bTime = b.started_at ? new Date(b.started_at).getTime() : 0;
+            return bTime - aTime;
+          });
+          databaseSessionId = sorted[0].id;
+        }
+      }
+    } catch (dbError) {
+      console.warn('[findActiveSession] Failed to check database:', dbError);
+      // Continue with IndexedDB result if database check fails
+    }
+    
+    // Reconcile differences
+    if (indexedDBSessionId && databaseSessionId) {
+      // Both have sessions - check if they match
+      if (indexedDBSessionId === databaseSessionId) {
+        // Same session, use database as source of truth
+        return { sessionId: databaseSessionId, source: 'database' };
+      } else {
+        // Different sessions - prefer database (more authoritative)
+        console.warn('[findActiveSession] Session mismatch:', {
+          indexedDB: indexedDBSessionId,
+          database: databaseSessionId
+        });
+        // Clean up IndexedDB session if it doesn't exist in database
+        try {
+          await deleteSession(indexedDBSessionId);
+        } catch (deleteError) {
+          console.error('[findActiveSession] Failed to clean up IndexedDB session:', deleteError);
+        }
+        return { sessionId: databaseSessionId, source: 'database' };
+      }
+    } else if (databaseSessionId) {
+      // Only database has session - IndexedDB might be out of sync
+      return { sessionId: databaseSessionId, source: 'database' };
+    } else if (indexedDBSessionId) {
+      // Only IndexedDB has session - might be orphaned, but use it
+      // Check if it's actually ended in database
+      try {
+        const response = await fetch(`/api/papers/sessions?id=${indexedDBSessionId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.session && data.session.ended_at) {
+            // Session is ended in database, clean up IndexedDB
+            await deleteSession(indexedDBSessionId);
+            return null;
+          }
+        }
+      } catch (checkError) {
+        console.warn('[findActiveSession] Failed to verify IndexedDB session:', checkError);
+      }
+      return { sessionId: indexedDBSessionId, source: 'indexeddb' };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('[findActiveSession] Failed to find active session:', error);
+    return null;
+  }
+}
+
+/**
  * Get all active sessions (for debugging/admin purposes)
  */
 export async function getAllSessions(): Promise<SessionData[]> {

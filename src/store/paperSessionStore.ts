@@ -90,6 +90,7 @@ interface PaperSessionState {
 
   sessionPersistPromise: Promise<unknown> | null;
   persistTimer: ReturnType<typeof setTimeout> | null;
+  pendingPersistQueue: Array<{ payload: any; retries: number; timestamp: number }>; // Queue for failed persists
   
   // Actions
   startSession: (config: {
@@ -140,7 +141,8 @@ interface PaperSessionState {
   getSectionRemainingTime: (sectionIndex: number) => number;
 
   schedulePersist: () => void;
-  persistSessionToServer: (options?: { immediate?: boolean }) => Promise<void>;
+  persistSessionToServer: (options?: { immediate?: boolean; retry?: number }) => Promise<void>;
+  processPendingPersists: () => Promise<void>;
   
   loadSessionFromDatabase: (sessionId: string) => Promise<void>;
   
@@ -212,6 +214,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       notes: '',
       sessionPersistPromise: null,
       persistTimer: null,
+      pendingPersistQueue: [],
       
       // Actions
       /**
@@ -295,6 +298,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           questionsLoading: false,
           questionsError: null,
           sessionPersistPromise: null,
+          pendingPersistQueue: [],
           // Reset section-related state
           currentSectionIndex: 0,
           sectionInstructionTimer: null,
@@ -950,6 +954,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           notes: '',
           persistTimer: null,
           sessionPersistPromise: null,
+          pendingPersistQueue: [],
         });
       },
 
@@ -1047,6 +1052,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             (mistakeTags[i] || 'None') as MistakeTag
           );
 
+          // Determine last visited question - find last question with an answer or visited
+          let lastVisitedIndex = 0;
+          for (let i = paddedAnswers.length - 1; i >= 0; i--) {
+            if (paddedAnswers[i]?.choice !== null && paddedAnswers[i]?.choice !== undefined) {
+              lastVisitedIndex = i;
+              break;
+            }
+          }
+          
+          // Mark questions as visited up to last answered question
+          const visitedQuestions = Array.from({ length: totalQuestions }, (_, i) => i <= lastVisitedIndex);
+
           set({
             answers: paddedAnswers,
             perQuestionSec: paddedPerQuestionSec,
@@ -1054,13 +1071,49 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             guessedFlags: paddedGuessedFlags,
             reviewFlags: paddedReviewFlags,
             mistakeTags: paddedMistakeTags,
-            visitedQuestions: Array.from({ length: totalQuestions }, () => false),
+            visitedQuestions: visitedQuestions,
             sectionStarts: {},
+            currentQuestionIndex: lastVisitedIndex, // Restore to last answered question
+            // Initialize section state - will be recalculated after questions load
+            currentSectionIndex: 0,
+            sectionElapsedTimes: [],
+            sectionTimeLimits: [],
+            sectionStartTimes: [],
+            sectionDeadlines: [],
+            isPaused: false, // Assume not paused when loading from database
+            pausedAt: null,
+            sectionInstructionTimer: null,
+            sectionInstructionDeadline: null,
+            instructionTimerStartedAt: null,
+            currentPipelineState: "section",
+            allSectionsQuestions: [],
           });
 
           // Load questions if paperId is available
           if (paperId) {
             await get().loadQuestions(paperId);
+            
+            // After questions load, restore section state
+            const stateAfterLoad = get();
+            if (stateAfterLoad.allSectionsQuestions.length > 0) {
+              // Find which section the last visited question belongs to
+              let targetSectionIndex = 0;
+              for (let i = 0; i < stateAfterLoad.allSectionsQuestions.length; i++) {
+                const sectionQuestions = stateAfterLoad.allSectionsQuestions[i];
+                const questionIds = sectionQuestions.map(q => q.id);
+                const currentQuestion = stateAfterLoad.questions[lastVisitedIndex];
+                if (currentQuestion && questionIds.includes(currentQuestion.id)) {
+                  targetSectionIndex = i;
+                  break;
+                }
+              }
+              
+              // Restore section index and calculate section time limits
+              stateAfterLoad.calculateSectionTimeLimits();
+              
+              // Set current section index
+              set({ currentSectionIndex: targetSectionIndex });
+            }
           }
         } catch (error) {
           console.error('[paperSessionStore] Failed to load session from database', error);
@@ -1069,7 +1122,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
 
       /**
-       * Persist session data to the server
+       * Persist session data to the server with retry logic
        * 
        * This saves the current session state including:
        * - All answers, flags, and timing data
@@ -1082,14 +1135,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
        * - Used by roadmap and library to show completion status
        * 
        * @param options.immediate - If true, persist immediately instead of debouncing
+       * @param options.retry - Internal parameter for retry attempts
        */
-      persistSessionToServer: async ({ immediate = false } = {}) => {
+      persistSessionToServer: async ({ immediate = false, retry = 0 } = {}) => {
         const state = get();
         if (!state.sessionId) {
           return;
         }
 
-        if (state.sessionPersistPromise) {
+        if (state.sessionPersistPromise && retry === 0) {
           try {
             await state.sessionPersistPromise;
           } catch {
@@ -1100,7 +1154,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (state.persistTimer && immediate) {
           clearTimeout(state.persistTimer);
           set({ persistTimer: null });
-        } else if (state.persistTimer && !immediate) {
+        } else if (state.persistTimer && !immediate && retry === 0) {
           return;
         }
 
@@ -1139,26 +1193,74 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           },
         };
 
-        try {
-          const response = await fetch("/api/papers/sessions", {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('[persistSessionToServer] Persist failed', {
-              status: response.status,
-              statusText: response.statusText,
-              errorText
+        const persistPromise = (async () => {
+          try {
+            const response = await fetch("/api/papers/sessions", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
             });
-            throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('[persistSessionToServer] Persist failed', {
+                status: response.status,
+                statusText: response.statusText,
+                errorText,
+                retry
+              });
+              
+              // Retry logic: exponential backoff (max 3 retries)
+              if (retry < 3 && response.status >= 500) {
+                // Only retry on server errors (5xx), not client errors (4xx)
+                const delay = Math.min(1000 * Math.pow(2, retry), 5000); // 1s, 2s, 4s, max 5s
+                console.log(`[persistSessionToServer] Retrying in ${delay}ms (attempt ${retry + 1}/3)`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return get().persistSessionToServer({ immediate: true, retry: retry + 1 });
+              } else if (retry < 3) {
+                // For other errors, queue for later retry
+                const currentState = get();
+                const queue = [...currentState.pendingPersistQueue];
+                queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
+                set({ pendingPersistQueue: queue });
+                console.log('[persistSessionToServer] Queued for retry', { queueLength: queue.length });
+              } else {
+                throw new Error(`Persist failed with status ${response.status}: ${errorText}`);
+              }
+            } else {
+              // Success - clear any queued items for this session
+              const currentState = get();
+              const filteredQueue = currentState.pendingPersistQueue.filter(
+                item => item.payload.id !== payload.id
+              );
+              if (filteredQueue.length !== currentState.pendingPersistQueue.length) {
+                set({ pendingPersistQueue: filteredQueue });
+              }
+            }
+          } catch (error) {
+            // Network errors - queue for retry
+            if (retry < 3) {
+              const currentState = get();
+              const queue = [...currentState.pendingPersistQueue];
+              queue.push({ payload, retries: retry + 1, timestamp: Date.now() });
+              set({ pendingPersistQueue: queue });
+              console.log('[persistSessionToServer] Network error, queued for retry', error);
+            } else {
+              console.error('[persistSessionToServer] Max retries exceeded', error);
+              throw error;
+            }
           }
-          
-          const responseData = await response.json().catch(() => null);
+        })();
+
+        // Store promise for immediate calls
+        if (immediate) {
+          set({ sessionPersistPromise: persistPromise });
+        }
+
+        try {
+          const responseData = await persistPromise;
 
           const latest = get();
           if (latest.endedAt) {
@@ -1205,6 +1307,68 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
         } catch (error) {
           console.error("[papers] failed updating session", error);
+        }
+      },
+      
+      /**
+       * Process pending persist queue - retry failed persists
+       */
+      processPendingPersists: async () => {
+        const state = get();
+        if (state.pendingPersistQueue.length === 0) return;
+        
+        const now = Date.now();
+        const maxAge = 5 * 60 * 1000; // 5 minutes
+        
+        // Filter out old items and process recent ones
+        const itemsToRetry = state.pendingPersistQueue.filter(item => {
+          const age = now - item.timestamp;
+          return age < maxAge && item.retries < 3;
+        });
+        
+        if (itemsToRetry.length === 0) {
+          // Clear old items
+          set({ pendingPersistQueue: [] });
+          return;
+        }
+        
+        // Process items one by one
+        for (const item of itemsToRetry) {
+          try {
+            const response = await fetch("/api/papers/sessions", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(item.payload),
+            });
+            
+            if (response.ok) {
+              // Success - remove from queue
+              const currentState = get();
+              const filtered = currentState.pendingPersistQueue.filter(
+                q => q.payload.id !== item.payload.id || q.timestamp !== item.timestamp
+              );
+              set({ pendingPersistQueue: filtered });
+            } else {
+              // Still failed - increment retries
+              const currentState = get();
+              const updated = currentState.pendingPersistQueue.map(q =>
+                q.payload.id === item.payload.id && q.timestamp === item.timestamp
+                  ? { ...q, retries: q.retries + 1, timestamp: now }
+                  : q
+              );
+              set({ pendingPersistQueue: updated });
+            }
+          } catch (error) {
+            console.error('[processPendingPersists] Failed to retry persist:', error);
+            // Increment retries
+            const currentState = get();
+            const updated = currentState.pendingPersistQueue.map(q =>
+              q.payload.id === item.payload.id && q.timestamp === item.timestamp
+                ? { ...q, retries: q.retries + 1, timestamp: now }
+                : q
+            );
+            set({ pendingPersistQueue: updated });
+          }
         }
       },
       
@@ -1445,22 +1609,51 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                                 state.sectionInstructionTimer !== null && 
                                 state.sectionInstructionTimer > 0;
         
-        if (wasOnInstruction) {
+        // Check if instruction timer expired while paused
+        let instructionTimerRemaining: number | null = state.sectionInstructionTimer;
+        if (wasOnInstruction && state.pausedAt && instructionTimerRemaining !== null) {
+          // Recalculate remaining time based on when it was paused
+          const pausedAt = state.pausedAt;
+          if (state.sectionInstructionDeadline) {
+            const elapsedWhilePaused = now - pausedAt;
+            const remainingAtPause = Math.max(0, state.sectionInstructionDeadline - pausedAt);
+            instructionTimerRemaining = Math.max(0, Math.floor((remainingAtPause - elapsedWhilePaused) / 1000));
+          }
+        }
+        
+        // If instruction timer expired, skip to section
+        const shouldSkipInstruction = wasOnInstruction && (instructionTimerRemaining === null || instructionTimerRemaining <= 0);
+        
+        // Restore currentQuestionIndex - find last visited question or use current
+        let restoredQuestionIndex = state.currentQuestionIndex;
+        if (state.visitedQuestions && state.visitedQuestions.length > 0) {
+          // Find the last visited question
+          const lastVisitedIndex = state.visitedQuestions.lastIndexOf(true);
+          if (lastVisitedIndex >= 0 && lastVisitedIndex < state.questions.length) {
+            restoredQuestionIndex = lastVisitedIndex;
+          }
+        }
+        // Ensure index is valid
+        if (restoredQuestionIndex < 0 || restoredQuestionIndex >= state.questions.length) {
+          restoredQuestionIndex = Math.max(0, Math.min(state.questions.length - 1, restoredQuestionIndex));
+        }
+        
+        if (wasOnInstruction && !shouldSkipInstruction && instructionTimerRemaining !== null) {
           // Restore instruction timer - recalculate deadline based on remaining time
-          const remainingSeconds = state.sectionInstructionTimer || 0;
-          const newDeadline = now + (remainingSeconds * 1000);
+          const newDeadline = now + (instructionTimerRemaining * 1000);
           
           set({
             isPaused: false,
             pausedAt: null,
-            sectionInstructionTimer: remainingSeconds,
+            sectionInstructionTimer: instructionTimerRemaining,
             sectionInstructionDeadline: newDeadline,
-            instructionTimerStartedAt: now - ((60 - remainingSeconds) * 1000), // Approximate start time
+            instructionTimerStartedAt: now - ((60 - instructionTimerRemaining) * 1000), // Approximate start time
             currentPipelineState: "instruction",
+            currentQuestionIndex: restoredQuestionIndex,
             lastActiveTimestamp: now,
           });
         } else {
-          // Resume active section - skip instruction timer
+          // Resume active section - skip instruction timer (either wasn't on instruction or timer expired)
           const sectionTimeLimit = state.sectionTimeLimits[currentSectionIndex] || 60;
           const elapsedMs = state.sectionElapsedTimes[currentSectionIndex] || 0;
           
@@ -1483,9 +1676,15 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             sectionInstructionDeadline: null,
             instructionTimerStartedAt: null,
             currentPipelineState: "section",
+            currentQuestionIndex: restoredQuestionIndex,
             lastActiveTimestamp: now,
           });
         }
+        
+        // Persist immediately to ensure state is saved
+        get().persistSessionToServer({ immediate: true }).catch((error) => {
+          console.error("[paperSessionStore] Failed to persist on resume:", error);
+        });
       },
       
       updateTimerState: () => {
