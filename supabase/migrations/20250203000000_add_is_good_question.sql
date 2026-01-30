@@ -14,3 +14,4 @@ COMMENT ON COLUMN ai_generated_questions.is_good_question IS
 
 
 
+

@@ -306,12 +306,6 @@ export function useBuilderSession() {
   );
 
   const startSession = useCallback(() => {
-    console.log("[startSession] DEBUG: Starting session", { 
-      hasUser: !!authSession?.user, 
-      topicVariants: selectedTopicVariants.length,
-      questionCount 
-    });
-    
     if (selectedTopicVariants.length === 0) {
       console.warn("[startSession] No topics selected, cannot start");
       alert("Please add at least one topic to start a session.");
@@ -331,7 +325,6 @@ export function useBuilderSession() {
       return topic?.category === "arithmetic";
     });
     setMode(isMentalMath ? "mental-math" : "standard");
-    console.log("[startSession] DEBUG: Mode set to", isMentalMath ? "mental-math" : "standard");
 
     // Convert variant selections to topic IDs and difficulty levels for generator
     const topicIds = selectedTopicVariants.map(tv => tv.topicId);
@@ -354,7 +347,6 @@ export function useBuilderSession() {
     });
     
     const questions = generateMixedQuestions(topicIds, questionCount, variantToLevelMap);
-    console.log("[startSession] DEBUG: Generated questions", { count: questions.length });
     
     if (questions.length === 0) {
       console.error("[startSession] No questions generated!");
@@ -372,7 +364,6 @@ export function useBuilderSession() {
       attempts: 0,
     };
 
-    console.log("[startSession] DEBUG: Setting session and switching to running view");
     setCurrentSession(session);
     setCurrentQuestionIndex(0);
     setQuestionStartTime(Date.now());
@@ -386,12 +377,6 @@ export function useBuilderSession() {
       // Create session first, then insert questions
       (async () => {
         try {
-          console.log("[startSession] DEBUG: Creating builder_session", {
-            sessionId,
-            userId: authSession.user.id,
-            startedAt: new Date(startedAt).toISOString(),
-          });
-
           const { data: sessionData, error: sessionError } = await (supabase as any)
             .from("builder_sessions")
             .insert({
@@ -419,10 +404,6 @@ export function useBuilderSession() {
             return; // Don't try to insert questions if session creation failed
           }
 
-          console.log("[startSession] DEBUG: Builder session created successfully", {
-            sessionId: sessionData?.id,
-          });
-
           // Now insert questions after session is created
           if (questions.length > 0) {
             const rows = questions.map((q, index) => ({
@@ -437,11 +418,6 @@ export function useBuilderSession() {
               payload: q,
             }));
 
-            console.log("[startSession] DEBUG: Inserting session questions", {
-              sessionId,
-              questionCount: rows.length,
-            });
-
             const { data: questionsData, error: questionsError } = await (supabase as any)
               .from("builder_session_questions")
               .insert(rows)
@@ -455,11 +431,6 @@ export function useBuilderSession() {
                 errorDetails: questionsError.details,
                 sessionId,
                 questionCount: rows.length,
-              });
-            } else {
-              console.log("[startSession] DEBUG: Session questions inserted successfully", {
-                sessionId,
-                insertedCount: questionsData?.length || 0,
               });
             }
           }
@@ -500,18 +471,10 @@ export function useBuilderSession() {
 
   const finalizeSession = useCallback(
     async (sessionId: string, attempts: number) => {
-      if (!authSession?.user) {
-        console.warn("[finalizeSession] WARNING: Skipping - no user session");
+      if (!authSession?.user || !currentSession) {
+        console.warn("[finalizeSession] WARNING: Skipping - no user session or current session");
         return;
       }
-      
-      console.log("[finalizeSession] DEBUG: Starting session finalization", {
-        sessionId,
-        userId: authSession.user.id,
-        attemptCount: attempts,
-        attemptLogLength: attemptLog.length,
-        questionCount: currentSession?.questions.length || 0,
-      });
       
       // Update builder_sessions table
       const { error: updateError } = await (supabase as any)
@@ -534,8 +497,6 @@ export function useBuilderSession() {
         return;
       }
 
-      console.log("[finalizeSession] DEBUG: Builder session updated, saving analytics");
-
       // Save comprehensive analytics data
       const { saveSessionAnalytics } = await import("@/lib/analytics/session-saver");
       
@@ -544,13 +505,6 @@ export function useBuilderSession() {
         topicId: q.topicId,
         variantId: undefined, // GeneratedQuestion doesn't track variantId
       })) || [];
-
-      console.log("[finalizeSession] DEBUG: Prepared question topics", {
-        questionTopicsCount: questionTopics.length,
-        uniqueTopics: [...new Set(questionTopics.map(qt => qt.topicId))],
-        startedAt: currentSession?.startedAt || Date.now(),
-        endedAt: Date.now(),
-      });
 
       try {
         await saveSessionAnalytics(supabase, {
@@ -561,7 +515,6 @@ export function useBuilderSession() {
           startedAt: currentSession?.startedAt || Date.now(),
           endedAt: Date.now(),
         });
-        console.log("[finalizeSession] SUCCESS: Analytics saved successfully");
       } catch (error) {
         console.error("[finalizeSession] ERROR: Failed to save analytics", {
           error,

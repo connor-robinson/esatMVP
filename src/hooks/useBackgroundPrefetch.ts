@@ -40,7 +40,6 @@ export function useBackgroundPrefetch(config: PrefetchConfig) {
         isPrefetching.current = true;
         await router.prefetch(route);
         prefetchedRoutes.current.add(route);
-        console.log(`✅ Prefetched route: ${route}`);
       } catch (error) {
         console.warn(`❌ Failed to prefetch route: ${route}`, error);
       } finally {

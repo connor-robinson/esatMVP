@@ -16,6 +16,6 @@ declare global {
 
 export function useQuicklink() {
   useEffect(() => {
-    console.log("Quicklink temporarily disabled to fix exports error");
+    // Quicklink temporarily disabled to fix exports error
   }, []);
 }

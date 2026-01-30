@@ -382,21 +382,11 @@ export function useQuestionBank(): UseQuestionBankReturn {
       params.append('random', 'true');
 
       const prefetchUrl = `/api/question-bank/questions?${params.toString()}`;
-      console.log('[useQuestionBank] 🚀 PREFETCHING from API:', prefetchUrl);
       
       const response = await fetch(prefetchUrl);
       
       // Parse response to get debug logs
       const responseData = await response.json().catch(() => ({}));
-      
-      // Log all server-side debug logs in browser console
-      if (responseData.debugLogs && Array.isArray(responseData.debugLogs)) {
-        console.group('🔍 [Question Bank API] Prefetch Server Debug Logs');
-        responseData.debugLogs.forEach((log: string) => {
-          console.log(log);
-        });
-        console.groupEnd();
-      }
       
       if (response.ok) {
         const data = responseData;
@@ -436,8 +426,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Fetch a new question (with caching)
   const fetchQuestion = useCallback(async (useCache: boolean = true) => {
-    console.log('[useQuestionBank] fetchQuestion called', { useCache, filters });
-    
     // Check if filters changed - if so, clear cache
     const currentFiltersHash = getFiltersHash();
     if (currentFiltersHash !== lastFiltersHash.current) {
@@ -505,21 +493,10 @@ export function useQuestionBank(): UseQuestionBankReturn {
       params.append('random', 'true');
 
       const apiUrl = `/api/question-bank/questions?${params.toString()}`;
-      console.log('[useQuestionBank] 🚀 FETCHING from API:', apiUrl);
-      console.log('[useQuestionBank] Filters being sent:', filters);
       
       const response = await fetch(apiUrl);
       
-      // Log all server-side debug logs in browser console
       const responseData = await response.json().catch(() => ({}));
-      
-      if (responseData.debugLogs && Array.isArray(responseData.debugLogs)) {
-        console.group('🔍 [Question Bank API] Server Debug Logs');
-        responseData.debugLogs.forEach((log: string) => {
-          console.log(log);
-        });
-        console.groupEnd();
-      }
       
       if (!response.ok) {
         const errorData = responseData;
@@ -595,8 +572,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
       timeUntilCorrectMs?: number | null;
     }
   ) => {
-    console.log('[useQuestionBank] submitAnswer called', { answer, correct, currentQuestion: currentQuestion?.id, metadata });
-    
     if (!currentQuestion) {
       console.error('[useQuestionBank] No current question');
       return;
@@ -645,7 +620,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
             
             // Retry once if it's a server error (5xx) or network error
             if (retryCount === 0 && (response.status >= 500 || response.status === 0)) {
-              console.log('[useQuestionBank] Retrying attempt save...');
               await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
               return saveAttempt(1);
             }
@@ -654,11 +628,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
           }
 
           const data = await response.json();
-          console.log('[useQuestionBank] Successfully saved attempt:', {
-            questionId: currentQuestion.id,
-            attemptId: data.attempt?.id,
-            isCorrect: correct
-          });
           return true;
         } catch (err) {
           console.error('[useQuestionBank] Error saving attempt:', err, {
@@ -668,7 +637,6 @@ export function useQuestionBank(): UseQuestionBankReturn {
           
           // Retry once on network errors
           if (retryCount === 0) {
-            console.log('[useQuestionBank] Retrying attempt save after error...');
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
             return saveAttempt(1);
           }

@@ -72,8 +72,6 @@ export default function PapersRoadmapPage() {
           acc[stage.examName].push(stage.id);
           return acc;
         }, {} as Record<string, string[]>);
-        console.log("[roadmap] Loaded stages by exam:", stagesByExam);
-        console.log("[roadmap] Total stages loaded:", loadedStages.length);
         
         // Debug: Check for duplicates
         const stageIds = loadedStages.map(s => s.id);
@@ -101,6 +99,8 @@ export default function PapersRoadmapPage() {
     if (stages.length === 0) return; // Wait for stages to load
 
     async function loadCompletionData() {
+      // Set loading to true at start
+      setLoading(true);
       try {
         // 1. Get completion data for each stage
         const completionMap = new Map<
@@ -185,6 +185,21 @@ export default function PapersRoadmapPage() {
         setCurrentStageIndex(currentIndex ?? 0);
       } catch (error) {
         console.error("[roadmap] Error loading completion data:", error);
+        // Set default completion data on error to prevent infinite loading
+        const defaultCompletionMap = new Map<
+          string,
+          { completed: number; total: number; parts: Map<string, boolean> }
+        >();
+        for (const stage of stages) {
+          defaultCompletionMap.set(stage.id, {
+            completed: 0,
+            total: stage.parts.length,
+            parts: new Map<string, boolean>(),
+          });
+        }
+        setCompletionData(defaultCompletionMap);
+        setUnlockedStages(new Set([stages[0]?.id].filter(Boolean)));
+        setCurrentStageIndex(0);
       } finally {
         setLoading(false);
       }
@@ -361,21 +376,11 @@ export default function PapersRoadmapPage() {
       if (session?.user?.id) {
         // Sync cache with database on refresh (will use cache if valid)
         const { syncWithDatabase } = await import('@/lib/papers/completionCache');
-        console.log('[roadmap] Refreshing completion data for user:', session.user.id);
         const completedIds = await syncWithDatabase(session.user.id);
-        console.log('[roadmap] Completed part IDs after sync:', completedIds.size, Array.from(completedIds));
         
         for (const stage of stages) {
-          console.log('[roadmap] Processing stage:', stage.id, stage.examName, stage.year);
           const count = await getStageCompletionCount(session.user.id, stage);
           const parts = await getStageCompletion(session.user.id, stage);
-
-          console.log('[roadmap] Stage completion:', {
-            stageId: stage.id,
-            completed: count.completed,
-            total: count.total,
-            parts: Object.fromEntries(parts)
-          });
 
           completionMap.set(stage.id, {
             completed: count.completed,

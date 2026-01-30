@@ -12,24 +12,20 @@ import { useEffect, useRef, useCallback } from 'react';
 export function waitForMathJax(timeout = 10000): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === 'undefined') {
-      console.log('[MathJax] Window not available');
       resolve(false);
       return;
     }
 
     // Check if MathJax is already loaded and ready
     if (window.MathJax?.typesetPromise) {
-      console.log('[MathJax] Already loaded and ready');
       resolve(true);
       return;
     }
 
-    console.log('[MathJax] Waiting for MathJax to load...');
     const startTime = Date.now();
     
     // Listen for the mathjax-ready event
     const handleReady = () => {
-      console.log('[MathJax] Received ready event');
       if (window.MathJax?.typesetPromise) {
         window.removeEventListener('mathjax-ready', handleReady);
         clearInterval(checkInterval);
@@ -41,7 +37,6 @@ export function waitForMathJax(timeout = 10000): Promise<boolean> {
     // Also poll as fallback
     const checkInterval = setInterval(() => {
       if (window.MathJax?.typesetPromise) {
-        console.log('[MathJax] Loaded after', Date.now() - startTime, 'ms');
         window.removeEventListener('mathjax-ready', handleReady);
         clearInterval(checkInterval);
         resolve(true);

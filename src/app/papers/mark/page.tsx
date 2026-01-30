@@ -1269,7 +1269,7 @@ export default function PapersMarkPage() {
         <PageHeader title="Mark Session" description="Review answers, mark correctness, and study solutions." />
 
         {/* Main two-column layout - connected container with equal height */}
-        <Card className="p-0 bg-neutral-900 border-0 overflow-hidden lg:h-[120vh]">
+        <Card className="p-0 bg-neutral-900 border-0 overflow-hidden lg:h-[156vh]">
           <div
             className="grid grid-cols-1 lg:[grid-template-columns:var(--left-col)_minmax(0,1fr)] h-full"
             style={{ ['--left-col' as any]: `${LEFT_COLUMN_WIDTH_PX}px` }}
@@ -1315,14 +1315,14 @@ export default function PapersMarkPage() {
               </div>
                               <div className="flex items-center gap-2">
                                 <div className="text-[11px] opacity-90">{gCorrect}/{gTotal}</div>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90 transition-transform duration-200 -rotate-90 group-open:rotate-0">
                                   <polyline points="6 9 12 15 18 9" />
                                 </svg>
             </div>
           </div>
           </div>
                         </summary>
-                        <div className="mt-1 space-y-1 px-0.5 pb-1 bg-[#0f1114] rounded-md group-open:rounded-b-md group-open:rounded-t-none">
+                        <div className="mt-1 space-y-1 px-0.5 pb-1 bg-[#0f1114] rounded-md group-open:rounded-b-md group-open:rounded-t-none transition-all duration-200">
                         {group.indexes.map((index) => {
                           const qNumber = questionNumbers[index];
               const answer = answers[index];
@@ -2388,8 +2388,8 @@ export default function PapersMarkPage() {
                 if (!stats) {
                   if (statsLoading) {
                     return (
-                      <div className="mb-4 p-3 rounded-md border border-white/10 bg-[#0f1114]">
-                        <div className="text-xs text-neutral-400">Loading community stats...</div>
+                      <div className="mb-4 py-3">
+                        <div className="text-xs text-neutral-500">Loading community stats...</div>
                       </div>
                     );
                   }
@@ -2397,72 +2397,60 @@ export default function PapersMarkPage() {
                 }
 
                 return (
-                  <div className="mb-4 p-4 rounded-md border border-white/10 bg-[#0f1114]">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="text-sm font-semibold text-neutral-200">Community Stats</div>
-                      {!stats.hasSufficientData && (
-                        <div className="text-xs text-neutral-500">Insufficient data</div>
-                      )}
+                  <div className="mb-4 space-y-3">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Community Stats</div>
+                      <div className="text-xs text-neutral-500">{stats.attempts} attempts</div>
                     </div>
                     
-                    {stats.hasSufficientData ? (
-                      <div className="space-y-3">
-                        {/* Average Time */}
-                        <div className="flex items-center justify-between">
-                          <div className="text-xs text-neutral-400">Average time</div>
-                          <div className="text-sm text-neutral-200 font-medium">
-                            {stats.avgTimeSeconds.toFixed(1)}s
-                          </div>
-                        </div>
-                        
-                        {/* Answer Distribution */}
-                        <div>
-                          <div className="text-xs text-neutral-400 mb-2">Answer distribution</div>
-                          <div className="space-y-1.5">
-                            {LETTERS.map((letter) => {
-                              const percentage = stats.optionPercentages[letter] || 0;
-                              const count = stats.optionCounts[letter] || 0;
-                              const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
-                              const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
-                              
-                              return (
-                                <div key={letter} className="flex items-center gap-2">
-                                  <div className="w-6 text-xs text-neutral-300 font-medium">{letter}</div>
-                                  <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
-                                    <div
-                                      className="h-full rounded-full transition-all"
-                                      style={{
-                                        width: `${percentage}%`,
-                                        backgroundColor: isCorrect
-                                          ? "#6c9e69"
-                                          : isUserChoice
-                                          ? "#b89f5a"
-                                          : "#4a5568",
-                                      }}
-                                    />
-                                  </div>
-                                  <div className="w-12 text-xs text-neutral-400 text-right">
-                                    {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
-                                  </div>
-                                  {count > 0 && (
-                                    <div className="w-8 text-xs text-neutral-500 text-right">
-                                      ({count})
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div className="mt-2 text-xs text-neutral-500">
-                            {stats.attempts} total attempts
-                          </div>
-                        </div>
+                    {/* Average Time */}
+                    <div className="flex items-center justify-between py-2">
+                      <div className="text-xs text-neutral-400">Average time</div>
+                      <div className="text-sm text-neutral-200 font-medium">
+                        {formatTime(Math.round(stats.avgTimeSeconds))}
                       </div>
-                    ) : (
-                      <div className="text-xs text-neutral-500">
-                        Stats will appear after {30 - stats.attempts} more attempts
+                    </div>
+                    
+                    {/* Answer Distribution */}
+                    <div className="space-y-2">
+                      <div className="text-xs text-neutral-400 mb-2">Answer distribution</div>
+                      <div className="space-y-1.5">
+                        {LETTERS.map((letter) => {
+                          const percentage = stats.optionPercentages[letter] || 0;
+                          const count = stats.optionCounts[letter] || 0;
+                          const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
+                          const isUserChoice = letter === (answers[selectedIndex]?.choice || "").toUpperCase();
+                          
+                          // Only show options that have some percentage or are the correct/user choice
+                          if (percentage === 0 && !isCorrect && !isUserChoice) {
+                            return null;
+                          }
+                          
+                          return (
+                            <div key={letter} className="flex items-center gap-3">
+                              <div className="w-5 text-xs text-neutral-300 font-medium">{letter}</div>
+                              <div className="flex-1 h-1.5 bg-neutral-800/50 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${Math.max(percentage, 0.5)}%`,
+                                    backgroundColor: isCorrect
+                                      ? "#6c9e69"
+                                      : isUserChoice
+                                      ? "#b89f5a"
+                                      : "#5a6370",
+                                  }}
+                                />
+                              </div>
+                              <div className="w-10 text-xs text-neutral-400 text-right">
+                                {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })()}
@@ -2474,70 +2462,101 @@ export default function PapersMarkPage() {
                 const questionImgSrc = (isTMUA && croppedQuestionImage) ? croppedQuestionImage : question?.questionImage;
                 
                 return (
-                  <div className={`grid gap-4 transition-all duration-300 ${isTMUA ? 'grid-cols-1' : (showAnswer ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1')}`}>
+                  <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
                     {/* Question image */}
-                    <div className={`relative rounded-lg p-2 pb-12 transition-all duration-300 ${showAnswer && !isTMUA ? '' : 'w-full'}`} style={{ backgroundColor: isDarkMode ? '#000000' : '#ffffff' }}>
-                      <div className="flex items-center justify-center">
-                        <img
-                          src={questionImgSrc}
-                          alt={`Question ${questionNumbers[selectedIndex]}`}
-                          className="rounded-md object-contain transition-all duration-300"
-                          style={{
-                            transition: "filter 300ms ease-in-out, opacity 300ms ease-in-out, max-height 300ms ease-in-out",
-                            filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                            maxHeight: isTMUA ? 'auto' : (showAnswer ? '72vh' : '84vh'),
-                            width: 'auto',
-                            maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`
-                          }}
-                        />
-                      </div>
-                  {/* Fullscreen Button - Bottom Left */}
-                  <div className="absolute left-8 pointer-events-auto" style={{ bottom: '48px' }}>
-                            <button
-                      onClick={() => {
-                        setIsFullscreen(true);
-                        setFullscreenImage('question');
-                      }}
-                      className="
-                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                      "
-                      title="Enter fullscreen mode"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                      </svg>
-                      <span className="hidden sm:inline">Fullscreen</span>
-                    </button>
-                  </div>
-                  {/* Dark Mode Toggle - Bottom Right */}
-                  <div className="absolute right-8 pointer-events-auto" style={{ bottom: '48px' }}>
-                            <button
-                      onClick={() => setIsDarkMode(!isDarkMode)}
-                      className={`
-                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                        backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                      `}
-                      title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                    >
-                      {isDarkMode ? (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                          </svg>
-                          <span className="hidden sm:inline">Light</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                          <span className="hidden sm:inline">Dark</span>
-                        </>
-                      )}
-                            </button>
+                    <div className={`relative rounded-lg transition-all duration-300 w-full`} style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff' }}>
+                      {/* Scrollable container for image content */}
+                      <div 
+                        className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
+                        style={{
+                          backgroundColor: isDarkMode ? '#000000' : '#ffffff'
+                        }}
+                      >
+                        <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
+                          <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
+                            <div
+                              className="relative inline-block"
+                              style={{
+                                width: 'min(72%, 1100px)',
+                                maxWidth: '1100px',
+                                lineHeight: 0,
+                                transition: 'background-color 300ms ease-in-out'
+                              }}
+                            >
+                              <div
+                                style={{
+                                  position: 'relative',
+                                  display: 'inline-block',
+                                  lineHeight: 0,
+                                  backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                                }}
+                              >
+                                <img
+                                  src={questionImgSrc}
+                                  alt={`Question ${questionNumbers[selectedIndex]}`}
+                                  className="block h-auto w-full transition-opacity duration-300 ease-in-out"
+                                  style={{
+                                    display: 'block',
+                                    height: 'auto',
+                                    width: '100%',
+                                    imageRendering: 'auto',
+                                    borderRadius: 0,
+                                    margin: 0,
+                                    padding: 0,
+                                    verticalAlign: 'bottom',
+                                    filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
+                                    mixBlendMode: isDarkMode ? 'difference' : 'normal'
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      
+                      {/* Fixed overlay for buttons - positioned as sibling of scrollable container */}
+                      <div className="absolute inset-0 pointer-events-none z-50">
+                        {/* Fullscreen Button - Top Left */}
+                        <div className="absolute top-6 left-6 pointer-events-auto">
+                          <button
+                            onClick={() => {
+                              setIsFullscreen(true);
+                              setFullscreenImage('question');
+                            }}
+                            className="
+                              flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
+                              backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
+                            "
+                            title="Enter fullscreen mode"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                            </svg>
+                          </button>
+                        </div>
+                        {/* Dark Mode Toggle - Top Right */}
+                        <div className="absolute top-6 right-6 pointer-events-auto">
+                          <button
+                            onClick={() => setIsDarkMode(!isDarkMode)}
+                            className="
+                              flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
+                              backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
+                            "
+                            title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+                          >
+                            {isDarkMode ? (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Answer/Solution section - only show when showAnswer is true */}
                     {showAnswer && (() => {
@@ -2548,70 +2567,104 @@ export default function PapersMarkPage() {
                       if (isTMUA) {
                         // TMUA: Answer image below question with solution label
                         return (
-                          <div className="relative rounded-lg p-2 pb-12 transition-all duration-300 w-full border-2" style={{ backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
-                            {/* Solution Header */}
-                            <div className="absolute top-3 left-8 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border shadow-sm bg-black/30 border-white/10 text-white/80">
+                          <div className="relative rounded-lg transition-all duration-300 w-full border-2" style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
+                            {/* Scrollable container for image content */}
+                            <div 
+                              className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
+                              style={{
+                                backgroundColor: isDarkMode ? '#000000' : '#ffffff'
+                              }}
+                            >
+                              <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
+                                <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
+                                  <div
+                                    className="relative inline-block"
+                                    style={{
+                                      width: 'min(72%, 1100px)',
+                                      maxWidth: '1100px',
+                                      lineHeight: 0,
+                                      transition: 'background-color 300ms ease-in-out'
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        position: 'relative',
+                                        display: 'inline-block',
+                                        lineHeight: 0,
+                                        backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                                      }}
+                                    >
+                                      <img
+                                        src={answerImgSrc as string}
+                                        alt="Solution"
+                                        className="block h-auto w-full transition-opacity duration-300 ease-in-out"
+                                        style={{
+                                          display: 'block',
+                                          height: 'auto',
+                                          width: '100%',
+                                          imageRendering: 'auto',
+                                          borderRadius: 0,
+                                          margin: 0,
+                                          padding: 0,
+                                          verticalAlign: 'bottom',
+                                          filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
+                                          mixBlendMode: isDarkMode ? 'difference' : 'normal'
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Solution Header - Fixed overlay */}
+                            <div className="absolute top-6 left-6 z-10 px-3 py-1.5 rounded-md backdrop-blur-md border shadow-sm bg-black/30 border-white/10 text-white/80 pointer-events-auto">
                               <div className="text-sm font-normal" style={{ fontFamily: 'Garamond, serif' }}>Official Solution</div>
                             </div>
-                            <div className="flex items-center justify-center">
-                              <img
-                                src={answerImgSrc as string}
-                                alt="Solution"
-                                className="rounded-md object-contain transition-all duration-300"
-                                style={{
-                                  filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                  transition: "filter 300ms ease-in-out",
-                                  maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`
-                                }}
-                        />
+                            
+                            {/* Fixed overlay for buttons */}
+                            <div className="absolute inset-0 pointer-events-none z-50">
+                              {/* Fullscreen Button - Top Left */}
+                              <div className="absolute top-6 right-6 pointer-events-auto">
+                                <button
+                                  onClick={() => {
+                                    setIsFullscreen(true);
+                                    setFullscreenImage('solution');
+                                  }}
+                                  className="
+                                    flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
+                                    backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
+                                  "
+                                  title="Enter fullscreen mode"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                                  </svg>
+                                </button>
+                              </div>
+                              {/* Dark Mode Toggle - Top Right (below fullscreen) */}
+                              <div className="absolute top-20 right-6 pointer-events-auto">
+                                <button
+                                  onClick={() => setIsDarkMode(!isDarkMode)}
+                                  className="
+                                    flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200
+                                    backdrop-blur-sm shadow-sm bg-black/40 text-white/70 hover:bg-black/50 hover:text-white/90
+                                  "
+                                  title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+                                >
+                                  {isDarkMode ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
                       </div>
-                            {/* Fullscreen Button - Bottom Left */}
-                            <div className="absolute left-8 pointer-events-auto" style={{ bottom: '48px' }}>
-                              <button
-                                onClick={() => {
-                                  setIsFullscreen(true);
-                                  setFullscreenImage('solution');
-                                }}
-                                className="
-                                  flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                                  backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                                "
-                                title="Enter fullscreen mode"
-                              >
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                                </svg>
-                                <span className="hidden sm:inline">Fullscreen</span>
-                              </button>
-                            </div>
-                            {/* Dark Mode Toggle - Bottom Right */}
-                            <div className="absolute right-8 pointer-events-auto" style={{ bottom: '48px' }}>
-                              <button
-                                onClick={() => setIsDarkMode(!isDarkMode)}
-                                className={`
-                                  flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-normal transition-all duration-200
-                                  backdrop-blur-sm border shadow-sm bg-black/40 border-white/15 text-white/70 hover:bg-black/50 hover:text-white/90 hover:border-white/25
-                                `}
-                                title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
-                              >
-                                {isDarkMode ? (
-                                  <>
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                    <span className="hidden sm:inline">Light</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                    </svg>
-                                    <span className="hidden sm:inline">Dark</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          </div>
                         );
                       }
                       

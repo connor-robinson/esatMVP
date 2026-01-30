@@ -240,7 +240,6 @@ export async function loadAllCompletedSessionsByPaperName(
   userId: string
 ): Promise<Map<string, Pick<PaperSessionRow, 'id' | 'ended_at' | 'selected_sections' | 'selected_part_ids' | 'paper_name' | 'paper_variant' | 'paper_id' | 'question_start' | 'question_end'>[]>> {
   try {
-    console.log('[completionUtils] loadAllCompletedSessionsByPaperName for user:', userId);
     const { data, error } = await supabase
       .from('paper_sessions')
       .select('id, ended_at, selected_sections, selected_part_ids, paper_name, paper_variant, paper_id, question_start, question_end')
@@ -252,11 +251,8 @@ export async function loadAllCompletedSessionsByPaperName(
       console.error('[completionUtils] Error loading all sessions:', error);
       return new Map();
     }
-
-    console.log('[completionUtils] Loaded sessions:', data?.length || 0);
     
     if (!data || data.length === 0) {
-      console.log('[completionUtils] No completed sessions found');
       return new Map();
     }
 
@@ -266,22 +262,12 @@ export async function loadAllCompletedSessionsByPaperName(
     const typedData = data as SessionType[];
     
     for (const session of typedData) {
-      console.log('[completionUtils] Processing session:', {
-        id: session.id,
-        paperName: session.paper_name,
-        paperVariant: session.paper_variant,
-        selectedPartIds: session.selected_part_ids || [],
-        selectedSections: session.selected_sections || []
-      });
-      
       const paperName = session.paper_name;
       if (!sessionsByPaperName.has(paperName)) {
         sessionsByPaperName.set(paperName, []);
       }
       sessionsByPaperName.get(paperName)!.push(session);
     }
-
-    console.log('[completionUtils] Grouped sessions by paper name:', Array.from(sessionsByPaperName.keys()));
 
     return sessionsByPaperName;
   } catch (error) {

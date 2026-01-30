@@ -225,6 +225,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
        *                                  This is used later to determine completion status
        */
       startSession: (config) => {
+        // Validate questionRange
+        if (!config.questionRange || config.questionRange.end < config.questionRange.start || config.questionRange.start < 1) {
+          console.error('[startSession] Invalid questionRange', config.questionRange);
+          return;
+        }
         const totalQuestions = config.questionRange.end - config.questionRange.start + 1;
         // Generate unique UUID for this session attempt
         // This ensures multiple attempts of the same paper are tracked separately
@@ -705,16 +710,14 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               
               // Always update questionRange to match actual loaded questions
               // This ensures consistency regardless of how questions were filtered
-              const expectedCount = currentState.questionRange.end - currentState.questionRange.start + 1;
+              const expectedCount = (currentState.questionRange && currentState.questionRange.end >= currentState.questionRange.start && currentState.questionRange.start >= 1)
+                ? currentState.questionRange.end - currentState.questionRange.start + 1
+                : 0;
               const needsUpdate = actualQuestionCount !== expectedCount || 
                                   currentState.questionRange.start !== actualQuestionStart ||
                                   currentState.questionRange.end !== actualQuestionEnd;
               
               if (needsUpdate) {
-                // Only log if there's a significant mismatch (more than just rounding differences)
-                if (Math.abs(actualQuestionCount - expectedCount) > 1) {
-                }
-                
                 set({
                   questions: processedQuestions,
                   sectionStarts,
@@ -984,7 +987,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             start: sessionData.question_start || 1,
             end: sessionData.question_end || 1,
           };
-          const totalQuestions = questionRange.end - questionRange.start + 1;
+          // Validate questionRange from database
+          let validQuestionRange = questionRange;
+          if (questionRange.end < questionRange.start || questionRange.start < 1) {
+            console.error('[loadSessionFromDatabase] Invalid questionRange from database', questionRange);
+            validQuestionRange = { start: 1, end: 1 };
+          }
+          const totalQuestions = validQuestionRange.end - validQuestionRange.start + 1;
 
           // Set basic session data
           set({
@@ -1095,6 +1104,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           return;
         }
 
+        // Validate questionRange before calculating totalQuestions
+        if (!state.questionRange || state.questionRange.end < state.questionRange.start || state.questionRange.start < 1) {
+          console.error('[persistSessionToServer] Invalid questionRange', state.questionRange);
+          return;
+        }
+
         const totalQuestions = state.questionRange.end - state.questionRange.start + 1;
 
         const payload = {
@@ -1196,6 +1211,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       // Computed getters
       getTotalQuestions: () => {
         const state = get();
+        if (!state.questionRange || state.questionRange.end < state.questionRange.start || state.questionRange.start < 1) {
+          return 0;
+        }
         return state.questionRange.end - state.questionRange.start + 1;
       },
       

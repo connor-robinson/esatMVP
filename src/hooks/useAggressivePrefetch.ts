@@ -11,7 +11,6 @@ export function useAggressivePrefetch() {
       CRITICAL_ROUTES.forEach((route, index) => {
         setTimeout(() => {
           router.prefetch(route);
-          console.log(`🚀 Aggressively prefetched: ${route}`);
         }, index * 25);
       });
     };

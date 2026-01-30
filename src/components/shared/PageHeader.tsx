@@ -10,7 +10,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, className }: PageHeaderProps) {
   return (
-    <div className={"py-2 space-y-1 " + (className || "")}> 
+    <div className={"py-1 space-y-1 " + (className || "")}> 
       <h1 className="text-xl font-semibold uppercase tracking-wider text-white/70">
         {title}
       </h1>

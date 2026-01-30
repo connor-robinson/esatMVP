@@ -82,7 +82,6 @@ export default function PapersDrillPage() {
 
   const handleNext = (outcome: "correct" | "wrong") => {
     // Here you would update the drill item with the outcome
-    console.log(`Question ${currentQuestion?.questionNumber}: ${outcome}`);
     startNextQuestion();
   };
 

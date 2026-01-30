@@ -75,6 +75,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid questionRange", details: "questionRange with start and end numbers is required" }, { status: 400 });
   }
 
+  // Validate questionRange values are valid (end >= start, both positive)
+  if (payload.questionRange.start < 1 || payload.questionRange.end < payload.questionRange.start) {
+    console.error("[papers:POST] Invalid questionRange values", {
+      start: payload.questionRange.start,
+      end: payload.questionRange.end
+    });
+    return NextResponse.json({ error: "Invalid questionRange", details: "questionRange start must be >= 1 and end must be >= start" }, { status: 400 });
+  }
+
   try {
     const { data, error } = await (supabase as any)
       .from("paper_sessions")
@@ -85,8 +94,8 @@ export async function POST(request: Request) {
         paper_name: payload.paperName,
         paper_variant: payload.paperVariant,
         session_name: payload.sessionName,
-        question_start: payload.questionRange?.start ?? null,
-        question_end: payload.questionRange?.end ?? null,
+        question_start: payload.questionRange.start,
+        question_end: payload.questionRange.end,
         selected_sections: payload.selectedSections ?? [],
         selected_part_ids: payload.selectedPartIds ?? [],
         question_order: payload.questionOrder ?? [],

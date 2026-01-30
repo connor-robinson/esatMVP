@@ -35,7 +35,8 @@ export function ServiceWorkerProvider() {
             document.addEventListener("visibilitychange", onVisible);
           })
           .catch((err) => {
-            console.log("[SW] registration failed", err);
+            // Silently fail - service worker is optional
+            // The 404 error is expected if sw.js doesn't exist
           });
       } else {
         navigator.serviceWorker.getRegistrations().then((regs) => {
