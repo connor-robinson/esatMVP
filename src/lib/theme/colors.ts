@@ -182,3 +182,4 @@ export function getSubjectColor(
   return getThemeColor(colorKey as keyof typeof themeColors, mode);
 }
 
+

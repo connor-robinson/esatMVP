@@ -14,3 +14,4 @@ DROP COLUMN IF EXISTS review_notes CASCADE;
 -- Note: Indexes on these columns will be automatically dropped when columns are removed
 
 
+

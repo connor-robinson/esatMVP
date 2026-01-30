@@ -67,6 +67,7 @@ export default function PapersMarkPage() {
     getTotalQuestions,
     getCorrectCount,
     persistSessionToServer,
+    setEndedAt,
   } = usePaperSessionStore();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -316,6 +317,22 @@ export default function PapersMarkPage() {
     setIsSubmitting(true);
     
     try {
+      // CRITICAL: Set endedAt before persisting so session shows up in analytics/history
+      const currentState = usePaperSessionStore.getState();
+      if (!currentState.endedAt) {
+        console.log('[mark:handleSaveAndContinue] Setting endedAt before saving');
+        setEndedAt(Date.now());
+      }
+      
+      console.log('[mark:handleSaveAndContinue] Saving session', {
+        sessionId: currentState.sessionId,
+        paperId: currentState.paperId,
+        paperName: currentState.paperName,
+        endedAt: currentState.endedAt || Date.now(),
+        selectedSections: currentState.selectedSections,
+        selectedPartIds: currentState.selectedPartIds
+      });
+      
       await persistSessionToServer({ immediate: true });
       
       // Mark part IDs as completed in cache
@@ -331,9 +348,10 @@ export default function PapersMarkPage() {
         }
       }
       
+      console.log('[mark:handleSaveAndContinue] Session saved successfully, navigating to archive');
       router.push("/papers/archive");
     } catch (error) {
-      console.error("Failed to save session:", error);
+      console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
       alert("Failed to save session. Please try again.");
     } finally {
       setIsSubmitting(false);

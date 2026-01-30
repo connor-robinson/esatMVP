@@ -109,6 +109,17 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Missing session id" }, { status: 400 });
   }
 
+  console.log("[papers:PATCH] Updating session", {
+    sessionId: payload.id,
+    paperName: payload.paperName,
+    paperVariant: payload.paperVariant,
+    endedAt: payload.endedAt,
+    endedAtIso: toIso(payload.endedAt),
+    selectedSections: payload.selectedSections,
+    selectedPartIds: payload.selectedPartIds,
+    score: payload.score
+  });
+
   const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .update({
@@ -143,9 +154,26 @@ export async function PATCH(request: Request) {
     .maybeSingle();
 
   if (error) {
-    console.error("[papers] failed updating session", error);
-    return NextResponse.json({ error: "Failed to update session" }, { status: 500 });
+    console.error("[papers:PATCH] failed updating session", {
+      error,
+      errorCode: error.code,
+      errorMessage: error.message,
+      errorDetails: error.details,
+      sessionId: payload.id,
+      userId: session.user.id
+    });
+    return NextResponse.json({ error: "Failed to update session", details: error.message }, { status: 500 });
   }
+
+  console.log("[papers:PATCH] Session updated successfully", {
+    sessionId: payload.id,
+    updatedSession: data ? {
+      id: data.id,
+      paper_name: data.paper_name,
+      ended_at: data.ended_at,
+      updated_at: data.updated_at
+    } : null
+  });
 
   return NextResponse.json({ session: data ?? null });
 }
@@ -180,6 +208,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ session: data ?? null });
   }
 
+  console.log("[papers:GET] Fetching all sessions for user", {
+    userId: session.user.id
+  });
+
   const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .select("*")
@@ -187,9 +219,25 @@ export async function GET(request: Request) {
     .order("started_at", { ascending: false });
 
   if (error) {
-    console.error("[papers] failed listing sessions", error);
+    console.error("[papers:GET] failed listing sessions", {
+      error,
+      errorCode: error.code,
+      errorMessage: error.message,
+      userId: session.user.id
+    });
     return NextResponse.json({ error: "Failed to load sessions" }, { status: 500 });
   }
+
+  console.log("[papers:GET] Fetched sessions", {
+    count: data?.length || 0,
+    sample: data?.slice(0, 3).map((s: any) => ({
+      id: s.id,
+      paper_name: s.paper_name,
+      paper_variant: s.paper_variant,
+      ended_at: s.ended_at,
+      started_at: s.started_at
+    }))
+  });
 
   return NextResponse.json({ sessions: data });
 }
