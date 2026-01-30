@@ -610,7 +610,7 @@ export default function QuestionBankPage() {
           {/* Active Filters and Timer Row */}
           <div className="flex items-center gap-4 flex-wrap">
             {/* Active Filters Container */}
-            <div className="flex items-center justify-between gap-4 flex-wrap px-6 py-4 rounded-organic-md bg-white/[0.02] flex-1">
+            <div className="flex items-center justify-between gap-4 flex-wrap px-6 py-4 rounded-organic-md bg-white/[0.02] flex-1 min-h-[56px]">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-medium text-white/50 font-mono">Active Filters:</span>
                   {(() => {
@@ -670,7 +670,7 @@ export default function QuestionBankPage() {
             
             {/* Timer Container */}
             {(sessionMode ? remainingTime !== null : elapsedTime !== undefined) && (
-              <div className="flex items-center gap-4 px-6 py-4 rounded-organic-md bg-white/[0.02]">
+              <div className="flex items-center gap-4 px-6 py-4 rounded-organic-md bg-white/[0.02] min-h-[56px]">
                 {!sessionMode && (
                   <button
                     onClick={resetTimer}
@@ -868,7 +868,7 @@ export default function QuestionBankPage() {
                 // Next Question Button - shown after answer is revealed or correct
                 <button
                   onClick={handleNextQuestionInSession}
-                  className="px-6 py-3 rounded-organic-md bg-interview/30 hover:bg-interview/40 text-interview transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium"
+                  className="px-6 py-3 rounded-organic-md bg-interview/40 hover:bg-interview/50 text-interview transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium"
                   style={{
                     boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
                   }}

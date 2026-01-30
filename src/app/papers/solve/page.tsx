@@ -535,7 +535,6 @@ export default function PapersSolvePage() {
       
       // Validate: must stay within current section
       if (newSectionIndex < 0 || newSectionIndex >= currentSectionQuestions.length) {
-        console.log('[solve] Navigation blocked: attempting to navigate outside current section');
         return; // Don't navigate outside section
       }
       
@@ -597,7 +596,6 @@ export default function PapersSolvePage() {
     if (isSectionMode && currentSectionQuestions.length > 0) {
       // Ensure index is within current section bounds
       if (sectionRelativeIndex < 0 || sectionRelativeIndex >= currentSectionQuestions.length) {
-        console.log('[solve] Question jump blocked: index outside current section bounds');
         return;
       }
       // Convert section-relative to global index

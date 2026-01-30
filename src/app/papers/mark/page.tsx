@@ -120,7 +120,6 @@ export default function PapersMarkPage() {
         const qs = usePaperSessionStore.getState().questions;
         const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
         const currentPaperName = paperName;
-        console.log('[mark] Loading conversion for paperId', paperId, { examName: currentExamName, paperName: currentPaperName });
         
         // Verify paperId matches expected exam
         const { data: paperCheck } = await supabase
@@ -139,8 +138,6 @@ export default function PapersMarkPage() {
               paperData: paperCheck
             });
             // Still continue but log the error
-          } else {
-            console.log('[mark] Paper ID verified', { paperId, examName: paperExamName, paperName: (paperCheck as any).paper_name, examType: (paperCheck as any).exam_type });
           }
         }
         
@@ -173,15 +170,6 @@ export default function PapersMarkPage() {
           
           const rows = await getConversionRows(table.id);
           if (!mounted) return;
-          console.log('[mark] Primary table found and verified', { 
-            tableId: table.id, 
-            tablePaperId: table.paperId,
-            rowCount: rows.length, 
-            examName: currentExamName, 
-            paperName: currentPaperName,
-            samplePartNames: rows.slice(0, 5).map((r: any) => r.partName),
-            allPartNames: [...new Set(rows.map((r: any) => r.partName))]
-          });
           if (rows.length > 0) {
             setConversionRows(rows);
             setHasConversion(true);
@@ -192,21 +180,17 @@ export default function PapersMarkPage() {
         const examName = qs?.[0]?.examName as any;
         const year = qs?.[0]?.examYear as number | undefined;
         const examType = (paperCheck as any)?.exam_type as any;
-        console.log('[mark] Trying fallback lookup', { examName, year, examType, paperName: currentPaperName });
         if (examName && year) {
           const fallback = await findFallbackConversionTable(examName as any, year, examType);
-          console.log('[mark] Fallback table', { tableId: fallback?.id, examName, year, examType });
           if (fallback) {
             const rows = await getConversionRows(fallback.id);
             if (!mounted) return;
-            console.log('[mark] Fallback rows loaded', { rowCount: rows.length, examName, year, examType, samplePartNames: rows.slice(0, 5).map(r => r.partName) });
           setConversionRows(rows);
           setHasConversion(rows.length > 0);
             return;
           }
         }
         // No conversion found
-        console.log('[mark] No conversion rows found (primary or fallback)');
           setConversionRows([]);
           setHasConversion(false);
       } catch {
@@ -320,18 +304,8 @@ export default function PapersMarkPage() {
       // CRITICAL: Set endedAt before persisting so session shows up in analytics/history
       const currentState = usePaperSessionStore.getState();
       if (!currentState.endedAt) {
-        console.log('[mark:handleSaveAndContinue] Setting endedAt before saving');
         setEndedAt(Date.now());
       }
-      
-      console.log('[mark:handleSaveAndContinue] Saving session', {
-        sessionId: currentState.sessionId,
-        paperId: currentState.paperId,
-        paperName: currentState.paperName,
-        endedAt: currentState.endedAt || Date.now(),
-        selectedSections: currentState.selectedSections,
-        selectedPartIds: currentState.selectedPartIds
-      });
       
       await persistSessionToServer({ immediate: true });
       
@@ -348,7 +322,6 @@ export default function PapersMarkPage() {
         }
       }
       
-      console.log('[mark:handleSaveAndContinue] Session saved successfully, navigating to archive');
       router.push("/papers/archive");
     } catch (error) {
       console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
@@ -657,14 +630,6 @@ export default function PapersMarkPage() {
     const examYear = qs?.[0]?.examYear;
     const isNSAA2019 = examName === 'NSAA' && examYear === 2019;
     
-    console.log('[mark:sectionAnalytics] Computing analytics', {
-      totalQuestions,
-      examName,
-      examYear,
-      isNSAA2019,
-      questionsCount: qs.length
-    });
-    
     // DEEP DEBUG: Log all questions with their partLetters to find the source of "SECTION"
     const allQuestionParts = qs.slice(0, totalQuestions).map((q, idx) => ({
       index: idx,
@@ -676,7 +641,6 @@ export default function PapersMarkPage() {
       partLetterTrimmed: (q.partLetter || '').trim(),
       isEmpty: !q.partLetter || q.partLetter.trim() === ''
     }));
-    console.log('[mark:sectionAnalytics] 🔍 DEEP DEBUG - All questions partLetters:', allQuestionParts);
     
     // Check for empty/null partLetters that might become "Section"
     const emptyPartLetters = allQuestionParts.filter(q => q.isEmpty);
@@ -855,9 +819,6 @@ export default function PapersMarkPage() {
       }
     });
     
-    console.log('[mark:sectionAnalytics] Final analytics keys:', Object.keys(analytics));
-    console.log('[mark:sectionAnalytics] Analytics summary:', Object.entries(analytics).map(([k, v]) => ({ key: k, total: v.total, correct: v.correct })));
-    
     return analytics;
   }, [totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
@@ -991,8 +952,6 @@ export default function PapersMarkPage() {
       return resolveCache.current.get(cacheKey)!;
     }
     
-    // Only log once per unique combination
-    console.log('[mark:resolve] Resolving conversion part name', { examName, partLetterRaw, partName, availableRows: rows.map(r => ({ partName: r.partName })) });
     const raw = (partLetterRaw || '').toString().trim();
     const upperRaw = raw.toUpperCase();
     // Extract a single part letter if present (handles 'A' or 'PART A')
@@ -1075,11 +1034,6 @@ export default function PapersMarkPage() {
     let weightedSum = 0;
     let totalWeight = 0;
     
-    console.log('[mark:predictedScore] Computing predicted score', {
-      entriesCount: entries.length,
-      entries: entries.map(([k, v]) => ({ key: k, total: v.total }))
-    });
-    
     for (const [section, data] of entries) {
       // CRITICAL: Skip "SECTION" entries - they're invalid
       const sectionUpper = section.toUpperCase();
@@ -1090,15 +1044,6 @@ export default function PapersMarkPage() {
       
       const match = qs.find(q => (q.partLetter || '').trim() === section);
       const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
-      
-      console.log('[mark:predictedScore] Processing section', {
-        section,
-        partLetterRaw,
-        matchQuestionNumber: match?.questionNumber,
-        matchPartName: match?.partName,
-        dataTotal: data.total,
-        dataCorrect: data.correct
-      });
       
       const { name: convPartName } = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
       const scaled = scaleScore(conversionRows as any, convPartName as any, (data as any).correct, 'nearest');
@@ -1138,15 +1083,6 @@ export default function PapersMarkPage() {
           const match = qs.find(q => (q.partLetter || '').trim() === section);
           const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
           
-          console.log('[mark:percentiles] Processing section for percentiles', {
-            section,
-            partLetterRaw,
-            matchQuestionNumber: match?.questionNumber,
-            matchPartName: match?.partName,
-            dataTotal: data.total,
-            dataCorrect: data.correct
-          });
-          
           const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
           const convPartName = resolved.name;
           const scaled = hasConversion ? scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest') : null;
@@ -1184,7 +1120,6 @@ export default function PapersMarkPage() {
             keyToRows[k] = await fetchEsatTable(k);
           } catch (e) {
             // Table doesn't exist for this exam/section - that's okay, we'll handle it gracefully
-            console.log(`[mark] Percentile table not available: ${k}`, e);
           }
         }));
         
@@ -1559,12 +1494,6 @@ export default function PapersMarkPage() {
                                   const match = qs.find(q => (q.partLetter || '').trim() === section);
                                   const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
                                   
-                                  console.log('[mark:UI:percentiles] Rendering section percentile', {
-                                    section,
-                                    partLetterRaw,
-                                    matchQuestionNumber: match?.questionNumber
-                                  });
-                                  
                                   const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
                                   const convPartName = resolved.name;
                                   const partRows = (conversionRows as any[]).filter((r: any) => 
@@ -1758,28 +1687,10 @@ export default function PapersMarkPage() {
                           const sectionExamName = (qs?.[0]?.examName || '').toUpperCase();
                           const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
                           
-                          console.log('[mark:UI:sectionPerformance] Processing section', {
-                            section,
-                            partLetterRaw,
-                            matchQuestionNumber: match?.questionNumber,
-                            matchPartName: match?.partName
-                          });
-                          
                           const resolved = resolveConversionPartName(sectionExamName, partLetterRaw, match?.partName, conversionRows as any[]);
                           const convPartName = resolved.name;
                           const scaled = scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest');
                             scaledScore = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
-                            console.log('[mark:section] Section score conversion', { 
-                              section, 
-                              sectionExamName, 
-                              partLetterRaw, 
-                              partName: match?.partName, 
-                              convPartName, 
-                              rawCorrect: data.correct, 
-                              scaledScore, 
-                              matched: resolved.matched,
-                              availablePartNames: [...new Set(conversionRows.map((r: any) => r.partName))]
-                            });
                             (data as any).__convPartName = convPartName;
                           (data as any).__convRowsFound = (conversionRows as any[]).some(r => (r.partName || '').toString().toLowerCase() === convPartName.toLowerCase());
                           }

@@ -5,7 +5,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Play, Save, Trash2, Clock, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
+import { X, Play, Save, Trash2, Clock, ChevronDown, ChevronRight, ArrowRight, BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Topic, SessionPreset, TopicVariantSelection } from "@/types/core";
@@ -141,11 +141,18 @@ function VariantChip({
 
 function EmptyState() {
   return (
-    <div className="w-full h-full min-h-[240px] rounded-organic-lg text-text-subtle p-12 flex flex-col items-center justify-center gap-3">
-      <div className="text-base text-text-subtle">
-        <span className="font-semibold">No topics added yet</span>
+    <div className="w-full h-full min-h-[240px] rounded-lg flex flex-col items-center justify-center gap-4 py-12">
+      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-surface-elevated mb-2">
+        <BookOpen className="w-8 h-8 text-text-muted" strokeWidth={1.5} />
       </div>
-      <div className="text-sm text-text-subtle">Click the + button to add topics</div>
+      <div className="text-center space-y-1.5">
+        <div className="text-base font-mono font-semibold text-text-muted">
+          No topics added yet
+        </div>
+        <div className="text-sm font-mono text-text-subtle max-w-xs">
+          Click the + button to add topics to your practice session
+        </div>
+      </div>
     </div>
   );
 }

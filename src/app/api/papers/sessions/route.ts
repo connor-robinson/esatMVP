@@ -56,24 +56,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  console.log("[papers:POST] Creating session", {
-    sessionId: payload?.id,
-    paperName: payload?.paperName,
-    paperVariant: payload?.paperVariant,
-    sessionName: payload?.sessionName,
-    userId: session.user.id,
-    questionRange: payload?.questionRange,
-    selectedSections: payload?.selectedSections,
-    selectedPartIds: payload?.selectedPartIds,
-    arraysLength: {
-      perQuestionSec: payload?.perQuestionSec?.length,
-      answers: payload?.answers?.length,
-      correctFlags: payload?.correctFlags?.length,
-      guessedFlags: payload?.guessedFlags?.length,
-      mistakeTags: payload?.mistakeTags?.length
-    }
-  });
-
   if (!payload?.id || !payload.paperName || !payload.sessionName) {
     console.error("[papers:POST] Missing required fields", {
       hasId: !!payload?.id,
@@ -158,15 +140,6 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
-    console.log("[papers:POST] Session created successfully", {
-      sessionId: payload.id,
-      createdSession: data ? {
-        id: data.id,
-        paper_name: data.paper_name,
-        started_at: data.started_at
-      } : null
-    });
-
     return NextResponse.json({ session: data });
   } catch (insertError: any) {
     console.error("[papers:POST] Exception during session creation", {
@@ -205,17 +178,6 @@ export async function PATCH(request: Request) {
   if (!payload?.id) {
     return NextResponse.json({ error: "Missing session id" }, { status: 400 });
   }
-
-  console.log("[papers:PATCH] Updating session", {
-    sessionId: payload.id,
-    paperName: payload.paperName,
-    paperVariant: payload.paperVariant,
-    endedAt: payload.endedAt,
-    endedAtIso: toIso(payload.endedAt),
-    selectedSections: payload.selectedSections,
-    selectedPartIds: payload.selectedPartIds,
-    score: payload.score
-  });
 
   const { data, error } = await (supabase as any)
     .from("paper_sessions")
@@ -262,16 +224,6 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Failed to update session", details: error.message }, { status: 500 });
   }
 
-  console.log("[papers:PATCH] Session updated successfully", {
-    sessionId: payload.id,
-    updatedSession: data ? {
-      id: data.id,
-      paper_name: data.paper_name,
-      ended_at: data.ended_at,
-      updated_at: data.updated_at
-    } : null
-  });
-
   return NextResponse.json({ session: data ?? null });
 }
 
@@ -305,10 +257,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ session: data ?? null });
   }
 
-  console.log("[papers:GET] Fetching all sessions for user", {
-    userId: session.user.id
-  });
-
   const { data, error } = await (supabase as any)
     .from("paper_sessions")
     .select("*")
@@ -324,17 +272,6 @@ export async function GET(request: Request) {
     });
     return NextResponse.json({ error: "Failed to load sessions" }, { status: 500 });
   }
-
-  console.log("[papers:GET] Fetched sessions", {
-    count: data?.length || 0,
-    sample: data?.slice(0, 3).map((s: any) => ({
-      id: s.id,
-      paper_name: s.paper_name,
-      paper_variant: s.paper_variant,
-      ended_at: s.ended_at,
-      started_at: s.started_at
-    }))
-  });
 
   return NextResponse.json({ sessions: data });
 }

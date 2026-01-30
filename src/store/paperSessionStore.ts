@@ -369,7 +369,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               throw new Error(errorData.error || "Failed to create paper session");
             }
             const result = await response.json().catch(() => ({}));
-            console.log("[papers] Session created successfully:", result);
             return result;
           })
           .catch((error) => {
@@ -392,32 +391,22 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       },
       
           loadQuestions: async (paperId) => {
-            console.log('=== DEBUG loadQuestions START ===');
-            console.log('paperId:', paperId);
-            
             set({ questionsLoading: true, questionsError: null });
 
             try {
               const state = get();
-              console.log('Current state selectedSections:', state.selectedSections);
-              console.log('Current state paperId:', state.paperId);
-              console.log('Current state paperName:', state.paperName);
               
               // IMPORTANT: getQuestions() only returns REAL exam questions from past papers
               // It queries the 'questions' table, NOT 'ai_generated_questions'
               // No fake or simulated questions are used here
               const { getQuestions } = await import('@/lib/supabase/questions');
               const allQuestions = await getQuestions(paperId);
-              console.log('Loaded all questions count:', allQuestions.length);
-              console.log('First question:', allQuestions[0]);
-              console.log('Sample question partNames:', allQuestions.slice(0, 5).map(q => ({ num: q.questionNumber, part: q.partName })));
               
               // Verify exam_type - warn if Specimen when we expect Official
               if (allQuestions.length > 0) {
                 const examType = allQuestions[0].examType?.toLowerCase();
                 const examName = allQuestions[0].examName;
                 const examYear = allQuestions[0].examYear;
-                console.log('[loadQuestions] Paper type check:', { examName, examYear, examType, paperId });
                 
                 if (examType === 'specimen') {
                   console.warn('[loadQuestions] ⚠️ WARNING: Loading Specimen paper instead of Official!', {
@@ -454,26 +443,13 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 sectionByQuestionId.set(question.id, section);
               });
 
-              // Debug: Log section distribution
-              if (isTmuaPaper && state.selectedSections.length > 0) {
-                const sectionCounts = new Map<string, number>();
-                allQuestions.forEach(q => {
-                  const section = sectionByQuestionId.get(q.id) || 'Unknown';
-                  sectionCounts.set(section, (sectionCounts.get(section) || 0) + 1);
-                });
-                console.log('[loadQuestions] TMUA Section distribution:', Object.fromEntries(sectionCounts));
-                console.log('[loadQuestions] Selected sections:', state.selectedSections);
-              }
-
               // Filter questions by question range first (if specified)
               let filteredQuestions = allQuestions;
               if (state.questionRange.start > 1 || state.questionRange.end < allQuestions.length) {
-                console.log('Filtering questions by range:', state.questionRange);
                 filteredQuestions = allQuestions.filter(q => 
                   q.questionNumber >= state.questionRange.start && 
                   q.questionNumber <= state.questionRange.end
                 );
-                console.log('Filtered by range:', filteredQuestions.length);
               }
               
               // CRITICAL: Filter out invalid parts BEFORE section filtering
@@ -485,8 +461,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                                   allQuestions[0].examType?.toLowerCase() === 'official';
               
               if (isNSAA2019) {
-                console.log('[loadQuestions] NSAA 2019 detected - filtering to only Part A, B, E');
-                console.log('[loadQuestions] Checking exam_type:', allQuestions[0].examType);
                 const beforeCount = filteredQuestions.length;
                 const validParts = ['PART A', 'PART B', 'PART E', 'A', 'B', 'E'];
                 filteredQuestions = filteredQuestions.filter(q => {
@@ -514,12 +488,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     }
                   }
                   
-                  if (!isValid) {
-                    console.log(`[loadQuestions] Filtering out question ${q.questionNumber}: partLetter="${partLetter}", partName="${q.partName}", examType="${q.examType}"`);
-                  }
                   return isValid;
                 });
-                console.log(`[loadQuestions] NSAA 2019 filtering: ${beforeCount} -> ${filteredQuestions.length} questions`);
                 
                 // Log part distribution after filtering
                 const partDistribution = new Map<string, number>();
@@ -533,8 +503,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     partName: q.partName || ''
                   });
                 });
-                console.log('[loadQuestions] NSAA 2019 part distribution after filtering:', Object.fromEntries(partDistribution));
-                console.log('[loadQuestions] 🔍 DEEP DEBUG - All filtered questions partLetters:', partDetails);
                 
                 // Check for any "SECTION" that might have slipped through
                 const sectionQuestions = filteredQuestions.filter(q => {
@@ -557,21 +525,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 filteredQuestions = filteredQuestions.filter(q => {
                   const partLetter = (q.partLetter || '').toString().trim().toUpperCase();
                   const isSection = partLetter === 'SECTION' || partLetter.startsWith('SECTION ');
-                  if (isSection) {
-                    console.log(`[loadQuestions] Filtering out invalid "SECTION" part: question ${q.questionNumber}, partLetter="${partLetter}", examType="${q.examType}"`);
-                  }
                   return !isSection;
                 });
-                if (beforeCount !== filteredQuestions.length) {
-                  console.log(`[loadQuestions] Filtered out ${beforeCount - filteredQuestions.length} questions with invalid "SECTION" parts`);
-                }
               }
               
               // Then filter by selected sections using systematic mapping
               if (state.selectedSections.length > 0) {
-                console.log('Filtering questions by sections:', state.selectedSections);
-                console.log('Section types:', state.selectedSections.map(s => typeof s));
-                
                 // Normalize selected sections to strings for comparison
                 const normalizedSelectedSections = state.selectedSections.map(s => String(s).trim());
                 
@@ -585,16 +544,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   const normalizedSection = String(section).trim();
                   const isIncluded = normalizedSelectedSections.includes(normalizedSection);
                   
-                  if (isTmuaPaper && !isIncluded) {
-                    // Debug: Log why questions are being excluded (only for first few to avoid spam)
-                    if (q.questionNumber <= 5 || (q.questionNumber > 20 && q.questionNumber <= 25)) {
-                      console.log(`[loadQuestions] Excluding question ${q.questionNumber}: section="${normalizedSection}", selectedSections=[${normalizedSelectedSections.join(', ')}]`);
-                    }
-                  }
                   return isIncluded;
                 });
-                console.log('Filtered questions (systematic mapping):', filteredQuestions.length);
-                console.log('Sample mapped sections:', filteredQuestions.slice(0, 6).map(q => ({ n: q.questionNumber, part: (q as any).partLetter, name: q.partName, section: sectionByQuestionId.get(q.id) })));
                 
                 // Debug: Verify both sections are present in filtered results
                 if (isTmuaPaper) {
@@ -603,7 +554,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     const section = sectionByQuestionId.get(q.id) || 'Unknown';
                     filteredSectionCounts.set(section, (filteredSectionCounts.get(section) || 0) + 1);
                   });
-                  console.log('[loadQuestions] Filtered section distribution:', Object.fromEntries(filteredSectionCounts));
                   
                   // Check if both Paper 1 and Paper 2 are in selected sections but only one appears in filtered
                   const hasPaper1 = state.selectedSections.includes('Paper 1' as any);
@@ -635,8 +585,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 if (!shouldTrimTmua2017) {
                   return filteredQuestions;
                 }
-
-                console.log('[loadQuestions] Applying TMUA 2017 footer trimming');
 
                 const results = await Promise.all(
                   filteredQuestions.map(async (question) => {
@@ -697,8 +645,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   });
                   
                   // Group questions by section into allSectionsQuestions array
-                  console.log('[loadQuestions] Grouping questions by selected sections:', state.selectedSections);
-                  
                   allSectionsQuestions = state.selectedSections.map((section) => {
                     const sectionQuestions = processedQuestions.filter((q) => {
                       const questionSection = sectionByQuestionId.get(q.id) ?? mapPartToSection({ partLetter: (q as any).partLetter, partName: q.partName }, state.paperName as any);
@@ -712,8 +658,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     section: state.selectedSections[idx],
                     count: qs.length
                   }));
-                  
-                  console.log('[loadQuestions] Grouped questions by section:', groupedInfo);
                   
                   // Warn if any section has no questions
                   groupedInfo.forEach((info) => {
@@ -743,14 +687,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                     lastSection = currentSection;
                   }
                 });
-                console.log('Section starts computed:', sectionStarts);
-                console.log('Section starts entries:', Object.entries(sectionStarts));
-                console.log('Total questions:', processedQuestions.length);
               }
-              
-              console.log('=== DEBUG loadQuestions END ===');
-              console.log('Final filtered questions count:', processedQuestions.length);
-              console.log('Final questions first 3:', processedQuestions.slice(0, 3).map(q => ({ num: q.questionNumber, part: q.partName })));
               
               // Calculate questionRange from actual loaded questions (based on question numbers, not count)
               const currentState = get();
@@ -776,7 +713,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               if (needsUpdate) {
                 // Only log if there's a significant mismatch (more than just rounding differences)
                 if (Math.abs(actualQuestionCount - expectedCount) > 1) {
-                  console.log(`[loadQuestions] Question range updated: expected ${expectedCount} (${currentState.questionRange.start}-${currentState.questionRange.end}), got ${actualQuestionCount} (${actualQuestionStart}-${actualQuestionEnd})`);
                 }
                 
                 set({
@@ -811,7 +747,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 if (finalState.selectedSections.length > 0 && 
                     finalState.currentSectionIndex === 0 && 
                     (finalState.sectionInstructionTimer === null || finalState.sectionInstructionTimer === 0)) {
-                  console.log('[loadQuestions] Initializing section instruction timer for first section');
                   finalState.setSectionInstructionTimer(60);
                 }
               } else if (finalState.selectedSections.length > 0) {
@@ -1142,21 +1077,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       persistSessionToServer: async ({ immediate = false } = {}) => {
         const state = get();
         if (!state.sessionId) {
-          console.log('[persistSessionToServer] No sessionId, skipping persist');
           return;
         }
 
-        console.log('[persistSessionToServer] Starting persist', { 
-          sessionId: state.sessionId, 
-          immediate, 
-          paperId: state.paperId,
-          paperName: state.paperName,
-          endedAt: state.endedAt 
-        });
-
         if (state.sessionPersistPromise) {
           try {
-            console.log('[persistSessionToServer] Waiting for existing persist promise');
             await state.sessionPersistPromise;
           } catch {
             // Error already logged when creating session
@@ -1167,7 +1092,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           clearTimeout(state.persistTimer);
           set({ persistTimer: null });
         } else if (state.persistTimer && !immediate) {
-          console.log('[persistSessionToServer] Persist timer active, skipping (not immediate)');
           return;
         }
 
@@ -1200,14 +1124,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           },
         };
 
-        console.log('[persistSessionToServer] Payload prepared', {
-          sessionId: payload.id,
-          paperId: payload.paperId,
-          score: payload.score,
-          answersCount: payload.answers.length,
-          correctFlagsCount: payload.correctFlags.filter(f => f === true).length
-        });
-
         try {
           const response = await fetch("/api/papers/sessions", {
             method: "PATCH",
@@ -1215,12 +1131,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
-          });
-
-          console.log('[persistSessionToServer] Response received', {
-            status: response.status,
-            ok: response.ok,
-            statusText: response.statusText
           });
 
           if (!response.ok) {
@@ -1234,7 +1144,6 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           }
           
           const responseData = await response.json().catch(() => null);
-          console.log('[persistSessionToServer] Persist successful', { responseData });
 
           const latest = get();
           if (latest.endedAt) {

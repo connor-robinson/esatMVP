@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
@@ -221,15 +222,23 @@ export default function PapersDrillPage() {
             </div>
           </Card>
         ) : (
-          <Card className="p-8 text-center">
-            <div className="space-y-4">
-              <div className="text-lg text-neutral-300">No questions available for {selectedPaper}</div>
-              <div className="text-sm text-neutral-500">
-                Complete some paper sessions and mark questions as wrong to build your drill pool.
+          <Card className="p-8 rounded-lg">
+            <div className="flex flex-col items-center justify-center gap-4 py-8">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-surface-elevated mb-2">
+                <BookOpen className="w-8 h-8 text-text-muted" strokeWidth={1.5} />
+              </div>
+              <div className="text-center space-y-1.5">
+                <div className="text-base font-mono font-semibold text-text-muted">
+                  No questions available for {selectedPaper}
+                </div>
+                <div className="text-sm font-mono text-text-subtle max-w-xs">
+                  Complete some paper sessions and mark questions as wrong to build your drill pool.
+                </div>
               </div>
               <Button
                 variant="primary"
                 onClick={() => window.location.href = "/papers/library"}
+                className="mt-4"
               >
                 Start a Session
               </Button>

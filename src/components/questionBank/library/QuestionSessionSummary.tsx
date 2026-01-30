@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { X, Play, Clock, Edit3, FileText, Plus, ArrowRight } from "lucide-react";
+import { X, Play, Clock, Edit3, FileText, Plus, ArrowRight, BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
@@ -119,9 +119,18 @@ export function QuestionSessionSummary({
       {/* Selected questions */}
       <div className="min-h-[300px] rounded-lg p-4 bg-white/[0.03] space-y-3 overflow-y-auto">
         {selectedQuestions.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-2 text-white/40 text-sm">
-            <div>No questions selected yet.</div>
-            <div className="text-xs">Browse the library to add questions.</div>
+          <div className="h-full min-h-[300px] flex flex-col items-center justify-center gap-4 py-12">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-surface-elevated mb-2">
+              <BookOpen className="w-8 h-8 text-text-muted" strokeWidth={1.5} />
+            </div>
+            <div className="text-center space-y-1.5">
+              <div className="text-base font-mono font-semibold text-text-muted">
+                No questions selected yet
+              </div>
+              <div className="text-sm font-mono text-text-subtle max-w-xs">
+                Browse the library to add questions to your practice session
+              </div>
+            </div>
           </div>
         ) : (
           selectedQuestions.map((question) => {
