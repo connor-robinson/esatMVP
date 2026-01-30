@@ -149,19 +149,19 @@ export function QuestionCard({
   };
 
   const getOptionStyle = (optionLetter: string) => {
-    // If answered correctly, show green background (signature green)
+    // If answered correctly, show green background (signature desaturated green)
     if (isAnswered && isCorrect && optionLetter === correctAnswer) {
-      return "bg-success/20 hover:bg-success/25 text-success cursor-default";
+      return "bg-[#85BC82]/20 text-[#85BC82] cursor-default";
     }
     
     // If answer is revealed, show correct answer with green
     if (answerRevealed && optionLetter === correctAnswer) {
-      return "bg-success/20 text-success cursor-default";
+      return "bg-[#85BC82]/20 text-[#85BC82] cursor-default";
     }
 
-    // Always keep all previously wrong answers marked as red
+    // Always keep all previously wrong answers marked as red (signature desaturated red)
     if (incorrectAnswers.has(optionLetter) && optionLetter !== correctAnswer) {
-      return "bg-error/20 text-error cursor-default";
+      return "bg-[#854952]/20 text-[#854952] cursor-default";
     }
 
     // If wrong answer was selected and not revealed, show only that wrong answer
@@ -169,7 +169,7 @@ export function QuestionCard({
       // Other options remain interactive
       if (allowRetry) {
         if (localSelectedAnswer === optionLetter) {
-          return "bg-secondary/20 hover:bg-secondary/30 text-secondary cursor-pointer";
+          return "bg-white/[0.08] hover:bg-white/[0.10] text-text cursor-pointer transition-all duration-fast ease-signature";
         }
         return cn(
           "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
@@ -179,9 +179,9 @@ export function QuestionCard({
       return "bg-white/[0.04] text-text-muted cursor-default";
     }
 
-    // Before answering or after correct answer - subtle lighter background for all, signature purple when selected
+    // Before answering or after correct answer - lighter background when selected
     if (localSelectedAnswer === optionLetter) {
-      return "bg-secondary/20 hover:bg-secondary/30 text-secondary cursor-pointer";
+      return "bg-white/[0.08] hover:bg-white/[0.10] text-text cursor-pointer transition-all duration-fast ease-signature";
     }
     return cn(
       "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
@@ -304,13 +304,13 @@ export function QuestionCard({
                   className={cn(
                     "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature",
                     isAnswered && isCorrect && letter === correctAnswer
-                      ? "bg-success/30 text-success"
+                      ? "bg-[#85BC82]/30 text-[#85BC82]"
                       : answerRevealed && letter === correctAnswer
-                      ? "bg-success/30 text-success"
+                      ? "bg-[#85BC82]/30 text-[#85BC82]"
                       : incorrectAnswers.has(letter) && letter !== correctAnswer
-                      ? "bg-error/30 text-error"
+                      ? "bg-[#854952]/30 text-[#854952]"
                       : localSelectedAnswer === letter && (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
-                      ? "bg-secondary/30 text-secondary"
+                      ? "bg-white/[0.10] text-text"
                       : "bg-white/[0.06] text-text-muted"
                   )}
                 >
@@ -355,7 +355,7 @@ export function QuestionCard({
                         e.stopPropagation();
                         handleSubmit();
                       }}
-                      className="w-10 h-10 rounded-organic-md bg-white/[0.06] hover:bg-white/[0.08] text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
+                      className="w-10 h-10 rounded-organic-md bg-white/[0.10] hover:bg-white/[0.12] text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
                       title="Submit answer"
                     >
                       <ArrowRight className="w-5 h-5" strokeWidth={2.5} />

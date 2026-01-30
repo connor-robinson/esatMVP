@@ -85,11 +85,15 @@ export function PaperLibraryFilters({
     const selectedLabel = options.find((opt) => opt.value === value)?.label || placeholder;
 
     return (
-      <div className={cn("relative", minWidth)} ref={dropdownRef}>
+      <div className={cn("relative", minWidth, "w-full")} ref={dropdownRef}>
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text font-mono focus:outline-none transition-all cursor-pointer flex items-center justify-between border-0"
+          onTouchStart={(e) => {
+            // Ensure touch events work on mobile
+            e.stopPropagation();
+          }}
+          className="w-full h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text font-mono focus:outline-none transition-all cursor-pointer flex items-center justify-between border-0 touch-manipulation"
         >
           <span className="truncate text-left">{selectedLabel}</span>
           <ChevronDown
@@ -104,7 +108,7 @@ export function PaperLibraryFilters({
           {isOpen && (
             <>
               <div
-                className="fixed inset-0 z-40"
+                className="fixed inset-0 z-[9998]"
                 onClick={() => setIsOpen(false)}
               />
               <motion.div
@@ -112,7 +116,7 @@ export function PaperLibraryFilters({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-[100] overflow-hidden border-0"
+                className="absolute top-full left-0 mt-2 w-full bg-surface rounded-lg shadow-2xl z-[9999] overflow-hidden border-0 min-w-[200px]"
               >
                 <div className="max-h-60 overflow-y-auto">
                   {options.map((option) => (
@@ -154,7 +158,7 @@ export function PaperLibraryFilters({
       </div>
       <div className="flex items-center gap-4 flex-wrap">
         {/* Search */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[200px] w-full sm:w-auto">
           <input
             type="text"
             value={searchQuery}
@@ -165,46 +169,52 @@ export function PaperLibraryFilters({
         </div>
 
         {/* Exam filter */}
-        <CustomDropdown
-          value={examFilter}
-          onChange={(value) => onExamFilterChange(value as string | "ALL")}
-          options={[
-            { value: "ALL", label: "All exams" },
-            ...exams.map((exam) => ({ value: exam, label: exam })),
-          ]}
-          placeholder="All exams"
-          minWidth="min-w-[140px]"
-        />
+        <div className="w-full sm:w-auto">
+          <CustomDropdown
+            value={examFilter}
+            onChange={(value) => onExamFilterChange(value as string | "ALL")}
+            options={[
+              { value: "ALL", label: "All exams" },
+              ...exams.map((exam) => ({ value: exam, label: exam })),
+            ]}
+            placeholder="All exams"
+            minWidth="min-w-[140px] w-full sm:w-auto"
+          />
+        </div>
 
         {/* Year filter */}
-        <CustomDropdown
-          value={yearFilter}
-          onChange={(value) => {
-            if (value === "ALL") {
-              onYearFilterChange("ALL");
-            } else {
-              onYearFilterChange(value as number);
-            }
-          }}
-          options={[
-            { value: "ALL", label: "All years" },
-            ...years.map((year) => ({ value: year, label: String(year) })),
-          ]}
-          placeholder="All years"
-          minWidth="min-w-[100px]"
-        />
+        <div className="w-full sm:w-auto">
+          <CustomDropdown
+            value={yearFilter}
+            onChange={(value) => {
+              if (value === "ALL") {
+                onYearFilterChange("ALL");
+              } else {
+                onYearFilterChange(value as number);
+              }
+            }}
+            options={[
+              { value: "ALL", label: "All years" },
+              ...years.map((year) => ({ value: year, label: String(year) })),
+            ]}
+            placeholder="All years"
+            minWidth="min-w-[100px] w-full sm:w-auto"
+          />
+        </div>
 
         {/* Type filter */}
-        <CustomDropdown
-          value={typeFilter}
-          onChange={(value) => onTypeFilterChange(value as string | "ALL")}
-          options={[
-            { value: "ALL", label: "All types" },
-            ...types.map((type) => ({ value: type, label: type })),
-          ]}
-          placeholder="All types"
-          minWidth="min-w-[120px]"
-        />
+        <div className="w-full sm:w-auto">
+          <CustomDropdown
+            value={typeFilter}
+            onChange={(value) => onTypeFilterChange(value as string | "ALL")}
+            options={[
+              { value: "ALL", label: "All types" },
+              ...types.map((type) => ({ value: type, label: type })),
+            ]}
+            placeholder="All types"
+            minWidth="min-w-[120px] w-full sm:w-auto"
+          />
+        </div>
       </div>
     </Card>
   );

@@ -342,13 +342,41 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 console.warn("[papers] Session creation skipped: User not authenticated. Session will work locally.");
                 return;
               }
+              // Enhanced error logging
+              console.error("[papers] Failed to create session - API Error:", {
+                status: response.status,
+                statusText: response.statusText,
+                errorData: errorData,
+                errorCode: errorData.code,
+                errorDetails: errorData.details,
+                errorHint: errorData.hint,
+                payload: {
+                  id: payload.id,
+                  paperName: payload.paperName,
+                  paperVariant: payload.paperVariant,
+                  sessionName: payload.sessionName,
+                  timeLimitMinutes: payload.timeLimitMinutes,
+                  questionRange: payload.questionRange,
+                  arrayLengths: {
+                    answers: payload.answers?.length,
+                    correctFlags: payload.correctFlags?.length,
+                    guessedFlags: payload.guessedFlags?.length,
+                    mistakeTags: payload.mistakeTags?.length,
+                    perQuestionSec: payload.perQuestionSec?.length,
+                  }
+                }
+              });
               throw new Error(errorData.error || "Failed to create paper session");
             }
+            const result = await response.json().catch(() => ({}));
+            console.log("[papers] Session created successfully:", result);
+            return result;
           })
           .catch((error) => {
             // Only log non-401 errors as errors, 401 is expected for unauthenticated users
             if (!error.message?.includes("401") && !error.message?.includes("not authenticated")) {
               console.error("[papers] failed to create session", error);
+              console.error("[papers] Error stack:", error.stack);
             }
           })
           .finally(() => {

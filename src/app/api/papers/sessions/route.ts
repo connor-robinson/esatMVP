@@ -84,6 +84,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required fields", details: "id, paperName, and sessionName are required" }, { status: 400 });
   }
 
+  // Validate questionRange since question_start and question_end are NOT NULL in database
+  if (!payload.questionRange || typeof payload.questionRange.start !== 'number' || typeof payload.questionRange.end !== 'number') {
+    console.error("[papers:POST] Invalid questionRange", {
+      questionRange: payload.questionRange,
+      payload: payload
+    });
+    return NextResponse.json({ error: "Invalid questionRange", details: "questionRange with start and end numbers is required" }, { status: 400 });
+  }
+
   try {
     const { data, error } = await (supabase as any)
       .from("paper_sessions")
