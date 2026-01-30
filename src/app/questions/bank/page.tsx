@@ -906,28 +906,11 @@ export default function QuestionBankPage() {
                   }}
                   disabled={!currentSelection || incorrectAnswers.has(currentSelection)}
                   className={cn(
-                    "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium",
+                    "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium border",
                     currentSelection && !incorrectAnswers.has(currentSelection)
-                      ? "bg-interview/30 hover:bg-interview/40 text-interview cursor-pointer"
-                      : "bg-white/5 text-white/40 cursor-not-allowed"
+                      ? "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 border-white/10 cursor-pointer"
+                      : "bg-white/5 text-white/40 cursor-not-allowed border-white/10"
                   )}
-                  style={
-                    currentSelection && !incorrectAnswers.has(currentSelection)
-                      ? {
-                          boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                        }
-                      : undefined
-                  }
-                  onMouseEnter={(e) => {
-                    if (currentSelection && !incorrectAnswers.has(currentSelection)) {
-                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (currentSelection && !incorrectAnswers.has(currentSelection)) {
-                      e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                    }
-                  }}
                 >
                   <span>Submit Answer</span>
                   <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

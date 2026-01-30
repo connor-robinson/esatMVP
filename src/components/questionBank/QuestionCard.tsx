@@ -151,17 +151,17 @@ export function QuestionCard({
   const getOptionStyle = (optionLetter: string) => {
     // If answered correctly, show green background (signature green)
     if (isAnswered && isCorrect && optionLetter === correctAnswer) {
-      return "bg-success/20 hover:bg-success/25 text-success border border-success/30 cursor-default";
+      return "bg-success/20 hover:bg-success/25 text-success cursor-default";
     }
     
     // If answer is revealed, show correct answer with green
     if (answerRevealed && optionLetter === correctAnswer) {
-      return "bg-success/20 text-success border border-success/30 cursor-default";
+      return "bg-success/20 text-success cursor-default";
     }
 
     // Always keep all previously wrong answers marked as red
     if (incorrectAnswers.has(optionLetter) && optionLetter !== correctAnswer) {
-      return "bg-error/20 text-error border border-error/30 cursor-default";
+      return "bg-error/20 text-error cursor-default";
     }
 
     // If wrong answer was selected and not revealed, show only that wrong answer
@@ -169,30 +169,30 @@ export function QuestionCard({
       // Other options remain interactive
       if (allowRetry) {
         if (localSelectedAnswer === optionLetter) {
-          return "bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/30 cursor-pointer";
+          return "bg-secondary/20 hover:bg-secondary/30 text-secondary cursor-pointer";
         }
         return cn(
-          "bg-surface-subtle hover:bg-surface-elevated text-text border border-border hover:border-border-subtle cursor-pointer transition-all duration-fast ease-signature",
-          hoveredOption === optionLetter && "bg-surface-elevated"
+          "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
+          hoveredOption === optionLetter && "bg-white/[0.06]"
         );
       }
-      return "bg-surface-subtle text-text-muted border border-border cursor-default";
+      return "bg-white/[0.04] text-text-muted cursor-default";
     }
 
     // Before answering or after correct answer - subtle lighter background for all, signature purple when selected
     if (localSelectedAnswer === optionLetter) {
-      return "bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/30 cursor-pointer";
+      return "bg-secondary/20 hover:bg-secondary/30 text-secondary cursor-pointer";
     }
     return cn(
-      "bg-surface-subtle hover:bg-surface-elevated text-text border border-border hover:border-border-subtle cursor-pointer transition-all duration-fast ease-signature",
-      hoveredOption === optionLetter && "bg-surface-elevated"
+      "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
+      hoveredOption === optionLetter && "bg-white/[0.06]"
     );
   };
 
   return (
     <div className="space-y-6">
       {/* Question stem - in its own card */}
-      <Card className="px-8 pt-0 pb-0 relative group bg-surface-subtle">
+      <div className="px-8 pt-6 pb-10 relative group bg-white/[0.02] rounded-organic-lg">
         {onEditQuestionStem && (
           <button
             onClick={onEditQuestionStem}
@@ -279,10 +279,10 @@ export function QuestionCard({
             />
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Options - in a container */}
-      <Card className="p-6 bg-surface-subtle">
+      <div className="p-6 bg-white/[0.02] rounded-organic-lg pb-8">
         <div className="space-y-2">
           {optionLetters.map((letter) => {
           const hasDistractor = question.distractor_map && question.distractor_map[letter] && letter !== correctAnswer;
@@ -295,24 +295,23 @@ export function QuestionCard({
               disabled={isAnswered && !allowRetry && !answerRevealed}
               className={cn(
                 "w-full py-3 px-4 rounded-organic-md transition-all duration-fast ease-signature text-left relative",
-                getOptionStyle(letter),
-                (!isAnswered || allowRetry) && "hover:shadow-lg hover:shadow-secondary/10"
+                getOptionStyle(letter)
               )}
             >
               <div className="flex items-center gap-3">
                 {/* Option letter badge */}
                 <div
                   className={cn(
-                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature border",
+                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature",
                     isAnswered && isCorrect && letter === correctAnswer
-                      ? "bg-success/30 text-success border-success/40"
+                      ? "bg-success/30 text-success"
                       : answerRevealed && letter === correctAnswer
-                      ? "bg-success/30 text-success border-success/40"
+                      ? "bg-success/30 text-success"
                       : incorrectAnswers.has(letter) && letter !== correctAnswer
-                      ? "bg-error/30 text-error border-error/40"
+                      ? "bg-error/30 text-error"
                       : localSelectedAnswer === letter && (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
-                      ? "bg-secondary/30 text-secondary border-secondary/40"
-                      : "bg-surface-elevated text-text-muted border-border"
+                      ? "bg-secondary/30 text-secondary"
+                      : "bg-white/[0.06] text-text-muted"
                   )}
                 >
                   {letter}
@@ -356,16 +355,7 @@ export function QuestionCard({
                         e.stopPropagation();
                         handleSubmit();
                       }}
-                      className="w-10 h-10 rounded-organic-md bg-interview/40 hover:bg-interview/60 text-interview transition-all duration-fast ease-signature flex items-center justify-center"
-                      style={{
-                        boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                      }}
+                      className="w-10 h-10 rounded-organic-md bg-white/[0.06] hover:bg-white/[0.08] text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
                       title="Submit answer"
                     >
                       <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
@@ -406,7 +396,7 @@ export function QuestionCard({
           );
         })}
         </div>
-      </Card>
+      </div>
 
       {/* Simple Feedback - shown by option colors */}
 

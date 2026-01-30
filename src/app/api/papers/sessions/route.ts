@@ -48,49 +48,137 @@ export async function POST(request: Request) {
 
   const supabase = createRouteClient();
 
-  const payload = (await request.json()) as SessionPayload;
+  let payload: SessionPayload;
+  try {
+    payload = (await request.json()) as SessionPayload;
+  } catch (parseError) {
+    console.error("[papers:POST] Failed to parse request body", parseError);
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  console.log("[papers:POST] Creating session", {
+    sessionId: payload?.id,
+    paperName: payload?.paperName,
+    paperVariant: payload?.paperVariant,
+    sessionName: payload?.sessionName,
+    userId: session.user.id,
+    questionRange: payload?.questionRange,
+    selectedSections: payload?.selectedSections,
+    selectedPartIds: payload?.selectedPartIds,
+    arraysLength: {
+      perQuestionSec: payload?.perQuestionSec?.length,
+      answers: payload?.answers?.length,
+      correctFlags: payload?.correctFlags?.length,
+      guessedFlags: payload?.guessedFlags?.length,
+      mistakeTags: payload?.mistakeTags?.length
+    }
+  });
+
   if (!payload?.id || !payload.paperName || !payload.sessionName) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    console.error("[papers:POST] Missing required fields", {
+      hasId: !!payload?.id,
+      hasPaperName: !!payload?.paperName,
+      hasSessionName: !!payload?.sessionName,
+      payload: payload
+    });
+    return NextResponse.json({ error: "Missing required fields", details: "id, paperName, and sessionName are required" }, { status: 400 });
   }
 
-  const { data, error } = await (supabase as any)
-    .from("paper_sessions")
-    .insert({
-      id: payload.id,
-      user_id: session.user.id,
-      paper_id: payload.paperId ?? null,
-      paper_name: payload.paperName,
-      paper_variant: payload.paperVariant,
-      session_name: payload.sessionName,
-      question_start: payload.questionRange?.start ?? null,
-      question_end: payload.questionRange?.end ?? null,
-      selected_sections: payload.selectedSections ?? [],
-      selected_part_ids: payload.selectedPartIds ?? [],
-      question_order: payload.questionOrder ?? [],
-      time_limit_minutes: payload.timeLimitMinutes,
-      started_at: toIso(payload.startedAt),
-      ended_at: toIso(payload.endedAt),
-      deadline_at: toIso(payload.deadlineAt),
-      per_question_seconds: payload.perQuestionSec ?? [],
-      answers: payload.answers ?? [],
-      correct_flags: payload.correctFlags ?? [],
-      guessed_flags: payload.guessedFlags ?? [],
-      mistake_tags: payload.mistakeTags ?? [],
-      notes: payload.notes ?? null,
-      score: payload.score ?? null,
-      predicted_score: payload.predictedScore ?? null,
-      section_percentiles: payload.sectionPercentiles ?? null,
-      pinned_insights: payload.pinnedInsights ?? null,
-    })
-    .select("*")
-    .single();
+  try {
+    const { data, error } = await (supabase as any)
+      .from("paper_sessions")
+      .insert({
+        id: payload.id,
+        user_id: session.user.id,
+        paper_id: payload.paperId ?? null,
+        paper_name: payload.paperName,
+        paper_variant: payload.paperVariant,
+        session_name: payload.sessionName,
+        question_start: payload.questionRange?.start ?? null,
+        question_end: payload.questionRange?.end ?? null,
+        selected_sections: payload.selectedSections ?? [],
+        selected_part_ids: payload.selectedPartIds ?? [],
+        question_order: payload.questionOrder ?? [],
+        time_limit_minutes: payload.timeLimitMinutes,
+        started_at: toIso(payload.startedAt),
+        ended_at: toIso(payload.endedAt),
+        deadline_at: toIso(payload.deadlineAt),
+        per_question_seconds: payload.perQuestionSec ?? [],
+        answers: payload.answers ?? [],
+        correct_flags: payload.correctFlags ?? [],
+        guessed_flags: payload.guessedFlags ?? [],
+        mistake_tags: payload.mistakeTags ?? [],
+        notes: payload.notes ?? null,
+        score: payload.score ?? null,
+        predicted_score: payload.predictedScore ?? null,
+        section_percentiles: payload.sectionPercentiles ?? null,
+        pinned_insights: payload.pinnedInsights ?? null,
+      })
+      .select("*")
+      .single();
 
-  if (error) {
-    console.error("[papers] failed creating session", error);
-    return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
+    if (error) {
+      console.error("[papers:POST] failed creating session", {
+        error,
+        errorCode: error.code,
+        errorMessage: error.message,
+        errorDetails: error.details,
+        errorHint: error.hint,
+        sessionId: payload.id,
+        userId: session.user.id,
+        paperName: payload.paperName,
+        payloadKeys: Object.keys(payload),
+        payloadSizes: {
+          answers: payload.answers?.length,
+          correctFlags: payload.correctFlags?.length,
+          guessedFlags: payload.guessedFlags?.length,
+          mistakeTags: payload.mistakeTags?.length,
+          perQuestionSec: payload.perQuestionSec?.length,
+        }
+      });
+      return NextResponse.json({ 
+        error: "Failed to create session", 
+        details: error.message,
+        code: error.code,
+        hint: error.hint,
+        // Include more debugging info in development
+        ...(process.env.NODE_ENV === 'development' && {
+          errorDetails: error.details,
+          errorFull: JSON.stringify(error, null, 2)
+        })
+      }, { status: 500 });
+    }
+
+    console.log("[papers:POST] Session created successfully", {
+      sessionId: payload.id,
+      createdSession: data ? {
+        id: data.id,
+        paper_name: data.paper_name,
+        started_at: data.started_at
+      } : null
+    });
+
+    return NextResponse.json({ session: data });
+  } catch (insertError: any) {
+    console.error("[papers:POST] Exception during session creation", {
+      error: insertError,
+      errorMessage: insertError?.message,
+      errorStack: insertError?.stack,
+      errorName: insertError?.name,
+      sessionId: payload.id,
+      userId: session.user.id,
+      paperName: payload.paperName
+    });
+    return NextResponse.json({ 
+      error: "Failed to create session", 
+      details: insertError?.message || "Unknown error",
+      // Include more debugging info in development
+      ...(process.env.NODE_ENV === 'development' && {
+        errorName: insertError?.name,
+        errorStack: insertError?.stack
+      })
+    }, { status: 500 });
   }
-
-  return NextResponse.json({ session: data });
 }
 
 export async function PATCH(request: Request) {
