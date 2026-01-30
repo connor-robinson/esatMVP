@@ -63,7 +63,7 @@ export function SessionPersistenceHandler() {
         }
 
         // Also try to persist via store (async, may not complete)
-        persistSessionToServer({ immediate: true }).catch(() => {
+        persistSessionToServer({ immediate: true }).catch((_error: unknown) => {
           // Ignore errors
         });
       }
@@ -82,7 +82,7 @@ export function SessionPersistenceHandler() {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Tab is hidden - persist current state
-        persistSessionToServer({ immediate: true }).catch(() => {
+        persistSessionToServer({ immediate: true }).catch((_error: unknown) => {
           // Ignore errors
         });
       }

@@ -21,7 +21,7 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
     // 1. Are in progress (ended_at IS NULL)
     // 2. Haven't been updated in X days
     // 3. Were started more than X days ago
-    const { data: staleSessions, error: fetchError } = await supabase
+    const { data: staleSessions, error: fetchError } = await (supabase as any)
       .from('paper_sessions')
       .select('id')
       .is('ended_at', null)
@@ -37,10 +37,10 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
     }
 
     // Mark all stale sessions as ended
-    const sessionIds = staleSessions.map(s => s.id);
+    const sessionIds = (staleSessions as Array<{ id: string }>).map((s) => s.id);
     const now = new Date().toISOString();
 
-    const { error: updateError } = await supabase
+    const { error: updateError } = await (supabase as any)
       .from('paper_sessions')
       .update({ ended_at: now })
       .in('id', sessionIds);
