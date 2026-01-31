@@ -136,8 +136,6 @@ export function TimeScatterChart({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      <div className="text-sm font-medium text-neutral-200">Pacing Profile (Time per Question)</div>
-      
       <div className="relative">
         <svg
           width={width}

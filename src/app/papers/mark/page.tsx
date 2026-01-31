@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -1393,7 +1393,16 @@ export default function PapersMarkPage() {
   }
 
   return (
-    <Fragment>
+    <React.Fragment>
+      {/* Page Title - above nav bar and top div */}
+      <div className="w-full bg-neutral-900 border-b border-white/10">
+        <Container size="xl" className="py-6">
+          <div className="space-y-2">
+            <div className="text-2xl font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
+            <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
+          </div>
+        </Container>
+      </div>
       <Container size="xl" className="h-[calc(100vh-4rem)] space-y-6">
         {/* Main two-column layout - fills available space */}
         <Card className="p-0 bg-neutral-900 border-0 overflow-hidden h-full">
@@ -1520,14 +1529,8 @@ export default function PapersMarkPage() {
 
             {/* Right column: detail view (fills, scrolls) */}
             <div className="p-4 pt-6 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
-              {/* Overview and Marking Header - at the top */}
-              <div className="space-y-2 mb-6">
-                <div className="text-lg font-semibold text-neutral-100">Overview and Marking</div>
-                <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
-              </div>
-              
               {selectedIndex === -1 ? (
-                <div className="space-y-6">
+                <div className="space-y-6 pb-8">
                   {/* Hero Section */}
                   <div className="space-y-4">
                     {/* Compact Header: type, year, section pills, date */}
@@ -1692,7 +1695,10 @@ export default function PapersMarkPage() {
 
                     {/* Pacing Profile */}
                     <div className={`${bubbleClass}`}>
-                      <div className="text-base font-semibold text-neutral-100 mb-4">Pacing Profile</div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="text-base font-semibold text-neutral-100">Pacing Profile</div>
+                        <div className="text-sm text-neutral-400">(time per question)</div>
+                      </div>
                       <TimeScatterChart
                         questionNumbers={questionNumbers}
                         perQuestionSec={perQuestionSec}
@@ -1705,7 +1711,7 @@ export default function PapersMarkPage() {
                   {/* Main Content Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Time Management Analysis */}
-                      <div className={`${bubbleClass} space-y-4 md:col-start-1 md:row-start-1`}>
+                      <div className={`${bubbleClass} space-y-3 md:col-start-1 md:row-start-1`}>
                       <div className="text-base font-semibold text-neutral-100">Time Management</div>
 
                       {/* KPI Row */}
@@ -1723,25 +1729,25 @@ export default function PapersMarkPage() {
                           : 0;
                         
                         return (
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="text-center p-2 rounded bg-neutral-900">
-                              <div className="text-[11px] text-neutral-400">Median time</div>
-                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(median))}</div>
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4 flex flex-col items-center justify-center min-h-[96px]">
+                              <div className="text-xs text-neutral-400">Median time</div>
+                              <div className="text-lg font-semibold text-neutral-200 leading-tight">{formatTime(Math.round(median))}</div>
                             </div>
-                            <div className="text-center p-2 rounded bg-neutral-900">
-                              <div className="text-[11px] text-neutral-400">Longest time</div>
-                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(longest))}</div>
+                            <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4 flex flex-col items-center justify-center min-h-[96px]">
+                              <div className="text-xs text-neutral-400">Longest time</div>
+                              <div className="text-lg font-semibold text-neutral-200 leading-tight">{formatTime(Math.round(longest))}</div>
                             </div>
-                            <div className="text-center p-2 rounded bg-neutral-900">
-                              <div className="text-[11px] text-neutral-400">Shortest time</div>
-                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(shortest))}</div>
+                            <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4 flex flex-col items-center justify-center min-h-[96px]">
+                              <div className="text-xs text-neutral-400">Shortest time</div>
+                              <div className="text-lg font-semibold text-neutral-200 leading-tight">{formatTime(Math.round(shortest))}</div>
                             </div>
                           </div>
                         );
                       })()}
 
                       {/* Time Used Split */}
-                      <div>
+                      <div className="p-3 rounded-md bg-neutral-900">
                         <div className="text-xs text-neutral-400 mb-2">Time Allocation</div>
                         <div className="w-full h-2 bg-neutral-700 rounded-full overflow-hidden">
                           {(() => {
@@ -1762,7 +1768,7 @@ export default function PapersMarkPage() {
                         </div>
                       </div>
 
-                      <div>
+                      <div className="p-3 rounded-md bg-neutral-900">
                         <div className="text-xs text-neutral-400 mb-2">Performance Trend</div>
                         <div className="space-y-2">
                           {(() => {
@@ -1828,8 +1834,8 @@ export default function PapersMarkPage() {
                               return d;
                             }
 
-                            const accStroke = performanceTrend.trend === 'improving' ? "#6c9e69" : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
-                            const speedStroke = PAPER_COLORS.mathematics ?? 'rgba(120,180,255,0.9)';
+                            const accStroke = 'rgba(163,163,163,0.8)'; // neutral-400
+                            const speedStroke = 'rgba(115,115,115,0.8)'; // neutral-500
 
                             const accPath = buildSmoothPath(accValues);
                             const speedPath = buildSmoothPath(speedValues);
@@ -1868,9 +1874,9 @@ export default function PapersMarkPage() {
                         const qs = usePaperSessionStore.getState().questions;
                         const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
                         const sectionTitle = currentExamName === 'TMUA' 
-                          ? 'TMUA score by Section'
+                          ? 'TMUA Score by Section'
                           : (currentExamName === 'ENGAA' || currentExamName === 'NSAA')
-                          ? 'ESAT score by Section'
+                          ? 'ESAT Score by Section'
                           : 'Section Performance';
                         return <div className="text-base font-semibold text-neutral-100">{sectionTitle}</div>;
                       })()}
@@ -1936,7 +1942,9 @@ export default function PapersMarkPage() {
                                 </div>
                                 <div className="text-right">
                                   {isESATorTMUA && (
-                                    <div className="text-xs text-neutral-400 mb-1">{currentExamName}</div>
+                                    <div className="text-xs text-neutral-400 mb-1">
+                                      {currentExamName === 'TMUA' ? 'TMUA' : 'ESAT'}
+                                    </div>
                                   )}
                                   <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
                                 </div>
@@ -2033,15 +2041,34 @@ export default function PapersMarkPage() {
                             const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
                             const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
                             
-                            // Build distribution curve points
-                            const points: string[] = [];
+                            // Build distribution curve points - through middle of bars, curved
+                            const points: { x: number; y: number }[] = [];
                             distributionData.forEach((d, i) => {
-                              const x1 = toX(rows[i].score);
-                              const x2 = toX(rows[i + 1].score);
+                              const midX = toX(d.midScore);
                               const y = toY(d.distPct);
-                              if (i === 0) points.push(`M ${x1},${y}`);
-                              points.push(`L ${x2},${y}`);
+                              points.push({ x: midX, y });
                             });
+                            
+                            // Build smooth curved path using cubic bezier curves
+                            let pathD = '';
+                            if (points.length > 0) {
+                              pathD = `M ${points[0].x},${points[0].y}`;
+                              for (let i = 1; i < points.length; i++) {
+                                const prev = points[i - 1];
+                                const curr = points[i];
+                                const next = points[i + 1] || curr;
+                                // Calculate control points for smooth cubic bezier curve
+                                const dx1 = (curr.x - prev.x) * 0.3;
+                                const dy1 = (curr.y - prev.y) * 0.3;
+                                const dx2 = (next.x - curr.x) * 0.3;
+                                const dy2 = (next.y - curr.y) * 0.3;
+                                const cp1x = prev.x + dx1;
+                                const cp1y = prev.y + dy1;
+                                const cp2x = curr.x - dx2;
+                                const cp2y = curr.y - dy2;
+                                pathD += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${curr.y}`;
+                              }
+                            }
                             
                             // Find averaged percentile position in distribution
                             let avgPercentileScore = minX + (maxX - minX) / 2;
@@ -2052,13 +2079,62 @@ export default function PapersMarkPage() {
                                 break;
                               }
                             }
-                            const percentileX = toX(avgPercentileScore);
+                            // Find which bar the percentile falls in
+                            let percentileX = toX(avgPercentileScore);
                             let percentileY = h - pad;
+                            let percentileBarIndex = -1;
                             for (let i = 0; i < distributionData.length; i++) {
                               if (avgPercentileScore >= rows[i].score && avgPercentileScore < rows[i + 1].score) {
-                                percentileY = toY(distributionData[i].distPct);
+                                percentileBarIndex = i;
+                                // Calculate Y position on the curve at user's exact X
+                                const barStart = rows[i].score;
+                                const barEnd = rows[i + 1].score;
+                                const ratio = (avgPercentileScore - barStart) / (barEnd - barStart);
+                                const prevPoint = i > 0 ? points[i - 1] : points[0];
+                                const currPoint = points[i];
+                                percentileY = prevPoint.y + (currPoint.y - prevPoint.y) * ratio;
                                 break;
                               }
+                            }
+                            
+                            // Build filled area path up to user's position
+                            let filledPathD = '';
+                            if (points.length > 0 && percentileBarIndex >= 0) {
+                              // Start at baseline
+                              filledPathD = `M ${points[0].x},${h - pad}`;
+                              // Follow the curve up to the user's position
+                              for (let i = 0; i < percentileBarIndex; i++) {
+                                if (i === 0) {
+                                  filledPathD += ` L ${points[i].x},${points[i].y}`;
+                                } else {
+                                  const prev = points[i - 1];
+                                  const curr = points[i];
+                                  const next = points[i + 1] || curr;
+                                  const dx1 = (curr.x - prev.x) * 0.3;
+                                  const dy1 = (curr.y - prev.y) * 0.3;
+                                  const dx2 = (next.x - curr.x) * 0.3;
+                                  const dy2 = (next.y - curr.y) * 0.3;
+                                  const cp1x = prev.x + dx1;
+                                  const cp1y = prev.y + dy1;
+                                  const cp2x = curr.x - dx2;
+                                  const cp2y = curr.y - dy2;
+                                  filledPathD += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${curr.y}`;
+                                }
+                              }
+                              // Add the point at user's exact position
+                              // Interpolate Y on the curve at user's X position
+                              const userActualX = toX(avgPercentileScore);
+                              const barStart = rows[percentileBarIndex].score;
+                              const barEnd = rows[percentileBarIndex + 1].score;
+                              const ratio = (avgPercentileScore - barStart) / (barEnd - barStart);
+                              const prevPoint = percentileBarIndex > 0 ? points[percentileBarIndex - 1] : points[0];
+                              const currPoint = points[percentileBarIndex];
+                              const nextPoint = points[percentileBarIndex + 1] || currPoint;
+                              // Linear interpolation for Y at user's X
+                              const userY = prevPoint.y + (currPoint.y - prevPoint.y) * ratio;
+                              filledPathD += ` L ${userActualX},${userY}`;
+                              // Close the path back to baseline
+                              filledPathD += ` L ${userActualX},${h - pad} Z`;
                             }
                             
                             // Build distribution bars
@@ -2088,9 +2164,45 @@ export default function PapersMarkPage() {
                                   {/* Axes */}
                                   <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
                                   <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
-                                  {/* Distribution bars */}
+                                  {/* Filled area under curve up to user's position */}
+                                  {filledPathD && (
+                                    <path d={filledPathD} fill="rgba(108, 158, 105, 0.2)" stroke="none" />
+                                  )}
+                                  {/* Distribution bars - split if user is in the middle */}
                                   {bars.map((bar, i) => {
                                     const isAvgBar = avgPercentileScore >= rows[i].score && avgPercentileScore < rows[i + 1].score;
+                                    const barStart = rows[i].score;
+                                    const barEnd = rows[i + 1].score;
+                                    const userInBar = avgPercentileScore >= barStart && avgPercentileScore < barEnd;
+                                    
+                                    if (userInBar && avgPercentileScore > barStart && avgPercentileScore < barEnd) {
+                                      // Split the bar at user's position
+                                      const splitX = toX(avgPercentileScore);
+                                      const leftWidth = splitX - bar.x;
+                                      const rightWidth = bar.width - leftWidth;
+                                      return (
+                                        <g key={i}>
+                                          <rect
+                                            x={bar.x}
+                                            y={bar.y}
+                                            width={leftWidth}
+                                            height={bar.height}
+                                            fill="rgba(108, 158, 105, 0.3)"
+                                            stroke="rgba(108, 158, 105, 0.6)"
+                                            strokeWidth={1.5}
+                                          />
+                                          <rect
+                                            x={splitX}
+                                            y={bar.y}
+                                            width={rightWidth}
+                                            height={bar.height}
+                                            fill="rgba(122, 127, 135, 0.2)"
+                                            stroke="rgba(122, 127, 135, 0.4)"
+                                            strokeWidth={0.5}
+                                          />
+                                        </g>
+                                      );
+                                    }
                                     return (
                                       <rect
                                         key={i}
@@ -2098,9 +2210,9 @@ export default function PapersMarkPage() {
                                         y={bar.y}
                                         width={bar.width}
                                         height={bar.height}
-                                        fill={isAvgBar ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)"}
-                                        stroke={isAvgBar ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)"}
-                                        strokeWidth={isAvgBar ? 1.5 : 0.5}
+                                        fill={isAvgBar ? "rgba(108, 158, 105, 0.3)" : (i < percentileBarIndex ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)")}
+                                        stroke={isAvgBar ? "rgba(108, 158, 105, 0.6)" : (i < percentileBarIndex ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)")}
+                                        strokeWidth={isAvgBar ? 1.5 : (i < percentileBarIndex ? 1.5 : 0.5)}
                                       />
                                     );
                                   })}
@@ -2118,7 +2230,7 @@ export default function PapersMarkPage() {
                                     </g>
                                   ))}
                                   {/* Distribution curve */}
-                                  <path d={points.join(' ')} fill="none" stroke="#7a7f87" strokeWidth="2" />
+                                  <path d={pathD} fill="none" stroke="#7a7f87" strokeWidth="2" />
                                   {/* Averaged percentile marker */}
                                   <line x1={percentileX} y1={pad} x2={percentileX} y2={h-pad} stroke="rgba(255,255,255,0.3)" strokeDasharray="4 4" />
                                   <circle cx={percentileX} cy={percentileY} r="4" fill="#ffffff" />
@@ -2241,24 +2353,90 @@ export default function PapersMarkPage() {
                                   const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
                                   const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
                                   
-                                  // Build distribution curve points
-                                  const points: string[] = [];
+                                  // Build distribution curve points - through middle of bars, curved
+                                  const points: { x: number; y: number }[] = [];
                                   distributionData.forEach((d, i) => {
-                                    const x1 = toX(rows[i].score);
-                                    const x2 = toX(rows[i + 1].score);
+                                    const midX = toX(d.midScore);
                                     const y = toY(d.distPct);
-                                    if (i === 0) points.push(`M ${x1},${y}`);
-                                    points.push(`L ${x2},${y}`);
+                                    points.push({ x: midX, y });
                                   });
                                   
-                                  const userX = toX(score ?? minX);
+                                  // Build smooth curved path using cubic bezier curves
+                                  let pathD = '';
+                                  if (points.length > 0) {
+                                    pathD = `M ${points[0].x},${points[0].y}`;
+                                    for (let i = 1; i < points.length; i++) {
+                                      const prev = points[i - 1];
+                                      const curr = points[i];
+                                      const next = points[i + 1] || curr;
+                                      // Calculate control points for smooth cubic bezier curve
+                                      const dx1 = (curr.x - prev.x) * 0.3;
+                                      const dy1 = (curr.y - prev.y) * 0.3;
+                                      const dx2 = (next.x - curr.x) * 0.3;
+                                      const dy2 = (next.y - curr.y) * 0.3;
+                                      const cp1x = prev.x + dx1;
+                                      const cp1y = prev.y + dy1;
+                                      const cp2x = curr.x - dx2;
+                                      const cp2y = curr.y - dy2;
+                                      pathD += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${curr.y}`;
+                                    }
+                                  }
+                                  
                                   // Find user's position in distribution
+                                  let userX = toX(score ?? minX);
                                   let userDistY = h - pad;
+                                  let userBarIndex = -1;
                                   for (let i = 0; i < distributionData.length; i++) {
                                     if (score !== null && score >= rows[i].score && score < rows[i + 1].score) {
-                                      userDistY = toY(distributionData[i].distPct);
+                                      userBarIndex = i;
+                                      // Calculate Y position on the curve at user's exact X
+                                      const barStart = rows[i].score;
+                                      const barEnd = rows[i + 1].score;
+                                      const ratio = (score - barStart) / (barEnd - barStart);
+                                      const prevPoint = i > 0 ? points[i - 1] : points[0];
+                                      const currPoint = points[i];
+                                      userDistY = prevPoint.y + (currPoint.y - prevPoint.y) * ratio;
                                       break;
                                     }
+                                  }
+                                  
+                                  // Build filled area path up to user's position
+                                  let filledPathD = '';
+                                  if (points.length > 0 && userBarIndex >= 0 && score !== null) {
+                                    // Start at baseline
+                                    filledPathD = `M ${points[0].x},${h - pad}`;
+                                    // Follow the curve up to the user's position
+                                    for (let i = 0; i < userBarIndex; i++) {
+                                      if (i === 0) {
+                                        filledPathD += ` L ${points[i].x},${points[i].y}`;
+                                      } else {
+                                        const prev = points[i - 1];
+                                        const curr = points[i];
+                                        const next = points[i + 1] || curr;
+                                        const dx1 = (curr.x - prev.x) * 0.3;
+                                        const dy1 = (curr.y - prev.y) * 0.3;
+                                        const dx2 = (next.x - curr.x) * 0.3;
+                                        const dy2 = (next.y - curr.y) * 0.3;
+                                        const cp1x = prev.x + dx1;
+                                        const cp1y = prev.y + dy1;
+                                        const cp2x = curr.x - dx2;
+                                        const cp2y = curr.y - dy2;
+                                        filledPathD += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${curr.y}`;
+                                      }
+                                    }
+                                    // Add the point at user's exact position
+                                    // Interpolate Y on the curve at user's X position
+                                    const userActualX = toX(score);
+                                    const barStart = rows[userBarIndex].score;
+                                    const barEnd = rows[userBarIndex + 1].score;
+                                    const ratio = (score - barStart) / (barEnd - barStart);
+                                    const prevPoint = userBarIndex > 0 ? points[userBarIndex - 1] : points[0];
+                                    const currPoint = points[userBarIndex];
+                                    // Linear interpolation for Y at user's X
+                                    const userY = prevPoint.y + (currPoint.y - prevPoint.y) * ratio;
+                                    filledPathD += ` L ${userActualX},${userY}`;
+                                    // Close the path back to baseline
+                                    filledPathD += ` L ${userActualX},${h - pad} Z`;
                                   }
                                   
                                   // Build shaded area (bars for distribution)
@@ -2287,9 +2465,45 @@ export default function PapersMarkPage() {
                                       {/* Axes */}
                                       <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
                                       <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
-                                      {/* Distribution bars */}
+                                      {/* Filled area under curve up to user's position */}
+                                      {filledPathD && (
+                                        <path d={filledPathD} fill="rgba(108, 158, 105, 0.2)" stroke="none" />
+                                      )}
+                                      {/* Distribution bars - split if user is in the middle */}
                                       {bars.map((bar, i) => {
                                         const isUserBar = score !== null && score >= rows[i].score && score < rows[i + 1].score;
+                                        const barStart = rows[i].score;
+                                        const barEnd = rows[i + 1].score;
+                                        const userInBar = score !== null && score >= barStart && score < barEnd;
+                                        
+                                        if (userInBar && score !== null && score > barStart && score < barEnd) {
+                                          // Split the bar at user's position
+                                          const splitX = toX(score);
+                                          const leftWidth = splitX - bar.x;
+                                          const rightWidth = bar.width - leftWidth;
+                                          return (
+                                            <g key={i}>
+                                              <rect
+                                                x={bar.x}
+                                                y={bar.y}
+                                                width={leftWidth}
+                                                height={bar.height}
+                                                fill="rgba(108, 158, 105, 0.3)"
+                                                stroke="rgba(108, 158, 105, 0.6)"
+                                                strokeWidth={1.5}
+                                              />
+                                              <rect
+                                                x={splitX}
+                                                y={bar.y}
+                                                width={rightWidth}
+                                                height={bar.height}
+                                                fill="rgba(122, 127, 135, 0.2)"
+                                                stroke="rgba(122, 127, 135, 0.4)"
+                                                strokeWidth={0.5}
+                                              />
+                                            </g>
+                                          );
+                                        }
                                         return (
                                           <rect
                                             key={i}
@@ -2297,9 +2511,9 @@ export default function PapersMarkPage() {
                                             y={bar.y}
                                             width={bar.width}
                                             height={bar.height}
-                                            fill={isUserBar ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)"}
-                                            stroke={isUserBar ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)"}
-                                            strokeWidth={isUserBar ? 1.5 : 0.5}
+                                            fill={isUserBar ? "rgba(108, 158, 105, 0.3)" : (i < userBarIndex ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)")}
+                                            stroke={isUserBar ? "rgba(108, 158, 105, 0.6)" : (i < userBarIndex ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)")}
+                                            strokeWidth={isUserBar ? 1.5 : (i < userBarIndex ? 1.5 : 0.5)}
                                           />
                                         );
                                       })}
@@ -2317,7 +2531,7 @@ export default function PapersMarkPage() {
                                         </g>
                                       ))}
                                       {/* Distribution curve */}
-                                      <path d={points.join(' ')} fill="none" stroke="#7a7f87" strokeWidth="2" />
+                                      <path d={pathD} fill="none" stroke="#7a7f87" strokeWidth="2" />
                                       {/* User marker */}
                                       {Number.isFinite(score) && (
                                         <>
@@ -2350,30 +2564,30 @@ export default function PapersMarkPage() {
                     
                     {/* Correct/Incorrect/Guessed stats */}
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-neutral-400 mb-1">Correct</div>
+                      <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-6 flex flex-col items-center justify-center min-h-[120px]">
+                        <div className="text-xs text-neutral-400 mb-2">Correct</div>
                         <div className="text-2xl font-bold" style={{ color: "#6c9e69" }}>
                           {accuracyPatterns.correct}
                         </div>
-                        <div className="text-xs text-neutral-500 mt-1">
+                        <div className="text-xs text-neutral-500 mt-2">
                           {Math.round((accuracyPatterns.correct / totalQuestions) * 100)}%
                         </div>
                       </div>
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-neutral-400 mb-1">Incorrect</div>
+                      <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-6 flex flex-col items-center justify-center min-h-[120px]">
+                        <div className="text-xs text-neutral-400 mb-2">Incorrect</div>
                         <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.chemistry }}>
                           {accuracyPatterns.incorrect}
                         </div>
-                        <div className="text-xs text-neutral-500 mt-1">
+                        <div className="text-xs text-neutral-500 mt-2">
                           {Math.round((accuracyPatterns.incorrect / totalQuestions) * 100)}%
                         </div>
                       </div>
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-neutral-400 mb-1">Guessed</div>
+                      <div className="rounded-xl bg-[#1a1f27] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-6 flex flex-col items-center justify-center min-h-[120px]">
+                        <div className="text-xs text-neutral-400 mb-2">Guessed</div>
                         <div className="text-2xl font-bold" style={{ color: '#c99d6a' }}>
                           {accuracyPatterns.guessed}
                         </div>
-                        <div className="text-xs text-neutral-500 mt-1">
+                        <div className="text-xs text-neutral-500 mt-2">
                           {Math.round((accuracyPatterns.guessed / totalQuestions) * 100)}%
                         </div>
                       </div>
@@ -2437,8 +2651,18 @@ export default function PapersMarkPage() {
                       {/* Guess accuracy */}
                       <div>
                         <div className="text-xs text-neutral-400 mb-2">Guess accuracy</div>
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-2xl font-bold text-neutral-200">{guessExtended.accuracy}%</div>
+                        <div className="p-3 rounded-md bg-neutral-900 flex items-center gap-3">
+                          <div className="w-[20%] text-center">
+                            <div className="text-2xl font-bold text-neutral-200">{guessExtended.accuracy}%</div>
+                          </div>
+                          <div className="flex-1 h-6 bg-neutral-800 rounded-full overflow-hidden border border-white/5">
+                            <div
+                              className="h-full flex items-center justify-center text-[11px] font-medium transition-all"
+                              style={{ width: `${guessExtended.accuracy}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
+                            >
+                              {guessExtended.accuracy >= 5 ? `${guessExtended.accuracy}%` : ''}
+                            </div>
+                          </div>
                         </div>
                       </div>
                       {/* Guess time split */}
@@ -2481,31 +2705,28 @@ export default function PapersMarkPage() {
                     </div>
                   </div>
 
+                  {/* Mistake Analysis */}
+                  <div className={`${bubbleClass} space-y-4 md:col-span-2`}>
+                    <div className="text-base font-semibold text-neutral-100">Mistake Analysis</div>
+                    
+                    <MistakeChart mistakeTags={mistakeTags} />
 
-                    {/* Mistake Analysis */}
-                    <div className={`${bubbleClass} space-y-4`}>
-                      <div className="text-base font-semibold text-neutral-100">Mistake Analysis</div>
-                      
-                      <MistakeChart mistakeTags={mistakeTags} />
-
-                      {Object.keys(mistakesBySection).length > 0 && (
-                        <div>
-                          <div className="text-xs text-neutral-400 mb-2">Mistakes by Section</div>
-                          <div className="space-y-2">
-                            {Object.entries(mistakesBySection).map(([section, mistakes]) => {
-                              const total = Object.values(mistakes).reduce((a, b) => a + b, 0);
-                              return (
-                                <div key={section} className="p-2 rounded bg-[#0f1114]">
-                                  <div className="text-xs text-neutral-300 mb-1">{section}</div>
-                                  <div className="text-xs text-neutral-400">{total} total mistakes</div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                    {Object.keys(mistakesBySection).length > 0 && (
+                      <div>
+                        <div className="text-xs text-neutral-400 mb-2">Mistakes by Section</div>
+                        <div className="space-y-2">
+                          {Object.entries(mistakesBySection).map(([section, mistakes]) => {
+                            const total = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                            return (
+                              <div key={section} className="p-2 rounded bg-[#0f1114]">
+                                <div className="text-xs text-neutral-300 mb-1">{section}</div>
+                                <div className="text-xs text-neutral-400">{total} total mistakes</div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
@@ -3203,10 +3424,6 @@ export default function PapersMarkPage() {
                     {/* Part Header with colored accent */}
                     <div className="flex items-center gap-2">
                       <div 
-                        className="h-1 rounded-full flex-shrink-0" 
-                        style={{ width: '4px', backgroundColor: group.color }}
-                      />
-                      <div 
                         className="text-sm font-semibold px-2 py-1 rounded-md text-white"
                         style={{ backgroundColor: group.color }}
                       >
@@ -3378,7 +3595,7 @@ export default function PapersMarkPage() {
           </div>
         </div>
     </Container>
-    </Fragment>
+    </React.Fragment>
   );
 }
 

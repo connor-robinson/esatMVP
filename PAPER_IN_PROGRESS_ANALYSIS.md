@@ -415,3 +415,5 @@ The paper in progress pipeline has several critical issues:
 
 These issues explain why papers appear "out of nowhere", resume doesn't work correctly, and sessions don't refresh properly. A comprehensive refactor is recommended to fix these issues systematically.
 
+
+
