@@ -81,16 +81,12 @@ export default function PapersMarkPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<'question' | 'solution' | null>(null);
   const [showAnswer, setShowAnswer] = useState(true);
-  const [showNotesBox, setShowNotesBox] = useState(false);
   const [drillSelection, setDrillSelection] = useState<number[]>([]);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [conversionRows, setConversionRows] = useState<any[]>([]);
   const [hasConversion, setHasConversion] = useState(false);
   const [croppedQuestionImage, setCroppedQuestionImage] = useState<string | null>(null);
   const [croppedAnswerImage, setCroppedAnswerImage] = useState<string | null>(null);
-  // Notes saving UX state
-  const [noteStatus, setNoteStatus] = useState<'idle' | 'typing' | 'saved'>('idle');
-  const noteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Session notes saving UX
   const [sessionNoteStatus, setSessionNoteStatus] = useState<'idle' | 'typing' | 'saved'>('idle');
   const sessionNoteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1364,7 +1360,7 @@ export default function PapersMarkPage() {
 
   return (
     <Fragment>
-      <Container size="lg" className="h-[calc(100vh-4rem)]">
+      <Container size="xl" className="h-[calc(100vh-4rem)] space-y-6">
         {/* Main two-column layout - fills available space */}
         <Card className="p-0 bg-neutral-900 border-0 overflow-hidden h-full">
           <div
@@ -1477,12 +1473,6 @@ export default function PapersMarkPage() {
                                   )}
                                 </div>
                               </div>
-                              {answer?.other && (
-                                <details className="mt-1">
-                                  <summary className="text-[11px] text-neutral-400 cursor-pointer">View notes</summary>
-                                  <div className="mt-1 text-[12px] text-neutral-300">{answer.other}</div>
-                                </details>
-                              )}
                             </button>
                           );
                         })}
@@ -2409,14 +2399,14 @@ export default function PapersMarkPage() {
                   </div>
 
               {/* Compact Stats Section - Two Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4 items-stretch">
                 {/* Left Column: Community Stats */}
                 {(() => {
                   const question = usePaperSessionStore.getState().questions[selectedIndex];
                   const stats = question ? questionStats[question.id] : null;
                   
                   return (
-                    <div className="space-y-3">
+                    <div className="flex flex-col space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Community Stats</div>
                         {stats && (
@@ -2431,17 +2421,17 @@ export default function PapersMarkPage() {
                       ) : (
                         <>
                           {/* Emphasized Average Time */}
-                          <div className="p-3 rounded-md" style={{ backgroundColor: '#1a1f27' }}>
-                            <div className="text-xs text-neutral-400 mb-1">Community average time</div>
-                            <div className="text-lg font-semibold text-neutral-100">
+                          <div className="p-2.5 rounded-md" style={{ backgroundColor: '#1a1f27' }}>
+                            <div className="text-xs text-neutral-400 mb-0.5">Community average time</div>
+                            <div className="text-base font-semibold text-neutral-100">
                               {formatTime(Math.round(stats.avgTimeSeconds))}
                             </div>
                           </div>
                           
-                          {/* Answer Distribution - Vertical Bar Chart */}
-                          <div className="space-y-2">
+                          {/* Answer Distribution - Compact Grid Layout */}
+                          <div className="space-y-1.5 flex-1">
                             <div className="text-xs text-neutral-400">Answer distribution</div>
-                            <div className="flex items-end justify-between gap-2 h-24">
+                            <div className="grid grid-cols-4 gap-2">
                               {LETTERS.map((letter) => {
                                 const percentage = stats.optionPercentages[letter] || 0;
                                 const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
@@ -2452,31 +2442,31 @@ export default function PapersMarkPage() {
                                 const shouldShow = percentage > 0 || isCorrect || isUserChoice;
                                 
                                 return (
-                                  <div key={letter} className="flex-1 flex flex-col items-center justify-end gap-1 h-full">
-                                    <div 
-                                      className="w-full rounded-t transition-all duration-300 relative"
-                                      style={{
-                                        height: `${Math.max(percentage, shouldShow ? 2 : 0)}%`,
-                                        backgroundColor: isCorrect
-                                          ? "#6c9e69"
-                                          : isUserWrong
-                                          ? PAPER_COLORS.chemistry
-                                          : isUserChoice
-                                          ? "#b89f5a"
-                                          : shouldShow
-                                          ? "#5a6370"
-                                          : "transparent",
-                                        minHeight: shouldShow ? "4px" : "0px",
-                                      }}
-                                    >
-                                      {shouldShow && percentage > 0 && (
-                                        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-xs text-neutral-400 whitespace-nowrap">
-                                          {percentage.toFixed(0)}%
-                                        </div>
-                                      )}
+                                  <div key={letter} className="space-y-1">
+                                    <div className="flex items-center justify-between">
+                                      <div className={`text-xs font-medium ${shouldShow ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                                        {letter}
+                                      </div>
+                                      <div className={`text-xs ${shouldShow ? 'text-neutral-400' : 'text-neutral-600'}`}>
+                                        {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
+                                      </div>
                                     </div>
-                                    <div className={`text-xs font-medium ${shouldShow ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                                      {letter}
+                                    <div className="h-3.5 bg-neutral-800/50 rounded-full overflow-hidden relative">
+                                      {shouldShow && (
+                                        <div
+                                          className="h-full rounded-full transition-all duration-300"
+                                          style={{
+                                            width: `${Math.max(percentage, 2)}%`,
+                                            backgroundColor: isCorrect
+                                              ? "#6c9e69"
+                                              : isUserWrong
+                                              ? PAPER_COLORS.chemistry
+                                              : isUserChoice
+                                              ? "#b89f5a"
+                                              : "#5a6370",
+                                          }}
+                                        />
+                                      )}
                                     </div>
                                   </div>
                                 );
@@ -2490,51 +2480,105 @@ export default function PapersMarkPage() {
                 })()}
 
                 {/* Right Column: Your Stats */}
-                <div className="space-y-2">
-                  <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">Your Answer</div>
+                <div className="flex flex-col space-y-2">
+                  <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider mb-1">Your Answer</div>
                   
-                  {/* Your answer */}
-                  <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                    <div className="text-xs text-neutral-200">Your answer</div>
-                    <div 
-                      className="text-sm mt-1 font-medium text-white"
-                      style={{
-                        color: answers[selectedIndex]?.choice 
-                          ? (guessedFlags[selectedIndex]
-                              ? '#b89f5a'
-                              : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
-                                  ? "#6c9e69"
-                                  : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
-                                      ? PAPER_COLORS.chemistry
-                                      : '#ffffff'))
-                            )
-                          : '#9ca3af'
-                      }}
-                    >
-                      {answers[selectedIndex]?.choice ?? "—"}
+                  {/* Time taken - Top row with comparison */}
+                  {(() => {
+                    const question = usePaperSessionStore.getState().questions[selectedIndex];
+                    const stats = question ? questionStats[question.id] : null;
+                    const userTime = perQuestionSec[selectedIndex] || 0;
+                    const communityTime = stats ? stats.avgTimeSeconds : null;
+                    const timeDiff = communityTime !== null ? userTime - communityTime : null;
+                    const isFaster = timeDiff !== null && timeDiff < 0;
+                    const diffSeconds = timeDiff !== null ? Math.abs(Math.round(timeDiff)) : 0;
+                    
+                    return (
+                      <div className="p-2.5 rounded-md border" style={{ backgroundColor: '#1a1f27', borderColor: 'rgba(255,255,255,0.1)' }}>
+                        <div className="text-xs text-neutral-400 mb-0.5">Your time</div>
+                        <div className="flex items-baseline gap-2">
+                          <div className="text-base font-semibold text-neutral-100">
+                            {formatTime(Math.round(userTime))}
+                          </div>
+                          {timeDiff !== null && diffSeconds > 0 && (
+                            <div className={`text-xs ${isFaster ? 'text-[#6c9e69]' : 'text-neutral-400'}`}>
+                              ({isFaster ? `${diffSeconds}s faster` : `${diffSeconds}s slower`} than avg)
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  
+                  {/* Your answer and Correct answer - Side by side */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* Your answer */}
+                    {(() => {
+                      const hasAnswer = answers[selectedIndex]?.choice;
+                      const isGuessed = guessedFlags[selectedIndex];
+                      const isCorrect = (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true;
+                      const isWrong = (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false;
+                      
+                      // Helper to convert hex to rgba
+                      const hexToRgba = (hex: string, alpha: number) => {
+                        const r = parseInt(hex.slice(1, 3), 16);
+                        const g = parseInt(hex.slice(3, 5), 16);
+                        const b = parseInt(hex.slice(5, 7), 16);
+                        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                      };
+                      
+                      let bgColor = '#2b2f36'; // default neutral
+                      let textColor = '#ffffff';
+                      let labelColor = 'text-neutral-200';
+                      
+                      if (hasAnswer) {
+                        if (isGuessed) {
+                          bgColor = 'rgba(184, 159, 90, 0.2)'; // gold with opacity
+                          textColor = '#f4d03f'; // lighter gold for text
+                          labelColor = 'text-neutral-300';
+                        } else if (isCorrect) {
+                          bgColor = 'rgba(108, 158, 105, 0.2)'; // green with opacity
+                          textColor = '#a6d48a'; // lighter green for text
+                          labelColor = 'text-neutral-300';
+                        } else if (isWrong) {
+                          // Convert chemistry color (red) to rgba
+                          const wrongColor = PAPER_COLORS.chemistry;
+                          bgColor = wrongColor.startsWith('#') 
+                            ? hexToRgba(wrongColor, 0.2)
+                            : `rgba(220, 38, 38, 0.2)`; // fallback red
+                          textColor = '#f87171'; // lighter red for text
+                          labelColor = 'text-neutral-300';
+                        }
+                      }
+                      
+                      return (
+                        <div className="p-2.5 rounded-md" style={{ backgroundColor: bgColor }}>
+                          <div className={`text-xs ${labelColor}`}>Your answer</div>
+                          <div 
+                            className="text-sm mt-0.5 font-medium"
+                            style={{ color: hasAnswer ? textColor : '#9ca3af' }}
+                          >
+                            {answers[selectedIndex]?.choice ?? "—"}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    
+                    {/* Correct answer */}
+                    <div className="p-2.5 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
+                      <div className="text-xs text-neutral-200">Correct answer</div>
+                      <div className="text-sm mt-0.5 font-medium" style={{ color: "#6c9e69" }}>
+                        {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "—").toUpperCase()}
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Correct answer */}
-                  <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                    <div className="text-xs text-neutral-200">Correct answer</div>
-                    <div className="text-sm mt-1 font-medium text-white" style={{ color: "#6c9e69" }}>
-                      {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "—").toUpperCase()}
-                    </div>
-                  </div>
-                  
-                  {/* Time taken */}
-                  <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                    <div className="text-xs text-neutral-200">Time taken</div>
-                    <div className="text-neutral-50 text-sm mt-1 font-medium">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
                   </div>
                   
                   {/* Change your answer buttons */}
-                  <div className="pt-2">
-                    <div className="text-xs text-neutral-400 mb-2">Change your answer</div>
+                  <div className="pt-1">
+                    <div className="text-xs text-neutral-400 mb-1.5">Change your answer</div>
                     <div className="flex flex-row gap-2">
                       <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
                           (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
                         }`}
                         style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
@@ -2544,7 +2588,7 @@ export default function PapersMarkPage() {
                         Correct
                       </button>
                       <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
                           (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
                         }`}
                         style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry } : { backgroundColor: "#1f1f1f" }}
@@ -2554,7 +2598,7 @@ export default function PapersMarkPage() {
                         Wrong
                       </button>
                       <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 ${
+                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
                           guessedFlags[selectedIndex]
                             ? "text-white"
                             : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
@@ -2625,8 +2669,7 @@ export default function PapersMarkPage() {
                                     margin: 0,
                                     padding: 0,
                                     verticalAlign: 'bottom',
-                                    filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                    mixBlendMode: isDarkMode ? 'difference' : 'normal'
+                                    filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'
                                   }}
                                 />
                               </div>
@@ -2728,8 +2771,7 @@ export default function PapersMarkPage() {
                                           margin: 0,
                                           padding: 0,
                                           verticalAlign: 'bottom',
-                                          filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                          mixBlendMode: isDarkMode ? 'difference' : 'normal'
+                                          filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none'
                                         }}
                                       />
                                     </div>
@@ -2874,22 +2916,12 @@ export default function PapersMarkPage() {
                 </div>
               )}
 
-              {/* Notes for this question & Add to Drill */}
-              <div className="mt-4 space-y-3">
+              {/* Session Notes - Always visible */}
+              <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowNotesBox(!showNotesBox)}
-                      className="px-2.5 py-1.5 text-xs rounded-md transition bg-[#0f1114] text-neutral-300 hover:bg-[#121418] flex items-center gap-1.5"
-                      aria-expanded={showNotesBox}
-                      title={showNotesBox ? "Hide note" : "Add a personal note"}
-                    >
-                      <svg className={`${showNotesBox ? 'rotate-90' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 6 15 12 9 18" />
-                      </svg>
-                      <span>{showNotesBox ? 'Hide note' : 'Add a personal note'}</span>
-                  </button>
-                    {/* Tooltip icon (same style as other tooltips on this page) */}
+                    <div className="text-xs font-medium text-neutral-300 uppercase tracking-wider">Session Notes</div>
+                    {/* Tooltip icon */}
                     <div className="relative group">
                       <button className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center" title="Notes info">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2897,34 +2929,30 @@ export default function PapersMarkPage() {
                           <line x1="12" y1="16" x2="12" y2="12" />
                           <circle cx="12" cy="8" r="1" />
                         </svg>
-                  </button>
+                      </button>
                       <div className="absolute left-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
-                        This note will appear with this question if you add it to Drill. You can review your notes in the Papers archive. Everything you type is autosaved.
-                      </div>
+                        These notes are private. They are autosaved and available in the Papers archive.
                       </div>
                     </div>
-                    {(noteStatus === 'typing' || noteStatus === 'saved') && (
-                    <div className={`px-2 py-0.5 rounded-md text-[11px] ${noteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
-                        {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
-                      </div>
-                    )}
                   </div>
-                {showNotesBox && (
-                  <div>
-                    <textarea
-                      value={answers[selectedIndex]?.explanation || ""}
-                      onChange={(e) => {
-                        setExplanation(selectedIndex, e.target.value);
-                        setNoteStatus('typing');
-                        if (noteDebounceRef.current) clearTimeout(noteDebounceRef.current);
-                        noteDebounceRef.current = setTimeout(() => setNoteStatus('saved'), 700);
-                      }}
-                      placeholder="Key takeaways for later practice… Use \\( ... \\) or \\[ ... \\] for math."
-                      className="w-full px-4 py-3 text-neutral-100 rounded-lg bg-white/5 text-sm resize-none placeholder:text-neutral-400 outline-none focus:outline-none focus:ring-0 ring-0 border-0"
-                      rows={4}
-                    />
-                  </div>
-                )}
+                  {(sessionNoteStatus === 'typing' || sessionNoteStatus === 'saved') && (
+                    <div className={`px-2 py-0.5 rounded-md text-[11px] ${sessionNoteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
+                      {sessionNoteStatus === 'typing' ? 'Saving…' : 'Saved'}
+                    </div>
+                  )}
+                </div>
+                <textarea
+                  value={notes}
+                  onChange={(e) => {
+                    setNotes(e.target.value);
+                    setSessionNoteStatus('typing');
+                    if (sessionNoteDebounceRef.current) clearTimeout(sessionNoteDebounceRef.current);
+                    sessionNoteDebounceRef.current = setTimeout(() => setSessionNoteStatus('saved'), 700);
+                  }}
+                  placeholder="Summarise your key mistakes and strategies for next time. You'll be able to review these before your next paper."
+                  className="w-full px-4 py-3 text-neutral-100 rounded-lg bg-white/5 text-sm resize-none placeholder:text-neutral-400 outline-none focus:outline-none focus:ring-0 ring-0 border-0"
+                  rows={4}
+                />
               </div>
               </div>
               )}
@@ -3001,37 +3029,77 @@ export default function PapersMarkPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="text-lg font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
-              <div className={`px-2 py-0.5 rounded-md text-[11px] ${noteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
-                {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
-              </div>
             </div>
             <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-              {questionNumbers.map((qn, index) => {
-                const isWrong = (derivedCorrectFlags[index] ?? correctFlags[index]) === false;
-                if (!isWrong) return null;
-                const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
+            <div className="space-y-4">
+              {partGroups.map((group) => {
+                // Filter to only wrong answers in this part
+                const wrongAnswersInPart = group.indexes
+                  .map((index) => ({
+                    index,
+                    qn: questionNumbers[index],
+                    isWrong: (derivedCorrectFlags[index] ?? correctFlags[index]) === false,
+                  }))
+                  .filter((item) => item.isWrong);
+
+                if (wrongAnswersInPart.length === 0) return null;
+
+                const partDisplay = /^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`;
                 const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing',"Didn't review options"];
                 const customKey = 'paper.customMistakeTags';
                 const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
                 const opts = Array.from(new Set([...preset, ...custom]));
+
                 return (
-                  <div key={qn} className="flex items-center justify-between bg-[#0f1114] hover:bg-[#121418] rounded-md px-3 py-2">
-                    <button className="text-sm font-medium text-neutral-200" onClick={() => setSelectedIndex(index)}>Q{qn}</button>
+                  <div key={group.partLetter} className="space-y-2">
+                    {/* Part Header with colored accent */}
                     <div className="flex items-center gap-2">
-                      <MistakeSelect
-                        value={Array.isArray(tags) ? tags : []}
-                        options={opts}
-                        onCreateOption={(label: string) => {
-                          const next = Array.from(new Set([...custom, label]));
-                          localStorage.setItem(customKey, JSON.stringify(next));
-                        }}
-                        onChange={(next: string[]) => {
-                          setNoteStatus('typing');
-                          setMistakeTag(index, next as any);
-                          setTimeout(() => setNoteStatus('saved'), 700);
-                        }}
+                      <div 
+                        className="h-1 rounded-full flex-shrink-0" 
+                        style={{ width: '4px', backgroundColor: group.color }}
                       />
+                      <div 
+                        className="text-sm font-semibold px-2 py-1 rounded-md text-white"
+                        style={{ backgroundColor: group.color }}
+                      >
+                        {partDisplay}
+                      </div>
+                      <div className="text-xs text-neutral-400">
+                        {wrongAnswersInPart.length} {wrongAnswersInPart.length === 1 ? 'mistake' : 'mistakes'}
+                      </div>
+                    </div>
+                    {/* Questions grid - 6 per row */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+                      {wrongAnswersInPart.map(({ index, qn }) => {
+                        const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
+                        return (
+                          <div 
+                            key={qn} 
+                            className="flex items-center justify-between bg-[#0f1114] hover:bg-[#121418] rounded-md px-3 py-2 border-l-2"
+                            style={{ borderLeftColor: group.color }}
+                          >
+                            <button 
+                              className="text-sm font-medium text-neutral-200" 
+                              onClick={() => setSelectedIndex(index)}
+                            >
+                              Q{qn}
+                            </button>
+                            <div className="flex items-center gap-2">
+                              <MistakeSelect
+                                value={Array.isArray(tags) ? tags : []}
+                                options={opts}
+                                onCreateOption={(label: string) => {
+                                  const next = Array.from(new Set([...custom, label]));
+                                  localStorage.setItem(customKey, JSON.stringify(next));
+                                }}
+                                onChange={(next: string[]) => {
+                                  setMistakeTag(index, next as any);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );

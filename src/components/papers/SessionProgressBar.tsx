@@ -9,11 +9,13 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { UserIcon, LogInIcon } from "@/components/icons";
+import { X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PAST_PAPERS_COLOR = "#5B8D94";
@@ -29,6 +31,7 @@ export function SessionProgressBar() {
     paperVariant,
     selectedSections,
     currentSectionIndex,
+    currentQuestionIndex,
     sectionTimeLimits,
     sectionInstructionTimer,
     sectionElapsedTimes,
@@ -37,6 +40,7 @@ export function SessionProgressBar() {
     resumeSession,
     resetSession,
     answers,
+    visitedQuestions,
     allSectionsQuestions,
     questions,
   } = usePaperSessionStore();
@@ -71,10 +75,13 @@ export function SessionProgressBar() {
 
   const paperDisplayName = getPaperDisplayName();
 
-  // Helper: Calculate section progress by question count (0-1)
+  // Helper: Calculate section progress by visited question position (0-1)
+  // Progress is based on which question the user is currently on, not how many they've answered
+  // When paused, still shows where the user left off
   const calculateSectionProgress = (sectionIndex: number): number => {
-    if (isPaused || isOnInstructionPage) {
-      return 0; // No progress when paused or on instruction page
+    // Don't show progress on instruction page, but show it when paused
+    if (isOnInstructionPage) {
+      return 0;
     }
     
     // Get questions for this section
@@ -87,40 +94,59 @@ export function SessionProgressBar() {
       return 0;
     }
     
-    // Count answered questions in this section
-    let answeredCount = 0;
-    sectionQuestions.forEach((question) => {
-      const globalIndex = questions.findIndex(q => q.id === question.id);
-      if (globalIndex >= 0 && answers[globalIndex]?.choice !== null && answers[globalIndex]?.choice !== undefined) {
-        answeredCount++;
-      }
-    });
+    // Find the current question's position within this section
+    const currentQuestion = questions[currentQuestionIndex];
+    if (!currentQuestion) {
+      return 0;
+    }
     
-    return Math.min(1, Math.max(0, answeredCount / sectionQuestions.length));
+    // If we're in this section, find the position of current question
+    if (sectionIndex === currentSectionIndex) {
+      const currentQuestionInSection = sectionQuestions.findIndex(q => q.id === currentQuestion.id);
+      if (currentQuestionInSection >= 0) {
+        // Progress = (position + 1) / total questions in section
+        // +1 because we're on that question (0-indexed to 1-indexed)
+        return Math.min(1, Math.max(0, (currentQuestionInSection + 1) / sectionQuestions.length));
+      }
+    }
+    
+    // If we've moved past this section, it's complete
+    if (sectionIndex < currentSectionIndex) {
+      return 1.0;
+    }
+    
+    // If we haven't reached this section yet, no progress
+    return 0;
   };
 
   // Calculate overall progress for current section
+  // When paused, still shows where the user left off
   const getCurrentSectionProgress = (): number => {
-    if (isPaused || isOnInstructionPage) {
-      // If paused or on instruction page, show static progress up to current node
+    if (isOnInstructionPage) {
+      // If on instruction page, show static progress up to current node
       return currentSectionIndex / totalSections;
     }
 
-    // Check if last section is completed (all questions answered)
+    // Check if last section is completed (user reached the end)
     const isLastSection = currentSectionIndex >= totalSections - 1;
     if (isLastSection && allSectionsQuestions && allSectionsQuestions.length > currentSectionIndex) {
       const lastSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
       if (lastSectionQuestions.length > 0) {
         const lastSectionProgress = calculateSectionProgress(currentSectionIndex);
-        // If last section is 100% complete, return 1.0 (full progress to MARK)
-        if (lastSectionProgress >= 1.0) {
-          return 1.0;
+        // If user is on the last question of the last section, show full progress
+        const currentQuestion = questions[currentQuestionIndex];
+        if (currentQuestion) {
+          const isLastQuestionInSection = lastSectionQuestions[lastSectionQuestions.length - 1]?.id === currentQuestion.id;
+          if (isLastQuestionInSection && lastSectionProgress >= 1.0) {
+            return 1.0;
+          }
         }
       }
     }
 
     const sectionProgress = calculateSectionProgress(currentSectionIndex);
     // Progress = completed sections + current section progress
+    // This works the same whether paused or not - shows where user left off
     const completedSectionsProgress = currentSectionIndex / totalSections;
     const currentSectionProgress = sectionProgress / totalSections;
     return completedSectionsProgress + currentSectionProgress;
@@ -161,8 +187,9 @@ export function SessionProgressBar() {
     }
     
     // Add segment for current active section if it's being worked on
+    // Show progress even when paused - displays where user left off
     const lastFilledIndex = filledNodes[filledNodes.length - 1];
-    if (lastFilledIndex === currentSectionIndex && !isOnInstructionPage && !isPaused) {
+    if (lastFilledIndex === currentSectionIndex && !isOnInstructionPage) {
       const sectionProgress = calculateSectionProgress(currentSectionIndex);
       const sectionStartPosition = (currentSectionIndex / totalSections) * 100;
       const nextNodePosition = currentSectionIndex < totalSections - 1 
@@ -186,14 +213,61 @@ export function SessionProgressBar() {
   };
 
   const progressSegments = getProgressSegments();
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [isQuitting, setIsQuitting] = useState(false);
 
   const handleQuit = async () => {
-    // Show confirmation dialog
-    if (window.confirm('Are you sure you want to quit? Your progress will be saved.')) {
+    setShowQuitModal(true);
+  };
+
+  const handleConfirmQuit = async () => {
+    setIsQuitting(true);
+    try {
+      const state = usePaperSessionStore.getState();
+      
+      // Persist session before quitting to ensure progress is saved
+      if (state.sessionId && !state.endedAt) {
+        try {
+          await state.persistSessionToServer({ immediate: true });
+        } catch (error) {
+          console.error('[SessionProgressBar] Failed to persist before quit:', error);
+          // Continue with quit even if persist fails
+        }
+      }
+      
       await resetSession();
+      setShowQuitModal(false);
       router.push('/papers/library');
+    } catch (error) {
+      console.error('[SessionProgressBar] Failed to quit session:', error);
+      setIsQuitting(false);
+      // Show error to user
+      alert('Failed to quit session. Please try again.');
     }
   };
+
+  const handleCancelQuit = () => {
+    if (isQuitting) return; // Don't allow cancel while quitting
+    setShowQuitModal(false);
+    setIsQuitting(false);
+  };
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    if (!showQuitModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isQuitting) {
+        setShowQuitModal(false);
+        setIsQuitting(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showQuitModal, isQuitting]);
 
   const loginHref = typeof window !== 'undefined' && window.location.pathname && window.location.pathname !== "/login" && window.location.pathname !== "/"
     ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
@@ -348,9 +422,14 @@ export function SessionProgressBar() {
 
           {/* Quit button (X) - positioned between progress bar and user icon */}
           <button
-            onClick={handleQuit}
-            className="ml-4 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-red-500/20 group"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleQuit();
+            }}
+            className="ml-2 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-red-500/20 group"
             title="Quit paper session"
+            type="button"
           >
             <svg
               width="20"
@@ -413,6 +492,82 @@ export function SessionProgressBar() {
           </div>
         </div>
       </div>
+      
+      {/* Quit Confirmation Modal */}
+      {showQuitModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          onClick={handleCancelQuit}
+        >
+          <div
+            className="relative w-full max-w-md mx-4 bg-[#1a1f27] border border-red-500/30 rounded-lg shadow-2xl overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-red-500/30 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400" strokeWidth={2.5} />
+                <h2 className="text-lg font-semibold text-white">Quit Session</h2>
+              </div>
+              <button
+                onClick={handleCancelQuit}
+                disabled={isQuitting}
+                className="p-2 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-colors disabled:opacity-50"
+              >
+                <X className="w-5 h-5" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4 text-sm text-white/80 leading-relaxed">
+                <p className="text-white font-medium">
+                  Are you sure you want to quit this paper session?
+                </p>
+                <p className="text-white/60">
+                  Your progress will be saved automatically. You can resume this session later from the library.
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-red-500/30 flex-shrink-0 flex gap-3">
+              <button
+                onClick={handleCancelQuit}
+                disabled={isQuitting}
+                className="flex-1 px-4 py-3 rounded-lg transition-all duration-fast ease-signature flex items-center justify-center gap-2 text-sm font-medium bg-white/5 hover:bg-white/10 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmQuit}
+                disabled={isQuitting}
+                className={cn(
+                  "flex-1 px-4 py-3 rounded-lg transition-all duration-fast ease-signature flex items-center justify-center gap-2 text-sm font-medium",
+                  isQuitting
+                    ? "bg-red-500/20 text-red-400/50 cursor-not-allowed"
+                    : "bg-red-500/30 hover:bg-red-500/40 text-red-400 hover:text-red-300 cursor-pointer"
+                )}
+              >
+                {isQuitting ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Quitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <X className="w-4 h-4" strokeWidth={2.5} />
+                    <span>Quit Session</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
