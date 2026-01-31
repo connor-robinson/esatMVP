@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -1393,7 +1393,7 @@ export default function PapersMarkPage() {
   }
 
   return (
-    <React.Fragment>
+    <Fragment>
       {/* Page Title - above nav bar and top div */}
       <div className="w-full bg-neutral-900 border-b border-white/10">
         <Container size="xl" className="py-6">
@@ -3595,7 +3595,7 @@ export default function PapersMarkPage() {
           </div>
         </div>
     </Container>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
