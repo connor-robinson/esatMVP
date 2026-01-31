@@ -32,7 +32,7 @@ import type { RoadmapPart } from "@/lib/papers/roadmapConfig";
 export default function PapersRoadmapPage() {
   const router = useRouter();
   const session = useSupabaseSession();
-  const { startSession, loadQuestions } = usePaperSessionStore();
+  const { startSession, loadQuestions, setQuestions } = usePaperSessionStore();
   const [stages, setStages] = useState<RoadmapStage[]>([]);
   const [unlockedStages, setUnlockedStages] = useState<Set<string>>(new Set());
   const [completionData, setCompletionData] = useState<
@@ -355,21 +355,52 @@ export default function PapersRoadmapPage() {
               partsToMatch: parts.map(p => `${p.partLetter}: ${p.partName} (${p.paperName})`)
             });
             
+            // Log sample questions for debugging Section 2
+            if (paper.paperName === 'Section 2' && questions.length > 0) {
+              console.log("[roadmap] Sample Section 2 questions:", questions.slice(0, 3).map(q => ({
+                questionNumber: q.questionNumber,
+                partLetter: q.partLetter,
+                partName: q.partName
+              })));
+            }
+            
             const filtered = questions.filter((q: Question) => {
               return parts.some(part => {
-                // Check if question matches this part
-                const partMatches =
-                  (q.partLetter === part.partLetter || q.partLetter?.includes(part.partLetter)) &&
-                  (q.partName === part.partName || q.partName?.includes(part.partName));
+                // Normalize strings for comparison (case-insensitive, trimmed)
+                const qPartLetter = (q.partLetter || '').toString().trim().toLowerCase();
+                const qPartName = (q.partName || '').toString().trim().toLowerCase();
+                const partLetter = part.partLetter.trim().toLowerCase();
+                const partName = part.partName.trim().toLowerCase();
+                
+                // Check if question matches this part (case-insensitive)
+                // Since Section 1 and Section 2 are separate papers, all questions in a paper
+                // belong to that section, so we just need to match partLetter/partName
+                const partLetterMatches = 
+                  qPartLetter === partLetter ||
+                  qPartLetter.includes(partLetter) ||
+                  partLetter.includes(qPartLetter);
+                
+                const partNameMatches = 
+                  qPartName === partName ||
+                  qPartName.includes(partName) ||
+                  partName.includes(qPartName);
 
-                if (!partMatches) return false;
+                const partMatches = partLetterMatches && partNameMatches;
 
-                // For NSAA, if we have Section 1 and Section 2 with same partLetter/partName,
-                // we need additional filtering. Check if the question's examType or paperName matches.
-                // Note: This assumes the database has Section 1 and Section 2 as separate papers
-                // OR that questions have some field distinguishing them.
-                // If they're in the same paper, the partLetter/partName matching should be sufficient
-                // if the database structure is correct.
+                if (!partMatches) {
+                  // Debug logging for first few non-matching questions
+                  if (paper.paperName === 'Section 2' && questions.indexOf(q) < 3) {
+                    console.log("[roadmap] Section 2 question not matching:", {
+                      questionNumber: q.questionNumber,
+                      qPartLetter: q.partLetter,
+                      qPartName: q.partName,
+                      partToMatch: { partLetter: part.partLetter, partName: part.partName },
+                      partLetterMatches,
+                      partNameMatches
+                    });
+                  }
+                  return false;
+                }
 
                 // Apply question range filter if specified (for ENGAA Section 1 Part A split)
                 if (part.questionRange) {
@@ -435,10 +466,22 @@ export default function PapersRoadmapPage() {
           selectedSections: Array.from(allSections),
         });
 
-        // Load questions from primary paper (the store will load all questions, 
-        // but we've already filtered them above - the store's loadQuestions will
-        // be used by the solve page, and the questionRange will filter correctly)
-        await loadQuestions(primaryPaper.id);
+        // If we have questions from multiple papers, set them directly
+        // Otherwise, use the standard loadQuestions
+        if (allPapers.size > 1) {
+          console.log("[roadmap] Multiple papers detected, setting questions directly:", {
+            papersCount: allPapers.size,
+            totalQuestions: matchingQuestions.length,
+            sections: Array.from(allSections)
+          });
+          // Set questions directly since we've already loaded and filtered from all papers
+          setQuestions(matchingQuestions);
+        } else {
+          // Single paper - use standard loading
+          console.log("[roadmap] Single paper, using standard loadQuestions");
+          await loadQuestions(primaryPaper.id);
+        }
+        
         router.push("/papers/solve");
       } catch (error) {
         console.error("[roadmap] Error starting stage:", error);

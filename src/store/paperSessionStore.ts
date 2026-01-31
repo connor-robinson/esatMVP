@@ -106,6 +106,7 @@ interface PaperSessionState {
   }) => Promise<void>;
   
   loadQuestions: (paperId: number) => Promise<void>;
+  setQuestions: (questions: Question[]) => void;
   
   setAnswer: (questionIndex: number, choice: Letter) => void;
   setOther: (questionIndex: number, other: string) => void;
@@ -804,6 +805,81 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 questionsError: error instanceof Error ? error.message : 'Failed to load questions',
                 questionsLoading: false
               });
+            }
+          },
+          
+          setQuestions: (questions: Question[]) => {
+            const state = get();
+            const isTmuaPaper = state.paperName === 'TMUA';
+            const sectionByQuestionId = new Map<number, string>();
+            
+            // Build section mapping for all questions
+            questions.forEach((question, index) => {
+              let section: string;
+              if (isTmuaPaper) {
+                const mappedSection = mapPartToSection(
+                  { partLetter: (question as any).partLetter || '', partName: question.partName || '' },
+                  'TMUA'
+                );
+                if (mappedSection === 'Paper 1' || mappedSection === 'Paper 2') {
+                  section = mappedSection;
+                } else {
+                  section = deriveTmuaSectionFromQuestion(question, index, questions.length);
+                }
+              } else {
+                section = mapPartToSection({ partLetter: (question as any).partLetter, partName: question.partName }, state.paperName as any);
+              }
+              sectionByQuestionId.set(question.id, section);
+            });
+            
+            // Group questions by section
+            let sectionStarts: Record<number, string> = {};
+            let allSectionsQuestions: Question[][] = [];
+            
+            if (state.selectedSections.length > 0) {
+              questions.sort((a, b) => {
+                const sectionA = sectionByQuestionId.get(a.id) ?? mapPartToSection({ partLetter: (a as any).partLetter, partName: a.partName }, state.paperName as any);
+                const sectionB = sectionByQuestionId.get(b.id) ?? mapPartToSection({ partLetter: (b as any).partLetter, partName: b.partName }, state.paperName as any);
+                let indexA = state.selectedSections.indexOf(sectionA as any);
+                let indexB = state.selectedSections.indexOf(sectionB as any);
+                const fallback = state.selectedSections.length + 1;
+                if (indexA < 0) indexA = fallback;
+                if (indexB < 0) indexB = fallback;
+                if (indexA === indexB) return a.questionNumber - b.questionNumber;
+                return indexA - indexB;
+              });
+              
+              allSectionsQuestions = state.selectedSections.map((section) => {
+                const sectionQuestions = questions.filter((q) => {
+                  const questionSection = sectionByQuestionId.get(q.id) ?? mapPartToSection({ partLetter: (q as any).partLetter, partName: q.partName }, state.paperName as any);
+                  return String(questionSection).trim() === String(section).trim();
+                });
+                return sectionQuestions;
+              });
+              
+              // Build section starts map
+              let currentIndex = 0;
+              allSectionsQuestions.forEach((sectionQs, idx) => {
+                if (sectionQs.length > 0) {
+                  sectionStarts[currentIndex] = state.selectedSections[idx];
+                  currentIndex += sectionQs.length;
+                }
+              });
+            }
+            
+            set({
+              questions,
+              sectionStarts,
+              allSectionsQuestions,
+              questionsLoading: false,
+              questionsError: null,
+              questionOrder: Array.from({ length: questions.length }, (_, i) => i + 1),
+            });
+            
+            // Calculate section time limits
+            const finalState = get();
+            if (finalState.allSectionsQuestions.length > 0) {
+              finalState.calculateSectionTimeLimits();
             }
           },
       

@@ -1669,20 +1669,36 @@ export default function PapersMarkPage() {
                       <div className="text-base font-semibold text-neutral-100">Time Management</div>
 
                       {/* KPI Row */}
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="text-center p-2 rounded bg-neutral-900">
-                          <div className="text-[11px] text-neutral-400">Median per Q</div>
-                          <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(timeSplits.median))}</div>
-                        </div>
-                        <div className="text-center p-2 rounded bg-neutral-900">
-                          <div className="text-[11px] text-neutral-400">75th percentile</div>
-                          <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(timeSplits.p75))}</div>
-                        </div>
-                        <div className="text-center p-2 rounded bg-neutral-900">
-                          <div className="text-[11px] text-neutral-400">Avg per Q</div>
-                          <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(avgTimePerQuestion))}</div>
-                        </div>
-                      </div>
+                      {(() => {
+                        const times = perQuestionSec.filter(t => t > 0);
+                        const sortedTimes = [...times].sort((a, b) => a - b);
+                        const median = sortedTimes.length > 0 
+                          ? sortedTimes[Math.floor(sortedTimes.length / 2)]
+                          : 0;
+                        const longest = sortedTimes.length > 0 
+                          ? sortedTimes[sortedTimes.length - 1]
+                          : 0;
+                        const shortest = sortedTimes.length > 0 
+                          ? sortedTimes[0]
+                          : 0;
+                        
+                        return (
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="text-center p-2 rounded bg-neutral-900">
+                              <div className="text-[11px] text-neutral-400">Median time</div>
+                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(median))}</div>
+                            </div>
+                            <div className="text-center p-2 rounded bg-neutral-900">
+                              <div className="text-[11px] text-neutral-400">Longest time</div>
+                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(longest))}</div>
+                            </div>
+                            <div className="text-center p-2 rounded bg-neutral-900">
+                              <div className="text-[11px] text-neutral-400">Shortest time</div>
+                              <div className="text-sm font-semibold text-neutral-200">{formatTime(Math.round(shortest))}</div>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {/* Time Used Split */}
                       <div>
@@ -1706,29 +1722,104 @@ export default function PapersMarkPage() {
                         </div>
                       </div>
 
-                      {/* (Removed) Time & Accuracy Split to reduce confusion; moved to Guessing Behavior */}
+                      <div>
+                        <div className="text-xs text-neutral-400 mb-2">Performance Trend</div>
+                        <div className="space-y-2">
+                          {(() => {
+                            const total = totalQuestions;
+                            const w = 320; // svg width
+                            const h = 64;  // svg height
+                            const pad = 8;
+                            const windowSize = Math.max(3, Math.floor(total / 10));
 
-                      {/* Fastest/Slowest Compact */}
-                      {fastestSlowest.fastest.length > 0 && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <div className="text-xs text-neutral-400 mb-1">Fastest</div>
-                            <div className="space-y-1">
-                              {fastestSlowest.fastest.map(item => (
-                                <div key={item.questionNumber} className="text-xs text-neutral-300">Q{item.questionNumber}: {formatTime(item.timeSec)}</div>
-                              ))}
-                            </div>
+                            // 1) Rolling accuracy values (0-100)
+                            const accValues: number[] = [];
+                            for (let i = 0; i < total; i++) {
+                              let hits = 0, seen = 0;
+                              for (let j = Math.max(0, i - windowSize + 1); j <= i; j++) {
+                                const v = derivedCorrectFlags[j];
+                                if (v !== null && v !== undefined) {
+                                  seen += 1;
+                                  if (v === true) hits += 1;
+                                }
+                              }
+                              const pct = seen > 0 ? (hits / seen) * 100 : (accValues.length > 0 ? accValues[accValues.length - 1] : 0);
+                              accValues.push(pct);
+                            }
+
+                            // 2) Rolling speed values (normalize so faster -> higher)
+                            const speedValuesRaw: number[] = [];
+                            for (let i = 0; i < total; i++) {
+                              let sum = 0, seen = 0;
+                              for (let j = Math.max(0, i - windowSize + 1); j <= i; j++) {
+                                const t = perQuestionSec[j];
+                                if (typeof t === 'number') { sum += t; seen += 1; }
+                              }
+                              const avg = seen > 0 ? sum / seen : (speedValuesRaw.length > 0 ? speedValuesRaw[speedValuesRaw.length - 1] : 0);
+                              speedValuesRaw.push(avg);
+                            }
+                            const minT = Math.min(...speedValuesRaw.filter(n => isFinite(n)));
+                            const maxT = Math.max(...speedValuesRaw.filter(n => isFinite(n)));
+                            const speedValues = speedValuesRaw.map(v => {
+                              if (!isFinite(v) || maxT === minT) return 50;
+                              const norm = 1 - (v - minT) / (maxT - minT); // faster (lower time) -> higher
+                              return Math.max(0, Math.min(1, norm)) * 100;
+                            });
+
+                            // Helpers to create a smooth path
+                            const stepX = (w - pad * 2) / Math.max(1, total - 1);
+                            const toY = (v: number) => h - pad - (v / 100) * (h - pad * 2);
+                            const toPoint = (i: number, v: number) => ({ x: pad + i * stepX, y: toY(v) });
+
+                            function buildSmoothPath(values: number[]) {
+                              if (values.length === 0) return '';
+                              const pts = values.map((v, i) => toPoint(i, v));
+                              if (pts.length < 2) return `M ${pts[0].x} ${pts[0].y}`;
+                              let d = `M ${pts[0].x} ${pts[0].y}`;
+                              for (let i = 1; i < pts.length; i++) {
+                                const p0 = pts[i - 1];
+                                const p1 = pts[i];
+                                const cp1x = p0.x + (stepX * 0.5);
+                                const cp1y = p0.y;
+                                const cp2x = p1.x - (stepX * 0.5);
+                                const cp2y = p1.y;
+                                d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
+                              }
+                              return d;
+                            }
+
+                            const accStroke = performanceTrend.trend === 'improving' ? "#6c9e69" : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
+                            const speedStroke = PAPER_COLORS.mathematics ?? 'rgba(120,180,255,0.9)';
+
+                            const accPath = buildSmoothPath(accValues);
+                            const speedPath = buildSmoothPath(speedValues);
+
+                            const msg = performanceTrend.trend === 'improving'
+                              ? 'Accuracy improved as the session progressed.'
+                              : performanceTrend.trend === 'declining'
+                                ? 'Accuracy declined towards the end of the session.'
+                                : 'Accuracy remained relatively steady throughout the session.';
+
+                            return (
+                              <div className="space-y-2">
+                                <div className="rounded-md bg-neutral-900 p-2 flex justify-center">
+                                  <svg width={w} height={h} className="h-16 w-[320px] block">
+                                    <path d={speedPath} stroke={speedStroke} strokeWidth={2} fill="none" />
+                                    <path d={accPath} stroke={accStroke} strokeWidth={2} fill="none" />
+                                  </svg>
                           </div>
-                          <div>
-                            <div className="text-xs text-neutral-400 mb-1">Slowest</div>
-                            <div className="space-y-1">
-                              {fastestSlowest.slowest.map(item => (
-                                <div key={item.questionNumber} className="text-xs text-neutral-300">Q{item.questionNumber}: {formatTime(item.timeSec)}</div>
-                              ))}
-                            </div>
+                                <div className="flex items-center justify-center gap-4 text-[11px] text-neutral-400">
+                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: speedStroke }} />Speed</div>
+                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: accStroke }} />Accuracy</div>
                           </div>
+                                <div className="text-[11px] text-neutral-400 text-center">{msg}</div>
+                          </div>
+                            );
+                          })()}
                         </div>
-                      )}
+                      </div>
+
+                      {/* (Removed) Time & Accuracy Split to reduce confusion; moved to Guessing Behavior */}
                     </div>
 
                     {/* Section Performance & Score Conversion (moved up next to Time Management) */}
@@ -1737,25 +1828,11 @@ export default function PapersMarkPage() {
                         const qs = usePaperSessionStore.getState().questions;
                         const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
                         const sectionTitle = currentExamName === 'TMUA' 
-                          ? 'TMUA score by section'
+                          ? 'TMUA score by Section'
                           : (currentExamName === 'ENGAA' || currentExamName === 'NSAA')
-                          ? 'ESAT score by section'
+                          ? 'ESAT score by Section'
                           : 'Section Performance';
                         return <div className="text-base font-semibold text-neutral-100">{sectionTitle}</div>;
-                      })()}
-                      {(() => {
-                        const qs = usePaperSessionStore.getState().questions;
-                        const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
-                        const scoreLabel = currentExamName === 'TMUA' 
-                          ? 'TMUA score'
-                          : (currentExamName === 'ENGAA' || currentExamName === 'NSAA')
-                          ? 'ESAT score'
-                          : 'Score';
-                        return (
-                          <div className="mb-2">
-                            <div className="text-xs text-neutral-400 text-right">{scoreLabel}</div>
-                          </div>
-                        );
                       })()}
                       <div className="space-y-3">
                         {Object.entries(sectionAnalytics)
@@ -1771,8 +1848,11 @@ export default function PapersMarkPage() {
                           .map(([section, data]) => {
                           const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
                           let scaledScore: number | null = null;
+                          const qs = usePaperSessionStore.getState().questions;
+                          const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
+                          const isESATorTMUA = currentExamName === 'TMUA' || currentExamName === 'ENGAA' || currentExamName === 'NSAA';
+                          
                           if (hasConversion && conversionRows.length > 0) {
-                            const qs = usePaperSessionStore.getState().questions;
                           const match = qs.find(q => (q.partLetter || '').trim() === section);
                           const sectionExamName = (qs?.[0]?.examName || '').toUpperCase();
                           const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
@@ -1787,33 +1867,45 @@ export default function PapersMarkPage() {
                           const qsForPill = usePaperSessionStore.getState().questions;
                           const matchForPill = qsForPill.find(q => (q.partLetter || '').trim() === section);
                           const sectionNameForColor = mapPartToSection({ partLetter: (matchForPill?.partLetter || section).toString(), partName: matchForPill?.partName || '' }, (usePaperSessionStore.getState().questions?.[0]?.examName as any));
+                          
+                          // Calculate bar percentage: for ESAT/TMUA, show score out of 9; otherwise show accuracy
+                          const barPercentage = isESATorTMUA && scaledScore !== null && scaledScore !== undefined
+                            ? Math.min(100, Math.max(0, (scaledScore / 9) * 100))
+                            : accuracy;
+                          const barLabel = isESATorTMUA && scaledScore !== null && scaledScore !== undefined
+                            ? `${Math.round(barPercentage)}%`
+                            : `${Math.round(accuracy)}%`;
+                          
                           return (
                             <div key={section} className="p-3 rounded-md bg-neutral-900">
                               <div className="flex items-start justify-between mb-2">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-sm font-semibold text-neutral-200">
+                                      {section}
+                                    </span>
                                     {sectionNameForColor && (
                                       <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
                                         {sectionNameForColor}
                                       </span>
                                     )}
-                                    <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium bg-neutral-700">
-                                      {section}
-                                    </span>
                                     <span className="text-xs px-2.5 py-1 rounded-md text-neutral-200 font-medium bg-neutral-800">
                                       {data.correct}/{data.total} raw
                                     </span>
                                   </div>
                                 </div>
                                 <div className="text-right">
+                                  {isESATorTMUA && (
+                                    <div className="text-xs text-neutral-400 mb-1">{currentExamName}</div>
+                                  )}
                                   <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2 mb-2">
                                 <div className="flex-1 h-2 bg-neutral-700 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full" style={{ width: `${accuracy}%`, backgroundColor: getSectionColor(sectionNameForColor) }} />
+                                  <div className="h-full rounded-full" style={{ width: `${barPercentage}%`, backgroundColor: getSectionColor(sectionNameForColor) }} />
                                 </div>
-                                <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
+                                <div className="text-xs font-semibold text-neutral-300">{barLabel}</div>
                               </div>
                               <div className="flex items-center justify-between text-xs text-neutral-400 min-h-[16px]">
                                 <span></span>
@@ -1851,31 +1943,119 @@ export default function PapersMarkPage() {
                       )}
                     </div>
                     
-                    {/* NSAA Averaged View (when toggle is off) */}
-                    {examName === 'NSAA' && !showIndividualNSAASubjects && nsaaAveragedPercentile !== null && (
-                      <div className="p-3 rounded-md bg-neutral-900">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full bg-[#6c9e69]">
-                                Average (All Subjects)
-                              </span>
-                            </div>
-                            <div className="text-xs text-neutral-400 mt-1">
-                              Averaged across {Object.entries(sectionAnalytics).length} subject{Object.entries(sectionAnalytics).length > 1 ? 's' : ''}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* NSAA Averaged View (when toggle is off) - spans full width */}
+                      {examName === 'NSAA' && !showIndividualNSAASubjects && nsaaAveragedPercentile !== null && (
+                        <div className="p-3 rounded-md bg-neutral-900 md:col-span-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium bg-neutral-700">
+                                  Average (All Subjects)
+                                </span>
+                              </div>
+                              <div className="text-xs text-neutral-400 mt-1">
+                                Averaged across {Object.entries(sectionAnalytics).length} subject{Object.entries(sectionAnalytics).length > 1 ? 's' : ''}
+                              </div>
                             </div>
                           </div>
+                          <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
+                            TOP {(Math.max(0, 100 - nsaaAveragedPercentile)).toFixed(1)}%
+                          </div>
+                          
+                          {/* Averaged percentile graph - full width */}
+                          {(() => {
+                            // Use the first available percentile table as a reference for the graph
+                            const firstSection = Object.keys(sectionAnalytics)[0];
+                            const firstSp = sectionPercentiles[firstSection];
+                            const tableKey = firstSp?.table;
+                            const rows = tableKey ? percentileTables[tableKey] : null;
+                            
+                            if (!rows || rows.length < 2) return null;
+                            
+                            const w = 800; const h = 175; const pad = 24;
+                            const xs = rows.map(r => r.score);
+                            const ys = rows.map(r => r.cumulativePct);
+                            const minX = Math.min(...xs), maxX = Math.max(...xs);
+                            const minY = 0, maxY = 100;
+                            const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
+                            const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
+                            const points = rows.map(r => `${toX(r.score)},${toY(r.cumulativePct)}`).join(' ');
+                            
+                            // For averaged percentile, show as horizontal line at percentile level
+                            const avgPercentileY = toY(nsaaAveragedPercentile);
+                            
+                            // Build shaded area polygon (area under curve up to averaged percentile)
+                            const shadedPoints: string[] = [];
+                            shadedPoints.push(`${pad},${h - pad}`); // bottom-left
+                            // Add points up to the averaged percentile level
+                            rows.forEach((r) => {
+                              if (r.cumulativePct <= nsaaAveragedPercentile) {
+                                shadedPoints.push(`${toX(r.score)},${toY(r.cumulativePct)}`);
+                              }
+                            });
+                            // Close the polygon at the averaged percentile level
+                            // Find where the curve crosses the percentile level (or use midpoint)
+                            let percentileX = pad + (w - 2*pad) / 2; // default to middle
+                            for (let i = 0; i < rows.length - 1; i++) {
+                              const r1 = rows[i];
+                              const r2 = rows[i + 1];
+                              if (r1.cumulativePct <= nsaaAveragedPercentile && r2.cumulativePct >= nsaaAveragedPercentile) {
+                                // Interpolate between these two points
+                                const ratio = (nsaaAveragedPercentile - r1.cumulativePct) / (r2.cumulativePct - r1.cumulativePct);
+                                percentileX = toX(r1.score + (r2.score - r1.score) * ratio);
+                                break;
+                              }
+                            }
+                            shadedPoints.push(`${percentileX},${avgPercentileY}`); // averaged percentile point
+                            shadedPoints.push(`${w - pad},${avgPercentileY}`); // extend to right edge
+                            shadedPoints.push(`${w - pad},${h - pad}`); // down to bottom-right
+                            shadedPoints.push(`${pad},${h - pad}`); // close polygon
+                            
+                            // Ticks
+                            const xTicks = [] as number[];
+                            for (let s = Math.ceil(minX); s <= Math.floor(maxX); s += 1) xTicks.push(s);
+                            const yTicks = [0, 25, 50, 75, 100];
+                            
+                            return (
+                              <div className="mt-3 w-full mx-auto">
+                                <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" className="block">
+                                  {/* Axes */}
+                                  <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
+                                  <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
+                                  {/* Shaded area for people behind you */}
+                                  <polygon points={shadedPoints.join(' ')} fill="rgba(80,97,65,0.15)" stroke="none" />
+                                  {/* Ticks */}
+                                  {xTicks.map((t, i) => (
+                                    <g key={`xt-${i}`}>
+                                      <line x1={toX(t)} y1={h - pad} x2={toX(t)} y2={h - pad + 4} stroke="#2a2d34" />
+                                      <text x={toX(t)} y={h - pad + 12} fill="#7a7f87" fontSize="9" textAnchor="middle">{t}</text>
+                                    </g>
+                                  ))}
+                                  {yTicks.map((t, i) => (
+                                    <g key={`yt-${i}`}>
+                                      <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke="#2a2d34" />
+                                      <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t}</text>
+                                    </g>
+                                  ))}
+                                  {/* Curve */}
+                                  <polyline points={points} fill="none" stroke="#7a7f87" strokeWidth="2" />
+                                  {/* Averaged percentile marker - horizontal line at percentile level */}
+                                  <line x1={pad} y1={avgPercentileY} x2={w - pad} y2={avgPercentileY} stroke="rgba(255,255,255,0.3)" strokeDasharray="4 4" />
+                                  <circle cx={percentileX} cy={avgPercentileY} r="4" fill="#ffffff" />
+                                  {/* Axis labels */}
+                                  <text x={w/2} y={h - 4} fill="#9ca3af" fontSize="10" textAnchor="middle">ESAT Score</text>
+                                  <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Cumulative %</text>
+                                </svg>
+                              </div>
+                            );
+                          })()}
+                          
+                          <div className="mt-2 text-xs text-neutral-400 text-center">
+                            If you sat the NSAA today, {(100 - nsaaAveragedPercentile).toFixed(1)}% of test-takers would outperform you on average across all subjects.
+                          </div>
                         </div>
-                        <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
-                          TOP {(Math.max(0, 100 - nsaaAveragedPercentile)).toFixed(1)}%
-                        </div>
-                        <div className="mt-2 text-xs text-neutral-400 text-center">
-                          If you sat the NSAA today, {(100 - nsaaAveragedPercentile).toFixed(1)}% of test-takers would outperform you on average across all subjects.
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      )}
                       {(() => {
                         const entries = Object.entries(sectionAnalytics);
                         // For NSAA, only show individual if toggle is on
@@ -2032,76 +2212,44 @@ export default function PapersMarkPage() {
                     })()}
                   </div>
 
-                  {/* Guessing Behavior (separate container) */}
-                  <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
-                    <div className="text-base font-semibold text-neutral-100">Guessing Behavior</div>
-                    <div className="grid grid-cols-4 gap-2 text-center">
-                      <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Guessed</div>
-                        <div className="text-sm font-semibold text-neutral-200">{guessExtended.count}</div>
+                  {/* Accuracy and Guessing Patterns (merged) */}
+                  <div className={`${bubbleClass} space-y-4 md:col-span-2`}>
+                    <div className="text-base font-semibold text-neutral-100">Accuracy and Guessing Patterns</div>
+                    
+                    {/* Correct/Incorrect/Guessed stats */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-neutral-400 mb-1">Correct</div>
+                        <div className="text-2xl font-bold" style={{ color: "#6c9e69" }}>
+                          {accuracyPatterns.correct}
+                        </div>
+                        <div className="text-xs text-neutral-500 mt-1">
+                          {Math.round((accuracyPatterns.correct / totalQuestions) * 100)}%
+                        </div>
                       </div>
-                      <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Correct guesses</div>
-                        <div className="text-sm font-semibold text-neutral-200">{guessExtended.correctGuesses}</div>
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-neutral-400 mb-1">Incorrect</div>
+                        <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.chemistry }}>
+                          {accuracyPatterns.incorrect}
+                        </div>
+                        <div className="text-xs text-neutral-500 mt-1">
+                          {Math.round((accuracyPatterns.incorrect / totalQuestions) * 100)}%
+                        </div>
                       </div>
-                      <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Guess accuracy</div>
-                        <div className="text-sm font-semibold text-neutral-200">{guessExtended.accuracy}%</div>
-                      </div>
-                      <div className="p-2 rounded bg-neutral-900">
-                        <div className="text-[11px] text-neutral-400">Time on guesses</div>
-                        <div className="text-sm font-semibold text-neutral-200">{guessExtended.shareOfTotalTime}%</div>
+                      <div className="p-3 rounded-md bg-neutral-900 text-center">
+                        <div className="text-xs text-neutral-400 mb-1">Guessed</div>
+                        <div className="text-2xl font-bold" style={{ color: '#b89f5a' }}>
+                          {accuracyPatterns.guessed}
+                        </div>
+                        <div className="text-xs text-neutral-500 mt-1">
+                          {Math.round((accuracyPatterns.guessed / totalQuestions) * 100)}%
+                        </div>
                       </div>
                     </div>
-                    {/* Guess Outcomes: time spent on correct vs wrong guesses */}
-                    {guessExtended.count > 0 && (() => {
-                      const correctCount = guessExtended.correctGuesses;
-                      const wrongCount = Math.max(0, guessExtended.count - correctCount);
-                      const correctTime = correctCount * Math.max(0, guessExtended.avgTimeCorrectGuess);
-                      const wrongTime = wrongCount * Math.max(0, guessExtended.avgTimeWrongGuess);
-                      const totalGuessTime = Math.max(1e-6, correctTime + wrongTime);
-                      const correctPct = Math.round((correctTime / totalGuessTime) * 100);
-                      const wrongPct = Math.max(0, 100 - correctPct);
-                      return (
+
+                    {/* Guess Distribution */}
                     <div>
-                          <div className="text-xs text-neutral-400 mb-2">Guess time split: correct vs wrong</div>
-                          <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
-                            <div className="flex w-full h-full">
-                              <div
-                                className="h-full flex items-center justify-center text-[11px] font-medium"
-                                style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
-                                title={`Correct guesses • ${correctPct}% of guess time`}
-                              >
-                                {correctPct >= 12 ? `${correctPct}%` : ''}
-                          </div>
-                              <div
-                                className="h-full flex items-center justify-center text-[11px] font-medium"
-                                style={{ width: `${wrongPct}%`, backgroundColor: `${PAPER_COLORS.chemistry}cc` }}
-                                title={`Wrong guesses • ${wrongPct}% of guess time`}
-                              >
-                                {wrongPct >= 12 ? `${wrongPct}%` : ''}
-                          </div>
-                        </div>
-                          </div>
-                          <div className="mt-1 flex items-center justify-between text-[11px] text-neutral-400">
-                            <div className="flex items-center gap-2">
-                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: "#6c9e69" }} />
-                              <span>Correct • {correctCount} qns • avg {formatTime(Math.round(guessExtended.avgTimeCorrectGuess))}</span>
-                          </div>
-                            <div className="flex items-center gap-2">
-                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: PAPER_COLORS.chemistry }} />
-                              <span>Wrong • {wrongCount} qns • avg {formatTime(Math.round(guessExtended.avgTimeWrongGuess))}</span>
-                        </div>
-                      </div>
-                    </div>
-                      );
-                    })()}
-                    {/* Combined Guess Distribution: line + timeline */}
-                    <div className="">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm font-semibold text-neutral-200">Guess Distribution</div>
-                        <div className="text-[11px] text-neutral-400">Guesses through Q{questionNumbers[0]}–Q{questionNumbers[questionNumbers.length-1]}</div>
-                            </div>
+                      <div className="text-xs text-neutral-400 mb-2">Analyse if you guessed too much</div>
                       {(() => {
                         const w = Math.max(420, questionNumbers.length * 14 + 16);
                         const h = 96; const pad = 12; const stripH = 16; const plotH = h - stripH - pad*3;
@@ -2131,7 +2279,7 @@ export default function PapersMarkPage() {
                               <path d={area} fill={`${guessColor}33`} />
                               <path d={path} stroke={guessColor} strokeWidth={2} fill="none" />
                               {/* Guess timeline blocks */}
-                      {questionNumbers.map((qn, idx) => {
+                              {questionNumbers.map((qn, idx) => {
                                 // Center each block inside its band: [pad + idx*step, pad + (idx+1)*step)
                                 const bandStart = pad + idx * step;
                                 const rectX = bandStart + blockInset;
@@ -2139,185 +2287,68 @@ export default function PapersMarkPage() {
                                 const corr = derivedCorrectFlags[idx];
                                 const fill = guessed ? guessColor : '#1a1f27';
                                 const border = corr === true ? correctBorder : (corr === false ? wrongBorder : 'rgba(255,255,255,0.12)');
-                        return (
+                                return (
                                   <g key={qn}>
                                     <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
                                     <rect x={rectX} y={h - pad - stripH} width={blockW - 2} height={stripH} rx={4} ry={4} fill={fill} stroke={border} strokeWidth={1} />
                                   </g>
-                        );
-                      })}
+                                );
+                              })}
                             </svg>
-                    </div>
+                          </div>
                         );
                       })()}
+                    </div>
+
+                    {/* Guess accuracy and Guess time split in the same row */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Guess accuracy */}
+                      <div>
+                        <div className="text-xs text-neutral-400 mb-2">Guess accuracy</div>
+                        <div className="p-3 rounded-md bg-neutral-900 text-center">
+                          <div className="text-2xl font-bold text-neutral-200">{guessExtended.accuracy}%</div>
+                        </div>
+                      </div>
+                      {/* Guess time split */}
+                      <div>
+                        <div className="text-xs text-neutral-400 mb-2">Guess time split: correct vs wrong</div>
+                        {guessExtended.count > 0 ? (() => {
+                          const correctCount = guessExtended.correctGuesses;
+                          const wrongCount = Math.max(0, guessExtended.count - correctCount);
+                          const correctTime = correctCount * Math.max(0, guessExtended.avgTimeCorrectGuess);
+                          const wrongTime = wrongCount * Math.max(0, guessExtended.avgTimeWrongGuess);
+                          const totalGuessTime = Math.max(1e-6, correctTime + wrongTime);
+                          const correctPct = Math.round((correctTime / totalGuessTime) * 100);
+                          const wrongPct = Math.max(0, 100 - correctPct);
+                          return (
+                            <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
+                              <div className="flex w-full h-full">
+                                <div
+                                  className="h-full flex items-center justify-center text-[11px] font-medium"
+                                  style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
+                                  title={`Correct guesses • ${correctPct}% of guess time`}
+                                >
+                                  {correctPct >= 12 ? `${correctPct}%` : ''}
+                                </div>
+                                <div
+                                  className="h-full flex items-center justify-center text-[11px] font-medium"
+                                  style={{ width: `${wrongPct}%`, backgroundColor: `${PAPER_COLORS.chemistry}cc` }}
+                                  title={`Wrong guesses • ${wrongPct}% of guess time`}
+                                >
+                                  {wrongPct >= 12 ? `${wrongPct}%` : ''}
+                                </div>
+                              </div>
                             </div>
-                    {/* Removed separate time bars to reduce duplication; combined above */}
+                          );
+                        })() : (
+                          <div className="p-3 rounded-md bg-neutral-900 text-center">
+                            <div className="text-sm text-neutral-500">No guesses</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  
-
-                    {/* Accuracy Patterns */}
-                    <div className={`${bubbleClass} space-y-4`}>
-                      <div className="text-base font-semibold text-neutral-100">Accuracy Patterns</div>
-                      
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Correct</div>
-                          <div className="text-2xl font-bold" style={{ color: "#6c9e69" }}>
-                            {accuracyPatterns.correct}
-                          </div>
-                          <div className="text-xs text-neutral-500 mt-1">
-                            {Math.round((accuracyPatterns.correct / totalQuestions) * 100)}%
-                          </div>
-                        </div>
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Incorrect</div>
-                          <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.chemistry }}>
-                            {accuracyPatterns.incorrect}
-                          </div>
-                          <div className="text-xs text-neutral-500 mt-1">
-                            {Math.round((accuracyPatterns.incorrect / totalQuestions) * 100)}%
-                          </div>
-                        </div>
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Guessed</div>
-                          <div className="text-2xl font-bold" style={{ color: '#b89f5a' }}>
-                            {accuracyPatterns.guessed}
-                      </div>
-                          <div className="text-xs text-neutral-500 mt-1">
-                            {Math.round((accuracyPatterns.guessed / totalQuestions) * 100)}%
-                          </div>
-                          </div>
-                      </div>
-
-                      {/* Guessing Performance (sentence style) */}
-                      <div className="p-4 rounded-md bg-neutral-900 text-center">
-                        <div className="text-sm text-neutral-300">Your guessing accuracy was:</div>
-                        <div className="text-2xl font-bold leading-tight" style={{ color: 'rgba(200, 200, 200, 0.9)' }}>
-                          {Math.round(guessStats.accuracy)}%
-                    </div>
-                        <div className="text-xs text-neutral-400 mt-1">
-                          You guessed {guessStats.correctGuesses} correct out of {guessStats.count}
-                    </div>
-                  </div>
-
-                      {/* Answer Confidence removed */}
-
-                      <div>
-                        <div className="text-xs text-neutral-400 mb-2">Streaks</div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="p-2 rounded bg-neutral-900 text-center">
-                            <div className="text-xs text-neutral-400">Longest Correct</div>
-                            <div className="text-lg font-semibold" style={{ color: "#6c9e69" }}>
-                              {streaks.longestCorrect}
-                            </div>
-                          </div>
-                          <div className="p-2 rounded bg-neutral-900 text-center">
-                            <div className="text-xs text-neutral-400">Longest Incorrect</div>
-                            <div className="text-lg font-semibold" style={{ color: PAPER_COLORS.chemistry }}>
-                              {streaks.longestIncorrect}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="text-xs text-neutral-400 mb-2">Performance Trend</div>
-                        <div className="space-y-2">
-                          {(() => {
-                            const total = totalQuestions;
-                            const w = 320; // svg width
-                            const h = 64;  // svg height
-                            const pad = 8;
-                            const windowSize = Math.max(3, Math.floor(total / 10));
-
-                            // 1) Rolling accuracy values (0-100)
-                            const accValues: number[] = [];
-                            for (let i = 0; i < total; i++) {
-                              let hits = 0, seen = 0;
-                              for (let j = Math.max(0, i - windowSize + 1); j <= i; j++) {
-                                const v = derivedCorrectFlags[j];
-                                if (v !== null && v !== undefined) {
-                                  seen += 1;
-                                  if (v === true) hits += 1;
-                                }
-                              }
-                              const pct = seen > 0 ? (hits / seen) * 100 : (accValues.length > 0 ? accValues[accValues.length - 1] : 0);
-                              accValues.push(pct);
-                            }
-
-                            // 2) Rolling speed values (normalize so faster -> higher)
-                            const speedValuesRaw: number[] = [];
-                            for (let i = 0; i < total; i++) {
-                              let sum = 0, seen = 0;
-                              for (let j = Math.max(0, i - windowSize + 1); j <= i; j++) {
-                                const t = perQuestionSec[j];
-                                if (typeof t === 'number') { sum += t; seen += 1; }
-                              }
-                              const avg = seen > 0 ? sum / seen : (speedValuesRaw.length > 0 ? speedValuesRaw[speedValuesRaw.length - 1] : 0);
-                              speedValuesRaw.push(avg);
-                            }
-                            const minT = Math.min(...speedValuesRaw.filter(n => isFinite(n)));
-                            const maxT = Math.max(...speedValuesRaw.filter(n => isFinite(n)));
-                            const speedValues = speedValuesRaw.map(v => {
-                              if (!isFinite(v) || maxT === minT) return 50;
-                              const norm = 1 - (v - minT) / (maxT - minT); // faster (lower time) -> higher
-                              return Math.max(0, Math.min(1, norm)) * 100;
-                            });
-
-                            // Helpers to create a smooth path
-                            const stepX = (w - pad * 2) / Math.max(1, total - 1);
-                            const toY = (v: number) => h - pad - (v / 100) * (h - pad * 2);
-                            const toPoint = (i: number, v: number) => ({ x: pad + i * stepX, y: toY(v) });
-
-                            function buildSmoothPath(values: number[]) {
-                              if (values.length === 0) return '';
-                              const pts = values.map((v, i) => toPoint(i, v));
-                              if (pts.length < 2) return `M ${pts[0].x} ${pts[0].y}`;
-                              let d = `M ${pts[0].x} ${pts[0].y}`;
-                              for (let i = 1; i < pts.length; i++) {
-                                const p0 = pts[i - 1];
-                                const p1 = pts[i];
-                                const cp1x = p0.x + (stepX * 0.5);
-                                const cp1y = p0.y;
-                                const cp2x = p1.x - (stepX * 0.5);
-                                const cp2y = p1.y;
-                                d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
-                              }
-                              return d;
-                            }
-
-                            const accStroke = performanceTrend.trend === 'improving' ? "#6c9e69" : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
-                            const speedStroke = PAPER_COLORS.mathematics ?? 'rgba(120,180,255,0.9)';
-
-                            const accPath = buildSmoothPath(accValues);
-                            const speedPath = buildSmoothPath(speedValues);
-
-                            const msg = performanceTrend.trend === 'improving'
-                              ? 'Accuracy improved as the session progressed.'
-                              : performanceTrend.trend === 'declining'
-                                ? 'Accuracy declined towards the end of the session.'
-                                : 'Accuracy remained relatively steady throughout the session.';
-
-                            return (
-                              <div className="space-y-2">
-                                <div className="rounded-md bg-neutral-900 p-2 flex justify-center">
-                                  <svg width={w} height={h} className="h-16 w-[320px] block">
-                                    <path d={speedPath} stroke={speedStroke} strokeWidth={2} fill="none" />
-                                    <path d={accPath} stroke={accStroke} strokeWidth={2} fill="none" />
-                                  </svg>
-                          </div>
-                                <div className="flex items-center justify-center gap-4 text-[11px] text-neutral-400">
-                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: speedStroke }} />Speed</div>
-                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: accStroke }} />Accuracy</div>
-                          </div>
-                                <div className="text-[11px] text-neutral-400 text-center">{msg}</div>
-                          </div>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    </div>
 
                     {/* Mistake Analysis */}
                     <div className={`${bubbleClass} space-y-4`}>
