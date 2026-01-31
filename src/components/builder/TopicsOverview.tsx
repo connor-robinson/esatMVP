@@ -9,7 +9,6 @@ import { Card } from "@/components/ui/Card";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { getTopicExtremes } from "@/lib/analytics";
 import { getTopic } from "@/config/topics";
-import { cn } from "@/lib/utils";
 import type { UserStats } from "@/types/analytics";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
 
@@ -130,9 +129,15 @@ export function TopicsOverview() {
   if (loading) {
     return (
       <Card variant="flat" className="p-5">
-        <div className="animate-pulse space-y-4">
-          <div className="h-5 w-32 bg-white/10 rounded" />
-          <div className="h-20 bg-white/5 rounded" />
+        <div className="mb-4">
+          <div className="h-4 w-32 bg-white/10 rounded animate-pulse mb-1" />
+          <div className="h-3 w-48 bg-white/5 rounded animate-pulse" />
+        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="h-3 w-20 bg-white/5 rounded animate-pulse" />
+            <div className="h-16 bg-white/5 rounded-organic-md animate-pulse" />
+          </div>
         </div>
       </Card>
     );
@@ -141,9 +146,20 @@ export function TopicsOverview() {
   if (!userStats || (strongest.length === 0 && weakest.length === 0)) {
     return (
       <Card variant="flat" className="p-5">
-        <div className="text-center py-8">
-          <p className="text-sm text-white/50">
-            Start practicing to see your strongest and weakest topics
+        <div className="mb-4">
+          <h3 className="text-base font-semibold text-white/90 mb-1">
+            Topics Overview
+          </h3>
+          <p className="text-xs text-white/50">
+            Your strongest and weakest areas
+          </p>
+        </div>
+        <div className="text-center py-6">
+          <p className="text-sm text-white/50 mb-1">
+            Start practicing to see insights
+          </p>
+          <p className="text-xs text-white/30">
+            Complete at least 10 questions per topic
           </p>
         </div>
       </Card>
@@ -152,64 +168,95 @@ export function TopicsOverview() {
 
   return (
     <Card variant="flat" className="p-5">
-      <div className="mb-3">
-        <h3 className="text-lg font-semibold uppercase tracking-wider text-white/90">
+      <div className="mb-4">
+        <h3 className="text-base font-semibold text-white/90 mb-1">
           Topics Overview
         </h3>
+        <p className="text-xs text-white/50">
+          Your strongest and weakest areas
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         {/* Strongest Topics */}
         {strongest.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
-              Strongest
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-4 bg-primary rounded-full" />
+              <span className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                Strongest
+              </span>
             </div>
-            {strongest.map((topic) => (
-              <div
-                key={topic.topicId}
-                className="flex items-center justify-between p-2.5 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-              >
-                <span className="text-sm font-medium text-white/90">
-                  {topic.topicName}
-                </span>
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="font-semibold text-primary">
-                    {topic.accuracy.toFixed(0)}%
-                  </span>
-                  <span className="text-white/50">
-                    {topic.questionsAnswered} questions
-                  </span>
+            <div className="space-y-2">
+              {strongest.map((topic) => (
+                <div
+                  key={topic.topicId}
+                  className="group relative overflow-hidden rounded-organic-md bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 hover:bg-white/[0.04] transition-all duration-200"
+                >
+                  <div className="p-3">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <span className="text-sm font-medium text-white/95 leading-tight">
+                        {topic.topicName}
+                      </span>
+                      <span className="text-sm font-bold text-primary whitespace-nowrap">
+                        {topic.accuracy.toFixed(0)}%
+                      </span>
+                    </div>
+                    {/* Progress bar */}
+                    <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{ width: `${topic.accuracy}%` }}
+                      />
+                    </div>
+                    <div className="mt-2 text-xs text-white/40">
+                      {topic.questionsAnswered} questions practiced
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
         {/* Weakest Topics */}
         {weakest.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
-              Weakest
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1 h-4 bg-red-400/60 rounded-full" />
+              <span className="text-xs font-semibold text-white/80 uppercase tracking-wider">
+                Needs Practice
+              </span>
             </div>
-            {weakest.map((topic) => (
-              <div
-                key={topic.topicId}
-                className="flex items-center justify-between p-2.5 rounded-organic-md bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
-              >
-                <span className="text-sm font-medium text-white/90">
-                  {topic.topicName}
-                </span>
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="font-semibold text-red-400">
-                    {topic.accuracy.toFixed(0)}%
-                  </span>
-                  <span className="text-white/50">
-                    {topic.questionsAnswered} questions
-                  </span>
+            <div className="space-y-2">
+              {weakest.map((topic) => (
+                <div
+                  key={topic.topicId}
+                  className="group relative overflow-hidden rounded-organic-md bg-white/[0.02] border border-white/[0.05] hover:border-red-400/20 hover:bg-white/[0.04] transition-all duration-200"
+                >
+                  <div className="p-3">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <span className="text-sm font-medium text-white/95 leading-tight">
+                        {topic.topicName}
+                      </span>
+                      <span className="text-sm font-bold text-red-400 whitespace-nowrap">
+                        {topic.accuracy.toFixed(0)}%
+                      </span>
+                    </div>
+                    {/* Progress bar */}
+                    <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-red-400/60 transition-all duration-300"
+                        style={{ width: `${topic.accuracy}%` }}
+                      />
+                    </div>
+                    <div className="mt-2 text-xs text-white/40">
+                      {topic.questionsAnswered} questions practiced
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>

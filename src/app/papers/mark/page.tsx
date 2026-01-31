@@ -30,6 +30,10 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import type { QuestionStats } from "@/types/questionStats";
 import { fetchInProgressSessions } from "@/lib/papers/analytics";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
+import { ArrowRight, Trash2 } from "lucide-react";
+import { deletePaperSession } from "@/lib/supabase/papers";
+import { deleteSession } from "@/lib/storage/sessionStorage";
+import { cn } from "@/lib/utils";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -326,12 +330,42 @@ export default function PapersMarkPage() {
         }
       }
       
-      router.push("/papers/archive");
+      // Navigate to analytics page with session ID to highlight
+      const sessionIdToHighlight = state.sessionId;
+      if (sessionIdToHighlight) {
+        router.push(`/papers/analytics?highlight=${sessionIdToHighlight}`);
+      } else {
+        router.push("/papers/analytics");
+      }
     } catch (error) {
       console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
       alert("Failed to save session. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAttempt = async () => {
+    if (!sessionId) return;
+    
+    if (!confirm("Are you sure you want to delete this attempt? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      // Delete from Supabase
+      await deletePaperSession(sessionId);
+      
+      // Delete from IndexedDB
+      await deleteSession(sessionId);
+      
+      // Clear the store
+      usePaperSessionStore.getState().resetSession();
+      
+      router.push("/papers/library");
+    } catch (error) {
+      console.error("[mark:handleDeleteAttempt] Failed to delete session:", error);
+      alert("Failed to delete session. Please try again.");
     }
   };
   
@@ -1454,7 +1488,7 @@ export default function PapersMarkPage() {
                     </div>
                                   {/* Guess pill if guessed */}
                                   {guessed && (
-                                    <div className="px-2 py-0.5 rounded-full text-white text-[11px]" style={{ backgroundColor: '#b89f5a' }}>
+                                    <div className="px-2 py-0.5 rounded-full text-white text-[11px]" style={{ backgroundColor: '#c99d6a' }}>
                                       Guess
                                     </div>
                                   )}
@@ -1485,9 +1519,15 @@ export default function PapersMarkPage() {
             </div>
 
             {/* Right column: detail view (fills, scrolls) */}
-            <div className="p-4 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
+            <div className="p-4 pt-6 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
               {selectedIndex === -1 ? (
                 <div className="space-y-6">
+                  {/* Overview and Marking Header */}
+                  <div className="space-y-2">
+                    <div className="text-lg font-semibold text-neutral-100">Overview and Marking</div>
+                    <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
+                  </div>
+                  
                   {/* Hero Section */}
                   <div className="space-y-4">
                     {/* Compact Header: type, year, section pills, date */}
@@ -2238,7 +2278,7 @@ export default function PapersMarkPage() {
                       </div>
                       <div className="p-3 rounded-md bg-neutral-900 text-center">
                         <div className="text-xs text-neutral-400 mb-1">Guessed</div>
-                        <div className="text-2xl font-bold" style={{ color: '#b89f5a' }}>
+                        <div className="text-2xl font-bold" style={{ color: '#c99d6a' }}>
                           {accuracyPatterns.guessed}
                         </div>
                         <div className="text-xs text-neutral-500 mt-1">
@@ -2263,7 +2303,7 @@ export default function PapersMarkPage() {
                         const toY = (v:number) => pad + (plotH - v * plotH);
                         const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
                         const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
-                        const guessColor = '#b89f5a'; // desaturated yellow
+                        const guessColor = '#c99d6a'; // desaturated orange
                         const correctBorder = "#6c9e69";
                         const wrongBorder = PAPER_COLORS.chemistry;
                         // Precompute band step so blocks never exceed inner width; avoids right-edge clamping overlap
@@ -2386,27 +2426,6 @@ export default function PapersMarkPage() {
                 <div className="flex items-center gap-2">
                   <div className="text-base font-semibold text-neutral-200">Question</div>
                   <div className="text-base font-semibold text-neutral-200">{questionNumbers[selectedIndex]}</div>
-                  <button
-                    onClick={() => setShowAnswer(!showAnswer)}
-                    className="ml-1 px-2 py-1 text-xs rounded-md ring-1 transition bg-neutral-800 text-neutral-300 ring-white/10 hover:bg-neutral-700 flex items-center gap-1"
-                    title={showAnswer ? "Hide answer key" : "Show answer key"}
-                  >
-                    {showAnswer ? (
-                      // eye-off (simplified)
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.8 21.8 0 014.22-5.56" />
-                        <path d="M9.88 5.09A10.94 10.94 0 0112 5c7 0 11 7 11 7a21.8 21.8 0 01-3.87 5.13" />
-                        <line x1="1" y1="1" x2="23" y2="23" />
-                      </svg>
-                    ) : (
-                      // eye (simplified)
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    )}
-                    {showAnswer ? "Hide Answer" : "Show Answer"}
-                  </button>
                 </div>
                 {/* Change your answer buttons */}
                 <div className="flex items-center gap-2">
@@ -2439,7 +2458,7 @@ export default function PapersMarkPage() {
                           : "text-neutral-300 hover:bg-neutral-700"
                       }`}
                       style={guessedFlags[selectedIndex]
-                        ? { backgroundColor: '#b89f5a', outline: 'none' }
+                        ? { backgroundColor: '#c99d6a', outline: 'none' }
                         : { backgroundColor: '#1f1f1f', outline: 'none' }}
                       onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
                     >
@@ -2508,7 +2527,7 @@ export default function PapersMarkPage() {
                                           : isUserWrong
                                           ? PAPER_COLORS.chemistry
                                           : isUserChoice
-                                          ? "#b89f5a"
+                                          ? "#c99d6a"
                                           : shouldShow
                                           ? "#5a6370"
                                           : "transparent",
@@ -2653,8 +2672,8 @@ export default function PapersMarkPage() {
                             <div
                               className="relative inline-block"
                               style={{
-                                width: 'min(72%, 1100px)',
-                                maxWidth: '1100px',
+                                width: 'min(54%, 825px)',
+                                maxWidth: '825px',
                                 lineHeight: 0,
                                 transition: 'background-color 300ms ease-in-out'
                               }}
@@ -2847,25 +2866,51 @@ export default function PapersMarkPage() {
                         <div className="rounded-lg p-4 bg-neutral-800 overflow-y-auto transition-all duration-300" style={{ maxHeight: '72vh' }}>
                           <div className="flex items-center justify-between mb-3">
                             <div className="text-sm font-semibold text-neutral-200">Suggested Answer</div>
-                            {currentQuestionTitle && (
-                              <div className="ml-3 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#1f1f1f', color: '#d1d5db' }}>
-                                {currentQuestionTitle}
-                              </div>
-                            )}
+                            <div className="flex items-center gap-2">
+                              {currentQuestionTitle && (
+                                <div className="ml-3 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#1f1f1f', color: '#d1d5db' }}>
+                                  {currentQuestionTitle}
+                                </div>
+                              )}
+                              <button
+                                onClick={() => setShowAnswer(!showAnswer)}
+                                className="px-2 py-1 text-xs rounded-md ring-1 transition bg-neutral-800 text-neutral-300 ring-white/10 hover:bg-neutral-700 flex items-center gap-1"
+                                title={showAnswer ? "Hide answer key" : "Show answer key"}
+                              >
+                                {showAnswer ? (
+                                  // eye-off (simplified)
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.8 21.8 0 014.22-5.56" />
+                                    <path d="M9.88 5.09A10.94 10.94 0 0112 5c7 0 11 7 11 7a21.8 21.8 0 01-3.87 5.13" />
+                                    <line x1="1" y1="1" x2="23" y2="23" />
+                                  </svg>
+                                ) : (
+                                  // eye (simplified)
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                  </svg>
+                                )}
+                                {showAnswer ? "Hide Answer" : "Show Answer"}
+                              </button>
+                            </div>
                           </div>
                           <div className="space-y-3">
                             {question?.solutionText && (
                               <div className="p-4 rounded-md bg-white/5">
-                                <MathContent 
-                                  content={(question.solutionText || "")
-                                    .replace(/<tip>.*?<\/tip>/gis, '')
-                                    .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
-                                    .replace(/<question>[\s\S]*?<\/question>/gi, '')
-                                    .replace(/<\/?solution>/gi, '')
-                                    .replace(/<\/?final_answer>/gi, '')
-                                    .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')} 
-                                  className="text-base text-white/80 leading-relaxed" 
-                                />
+                                <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem', marginTop: '0', marginBottom: '0', paddingTop: '0', paddingBottom: '0' }}>
+                                  <MathContent 
+                                    content={(question.solutionText || "")
+                                      .replace(/<tip>.*?<\/tip>/gis, '')
+                                      .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
+                                      .replace(/<question>[\s\S]*?<\/question>/gi, '')
+                                      .replace(/<\/?solution>/gi, '')
+                                      .replace(/<\/?final_answer>/gi, '')
+                                      .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')
+                                      .replace(/^\s+/, '')} 
+                                    className="text-white" 
+                                  />
+                                </div>
                               </div>
                             )}
                             {question?.solutionImage && (
@@ -2908,20 +2953,20 @@ export default function PapersMarkPage() {
                 );
               })()}
 
-              {/* Tip Section - Full Width Below Question/Answer */}
+              {/* Tips and Tricks Section - Full Width Below Question/Answer */}
               {currentTip && (
-                <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: 'rgba(108, 158, 105, 0.12)' }}>
+                <div className={`${bubbleClass} mt-4`}>
                   <div className="space-y-3">
-                    {/* Tip Header */}
+                    {/* Tips and Tricks Header */}
                     <div className="flex items-center gap-2">
                       <svg className="w-5 h-5" style={{ color: "#6c9e69" }} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
-                      <div className="text-base font-bold" style={{ color: "#6c9e69" }}>Tip</div>
-                  </div>
-                    {/* Tip Content */}
-                    <div className="text-sm text-neutral-200 leading-relaxed">
-                      <MathContent content={currentTip} className="text-neutral-200 text-sm" />
+                      <div className="text-base font-semibold text-neutral-100">Tips and Tricks</div>
+                    </div>
+                    {/* Tips and Tricks Content */}
+                    <div className="text-sm text-neutral-300 leading-relaxed">
+                      <MathContent content={currentTip} className="text-neutral-300 text-sm" />
                     </div>
                   </div>
                 </div>
@@ -3166,23 +3211,79 @@ export default function PapersMarkPage() {
         {/* Key insights removed per design */}
 
         {/* Actions */}
-        <div className="flex justify-end gap-3">
-          <Button
-            variant="secondary"
-            className="px-4 py-2 text-sm rounded-md ring-1 ring-white/10 bg-[#0f1114] text-neutral-300 hover:bg-[#121418]"
-            onClick={() => router.push("/papers/library")}
+        <div className="flex items-center justify-between gap-3">
+          {/* Delete Attempt Button - Left Side */}
+          <button
+            onClick={handleDeleteAttempt}
+            className={cn(
+              "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
+              "bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80 cursor-pointer"
+            )}
+            style={{
+              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+            }}
           >
-            New Session
-          </Button>
-          <Button
-            variant="primary"
-            className="px-4 py-2 text-sm rounded-md text-white shadow-glow"
-            style={{ backgroundColor: "#6c9e69", borderColor: 'rgba(255,255,255,0.15)' }}
-            onClick={handleSaveAndContinue}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Save & Continue"}
-          </Button>
+            <Trash2 className="w-4 h-4" strokeWidth={2.5} />
+            <span>Delete Attempt</span>
+          </button>
+
+          {/* Right Side Buttons */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push("/papers/library")}
+              className={cn(
+                "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
+                "bg-white/5 hover:bg-white/10 text-white/80 hover:text-white cursor-pointer"
+              )}
+              style={{
+                boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+              }}
+            >
+              <span>New Session</span>
+            </button>
+            <button
+              onClick={handleSaveAndContinue}
+              disabled={isSubmitting}
+              className={cn(
+                "px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
+                isSubmitting
+                  ? "bg-white/5 text-white/40 cursor-not-allowed"
+                  : "bg-primary/30 hover:bg-primary/40 text-primary cursor-pointer"
+              )}
+              style={
+                !isSubmitting
+                  ? {
+                      boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
+                    }
+                  : undefined
+              }
+              onMouseEnter={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
+                }
+              }}
+            >
+              <span>{isSubmitting ? "Saving..." : "Save & Continue"}</span>
+              {!isSubmitting && <ArrowRight className="w-4 h-4" strokeWidth={2.5} />}
+            </button>
+          </div>
         </div>
     </Container>
     </Fragment>

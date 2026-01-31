@@ -46,6 +46,7 @@ export default function PapersAnalyticsPage() {
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [highlightedSessionId, setHighlightedSessionId] = useState<string | null>(null);
   
   // Filter states for Performance Trends
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -84,6 +85,43 @@ export default function PapersAnalyticsPage() {
       setLoading(false);
     }
   }, [session]);
+
+  // Handle highlighting and scrolling to session
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlightId = urlParams.get('highlight');
+    
+    if (highlightId && sessions.length > 0 && !loading) {
+      setHighlightedSessionId(highlightId);
+      
+      // Expand sessions section if collapsed
+      if (collapsedSections.has('sessions')) {
+        setCollapsedSections(prev => {
+          const next = new Set(prev);
+          next.delete('sessions');
+          return next;
+        });
+      }
+      
+      // Scroll to the highlighted session after a short delay to allow rendering
+      setTimeout(() => {
+        const sessionElement = document.querySelector(`[data-session-id="${highlightId}"]`);
+        if (sessionElement) {
+          sessionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Remove highlight after 5 seconds
+          setTimeout(() => {
+            setHighlightedSessionId(null);
+            // Remove query parameter from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('highlight');
+            router.replace(url.pathname + url.search);
+          }, 5000);
+        }
+      }, 300);
+    }
+  }, [sessions, loading, collapsedSections, router]);
 
   // Helper function to map topic filter to sections
   const topicToSections = (topic: string): PaperSection[] => {
@@ -737,11 +775,21 @@ export default function PapersAnalyticsPage() {
                             : null
                           : null;
 
+                        const isHighlighted = highlightedSessionId === session.id;
                         return (
                           <button
                             key={session.id}
+                            data-session-id={session.id}
                             onClick={() => handleViewMarkPage(session.id)}
-                            className="w-full text-left grid grid-cols-12 gap-4 px-5 py-4 bg-surface-elevated rounded-organic-md hover:bg-surface-mid transition-colors items-center"
+                            className={cn(
+                              "w-full text-left grid grid-cols-12 gap-4 px-5 py-4 rounded-organic-md transition-all items-center",
+                              isHighlighted
+                                ? "bg-primary/20 border-2 border-primary/50 shadow-lg shadow-primary/20"
+                                : "bg-surface-elevated hover:bg-surface-mid"
+                            )}
+                            style={isHighlighted ? {
+                              animation: 'pulse 2s ease-in-out'
+                            } : undefined}
                           >
                             {/* Paper Name & Sections */}
                             <div className="col-span-4 flex items-center gap-3">

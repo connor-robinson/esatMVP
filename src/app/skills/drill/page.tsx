@@ -73,6 +73,13 @@ export default function BuilderPage() {
 
           {/* Right: Session folder and presets */}
           <div className="space-y-6">
+            {/* Topics Overview */}
+            <div>
+              <Suspense fallback={<div className="h-48 bg-white/10 rounded-lg animate-pulse" />}>
+                <TopicsOverview />
+              </Suspense>
+            </div>
+
             <div>
               <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
               <SessionFolder
@@ -90,13 +97,6 @@ export default function BuilderPage() {
                 presets={builder.presets}
                 onLoadPreset={builder.loadPreset}
               />
-              </Suspense>
-            </div>
-
-            {/* Topics Overview */}
-            <div>
-              <Suspense fallback={<div className="h-48 bg-white/10 rounded-lg animate-pulse" />}>
-                <TopicsOverview />
               </Suspense>
             </div>
 
