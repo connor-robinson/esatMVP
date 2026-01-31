@@ -40,11 +40,13 @@ export function Navbar() {
   const [activePress, setActivePress] = useState<string | null>(null);
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
-  const { sessionId, endedAt } = usePaperSessionStore();
+  const { sessionId, endedAt, justQuitSessionId, justQuitTimestamp } = usePaperSessionStore();
   const { theme, toggleTheme, isDark } = useTheme();
   
   // Show progress bar if there's an active session
-  const hasActiveSession = sessionId !== null && endedAt === null;
+  // Don't show if this session was just quit (within last 5 seconds)
+  const isJustQuit = justQuitSessionId === sessionId && justQuitTimestamp && (Date.now() - justQuitTimestamp) < 5000;
+  const hasActiveSession = sessionId !== null && endedAt === null && !isJustQuit;
 
   const currentSection =
     pathname.startsWith("/skills") ? "skills" 

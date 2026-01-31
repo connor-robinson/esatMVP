@@ -182,10 +182,10 @@ export function SessionFolder({
   }, {} as Record<string, TopicVariantSelection[]>);
 
   return (
-    <Card variant="flat" className="p-5">
-      <div className="h-full">
+    <Card variant="flat" className="p-5 h-full flex flex-col">
+      <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-5 flex-shrink-0">
         <div>
           <h2 className="text-lg font-semibold uppercase tracking-wider text-text">
             Session Folder
@@ -200,7 +200,7 @@ export function SessionFolder({
       </div>
 
         {/* Topics list */}
-        <div className="min-h-[260px] rounded-organic-lg p-4 mb-5 bg-surface-subtle">
+        <div className="flex-1 min-h-[260px] rounded-organic-lg p-4 mb-5 bg-surface-subtle overflow-y-auto">
           {selectedTopicVariants.length === 0 ? (
             <EmptyState />
           ) : (
@@ -233,7 +233,7 @@ export function SessionFolder({
         </div>
 
       {/* Controls - Single Row */}
-      <div className="space-y-4">
+      <div className="space-y-4 flex-shrink-0">
         {/* Question count on left, Save and Clear on right */}
         <div className="flex items-stretch gap-3">
           {/* Question count input - bubble style, expanded */}

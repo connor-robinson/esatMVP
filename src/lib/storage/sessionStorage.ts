@@ -225,6 +225,23 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
       // Both have sessions - check if they match
       if (indexedDBSessionId === databaseSessionId) {
         // Same session, use database as source of truth
+        // Double-check that it's not ended in database
+        try {
+          const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.session && data.session.ended_at) {
+              // Session is ended in database, clean up both
+              await deleteSession(indexedDBSessionId);
+              return null;
+            }
+          }
+        } catch (checkError) {
+          console.warn('[findActiveSession] Failed to verify session status:', checkError);
+        }
         return { sessionId: databaseSessionId, source: 'database' };
       } else {
         // Different sessions - prefer database (more authoritative)
@@ -238,10 +255,40 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
         } catch (deleteError) {
           console.error('[findActiveSession] Failed to clean up IndexedDB session:', deleteError);
         }
+        // Verify database session is not ended
+        try {
+          const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.session && data.session.ended_at) {
+              return null;
+            }
+          }
+        } catch (checkError) {
+          console.warn('[findActiveSession] Failed to verify database session:', checkError);
+        }
         return { sessionId: databaseSessionId, source: 'database' };
       }
     } else if (databaseSessionId) {
       // Only database has session - IndexedDB might be out of sync
+      // Verify it's not ended
+      try {
+        const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.session && data.session.ended_at) {
+            return null;
+          }
+        }
+      } catch (checkError) {
+        console.warn('[findActiveSession] Failed to verify database session:', checkError);
+      }
       return { sessionId: databaseSessionId, source: 'database' };
     } else if (indexedDBSessionId) {
       // Only IndexedDB has session - might be orphaned, but use it
@@ -258,9 +305,15 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
             await deleteSession(indexedDBSessionId);
             return null;
           }
+        } else if (response.status === 404) {
+          // Session doesn't exist in database, clean up IndexedDB
+          await deleteSession(indexedDBSessionId);
+          return null;
         }
       } catch (checkError) {
         console.warn('[findActiveSession] Failed to verify IndexedDB session:', checkError);
+        // If we can't verify, don't restore it (safer to not restore than to restore incorrectly)
+        return null;
       }
       return { sessionId: indexedDBSessionId, source: 'indexeddb' };
     }

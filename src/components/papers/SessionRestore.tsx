@@ -17,7 +17,7 @@ import { runCleanupOnLoad } from "@/lib/papers/sessionCleanup";
 export function SessionRestore() {
   const router = useRouter();
   const pathname = usePathname();
-  const { sessionId, isPaused, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring } = usePaperSessionStore();
+  const { sessionId, isPaused, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring, justQuitSessionId, justQuitTimestamp } = usePaperSessionStore();
   const session = useSupabaseSession();
   
   useEffect(() => {
@@ -40,6 +40,16 @@ export function SessionRestore() {
       return;
     }
 
+    // Check if a session was just quit - prevent restoration for 5 seconds after quit
+    if (justQuitSessionId && justQuitTimestamp) {
+      const timeSinceQuit = Date.now() - justQuitTimestamp;
+      if (timeSinceQuit < 5000) {
+        // Session was just quit, don't restore it
+        console.log('[SessionRestore] Skipping restoration - session was just quit:', justQuitSessionId);
+        return;
+      }
+    }
+
     const checkAndRestore = async () => {
       // Set restoring flag
       usePaperSessionStore.setState({ isRestoring: true });
@@ -49,6 +59,16 @@ export function SessionRestore() {
         const activeSession = await findActiveSession();
         if (activeSession) {
           const { sessionId: activeSessionId, source } = activeSession;
+          
+          // Double-check: Don't restore if this is the session that was just quit
+          const currentState = usePaperSessionStore.getState();
+          if (currentState.justQuitSessionId === activeSessionId) {
+            const timeSinceQuit = currentState.justQuitTimestamp ? Date.now() - currentState.justQuitTimestamp : Infinity;
+            if (timeSinceQuit < 5000) {
+              console.log('[SessionRestore] Skipping restoration - this session was just quit:', activeSessionId);
+              return;
+            }
+          }
           
           // Load from appropriate source
           if (source === 'indexeddb') {
@@ -80,7 +100,7 @@ export function SessionRestore() {
     };
 
     checkAndRestore();
-  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring, session?.user]);
+  }, [sessionId, isPaused, pathname, router, loadSessionFromIndexedDB, loadSessionFromDatabase, isRestoring, session?.user, justQuitSessionId, justQuitTimestamp]);
 
   return null; // This component doesn't render anything
 }

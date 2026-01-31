@@ -84,6 +84,8 @@ interface PaperSessionState {
   isPaused: boolean; // Whether session is currently paused
   pausedAt: number | null; // Timestamp when paused
   isRestoring: boolean; // Whether session is currently being restored from IndexedDB
+  justQuitSessionId: string | null; // Session ID that was just quit (to prevent restoration)
+  justQuitTimestamp: number | null; // Timestamp when session was quit (to prevent restoration for a short period)
   
   // Session notes
   notes: string;
@@ -211,6 +213,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       isPaused: false,
       pausedAt: null,
       isRestoring: false,
+      justQuitSessionId: null,
+      justQuitTimestamp: null,
       
       notes: '',
       sessionPersistPromise: null,
@@ -1016,38 +1020,62 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       
       resetSession: async () => {
         const state = get();
+        const sessionIdToQuit = state.sessionId;
+        
         if (state.persistTimer) {
           clearTimeout(state.persistTimer);
         }
         
-        // Mark session as ended in database before clearing state
-        if (state.sessionId && !state.endedAt) {
+        // Mark session as ended in database BEFORE clearing state
+        // This ensures the database is updated before SessionRestore can detect it
+        if (sessionIdToQuit && !state.endedAt) {
           try {
             const endedAt = Date.now();
-            await fetch('/api/papers/sessions', {
+            const response = await fetch('/api/papers/sessions', {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                id: state.sessionId,
+                id: sessionIdToQuit,
                 endedAt: endedAt,
               }),
-            }).catch(err => {
-              console.error('[resetSession] Failed to mark session as ended:', err);
             });
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('[resetSession] Failed to mark session as ended:', {
+                status: response.status,
+                statusText: response.statusText,
+                errorText,
+                sessionId: sessionIdToQuit
+              });
+            } else {
+              console.log('[resetSession] Successfully marked session as ended:', sessionIdToQuit);
+            }
           } catch (error) {
             console.error('[resetSession] Failed to end session in database:', error);
+            // Continue with reset even if database update fails
           }
         }
         
         // Delete from IndexedDB when resetting
-        if (state.sessionId) {
+        if (sessionIdToQuit) {
           try {
-            await deleteSession(state.sessionId);
+            await deleteSession(sessionIdToQuit);
+            console.log('[resetSession] Successfully deleted session from IndexedDB:', sessionIdToQuit);
           } catch (error) {
             console.error('[paperSessionStore] Failed to delete session from IndexedDB on reset:', error);
+            // Continue with reset even if IndexedDB deletion fails
           }
         }
         
+        // Set quit flag BEFORE clearing state to prevent SessionRestore from restoring
+        const now = Date.now();
+        set({
+          justQuitSessionId: sessionIdToQuit,
+          justQuitTimestamp: now,
+        });
+        
+        // Clear all session state
         set({
           sessionId: null,
           paperId: null,
@@ -1090,6 +1118,17 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionPersistPromise: null,
           pendingPersistQueue: [],
         });
+        
+        // Clear quit flag after a delay (5 seconds) to allow for any delayed restoration attempts
+        setTimeout(() => {
+          const currentState = get();
+          if (currentState.justQuitSessionId === sessionIdToQuit) {
+            set({
+              justQuitSessionId: null,
+              justQuitTimestamp: null,
+            });
+          }
+        }, 5000);
       },
 
       schedulePersist: () => {

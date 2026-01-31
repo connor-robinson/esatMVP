@@ -226,34 +226,31 @@ export function SessionProgressBar() {
     try {
       const state = usePaperSessionStore.getState();
       
-      // Mark session as ended in database before resetting
+      // First persist current state to ensure nothing is lost
       if (state.sessionId && !state.endedAt) {
         try {
-          // First persist current state
           await state.persistSessionToServer({ immediate: true });
-          
-          // Then mark as ended
-          const endedAt = Date.now();
-          await fetch('/api/papers/sessions', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: state.sessionId,
-              endedAt: endedAt,
-            }),
-          });
         } catch (error) {
-          console.error('[SessionProgressBar] Failed to persist/end session before quit:', error);
+          console.error('[SessionProgressBar] Failed to persist session before quit:', error);
           // Continue with quit even if persist fails
         }
       }
       
+      // Reset session (this will mark as ended in database and clear state)
       await resetSession();
+      
+      // Close modal and navigate
       setShowQuitModal(false);
-      router.push('/papers/library');
+      setIsQuitting(false);
+      
+      // Small delay before navigation to ensure state is cleared
+      setTimeout(() => {
+        router.push('/papers/library');
+      }, 100);
     } catch (error) {
       console.error('[SessionProgressBar] Failed to quit session:', error);
       setIsQuitting(false);
+      setShowQuitModal(false);
       // Show error to user
       alert('Failed to quit session. Please try again.');
     }

@@ -1520,14 +1520,14 @@ export default function PapersMarkPage() {
 
             {/* Right column: detail view (fills, scrolls) */}
             <div className="p-4 pt-6 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
+              {/* Overview and Marking Header - at the top */}
+              <div className="space-y-2 mb-6">
+                <div className="text-lg font-semibold text-neutral-100">Overview and Marking</div>
+                <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
+              </div>
+              
               {selectedIndex === -1 ? (
                 <div className="space-y-6">
-                  {/* Overview and Marking Header */}
-                  <div className="space-y-2">
-                    <div className="text-lg font-semibold text-neutral-100">Overview and Marking</div>
-                    <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
-                  </div>
-                  
                   {/* Hero Section */}
                   <div className="space-y-4">
                     {/* Compact Header: type, year, section pills, date */}
@@ -2013,49 +2013,74 @@ export default function PapersMarkPage() {
                             
                             if (!rows || rows.length < 2) return null;
                             
+                            // Convert cumulative to distribution
+                            const distributionData: { score: number; distPct: number; midScore: number }[] = [];
+                            for (let i = 0; i < rows.length - 1; i++) {
+                              const distPct = rows[i + 1].cumulativePct - rows[i].cumulativePct;
+                              const midScore = (rows[i].score + rows[i + 1].score) / 2;
+                              distributionData.push({
+                                score: rows[i].score,
+                                distPct: distPct,
+                                midScore: midScore
+                              });
+                            }
+                            
                             const w = 800; const h = 175; const pad = 24;
                             const xs = rows.map(r => r.score);
-                            const ys = rows.map(r => r.cumulativePct);
+                            const distPcts = distributionData.map(d => d.distPct);
                             const minX = Math.min(...xs), maxX = Math.max(...xs);
-                            const minY = 0, maxY = 100;
+                            const minY = 0, maxY = Math.max(...distPcts, 1);
                             const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
                             const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
-                            const points = rows.map(r => `${toX(r.score)},${toY(r.cumulativePct)}`).join(' ');
                             
-                            // For averaged percentile, show as horizontal line at percentile level
-                            const avgPercentileY = toY(nsaaAveragedPercentile);
-                            
-                            // Build shaded area polygon (area under curve up to averaged percentile)
-                            const shadedPoints: string[] = [];
-                            shadedPoints.push(`${pad},${h - pad}`); // bottom-left
-                            // Add points up to the averaged percentile level
-                            rows.forEach((r) => {
-                              if (r.cumulativePct <= nsaaAveragedPercentile) {
-                                shadedPoints.push(`${toX(r.score)},${toY(r.cumulativePct)}`);
-                              }
+                            // Build distribution curve points
+                            const points: string[] = [];
+                            distributionData.forEach((d, i) => {
+                              const x1 = toX(rows[i].score);
+                              const x2 = toX(rows[i + 1].score);
+                              const y = toY(d.distPct);
+                              if (i === 0) points.push(`M ${x1},${y}`);
+                              points.push(`L ${x2},${y}`);
                             });
-                            // Close the polygon at the averaged percentile level
-                            // Find where the curve crosses the percentile level (or use midpoint)
-                            let percentileX = pad + (w - 2*pad) / 2; // default to middle
+                            
+                            // Find averaged percentile position in distribution
+                            let avgPercentileScore = minX + (maxX - minX) / 2;
                             for (let i = 0; i < rows.length - 1; i++) {
-                              const r1 = rows[i];
-                              const r2 = rows[i + 1];
-                              if (r1.cumulativePct <= nsaaAveragedPercentile && r2.cumulativePct >= nsaaAveragedPercentile) {
-                                // Interpolate between these two points
-                                const ratio = (nsaaAveragedPercentile - r1.cumulativePct) / (r2.cumulativePct - r1.cumulativePct);
-                                percentileX = toX(r1.score + (r2.score - r1.score) * ratio);
+                              if (nsaaAveragedPercentile >= rows[i].cumulativePct && nsaaAveragedPercentile <= rows[i + 1].cumulativePct) {
+                                const ratio = (nsaaAveragedPercentile - rows[i].cumulativePct) / (rows[i + 1].cumulativePct - rows[i].cumulativePct);
+                                avgPercentileScore = rows[i].score + (rows[i + 1].score - rows[i].score) * ratio;
                                 break;
                               }
                             }
-                            shadedPoints.push(`${percentileX},${avgPercentileY}`); // averaged percentile point
-                            shadedPoints.push(`${w - pad},${avgPercentileY}`); // extend to right edge
-                            shadedPoints.push(`${w - pad},${h - pad}`); // down to bottom-right
-                            shadedPoints.push(`${pad},${h - pad}`); // close polygon
+                            const percentileX = toX(avgPercentileScore);
+                            let percentileY = h - pad;
+                            for (let i = 0; i < distributionData.length; i++) {
+                              if (avgPercentileScore >= rows[i].score && avgPercentileScore < rows[i + 1].score) {
+                                percentileY = toY(distributionData[i].distPct);
+                                break;
+                              }
+                            }
+                            
+                            // Build distribution bars
+                            const bars: { x: number; width: number; height: number; y: number }[] = [];
+                            distributionData.forEach((d, i) => {
+                              const x1 = toX(rows[i].score);
+                              const x2 = toX(rows[i + 1].score);
+                              const barWidth = x2 - x1;
+                              const barHeight = h - pad - toY(d.distPct);
+                              bars.push({
+                                x: x1,
+                                width: barWidth,
+                                height: barHeight,
+                                y: toY(d.distPct)
+                              });
+                            });
                             
                             // Ticks
                             const xTicks = [] as number[];
                             for (let s = Math.ceil(minX); s <= Math.floor(maxX); s += 1) xTicks.push(s);
-                            const yTicks = [0, 25, 50, 75, 100];
+                            const maxDistTick = Math.ceil(maxY);
+                            const yTicks = [0, maxDistTick * 0.25, maxDistTick * 0.5, maxDistTick * 0.75, maxDistTick].map(t => Math.round(t * 10) / 10);
                             
                             return (
                               <div className="mt-3 w-full mx-auto">
@@ -2063,8 +2088,22 @@ export default function PapersMarkPage() {
                                   {/* Axes */}
                                   <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
                                   <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
-                                  {/* Shaded area for people behind you */}
-                                  <polygon points={shadedPoints.join(' ')} fill="rgba(80,97,65,0.15)" stroke="none" />
+                                  {/* Distribution bars */}
+                                  {bars.map((bar, i) => {
+                                    const isAvgBar = avgPercentileScore >= rows[i].score && avgPercentileScore < rows[i + 1].score;
+                                    return (
+                                      <rect
+                                        key={i}
+                                        x={bar.x}
+                                        y={bar.y}
+                                        width={bar.width}
+                                        height={bar.height}
+                                        fill={isAvgBar ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)"}
+                                        stroke={isAvgBar ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)"}
+                                        strokeWidth={isAvgBar ? 1.5 : 0.5}
+                                      />
+                                    );
+                                  })}
                                   {/* Ticks */}
                                   {xTicks.map((t, i) => (
                                     <g key={`xt-${i}`}>
@@ -2075,17 +2114,17 @@ export default function PapersMarkPage() {
                                   {yTicks.map((t, i) => (
                                     <g key={`yt-${i}`}>
                                       <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke="#2a2d34" />
-                                      <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t}</text>
+                                      <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t.toFixed(1)}</text>
                                     </g>
                                   ))}
-                                  {/* Curve */}
-                                  <polyline points={points} fill="none" stroke="#7a7f87" strokeWidth="2" />
-                                  {/* Averaged percentile marker - horizontal line at percentile level */}
-                                  <line x1={pad} y1={avgPercentileY} x2={w - pad} y2={avgPercentileY} stroke="rgba(255,255,255,0.3)" strokeDasharray="4 4" />
-                                  <circle cx={percentileX} cy={avgPercentileY} r="4" fill="#ffffff" />
+                                  {/* Distribution curve */}
+                                  <path d={points.join(' ')} fill="none" stroke="#7a7f87" strokeWidth="2" />
+                                  {/* Averaged percentile marker */}
+                                  <line x1={percentileX} y1={pad} x2={percentileX} y2={h-pad} stroke="rgba(255,255,255,0.3)" strokeDasharray="4 4" />
+                                  <circle cx={percentileX} cy={percentileY} r="4" fill="#ffffff" />
                                   {/* Axis labels */}
                                   <text x={w/2} y={h - 4} fill="#9ca3af" fontSize="10" textAnchor="middle">ESAT Score</text>
-                                  <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Cumulative %</text>
+                                  <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Distribution %</text>
                                 </svg>
                               </div>
                             );
@@ -2181,41 +2220,89 @@ export default function PapersMarkPage() {
                                 {(() => {
                                   const rows = percentileTables[sp.table] || [];
                                   const w = 400; const h = 175; const pad = 24;
+                                  if (rows.length < 2) return null;
+                                  
+                                  // Convert cumulative to distribution
+                                  const distributionData: { score: number; distPct: number; midScore: number }[] = [];
+                                  for (let i = 0; i < rows.length - 1; i++) {
+                                    const distPct = rows[i + 1].cumulativePct - rows[i].cumulativePct;
+                                    const midScore = (rows[i].score + rows[i + 1].score) / 2;
+                                    distributionData.push({
+                                      score: rows[i].score,
+                                      distPct: distPct,
+                                      midScore: midScore
+                                    });
+                                  }
+                                  
                                   const xs = rows.map(r => r.score);
-                                  const ys = rows.map(r => r.cumulativePct);
-                                  if (xs.length < 2) return null;
+                                  const distPcts = distributionData.map(d => d.distPct);
                                   const minX = Math.min(...xs), maxX = Math.max(...xs);
-                                  const minY = 0, maxY = 100;
+                                  const minY = 0, maxY = Math.max(...distPcts, 1);
                                   const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
                                   const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
-                                  const points = rows.map(r => `${toX(r.score)},${toY(r.cumulativePct)}`).join(' ');
-                                  const userX = toX(score ?? minX);
-                                  const userY = toY(pct ?? 0);
-                                  // Build shaded area polygon (area under curve up to user's score)
-                                  const shadedPoints: string[] = [];
-                                  shadedPoints.push(`${pad},${h - pad}`); // bottom-left
-                                  // Add points up to user's score
-                                  rows.forEach((r) => {
-                                    if (r.score <= (score ?? minX)) {
-                                      shadedPoints.push(`${toX(r.score)},${toY(r.cumulativePct)}`);
-                                    }
+                                  
+                                  // Build distribution curve points
+                                  const points: string[] = [];
+                                  distributionData.forEach((d, i) => {
+                                    const x1 = toX(rows[i].score);
+                                    const x2 = toX(rows[i + 1].score);
+                                    const y = toY(d.distPct);
+                                    if (i === 0) points.push(`M ${x1},${y}`);
+                                    points.push(`L ${x2},${y}`);
                                   });
-                                  shadedPoints.push(`${userX},${userY}`); // user's point
-                                  shadedPoints.push(`${userX},${h - pad}`); // down to bottom
-                                  shadedPoints.push(`${pad},${h - pad}`); // close polygon
+                                  
+                                  const userX = toX(score ?? minX);
+                                  // Find user's position in distribution
+                                  let userDistY = h - pad;
+                                  for (let i = 0; i < distributionData.length; i++) {
+                                    if (score !== null && score >= rows[i].score && score < rows[i + 1].score) {
+                                      userDistY = toY(distributionData[i].distPct);
+                                      break;
+                                    }
+                                  }
+                                  
+                                  // Build shaded area (bars for distribution)
+                                  const bars: { x: number; width: number; height: number; y: number }[] = [];
+                                  distributionData.forEach((d, i) => {
+                                    const x1 = toX(rows[i].score);
+                                    const x2 = toX(rows[i + 1].score);
+                                    const barWidth = x2 - x1;
+                                    const barHeight = h - pad - toY(d.distPct);
+                                    bars.push({
+                                      x: x1,
+                                      width: barWidth,
+                                      height: barHeight,
+                                      y: toY(d.distPct)
+                                    });
+                                  });
+                                  
                                   // Ticks
                                   const xTicks = [] as number[];
                                   for (let s = Math.ceil(minX); s <= Math.floor(maxX); s += 1) xTicks.push(s);
-                                  const yTicks = [0, 25, 50, 75, 100];
+                                  const maxDistTick = Math.ceil(maxY);
+                                  const yTicks = [0, maxDistTick * 0.25, maxDistTick * 0.5, maxDistTick * 0.75, maxDistTick].map(t => Math.round(t * 10) / 10);
+                                  
                                   return (
                                     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" className="block">
                                       {/* Axes */}
                                       <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
                                       <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
-                                      {/* Shaded area for people behind you */}
-                                      {Number.isFinite(score) && Number.isFinite(pct) && (
-                                        <polygon points={shadedPoints.join(' ')} fill="rgba(80,97,65,0.15)" stroke="none" />
-                                      )}
+                                      {/* Distribution bars */}
+                                      {bars.map((bar, i) => {
+                                        const isUserBar = score !== null && score >= rows[i].score && score < rows[i + 1].score;
+                                        return (
+                                          <rect
+                                            key={i}
+                                            x={bar.x}
+                                            y={bar.y}
+                                            width={bar.width}
+                                            height={bar.height}
+                                            fill={isUserBar ? "rgba(108, 158, 105, 0.3)" : "rgba(122, 127, 135, 0.2)"}
+                                            stroke={isUserBar ? "rgba(108, 158, 105, 0.6)" : "rgba(122, 127, 135, 0.4)"}
+                                            strokeWidth={isUserBar ? 1.5 : 0.5}
+                                          />
+                                        );
+                                      })}
                                       {/* Ticks */}
                                       {xTicks.map((t, i) => (
                                         <g key={`xt-${i}`}>
@@ -2226,16 +2313,21 @@ export default function PapersMarkPage() {
                                       {yTicks.map((t, i) => (
                                         <g key={`yt-${i}`}>
                                           <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke="#2a2d34" />
-                                          <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t}</text>
+                                          <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t.toFixed(1)}</text>
                                         </g>
                                       ))}
-                                      {/* Curve and marker */}
-                                      <polyline points={points} fill="none" stroke="#7a7f87" strokeWidth="2" />
-                                      <line x1={userX} y1={pad} x2={userX} y2={h-pad} stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" />
-                                      <circle cx={userX} cy={userY} r="3" fill="#ffffff" />
+                                      {/* Distribution curve */}
+                                      <path d={points.join(' ')} fill="none" stroke="#7a7f87" strokeWidth="2" />
+                                      {/* User marker */}
+                                      {Number.isFinite(score) && (
+                                        <>
+                                          <line x1={userX} y1={pad} x2={userX} y2={h-pad} stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" />
+                                          <circle cx={userX} cy={userDistY} r="3" fill="#ffffff" />
+                                        </>
+                                      )}
                                       {/* Axis labels */}
                                       <text x={w/2} y={h - 4} fill="#9ca3af" fontSize="10" textAnchor="middle">{examName || 'Score'}</text>
-                                      <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Cumulative %</text>
+                                      <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Distribution %</text>
                                     </svg>
                                   );
                                 })()}

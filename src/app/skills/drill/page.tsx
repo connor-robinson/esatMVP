@@ -14,7 +14,6 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 const TopicSelector = lazy(() => import("@/components/builder/TopicSelector").then(mod => ({ default: mod.TopicSelector })));
 const SessionFolder = lazy(() => import("@/components/builder/SessionFolder").then(mod => ({ default: mod.SessionFolder })));
 const TopicsOverview = lazy(() => import("@/components/builder/TopicsOverview").then(mod => ({ default: mod.TopicsOverview })));
-const PresetManager = lazy(() => import("@/components/builder/PresetManager").then(mod => ({ default: mod.PresetManager })));
 const MentalMathSession = lazy(() => import("@/components/mental-math/MentalMathSession").then(mod => ({ default: mod.MentalMathSession })));
 const SessionResults = lazy(() => import("@/components/builder/SessionResults").then(mod => ({ default: mod.SessionResults })));
 
@@ -57,61 +56,52 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <Container size="xl" className="py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 items-stretch">
           {/* Left: Topic selector */}
-          <div>
-            <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
-              <TopicSelector
-                topics={allTopics}
-                selectedTopicIds={builder.selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`)}
-                onAddTopic={builder.addTopic}
-                presets={builder.presets}
-                onLoadPreset={builder.loadPreset}
-              />
+          <div className="flex flex-col min-h-0">
+            <Suspense fallback={<div className="h-full bg-white/10 rounded-lg animate-pulse" />}>
+              <div className="h-full">
+                <TopicSelector
+                  topics={allTopics}
+                  selectedTopicIds={builder.selectedTopicVariants.map(tv => `${tv.topicId}-${tv.variantId}`)}
+                  onAddTopic={builder.addTopic}
+                  presets={builder.presets}
+                  onLoadPreset={builder.loadPreset}
+                />
+              </div>
             </Suspense>
           </div>
 
-          {/* Right: Session folder and presets */}
-          <div className="space-y-6">
+          {/* Right: Topics Overview and Session folder */}
+          <div className="flex flex-col space-y-6 min-h-0">
             {/* Topics Overview */}
-            <div>
+            <div className="flex-shrink-0">
               <Suspense fallback={<div className="h-48 bg-white/10 rounded-lg animate-pulse" />}>
                 <TopicsOverview />
               </Suspense>
             </div>
 
-            <div>
-              <Suspense fallback={<div className="h-96 bg-white/10 rounded-lg animate-pulse" />}>
-              <SessionFolder
-                selectedTopicVariants={builder.selectedTopicVariants}
-                questionCount={builder.questionCount}
-                onQuestionCountChange={builder.setQuestionCount}
-                onRemoveTopicVariant={builder.removeTopicVariant}
-                onRemoveAllTopicVariants={builder.removeAllTopicVariants}
-                onClear={builder.clearTopics}
-                onSave={handleSavePreset}
-                onStart={() => {
-                  builder.startSession();
-                }}
-                canStart={builder.canStart}
-                presets={builder.presets}
-                onLoadPreset={builder.loadPreset}
-              />
+            <div className="flex-1 min-h-0">
+              <Suspense fallback={<div className="h-full bg-white/10 rounded-lg animate-pulse" />}>
+              <div className="h-full">
+                <SessionFolder
+                  selectedTopicVariants={builder.selectedTopicVariants}
+                  questionCount={builder.questionCount}
+                  onQuestionCountChange={builder.setQuestionCount}
+                  onRemoveTopicVariant={builder.removeTopicVariant}
+                  onRemoveAllTopicVariants={builder.removeAllTopicVariants}
+                  onClear={builder.clearTopics}
+                  onSave={handleSavePreset}
+                  onStart={() => {
+                    builder.startSession();
+                  }}
+                  canStart={builder.canStart}
+                  presets={builder.presets}
+                  onLoadPreset={builder.loadPreset}
+                />
+              </div>
               </Suspense>
             </div>
-
-            {/* Presets */}
-            {builder.presets.length > 0 && (
-              <div>
-                <Suspense fallback={<div className="h-32 bg-white/10 rounded-lg animate-pulse" />}>
-                  <PresetManager
-                    presets={builder.presets}
-                    onLoad={builder.loadPreset}
-                    onDelete={builder.removePreset}
-                  />
-                </Suspense>
-              </div>
-            )}
           </div>
         </div>
       </Container>
