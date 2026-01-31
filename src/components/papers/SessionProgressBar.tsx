@@ -10,6 +10,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
@@ -225,12 +226,24 @@ export function SessionProgressBar() {
     try {
       const state = usePaperSessionStore.getState();
       
-      // Persist session before quitting to ensure progress is saved
+      // Mark session as ended in database before resetting
       if (state.sessionId && !state.endedAt) {
         try {
+          // First persist current state
           await state.persistSessionToServer({ immediate: true });
+          
+          // Then mark as ended
+          const endedAt = Date.now();
+          await fetch('/api/papers/sessions', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: state.sessionId,
+              endedAt: endedAt,
+            }),
+          });
         } catch (error) {
-          console.error('[SessionProgressBar] Failed to persist before quit:', error);
+          console.error('[SessionProgressBar] Failed to persist/end session before quit:', error);
           // Continue with quit even if persist fails
         }
       }
@@ -493,8 +506,8 @@ export function SessionProgressBar() {
         </div>
       </div>
       
-      {/* Quit Confirmation Modal */}
-      {showQuitModal && (
+      {/* Quit Confirmation Modal - Rendered via Portal */}
+      {showQuitModal && typeof window !== 'undefined' && createPortal(
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
           onClick={handleCancelQuit}
@@ -566,7 +579,8 @@ export function SessionProgressBar() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </nav>
   );

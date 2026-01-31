@@ -103,7 +103,7 @@ interface PaperSessionState {
     selectedSections?: PaperSection[];
     selectedPartIds?: string[]; // Optional: if provided, use directly; otherwise generate from selectedSections
     questionOrder?: number[];
-  }) => void;
+  }) => Promise<void>;
   
   loadQuestions: (paperId: number) => Promise<void>;
   
@@ -227,12 +227,51 @@ export const usePaperSessionStore = create<PaperSessionState>()(
        * @param config.selectedSections - Array of section names to track for this session
        *                                  This is used later to determine completion status
        */
-      startSession: (config) => {
+      startSession: async (config) => {
         // Validate questionRange
         if (!config.questionRange || config.questionRange.end < config.questionRange.start || config.questionRange.start < 1) {
           console.error('[startSession] Invalid questionRange', config.questionRange);
           return;
         }
+        
+        // Before starting a new session, end any existing in-progress sessions for this paper
+        // This prevents accumulation of orphaned sessions
+        try {
+          const response = await fetch(`/api/papers/sessions?in_progress=true`);
+          if (response.ok) {
+            const data = await response.json();
+            const inProgressSessions = (data.sessions || []) as any[];
+            
+            // Find sessions for the same paper variant
+            const samePaperSessions = inProgressSessions.filter(
+              s => s.paper_variant === config.paperVariant && s.paper_name === config.paperName
+            );
+            
+            // End all matching sessions
+            if (samePaperSessions.length > 0) {
+              const now = Date.now();
+              await Promise.all(
+                samePaperSessions.map(session =>
+                  fetch('/api/papers/sessions', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      id: session.id,
+                      endedAt: now,
+                    }),
+                  }).catch(err => {
+                    console.error('[startSession] Failed to end existing session:', err);
+                  })
+                )
+              );
+              console.log(`[startSession] Ended ${samePaperSessions.length} existing in-progress session(s) for ${config.paperVariant}`);
+            }
+          }
+        } catch (error) {
+          console.warn('[startSession] Failed to check/end existing sessions:', error);
+          // Continue with starting new session even if cleanup fails
+        }
+        
         const totalQuestions = config.questionRange.end - config.questionRange.start + 1;
         // Generate unique UUID for this session attempt
         // This ensures multiple attempts of the same paper are tracked separately
@@ -903,6 +942,25 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         const state = get();
         if (state.persistTimer) {
           clearTimeout(state.persistTimer);
+        }
+        
+        // Mark session as ended in database before clearing state
+        if (state.sessionId && !state.endedAt) {
+          try {
+            const endedAt = Date.now();
+            await fetch('/api/papers/sessions', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: state.sessionId,
+                endedAt: endedAt,
+              }),
+            }).catch(err => {
+              console.error('[resetSession] Failed to mark session as ended:', err);
+            });
+          } catch (error) {
+            console.error('[resetSession] Failed to end session in database:', error);
+          }
         }
         
         // Delete from IndexedDB when resetting

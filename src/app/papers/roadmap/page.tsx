@@ -26,7 +26,7 @@ import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { getPaper, getQuestions } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import type { PaperSection } from "@/types/papers";
+import type { PaperSection, Question, Paper } from "@/types/papers";
 import type { RoadmapPart } from "@/lib/papers/roadmapConfig";
 
 export default function PapersRoadmapPage() {
@@ -228,8 +228,7 @@ export default function PapersRoadmapPage() {
           partsByPaper.get(paperKey)!.push(part);
         });
 
-        // For now, use the paper with the most parts (or first if equal)
-        // TODO: In future, could support multi-paper sessions
+        // Determine primary paper (for session metadata) - use the one with most parts
         let primaryPaperKey = '';
         let maxParts = 0;
         for (const [key, parts] of partsByPaper.entries()) {
@@ -242,29 +241,13 @@ export default function PapersRoadmapPage() {
         const primaryParts = partsByPaper.get(primaryPaperKey) || selectedParts;
         const firstPart = primaryParts[0];
 
-        const paper = await getPaper(stage.examName, stage.year, firstPart.paperName, firstPart.examType);
-
-        if (!paper) {
-          console.error("[roadmap] Paper not found for stage", {
-            examName: stage.examName,
-            year: stage.year,
-            paperName: firstPart.paperName,
-            examType: firstPart.examType,
-            stageId: stage.id
-          });
-          
-          // Show user-friendly error message
-          alert(`Paper not found: ${stage.examName} ${stage.year} ${firstPart.paperName} (${firstPart.examType}). Please check if this paper exists in the database.`);
-          return;
-        }
-
-        // Collect sections from selected parts only
+        // Collect sections from ALL selected parts (not just primary)
         const allSections = new Set<PaperSection>();
         const paperType = examNameToPaperType(stage.examName) || "NSAA";
 
         // Handle TMUA differently - use section mapping
         if (paperType === "TMUA") {
-          primaryParts.forEach(part => {
+          selectedParts.forEach(part => {
             // TMUA uses Paper 1 / Paper 2 as sections
             if (part.paperName === "Paper 1") {
               allSections.add("Paper 1");
@@ -273,51 +256,148 @@ export default function PapersRoadmapPage() {
             }
           });
         } else {
-          primaryParts.forEach(part => {
+          // Collect sections from ALL selected parts across all papers
+          selectedParts.forEach(part => {
             const section = getSectionForRoadmapPart(part, stage.examName);
             allSections.add(section);
           });
         }
 
-        // Get all questions for the primary paper
-        const allQuestions = await getQuestions(paper.id);
+        // Load questions from ALL papers that have selected parts
+        const allPapers = new Map<string, Paper>();
+        const allQuestionsByPaper = new Map<number, Question[]>();
+        
+        console.log("[roadmap] Loading papers for selected parts:", {
+          selectedPartsCount: selectedParts.length,
+          papersCount: partsByPaper.size,
+          paperKeys: Array.from(partsByPaper.keys())
+        });
+        
+        for (const [paperKey, parts] of partsByPaper.entries()) {
+          const firstPartInPaper = parts[0];
+          const paper = await getPaper(stage.examName, stage.year, firstPartInPaper.paperName, firstPartInPaper.examType);
+          
+          if (!paper) {
+            console.error("[roadmap] Paper not found for stage", {
+              examName: stage.examName,
+              year: stage.year,
+              paperName: firstPartInPaper.paperName,
+              examType: firstPartInPaper.examType,
+              stageId: stage.id
+            });
+            
+            // Show user-friendly error message
+            alert(`Paper not found: ${stage.examName} ${stage.year} ${firstPartInPaper.paperName} (${firstPartInPaper.examType}). Please check if this paper exists in the database.`);
+            return;
+          }
+          
+          console.log("[roadmap] Loaded paper:", {
+            paperKey,
+            paperId: paper.id,
+            paperName: paper.paperName,
+            partsCount: parts.length,
+            parts: parts.map(p => `${p.partLetter}: ${p.partName}`)
+          });
+          
+          allPapers.set(paperKey, paper);
+          const questions = await getQuestions(paper.id);
+          console.log("[roadmap] Loaded questions from paper:", {
+            paperId: paper.id,
+            questionsCount: questions.length
+          });
+          allQuestionsByPaper.set(paper.id, questions);
+        }
 
-        // Filter questions to match selected parts from the primary paper only
-        let matchingQuestions: typeof allQuestions;
+        // Get primary paper for session metadata
+        const primaryPaper = allPapers.get(primaryPaperKey);
+        if (!primaryPaper) {
+          console.error("[roadmap] Primary paper not found");
+          return;
+        }
+
+        // Combine questions from all papers and filter to match ALL selected parts
+        let matchingQuestions: Question[] = [];
+
+        console.log("[roadmap] Filtering questions:", {
+          allSections: Array.from(allSections),
+          paperType,
+          totalPapers: allQuestionsByPaper.size
+        });
 
         if (paperType === "TMUA") {
-          // For TMUA, filter by section derived from question position
-          const totalQuestions = allQuestions.length;
-          matchingQuestions = allQuestions.filter((q, index) => {
-            const section = deriveTmuaSectionFromQuestion(q, index, totalQuestions);
-            return Array.from(allSections).includes(section);
-          });
-        } else {
-          matchingQuestions = allQuestions.filter(q => {
-            return primaryParts.some(part => {
-              // Check if question matches this part
-              const partMatches =
-                (q.partLetter === part.partLetter || q.partLetter?.includes(part.partLetter)) &&
-                (q.partName === part.partName || q.partName?.includes(part.partName));
-
-              if (!partMatches) return false;
-
-              // Apply question range filter if specified (for ENGAA Section 1 Part A split)
-              if (part.questionRange) {
-                const inRange = q.questionNumber >= part.questionRange.start && 
-                               q.questionNumber <= part.questionRange.end;
-                if (!inRange) return false;
-              }
-
-              // Apply question filter if specified (for ENGAA Section 1 Part B)
-              if (part.questionFilter && part.questionFilter.length > 0) {
-                return part.questionFilter.includes(q.questionNumber);
-              }
-
-              return true;
+          // For TMUA, combine questions from all papers and filter by section
+          for (const [paperId, questions] of allQuestionsByPaper.entries()) {
+            const totalQuestions = questions.length;
+            const filtered = questions.filter((q: Question, index: number) => {
+              const section = deriveTmuaSectionFromQuestion(q, index, totalQuestions);
+              return Array.from(allSections).includes(section);
             });
-          });
+            matchingQuestions = [...matchingQuestions, ...filtered];
+          }
+        } else {
+          // For NSAA/ENGAA, filter questions from all papers to match ALL selected parts
+          // Important: For NSAA, Section 1 and Section 2 might be in the same paper or different papers
+          // We need to match parts correctly, considering that the same partLetter/partName
+          // might exist in both sections, so we need to use the paperName from the roadmap config
+          // to distinguish them. However, if they're in the same paper, we rely on the database
+          // structure to have them properly distinguished (e.g., via examType or other fields).
+          
+          for (const [paperKey, parts] of partsByPaper.entries()) {
+            const paper = allPapers.get(paperKey);
+            if (!paper) continue;
+            
+            const questions = allQuestionsByPaper.get(paper.id) || [];
+            console.log("[roadmap] Filtering questions for paper:", {
+              paperKey,
+              paperId: paper.id,
+              paperName: paper.paperName,
+              questionsCount: questions.length,
+              partsToMatch: parts.map(p => `${p.partLetter}: ${p.partName} (${p.paperName})`)
+            });
+            
+            const filtered = questions.filter((q: Question) => {
+              return parts.some(part => {
+                // Check if question matches this part
+                const partMatches =
+                  (q.partLetter === part.partLetter || q.partLetter?.includes(part.partLetter)) &&
+                  (q.partName === part.partName || q.partName?.includes(part.partName));
+
+                if (!partMatches) return false;
+
+                // For NSAA, if we have Section 1 and Section 2 with same partLetter/partName,
+                // we need additional filtering. Check if the question's examType or paperName matches.
+                // Note: This assumes the database has Section 1 and Section 2 as separate papers
+                // OR that questions have some field distinguishing them.
+                // If they're in the same paper, the partLetter/partName matching should be sufficient
+                // if the database structure is correct.
+
+                // Apply question range filter if specified (for ENGAA Section 1 Part A split)
+                if (part.questionRange) {
+                  const inRange = q.questionNumber >= part.questionRange.start && 
+                                 q.questionNumber <= part.questionRange.end;
+                  if (!inRange) return false;
+                }
+
+                // Apply question filter if specified (for ENGAA Section 1 Part B)
+                if (part.questionFilter && part.questionFilter.length > 0) {
+                  return part.questionFilter.includes(q.questionNumber);
+                }
+
+                return true;
+              });
+            });
+            
+            console.log("[roadmap] Filtered questions for paper:", {
+              paperKey,
+              beforeCount: questions.length,
+              afterCount: filtered.length
+            });
+            
+            matchingQuestions = [...matchingQuestions, ...filtered];
+          }
         }
+        
+        console.log("[roadmap] Total matching questions:", matchingQuestions.length);
 
         if (matchingQuestions.length === 0) {
           console.error("[roadmap] No matching questions found for stage");
@@ -325,7 +405,7 @@ export default function PapersRoadmapPage() {
         }
 
         // Get question number range
-        const questionNumbers = matchingQuestions.map(q => q.questionNumber).sort((a, b) => a - b);
+        const questionNumbers = matchingQuestions.map((q: Question) => q.questionNumber).sort((a: number, b: number) => a - b);
         const questionStart = questionNumbers[0];
         const questionEnd = questionNumbers[questionNumbers.length - 1];
         const totalQuestions = questionNumbers.length;
@@ -338,12 +418,12 @@ export default function PapersRoadmapPage() {
           timeLimitMinutes = Math.ceil(totalQuestions * 1.5);
         }
 
-        // Create variant string
+        // Create variant string (use primary paper for metadata)
         const variantString = `${stage.year}-${firstPart.paperName}-${firstPart.examType}`;
 
-        // Start session
+        // Start session (use primary paper ID, but questions are already filtered)
         startSession({
-          paperId: paper.id,
+          paperId: primaryPaper.id,
           paperName: paperType,
           paperVariant: variantString,
           sessionName: `${stage.examName} ${stage.year} - ${new Date().toLocaleString()}`,
@@ -355,8 +435,10 @@ export default function PapersRoadmapPage() {
           selectedSections: Array.from(allSections),
         });
 
-        // Load questions and navigate to solve
-        await loadQuestions(paper.id);
+        // Load questions from primary paper (the store will load all questions, 
+        // but we've already filtered them above - the store's loadQuestions will
+        // be used by the solve page, and the questionRange will filter correctly)
+        await loadQuestions(primaryPaper.id);
         router.push("/papers/solve");
       } catch (error) {
         console.error("[roadmap] Error starting stage:", error);

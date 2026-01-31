@@ -1733,28 +1733,30 @@ export default function PapersMarkPage() {
 
                     {/* Section Performance & Score Conversion (moved up next to Time Management) */}
                     <div className={`${bubbleClass} space-y-4 md:col-start-2 md:row-start-1`}>
-                      <div className="text-base font-semibold text-neutral-100">Section Performance</div>
-                      {/* Global conversion rows (all sections) */}
-                      {hasConversion && (
-                        <details>
-                          <summary className="cursor-pointer text-[11px] text-neutral-400">View conversion rows</summary>
-                          <div className="mt-2 text-[11px] text-neutral-300 space-y-1 max-h-48 overflow-y-auto">
-                            {(() => {
-                              const rows = (conversionRows as any[]).slice().sort((a,b) => {
-                                if (a.partName === b.partName) return a.rawScore - b.rawScore;
-                                return a.partName.localeCompare(b.partName);
-                              });
-                              if (rows.length === 0) return <div className="text-neutral-500">No conversion rows found</div>;
-                              return rows.map((r, idx) => (
-                                <div key={idx} className="flex items-center justify-between">
-                                  <span>{r.partName} • Raw {r.rawScore}</span>
-                                  <span>→ {examName} {r.scaledScore !== undefined && r.scaledScore !== null ? Number(r.scaledScore).toFixed(1) : '—'}</span>
-                                </div>
-                              ));
-                            })()}
+                      {(() => {
+                        const qs = usePaperSessionStore.getState().questions;
+                        const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
+                        const sectionTitle = currentExamName === 'TMUA' 
+                          ? 'TMUA score by section'
+                          : (currentExamName === 'ENGAA' || currentExamName === 'NSAA')
+                          ? 'ESAT score by section'
+                          : 'Section Performance';
+                        return <div className="text-base font-semibold text-neutral-100">{sectionTitle}</div>;
+                      })()}
+                      {(() => {
+                        const qs = usePaperSessionStore.getState().questions;
+                        const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
+                        const scoreLabel = currentExamName === 'TMUA' 
+                          ? 'TMUA score'
+                          : (currentExamName === 'ENGAA' || currentExamName === 'NSAA')
+                          ? 'ESAT score'
+                          : 'Score';
+                        return (
+                          <div className="mb-2">
+                            <div className="text-xs text-neutral-400 text-right">{scoreLabel}</div>
                           </div>
-                        </details>
-                      )}
+                        );
+                      })()}
                       <div className="space-y-3">
                         {Object.entries(sectionAnalytics)
                           .filter(([section]) => {
@@ -1788,29 +1790,22 @@ export default function PapersMarkPage() {
                           return (
                             <div key={section} className="p-3 rounded-md bg-neutral-900">
                               <div className="flex items-start justify-between mb-2">
-                                <div>
+                                <div className="flex-1">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     {sectionNameForColor && (
                                       <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
                                         {sectionNameForColor}
                                       </span>
                                     )}
-                                    <div className="text-sm font-medium text-neutral-200">{section}</div>
+                                    <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium bg-neutral-700">
+                                      {section}
+                                    </span>
+                                    <span className="text-xs px-2.5 py-1 rounded-md text-neutral-200 font-medium bg-neutral-800">
+                                      {data.correct}/{data.total} raw
+                                    </span>
                                   </div>
-                                  {hasConversion && (
-                                    <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                                      <span className={`text-xs px-2 py-0.5 rounded-md ${ (data as any).__convRowsFound ? 'bg-[rgba(80,97,65,0.25)] text-neutral-200' : 'bg-[rgba(239,68,68,0.2)] text-neutral-300' }`}>
-                                        {(data as any).__convRowsFound ? 'Mapped' : 'Not mapped'}
-                                      </span>
-                                      {(data as any).__convPartName && (
-                                        <span className="text-xs text-neutral-400">{((data as any).__convPartName as string)}</span>
-                                      )}
-                                      <span className="text-xs text-neutral-500">{data.correct}/{data.total} raw</span>
-                                    </div>
-                                  )}
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-xs text-neutral-400">{(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName}</div>
                                   <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
                                 </div>
                               </div>
@@ -1820,8 +1815,8 @@ export default function PapersMarkPage() {
                                 </div>
                                 <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
                               </div>
-                              <div className="flex items-center justify-between text-xs text-neutral-400">
-                                <span>Avg: {formatTime(Math.round(data.avgTime))}</span>
+                              <div className="flex items-center justify-between text-xs text-neutral-400 min-h-[16px]">
+                                <span></span>
                                 {data.guessed > 0 && <span>{data.guessed} guessed</span>}
                               </div>
                               {/* per-section conversion rows removed; shown globally above */}
@@ -2330,20 +2325,6 @@ export default function PapersMarkPage() {
                       
                       <MistakeChart mistakeTags={mistakeTags} />
 
-                      {topMistakes.length > 0 && (
-                        <div>
-                          <div className="text-xs text-neutral-400 mb-2">Top Mistakes</div>
-                  <div className="space-y-2">
-                            {topMistakes.map(([tag, count], idx) => (
-                              <div key={tag} className="flex items-center justify-between p-2 rounded bg-[#0f1114]">
-                                <span className="text-xs text-neutral-300">{idx + 1}. {tag}</span>
-                                <span className="text-xs font-semibold text-neutral-400">{count}</span>
-                              </div>
-                      ))}
-                    </div>
-                  </div>
-                      )}
-
                       {Object.keys(mistakesBySection).length > 0 && (
                         <div>
                           <div className="text-xs text-neutral-400 mb-2">Mistakes by Section</div>
@@ -2374,7 +2355,7 @@ export default function PapersMarkPage() {
                 <div className="flex items-center gap-2">
                   <div className="text-base font-semibold text-neutral-200">Question</div>
                   <div className="text-base font-semibold text-neutral-200">{questionNumbers[selectedIndex]}</div>
-                    <button
+                  <button
                     onClick={() => setShowAnswer(!showAnswer)}
                     className="ml-1 px-2 py-1 text-xs rounded-md ring-1 transition bg-neutral-800 text-neutral-300 ring-white/10 hover:bg-neutral-700 flex items-center gap-1"
                     title={showAnswer ? "Hide answer key" : "Show answer key"}
@@ -2396,7 +2377,51 @@ export default function PapersMarkPage() {
                     {showAnswer ? "Hide Answer" : "Show Answer"}
                   </button>
                 </div>
+                {/* Change your answer buttons */}
+                <div className="flex items-center gap-2">
+                  <div className="text-xs text-neutral-400">Change your answer:</div>
+                  <div className="flex flex-row gap-2">
+                    <button
+                      className={`px-3 py-2 text-xs rounded-md transition flex items-center justify-center gap-1.5 outline-none focus:outline-none ${
+                        (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 hover:bg-neutral-700"
+                      }`}
+                      style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69", outline: 'none' } : { backgroundColor: "#1f1f1f", outline: 'none' }}
+                      onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                      Correct
+                    </button>
+                    <button
+                      className={`px-3 py-2 text-xs rounded-md transition flex items-center justify-center gap-1.5 outline-none focus:outline-none ${
+                        (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 hover:bg-neutral-700"
+                      }`}
+                      style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry, outline: 'none' } : { backgroundColor: "#1f1f1f", outline: 'none' }}
+                      onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                      Wrong
+                    </button>
+                    <button
+                      className={`px-3 py-2 text-xs rounded-md transition flex items-center justify-center gap-1.5 outline-none focus:outline-none ${
+                        guessedFlags[selectedIndex]
+                          ? "text-white"
+                          : "text-neutral-300 hover:bg-neutral-700"
+                      }`}
+                      style={guessedFlags[selectedIndex]
+                        ? { backgroundColor: '#b89f5a', outline: 'none' }
+                        : { backgroundColor: '#1f1f1f', outline: 'none' }}
+                      onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={guessedFlags[selectedIndex] ? 'white' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="8.5" />
+                        <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
+                        <path d="M12 16.9h.01" />
+                      </svg>
+                      Guess
+                    </button>
                   </div>
+                </div>
+              </div>
 
               {/* Compact Stats Section - Two Column Layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4 items-stretch">
@@ -2428,10 +2453,10 @@ export default function PapersMarkPage() {
                             </div>
                           </div>
                           
-                          {/* Answer Distribution - Compact Grid Layout */}
+                          {/* Answer Distribution - Vertical Bar Chart */}
                           <div className="space-y-1.5 flex-1">
                             <div className="text-xs text-neutral-400">Answer distribution</div>
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="flex items-end justify-between gap-1.5 h-20">
                               {LETTERS.map((letter) => {
                                 const percentage = stats.optionPercentages[letter] || 0;
                                 const isCorrect = letter === (question?.answerLetter || "").toUpperCase();
@@ -2442,31 +2467,31 @@ export default function PapersMarkPage() {
                                 const shouldShow = percentage > 0 || isCorrect || isUserChoice;
                                 
                                 return (
-                                  <div key={letter} className="space-y-1">
-                                    <div className="flex items-center justify-between">
-                                      <div className={`text-xs font-medium ${shouldShow ? 'text-neutral-300' : 'text-neutral-600'}`}>
-                                        {letter}
-                                      </div>
-                                      <div className={`text-xs ${shouldShow ? 'text-neutral-400' : 'text-neutral-600'}`}>
-                                        {percentage > 0 ? `${percentage.toFixed(0)}%` : "—"}
-                                      </div>
-                                    </div>
-                                    <div className="h-3.5 bg-neutral-800/50 rounded-full overflow-hidden relative">
-                                      {shouldShow && (
-                                        <div
-                                          className="h-full rounded-full transition-all duration-300"
-                                          style={{
-                                            width: `${Math.max(percentage, 2)}%`,
-                                            backgroundColor: isCorrect
-                                              ? "#6c9e69"
-                                              : isUserWrong
-                                              ? PAPER_COLORS.chemistry
-                                              : isUserChoice
-                                              ? "#b89f5a"
-                                              : "#5a6370",
-                                          }}
-                                        />
+                                  <div key={letter} className="flex-1 flex flex-col items-center justify-end gap-1 h-full">
+                                    <div 
+                                      className="w-full rounded-t transition-all duration-300 relative"
+                                      style={{
+                                        height: `${Math.max(percentage, shouldShow ? 3 : 0)}%`,
+                                        backgroundColor: isCorrect
+                                          ? "#6c9e69"
+                                          : isUserWrong
+                                          ? PAPER_COLORS.chemistry
+                                          : isUserChoice
+                                          ? "#b89f5a"
+                                          : shouldShow
+                                          ? "#5a6370"
+                                          : "transparent",
+                                        minHeight: shouldShow ? "6px" : "0px",
+                                      }}
+                                    >
+                                      {shouldShow && percentage > 0 && (
+                                        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-[10px] text-neutral-400 whitespace-nowrap">
+                                          {percentage.toFixed(0)}%
+                                        </div>
                                       )}
+                                    </div>
+                                    <div className={`text-xs font-medium ${shouldShow ? 'text-neutral-300' : 'text-neutral-600'}`}>
+                                      {letter}
                                     </div>
                                   </div>
                                 );
@@ -2494,7 +2519,7 @@ export default function PapersMarkPage() {
                     const diffSeconds = timeDiff !== null ? Math.abs(Math.round(timeDiff)) : 0;
                     
                     return (
-                      <div className="p-2.5 rounded-md border" style={{ backgroundColor: '#1a1f27', borderColor: 'rgba(255,255,255,0.1)' }}>
+                      <div className="p-2.5 rounded-md" style={{ backgroundColor: '#1a1f27' }}>
                         <div className="text-xs text-neutral-400 mb-0.5">Your time</div>
                         <div className="flex items-baseline gap-2">
                           <div className="text-base font-semibold text-neutral-100">
@@ -2552,10 +2577,10 @@ export default function PapersMarkPage() {
                       }
                       
                       return (
-                        <div className="p-2.5 rounded-md" style={{ backgroundColor: bgColor }}>
-                          <div className={`text-xs ${labelColor}`}>Your answer</div>
+                        <div className="p-3 rounded-md flex flex-col justify-center min-h-[80px]" style={{ backgroundColor: bgColor }}>
+                          <div className={`text-xs ${labelColor} mb-1`}>Your answer</div>
                           <div 
-                            className="text-sm mt-0.5 font-medium"
+                            className="text-base font-medium"
                             style={{ color: hasAnswer ? textColor : '#9ca3af' }}
                           >
                             {answers[selectedIndex]?.choice ?? "—"}
@@ -2565,56 +2590,11 @@ export default function PapersMarkPage() {
                     })()}
                     
                     {/* Correct answer */}
-                    <div className="p-2.5 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                      <div className="text-xs text-neutral-200">Correct answer</div>
-                      <div className="text-sm mt-0.5 font-medium" style={{ color: "#6c9e69" }}>
+                    <div className="p-3 rounded-md flex flex-col justify-center min-h-[80px]" style={{ backgroundColor: '#2b2f36' }}>
+                      <div className="text-xs text-neutral-200 mb-1">Correct answer</div>
+                      <div className="text-base font-medium" style={{ color: "#6c9e69" }}>
                         {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "—").toUpperCase()}
                       </div>
-                    </div>
-                  </div>
-                  
-                  {/* Change your answer buttons */}
-                  <div className="pt-1">
-                    <div className="text-xs text-neutral-400 mb-1.5">Change your answer</div>
-                    <div className="flex flex-row gap-2">
-                      <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
-                          (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                        }`}
-                        style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
-                        onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                        Correct
-                      </button>
-                      <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
-                          (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                        }`}
-                        style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry } : { backgroundColor: "#1f1f1f" }}
-                        onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                        Wrong
-                      </button>
-                      <button
-                        className={`px-3 py-2 text-xs rounded-md ring-1 transition flex items-center justify-center gap-1.5 focus:outline-none focus:ring-0 ${
-                          guessedFlags[selectedIndex]
-                            ? "text-white"
-                            : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                        }`}
-                        style={guessedFlags[selectedIndex]
-                          ? { backgroundColor: '#b89f5a' }
-                          : { backgroundColor: '#1f1f1f' }}
-                        onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={guessedFlags[selectedIndex] ? 'white' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="8.5" />
-                          <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
-                          <path d="M12 16.9h.01" />
-                        </svg>
-                        Guess
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -2850,8 +2830,8 @@ export default function PapersMarkPage() {
                                     .replace(/<tip>.*?<\/tip>/gis, '')
                                     .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
                                     .replace(/<question>[\s\S]*?<\/question>/gi, '')
-                                    .replace(/<solution>[\s\S]*?<\/solution>/gi, '')
-                                    .replace(/<final_answer>[\s\S]*?<\/final_answer>/gi, '')
+                                    .replace(/<\/?solution>/gi, '')
+                                    .replace(/<\/?final_answer>/gi, '')
                                     .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')} 
                                   className="text-base text-white/80 leading-relaxed" 
                                 />
@@ -3044,7 +3024,7 @@ export default function PapersMarkPage() {
 
                 if (wrongAnswersInPart.length === 0) return null;
 
-                const partDisplay = /^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`;
+                const partDisplay = (/^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`).replace(/^[•·\.]\s*/, '');
                 const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing',"Didn't review options"];
                 const customKey = 'paper.customMistakeTags';
                 const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();

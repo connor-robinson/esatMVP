@@ -42,19 +42,11 @@ export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
     return { entries, total };
   }, [mistakeTags]);
 
-  if (chartData.total === 0) {
-    return (
-      <div className={`p-6 text-center ${className}`}>
-        <div className="text-sm text-neutral-500">No mistakes yet — scroll down to &quot;Mistake Analysis & Drill Setup&quot; to tag mistakes and build your drill.</div>
-      </div>
-    );
-  }
-
-  const radius = 36;
+  const radius = 72;
   const circumference = 2 * Math.PI * radius;
-  const centerX = 48;
-  const centerY = 48;
-  const strokeWidth = 16;
+  const centerX = 96;
+  const centerY = 96;
+  const strokeWidth = 24;
 
   let currentOffset = 0;
 
@@ -65,7 +57,7 @@ export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
       <div className="flex items-center gap-6">
         {/* Donut Chart */}
         <div className="flex-shrink-0">
-          <svg width="96" height="96" viewBox="0 0 96 96">
+          <svg width="192" height="192" viewBox="0 0 192 192">
             {/* Background circle */}
             <circle
               cx={centerX}
@@ -121,32 +113,36 @@ export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
 
         {/* Legend */}
         <div className="flex-1 space-y-2">
-          {chartData.entries.map(([key, count], index) => {
-            const percentage = Math.round((count / chartData.total) * 100);
-            const colors = [
-              PAPER_COLORS.biology,
-              PAPER_COLORS.chemistry,
-              PAPER_COLORS.mathematics,
-              PAPER_COLORS.physics,
-              PAPER_COLORS.advanced
-            ];
-            const color = colors[index % colors.length];
-            
-            return (
-              <div key={key} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: color }}
-                  />
-                  <span className="text-sm text-neutral-300">{key}</span>
+          {chartData.entries.length > 0 ? (
+            chartData.entries.map(([key, count], index) => {
+              const percentage = Math.round((count / chartData.total) * 100);
+              const colors = [
+                PAPER_COLORS.biology,
+                PAPER_COLORS.chemistry,
+                PAPER_COLORS.mathematics,
+                PAPER_COLORS.physics,
+                PAPER_COLORS.advanced
+              ];
+              const color = colors[index % colors.length];
+              
+              return (
+                <div key={key} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="text-sm text-neutral-300">{key}</span>
+                  </div>
+                  <div className="text-sm text-neutral-400">
+                    {count} ({percentage}%)
+                  </div>
                 </div>
-                <div className="text-sm text-neutral-400">
-                  {count} ({percentage}%)
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="text-sm text-neutral-500">No mistakes tagged yet</div>
+          )}
         </div>
       </div>
     </div>
