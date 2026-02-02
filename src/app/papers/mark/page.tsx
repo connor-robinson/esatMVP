@@ -4,7 +4,7 @@
 
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -1393,7 +1393,7 @@ export default function PapersMarkPage() {
   }
 
   return (
-    <Fragment>
+    <div>
       {/* Page Title - above nav bar and top div */}
       <div className="w-full bg-neutral-900 border-b border-white/10">
         <Container size="xl" className="py-6">
@@ -2653,7 +2653,7 @@ export default function PapersMarkPage() {
                         <div className="text-xs text-neutral-400 mb-2">Guess accuracy</div>
                         <div className="p-3 rounded-md bg-neutral-900 flex items-center gap-3">
                           <div className="w-[20%] text-center">
-                            <div className="text-2xl font-bold text-neutral-200">{guessExtended.accuracy}%</div>
+                          <div className="text-2xl font-bold text-neutral-200">{guessExtended.accuracy}%</div>
                           </div>
                           <div className="flex-1 h-6 bg-neutral-800 rounded-full overflow-hidden border border-white/5">
                             <div
@@ -2705,28 +2705,28 @@ export default function PapersMarkPage() {
                     </div>
                   </div>
 
-                  {/* Mistake Analysis */}
+                    {/* Mistake Analysis */}
                   <div className={`${bubbleClass} space-y-4 md:col-span-2`}>
-                    <div className="text-base font-semibold text-neutral-100">Mistake Analysis</div>
-                    
-                    <MistakeChart mistakeTags={mistakeTags} />
+                      <div className="text-base font-semibold text-neutral-100">Mistake Analysis</div>
+                      
+                      <MistakeChart mistakeTags={mistakeTags} />
 
-                    {Object.keys(mistakesBySection).length > 0 && (
-                      <div>
-                        <div className="text-xs text-neutral-400 mb-2">Mistakes by Section</div>
-                        <div className="space-y-2">
-                          {Object.entries(mistakesBySection).map(([section, mistakes]) => {
-                            const total = Object.values(mistakes).reduce((a, b) => a + b, 0);
-                            return (
-                              <div key={section} className="p-2 rounded bg-[#0f1114]">
-                                <div className="text-xs text-neutral-300 mb-1">{section}</div>
-                                <div className="text-xs text-neutral-400">{total} total mistakes</div>
-                              </div>
-                            );
-                          })}
+                      {Object.keys(mistakesBySection).length > 0 && (
+                        <div>
+                          <div className="text-xs text-neutral-400 mb-2">Mistakes by Section</div>
+                          <div className="space-y-2">
+                            {Object.entries(mistakesBySection).map(([section, mistakes]) => {
+                              const total = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                              return (
+                                <div key={section} className="p-2 rounded bg-[#0f1114]">
+                                  <div className="text-xs text-neutral-300 mb-1">{section}</div>
+                                  <div className="text-xs text-neutral-400">{total} total mistakes</div>
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
 
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
@@ -3595,7 +3595,7 @@ export default function PapersMarkPage() {
           </div>
         </div>
     </Container>
-    </Fragment>
+    </div>
   );
 }
 
