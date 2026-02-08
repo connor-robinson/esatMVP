@@ -322,7 +322,13 @@ export default function PapersMarkPage() {
         }
       }
       
-      router.push("/papers/archive");
+      // Navigate to analytics page with session ID to highlight
+      const sessionIdToHighlight = state.sessionId;
+      if (sessionIdToHighlight) {
+        router.push(`/papers/analytics?highlight=${sessionIdToHighlight}`);
+      } else {
+        router.push("/papers/analytics");
+      }
     } catch (error) {
       console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
       alert("Failed to save session. Please try again.");
