@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Final Retro Statistics &amp; Management Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --retro-cream: #f4f1ea;
+            --retro-navy: #2d3e50;
+            --retro-sage: #8ba88e;
+            --retro-slate: #4a5568;
+            --retro-border: #1a1a1a;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--retro-cream);
+            color: var(--retro-navy);
+        }
+        .brutal-border {
+            border: 3px solid var(--retro-border);
+        }
+        .brutal-shadow {
+            box-shadow: 6px 6px 0px 0px var(--retro-border);
+        }
+        .radar-grid {
+            stroke: var(--retro-slate);
+            stroke-dasharray: 4;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-6 md:p-12">
+<header class="mb-12 border-b-4 border-[var(--retro-border)] pb-6 flex justify-between items-end">
+<div>
+<h1 class="text-6xl font-black tracking-tighter uppercase leading-none">System Overview</h1>
+<p class="text-lg font-medium opacity-70 mt-2 uppercase tracking-widest">Performance Metrics &amp; Historical Ledger</p>
+</div>
+<div class="hidden md:block text-right">
+<div class="text-sm font-bold uppercase tracking-tighter">Status: Optimized</div>
+<div class="text-xs font-medium opacity-60 uppercase">Last Sync: Oct 24, 2023</div>
+</div>
+</header>
+<main class="max-w-[1400px] mx-auto w-full space-y-16">
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="brutal-border brutal-shadow bg-white p-8 rounded-xl">
+<h3 class="text-2xl font-black uppercase mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-3xl">hub</span>
+                    Core Values Balance
+                </h3>
+<div class="flex items-center justify-center py-4">
+<div class="relative w-[320px] h-[320px]">
+<svg class="w-full h-full overflow-visible" viewBox="0 0 200 200">
+<circle class="radar-grid" cx="100" cy="100" fill="none" r="20" stroke-width="1"></circle>
+<circle class="radar-grid" cx="100" cy="100" fill="none" r="40" stroke-width="1"></circle>
+<circle class="radar-grid" cx="100" cy="100" fill="none" r="60" stroke-width="1"></circle>
+<circle class="radar-grid" cx="100" cy="100" fill="none" r="80" stroke-width="1"></circle>
+<line class="radar-grid" stroke-width="1" x1="100" x2="100" y1="20" y2="180"></line>
+<line class="radar-grid" stroke-width="1" x1="20" x2="180" y1="100" y2="100"></line>
+<polygon fill="rgba(139, 168, 142, 0.4)" points="100,40 160,80 140,150 50,130 40,80" stroke="var(--retro-sage)" stroke-width="4"></polygon>
+<circle cx="100" cy="40" fill="var(--retro-navy)" r="4"></circle>
+<circle cx="160" cy="80" fill="var(--retro-navy)" r="4"></circle>
+<circle cx="140" cy="150" fill="var(--retro-navy)" r="4"></circle>
+<circle cx="50" cy="130" fill="var(--retro-navy)" r="4"></circle>
+<circle cx="40" cy="80" fill="var(--retro-navy)" r="4"></circle>
+</svg>
+<span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase bg-[var(--retro-navy)] text-white px-2">Focus</span>
+<span class="absolute top-1/2 -right-8 -translate-y-1/2 text-[10px] font-black uppercase bg-[var(--retro-navy)] text-white px-2">Work</span>
+<span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase bg-[var(--retro-navy)] text-white px-2">Spirit</span>
+<span class="absolute top-1/2 -left-8 -translate-y-1/2 text-[10px] font-black uppercase bg-[var(--retro-navy)] text-white px-2">Health</span>
+</div>
+</div>
+</div>
+<div class="brutal-border brutal-shadow bg-white p-8 rounded-xl flex flex-col">
+<h3 class="text-2xl font-black uppercase mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-3xl">insights</span>
+                    Core Value Trends
+                </h3>
+<div class="space-y-6 flex-1 flex flex-col justify-center">
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-black uppercase">
+<span>Focus Capacity</span>
+<span class="text-[var(--retro-sage)]">+12%</span>
+</div>
+<div class="h-10 brutal-border bg-[var(--retro-cream)] flex items-end p-1 gap-1 overflow-hidden">
+<div class="flex-1 bg-[var(--retro-navy)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-1/3"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-3/4"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-full"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-4/5"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-navy)] h-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-black uppercase">
+<span>Deep Work Hours</span>
+<span class="text-[var(--retro-sage)]">+4%</span>
+</div>
+<div class="h-10 brutal-border bg-[var(--retro-cream)] flex items-end p-1 gap-1 overflow-hidden">
+<div class="flex-1 bg-[var(--retro-slate)] h-3/4"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-3/4"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-full"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-3/4"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-slate)] h-4/5"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px] font-black uppercase">
+<span>Emotional Equilibrium</span>
+<span class="text-red-800">-2%</span>
+</div>
+<div class="h-10 brutal-border bg-[var(--retro-cream)] flex items-end p-1 gap-1 overflow-hidden">
+<div class="flex-1 bg-[var(--retro-sage)] h-full"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-4/5"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-3/4"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-4/5"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-2/3"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-1/3"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-1/4"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-1/2"></div>
+<div class="flex-1 bg-[var(--retro-sage)] h-2/3"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="space-y-8">
+<div class="flex items-center justify-between border-b-2 border-[var(--retro-border)] pb-4">
+<h2 class="text-4xl font-black italic uppercase tracking-tighter">Log History</h2>
+<div class="flex gap-4">
+<button class="brutal-border px-4 py-1 text-xs font-black uppercase bg-white">Export CSV</button>
+<button class="brutal-border px-4 py-1 text-xs font-black uppercase bg-[var(--retro-navy)] text-white">New Entry</button>
+</div>
+</div>
+<div class="space-y-6">
+<div class="brutal-border bg-white p-6 rounded-xl flex items-center gap-8 group hover:bg-[var(--retro-cream)] transition-colors">
+<div class="shrink-0 w-24">
+<p class="text-[10px] font-black uppercase opacity-60">Oct 24</p>
+<p class="text-3xl font-black tracking-tighter">2023</p>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-black uppercase text-[var(--retro-sage)] mb-1">Main Goal</p>
+<h4 class="text-xl font-bold uppercase mb-2">Morning Deep Work Protocol</h4>
+<p class="text-sm italic opacity-80 line-clamp-1">"The resistance was high but the ritual held. Focused on architecture for 4 hours without distraction..."</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 brutal-border rounded-lg bg-[var(--retro-cream)] hover:bg-[var(--retro-sage)]">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</div>
+<div class="brutal-border-bold brutal-shadow bg-[var(--retro-navy)] text-white p-8 rounded-2xl space-y-6">
+<div class="flex justify-between items-center border-b border-white/20 pb-4">
+<h4 class="text-xs font-black uppercase tracking-widest text-[var(--retro-sage)]">Editing Entry: Oct 23, 2023</h4>
+<div class="flex gap-2">
+<button class="text-white/60 hover:text-white"><span class="material-symbols-outlined">close</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-3">
+<label class="text-[10px] font-black uppercase tracking-widest text-white/60">Main Goal</label>
+<input class="w-full bg-white/10 border-2 border-white/20 rounded-xl p-4 text-white font-bold focus:border-[var(--retro-sage)] focus:ring-0 outline-none" type="text" value="30 Minute Meditation Session"/>
+</div>
+<div class="space-y-3">
+<label class="text-[10px] font-black uppercase tracking-widest text-white/60">Value Focus Area</label>
+<select class="w-full bg-white/10 border-2 border-white/20 rounded-xl p-4 text-white font-bold focus:border-[var(--retro-sage)] focus:ring-0 outline-none">
+<option>Spirit</option>
+<option>Focus</option>
+<option>Work</option>
+<option>Health</option>
+</select>
+</div>
+</div>
+<div class="space-y-3">
+<label class="text-[10px] font-black uppercase tracking-widest text-white/60">Key Lessons</label>
+<textarea class="w-full bg-white/10 border-2 border-white/20 rounded-xl p-4 text-white font-medium italic focus:border-[var(--retro-sage)] focus:ring-0 outline-none" rows="3">Maintained focus despite external noise. Breath remained the anchor throughout the transition from focus to action.</textarea>
+</div>
+<div class="flex justify-end gap-4 pt-4">
+<button class="px-6 py-2 text-xs font-black uppercase hover:underline">Discard Changes</button>
+<button class="px-8 py-3 bg-[var(--retro-sage)] text-[var(--retro-navy)] brutal-border font-black uppercase rounded-xl">Commit Updates</button>
+</div>
+</div>
+<div class="brutal-border bg-white p-6 rounded-xl flex items-center gap-8 group hover:bg-[var(--retro-cream)] transition-colors">
+<div class="shrink-0 w-24">
+<p class="text-[10px] font-black uppercase opacity-60">Oct 22</p>
+<p class="text-3xl font-black tracking-tighter">2023</p>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-black uppercase text-[var(--retro-sage)] mb-1">Main Goal</p>
+<h4 class="text-xl font-bold uppercase mb-2">High-Intensity Leg Circuit</h4>
+<p class="text-sm italic opacity-80 line-clamp-1">"Physical failure reached at 12 reps. The mind wanted to stop at 8. Success found in the delta..."</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 brutal-border rounded-lg bg-[var(--retro-cream)] hover:bg-[var(--retro-sage)]">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="mt-20 border-t-4 border-[var(--retro-border)] bg-[var(--retro-cream)] py-10">
+<div class="max-w-[1400px] mx-auto grid grid-cols-7 gap-4">
+<div class="text-center text-[10px] font-black uppercase opacity-40">Mon</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Tue</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Wed</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Thu</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Fri</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Sat</div>
+<div class="text-center text-[10px] font-black uppercase opacity-40">Sun</div>
+<div class="aspect-square brutal-border bg-white/40 flex items-center justify-center opacity-30 text-xs font-bold">18</div>
+<div class="aspect-square brutal-border bg-white/40 flex items-center justify-center opacity-30 text-xs font-bold">19</div>
+<div class="aspect-square brutal-border bg-white/40 flex items-center justify-center opacity-30 text-xs font-bold">20</div>
+<div class="aspect-square brutal-border bg-white/40 flex items-center justify-center opacity-30 text-xs font-bold">21</div>
+<div class="aspect-square brutal-border bg-[var(--retro-sage)] flex items-center justify-center text-xs font-black">22</div>
+<div class="aspect-square brutal-border bg-[var(--retro-navy)] text-white flex items-center justify-center text-xs font-black">23</div>
+<div class="aspect-square brutal-border bg-white flex flex-col items-center justify-center text-xs font-black border-4">
+<span>24</span>
+<span class="w-1 h-1 bg-[var(--retro-navy)] rounded-full mt-1"></span>
+</div>
+<div class="col-span-7 flex justify-between items-center mt-6">
+<div class="flex items-center gap-4 text-xs font-black uppercase">
+<button class="hover:underline">Previous Week</button>
+<span class="opacity-30">/</span>
+<button class="hover:underline">Next Week</button>
+</div>
+<div class="flex gap-4">
+<span class="text-[10px] font-black uppercase opacity-60">System: Active</span>
+<span class="text-[10px] font-black uppercase opacity-60">Version: 2.0.4-Retro</span>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>
