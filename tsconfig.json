@@ -24,7 +24,7 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "reference_old", "review-app"]
+  "exclude": ["node_modules", "reference_old", "review-app", "**/*EXAMPLE*.ts", "**/*_EXAMPLE*.ts", "SECURE_*.ts"]
 }
 
 

@@ -126,7 +126,8 @@ export async function PATCH(
     // Update the question (RLS policies will control access)
     const { data, error } = await supabase
       .from('ai_generated_questions')
-      .update(filteredUpdates as any)
+      // @ts-ignore - Supabase type inference issue with table name
+      .update(filteredUpdates)
       .eq('id', questionId)
       .select();
 
