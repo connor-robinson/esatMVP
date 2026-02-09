@@ -67,24 +67,27 @@ npm start
 ## Project Structure
 
 ```
-src/
-├── app/                    # Next.js app router pages
-│   ├── page.tsx          # Overview homepage
-│   ├── papers/           # Papers section pages
-│   └── train/            # Train section pages
-├── components/            # React components
-│   ├── analytics/        # Analytics components
-│   ├── builder/          # Session builder components
-│   ├── home/             # Homepage components
-│   ├── papers/           # Papers-specific components
-│   └── shared/           # Shared components
-├── lib/                  # Utility libraries
-│   ├── analytics.ts     # Analytics calculations
-│   ├── papers/          # Papers utilities
-│   └── supabase/        # Supabase clients and queries
-├── store/                # Zustand state stores
-├── types/                # TypeScript type definitions
-└── config/               # Configuration files
+nocalcMVP2_real/
+├── src/                    # Application source code
+│   ├── app/                # Next.js app router pages
+│   ├── components/         # React components
+│   ├── lib/                # Utility libraries
+│   ├── store/              # Zustand state stores
+│   ├── types/              # TypeScript type definitions
+│   └── config/             # Configuration files
+├── scripts/                # Scripts and utilities
+│   ├── utilities/          # One-off Python scripts (migrations, fixes)
+│   ├── backup/             # Database backup scripts
+│   ├── esat_question_generator/  # ESAT question generation tools
+│   ├── tmua_question_generator/  # TMUA question generation tools
+│   └── schema_generator/   # Schema extraction and analysis tools
+├── docs/                   # Documentation
+│   ├── guides/             # Active documentation (deployment, security, config)
+│   └── archive/            # Historical documentation
+├── examples/               # Example files and code samples
+├── supabase/               # Supabase configuration
+│   └── migrations/         # Database migrations
+└── public/                 # Static assets
 ```
 
 ## Key Features
@@ -95,10 +98,21 @@ src/
 - **Activity Tracking**: Visual calendar showing practice history
 - **Spaced Repetition**: Drill mode for reviewing difficult questions
 
+## Documentation
+
+- **[Documentation Index](docs/README.md)** - Overview of all documentation
+- **[Deployment Guide](docs/guides/DEPLOYMENT_GUIDE.md)** - How to deploy the application
+- **[Security Guide](docs/guides/SECURITY_HANDOVER_GUIDE.md)** - Security best practices
+- **[Configuration Guides](docs/guides/)** - Colors, branding, and other configurations
+
+## Scripts & Utilities
+
+- **[Utility Scripts](scripts/utilities/README.md)** - One-off Python scripts for migrations and fixes
+- **[Backup Scripts](scripts/backup/)** - Database backup utilities
+
 ## Notes
 
 - The Papers Analytics page is currently a placeholder with mock data
 - All Learn and Interview routes have been removed
 - Navigation has been simplified to only show Overview, Papers, and Train sections
-
 
