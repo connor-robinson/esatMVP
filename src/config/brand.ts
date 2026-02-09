@@ -37,7 +37,7 @@ export const BRAND_CONFIG = {
     "no calculator",
     "NoCalc"
   ],
-} as const;
+};
 
 // Export individual values for convenience
 export const APP_NAME = BRAND_CONFIG.appName;

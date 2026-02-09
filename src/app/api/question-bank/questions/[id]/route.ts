@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { requireRouteUser } from '@/lib/supabase/auth';
+import type { AiGeneratedQuestionRow } from '@/lib/supabase/types';
 
 /**
  * PATCH /api/question-bank/questions/[id]
@@ -148,7 +149,7 @@ export async function PATCH(
     console.log('[Question Update API] Successfully updated question:', questionId);
 
     // Get the first (and should be only) result
-    const updatedQuestion = Array.isArray(data) ? data[0] : data;
+    const updatedQuestion: AiGeneratedQuestionRow | null = Array.isArray(data) ? (data[0] as AiGeneratedQuestionRow) : (data as AiGeneratedQuestionRow);
     
     if (!updatedQuestion) {
       console.error('[Question Update API] No question data returned');
@@ -159,8 +160,8 @@ export async function PATCH(
     }
 
     // Parse JSONB fields
-    const question = {
-      ...(updatedQuestion as Record<string, any>),
+    const question: AiGeneratedQuestionRow = {
+      ...updatedQuestion,
       options: typeof updatedQuestion.options === 'string' ? JSON.parse(updatedQuestion.options) : updatedQuestion.options,
       distractor_map: updatedQuestion.distractor_map && typeof updatedQuestion.distractor_map === 'string' 
         ? JSON.parse(updatedQuestion.distractor_map) 
