@@ -149,10 +149,18 @@ export async function PATCH(
 
     // Get the first (and should be only) result
     const updatedQuestion = Array.isArray(data) ? data[0] : data;
+    
+    if (!updatedQuestion) {
+      console.error('[Question Update API] No question data returned');
+      return NextResponse.json(
+        { error: 'Question not found' },
+        { status: 404 }
+      );
+    }
 
     // Parse JSONB fields
     const question = {
-      ...updatedQuestion,
+      ...(updatedQuestion as Record<string, any>),
       options: typeof updatedQuestion.options === 'string' ? JSON.parse(updatedQuestion.options) : updatedQuestion.options,
       distractor_map: updatedQuestion.distractor_map && typeof updatedQuestion.distractor_map === 'string' 
         ? JSON.parse(updatedQuestion.distractor_map) 
