@@ -1,46 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { createClient } from '@supabase/supabase-js';
+import { requireRouteUser } from '@/lib/supabase/auth';
 
 /**
  * PATCH /api/question-bank/questions/[id]
  * Updates a question's fields
+ * 
+ * SECURITY: Requires authentication and respects RLS policies
  */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Use service role client to bypass RLS for development
-    // TODO: Add proper authentication checks before production
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    // SECURITY: Require authentication instead of using service role
+    const { user, supabase, error: authError } = await requireRouteUser(request);
     
-    if (!supabaseServiceKey) {
-      console.error('[Question Update API] Missing SUPABASE_SERVICE_ROLE_KEY');
+    if (authError || !user) {
+      console.error('[Question Update API] Unauthorized access attempt');
       return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
+        { error: 'Unauthorized - authentication required' },
+        { status: 401 }
       );
     }
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+
+    console.log('[Question Update API] Authenticated user:', user.id);
+
+    // Use authenticated client (respects RLS policies)
+    // No longer using service role key
     
     const questionId = params.id;
     const updates = await request.json();
 
     console.log('[Question Update API] ===== START UPDATE =====');
     console.log('[Question Update API] Question ID:', questionId);
-    console.log('[Question Update API] Question ID type:', typeof questionId);
-    console.log('[Question Update API] Question ID length:', questionId?.length);
-    console.log('[Question Update API] Raw updates:', JSON.stringify(updates, null, 2));
-    console.log('[Question Update API] Updates keys:', Object.keys(updates));
-    console.log('[Question Update API] Updates values:', Object.values(updates));
+    console.log('[Question Update API] Updates:', Object.keys(updates));
 
     // Validate that we have updates to make
     if (!updates || Object.keys(updates).length === 0) {
@@ -85,12 +79,6 @@ export async function PATCH(
     // Validate status value if it's being updated
     if (filteredUpdates.status) {
       const validStatuses = ['pending_review', 'approved', 'rejected', 'needs_revision'];
-      console.error('[Question Update API] Validating status...');
-      console.error('[Question Update API] Received status:', JSON.stringify(filteredUpdates.status));
-      console.error('[Question Update API] Status length:', filteredUpdates.status.length);
-      console.error('[Question Update API] Status charCodes:', Array.from(filteredUpdates.status as string).map((c: string) => c.charCodeAt(0)));
-      console.error('[Question Update API] Valid statuses:', validStatuses);
-      console.error('[Question Update API] Includes check:', validStatuses.includes(filteredUpdates.status));
       
       if (!validStatuses.includes(filteredUpdates.status)) {
         console.error('[Question Update API] Invalid status value:', filteredUpdates.status);
@@ -101,20 +89,12 @@ export async function PATCH(
       }
     }
 
-    console.log('[Question Update API] Filtered updates:', filteredUpdates);
-    console.log('[Question Update API] Status value being sent:', filteredUpdates.status);
-    console.log('[Question Update API] Status value type:', typeof filteredUpdates.status);
-
-    // First, check if the question exists
+    // First, check if the question exists (using authenticated client)
     const { data: existingQuestion, error: checkError } = await supabase
       .from('ai_generated_questions')
       .select('id, status, generation_id')
       .eq('id', questionId)
       .maybeSingle();
-
-    console.log('[Question Update API] Existing question:', existingQuestion);
-    console.log('[Question Update API] Current status:', existingQuestion?.status);
-    console.log('[Question Update API] Check error:', checkError);
 
     if (checkError) {
       console.error('[Question Update API] Error checking question:', checkError);
@@ -134,16 +114,22 @@ export async function PATCH(
 
     console.log('[Question Update API] Question exists, proceeding with update');
 
-    // Update the question
+    // Update the question (RLS policies will control access)
     const { data, error } = await supabase
       .from('ai_generated_questions')
-      .update(filteredUpdates)
+      .update(filteredUpdates as any)
       .eq('id', questionId)
       .select();
 
     if (error) {
       console.error('[Question Update API] Supabase error:', error);
-      console.error('[Question Update API] Error details:', JSON.stringify(error, null, 2));
+      // RLS policy might block this - that's expected if user doesn't have permission
+      if (error.code === '42501' || error.message.includes('permission denied')) {
+        return NextResponse.json(
+          { error: 'Permission denied - insufficient privileges to update this question' },
+          { status: 403 }
+        );
+      }
       return NextResponse.json(
         { error: `Failed to update question: ${error.message}` },
         { status: 500 }

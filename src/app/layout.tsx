@@ -14,15 +14,16 @@ import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
+import { BRAND_CONFIG } from "@/config/brand";
 import "@/styles/globals.css";
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: "CantabPrep | Premium ESAT & TMUA Mastery",
+  title: BRAND_CONFIG.fullTitle,
   description:
     "Master the ESAT & TMUA. Secure your Cambridge offer. The non-calculator, high-pressure entrance exams demand more than just knowledge. Master the speed and strategy required for the 2024-25 cycle.",
-  keywords: ["mental math", "ESAT", "TMUA", "Cambridge", "entrance exams", "no calculator", "CantabPrep"],
+  keywords: BRAND_CONFIG.keywords,
 };
 
 export default async function RootLayout({

@@ -25,7 +25,7 @@ Open `.env.local` in your project root and replace the old key:
 
 ```bash
 # Old (REVOKED - DO NOT USE)
-GEMINI_API_KEY=AIzaSyCNhRb0Aj3yVcqglvc9i_OrlBbpmXDl2pU
+# GEMINI_API_KEY=[REDACTED - Old key has been revoked]
 
 # New (replace with your new key)
 GEMINI_API_KEY=your_new_api_key_here
@@ -73,7 +73,7 @@ npm run dev
 ### Check Git History
 ```bash
 # Search Git history for your old API key
-git log --all --full-history -S "AIzaSyCNhRb0Aj3yVcqglvc9i_OrlBbpmXDl2pU"
+# git log --all --full-history -S "[YOUR_OLD_API_KEY]"
 ```
 
 If found, you need to:

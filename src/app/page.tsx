@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { BRAND_CONFIG } from "@/config/brand";
 
 export default function HomePage() {
   const [email, setEmail] = useState("");
@@ -602,7 +603,7 @@ export default function HomePage() {
             <div className="col-span-2 space-y-8">
               <div className="flex items-center gap-2">
                 <span className="font-display font-bold text-xl tracking-tight uppercase">
-                  CantabPrep
+                  {BRAND_CONFIG.displayName}
                 </span>
               </div>
               <p className="text-[#94A3B8] max-w-sm leading-relaxed">
@@ -690,8 +691,7 @@ export default function HomePage() {
           </div>
           <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-[#94A3B8] text-xs">
-              © 2024 CantabPrep. Not affiliated with the University of
-              Cambridge.
+              {BRAND_CONFIG.copyright}
             </p>
             <div className="flex gap-6">
               <a

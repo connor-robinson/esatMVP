@@ -52,3 +52,12 @@ Thumbs.db
 # Question generator status
 scripts/
 
+# Backups (contain real data)
+supabase_backups/
+*.backup
+*.sql.backup
+*.json.backup
+
+# Personal notes/files
+commit_files.txt
+files_to_restore.txt
