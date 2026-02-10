@@ -183,8 +183,8 @@ export default function PapersSolvePage() {
     if (sessionId && isPaused) {
       // If paused, redirect to resume page
       const currentPath = window.location.pathname;
-      if (!currentPath.includes('/papers/solve/resume')) {
-        router.push('/papers/solve/resume');
+      if (!currentPath.includes('/past-papers/solve/resume')) {
+        router.push('/past-papers/solve/resume');
         return;
       }
     }
@@ -305,7 +305,7 @@ export default function PapersSolvePage() {
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId && !isRestoring) {
-      router.push("/papers/library");
+      router.push("/past-papers/library");
     }
   }, [sessionId, isRestoring, router]);
 
@@ -619,7 +619,7 @@ export default function PapersSolvePage() {
   
   const handleSubmit = () => {
     setEndedAt(Date.now());
-    router.push("/papers/submit");
+    router.push("/past-papers/submit");
   };
 
   // Handle section summary next button
@@ -731,7 +731,7 @@ export default function PapersSolvePage() {
   // Handle marking info page next
   const handleMarkingInfoNext = () => {
     setEndedAt(Date.now());
-    router.push("/papers/mark");
+    router.push("/past-papers/mark");
   };
 
   const getTimerVariant = () => {

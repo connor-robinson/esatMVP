@@ -1,5 +1,5 @@
 /**
- * Papers Plan page - Paper Library
+ * Papers Library page - Paper Library
  * Browse papers and build a practice session from selected sections.
  */
 
@@ -8,26 +8,25 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/layout/Container";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import { getAvailablePapers } from "@/lib/supabase/questions";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { getQuestions } from "@/lib/supabase/questions";
 import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
-import { PaperLibraryFilters } from "@/components/papers/plan/PaperLibraryFilters";
-import { PaperLibraryGrid } from "@/components/papers/plan/PaperLibraryGrid";
-import { PaperSessionSummary } from "@/components/papers/plan/PaperSessionSummary";
+import { PaperLibraryFilters } from "@/components/papers/library/PaperLibraryFilters";
+import { PaperLibraryGrid } from "@/components/papers/library/PaperLibraryGrid";
+import { PaperSessionSummary } from "@/components/papers/library/PaperSessionSummary";
 
 interface SelectedPaper {
   paper: Paper;
-  selectedSections: Set<PaperSection>;
+  selectedSections: Map<string, Set<PaperSection>>; // Map<mainSectionName, Set<subject>>
 }
 
 const TMUA_SECTIONS = ["Paper 1", "Paper 2"] as const;
 type TmuaSection = typeof TMUA_SECTIONS[number];
 
-export default function PapersPlanPage() {
+export default function PapersLibraryPage() {
   const router = useRouter();
   const { startSession, loadQuestions } = usePaperSessionStore();
 
@@ -48,6 +47,21 @@ export default function PapersPlanPage() {
     () => new Set(selectedPapers.map((sp) => sp.paper.id)),
     [selectedPapers]
   );
+
+  // Map of selected sections by paper ID for grid component
+  // Convert Map<mainSection, Set<subject>> to Set<subject> for backward compatibility
+  const selectedSectionsByPaper = useMemo(() => {
+    const map = new Map<number, Set<PaperSection>>();
+    selectedPapers.forEach(({ paper, selectedSections }) => {
+      // Flatten all selected subjects from all main sections into a single set
+      const allSubjects = new Set<PaperSection>();
+      selectedSections.forEach((subjects) => {
+        subjects.forEach((subject) => allSubjects.add(subject));
+      });
+      map.set(paper.id, allSubjects);
+    });
+    return map;
+  }, [selectedPapers]);
 
   // Sections loaded per paper (used by summary component)
   const [availableSectionsByPaper, setAvailableSectionsByPaper] = useState<
@@ -84,19 +98,105 @@ export default function PapersPlanPage() {
       // Add new paper with empty sections
       setSelectedPapers((prev) => [
         ...prev,
-        { paper, selectedSections: new Set<PaperSection>() },
+        { paper, selectedSections: new Map<string, Set<PaperSection>>() },
       ]);
     }
   };
-  const handleToggleSection = (paperId: number, section: PaperSection) => {
-    const selectedPaper = selectedPapers.find((sp) => sp.paper.id === paperId);
-    if (!selectedPaper) return;
 
-    const newSections = new Set(selectedPaper.selectedSections);
-    if (newSections.has(section)) {
-      newSections.delete(section);
+  // Add full paper with all sections
+  const handleAddFullPaper = (paper: Paper, sections: PaperSection[]) => {
+    const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
+    if (existingPaper) {
+      // Paper already selected, select all available sections
+      // For full paper, we need to determine which main sections these belong to
+      // This is a simplified version - in practice, we'd need to load the paper data
+      const allSections = new Map<string, Set<PaperSection>>();
+      allSections.set("Section 1", new Set(sections));
+      handleUpdateSections(paper.id, allSections);
     } else {
-      newSections.add(section);
+      // Add paper with all sections selected
+      const allSections = new Map<string, Set<PaperSection>>();
+      allSections.set("Section 1", new Set(sections));
+      setSelectedPapers((prev) => [
+        ...prev,
+        { paper, selectedSections: allSections },
+      ]);
+    }
+  };
+
+  // Add a specific section (Section 1, Section 2, etc.)
+  const handleAddSection = (paper: Paper, sectionName: string, subjectParts: PaperSection[]) => {
+    const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
+    
+    // Get the first subject from this section as default
+    const firstSubject = subjectParts.length > 0 ? subjectParts[0] : null;
+    
+    if (existingPaper) {
+      // Paper already selected, add the first subject from this section
+      if (firstSubject) {
+        const newSections = new Map(existingPaper.selectedSections);
+        const sectionSubjects = newSections.get(sectionName) || new Set<PaperSection>();
+        sectionSubjects.add(firstSubject);
+        newSections.set(sectionName, sectionSubjects);
+        handleUpdateSections(paper.id, newSections);
+      }
+    } else {
+      // Add paper with first subject from this section
+      const newSections = new Map<string, Set<PaperSection>>();
+      if (firstSubject) {
+        newSections.set(sectionName, new Set([firstSubject]));
+      }
+      setSelectedPapers((prev) => [
+        ...prev,
+        { paper, selectedSections: newSections },
+      ]);
+    }
+  };
+  
+  const handleToggleSection = (paperId: number, section: PaperSection, mainSectionName?: string) => {
+    const selectedPaper = selectedPapers.find((sp) => sp.paper.id === paperId);
+    
+    // If paper is not in selection, add it first
+    if (!selectedPaper) {
+      const paper = papers.find((p) => p.id === paperId);
+      if (!paper) return;
+      
+      // Add paper with the selected section
+      const newSections = new Map<string, Set<PaperSection>>();
+      if (mainSectionName) {
+        newSections.set(mainSectionName, new Set([section]));
+      } else {
+        // Fallback: use "Section 1" if no main section name provided
+        newSections.set("Section 1", new Set([section]));
+      }
+      setSelectedPapers((prev) => [
+        ...prev,
+        { paper, selectedSections: newSections },
+      ]);
+      return;
+    }
+
+    // Use the provided main section name, or default to "Section 1"
+    const sectionName = mainSectionName || "Section 1";
+    const newSections = new Map(selectedPaper.selectedSections);
+    const sectionSubjects = newSections.get(sectionName) || new Set<PaperSection>();
+    
+    if (sectionSubjects.has(section)) {
+      sectionSubjects.delete(section);
+      // If no subjects left in this section, remove the section entry
+      if (sectionSubjects.size === 0) {
+        newSections.delete(sectionName);
+        // If no sections left at all, remove the paper
+        if (newSections.size === 0) {
+          setSelectedPapers((prev) => prev.filter((sp) => sp.paper.id !== paperId));
+          return;
+        }
+      } else {
+        newSections.set(sectionName, sectionSubjects);
+      }
+    } else {
+      sectionSubjects.add(section);
+      newSections.set(sectionName, sectionSubjects);
     }
 
     handleUpdateSections(paperId, newSections);
@@ -114,55 +214,20 @@ export default function PapersPlanPage() {
 
   // Derive filtered papers for grid
   const filteredPapers = useMemo(() => {
-    // First, filter by exam and year
-    let filtered = papers.filter((paper) => {
+    return papers.filter((paper) => {
       if (examFilter !== "ALL" && paper.examName !== examFilter) return false;
       if (yearFilter !== "ALL" && paper.examYear !== yearFilter) return false;
-      return true;
-    });
+      if (typeFilter !== "ALL" && paper.examType !== typeFilter) return false;
 
-    // Handle type filter: if a year has both Official and Specimen, show both
-    if (typeFilter !== "ALL") {
-      // Group papers by exam + year to check for dual types
-      const papersByExamYear = new Map<string, Paper[]>();
-      filtered.forEach((paper) => {
-        const key = `${paper.examName}-${paper.examYear}`;
-        if (!papersByExamYear.has(key)) {
-          papersByExamYear.set(key, []);
-        }
-        papersByExamYear.get(key)!.push(paper);
-      });
-
-      // Filter: if year has both types, include both; otherwise filter by type
-      filtered = filtered.filter((paper) => {
-        const key = `${paper.examName}-${paper.examYear}`;
-        const yearPapers = papersByExamYear.get(key) || [];
-        const hasOfficial = yearPapers.some((p) => p.examType === "Official");
-        const hasSpecimen = yearPapers.some((p) => p.examType === "Specimen");
-
-        // If year has both types, show both regardless of filter
-        if (hasOfficial && hasSpecimen) {
-          return true;
-        }
-
-        // Otherwise, filter by selected type
-        return paper.examType === typeFilter;
-      });
-    }
-
-    // Apply search query filter
-    if (searchQuery.trim()) {
+      if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (paper) =>
-          paper.examName.toLowerCase().includes(q) ||
-          paper.paperName.toLowerCase().includes(q) ||
-          paper.examYear.toString().includes(q) ||
-          paper.examType.toLowerCase().includes(q)
+      return (
+        paper.examName.toLowerCase().includes(q) ||
+        paper.paperName.toLowerCase().includes(q) ||
+        paper.examYear.toString().includes(q) ||
+        paper.examType.toLowerCase().includes(q)
       );
-    }
-
-    return filtered;
+    });
   }, [papers, examFilter, yearFilter, typeFilter, searchQuery]);
 
 
@@ -174,7 +239,7 @@ export default function PapersPlanPage() {
   // Update sections for a paper
   const handleUpdateSections = (
     paperId: number,
-    sections: Set<PaperSection>
+    sections: Map<string, Set<PaperSection>>
   ) => {
     setSelectedPapers((prev) =>
       prev.map((sp) =>
@@ -183,14 +248,35 @@ export default function PapersPlanPage() {
     );
   };
 
+  // Reorder paper in selection
+  const handleReorderPaper = (paperId: number, direction: "up" | "down") => {
+    setSelectedPapers((prev) => {
+      const index = prev.findIndex((sp) => sp.paper.id === paperId);
+      if (index === -1) return prev;
+
+      const newPapers = [...prev];
+      if (direction === "up" && index > 0) {
+        [newPapers[index - 1], newPapers[index]] = [newPapers[index], newPapers[index - 1]];
+      } else if (direction === "down" && index < newPapers.length - 1) {
+        [newPapers[index], newPapers[index + 1]] = [newPapers[index + 1], newPapers[index]];
+      }
+      return newPapers;
+    });
+  };
+
   // Start session
   const handleStartSession = async () => {
     if (isStartingSession) return;
 
     // Validate: at least one paper with at least one section
-    const validPapers = selectedPapers.filter(
-      (sp) => sp.selectedSections.size > 0
-    );
+    const validPapers = selectedPapers.filter((sp) => {
+      // Check if there are any selected subjects across all main sections
+      let hasSelectedSubjects = false;
+      sp.selectedSections.forEach((subjects) => {
+        if (subjects.size > 0) hasSelectedSubjects = true;
+      });
+      return hasSelectedSubjects;
+    });
 
     if (validPapers.length === 0) {
       alert("Please select at least one paper with at least one section.");
@@ -201,7 +287,11 @@ export default function PapersPlanPage() {
     // TODO: Support multi-paper sessions in the future
     const firstPaper = validPapers[0];
     const paper = firstPaper.paper;
-    const selectedSections = Array.from(firstPaper.selectedSections);
+    // Flatten all selected subjects from all main sections
+    const selectedSections: PaperSection[] = [];
+    firstPaper.selectedSections.forEach((subjects) => {
+      subjects.forEach((subject) => selectedSections.push(subject));
+    });
 
     try {
       setIsStartingSession(true);
@@ -257,16 +347,6 @@ export default function PapersPlanPage() {
       const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
       const paperTypeName = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
-      // Generate part IDs for selected sections
-      const { generatePartIdsFromSections } = await import('@/lib/papers/partIdUtils');
-      const selectedPartIds = generatePartIdsFromSections(
-        paper.examName,
-        paper.examYear,
-        paper.paperName,
-        selectedSections,
-        paper.examType || 'Official'
-      );
-
       // Start session
       startSession({
         paperId: paper.id,
@@ -279,14 +359,13 @@ export default function PapersPlanPage() {
           end: questionEnd,
         },
         selectedSections: selectedSections.length > 0 ? selectedSections : undefined,
-        selectedPartIds: selectedPartIds,
       });
 
       // Load questions and navigate
       await loadQuestions(paper.id);
-      router.push("/papers/solve");
+      router.push("/past-papers/solve");
     } catch (err) {
-      console.error("[plan] Error starting session:", err);
+      console.error("[library] Error starting session:", err);
       setError(err instanceof Error ? err.message : "Failed to start session");
     } finally {
       setIsStartingSession(false);
@@ -300,8 +379,7 @@ export default function PapersPlanPage() {
   if (loading) {
     return (
       <Container>
-        <PageHeader title="Paper Library" />
-        <div className="py-12 text-center text-white/50">Loading papers...</div>
+        <div className="py-12 text-center text-text-subtle">Loading papers...</div>
       </Container>
     );
   }
@@ -309,42 +387,40 @@ export default function PapersPlanPage() {
   if (error && papers.length === 0) {
     return (
       <Container>
-        <PageHeader title="Paper Library" />
-        <div className="py-12 text-center text-red-400">{error}</div>
+        <div className="py-12 text-center text-error">{error}</div>
       </Container>
     );
   }
 
   return (
     <Container>
-      <PageHeader
-        title="Paper Library"
-        description="Browse past papers by exam and year, then build a focused practice session from selected sections."
-      />
+      {/* Filters - Full width at top */}
+      <div className="mb-6 pt-6">
+        <PaperLibraryFilters
+          papers={papers}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          examFilter={examFilter}
+          onExamFilterChange={setExamFilter}
+          yearFilter={yearFilter}
+          onYearFilterChange={setYearFilter}
+          typeFilter={typeFilter}
+          onTypeFilterChange={setTypeFilter}
+        />
+      </div>
 
-      {/* Three-column layout: filters • library • session summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1.4fr)_360px] gap-6 py-8">
-        {/* Left: Filters */}
-        <div>
-          <PaperLibraryFilters
-            papers={papers}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            examFilter={examFilter}
-            onExamFilterChange={setExamFilter}
-            yearFilter={yearFilter}
-            onYearFilterChange={setYearFilter}
-            typeFilter={typeFilter}
-            onTypeFilterChange={setTypeFilter}
-          />
-        </div>
-
-        {/* Middle: Paper grid */}
+      {/* Two-column layout: library • session summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(450px,550px)] gap-6 py-4">
+        {/* Left: Paper library */}
         <div>
           <PaperLibraryGrid
             papers={filteredPapers}
             selectedPaperIds={selectedPaperIds}
-            onToggleSelect={handleAddPaper}
+            selectedSectionsByPaper={selectedSectionsByPaper}
+            onToggleSection={handleToggleSection}
+            onAddFullPaper={handleAddFullPaper}
+            onAddPaper={handleAddPaper}
+            onAddSection={handleAddSection}
           />
         </div>
 
@@ -367,9 +443,11 @@ export default function PapersPlanPage() {
               }
               handleToggleSection(paperId, section);
             }}
+            onReorderPaper={handleReorderPaper}
             availableSectionsByPaper={availableSectionsByPaper}
             canStart={canStart && !isStartingSession}
             onStartSession={handleStartSession}
+            allPapers={papers}
           />
         </div>
       </div>
@@ -383,3 +461,4 @@ export default function PapersPlanPage() {
     </Container>
   );
 }
+

@@ -17,20 +17,20 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { Sun, Moon } from "lucide-react";
 
 const skillsNavItems = [
-  { href: "/skills/drill", label: "Drill" },
-  { href: "/skills/analytics", label: "Analytics" },
-  { href: "/skills/leaderboard", label: "Leaderboard" },
+  { href: "/mental-maths/drill", label: "Drill" },
+  { href: "/mental-maths/analytics", label: "Analytics" },
+  { href: "/mental-maths/leaderboard", label: "Leaderboard" },
 ];
 
 const papersNavItems = [
-  { href: "/papers/roadmap", label: "Roadmap" },
-  { href: "/papers/library", label: "Library" },
-  { href: "/papers/drill", label: "Drill" },
-  { href: "/papers/analytics", label: "Analytics" },
+  { href: "/past-papers/roadmap", label: "Roadmap" },
+  { href: "/past-papers/library", label: "Library" },
+  { href: "/past-papers/drill", label: "Drill" },
+  { href: "/past-papers/analytics", label: "Analytics" },
 ];
 
 const questionsNavItems = [
-  { href: "/questions/bank", label: "Bank" },
+  { href: "/questions/questionbank", label: "Bank" },
   { href: "/questions/library", label: "Library" },
 ];
 
@@ -49,8 +49,8 @@ export function Navbar() {
   const hasActiveSession = sessionId !== null && endedAt === null && !isJustQuit;
 
   const currentSection =
-    pathname.startsWith("/skills") ? "skills" 
-    : pathname.startsWith("/papers") ? "papers" 
+    pathname.startsWith("/mental-maths") ? "skills" 
+    : pathname.startsWith("/past-papers") ? "papers" 
     : pathname.startsWith("/questions") ? "questions"
     : "home";
 
@@ -63,13 +63,13 @@ export function Navbar() {
   useEffect(() => {
     const allRoutes = [
       "/",
-      "/skills/drill",
-      "/skills/analytics",
-      "/papers/roadmap",
-      "/papers/library",
-      "/papers/drill",
-      "/papers/analytics",
-      "/questions/bank",
+      "/mental-maths/drill",
+      "/mental-maths/analytics",
+      "/past-papers/roadmap",
+      "/past-papers/library",
+      "/past-papers/drill",
+      "/past-papers/analytics",
+      "/questions/questionbank",
       "/questions/library",
     ];
 
@@ -99,7 +99,7 @@ export function Navbar() {
 
   const loginHref = useMemo(() => {
     // Default to /papers/library if on home page or login page
-    const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/papers/library";
+    const redirectTo = pathname && pathname !== "/login" && pathname !== "/" ? pathname : "/past-papers/library";
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 
@@ -121,7 +121,7 @@ export function Navbar() {
 
             <div className="flex items-center space-x-3">
               <Link
-                href="/skills/drill"
+                href="/mental-maths/drill"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
                   currentSection === "skills" ? "text-primary" : "text-text-muted hover:text-text"
@@ -131,7 +131,7 @@ export function Navbar() {
               </Link>
               <span className="text-sm text-text-subtle">/</span>
               <Link
-                href="/papers/library"
+                href="/past-papers/library"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
                   currentSection === "papers" ? "text-maths" : "text-text-muted hover:text-text"
@@ -141,7 +141,7 @@ export function Navbar() {
               </Link>
               <span className="text-sm text-text-subtle">/</span>
               <Link
-                href="/questions/bank"
+                href="/questions/questionbank"
                 className={cn(
                   "text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature",
                   pathname.startsWith("/questions") ? "text-secondary" : "text-text-muted hover:text-text"

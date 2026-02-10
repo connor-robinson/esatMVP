@@ -9,12 +9,12 @@ This is a streamlined MVP version of the No-Calc Trainer application, focusing o
 - Quick navigation to key sections
 - Activity heatmap showing practice history
 
-### Papers (`/papers/*`)
-- **Library** (`/papers/library`): Paper session setup wizard
-- **Solve** (`/papers/solve`): Timed paper-taking interface
-- **Mark** (`/papers/mark`): Review and marking interface
-- **Analytics** (`/papers/analytics`): Performance analytics (placeholder for now)
-- **Drill** (`/papers/drill`): Spaced repetition drill mode for paper questions
+### Past Papers (`/past-papers/*`)
+- **Library** (`/past-papers/library`): Paper session setup wizard
+- **Solve** (`/past-papers/solve`): Timed paper-taking interface
+- **Mark** (`/past-papers/mark`): Review and marking interface
+- **Analytics** (`/past-papers/analytics`): Performance analytics (placeholder for now)
+- **Drill** (`/past-papers/drill`): Spaced repetition drill mode for paper questions
 
 ### Train (`/train/*`)
 - **Drill** (`/train/drill`): Custom multi-topic session builder

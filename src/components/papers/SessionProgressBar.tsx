@@ -245,7 +245,7 @@ export function SessionProgressBar() {
       
       // Small delay before navigation to ensure state is cleared
       setTimeout(() => {
-        router.push('/papers/library');
+        router.push('/past-papers/library');
       }, 100);
     } catch (error) {
       console.error('[SessionProgressBar] Failed to quit session:', error);
@@ -281,7 +281,7 @@ export function SessionProgressBar() {
 
   const loginHref = typeof window !== 'undefined' && window.location.pathname && window.location.pathname !== "/login" && window.location.pathname !== "/"
     ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
-    : `/login?redirectTo=${encodeURIComponent("/papers/library")}`;
+    : `/login?redirectTo=${encodeURIComponent("/past-papers/library")}`;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
@@ -412,12 +412,12 @@ export function SessionProgressBar() {
                       // If paused, always navigate to resume page
                       if (isPaused) {
                         if (!currentPath.includes('/papers/solve/resume')) {
-                          router.push('/papers/solve/resume');
+                          router.push('/past-papers/solve/resume');
                         }
                       } else {
                         // If active, navigate to solve page (only if not already there)
                         if (!currentPath.includes('/papers/solve') || currentPath.includes('/papers/solve/resume')) {
-                          router.push('/papers/solve');
+                          router.push('/past-papers/solve');
                         }
                       }
                     }

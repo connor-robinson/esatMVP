@@ -24,7 +24,7 @@ export async function PATCH(
         { status: 401 }
       );
     }
-
+    
     console.log('[Question Update API] Authenticated user:', user.id);
 
     // Use authenticated client (respects RLS policies)

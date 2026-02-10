@@ -29,7 +29,7 @@ export default function PapersSubmitPage() {
   // Redirect if no active session
   useEffect(() => {
     if (!sessionId) {
-      router.push("/papers/library");
+      router.push("/past-papers/library");
     }
   }, [sessionId, router]);
 
@@ -50,7 +50,7 @@ export default function PapersSubmitPage() {
   }, [sessionId, hasSaved, isSaving, persistSessionToServer]);
 
   const handleContinueToMark = () => {
-    router.push("/papers/mark");
+    router.push("/past-papers/mark");
   };
 
   const totalQuestions = getTotalQuestions();

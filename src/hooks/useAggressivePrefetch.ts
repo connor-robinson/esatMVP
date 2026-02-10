@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const CRITICAL_ROUTES = ["/", "/skills/analytics", "/skills/drill"];
+const CRITICAL_ROUTES = ["/", "/mental-maths/analytics", "/mental-maths/drill"];
 
 export function useAggressivePrefetch() {
   const router = useRouter();

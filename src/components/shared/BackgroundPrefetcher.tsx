@@ -9,13 +9,13 @@ import { useEffect } from "react";
 import { useBackgroundPrefetch } from "@/hooks/useBackgroundPrefetch";
 import { useAggressivePrefetch } from "@/hooks/useAggressivePrefetch";
 
-const CRITICAL_ROUTES = ["/", "/skills/analytics", "/skills/drill"];
+const CRITICAL_ROUTES = ["/", "/mental-maths/analytics", "/mental-maths/drill"];
 
 const SECONDARY_ROUTES = [
-  "/papers/analytics",
-  "/papers/mark",
-  "/papers/library",
-  "/papers/solve",
+  "/past-papers/analytics",
+  "/past-papers/mark",
+  "/past-papers/library",
+  "/past-papers/solve",
 ];
 
 export function BackgroundPrefetcher() {

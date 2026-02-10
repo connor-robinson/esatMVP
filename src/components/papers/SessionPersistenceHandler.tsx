@@ -49,10 +49,10 @@ export function SessionPersistenceHandler() {
         // Try sendBeacon first (more reliable for page unload)
         if (navigator.sendBeacon) {
           const blob = new Blob([payload], { type: 'application/json' });
-          navigator.sendBeacon('/api/papers/sessions', blob);
+          navigator.sendBeacon('/api/past-papers/sessions', blob);
         } else {
           // Fallback to sync fetch (blocks page unload)
-          fetch('/api/papers/sessions', {
+          fetch('/api/past-papers/sessions', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: payload,

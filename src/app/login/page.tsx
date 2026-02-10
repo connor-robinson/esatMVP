@@ -25,7 +25,7 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (session?.user) {
-      const redirectTo = searchParams.get("redirectTo") || "/papers/library";
+      const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
       router.push(redirectTo);
     }
   }, [session, searchParams, router]);
@@ -35,7 +35,7 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
 
-      const redirectTo = searchParams.get("redirectTo") || "/papers/library";
+      const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
       // Use absolute URL for redirectTo - Supabase will redirect here after OAuth
       // The redirect URL must be whitelisted in Supabase dashboard
       const redirectUrl = `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`;

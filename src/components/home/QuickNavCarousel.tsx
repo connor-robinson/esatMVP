@@ -11,12 +11,12 @@ const PAGES = [
   {
     name: "Drill",
     description: "Practice Sessions",
-    href: "/skills/drill",
+    href: "/mental-maths/drill",
   },
   {
     name: "Papers",
     description: "Exam Practice",
-    href: "/papers/library",
+    href: "/past-papers/library",
   },
 ];
 

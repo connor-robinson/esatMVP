@@ -34,12 +34,12 @@ export default function ResumePage() {
   // Redirect if no session or not paused
   useEffect(() => {
     if (!sessionId) {
-      router.push("/papers/library");
+      router.push("/past-papers/library");
       return;
     }
     if (!isPaused) {
       // If not paused, redirect to solve page
-      router.push("/papers/solve");
+      router.push("/past-papers/solve");
       return;
     }
   }, [sessionId, isPaused, router]);
@@ -113,7 +113,7 @@ export default function ResumePage() {
   const handleQuit = async () => {
     if (window.confirm('Are you sure you want to quit? Your progress will be saved.')) {
       await resetSession();
-      router.push("/papers/library");
+      router.push("/past-papers/library");
     }
   };
 

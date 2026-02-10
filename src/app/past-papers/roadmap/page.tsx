@@ -482,7 +482,7 @@ export default function PapersRoadmapPage() {
           await loadQuestions(primaryPaper.id);
         }
         
-        router.push("/papers/solve");
+        router.push("/past-papers/solve");
       } catch (error) {
         console.error("[roadmap] Error starting stage:", error);
       }

@@ -33,7 +33,7 @@ export default function SessionPage() {
     const timer = setTimeout(() => {
       // Only redirect if we're still in builder mode and have no session after waiting
       if (builder.view === "builder" && !builder.currentSession) {
-        router.replace("/skills/drill");
+        router.replace("/mental-maths/drill");
       }
     }, 300);
     
@@ -62,7 +62,7 @@ export default function SessionPage() {
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
           onExit={() => {
             builder.exitSession();
-            router.push("/skills/drill");
+            router.push("/mental-maths/drill");
           }}
         />
       </Suspense>
@@ -78,7 +78,7 @@ export default function SessionPage() {
           attempts={builder.attemptLog}
           onBackToBuilder={() => {
             builder.exitSession();
-            router.push("/skills/drill");
+            router.push("/mental-maths/drill");
           }}
           mode={builder.mode}
         />

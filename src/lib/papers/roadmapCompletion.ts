@@ -293,7 +293,7 @@ export async function markPartAsCompleted(
     // Create minimal session record via API
     const sessionId = crypto.randomUUID();
     
-    const response = await fetch('/api/papers/sessions', {
+    const response = await fetch('/api/past-papers/sessions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

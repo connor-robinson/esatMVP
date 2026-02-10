@@ -14,7 +14,7 @@ export default function QuestionBankRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/questions/bank');
+    router.replace('/questions/questionbank');
   }, [router]);
 
   return (

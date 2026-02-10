@@ -246,7 +246,7 @@ export default function PapersMarkPage() {
         if (questionIds.length === 0) return;
         
         setStatsLoading(true);
-        const response = await fetch("/api/papers/questions/stats", {
+        const response = await fetch("/api/past-papers/questions/stats", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ questionIds }),
@@ -327,7 +327,7 @@ export default function PapersMarkPage() {
       if (sessionIdToHighlight) {
         router.push(`/papers/analytics?highlight=${sessionIdToHighlight}`);
       } else {
-        router.push("/papers/analytics");
+        router.push("/past-papers/analytics");
       }
     } catch (error) {
       console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
@@ -1263,7 +1263,7 @@ export default function PapersMarkPage() {
   
   // Redirect if no active session (after all hooks)
   if (!sessionId) {
-    router.push("/papers/library");
+    router.push("/past-papers/library");
     return null;
   }
 

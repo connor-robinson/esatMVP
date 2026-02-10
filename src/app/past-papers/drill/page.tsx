@@ -236,7 +236,7 @@ export default function PapersDrillPage() {
               </div>
               <Button
                 variant="primary"
-                onClick={() => window.location.href = "/papers/library"}
+                onClick={() => window.location.href = "/past-papers/library"}
                 className="mt-4"
               >
                 Start a Session

@@ -196,7 +196,7 @@ export default function HomePage() {
                 </p>
               </div>
               <Link
-                href="/skills/drill"
+                href="/mental-maths/drill"
                 className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
               >
                 Try Trainer{" "}
@@ -247,7 +247,7 @@ export default function HomePage() {
                 </div>
               </div>
               <Link
-                href="/papers/library"
+                href="/past-papers/library"
                 className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all"
               >
                 View Planner
@@ -282,7 +282,7 @@ export default function HomePage() {
                 </p>
               </div>
               <Link
-                href="/questions/bank"
+                href="/questions/questionbank"
                 className="w-full py-3 border border-[#3B82F6] text-[#3B82F6] hover:bg-[#3B82F6] hover:text-white font-bold rounded-xl transition-all"
               >
                 Start Question Bank
@@ -625,7 +625,7 @@ export default function HomePage() {
               <ul className="space-y-4 text-sm text-[#94A3B8]">
                 <li>
                   <Link
-                    href="/skills/drill"
+                    href="/mental-maths/drill"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
                     Mental Maths
@@ -633,7 +633,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <Link
-                    href="/questions/bank"
+                    href="/questions/questionbank"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
                     Question Bank
@@ -641,7 +641,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <Link
-                    href="/papers/library"
+                    href="/past-papers/library"
                     className="hover:text-[#3B82F6] transition-colors"
                   >
                     Past Papers

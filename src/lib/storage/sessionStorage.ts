@@ -197,7 +197,7 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
     // Check database for in-progress sessions
     let databaseSessionId: string | null = null;
     try {
-      const response = await fetch('/api/papers/sessions?in_progress=true', {
+      const response = await fetch('/api/past-papers/sessions?in_progress=true', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -227,7 +227,7 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
         // Same session, use database as source of truth
         // Double-check that it's not ended in database
         try {
-          const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+          const response = await fetch(`/api/past-papers/sessions?id=${databaseSessionId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
           });
@@ -257,7 +257,7 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
         }
         // Verify database session is not ended
         try {
-          const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+          const response = await fetch(`/api/past-papers/sessions?id=${databaseSessionId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
           });
@@ -276,7 +276,7 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
       // Only database has session - IndexedDB might be out of sync
       // Verify it's not ended
       try {
-        const response = await fetch(`/api/papers/sessions?id=${databaseSessionId}`, {
+        const response = await fetch(`/api/past-papers/sessions?id=${databaseSessionId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
@@ -294,7 +294,7 @@ export async function findActiveSession(): Promise<{ sessionId: string; source: 
       // Only IndexedDB has session - might be orphaned, but use it
       // Check if it's actually ended in database
       try {
-        const response = await fetch(`/api/papers/sessions?id=${indexedDBSessionId}`, {
+        const response = await fetch(`/api/past-papers/sessions?id=${indexedDBSessionId}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });

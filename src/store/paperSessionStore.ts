@@ -242,7 +242,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         // Before starting a new session, end any existing in-progress sessions for this paper
         // This prevents accumulation of orphaned sessions
         try {
-          const response = await fetch(`/api/papers/sessions?in_progress=true`);
+          const response = await fetch(`/api/past-papers/sessions?in_progress=true`);
           if (response.ok) {
             const data = await response.json();
             const inProgressSessions = (data.sessions || []) as any[];
@@ -257,7 +257,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               const now = Date.now();
               await Promise.all(
                 samePaperSessions.map(session =>
-                  fetch('/api/papers/sessions', {
+                  fetch('/api/past-papers/sessions', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -379,7 +379,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           score: null,
         };
 
-        const createPromise = fetch("/api/papers/sessions", {
+            const createPromise = fetch("/api/past-papers/sessions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1031,7 +1031,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         if (sessionIdToQuit && !state.endedAt) {
           try {
             const endedAt = Date.now();
-            const response = await fetch('/api/papers/sessions', {
+            const response = await fetch('/api/past-papers/sessions', {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1148,7 +1148,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
       loadSessionFromDatabase: async (sessionIdToLoad: string) => {
         try {
-          const response = await fetch(`/api/papers/sessions?id=${sessionIdToLoad}`);
+          const response = await fetch(`/api/past-papers/sessions?id=${sessionIdToLoad}`);
           if (!response.ok) {
             throw new Error(`Failed to load session: ${response.statusText}`);
           }
@@ -1368,7 +1368,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
         const persistPromise = (async () => {
           try {
-            const response = await fetch("/api/papers/sessions", {
+            const response = await fetch("/api/past-papers/sessions", {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
@@ -1462,7 +1462,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
             if (drillItems.length > 0) {
               try {
-                const drillResponse = await fetch("/api/papers/drill-items", {
+                const drillResponse = await fetch("/api/past-papers/drill-items", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -1508,7 +1508,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         // Process items one by one
         for (const item of itemsToRetry) {
           try {
-            const response = await fetch("/api/papers/sessions", {
+            const response = await fetch("/api/past-papers/sessions", {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(item.payload),

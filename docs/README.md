@@ -22,6 +22,7 @@ This directory contains all project documentation organized by purpose.
 ## Quick Links
 
 ### Essential Guides
+- **[Complete Site Guide & Bug List](guides/COMPLETE_SITE_GUIDE_AND_BUGS.md)** - **START HERE** - Complete explanation of all features and all bugs to fix
 - **[Deployment Guide](guides/DEPLOYMENT_GUIDE.md)** - How to deploy the application
 - **[Security Handover Guide](guides/SECURITY_HANDOVER_GUIDE.md)** - Security best practices
 - **[Color Configuration](guides/COLOR_CONFIGURATION_GUIDE.md)** - How to change app colors

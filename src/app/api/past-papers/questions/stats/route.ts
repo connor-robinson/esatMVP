@@ -115,7 +115,7 @@ function computeStatsWithBaseline(
 }
 
 /**
- * POST /api/papers/questions/stats
+ * POST /api/past-papers/questions/stats
  * Fetches community statistics for multiple questions
  * 
  * Body: { questionIds: number[] }

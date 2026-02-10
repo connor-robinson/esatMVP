@@ -151,7 +151,7 @@ export function convertSessionRow(row: PaperSessionRow): PaperSession {
  */
 export async function fetchUserSessions(): Promise<PaperSession[]> {
   try {
-    const response = await fetch('/api/papers/sessions', {
+    const response = await fetch('/api/past-papers/sessions', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ export async function fetchUserSessions(): Promise<PaperSession[]> {
  */
 export async function fetchInProgressSessions(): Promise<PaperSession[]> {
   try {
-    const response = await fetch('/api/papers/sessions?in_progress=true', {
+    const response = await fetch('/api/past-papers/sessions?in_progress=true', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

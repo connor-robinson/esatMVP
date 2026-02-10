@@ -296,7 +296,7 @@ The question matching uses flexible `includes()` matching, but exact matches are
 
 - `src/lib/papers/roadmapConfig.ts` - Roadmap stage definitions
 - `src/components/papers/roadmap/StageListCard.tsx` - UI component with hierarchical grouping
-- `src/app/papers/roadmap/page.tsx` - Question filtering logic
+- `src/app/past-papers/roadmap/page.tsx` - Question filtering logic
 - `src/lib/papers/sectionMapping.ts` - Part to section mapping
 - `src/lib/papers/partIdUtils.ts` - Part ID generation for completion tracking
 - `src/app/papers/plan/page.tsx` - Library (shows all parts, no filtering)

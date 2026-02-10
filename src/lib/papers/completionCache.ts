@@ -120,7 +120,7 @@ export function invalidateCache(userId: string): void {
  */
 export async function syncWithDatabase(userId: string): Promise<Set<string>> {
   try {
-    const response = await fetch('/api/papers/sessions');
+    const response = await fetch('/api/past-papers/sessions');
     if (!response.ok) {
       console.error('[completionCache] Failed to fetch sessions:', response.status, response.statusText);
       throw new Error(`Failed to fetch sessions: ${response.statusText}`);

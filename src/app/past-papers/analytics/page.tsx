@@ -330,7 +330,7 @@ export default function PapersAnalyticsPage() {
   const handleViewMarkPage = async (sessionId: string) => {
     try {
       await loadSessionFromDatabase(sessionId);
-      router.push('/papers/mark');
+      router.push('/past-papers/mark');
     } catch (error) {
       console.error('Failed to load session:', error);
     }
@@ -357,7 +357,7 @@ export default function PapersAnalyticsPage() {
     
     setIsClearing(true);
     try {
-      const response = await fetch('/api/papers/sessions', {
+      const response = await fetch('/api/past-papers/sessions', {
         method: 'DELETE',
       });
 
