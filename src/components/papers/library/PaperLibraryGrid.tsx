@@ -111,7 +111,7 @@ export function PaperLibraryGrid({
   }, [papers]);
 
   return (
-    <Card variant="flat" className="p-5 h-full bg-surface-mid">
+    <Card variant="flat" className="p-5 h-full bg-surface">
       <div className="flex items-center justify-between mb-5">
         <div>
           <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">
@@ -143,12 +143,12 @@ export function PaperLibraryGrid({
             return (
               <div
                 key={examName}
-                className="rounded-xl overflow-hidden transition-all duration-300 bg-surface-subtle"
+                className="rounded-xl overflow-hidden transition-all duration-300 bg-surface-mid"
               >
                 {/* Color-coded header */}
                 <button
                   onClick={() => toggleExam(examName)}
-                  className="w-full px-6 py-7 flex items-center justify-between bg-surface-mid hover:bg-surface transition-colors group"
+                  className="w-full px-6 py-7 flex items-center justify-between bg-surface-mid hover:bg-surface-elevated transition-colors group"
                 >
                   <div className="flex items-center gap-3">
                     <ChevronDown
