@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Drill-Down Multi-Column Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2130",
+                        "accent-cyan": "#06b6d4",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(19, 91, 236, 0.2);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(19, 91, 236, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen flex flex-col overflow-hidden">
+<!-- Header / Navigation -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 bg-white dark:bg-background-dark z-20">
+<div class="flex items-center gap-4">
+<div class="bg-primary p-2 rounded-lg">
+<span class="material-icons text-white">school</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">Edu<span class="text-primary">Drill</span></h1>
+<div class="h-4 w-[1px] bg-slate-700 mx-2"></div>
+<nav class="flex items-center gap-2 text-sm font-medium text-slate-500">
+<span>Dashboard</span>
+<span class="material-icons text-sm">chevron_right</span>
+<span class="text-slate-300">Practice Lab</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-icons">notifications</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-slate-800">
+<div class="text-right">
+<p class="text-xs font-semibold">Alex Johnson</p>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">Pro Student</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary/20" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKr-mmAMerlTTBJBGmI6RH4Bb_V21JDc3PKejGcs16famcysULoT_0qA1sX5t6MmG1aFuSAgMjWB-yfcLZVpGFThyglbn4ikFDr-3F1-oMzB3lDyxAYof4VJJhALzMPzFfPw0uaLIVwn1Ypk-IHDO6_A9U4V5RHFI5LXMn6jXtLzNtnNfLK815dLoT1DUVSiS9wnyTbaim30HL6pFG7_ksni_EXacjxf0E453OCQ300sZx9jiZbN6OHtBYeFbiozMB3PnqejLsmow"/>
+</div>
+</div>
+</header>
+<!-- Main Dashboard Content -->
+<main class="flex-1 flex overflow-hidden relative">
+<!-- COLUMN 1: Categories -->
+<aside class="w-24 md:w-28 flex flex-col items-center py-6 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark overflow-y-auto custom-scrollbar">
+<div class="space-y-8">
+<!-- Category Item: Active -->
+<button class="flex flex-col items-center gap-2 group w-full px-2">
+<div class="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/30 transition-all">
+<span class="material-icons text-3xl">calculate</span>
+</div>
+<span class="text-[11px] font-semibold text-primary uppercase tracking-tighter">Arithmetic</span>
+</button>
+<!-- Category Item -->
+<button class="flex flex-col items-center gap-2 group w-full px-2 opacity-60 hover:opacity-100 transition-all">
+<div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-surface-dark text-slate-500 flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+<span class="material-icons text-3xl">functions</span>
+</div>
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-tighter group-hover:text-primary">Algebra</span>
+</button>
+<!-- Category Item -->
+<button class="flex flex-col items-center gap-2 group w-full px-2 opacity-60 hover:opacity-100 transition-all">
+<div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-surface-dark text-slate-500 flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+<span class="material-icons text-3xl">architecture</span>
+</div>
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-tighter group-hover:text-primary">Geometry</span>
+</button>
+<!-- Category Item -->
+<button class="flex flex-col items-center gap-2 group w-full px-2 opacity-60 hover:opacity-100 transition-all">
+<div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-surface-dark text-slate-500 flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+<span class="material-icons text-3xl">bar_chart</span>
+</div>
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-tighter group-hover:text-primary">Statistics</span>
+</button>
+<!-- Category Item -->
+<button class="flex flex-col items-center gap-2 group w-full px-2 opacity-60 hover:opacity-100 transition-all">
+<div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-surface-dark text-slate-500 flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+<span class="material-icons text-3xl">science</span>
+</div>
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-tighter group-hover:text-primary">Physics</span>
+</button>
+</div>
+</aside>
+<!-- COLUMN 2: Operation Folders -->
+<section class="w-72 md:w-80 flex flex-col border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-background-dark/50 overflow-y-auto custom-scrollbar">
+<div class="p-6">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Operations</h2>
+<span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-bold">12 Total</span>
+</div>
+<div class="space-y-3">
+<!-- Folder Item: Selected -->
+<button class="w-full text-left p-4 rounded-xl bg-white dark:bg-surface-dark border-2 border-primary shadow-sm relative group overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Addition</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Multi-digit &amp; Decimals</p>
+</div>
+<span class="material-icons text-primary text-xl">folder_open</span>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">4 Drills</span>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent-cyan/10 text-accent-cyan">85% Avg</span>
+</div>
+</button>
+<!-- Folder Item -->
+<button class="w-full text-left p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all group">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Multiplication</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Times tables &amp; Long mult</p>
+</div>
+<span class="material-icons text-slate-400 text-xl group-hover:text-primary transition-colors">folder</span>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">6 Drills</span>
+</div>
+</button>
+<!-- Folder Item -->
+<button class="w-full text-left p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all group">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Subtraction</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Borrowing &amp; Differences</p>
+</div>
+<span class="material-icons text-slate-400 text-xl group-hover:text-primary transition-colors">folder</span>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">3 Drills</span>
+</div>
+</button>
+<!-- Folder Item -->
+<button class="w-full text-left p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all group">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Division</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Remainders &amp; Long div</p>
+</div>
+<span class="material-icons text-slate-400 text-xl group-hover:text-primary transition-colors">folder</span>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">2 Drills</span>
+</div>
+</button>
+<!-- Folder Item -->
+<button class="w-full text-left p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all group">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">Fractions</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Adding &amp; Simplification</p>
+</div>
+<span class="material-icons text-slate-400 text-xl group-hover:text-primary transition-colors">folder</span>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">5 Drills</span>
+</div>
+</button>
+</div>
+</div>
+</section>
+<!-- COLUMN 3: Drill Grid -->
+<section class="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-background-dark p-8 pb-32">
+<div class="max-w-5xl mx-auto">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-primary material-icons">add_circle</span>
+<h2 class="text-2xl font-bold">Addition Drills</h2>
+</div>
+<p class="text-slate-500 dark:text-slate-400">Select one or more drills to build your custom practice session.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-slate-100 dark:bg-surface-dark rounded-lg p-1">
+<button class="px-3 py-1.5 text-xs font-bold rounded bg-white dark:bg-slate-800 shadow-sm">Grid View</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500">List View</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Drill Card 1: Selected -->
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/5 rounded-xl border-2 border-primary z-0"></div>
+<div class="relative z-10 p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-green-500/10 text-green-500 uppercase">Easy</span>
+<span class="material-icons text-primary">check_circle</span>
+</div>
+<h4 class="text-lg font-bold mb-1">2-Digit Addition</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1">Practice basic sums without carrying. Perfect for warming up.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span class="flex items-center gap-1"><span class="material-icons text-sm">list_alt</span> 10 Qs</span>
+<span class="flex items-center gap-1"><span class="material-icons text-sm">timer</span> 5m</span>
+</div>
+<button class="bg-primary/20 text-primary hover:bg-primary/30 text-xs font-bold px-4 py-2 rounded-lg transition-colors">Remove</button>
+</div>
+</div>
+</div>
+<!-- Drill Card 2 -->
+<div class="relative group bg-slate-50 dark:bg-surface-dark/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/40 transition-all">
+<div class="p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 uppercase">Medium</span>
+<span class="material-icons text-slate-300 dark:text-slate-700">stars</span>
+</div>
+<h4 class="text-lg font-bold mb-1">3-Digit Carrying</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1">Advanced addition involving hundreds and carrying over units.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span class="flex items-center gap-1"><span class="material-icons text-sm">list_alt</span> 15 Qs</span>
+<span class="flex items-center gap-1"><span class="material-icons text-sm">timer</span> 8m</span>
+</div>
+<button class="bg-primary text-white hover:bg-primary/90 text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-1">
+<span class="material-icons text-xs">add</span> Add
+                                </button>
+</div>
+</div>
+</div>
+<!-- Drill Card 3 -->
+<div class="relative group bg-slate-50 dark:bg-surface-dark/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/40 transition-all">
+<div class="p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-500 uppercase">Hard</span>
+<span class="material-icons text-slate-300 dark:text-slate-700">stars</span>
+</div>
+<h4 class="text-lg font-bold mb-1">Decimal Addition</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1">Challenge yourself with floating points and precise calculation drills.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span class="flex items-center gap-1"><span class="material-icons text-sm">list_alt</span> 20 Qs</span>
+<span class="flex items-center gap-1"><span class="material-icons text-sm">timer</span> 12m</span>
+</div>
+<button class="bg-primary text-white hover:bg-primary/90 text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-1">
+<span class="material-icons text-xs">add</span> Add
+                                </button>
+</div>
+</div>
+</div>
+<!-- Drill Card 4 -->
+<div class="relative group bg-slate-50 dark:bg-surface-dark/50 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary/40 transition-all">
+<div class="p-6 flex flex-col h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 uppercase">Medium</span>
+<span class="material-icons text-slate-300 dark:text-slate-700">stars</span>
+</div>
+<h4 class="text-lg font-bold mb-1">Negative Integers</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1">Working with positive and negative numbers in combined operations.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span class="flex items-center gap-1"><span class="material-icons text-sm">list_alt</span> 12 Qs</span>
+<span class="flex items-center gap-1"><span class="material-icons text-sm">timer</span> 7m</span>
+</div>
+<button class="bg-primary text-white hover:bg-primary/90 text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-1">
+<span class="material-icons text-xs">add</span> Add
+                                </button>
+</div>
+</div>
+</div>
+<!-- Drill Card Placeholder -->
+<div class="relative group rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center p-6 bg-transparent">
+<span class="material-icons text-4xl text-slate-300 dark:text-slate-700 mb-2">lock</span>
+<p class="text-sm font-bold text-slate-400">Unlock Advanced Drills</p>
+<p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-semibold">Premium Only</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Floating Action Bar -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 z-50">
+<div class="bg-white/80 dark:bg-surface-dark/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl shadow-2xl p-4 md:p-5 flex items-center justify-between">
+<div class="flex items-center gap-6">
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center border-2 border-white dark:border-surface-dark shadow-lg">
+<span class="material-icons text-xl">calculate</span>
+</div>
+<div class="w-10 h-10 rounded-xl bg-accent-cyan text-white flex items-center justify-center border-2 border-white dark:border-surface-dark shadow-lg">
+<span class="material-icons text-xl">timer</span>
+</div>
+</div>
+<div>
+<h5 class="text-sm font-bold">1 Drill Selected</h5>
+<p class="text-[11px] font-medium text-slate-500 flex items-center gap-3">
+<span class="flex items-center gap-1"><span class="material-icons text-[12px]">format_list_numbered</span> 10 Questions</span>
+<span class="flex items-center gap-1"><span class="material-icons text-[12px]">schedule</span> Est. 5 mins</span>
+</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 px-4">Clear All</button>
+<button class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/25">
+                        Review &amp; Start Session
+                        <span class="material-icons">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Decoration (Subtle background elements) -->
+<div class="fixed top-0 right-0 -z-10 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent opacity-50"></div>
+</body></html>
+

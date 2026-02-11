@@ -115,7 +115,7 @@ export function Navbar() {
           <div className="flex items-center space-x-8">
             <Link href="/" className="interaction-scale">
               <span className="text-sm font-semibold uppercase tracking-wider text-text transition-colors duration-fast ease-signature hover:text-text-muted">
-                ChanAcademy
+                No-Calc
               </span>
             </Link>
 

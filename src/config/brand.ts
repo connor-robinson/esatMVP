@@ -19,7 +19,7 @@ export const BRAND_CONFIG = {
   shortTitle: "NoCalc",
   
   // Copyright text
-  copyright: "© 2024 NoCalc. Not affiliated with the University of Cambridge.",
+  copyright: "© 2024 NoCalc. Not affiliated with any university.",
   
   // Company/Organization name (if different from app name)
   companyName: "NoCalc",
@@ -32,7 +32,6 @@ export const BRAND_CONFIG = {
     "mental math",
     "ESAT",
     "TMUA",
-    "Cambridge",
     "entrance exams",
     "no calculator",
     "NoCalc"

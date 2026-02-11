@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: BRAND_CONFIG.fullTitle,
   description:
-    "Master the ESAT & TMUA. Secure your Cambridge offer. The non-calculator, high-pressure entrance exams demand more than just knowledge. Master the speed and strategy required for the 2024-25 cycle.",
+    "Master the ESAT & TMUA. Secure your offer. The non-calculator, high-pressure entrance exams demand more than just knowledge. Master the speed and strategy required for the 2024-25 cycle.",
   keywords: [...BRAND_CONFIG.keywords],
 };
 

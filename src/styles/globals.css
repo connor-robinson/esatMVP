@@ -49,7 +49,8 @@
     --color-background: #0e0f13;
     --color-surface: #12141a;
     --color-surface-elevated: #1a1d26;
-    --color-surface-subtle: #0f1114;
+    /* Slightly lighter subtle surface so large panels stand out more from the background */
+    --color-surface-subtle: #151821;
     --color-surface-mid: #111318;
     --color-surface-neutral: #151821;
     --color-border: rgba(255, 255, 255, 0.1);

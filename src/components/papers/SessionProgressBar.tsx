@@ -291,7 +291,7 @@ export function SessionProgressBar() {
           <div className="flex items-center">
             <Link href="/" className="interaction-scale">
               <span className="text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white">
-                ChanAcademy
+                No-Calc
               </span>
             </Link>
           </div>
