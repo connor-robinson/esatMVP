@@ -32,7 +32,7 @@ export function DrillVariantsGrid({
 
   if (!topic || !topic.variants || topic.variants.length === 0) {
     return (
-      <div className="flex-1 flex flex-col bg-surface rounded-2xl p-8 overflow-y-auto shadow-lg">
+      <div className="flex-1 flex flex-col bg-surface-mid rounded-2xl p-8 overflow-y-auto shadow-lg">
         <div className="text-center text-text-subtle py-12">
           <p className="text-sm">
             {topicId ? "No variants available for this topic" : "Select a topic to view drills"}
@@ -43,7 +43,7 @@ export function DrillVariantsGrid({
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-surface rounded-2xl p-8 overflow-y-auto shadow-lg">
+    <div className="flex-1 flex flex-col bg-surface-mid rounded-2xl p-8 overflow-y-auto shadow-lg">
       <div className="flex items-end justify-between mb-8">
         <div>
           <h2 className="text-2xl font-bold text-text mb-2">{topic.name} Drills</h2>

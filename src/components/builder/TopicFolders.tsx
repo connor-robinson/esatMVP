@@ -77,7 +77,7 @@ export function TopicFolders({
   };
 
   return (
-    <div className="w-full md:w-80 lg:w-72 xl:w-80 flex-shrink-0 flex flex-col min-h-0 bg-surface rounded-2xl p-6 overflow-y-auto shadow-lg">
+    <div className="w-full md:w-80 lg:w-72 xl:w-80 flex-shrink-0 flex flex-col min-h-0 bg-surface-mid rounded-2xl p-6 overflow-y-auto shadow-lg">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-bold uppercase tracking-widest text-text-muted">
           {selectedCategory ? categoryLabels[selectedCategory] || "Operations" : "Operations"}
