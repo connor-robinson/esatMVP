@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Question Generation
+ESAT Question Generation with Progress Tracking
 
-Runs question generation using the worker manager.
+Runs question generation using the worker manager and writes status updates
+to a file that can be read by the web UI.
 """
 
 import os
 import sys
 import time
+import json
 import traceback
 from pathlib import Path
 from worker_manager import WorkerManager, RunConfig, ModelsConfig, SystematicGenerationConfig, load_schema_coverage
@@ -26,16 +28,36 @@ if sys.platform == "win32":
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
         sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
-# Simple callbacks for console output (optional)
+# Status file path (relative to script directory)
+STATUS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".generation_status.json")
+
+def write_status(status: dict):
+    """Write status to JSON file for web UI to read."""
+    try:
+        with open(STATUS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(status, f, indent=2)
+    except Exception as e:
+        # Don't fail generation if status write fails
+        print(f"Warning: Could not write status file: {e}", file=sys.stderr)
+
 def progress_callback(successful: int, target: int):
     """Optional callback for console progress output."""
     # Can print to console if needed, but no file I/O
     pass
 
 def status_callback(status_update: dict):
-    """Optional callback for status updates."""
-    # No-op - no status file needed
-    pass
+    """Write status updates to file for web UI."""
+    # Format status update to match web UI expectations
+    status = {
+        "status": "running",
+        "total": status_update.get("total", 0),
+        "completed": status_update.get("completed", 0),
+        "successful": status_update.get("successful", 0),
+        "failed": status_update.get("failed", 0),
+        "message": f"Generating questions... {status_update.get('successful', 0)}/{status_update.get('total', 0)} successful",
+        "worker_status": status_update.get("worker_status", {})
+    }
+    write_status(status)
 
 
 def main():
@@ -168,6 +190,17 @@ def main():
     )
 
     try:
+        # Initialize status
+        initial_status = {
+            "status": "running",
+            "total": n_questions,
+            "completed": 0,
+            "successful": 0,
+            "failed": 0,
+            "message": "Starting question generation...",
+        }
+        write_status(initial_status)
+        
         # Create worker manager
         manager = WorkerManager(base_dir, cfg, models, max_workers=max_workers, systematic_config=systematic_config)
 
@@ -180,6 +213,10 @@ def main():
             total_needed = sum(manager.schema_targets.values())
         else:
             total_needed = n_questions
+        
+        # Update status with correct total
+        initial_status["total"] = total_needed
+        write_status(initial_status)
         
         results = manager.generate_questions(
             total_needed, 
@@ -197,12 +234,33 @@ def main():
         
         print(f"Generation completed! {manager.stats.successful}/{final_total} successful questions generated ({manager.stats.total_questions} total attempts, {manager.stats.failed} failed)")
 
+        # Write final status
+        final_status = {
+            "status": "completed",
+            "total": final_total,
+            "completed": manager.stats.total_questions,
+            "successful": manager.stats.successful,
+            "failed": manager.stats.failed,
+            "message": f"Generation completed! {manager.stats.successful}/{final_total} successful",
+        }
+        write_status(final_status)
+
         # Always exit with 0 - failures are tracked in the status, not exit code
         # This allows the API route to distinguish between script crashes and completed runs with failures
         sys.exit(0)
 
     except KeyboardInterrupt:
         print("\nGeneration interrupted by user", file=sys.stderr)
+        # Write stopped status
+        current_status = {
+            "status": "stopped",
+            "total": n_questions,
+            "completed": manager.stats.total_questions if 'manager' in locals() else 0,
+            "successful": manager.stats.successful if 'manager' in locals() else 0,
+            "failed": manager.stats.failed if 'manager' in locals() else 0,
+            "message": "Generation interrupted by user",
+        }
+        write_status(current_status)
         sys.exit(130)  # Standard exit code for Ctrl+C
     except Exception as e:
         # Print error and exit
@@ -212,6 +270,18 @@ def main():
         print(f"Error type: {type(e).__name__}", file=sys.stderr)
         print("Full traceback:", file=sys.stderr)
         print(error_trace, file=sys.stderr)
+        
+        # Write error status
+        error_status = {
+            "status": "error",
+            "total": n_questions,
+            "completed": manager.stats.total_questions if 'manager' in locals() else 0,
+            "successful": manager.stats.successful if 'manager' in locals() else 0,
+            "failed": manager.stats.failed if 'manager' in locals() else 0,
+            "error": str(e),
+            "message": f"Generation failed: {str(e)}",
+        }
+        write_status(error_status)
         sys.exit(1)
 
 

@@ -1,59 +1,8 @@
 {
-  "status": "error",
-  "total": 20,
+  "status": "running",
+  "total": 3130,
   "completed": 0,
   "successful": 0,
   "failed": 0,
-  "message": "Generation failed: No schemas parsed. Ensure Schemas.md uses headings like: ## **M1. Title** or ## **P1. Title** or ## **B1. Title** or ## **C1. Title** or ## **M. Title** or ## **P. Title**",
-  "current_schema": "None",
-  "worker_status": {
-    "1": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "2": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "3": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "4": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "5": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "6": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "7": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    },
-    "8": {
-      "state": "idle",
-      "schema": null,
-      "stage": null,
-      "message": ""
-    }
-  }
+  "message": "Starting question generation..."
 }

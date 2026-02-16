@@ -52,6 +52,7 @@ import hashlib
 import datetime
 import threading
 import sqlite3
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Tuple, Callable
 from dotenv import load_dotenv
@@ -403,11 +404,22 @@ def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P
 # ---------- Gemini client wrapper ----------
 
 class LLMClient:
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, min_delay: float = 0.0, rate_limit_delay: float = 5.0):
+        """
+        Lightweight wrapper around the Gemini client with optional rate limiting.
+
+        Args:
+            api_key: Gemini API key
+            min_delay: Minimum delay (in seconds) between consecutive calls
+            rate_limit_delay: Extra delay (in seconds) to wait after a rate-limit style error
+        """
         self.api_key = api_key
         self.client = None
         self.last_usage = None  # Store last API call's token usage
         self.total_usage = {"prompt_tokens": 0, "candidates_tokens": 0, "total_tokens": 0}  # Accumulate total usage
+        self.min_delay = float(min_delay) if min_delay is not None else 0.0
+        self.rate_limit_delay = float(rate_limit_delay) if rate_limit_delay is not None else 5.0
+        self._last_call_time: float = 0.0
         if _GENAI_AVAILABLE:
             self.client = genai.Client(api_key=api_key)
 
@@ -425,6 +437,14 @@ class LLMClient:
         last_error = None
         for attempt in range(max_retries):
             try:
+                # Respect minimum delay between calls (simple client-side rate limiting)
+                if self.min_delay > 0 and self._last_call_time > 0:
+                    elapsed = time.time() - self._last_call_time
+                    if elapsed < self.min_delay:
+                        sleep_time = self.min_delay - elapsed
+                        print(f"[DEBUG] Respecting min_delay={self.min_delay}s, sleeping for {sleep_time:.2f}s")
+                        time.sleep(sleep_time)
+
                 # Log API call details (for debugging)
                 api_key_preview = f"{self.api_key[:8]}...{self.api_key[-4:]}" if len(self.api_key) > 12 else "***"
                 print(f"[DEBUG] LLMClient.generate - Model: {model}, Attempt: {attempt + 1}/{max_retries}")
@@ -440,6 +460,9 @@ class LLMClient:
                         "temperature": temperature,
                     },
                 )
+                # Record call time for min_delay handling
+                self._last_call_time = time.time()
+
                 print(f"[DEBUG] ✓ API call successful for model {model}")
                 # Capture usage metadata if available
                 usage_info = {}
@@ -498,6 +521,9 @@ class LLMClient:
                 if is_transient and attempt < max_retries - 1:
                     # Exponential backoff: wait 2^attempt seconds
                     wait_time = 2 ** attempt
+                    # If it looks like a rate-limit style error, add extra delay
+                    if "rate" in error_str.lower() or "quota" in error_str.lower():
+                        wait_time = max(wait_time, self.rate_limit_delay)
                     print(f"[DEBUG] Transient error detected, retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                     continue
@@ -526,8 +552,16 @@ class Prompts:
 
 
 def load_prompts(base_dir: str) -> Prompts:
-    """Load prompts from new by_subject_prompts structure."""
+    """Load prompts from new by_subject_prompts structure.
+    
+    Supports both old structure (by_subject_prompts/old/) and new Math1 structure (by_subject_prompts/new/Math1/).
+    For Math1, loads the new specialized prompts.
+    """
     prompt_dir = os.path.join(base_dir, "by_subject_prompts")
+    
+    # Check for new Math1 structure first
+    new_math1_path = os.path.join(prompt_dir, "new", "Math1")
+    use_new_math1 = os.path.exists(new_math1_path)
     
     # Load subject-specific prompts
     subjects = {
@@ -541,10 +575,66 @@ def load_prompts(base_dir: str) -> Prompts:
     implementers = {}
     classifiers = {}
     
-    for subject_key, folder_name in subjects.items():
-        subject_path = os.path.join(prompt_dir, folder_name)
+    # Also load mode injection prompts for Math1
+    sibling_mode_prompt = None
+    far_mode_prompt = None
+    format_fixer_prompt = None
+    retry_controller_math1 = None
+    verifier_math1 = None
+    style_checker_math1 = None
+    tag_labeler_math1 = None
+    
+    if use_new_math1:
+        # Load new Math1 prompts
+        math1_designer_path = os.path.join(new_math1_path, "Math1 Designer.md")
+        math1_implementer_path = os.path.join(new_math1_path, "Math1 Implementer.md")
+        math1_tag_labeler_path = os.path.join(new_math1_path, "Math1 Tag_Labeler.md")
         
-        # Find and load Designer file (e.g., "Math Designer.md", "Biology Designer.md")
+        if os.path.exists(math1_designer_path):
+            designers['mathematics'] = read_text(math1_designer_path)
+        if os.path.exists(math1_implementer_path):
+            implementers['mathematics'] = read_text(math1_implementer_path)
+        if os.path.exists(math1_tag_labeler_path):
+            tag_labeler_math1 = read_text(math1_tag_labeler_path)
+            classifiers['mathematics'] = tag_labeler_math1
+        
+        # Load mode injection prompts
+        sibling_path = os.path.join(new_math1_path, "Math1 Sibling Mode.md")
+        far_path = os.path.join(new_math1_path, "Math1 Far Mode.md")
+        if os.path.exists(sibling_path):
+            sibling_mode_prompt = read_text(sibling_path)
+        if os.path.exists(far_path):
+            far_mode_prompt = read_text(far_path)
+        
+        # Load specialized Math1 prompts
+        format_fixer_path = os.path.join(new_math1_path, "Math1 Format Fixer.md")
+        retry_controller_path = os.path.join(new_math1_path, "Math1 Retry_controller.md")
+        verifier_path = os.path.join(new_math1_path, "Math1 Verifier.md")
+        style_checker_path = os.path.join(new_math1_path, "Math1 Style_checker.md")
+        
+        if os.path.exists(format_fixer_path):
+            format_fixer_prompt = read_text(format_fixer_path)
+        if os.path.exists(retry_controller_path):
+            retry_controller_math1 = read_text(retry_controller_path)
+        if os.path.exists(verifier_path):
+            verifier_math1 = read_text(verifier_path)
+        if os.path.exists(style_checker_path):
+            style_checker_math1 = read_text(style_checker_path)
+    
+    # Load other subjects from old structure
+    old_prompt_dir = os.path.join(prompt_dir, "old")
+    if not os.path.exists(old_prompt_dir):
+        old_prompt_dir = prompt_dir  # Fallback to main directory
+    
+    for subject_key, folder_name in subjects.items():
+        if subject_key == 'mathematics' and use_new_math1:
+            continue  # Already loaded above
+        
+        subject_path = os.path.join(old_prompt_dir, folder_name)
+        if not os.path.exists(subject_path):
+            continue
+        
+        # Find and load Designer file
         designer_files = [f for f in os.listdir(subject_path) if 'Designer' in f and f.endswith('.md')]
         if designer_files:
             designers[subject_key] = read_text(os.path.join(subject_path, designer_files[0]))
@@ -559,18 +649,47 @@ def load_prompts(base_dir: str) -> Prompts:
         if class_files:
             classifiers[subject_key] = read_text(os.path.join(subject_path, class_files[0]))
     
-    # Load universal prompts (contain all subject sections)
-    retry_controller = read_text(os.path.join(prompt_dir, "Retry_controller.md"))
-    verifier = read_text(os.path.join(prompt_dir, "Verifier.md"))
-    style_checker = read_text(os.path.join(prompt_dir, "Style_checker.md"))
+    # Load universal prompts (fallback if Math1-specific not found)
+    retry_controller_path = os.path.join(prompt_dir, "Retry_controller.md")
+    if not retry_controller_math1 and os.path.exists(retry_controller_path):
+        retry_controller_math1 = read_text(retry_controller_path)
+    elif not retry_controller_math1:
+        old_retry_path = os.path.join(old_prompt_dir, "Retry_controller.md")
+        if os.path.exists(old_retry_path):
+            retry_controller_math1 = read_text(old_retry_path)
+    
+    verifier_path = os.path.join(prompt_dir, "Verifier.md")
+    if not verifier_math1 and os.path.exists(verifier_path):
+        verifier_math1 = read_text(verifier_path)
+    elif not verifier_math1:
+        old_verifier_path = os.path.join(old_prompt_dir, "Verifier.md")
+        if os.path.exists(old_verifier_path):
+            verifier_math1 = read_text(old_verifier_path)
+    
+    style_checker_path = os.path.join(prompt_dir, "Style_checker.md")
+    if not style_checker_math1 and os.path.exists(style_checker_path):
+        style_checker_math1 = read_text(style_checker_path)
+    elif not style_checker_math1:
+        old_style_path = os.path.join(old_prompt_dir, "Style_checker.md")
+        if os.path.exists(old_style_path):
+            style_checker_math1 = read_text(old_style_path)
+    
+    # Store Math1-specific prompts as attributes for later use
+    Prompts.sibling_mode = sibling_mode_prompt
+    Prompts.far_mode = far_mode_prompt
+    Prompts.format_fixer_math1 = format_fixer_prompt
+    Prompts.retry_controller_math1 = retry_controller_math1 or ""
+    Prompts.verifier_math1 = verifier_math1 or ""
+    Prompts.style_checker_math1 = style_checker_math1 or ""
+    Prompts.tag_labeler_math1 = tag_labeler_math1
     
     return Prompts(
         designer=designers,
         implementer=implementers,
         classifier=classifiers,
-        retry_controller=retry_controller,
-        verifier=verifier,
-        style_checker=style_checker
+        retry_controller=retry_controller_math1 or "",
+        verifier=verifier_math1 or "",
+        style_checker=style_checker_math1 or ""
     )
 
 
@@ -628,20 +747,92 @@ def choose_difficulty(cfg: RunConfig) -> str:
     weights = [cfg.difficulty_weights[d] for d in diffs]
     return random.choices(diffs, weights=weights, k=1)[0]
 
-def designer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, schema_block: str, schema_id: str, difficulty: str, exemplar_ids: List[str] = None) -> Dict[str, Any]:
+def apply_mode_injection(llm: LLMClient, prompts: Prompts, models: ModelsConfig, 
+                         idea_plan: Dict[str, Any], mode: str) -> Dict[str, Any]:
+    """
+    Apply mode injection (Sibling/Far) to a designer idea_plan.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        idea_plan: Original idea_plan from designer
+        mode: "sibling" or "far"
+    
+    Returns:
+        Modified idea_plan with mode injection applied
+    """
+    if mode not in ["sibling", "far"]:
+        return idea_plan  # No injection needed
+    
+    # Get appropriate mode prompt
+    mode_prompt = None
+    if mode == "sibling" and hasattr(prompts, 'sibling_mode') and prompts.sibling_mode:
+        mode_prompt = prompts.sibling_mode
+    elif mode == "far" and hasattr(prompts, 'far_mode') and prompts.far_mode:
+        mode_prompt = prompts.far_mode
+    
+    if not mode_prompt:
+        # Mode injection not available, return original
+        return idea_plan
+    
+    # Apply mode injection
+    user = f"""Original idea_plan (YAML):
+{yaml.safe_dump(idea_plan, sort_keys=False)}
+
+Apply {mode.upper()} mode injection to this idea_plan.
+Return the modified idea_plan in YAML format with variation_mode set to "{mode}".
+"""
+    
+    txt = llm.generate(
+        model=models.designer,
+        system_prompt=mode_prompt,
+        user_prompt=user,
+        temperature=0.7
+    )
+    
+    obj = safe_yaml_load(txt)
+    if not isinstance(obj, dict):
+        # If parsing fails, return original with mode set
+        idea_plan["variation_mode"] = mode
+        return idea_plan
+    
+    # Ensure variation_mode is set
+    obj["variation_mode"] = mode
+    obj["_raw_text"] = txt
+    return obj
+
+
+def designer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, schema_block: str, schema_id: str, difficulty: str, exemplar_ids: List[str] = None, variation_mode: str = "base") -> Dict[str, Any]:
+    """
+    Call Designer to create an idea_plan.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        schema_block: Schema markdown block
+        schema_id: Schema ID
+        difficulty: Target difficulty
+        exemplar_ids: List of exemplar question IDs (1-2 NSAA references)
+        variation_mode: "base", "sibling", or "far" (default: "base")
+    
+    Returns:
+        idea_plan dictionary with required fields
+    """
     subject_prompts = get_subject_prompts(prompts, schema_id)
     
-    # Inject authentic examples if available
+    # Inject authentic examples if available (1-2 NSAA Section 1 references)
     exemplar_section = ""
     if exemplar_ids:
-        # Sample up to 3 random exemplars
-        sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 3))
+        # Sample 1-2 exemplars (as per new pipeline spec)
+        sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
         texts = fetch_exemplar_texts(sample_ids)
         if texts:
-            exemplar_section = "\n\n# AUTHENTIC NSAA EXAMPLES\n"
+            exemplar_section = "\n\n# AUTHENTIC NSAA SECTION 1 MATHEMATICS REFERENCES\n"
             for i, text in enumerate(texts):
-                exemplar_section += f"Example {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
-            exemplar_section += "\nUse these real examples to calibrate the mathematical complexity and concise phrasing of your new design."
+                exemplar_section += f"Reference {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
+            exemplar_section += "\nUse these references ONLY to calibrate stem compactness, tone, expected step-count, no-calculator engineering, and distractor structure. Do NOT copy distinctive numbers, structural fingerprints, wording, constants, or transformation chains."
 
     user = f"""You will receive a schema and a target difficulty.
 
@@ -650,27 +841,179 @@ Schema:
 
 Target difficulty: {difficulty}
 
-Return exactly one idea plan in the required YAML format."""
+Return exactly one idea_plan in the required YAML format.
+The idea_plan must include:
+- schema_id
+- variation_mode (will be set to "{variation_mode}" after generation)
+- task_signature
+- primary_tag
+- secondary_tags
+- intended_wrong_paths
+- constraints_used
+- idea_summary
+- tool_footprint
+- difficulty_rationale
+- mcq_viability
+
+No numbers. No equations. No solving.
+Define ONE dominant reasoning move."""
+    
     txt = llm.generate(model=models.designer, system_prompt=subject_prompts['designer'], user_prompt=user, temperature=0.7)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "schema_id" not in obj:
         raise ValueError(f"Designer output invalid YAML/object. Raw output:\n{txt}")
-    # Normalize schema_id like "M3..." to "M3" when possible
-    # but keep original too.
+    
+    # Set variation_mode
+    obj["variation_mode"] = variation_mode
+    
+    # Apply mode injection if needed (after initial design)
+    if variation_mode in ["sibling", "far"]:
+        obj = apply_mode_injection(llm, prompts, models, obj, variation_mode)
+    
+    # Normalize schema_id
     out_schema = str(obj.get("schema_id", "")).strip()
-    # Soft check: it should contain schema_id token
     if schema_id not in out_schema:
-        # not fatal—designer might use full id; just record a warning
         obj["_warning"] = f"Designer schema_id '{out_schema}' does not include expected '{schema_id}'."
+    
     obj["_raw_text"] = txt
     return obj
 
-def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, idea_plan: Dict[str, Any]) -> Dict[str, Any]:
+def format_fixer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
+                       question_obj: Dict[str, Any], katex_errors: Optional[List[Dict[str, Any]]] = None,
+                       yaml_errors: Optional[str] = None, schema_id: str = "M1") -> Dict[str, Any]:
+    """
+    Format Fixer: Fix YAML + KaTeX formatting only, no math changes.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        question_obj: Question package with formatting errors
+        katex_errors: Optional list of KaTeX errors
+        yaml_errors: Optional YAML parsing errors
+        schema_id: Schema ID for subject-specific handling
+    
+    Returns:
+        Fixed question package, or original with format_only_blocked flag if non-format issue detected
+    """
+    # Check if Math1 format fixer is available
+    format_fixer_prompt = None
+    if hasattr(prompts, 'format_fixer_math1') and prompts.format_fixer_math1:
+        format_fixer_prompt = prompts.format_fixer_math1
+    
+    if not format_fixer_prompt:
+        # Fallback: try to load from old location
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        old_format_fixer_path = os.path.join(base_dir, "by_subject_prompts", "old", "KaTeX_Fixer.md")
+        if os.path.exists(old_format_fixer_path):
+            format_fixer_prompt = read_text(old_format_fixer_path)
+        else:
+            # No format fixer available, return original
+            return question_obj
+    
+    # Build error report
+    error_report = ""
+    if katex_errors:
+        error_report += "KaTeX Validation Errors:\n"
+        for error_info in katex_errors:
+            field = error_info.get("field", "unknown")
+            errors = error_info.get("errors", [])
+            error_report += f"\nField: {field}\n"
+            for err in errors:
+                error_report += f"  - {err}\n"
+    
+    if yaml_errors:
+        error_report += f"\nYAML Parsing Errors:\n{yaml_errors}\n"
+    
+    user = f"""implemented_question_yaml: |
+{yaml.safe_dump(question_obj, sort_keys=False, default_flow_style=False)}
+
+"""
+    if error_report:
+        user += f"""katex_errors: |
+{error_report}
+
+"""
+    if yaml_errors:
+        user += f"""yaml_errors: |
+{yaml_errors}
+
+"""
+    
+    user += "Fix ONLY YAML and KaTeX formatting. Do NOT change mathematical content, logic, or structure."
+    
+    txt = llm.generate(
+        model=models.implementer,  # Use implementer model for format fixing
+        system_prompt=format_fixer_prompt,
+        user_prompt=user,
+        temperature=0.2  # Very low temperature for precise formatting
+    )
+    
+    # Check if format fixer blocked (non-format issue detected)
+    if "format_only_blocked" in txt.lower() or "blocked_reason" in txt.lower():
+        try:
+            blocked_obj = safe_yaml_load(txt)
+            if blocked_obj.get("format_only_blocked"):
+                # Return original with blocked flag
+                question_obj["_format_fixer_blocked"] = True
+                question_obj["_format_fixer_reason"] = blocked_obj.get("blocked_reason", "non-format issue detected")
+                return question_obj
+        except:
+            pass
+    
+    try:
+        fixed_obj = safe_yaml_load(txt)
+    except Exception as e:
+        # If parsing fails, return original
+        return question_obj
+    
+    # Normalize output
+    fixed_obj = normalize_implementer_output(fixed_obj)
+    
+    if not isinstance(fixed_obj, dict) or "question" not in fixed_obj:
+        # Invalid output, return original
+        return question_obj
+    
+    fixed_obj["_raw_text"] = txt
+    return fixed_obj
+
+
+def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, idea_plan: Dict[str, Any], exemplar_ids: List[str] = None) -> Dict[str, Any]:
+    """
+    Call Implementer to build full MCQ from idea_plan.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        idea_plan: Designer idea_plan
+        exemplar_ids: Optional list of 1-2 NSAA Section 1 reference question IDs
+    
+    Returns:
+        Complete question package with metadata, question, solution, distractor_map
+    """
     # Get subject from idea_plan's schema_id
     schema_id = idea_plan.get("schema_id", "M1")
     subject_prompts = get_subject_prompts(prompts, schema_id)
     
-    user = "Designer idea plan (YAML):\n" + yaml.safe_dump(idea_plan, sort_keys=False)
+    # Add NSAA references if available
+    references_section = ""
+    if exemplar_ids:
+        sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
+        texts = fetch_exemplar_texts(sample_ids)
+        if texts:
+            references_section = "\n\n# NSAA SECTION 1 MATHEMATICS REFERENCES (Calibration Anchors)\n"
+            for i, text in enumerate(texts):
+                references_section += f"Reference {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
+            references_section += "Use these references ONLY to calibrate: stem compactness, tone, expected step-count, no-calculator engineering, distractor structure.\n"
+            references_section += "Do NOT copy: distinctive numbers, structural fingerprints, wording, constants, transformation chains.\n"
+    
+    user = f"""idea_plan (YAML):
+{yaml.safe_dump(idea_plan, sort_keys=False)}{references_section}
+
+Implement this idea_plan into a complete ESAT Mathematics 1 multiple-choice question.
+Return raw YAML only (no markdown fences)."""
+    
     txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     try:
         obj = safe_yaml_load(txt)
@@ -717,50 +1060,143 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     obj["_raw_text"] = txt
     return obj
 
-def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str) -> Dict[str, Any]:
+def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str, designer_plan: Optional[Dict[str, Any]] = None, exemplar_ids: Optional[List[str]] = None) -> Dict[str, Any]:
+    """
+    Call Verifier to check question validity.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        question_obj: Implemented question package
+        schema_id: Schema ID
+        designer_plan: Optional designer plan (for new Math1 pipeline)
+        exemplar_ids: Optional NSAA reference question IDs
+    
+    Returns:
+        Verifier report with verdict (PASS/FAIL) and details
+    """
     subject = get_subject_from_schema(schema_id)
     
-    # Add subject tag to question_obj
-    question_with_subject = {
-        "subject": subject,
-        **question_obj
-    }
+    # Use Math1-specific verifier if available
+    verifier_prompt = None
+    if subject == "mathematics" and hasattr(prompts, 'verifier_math1') and prompts.verifier_math1:
+        verifier_prompt = prompts.verifier_math1
+    else:
+        # Filter verifier prompt to include only relevant subject instructions
+        verifier_prompt = filter_prompt_by_subject(prompts.verifier, subject)
     
-    # Filter verifier prompt to include only relevant subject instructions
-    filtered_prompt = filter_prompt_by_subject(prompts.verifier, subject)
+    # Build user prompt with designer_plan if available (new Math1 pipeline)
+    if designer_plan and subject == "mathematics":
+        # New Math1 pipeline: pass designer_plan and implemented_question separately
+        references_section = ""
+        if exemplar_ids:
+            sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
+            texts = fetch_exemplar_texts(sample_ids)
+            if texts:
+                references_section = "\n\n# NSAA/ENGAA/ESAT REFERENCES (Optional)\n"
+                for i, text in enumerate(texts):
+                    references_section += f"Reference {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
+        
+        user = f"""designer_plan (YAML):
+{yaml.safe_dump(designer_plan, sort_keys=False)}
+
+implemented_question (YAML):
+{yaml.safe_dump(question_obj, sort_keys=False)}
+{references_section}
+
+Verify the implemented question against the designer plan."""
+    else:
+        # Old pipeline: just pass question with subject
+        question_with_subject = {
+            "subject": subject,
+            **question_obj
+        }
+        user = "Question package to verify (YAML):\n" + yaml.safe_dump(question_with_subject, sort_keys=False)
     
-    user = "Question package to verify (YAML):\n" + yaml.safe_dump(question_with_subject, sort_keys=False)
-    txt = llm.generate(model=models.verifier, system_prompt=filtered_prompt, user_prompt=user, temperature=0.2)
+    txt = llm.generate(model=models.verifier, system_prompt=verifier_prompt, user_prompt=user, temperature=0.2)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
         raise ValueError(f"Verifier output invalid YAML/object. Raw output:\n{txt}")
     obj["_raw_text"] = txt
     return obj
 
-def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str, verifier_obj: Optional[Dict[str, Any]]=None) -> Dict[str, Any]:
+def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], schema_id: str, verifier_obj: Optional[Dict[str, Any]]=None, designer_plan: Optional[Dict[str, Any]]=None, exemplar_ids: Optional[List[str]]=None) -> Dict[str, Any]:
+    """
+    Call Style Checker to verify authenticity and difficulty calibration.
+    
+    Args:
+        llm: LLM client
+        prompts: Prompts object
+        models: Models config
+        question_obj: Implemented question package
+        schema_id: Schema ID
+        verifier_obj: Optional verifier report (already passed)
+        designer_plan: Optional designer plan (for new Math1 pipeline)
+        exemplar_ids: Optional NSAA reference question IDs
+    
+    Returns:
+        Style checker report with verdict and style score
+    """
     subject = get_subject_from_schema(schema_id)
     
-    payload = {
-        "subject": subject,
-        "question": question_obj
-    }
-    if verifier_obj:
-        payload["verifier_report"] = verifier_obj
+    # Use Math1-specific style checker if available
+    style_checker_prompt = None
+    if subject == "mathematics" and hasattr(prompts, 'style_checker_math1') and prompts.style_checker_math1:
+        style_checker_prompt = prompts.style_checker_math1
+    else:
+        # Load subject-specific style checker file
+        prompt_dir = os.path.join(os.path.dirname(__file__), "by_subject_prompts")
+        style_checker_file_map = {
+            "physics": "Style_checker_physics.md",
+            "chemistry": "Style_checker_chemistry.md",
+            "biology": "Style_checker_biology.md",
+            "mathematics": "Style_checker.md",
+        }
+        
+        style_checker_filename = style_checker_file_map.get(subject, "Style_checker.md")
+        style_checker_path = os.path.join(prompt_dir, style_checker_filename)
+        if os.path.exists(style_checker_path):
+            style_checker_prompt = read_text(style_checker_path)
+        else:
+            # Fallback to old location
+            old_style_path = os.path.join(prompt_dir, "old", style_checker_filename)
+            if os.path.exists(old_style_path):
+                style_checker_prompt = read_text(old_style_path)
     
-    # Load subject-specific style checker file
-    prompt_dir = os.path.join(os.path.dirname(__file__), "by_subject_prompts")
-    style_checker_file_map = {
-        "physics": "Style_checker_physics.md",
-        "chemistry": "Style_checker_chemistry.md",
-        "biology": "Style_checker_biology.md",
-        "mathematics": "Style_checker.md",  # Keep old file for math for now
-    }
+    if not style_checker_prompt:
+        raise ValueError(f"Style checker prompt not found for subject: {subject}")
     
-    style_checker_filename = style_checker_file_map.get(subject, "Style_checker.md")
-    style_checker_path = os.path.join(prompt_dir, style_checker_filename)
-    style_checker_prompt = read_text(style_checker_path)
+    # Build user prompt
+    if designer_plan and subject == "mathematics":
+        # New Math1 pipeline: pass designer_plan, implemented_question, and references separately
+        references_section = ""
+        if exemplar_ids:
+            sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
+            texts = fetch_exemplar_texts(sample_ids)
+            if texts:
+                references_section = "\n\n# NSAA SECTION 1 MATHEMATICS REFERENCES\n"
+                for i, text in enumerate(texts):
+                    references_section += f"Reference {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
+        
+        user = f"""designer_plan (YAML):
+{yaml.safe_dump(designer_plan, sort_keys=False)}
+
+implemented_question (YAML):
+{yaml.safe_dump(question_obj, sort_keys=False)}
+{references_section}
+
+Check style authenticity and difficulty calibration."""
+    else:
+        # Old pipeline
+        payload = {
+            "subject": subject,
+            "question": question_obj
+        }
+        if verifier_obj:
+            payload["verifier_report"] = verifier_obj
+        user = "Package to style-check (YAML):\n" + yaml.safe_dump(payload, sort_keys=False)
     
-    user = "Package to style-check (YAML):\n" + yaml.safe_dump(payload, sort_keys=False)
     txt = llm.generate(model=models.style_judge, system_prompt=style_checker_prompt, user_prompt=user, temperature=0.3)
     obj = safe_yaml_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
@@ -878,29 +1314,93 @@ Analyze the question and assign appropriate curriculum tags."""
 # Alias for backward compatibility
 def tag_labeler_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_obj: Dict[str, Any], 
                      schema_id: str, curriculum_parser) -> Dict[str, Any]:
-    """Backward compatibility alias for classifier_call."""
-    return classifier_call(llm, prompts, models, question_obj, schema_id, curriculum_parser)
+    """
+    Tag Labeler: Post-acceptance metadata classification (non-blocking).
+    
+    Uses Math1 Tag_Labeler prompt if available, otherwise falls back to classifier_call.
+    """
+    subject = get_subject_from_schema(schema_id)
+    
+    # Use Math1-specific tag labeler if available
+    if subject == "mathematics" and hasattr(prompts, 'tag_labeler_math1') and prompts.tag_labeler_math1:
+        # Use Math1 Tag_Labeler prompt
+        user = f"""implemented_question (YAML):
+{yaml.safe_dump(question_obj, sort_keys=False)}
+
+Assign ESAT Mathematics 1 curriculum tags (primary_tag: 1-7, secondary_tags: 0-2).
+Return raw YAML only."""
+        
+        model = getattr(models, 'classifier', None) or models.style_judge
+        txt = llm.generate(
+            model=model,
+            system_prompt=prompts.tag_labeler_math1,
+            user_prompt=user,
+            temperature=0.3
+        )
+        
+        obj = safe_yaml_load(txt)
+        if not isinstance(obj, dict) or "primary_tag" not in obj:
+            raise ValueError(f"Tag Labeler output invalid YAML/object. Raw output:\n{txt}")
+        
+        # Validate Math1 tags (1-7 only)
+        primary_tag = str(obj.get("primary_tag", ""))
+        if primary_tag and not primary_tag in ["1", "2", "3", "4", "5", "6", "7"]:
+            raise ValueError(f"Tag Labeler assigned invalid Math1 primary_tag: {primary_tag}. Must be 1-7.")
+        
+        obj["_raw_text"] = txt
+        return obj
+    else:
+        # Fallback to classifier_call for other subjects
+        return classifier_call(llm, prompts, models, question_obj, schema_id, curriculum_parser)
 
 def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
                            idea_plan: Dict[str, Any],
                            previous_attempt: Dict[str, Any],
                            verifier_report: Dict[str, Any],
                            style_report: Optional[Dict[str, Any]]=None) -> Dict[str, Any]:
+    """
+    Call Retry Controller to regenerate question implementation.
+    
+    Uses Math1 Retry_controller prompt if available, otherwise falls back to universal retry_controller.
+    """
     # Get subject from idea_plan's schema_id
     schema_id = idea_plan.get("schema_id", "M1")
+    subject = get_subject_from_schema(schema_id)
+    
+    # Use Math1-specific retry controller if available
+    retry_prompt = None
+    if subject == "mathematics" and hasattr(prompts, 'retry_controller_math1') and prompts.retry_controller_math1:
+        retry_prompt = prompts.retry_controller_math1
+    else:
+        retry_prompt = prompts.retry_controller
+    
+    # Load regen header if available (for Math1)
+    regen_header = ""
+    if subject == "mathematics":
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        regen_header_path = os.path.join(base_dir, "by_subject_prompts", "new", "Math1", "Math1 regen header.md")
+        if os.path.exists(regen_header_path):
+            regen_header = read_text(regen_header_path)
+            # Replace placeholder with actual fail report
+            fail_yaml = yaml.safe_dump(verifier_report, sort_keys=False)
+            if style_report:
+                fail_yaml += "\n\nstyle_report:\n" + yaml.safe_dump(style_report, sort_keys=False)
+            regen_header = regen_header.replace("<FAIL_YAML>", fail_yaml)
+    
     subject_prompts = get_subject_prompts(prompts, schema_id)
     
-    user = (
-        prompts.retry_controller.strip()
-        + "\n\nidea_plan:\n"
+    user = regen_header + "\n\n" if regen_header else ""
+    user += (
+        retry_prompt.strip()
+        + "\n\ndesigner_plan_yaml (YAML):\n"
         + yaml.safe_dump(idea_plan, sort_keys=False)
-        + "\nprevious_attempt:\n"
+        + "\n\nprevious_implemented_yaml (YAML):\n"
         + yaml.safe_dump(previous_attempt, sort_keys=False)
-        + "\nverifier_report:\n"
+        + "\n\nfail_report_yaml (YAML):\n"
         + yaml.safe_dump(verifier_report, sort_keys=False)
     )
     if style_report:
-        user += "\nstyle_report:\n" + yaml.safe_dump(style_report, sort_keys=False)
+        user += "\n\nstyle_report (YAML):\n" + yaml.safe_dump(style_report, sort_keys=False)
 
     txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     try:
@@ -1186,14 +1686,66 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         raise SystemExit("Missing GEMINI_API_KEY environment variable.")
 
     prompts = load_prompts(base_dir)
-    # Prefer Schemas_NSAA.md if it exists (new restructured schemas), otherwise fall back to Schemas.md
+    
+    # Helper function to extract markdown from code blocks
+    def extract_markdown_from_code_blocks(text: str) -> str:
+        """Extract markdown content from markdown code blocks."""
+        pattern = r'```markdown\s*\n(.*?)(?:\n---\s*\n)?```'
+        matches = re.findall(pattern, text, re.DOTALL)
+        if matches:
+            cleaned_matches = [m.strip() for m in matches if m.strip()]
+            if cleaned_matches:
+                extracted = '\n\n'.join(cleaned_matches)
+                if extracted.strip() and '## **' in extracted:
+                    return extracted
+        return text
+    
+    # Try to find schema files - check multiple locations
+    schemas_path = None
+    schemas_md = None
+    
+    # Try multiple locations for ESAT schemas
+    base_dir_path = Path(base_dir)
+    scripts_dir = base_dir_path.parent
+    
+    # Location 1: Local schemas directory (preferred)
     schemas_path = os.path.join(base_dir, "schemas", "Schemas_NSAA.md")
-    if not os.path.exists(schemas_path):
-        schemas_path = os.path.join(base_dir, "Schemas.md")
-    if not os.path.exists(schemas_path):
-        raise FileNotFoundError(f"Schema file not found. Tried: {os.path.join(base_dir, 'schemas', 'Schemas_NSAA.md')} and {os.path.join(base_dir, 'Schemas.md')}")
-    print(f"[run_once] Using schema file: {schemas_path}")
-    schemas_md = read_text(schemas_path)
+    if os.path.exists(schemas_path):
+        schemas_md_raw = read_text(schemas_path)
+        schemas_md = extract_markdown_from_code_blocks(schemas_md_raw)
+        print(f"[run_once] Using schema file: {schemas_path}")
+    else:
+        # Location 2: Schemas_ESAT.md in local schemas directory
+        schemas_path = os.path.join(base_dir, "schemas", "Schemas_ESAT.md")
+        if os.path.exists(schemas_path):
+            schemas_md_raw = read_text(schemas_path)
+            schemas_md = extract_markdown_from_code_blocks(schemas_md_raw)
+            print(f"[run_once] Using schema file: {schemas_path}")
+        else:
+            # Location 3: Schemas.md in base directory
+            schemas_path = os.path.join(base_dir, "Schemas.md")
+            if os.path.exists(schemas_path):
+                schemas_md_raw = read_text(schemas_path)
+                schemas_md = extract_markdown_from_code_blocks(schemas_md_raw)
+                print(f"[run_once] Using schema file: {schemas_path}")
+            else:
+                # Location 4: Shared schemas directory (fallback)
+                shared_schemas_path = scripts_dir / "esat_question_generator" / "schemas" / "Schemas_NSAA.md"
+                if shared_schemas_path.exists():
+                    schemas_md_raw = read_text(str(shared_schemas_path))
+                    schemas_md = extract_markdown_from_code_blocks(schemas_md_raw)
+                    schemas_path = str(shared_schemas_path)
+                    print(f"[run_once] Using schema file: {schemas_path}")
+    
+    if not schemas_md:
+        raise FileNotFoundError(
+            f"Schema file not found. Tried:\n"
+            f"  - {os.path.join(base_dir, 'schemas', 'Schemas_NSAA.md')}\n"
+            f"  - {os.path.join(base_dir, 'schemas', 'Schemas_ESAT.md')}\n"
+            f"  - {os.path.join(base_dir, 'Schemas.md')}\n"
+            f"  - {scripts_dir / 'esat_question_generator' / 'schemas' / 'Schemas_NSAA.md'}"
+        )
+    
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
     if schemas and forced_schema_id:
         sample_sids = [forced_schema_id] if forced_schema_id in schemas else list(schemas.keys())[:3]
@@ -1212,7 +1764,10 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             print("   Tag labeling will be disabled for this run.")
             curriculum_parser = None
 
-    llm = LLMClient(api_key=api_key)
+    # Configure rate limiting from environment variables
+    min_delay = float(os.environ.get("API_MIN_DELAY", "0.5"))  # Default 0.5s between calls
+    rate_limit_delay = float(os.environ.get("API_RATE_LIMIT_DELAY", "5.0"))  # Default 5s on rate limit
+    llm = LLMClient(api_key=api_key, min_delay=min_delay, rate_limit_delay=rate_limit_delay)
 
     run_id = now_stamp()
     run_dir = os.path.join(base_dir, cfg.out_dir, run_id)
@@ -1259,7 +1814,12 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         try:
             if callbacks and "on_stage_progress" in callbacks:
                 callbacks["on_stage_progress"]("Designer", f"Attempt {d_try + 1}/{cfg.max_designer_retries + 1}")
-            idea_plan = designer_call(llm, prompts, models, schema_block, schema_id, difficulty, exemplar_ids)
+            # Determine variation_mode (base/sibling/far) - can be set via config or env var
+            variation_mode = getattr(cfg, 'variation_mode', os.environ.get('VARIATION_MODE', 'base'))
+            if variation_mode not in ['base', 'sibling', 'far']:
+                variation_mode = 'base'
+            
+            idea_plan = designer_call(llm, prompts, models, schema_block, schema_id, difficulty, exemplar_ids, variation_mode=variation_mode)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Designer", idea_plan)
             break
@@ -1344,7 +1904,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             if attempt == 0:
                 if callbacks and "on_stage_start" in callbacks:
                     callbacks["on_stage_start"]("Implementer", f"Implementing question (Attempt {attempt + 1})")
-                q_pkg = implementer_call(llm, prompts, models, idea_plan)
+                q_pkg = implementer_call(llm, prompts, models, idea_plan, exemplar_ids=exemplar_ids)
                 if callbacks and "on_stage_complete" in callbacks:
                     callbacks["on_stage_complete"]("Implementer", q_pkg)
             else:
@@ -1363,7 +1923,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
 
             if callbacks and "on_stage_start" in callbacks:
                 callbacks["on_stage_start"]("Verifier", "Verifying question correctness")
-            verifier_report = verifier_call(llm, prompts, models, q_pkg, schema_id)
+            verifier_report = verifier_call(llm, prompts, models, q_pkg, schema_id, designer_plan=idea_plan, exemplar_ids=exemplar_ids)
             v_verdict = extract_verdict(verifier_report)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Verifier", verifier_report)
@@ -1445,7 +2005,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             # Style Judge
             if callbacks and "on_stage_start" in callbacks:
                 callbacks["on_stage_start"]("Style Judge", "Checking exam authenticity")
-            style_report = style_call(llm, prompts, models, q_pkg, schema_id, verifier_obj=verifier_report)
+            style_report = style_call(llm, prompts, models, q_pkg, schema_id, verifier_obj=verifier_report, designer_plan=idea_plan, exemplar_ids=exemplar_ids)
             s_verdict = extract_verdict(style_report)
             if callbacks and "on_stage_complete" in callbacks:
                 callbacks["on_stage_complete"]("Style Judge", style_report)
@@ -1545,7 +2105,27 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                             callbacks["on_stage_progress"]("KaTeX Validator", f"Fixing KaTeX errors: {error_summary}")
                         
                         try:
-                            q_pkg = fix_katex_issues(llm, prompts, models, q_pkg, katex_errors, schema_id, katex_attempt, base_dir)
+                            # Use format_fixer_call for format-only fixes (new Math1 pipeline)
+                            # Check if errors are format-only (katex_yaml_formatting)
+                            is_format_only = all(
+                                "katex" in str(err).lower() or "yaml" in str(err).lower() or "format" in str(err).lower()
+                                for error_info in katex_errors
+                                for err in error_info.get("errors", [])
+                            )
+                            
+                            if is_format_only:
+                                # Use format_fixer_call (format-only, no math changes)
+                                if callbacks and "on_stage_start" in callbacks:
+                                    callbacks["on_stage_start"]("Format Fixer", "Fixing YAML and KaTeX formatting only")
+                                q_pkg = format_fixer_call(llm, prompts, models, q_pkg, katex_errors=katex_errors, schema_id=schema_id)
+                                
+                                # Check if format fixer blocked (non-format issue detected)
+                                if q_pkg.get("_format_fixer_blocked"):
+                                    raise ValueError(f"Format Fixer blocked: {q_pkg.get('_format_fixer_reason', 'non-format issue detected')}")
+                            else:
+                                # Fallback to old fix_katex_issues for non-format errors
+                                q_pkg = fix_katex_issues(llm, prompts, models, q_pkg, katex_errors, schema_id, katex_attempt, base_dir)
+                            
                             if callbacks and "on_stage_progress" in callbacks:
                                 callbacks["on_stage_progress"]("KaTeX Validator", "Retrying validation after fix")
                         except Exception as e:
@@ -1597,102 +2177,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 # Should not reach here, but safety check
                 return {"run_dir": run_dir, "status": "rejected_katex_validation"}
             
-            # PASS KaTeX validation -> Tag labeling (optional, non-blocking)
-            tags = None
-            if cfg.enable_tag_labeling and curriculum_parser:
-                try:
-                    if callbacks and "on_stage_start" in callbacks:
-                        callbacks["on_stage_start"]("Tag Labeler", "Assigning curriculum tags")
-                    
-                    tag_result = tag_labeler_call(llm, prompts, models, q_pkg, schema_id, curriculum_parser)
-                    
-                    # CRITICAL: Validate schema_id matches the classified subject
-                    schema_prefix = schema_id[0].upper()
-                    primary_tag = tag_result.get("primary_tag", "")
-                    
-                    # Check if classifier assigned a tag that doesn't match the schema prefix
-                    if primary_tag:
-                        # Validate that Chemistry schemas get chemistry- tags, not Math tags
-                        if schema_prefix == 'C':
-                            if primary_tag.startswith("M1-") or primary_tag.startswith("M2-"):
-                                print(f"⚠️  ERROR: Chemistry schema {schema_id} was classified as Math: {primary_tag}")
-                                print(f"   This question should use an M schema, not a C schema.")
-                                raise ValueError(f"Schema mismatch: Chemistry schema {schema_id} got Math tag {primary_tag}. "
-                                               f"Question is actually mathematics - use an M schema instead.")
-                            elif not primary_tag.startswith("chemistry-"):
-                                print(f"⚠️  WARNING: Chemistry schema {schema_id} got unexpected tag: {primary_tag}")
-                        elif schema_prefix == 'M':
-                            # Math schemas should get M1- or M2- tags, not chemistry- tags
-                            if primary_tag.startswith("chemistry-"):
-                                print(f"⚠️  ERROR: Math schema {schema_id} was classified as Chemistry: {primary_tag}")
-                                print(f"   This question should use a C schema, not an M schema.")
-                                raise ValueError(f"Schema mismatch: Math schema {schema_id} got Chemistry tag {primary_tag}. "
-                                               f"Question is actually chemistry - use a C schema instead.")
-                    
-                    # Normalize to prefixed format if needed (future-proofing)
-                    if primary_tag and curriculum_parser:
-                        normalized_primary = curriculum_parser.normalize_topic_code(primary_tag)
-                        if normalized_primary:
-                            primary_tag = normalized_primary
-                    
-                    secondary_tags_list = tag_result.get("secondary_tags", [])
-                    secondary_tags = []
-                    for tag in secondary_tags_list:
-                        tag_code = tag.get("code", "") if isinstance(tag, dict) else str(tag)
-                        if tag_code:
-                            # Normalize to prefixed format if needed
-                            if curriculum_parser:
-                                normalized_tag = curriculum_parser.normalize_topic_code(tag_code)
-                                if normalized_tag:
-                                    tag_code = normalized_tag
-                            secondary_tags.append(tag_code)
-                    
-                    # Build confidence object
-                    confidence = {
-                        "primary": tag_result.get("primary_confidence", 0.0)
-                    }
-                    if secondary_tags_list:
-                        for i, tag in enumerate(secondary_tags_list):
-                            if isinstance(tag, dict):
-                                confidence[tag.get("code", "")] = tag.get("confidence", 0.0)
-                    
-                    tags = {
-                        "primary_tag": primary_tag,
-                        "secondary_tags": secondary_tags,
-                        "confidence": confidence,
-                        "labeled_at": datetime.datetime.now().isoformat(),
-                        "labeled_by": "ai_generation",
-                        "reasoning": tag_result.get("reasoning", "")
-                    }
-                    
-                    # NEW: Add paper field for Math questions
-                    if "paper" in tag_result:
-                        tags["paper"] = tag_result["paper"]
-                    
-                    dump_jsonl(paths["logs"], {
-                        "stage": "tag_labeler",
-                        "schema_id": schema_id,
-                        "difficulty": difficulty,
-                        "attempt": attempt + 1,
-                        "tags": tags,
-                    })
-                    
-                    if callbacks and "on_stage_complete" in callbacks:
-                        callbacks["on_stage_complete"]("Tag Labeler", tag_result)
-                except Exception as e:
-                    # Tag labeling failures should not block question generation
-                    error_msg = str(e)
-                    print(f"⚠ Tag labeling failed (non-fatal): {error_msg[:200]}...")
-                    dump_jsonl(paths["logs"], {
-                        "stage": "tag_labeler",
-                        "schema_id": schema_id,
-                        "difficulty": difficulty,
-                        "attempt": attempt + 1,
-                        "error": error_msg,
-                    })
-                    if callbacks and "on_stage_error" in callbacks:
-                        callbacks["on_stage_error"]("Tag Labeler", error_msg)
-            
+            # PASS KaTeX validation -> Build item and accept (tag labeling happens AFTER acceptance)
             # Get token usage from LLM client
             token_usage = llm.total_usage.copy() if llm.total_usage else None
             item = build_bank_item(
@@ -1705,7 +2190,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 models=models,
                 attempts=attempt + 1,
                 token_usage=token_usage,
-                tags=tags,
+                tags=None,  # Tags will be assigned by classifier_station at the end
             )
             # Add run_id to item
             item["_run_id"] = run_id
@@ -1744,6 +2229,85 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             stats["by_schema"][schema_id]["accepted"] += 1
             with open(paths["stats"], "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
+            
+            # Tag labeling is now handled by classifier_station() after question acceptance
+            # Run classifier AFTER acceptance (non-blocking, like TMUA)
+            if cfg.enable_tag_labeling and curriculum_parser:
+                try:
+                    if callbacks and "on_stage_start" in callbacks:
+                        callbacks["on_stage_start"]("Classifier Station", "Assigning curriculum tags")
+                    
+                    tag_result = tag_labeler_call(llm, prompts, models, q_pkg, schema_id, curriculum_parser)
+                    
+                    # Process tag_result into tags format
+                    primary_tag = tag_result.get("primary_tag", "")
+                    secondary_tags_list = tag_result.get("secondary_tags", [])
+                    secondary_tags = []
+                    
+                    # Normalize to prefixed format if needed
+                    if primary_tag and curriculum_parser:
+                        normalized_primary = curriculum_parser.normalize_topic_code(primary_tag)
+                        if normalized_primary:
+                            primary_tag = normalized_primary
+                    
+                    for tag in secondary_tags_list:
+                        tag_code = tag.get("code", "") if isinstance(tag, dict) else str(tag)
+                        if tag_code:
+                            # Normalize to prefixed format if needed
+                            if curriculum_parser:
+                                normalized_tag = curriculum_parser.normalize_topic_code(tag_code)
+                                if normalized_tag:
+                                    tag_code = normalized_tag
+                            secondary_tags.append(tag_code)
+                    
+                    # Build confidence object
+                    confidence = {
+                        "primary": tag_result.get("primary_confidence", 0.0)
+                    }
+                    if secondary_tags_list:
+                        for i, tag in enumerate(secondary_tags_list):
+                            if isinstance(tag, dict):
+                                confidence[tag.get("code", "")] = tag.get("confidence", 0.0)
+                    
+                    tags = {
+                        "primary_tag": primary_tag,
+                        "secondary_tags": secondary_tags,
+                        "confidence": confidence,
+                        "labeled_at": datetime.datetime.now().isoformat(),
+                        "labeled_by": "classifier_station",
+                        "reasoning": tag_result.get("reasoning", "")
+                    }
+                    
+                    # Add paper field for Math questions
+                    if "paper" in tag_result:
+                        tags["paper"] = tag_result["paper"]
+                    
+                    # Update item with tags
+                    item["tags"] = tags
+                    
+                    dump_jsonl(paths["logs"], {
+                        "stage": "classifier_station",
+                        "schema_id": schema_id,
+                        "difficulty": difficulty,
+                        "attempt": attempt + 1,
+                        "tags": tags,
+                    })
+                    
+                    if callbacks and "on_stage_complete" in callbacks:
+                        callbacks["on_stage_complete"]("Classifier Station", tag_result)
+                except Exception as e:
+                    # Classifier failures should not block question generation
+                    error_msg = str(e)
+                    print(f"⚠ Classifier failed (non-fatal): {error_msg[:200]}...")
+                    dump_jsonl(paths["logs"], {
+                        "stage": "classifier_station",
+                        "schema_id": schema_id,
+                        "difficulty": difficulty,
+                        "attempt": attempt + 1,
+                        "error": error_msg,
+                    })
+                    if callbacks and "on_stage_error" in callbacks:
+                        callbacks["on_stage_error"]("Classifier Station", error_msg)
             
             # Backup question (all questions, accepted and rejected)
             try:
@@ -2009,7 +2573,8 @@ class PipelineGUI:
         
         # Stage widgets
         self.stage_widgets = {}
-        stages = ["Designer", "Implementer", "Verifier", "Style Judge"]
+        # Include all major stages we use in callbacks
+        stages = ["Designer", "Implementer", "Verifier", "Style Judge", "KaTeX Validator", "Classifier Station"]
         
         for i, stage in enumerate(stages):
             frame = ttk.Frame(stages_frame)
@@ -2179,6 +2744,15 @@ class PipelineGUI:
             import traceback
             error_msg = f"Exception: {str(e)}\n\n{traceback.format_exc()}"
             error_short = str(e)[:50]
+
+            # Always log full error to console for debugging
+            try:
+                print("[PipelineGUI] Unhandled exception during pipeline run:")
+                print(error_msg)
+            except Exception:
+                # Avoid secondary failures during logging
+                pass
+
             self.root.after(0, lambda: (
                 self.status_label.config(text=f"Error: {error_short}...", foreground="red"),
                 self.result_text.config(state=tk.NORMAL),

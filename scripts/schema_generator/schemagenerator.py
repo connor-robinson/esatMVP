@@ -50,6 +50,14 @@ import tempfile
 import shutil
 import random
 import uuid
+import sys
+import warnings
+
+# Suppress Abseil warnings from Google Generative AI library
+# This warning appears when the library initializes and is harmless
+os.environ['ABSL_MIN_LOG_LEVEL'] = '2'  # Suppress INFO and WARNING logs
+warnings.filterwarnings('ignore', category=UserWarning, module='absl')
+
 try:
     import numpy as np
     NUMPY_AVAILABLE = True
@@ -67,6 +75,16 @@ from rapidfuzz import fuzz
 import google.generativeai as genai
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
+
+# Import database module
+import sys
+_restructure_path = str(Path(__file__).parent / "restructure")
+if _restructure_path not in sys.path:
+    sys.path.insert(0, _restructure_path)
+try:
+    from db import NSAASchemaDB  # type: ignore
+except ImportError:
+    NSAASchemaDB = None  # type: ignore
 
 
 # ----------------------------
@@ -145,6 +163,8 @@ class QuestionItem:
     # TMUA Official Solutions fields
     solution_text: Optional[str] = None  # Full solution text from Official Solutions PDF
     solution_pdf_path: Optional[str] = None  # Path to the Official Solutions PDF that provided this solution
+    # NSAA/ESAT subject classification
+    subject: Optional[str] = None  # Mathematics, Physics, Chemistry, Biology (for NSAA/ESAT)
 
 @dataclass
 class SchemaSummary:
@@ -192,6 +212,42 @@ class QuestionFingerprint:
     wrong_move: str  # One sentence describing common incorrect approach
     answer_form: str  # "integer|rational|algebraic|logic|multiple_choice_logic|other"
     confidence: float  # 0.0-1.0
+
+@dataclass
+class MicroSchema:
+    """Micro-schema extracted from a single question (legacy format)."""
+    qid: str
+    question_item: QuestionItem
+    core_move: str  # Single decisive step in imperative form
+    secondary_moves: List[str]  # Optional secondary steps
+    key_triggers: List[str]  # 2-5 concrete phrases that signal this move
+    representation: str  # "algebraic|diagram|graph|probability|data_table|pure_text|other"
+    difficulty: str  # "Easy|Medium|Hard"
+    prerequisites: List[str]  # Required concepts
+    wrong_paths: List[str]  # 2-3 common mistakes
+    answer_form: str  # "integer|rational|algebraic|logic|multiple_choice_logic|proof|explanation|other"
+    object_type: str  # "function|geometry|reaction|energy|probability_distribution|other"
+    prefix_hint: str  # "M|P|B|C|R"
+    embedding: Optional[List[float]] = None  # Embedding vector for clustering
+    core_move_verb: Optional[str] = None  # Extracted verb from core_move (e.g., "apply", "set up", "differentiate")
+
+@dataclass
+class MicroSchemaNew:
+    """Micro-schema for new pipeline (matches database structure)."""
+    question_id: str
+    subject_assigned: str
+    subject_final: str
+    subject_confidence: str  # "high|medium|low"
+    discard: bool
+    discard_reason: Optional[str]
+    core_move: Optional[str]
+    trigger_signals: List[str]
+    type_bucket: Optional[str]  # reasoning_type/manipulation_type/representation_type
+    common_wrong_path: Optional[str]
+    minimal_prerequisite: Optional[str]
+    difficulty_estimate: Optional[str]  # "low|medium|high"
+    quality_score: float
+    embedding: Optional[List[float]]
 
 @dataclass
 class PDFExtractionStats:
@@ -1463,8 +1519,8 @@ def infer_exam_section_from_path(pdf_path: Path) -> Tuple[Optional[str], Optiona
             section = "Paper 2"
             break
 
-    # year
-    m = re.search(r"(201\d|202\d)", str(pdf_path))
+    # year - support 2010-2029 (2010-2019 and 2020-2029)
+    m = re.search(r"(20[12]\d)", str(pdf_path))
     if m:
         year = m.group(1)
 
@@ -1556,14 +1612,86 @@ def validate_pdf_extraction(items: List[QuestionItem], pdf_path: Path) -> Tuple[
         # Don't require option letters for TMUA - they might be on answer sheet
         return True, ""
     
-    # For non-TMUA: Check for option letters (A-D)
+    # Check if this is an ESAT/NSAA paper
+    is_esat = any(item.exam and item.exam in ["NSAA", "ENGAA"] for item in items) or any(exam in str(pdf_path).upper() for exam in ["NSAA", "ENGAA"])
+    is_section2 = any(item.section and "Section 2" in item.section for item in items) or "Section 2" in str(pdf_path)
+    
+    # For ESAT/NSAA: Check for appropriate option letters
     all_text = " ".join(q.text for q in items)
+    
+    if is_esat:
+        if is_section2:
+            # Section 2 uses A-H options
+            has_options = bool(re.search(r'[A-H]\)|[A-H]\.|\([A-H]\)|[A-H]:', all_text, re.IGNORECASE))
+            if not has_options:
+                # For Section 2, be lenient - options might be on separate pages or not extracted yet
+                # Just check we have reasonable content
+                if len(items) < 5:
+                    return False, f"Too few questions extracted ({len(items)} < 5) - likely extraction issue"
+                # Allow through even without options for Section 2
+                return True, ""
+        else:
+            # Section 1 uses A-D options, but be lenient
+            has_options = bool(re.search(r'[A-D]\)|[A-D]\.|\([A-D]\)|[A-D]:', all_text, re.IGNORECASE))
+            if not has_options:
+                # For ESAT/NSAA, be lenient - options might be on separate pages
+                if len(items) < 5:
+                    return False, f"Too few questions extracted ({len(items)} < 5) - likely extraction issue"
+                # Allow through even without options
+                return True, ""
+        return True, ""
+    
+    # For other non-TMUA papers: Check for option letters (A-D)
     has_options = bool(re.search(r'[A-D]\)|[A-D]\.|\([A-D]\)|[A-D]:', all_text))
     
     if not has_options:
         return False, "No option letters (A-D) found - likely not a question paper"
     
     return True, ""
+
+
+def classify_nsaa_question_by_part_header(page_text: str, section: Optional[str]) -> Optional[str]:
+    """
+    Classify NSAA question by PART header in page text.
+    PART headers appear on every page in that section (e.g., "PART X PHYSICS" on all Physics pages).
+    Returns: 'Mathematics', 'Physics', 'Chemistry', or 'Biology', or None if not found.
+    """
+    if not section:
+        return None
+    
+    lines = page_text.splitlines()[:15]  # Check first 15 lines for PART header
+    
+    if "Section 1" in section:
+        # Section 1: PART A = Mathematics, PART B = Physics, PART C = Chemistry
+        for line in lines:
+            # Match "PART A Mathematics" or "PART A" followed by Mathematics
+            if re.search(r'PART\s+A\s+Mathematics', line, re.IGNORECASE):
+                return 'Mathematics'
+            elif re.search(r'PART\s+B\s+Physics', line, re.IGNORECASE):
+                return 'Physics'
+            elif re.search(r'PART\s+C\s+Chemistry', line, re.IGNORECASE):
+                return 'Chemistry'
+            # Also check for just "PART A" / "PART B" / "PART C" if subject is clear from context
+            elif re.search(r'PART\s+A\b', line, re.IGNORECASE) and 'mathematics' in line.lower():
+                return 'Mathematics'
+            elif re.search(r'PART\s+B\b', line, re.IGNORECASE) and 'physics' in line.lower():
+                return 'Physics'
+            elif re.search(r'PART\s+C\b', line, re.IGNORECASE) and 'chemistry' in line.lower():
+                return 'Chemistry'
+    
+    elif "Section 2" in section:
+        # Section 2: PART X = Physics, PART Y = Chemistry, PART Z = Biology
+        # "PART X PHYSICS" appears on every Physics page
+        for line in lines:
+            # Match "PART X PHYSICS" or "PART X" with Physics
+            if re.search(r'PART\s+X\s+PHYSICS', line, re.IGNORECASE) or (re.search(r'PART\s+X\b', line, re.IGNORECASE) and 'physics' in line.lower()):
+                return 'Physics'
+            elif re.search(r'PART\s+Y\s+CHEMISTRY', line, re.IGNORECASE) or (re.search(r'PART\s+Y\b', line, re.IGNORECASE) and 'chemistry' in line.lower()):
+                return 'Chemistry'
+            elif re.search(r'PART\s+Z\s+BIOLOGY', line, re.IGNORECASE) or (re.search(r'PART\s+Z\b', line, re.IGNORECASE) and 'biology' in line.lower()):
+                return 'Biology'
+    
+    return None
 
 
 def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, bool]] = None) -> Tuple[List[QuestionItem], PDFExtractionStats]:
@@ -1583,8 +1711,57 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
     # Check if this is a TMUA paper - use per-page extraction
     is_tmua = exam == "TMUA"
     
+    # For ESAT/NSAA Section 2 papers before and including 2018, skip them
+    if not is_tmua and section and "Section 2" in section and year:
+        try:
+            year_int = int(year)
+            if year_int <= 2018:
+                print(f"[SKIP] Skipping {pdf_path.name}: Section 2 papers before/including 2018 are not supported")
+                doc.close()
+                return [], PDFExtractionStats(
+                    pdf_path=str(pdf_path),
+                    status="SUCCESS",
+                    total_chars=0,
+                    question_count=0,
+                    median_question_length=0,
+                    failure_reason=None,
+                    extracted_at=now_iso()
+                )
+        except (ValueError, TypeError):
+            pass  # If year parsing fails, continue
+    
+    # Determine extraction strategy
+    is_section1 = not is_tmua and section and "Section 1" in section
+    is_section2 = not is_tmua and section and "Section 2" in section
+    
+    # Debug output
+    if is_section2:
+        print(f"[DEBUG] Section 2 detected: exam={exam}, section={section}, year={year}, path={pdf_path.name}")
+    
     # For TMUA, skip first page (cover/instructions), then use one question per page
-    start_page = 1 if is_tmua else 0
+    # For Section 1, also use per-page extraction (1-2 questions per page)
+    start_page = 1 if (is_tmua or is_section1) else 0
+
+    # ----------------------------
+    # ENGAA Section 1 Part B handling
+    # ----------------------------
+    # ENGAA Section 1 PDFs in the "Part B" folders contain BOTH Part A and Part B.
+    # We only want to keep Part B questions (Advanced Mathematics and Advanced Physics).
+    # Heuristic:
+    # - Find the first page that contains a "PART B" heading.
+    # - Skip all pages before that when extracting Section 1 questions.
+    part_b_start_page: Optional[int] = None
+    if exam == "ENGAA" and is_section1:
+        for pi_scan in range(start_page, doc.page_count):
+            page_scan = doc.load_page(pi_scan)
+            raw_scan = page_scan.get_text("text") or ""
+            text_scan = normalize_spaces(raw_scan).upper()
+            # Look for a reasonably specific Part B marker to avoid false positives
+            if "PART B" in text_scan and "ADVANCED" in text_scan:
+                part_b_start_page = pi_scan
+                break
+        # If we didn't find an explicit PART B marker, fall back to processing everything
+        # (this keeps behaviour unchanged for legacy/odd PDFs).
     
     for pi in range(start_page, doc.page_count):
         page = doc.load_page(pi)
@@ -1594,8 +1771,84 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
             continue
 
         page_has_diagram = detect_page_has_diagram(page)
-        
-        if is_tmua:
+
+        # For ENGAA Section 1, drop all pages that belong to Part A.
+        # If we detected a PART B start page, only keep pages at/after that.
+        if exam == "ENGAA" and is_section1 and part_b_start_page is not None:
+            if pi < part_b_start_page:
+                # This is Part A content – skip entirely.
+                continue
+
+        if is_section1:
+            # Section 1: Usually 1-2 questions per page, per-page extraction
+            lines = text.splitlines()
+            qnum = None
+            
+            # Try to find question number in first few lines
+            for line_idx, line in enumerate(lines[:10]):
+                line_stripped = line.strip()
+                if not line_stripped:
+                    continue
+                
+                # Pattern: Number at start of line: "1 ", "2 ", etc.
+                m = re.match(r"^(\d{1,2})\s+", line_stripped)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 80:  # Section 1 can have up to 80 questions
+                        qnum = candidate
+                        break
+                
+                # Pattern: "Question N" or "Q N"
+                m = re.match(r"^Question\s+(\d{1,2})[:\.]?\s*", line_stripped, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 80:
+                        qnum = candidate
+                        break
+                m = re.match(r"^Q\.?\s*(\d{1,2})[:\.]?\s*", line_stripped, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 80:
+                        qnum = candidate
+                        break
+            
+            if qnum is None:
+                # Try to infer from page number (less reliable)
+                inferred_qnum = (pi - start_page) + 1
+                if 1 <= inferred_qnum <= 80:
+                    qnum = inferred_qnum
+                else:
+                    continue
+            
+            # Use entire page text as question text (Section 1 typically has 1-2 questions per page)
+            qtext = text.strip()
+            
+            # Skip if too short
+            if len(qtext) < 50:
+                continue
+            
+            # Classify subject for NSAA/ESAT questions (before cleaning)
+            subject = None
+            if exam and exam in ["NSAA", "ENGAA"]:
+                subject = classify_nsaa_question_by_part_header(text, section)
+            
+            # Diagram detection: Always False for now
+            skipped = False
+            
+            item = QuestionItem(
+                paper_id=paper_id,
+                pdf_path=str(pdf_path),
+                year=year,
+                exam=exam,
+                section=section,
+                qnum=qnum,
+                text=qtext,
+                skipped_diagram=skipped,
+                subject=subject,
+            )
+            items.append(item)
+            
+        elif is_tmua:
             # TMUA: One question per page - extract question number from first few lines
             lines = text.splitlines()
             qnum = None
@@ -1667,6 +1920,11 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
             # Note: We don't skip questions here - we'll handle that in build_or_load_index
             # after extracting solutions, so we can still match solutions to question numbers
 
+            # Classify subject for NSAA/ESAT questions
+            subject = None
+            if exam and exam in ["NSAA", "ENGAA"]:
+                subject = classify_nsaa_question_by_part_header(text, section)
+
             item = QuestionItem(
                 paper_id=paper_id,
                 pdf_path=str(pdf_path),
@@ -1676,19 +1934,311 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
                 qnum=qnum,
                 text=qtext,
                 skipped_diagram=skipped,  # Always False now
+                subject=subject,
             )
             items.append(item)
                 
+        elif is_section2:
+            # Section 2 (2019+): Clean extraction approach
+            # 1. Remove headers/footers
+            # 2. Identify PART pages (X, Y, Z)
+            # 3. Extract one question per page after PART header
+            # 4. Validate
+            
+            # Debug: Track extraction for this PDF
+            if not hasattr(extract_questions_from_pdf, '_debug_section2'):
+                extract_questions_from_pdf._debug_section2 = {}
+            if str(pdf_path) not in extract_questions_from_pdf._debug_section2:
+                extract_questions_from_pdf._debug_section2[str(pdf_path)] = {
+                    'total_pages': doc.page_count,
+                    'processed': 0,
+                    'skipped_early_pages': 0,
+                    'skipped_not_question': 0,
+                    'skipped_no_qnum': 0,
+                    'skipped_too_short': 0,
+                    'skipped_false_positive': 0,
+                    'skipped_no_content': 0,
+                    'extracted': 0,
+                    'page_details': []
+                }
+            debug_info = extract_questions_from_pdf._debug_section2[str(pdf_path)]
+            
+            # Skip first ~7 pages (cover, instructions, TOC, periodic table, blank pages)
+            if pi < start_page + 7:
+                debug_info['skipped_early_pages'] = debug_info.get('skipped_early_pages', 0) + 1
+                continue
+            
+            # Helper function to remove headers/footers from text
+            def remove_headers_footers(text_lines: List[str]) -> List[str]:
+                """Remove common headers and footers from page text."""
+                if not text_lines:
+                    return []
+                
+                cleaned = []
+                header_patterns = [
+                    r'^PART\s+[XYZ]\s*$',  # PART X, PART Y, PART Z (standalone)
+                    r'^PART\s+[XYZ]\s+[A-Z]+',  # PART X PHYSICS, etc.
+                    r'^SECTION\s+2',
+                    r'^NSAA\s+SECTION\s+2',
+                    r'^\d+\s*$',  # Just page numbers
+                ]
+                footer_patterns = [
+                    r'^BLANK\s+PAGE',
+                    r'^Cambridge',
+                    r'^©\s+Cambridge',
+                    r'^\d+\s*$',  # Page numbers at bottom
+                ]
+                
+                # Remove headers from top (first few lines)
+                start_idx = 0
+                for i, line in enumerate(text_lines[:5]):
+                    line_stripped = line.strip()
+                    if any(re.match(pattern, line_stripped, re.IGNORECASE) for pattern in header_patterns):
+                        start_idx = i + 1
+                    else:
+                        break
+                
+                # Remove footers from bottom (last few lines)
+                end_idx = len(text_lines)
+                for i in range(len(text_lines) - 1, max(len(text_lines) - 5, start_idx), -1):
+                    line_stripped = text_lines[i].strip()
+                    if any(re.match(pattern, line_stripped, re.IGNORECASE) for pattern in footer_patterns):
+                        end_idx = i
+                    else:
+                        break
+                
+                # Extract cleaned lines
+                for line in text_lines[start_idx:end_idx]:
+                    line_stripped = line.strip()
+                    # Skip empty lines
+                    if not line_stripped:
+                        continue
+                    # Skip any remaining header/footer patterns
+                    is_header = any(re.match(pattern, line_stripped, re.IGNORECASE) for pattern in header_patterns)
+                    is_footer = any(re.match(pattern, line_stripped, re.IGNORECASE) for pattern in footer_patterns)
+                    if not is_header and not is_footer:
+                        cleaned.append(line)
+                
+                return cleaned
+            
+            lines = text.splitlines()
+            debug_info['processed'] += 1
+            page_debug = {
+                'page_num': pi,
+                'total_lines': len(lines),
+                'skipped_reason': None,
+                'qnum_found': None,
+                'qnum_source': None,
+                'text_length': 0,
+                'has_question_content': False
+            }
+            
+            # Check if this is a standalone PART header page (not just a header on a question page)
+            # PART header pages typically have ONLY "PART X" or "PART X Physics" with little other content
+            is_standalone_part_header = False
+            part_letter = None
+            non_empty_lines = [l.strip() for l in lines if l.strip()]
+            if len(non_empty_lines) <= 5:  # Very few lines = likely standalone header page
+                for line in non_empty_lines[:5]:
+                    m = re.match(r'^\s*PART\s+([XYZ])\s*$', line, re.IGNORECASE)  # Standalone PART X/Y/Z (no subject)
+                    if m:
+                        is_standalone_part_header = True
+                        part_letter = m.group(1).upper()
+                        break
+            
+            # Skip standalone PART header pages (questions start on next page)
+            if is_standalone_part_header:
+                debug_info['skipped_not_question'] = debug_info.get('skipped_not_question', 0) + 1
+                page_debug['skipped_reason'] = f'Standalone PART header page ({part_letter})'
+                debug_info['page_details'].append(page_debug)
+                continue
+            
+            # Clean headers/footers (removes "PART X PHYSICS" headers that appear on every page)
+            cleaned_lines = remove_headers_footers(lines)
+            page_debug['cleaned_lines'] = len(cleaned_lines)
+            
+            # Skip if page is too short after cleaning (likely blank or minimal content)
+            if len(cleaned_lines) < 5:  # Need at least 5 lines for a question
+                debug_info['skipped_too_short'] += 1
+                page_debug['skipped_reason'] = f'Too few lines after cleaning ({len(cleaned_lines)} < 5)'
+                debug_info['page_details'].append(page_debug)
+                continue
+            
+            # Extract question number from page (one question per page for Section 2)
+            # Try original lines first (before cleaning), then cleaned lines
+            qnum = None
+            qnum_source = None
+            search_lines = lines[:20] + cleaned_lines[:20]  # Check both original and cleaned
+            
+            for line in search_lines:
+                # Pattern: Question number at start: "1 ", "2 ", etc.
+                m = re.match(r'^\s*(\d{1,2})\s+(.+)$', line)
+                if m:
+                    candidate = int(m.group(1))
+                    rest = m.group(2).strip()
+                    # Validate it's a real question (has content after number)
+                    if len(rest) >= 3 and 1 <= candidate <= 80:  # More lenient: 3 chars instead of 5
+                        qnum = candidate
+                        qnum_source = f'Pattern match: "{line[:50]}"'
+                        break
+                
+                # Pattern: "Question N" or "Q N"
+                m = re.match(r'^Question\s+(\d{1,2})[:\.]?\s*', line, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 80:
+                        qnum = candidate
+                        qnum_source = f'Question pattern: "{line[:50]}"'
+                        break
+                m = re.match(r'^Q\.?\s*(\d{1,2})[:\.]?\s*', line, re.IGNORECASE)
+                if m:
+                    candidate = int(m.group(1))
+                    if 1 <= candidate <= 80:
+                        qnum = candidate
+                        qnum_source = f'Q pattern: "{line[:50]}"'
+                        break
+            
+            if qnum is None:
+                # Try to infer from page number - be more aggressive
+                # For Section 2, questions typically start after cover/instructions (first ~5-7 pages)
+                # Then each PART has ~20 questions, so we need to track which PART we're in
+                # For now, use a simpler approach: assume questions start around page 7-8
+                # Be very lenient - if we're past the first few pages, assume it's a question
+                if pi >= start_page + 3:  # Very lenient: start from page 3 (after cover/instructions)
+                    # Try to infer question number from page position
+                    # This is rough but better than skipping
+                    inferred_qnum = (pi - start_page - 3) + 1
+                    if 1 <= inferred_qnum <= 80:
+                        qnum = inferred_qnum
+                        qnum_source = f'Inferred from page number (pi={pi}, start_page={start_page})'
+                    else:
+                        debug_info['skipped_no_qnum'] += 1
+                        page_debug['skipped_reason'] = f'Inferred qnum out of range: {inferred_qnum}'
+                        debug_info['page_details'].append(page_debug)
+                        continue
+                else:
+                    debug_info['skipped_no_qnum'] += 1
+                    page_debug['skipped_reason'] = f'Page too early (pi={pi} < start_page+3={start_page+3})'
+                    debug_info['page_details'].append(page_debug)
+                    continue
+            
+            page_debug['qnum_found'] = qnum
+            page_debug['qnum_source'] = qnum_source
+            
+            # Use cleaned page text as question text (one question per page)
+            qtext = normalize_spaces("\n".join(cleaned_lines))
+            page_debug['text_length'] = len(qtext.strip())
+            
+            # Skip if too short (more lenient for Section 2)
+            if len(qtext.strip()) < 30:  # Reduced from 50 to 30
+                debug_info['skipped_too_short'] += 1
+                page_debug['skipped_reason'] = f'Text too short ({len(qtext.strip())} < 30)'
+                debug_info['page_details'].append(page_debug)
+                continue
+            
+            # Filter out obvious false positives
+            qtext_lower = qtext.lower()
+            false_positive_indicators = [
+                "blank page", "instructions", "answer sheet", "total marks",
+                "periodic table", "dictionary", "calculator"
+            ]
+            if any(indicator in qtext_lower[:100] for indicator in false_positive_indicators):
+                if len(qtext.strip()) < 150:
+                    debug_info['skipped_false_positive'] += 1
+                    page_debug['skipped_reason'] = f'False positive indicator found: {[ind for ind in false_positive_indicators if ind in qtext_lower[:100]]}'
+                    debug_info['page_details'].append(page_debug)
+                    continue
+            
+            # Check for question-like content
+            question_indicators = [
+                r'\?',  # Question mark
+                r'what|which|where|when|why|how|who',  # Question words
+                r'calculate|find|determine|show|prove|state|explain|describe|identify',  # Question verbs
+                r'[A-H]\)',  # Multiple choice options (A-H for Section 2)
+                r'[A-H]\.',  # Multiple choice options with period
+            ]
+            has_question_content = any(re.search(pattern, qtext, re.IGNORECASE) for pattern in question_indicators)
+            page_debug['has_question_content'] = has_question_content
+            
+            # For ESAT Section 2, be very lenient - just need reasonable length or question content
+            # Don't require question content if text is substantial
+            if not has_question_content and len(qtext.strip()) < 50:  # Reduced from 100 to 50
+                debug_info['skipped_no_content'] += 1
+                page_debug['skipped_reason'] = f'No question content and text too short ({len(qtext.strip())} < 50)'
+                debug_info['page_details'].append(page_debug)
+                continue
+            
+            # Classify subject for NSAA/ESAT questions (use original text before cleaning)
+            subject = None
+            if exam and exam in ["NSAA", "ENGAA"]:
+                subject = classify_nsaa_question_by_part_header(text, section)
+            
+            # Diagram detection: Always False for now
+            skipped = False
+            
+            item = QuestionItem(
+                paper_id=paper_id,
+                pdf_path=str(pdf_path),
+                year=year,
+                exam=exam,
+                section=section,
+                qnum=qnum,
+                text=qtext,
+                skipped_diagram=skipped,
+                subject=subject,
+            )
+            items.append(item)
+            if is_section2 and str(pdf_path) in extract_questions_from_pdf._debug_section2:
+                debug_info['extracted'] += 1
+                page_debug['extracted'] = True
+                debug_info['page_details'].append(page_debug)
+                
         else:
-            # Non-TMUA: Original multi-question-per-page logic
+            # Non-TMUA, non-Section 1/2: Improved multi-question-per-page logic with better boundary detection
             lines = text.splitlines()
             starts: List[Tuple[int, int, str]] = []
             
+            # Helper function to validate if a line looks like a real question start
+            def is_valid_question_start(line: str, qnum: int) -> bool:
+                """Check if this line is likely a real question start, not a false positive."""
+                line_lower = line.lower().strip()
+                
+                # Reject if it's just a number with no content
+                if len(line.strip()) < 5:
+                    return False
+                
+                # Reject common false positives
+                false_positive_patterns = [
+                    r'^\d+\s*$',  # Just a number alone
+                    r'page\s+\d+',  # Page numbers
+                    r'section\s+\d+',  # Section numbers
+                    r'part\s+\d+',  # Part numbers
+                    r'^\d+\s*[\.\)]\s*$',  # Just "1." or "1)" with nothing after
+                ]
+                for pattern in false_positive_patterns:
+                    if re.match(pattern, line_lower):
+                        return False
+                
+                # Must have some actual text content after the number
+                # Extract the part after the question number
+                match = re.match(r'^\s*\d+\s+(.+)$', line)
+                if match:
+                    rest = match.group(1).strip()
+                    if len(rest) < 10:  # Need at least 10 chars of actual content
+                        return False
+                else:
+                    return False
+                
+                return True
+            
+            # Find question starts with validation
             for idx, line in enumerate(lines):
                 m = QSTART_RE.match(line)
                 if m:
                     qnum = int(m.group(1))
-                    starts.append((idx, qnum, m.group(2)))
+                    # Validate it's a real question start
+                    if is_valid_question_start(line, qnum):
+                        starts.append((idx, qnum, m.group(2)))
             
             # Try fallback patterns if primary found nothing
             if not starts:
@@ -1701,8 +2251,10 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
                         m = pattern_re.match(line)
                         if m:
                             qnum = int(m.group(1))
-                            rest = m.group(2) if pattern_re.groups >= 2 else ""
-                            starts.append((idx, qnum, rest))
+                            # Validate it's a real question start
+                            if is_valid_question_start(line, qnum):
+                                rest = m.group(2) if pattern_re.groups >= 2 else ""
+                                starts.append((idx, qnum, rest))
                             break
                     if starts:
                         break
@@ -1710,19 +2262,95 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
             if not starts:
                 continue
             
+            # Helper function to find better question end boundary
+            def find_question_end(start_idx: int, qnum: int, lines: List[str], next_start_idx: int = None) -> int:
+                """Find where this question actually ends, ensuring we capture all options."""
+                # Start from question start
+                search_start = start_idx
+                search_end = next_start_idx if next_start_idx is not None else len(lines)
+                
+                # Look for multiple choice option patterns to ensure we capture all options
+                # Support A-D for most exams, but also A-H for Section 2
+                option_patterns = [
+                    r'^[A-H]\)',  # A), B), C), D), E), F), G), H)
+                    r'^[A-H]\.',  # A. B. C. D. E. F. G. H.
+                    r'^\([A-H]\)',  # (A), (B), (C), (D), (E), (F), (G), (H)
+                    r'^[A-H]\s+',  # A  B  C  D  E  F  G  H (with spaces)
+                ]
+                
+                # Find the last option in this question block
+                last_option_idx = search_start
+                for i in range(search_start, search_end):
+                    line = lines[i].strip()
+                    for pattern in option_patterns:
+                        if re.match(pattern, line, re.IGNORECASE):
+                            last_option_idx = i
+                            break
+                
+                # If we found options, extend to capture a few lines after the last option
+                # (in case there's additional text or the question continues)
+                if last_option_idx > search_start:
+                    # Look for the end of the last option (empty line or next question)
+                    for i in range(last_option_idx + 1, min(last_option_idx + 5, search_end)):
+                        if i < len(lines):
+                            line = lines[i].strip()
+                            # Stop if we hit another question number or clear section break
+                            if re.match(r'^\d+\s+', line) and i != search_start:
+                                return i
+                            # Stop if we hit multiple empty lines
+                            if not line and i > last_option_idx + 2:
+                                return i
+                    return min(last_option_idx + 3, search_end)
+                
+                # No options found, use next question start or end of page
+                return search_end
+            
             # Process all questions found on this page
             for si, (start_idx, qnum, first_line_rest) in enumerate(starts):
-                end_idx = starts[si + 1][0] if si + 1 < len(starts) else len(lines)
+                next_start_idx = starts[si + 1][0] if si + 1 < len(starts) else len(lines)
+                
+                # Find better end boundary
+                end_idx = find_question_end(start_idx, qnum, lines, next_start_idx)
+                
+                # Extract question text
                 block_lines = [f"{qnum} {first_line_rest}"] + lines[start_idx + 1:end_idx]
                 qtext = normalize_spaces("\n".join(block_lines))
                 
-                # Sanity filter: skip questions that are too short or malformed
-                if len(qtext.strip()) < 40:
+                # Enhanced validation: skip questions that are too short or malformed
+                if len(qtext.strip()) < 50:  # Increased minimum length
                     continue
                 
-                # Validate options (non-TMUA uses A-D)
-                if not re.search(r'[A-D]\)|[A-D]\.|\([A-D]\)', qtext):
-                    continue
+                # Filter out obvious false positives
+                qtext_lower = qtext.lower()
+                false_positive_indicators = [
+                    "page", "section", "part", "turn over", "blank page",
+                    "instructions", "answer sheet", "total marks"
+                ]
+                # Check if text is mostly false positive indicators
+                if any(indicator in qtext_lower[:100] for indicator in false_positive_indicators):
+                    # Only skip if it's a very short match (likely false positive)
+                    if len(qtext.strip()) < 150:
+                        continue
+                
+                # NO option letter filtering for ESAT/NSAA - options may be on separate pages
+                # Check for question-like content (must have some question words or structure)
+                question_indicators = [
+                    r'\?',  # Question mark
+                    r'what|which|where|when|why|how|who',  # Question words
+                    r'calculate|find|determine|show|prove|state|explain',  # Question verbs
+                    r'[A-H]\)',  # Multiple choice options (A-H for Section 2, A-D for others)
+                ]
+                has_question_content = any(re.search(pattern, qtext, re.IGNORECASE) for pattern in question_indicators)
+                
+                # For ESAT, be lenient - don't require options or strict question structure
+                if MODE == "ESAT":
+                    # Must have at least some question-like content or be reasonably long
+                    if not has_question_content and len(qtext.strip()) < 100:
+                        continue
+                else:
+                    # For other modes, require question content
+                    if not has_question_content:
+                        continue
                 
                 # Diagram detection: User requested to ignore diagram filtering for now
                 # Always set skipped_diagram = False (don't filter out any questions)
@@ -1741,6 +2369,52 @@ def extract_questions_from_pdf(pdf_path: Path, overrides: Optional[Dict[int, boo
                 items.append(item)
 
     doc.close()
+    
+    # Print debug info for Section 2 papers
+    if is_section2 and hasattr(extract_questions_from_pdf, '_debug_section2') and str(pdf_path) in extract_questions_from_pdf._debug_section2:
+        debug_info = extract_questions_from_pdf._debug_section2[str(pdf_path)]
+        print(f"\n[DEBUG] Section 2 Extraction Summary for {pdf_path.name}:")
+        print(f"  Total pages: {debug_info['total_pages']}")
+        print(f"  Pages processed: {debug_info['processed']}")
+        print(f"  Questions extracted: {debug_info['extracted']}")
+        print(f"  Skipped - Early pages (first 7): {debug_info.get('skipped_early_pages', 0)}")
+        print(f"  Skipped - Not a question page: {debug_info.get('skipped_not_question', 0)}")
+        print(f"  Skipped - No question number: {debug_info['skipped_no_qnum']}")
+        print(f"  Skipped - Too short: {debug_info['skipped_too_short']}")
+        print(f"  Skipped - False positive: {debug_info['skipped_false_positive']}")
+        print(f"  Skipped - No question content: {debug_info['skipped_no_content']}")
+        
+        # Show subject classification stats
+        subject_counts = {}
+        for item in items:
+            if item.subject:
+                subject_counts[item.subject] = subject_counts.get(item.subject, 0) + 1
+        if subject_counts:
+            print(f"\n  Subject Classification:")
+            for subject, count in sorted(subject_counts.items()):
+                print(f"    {subject}: {count} questions")
+        else:
+            print(f"\n  Subject Classification: None (classification may have failed)")
+        
+        # Show details for first 10 pages and all extracted pages
+        print(f"\n[DEBUG] Page-by-page details (first 10 + extracted):")
+        shown = 0
+        for page_detail in debug_info['page_details']:
+            if shown < 10 or page_detail.get('extracted', False):
+                status = "✓ EXTRACTED" if page_detail.get('extracted', False) else f"✗ {page_detail.get('skipped_reason', 'Unknown')}"
+                print(f"  Page {page_detail['page_num']}: {status}")
+                if page_detail.get('qnum_found'):
+                    print(f"    Qnum: {page_detail['qnum_found']} ({page_detail.get('qnum_source', 'unknown')})")
+                if page_detail.get('text_length'):
+                    print(f"    Text length: {page_detail['text_length']} chars")
+                if page_detail.get('has_question_content') is not None:
+                    print(f"    Has question content: {page_detail['has_question_content']}")
+                if page_detail.get('cleaned_lines'):
+                    print(f"    Cleaned lines: {page_detail['cleaned_lines']}")
+                shown += 1
+                if shown >= 20:  # Limit output
+                    break
+        print()
     
     # Validate extraction and create stats
     is_valid, failure_reason = validate_pdf_extraction(items, pdf_path)
@@ -1804,8 +2478,8 @@ def extract_solutions_from_official_solutions_pdf(pdf_path: Path) -> Dict[int, s
             if m:
                 try:
                     qnum = int(m.group(1))
-                    # Only accept reasonable question numbers (1-25 for TMUA)
-                    if 1 <= qnum <= 25:
+                    # Accept reasonable question numbers (1-50 for ESAT/TMUA - ESAT can have more questions)
+                    if 1 <= qnum <= 50:
                         question_positions.append((idx, qnum))
                         break
                 except (ValueError, IndexError):
@@ -1954,12 +2628,12 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     if before_count > len(pdfs):
         print(f"[INDEX] Spec filter: {before_count} -> {len(pdfs)} PDFs (excluded Spec folders)")
 
-    # Track valid paper pairs for TMUA mode (will be used in extraction loop)
-    valid_tmua_pairs: List[Tuple[Path, Path]] = []
-    discarded_tmua_count = 0
-    tmua_solutions_map: Dict[Path, Path] = {}  # Lookup: past_paper_path -> solutions_path
+    # Track valid paper pairs for both ESAT and TMUA modes (will be used in extraction loop)
+    valid_paper_pairs: List[Tuple[Path, Path]] = []
+    discarded_count = 0
+    solutions_map: Dict[Path, Path] = {}  # Lookup: past_paper_path -> solutions_path
     
-    # Filter PDFs based on mode - TMUA mode handles Past Papers and Official Solutions differently
+    # Filter PDFs based on mode - both ESAT and TMUA can have solution PDFs
     if MODE == "TMUA":
         # Step 1: Separate Past Papers from Official Solutions
         past_papers = [p for p in pdfs if "past paper" in p.name.lower()]
@@ -1971,36 +2645,53 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
         for pp in past_papers:
             matching_solution = find_matching_solutions_pdf(pp, official_solutions)
             if matching_solution:
-                valid_tmua_pairs.append((pp, matching_solution))
-                tmua_solutions_map[pp] = matching_solution
+                valid_paper_pairs.append((pp, matching_solution))
+                solutions_map[pp] = matching_solution
             else:
                 paper_id = get_paper_identifier_from_path(pp)
                 print(f"[SKIP] No Official Solutions found for {pp.name} (ID: {paper_id}) - discarding paper")
-                discarded_tmua_count += 1
+                discarded_count += 1
         
-        print(f"[INDEX] TMUA mode: Matched {len(valid_tmua_pairs)} paper pairs, discarded {discarded_tmua_count} papers without solutions")
+        print(f"[INDEX] TMUA mode: Matched {len(valid_paper_pairs)} paper pairs, discarded {discarded_count} papers without solutions")
         
         # Step 3: Only process Past Papers that have solutions (solutions will be processed with their pairs)
-        pdfs = [pp for pp, _ in valid_tmua_pairs]
+        pdfs = [pp for pp, _ in valid_paper_pairs]
         
         if len(pdfs) == 0:
             print(f"[WARN] No valid TMUA paper pairs found! Need both Past Papers and matching Official Solutions.")
     
     elif not include_non_papers:
-        # ESAT mode: Filter to only include "Past Paper" files (exclude answer keys, conversion tables, etc.)
-        before_count = len(pdfs)
-        # Only include files with "Past Paper" in the filename
-        pdfs = [p for p in pdfs if "past paper" in p.name.lower()]
-        if before_count > len(pdfs):
-            print(f"[INDEX] Past Paper filter: {before_count} -> {len(pdfs)} PDFs (only Past Papers included)")
+        # ESAT mode: Process ONLY past papers (no solutions needed, no matching)
+        # ENGAA papers often do NOT include "Past Paper" in the filename, but live under
+        # .../ENGAA/<year>/Section 1/Part B/ and contain Section 1 Part A+B.
+        # When we're indexing under an ENGAA subtree, treat all Section 1 PDFs as "past papers".
+        if "engaa" in str(papers_dir).lower():
+            # Keep only Section 1 PDFs; we'll trim to Part B inside extract_questions_from_pdf.
+            past_papers = [p for p in pdfs if "section 1" in str(p).lower()]
+        else:
+            past_papers = [p for p in pdfs if "past paper" in p.name.lower()]
         
-        # Additional safety: exclude common non-paper keywords (in case some slip through)
-        exclude_keywords = ["answer key", "answers", "mark scheme", "conversion table", 
-                          "official solutions", "data sheet", "worked", "specimen"]
-        before_count = len(pdfs)
-        pdfs = [p for p in pdfs if not any(k in p.name.lower() for k in exclude_keywords)]
-        if before_count > len(pdfs):
-            print(f"[INDEX] Additional safety filter: {before_count} -> {len(pdfs)} PDFs")
+        # Skip "explain answer" files
+        before_explain_filter = len(past_papers)
+        past_papers = [p for p in past_papers if "explain answer" not in p.name.lower()]
+        if before_explain_filter > len(past_papers):
+            print(f"[INDEX] ESAT mode: Skipped {before_explain_filter - len(past_papers)} 'explain answer' files")
+        
+        # Exclude solution/answer files - we don't need them
+        exclude_keywords = [
+            "official solutions", "solutions", "answer key", "answers", 
+            "mark scheme", "explain answer", "worked", "worked solutions",
+            "conversion table", "data sheet", "specimen", "formula sheet", "reference"
+        ]
+        before_count = len(past_papers)
+        past_papers = [p for p in past_papers if not any(k in p.name.lower() for k in exclude_keywords)]
+        if before_count > len(past_papers):
+            print(f"[INDEX] ESAT mode: Excluded {before_count - len(past_papers)} solution/non-paper files")
+        
+        # Process ONLY past papers (no solution matching needed)
+        pdfs = past_papers.copy()
+        
+        print(f"[INDEX] ESAT mode: Processing {len(pdfs)} past_papers (questions only, no solutions needed)")
     
     if len(pdfs) == 0:
         print(f"[WARN] No PDFs found! Check papers directory: {papers_dir}")
@@ -2040,9 +2731,10 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
                 pdf_overrides = overrides_map.get(str(pdf), {})
                 items, stats = extract_questions_from_pdf(pdf, pdf_overrides)
                 
-                # For TMUA mode: Extract solutions and match to questions
-                if MODE == "TMUA" and stats.status == "SUCCESS" and pdf in tmua_solutions_map:
-                    matching_solutions_path = tmua_solutions_map[pdf]
+                # For TMUA mode: Extract solutions and match to questions (if solution PDF available)
+                # ESAT mode: Skip solution matching completely - we only need questions
+                if MODE == "TMUA" and stats.status == "SUCCESS" and pdf in solutions_map:
+                    matching_solutions_path = solutions_map[pdf]
                     try:
                         solutions_dict = extract_solutions_from_official_solutions_pdf(matching_solutions_path)
                         print(f"[INDEX] Extracted {len(solutions_dict)} solutions from {matching_solutions_path.name}")
@@ -2128,6 +2820,7 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
                             solution_coverage_stats["questions_with_solutions"] += matched_count
                     except Exception as e:
                         print(f"[WARN] Failed to extract solutions from {matching_solutions_path.name}: {e}")
+                # Note: If no solution PDF is available, questions will be processed without solutions (still valid)
                 
                 # Only cache if extraction was successful
                 if stats.status == "SUCCESS":
@@ -2194,8 +2887,8 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     # Save aggregated cache
     safe_write_text(INDEX_JSON, json.dumps([asdict(x) for x in all_items], indent=2))
     
-    # Save extraction report with solution coverage stats
-    save_extraction_report(extraction_stats, total_pdfs, solution_coverage_stats if MODE == "TMUA" else None, discarded_tmua_count if MODE == "TMUA" else 0)
+    # Save extraction report with solution coverage stats (for both ESAT and TMUA if solutions were found)
+    save_extraction_report(extraction_stats, total_pdfs, solution_coverage_stats if solution_coverage_stats["questions_with_solutions"] > 0 else None, discarded_count)
     
     # Final summary - cleaner output for TMUA
     if MODE == "TMUA" and len(all_items) > 0:
@@ -2214,8 +2907,8 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
             paper2_by_year[year] = paper2_by_year.get(year, 0) + 1
         
         print(f"\n[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
-        if discarded_tmua_count > 0:
-            print(f"[INDEX] Discarded {discarded_tmua_count} papers without Official Solutions")
+        if discarded_count > 0:
+            print(f"[INDEX] Discarded {discarded_count} papers without Official Solutions")
         print(f"[INDEX] Paper 1 (Mathematical Knowledge): {len(paper1_questions)} questions")
         for year in sorted(paper1_by_year.keys()):
             print(f"  - {year}: {paper1_by_year[year]} questions")
@@ -2228,11 +2921,13 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
             print(f"[INDEX] Solution coverage: {solution_coverage_stats['questions_with_solutions']}/{solution_coverage_stats['total_questions']} questions ({coverage_pct:.1f}%)")
     else:
         print(f"[INDEX] Summary: {total_pdfs} PDFs processed, {len(all_items)} questions indexed")
-        if MODE == "TMUA" and discarded_tmua_count > 0:
-            print(f"[INDEX] TMUA: Discarded {discarded_tmua_count} papers without Official Solutions")
-        if MODE == "TMUA" and solution_coverage_stats["total_questions"] > 0:
+        if discarded_count > 0:
+            mode_label = "TMUA" if MODE == "TMUA" else "ESAT"
+            print(f"[INDEX] {mode_label}: Discarded {discarded_count} papers without Official Solutions")
+        if solution_coverage_stats["total_questions"] > 0:
             coverage_pct = (solution_coverage_stats["questions_with_solutions"] / solution_coverage_stats["total_questions"]) * 100
-            print(f"[INDEX] TMUA: Solution coverage: {solution_coverage_stats['questions_with_solutions']}/{solution_coverage_stats['total_questions']} questions ({coverage_pct:.1f}%)")
+            mode_label = "TMUA" if MODE == "TMUA" else "ESAT"
+            print(f"[INDEX] {mode_label}: Solution coverage: {solution_coverage_stats['questions_with_solutions']}/{solution_coverage_stats['total_questions']} questions ({coverage_pct:.1f}%)")
     
     if len(all_items) == 0:
         print(f"[WARN] No questions indexed! Possible causes:")
@@ -2269,6 +2964,15 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
     ]
     if before_unknown_filter > len(all_items):
         print(f"[INDEX] Removed {before_unknown_filter - len(all_items)} questions from unknown papers")
+
+    # Explicitly drop all ENGAA Section 2 questions – we only want ENGAA Section 1.
+    before_engaa_filter = len(all_items)
+    all_items = [
+        q for q in all_items
+        if not (q.exam == "ENGAA" and q.section and "Section 2" in q.section)
+    ]
+    if before_engaa_filter > len(all_items):
+        print(f"[INDEX] Removed {before_engaa_filter - len(all_items)} ENGAA Section 2 questions")
     
     return all_items
 
@@ -2278,7 +2982,7 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
 # ----------------------------
 
 class Gemini:
-    def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
         genai.configure(api_key=api_key)
         self._requested_model = model
         # Try to create the model, fallback to gemini-1.5-flash if not available
@@ -2416,6 +3120,15 @@ SPLIT_PROMPT_PATH = PROMPT_DIR / "Schema_Split_Prompt.md"
 ENRICH_PROMPT_PATH = PROMPT_DIR / "Schema_Enrich_Prompt.md"
 FINGERPRINT_EXTRACTION_PROMPT_PATH = PROMPT_DIR / "Fingerprint_Extraction_Prompt.md"
 SCHEMA_SYNTHESIS_CLUSTER_PROMPT_PATH = PROMPT_DIR / "Schema_Synthesis_Cluster_Prompt.md"
+MICRO_SCHEMA_EXTRACTION_PROMPT_PATH = PROMPT_DIR / "Micro_Schema_Extraction_Prompt.md"
+
+# New pipeline prompts
+MICRO_SCHEMA_MATH_PROMPT = PROMPT_DIR / "new" / "microschemas" / "math prompt.md"
+MICRO_SCHEMA_PHYSICS_PROMPT = PROMPT_DIR / "new" / "microschemas" / "physics prompt.md"
+MICRO_SCHEMA_CHEMISTRY_PROMPT = PROMPT_DIR / "new" / "microschemas" / "chemistry prompt.md"
+MICRO_SCHEMA_BIOLOGY_PROMPT = PROMPT_DIR / "new" / "microschemas" / "biology prompt.md"
+GROUPING_PROMPT_PATH = PROMPT_DIR / "new" / "grouping_prompt.md"
+WRITING_PROMPT_PATH = PROMPT_DIR / "new" / "writing_prompt.md"
 
 # Fingerprints directory for Stage 1 output
 FINGERPRINTS_DIR_DEFAULT = Path(__file__).parent / "fingerprints"
@@ -2447,12 +3160,12 @@ def prompt_candidates(
         [f"- {s.schema_id}: {s.title} | {s.core_move}".strip() for s in schema_summaries]
     )
 
-    # Evidence corpus: short question IDs + text (with solution if available for TMUA)
+    # Evidence corpus: short question IDs + text (with solution if available for ESAT/TMUA)
     corpus_lines = []
     for q in questions:
         qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
         if q.solution_text:
-            # Include solution text for TMUA questions
+            # Include solution text for ESAT/TMUA questions (helps identify reasoning patterns)
             corpus_lines.append(f"[{qid}] Question: {q.text} | Solution: {q.solution_text}")
         else:
             corpus_lines.append(f"[{qid}] {q.text}")
@@ -2589,6 +3302,465 @@ def prompt_split_candidate(candidate: Candidate) -> str:
                    .replace("{candidate.prefix}", candidate.prefix)
 
 
+# ----------------------------
+# New Micro-Schema Pipeline Functions
+# ----------------------------
+
+def extract_core_move_verb(core_move: str) -> str:
+    """Extract the main verb from core_move for clustering."""
+    # Common patterns: "Apply X", "Set up X", "Differentiate X", "Use X", etc.
+    verbs = ["apply", "use", "set up", "differentiate", "integrate", "solve", "find", 
+             "compute", "calculate", "exploit", "exploit", "invoke", "invoke", "invoke"]
+    core_lower = core_move.lower()
+    for verb in verbs:
+        if core_lower.startswith(verb):
+            return verb
+    # Fallback: first word
+    words = core_move.split()
+    return words[0].lower() if words else "unknown"
+
+
+def extract_micro_schema(question: QuestionItem, gemini_client) -> Optional[MicroSchema]:
+    """
+    Extract micro-schema from a single question.
+    Returns None on failure.
+    """
+    try:
+        # Load prompt template
+        template = load_prompt_template(MICRO_SCHEMA_EXTRACTION_PROMPT_PATH)
+        
+        # Build question ID
+        qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+        
+        # Prepare prompt
+        solution_text = question.solution_text if question.solution_text else "Not available"
+        prompt = template.replace("{qid}", qid) \
+                        .replace("{question_text}", question.text) \
+                        .replace("{solution_text}", solution_text)
+        
+        # Generate JSON response
+        response = gemini_client.generate_json(prompt)
+        
+        if not response or not isinstance(response, dict):
+            return None
+        
+        # Extract core move verb
+        core_move = response.get("core_move", "")
+        core_move_verb = extract_core_move_verb(core_move)
+        
+        # Create MicroSchema
+        micro_schema = MicroSchema(
+            qid=qid,
+            question_item=question,
+            core_move=core_move,
+            secondary_moves=response.get("secondary_moves", []),
+            key_triggers=response.get("key_triggers", []),
+            representation=response.get("representation", "other"),
+            difficulty=response.get("difficulty", "Medium"),
+            prerequisites=response.get("prerequisites", []),
+            wrong_paths=response.get("wrong_paths", []),
+            answer_form=response.get("answer_form", "other"),
+            object_type=response.get("object_type", "other"),
+            prefix_hint=response.get("prefix_hint", "M"),
+            embedding=None,  # Will be computed later
+            core_move_verb=core_move_verb
+        )
+        
+        return micro_schema
+    except Exception as e:
+        print(f"[ERROR] Failed to extract micro-schema for {qid}: {e}")
+        return None
+
+
+def extract_micro_schemas_batch(questions: List[QuestionItem], gemini_client, 
+                                batch_size: int = 20, progress_callback=None) -> List[MicroSchema]:
+    """
+    Extract micro-schemas from questions in batches.
+    Returns list of successfully extracted micro-schemas.
+    """
+    micro_schemas = []
+    total = len(questions)
+    
+    for i in range(0, total, batch_size):
+        batch = questions[i:i+batch_size]
+        if progress_callback:
+            progress_callback(i, total, f"Extracting micro-schemas: {i+1}-{min(i+batch_size, total)}/{total}")
+        
+        for question in batch:
+            micro_schema = extract_micro_schema(question, gemini_client)
+            if micro_schema:
+                micro_schemas.append(micro_schema)
+        
+        # Small delay between batches to avoid rate limits
+        time.sleep(0.5)
+    
+    return micro_schemas
+
+
+def compute_micro_schema_embedding(micro_schema: MicroSchema, gemini_client=None) -> Optional[List[float]]:
+    """
+    Compute embedding for a micro-schema.
+    Embedding is based on: core_move + triggers + wrong_paths
+    """
+    # Combine key fields for embedding
+    embedding_text = f"{micro_schema.core_move}\n"
+    embedding_text += "Triggers: " + ", ".join(micro_schema.key_triggers) + "\n"
+    embedding_text += "Wrong paths: " + ", ".join(micro_schema.wrong_paths)
+    
+    # Use the existing compute_embedding function which uses genai directly
+    return compute_embedding(embedding_text, gemini_client)
+
+
+def create_structured_signature(micro_schema: MicroSchema) -> Dict[str, Any]:
+    """
+    Create a structured signature for duplicate detection.
+    """
+    return {
+        "prefix": micro_schema.prefix_hint,
+        "representation": micro_schema.representation,
+        "core_move_verb": micro_schema.core_move_verb,
+        "object_type": micro_schema.object_type,
+        "answer_form": micro_schema.answer_form
+    }
+
+
+def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+    """Compute cosine similarity between two vectors."""
+    if len(vec1) != len(vec2):
+        return 0.0
+    
+    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    magnitude1 = sum(a * a for a in vec1) ** 0.5
+    magnitude2 = sum(b * b for b in vec2) ** 0.5
+    
+    if magnitude1 == 0 or magnitude2 == 0:
+        return 0.0
+    
+    return dot_product / (magnitude1 * magnitude2)
+
+
+def cluster_micro_schemas(micro_schemas: List[MicroSchema], 
+                          min_cluster_size: int = 3,
+                          max_cluster_size: int = 6,
+                          similarity_threshold: float = 0.75) -> List[List[MicroSchema]]:
+    """
+    Cluster micro-schemas into groups of 3-6 questions.
+    
+    Uses two-pass clustering:
+    Pass A (coarse): Group by prefix, representation, core_move_verb
+    Pass B (semantic): Within each bucket, cluster by embedding similarity
+    """
+    if not micro_schemas:
+        return []
+    
+    # Filter out micro-schemas without embeddings
+    schemas_with_embeddings = [ms for ms in micro_schemas if ms.embedding is not None]
+    if not schemas_with_embeddings:
+        print("[WARN] No embeddings found. Computing embeddings first...")
+        return []
+    
+    # Pass A: Coarse grouping by structured signature
+    buckets: Dict[str, List[MicroSchema]] = {}
+    
+    for ms in schemas_with_embeddings:
+        sig = create_structured_signature(ms)
+        # Create bucket key from signature
+        bucket_key = f"{sig['prefix']}|{sig['representation']}|{sig['core_move_verb']}"
+        if bucket_key not in buckets:
+            buckets[bucket_key] = []
+        buckets[bucket_key].append(ms)
+    
+    # Pass B: Semantic clustering within each bucket using embeddings
+    clusters = []
+    orphans = []  # Schemas that don't fit in any cluster
+    
+    for bucket_key, bucket_schemas in buckets.items():
+        if len(bucket_schemas) < min_cluster_size:
+            # Too small - mark as orphans
+            orphans.extend(bucket_schemas)
+            continue
+        
+        # Cluster by embedding similarity using agglomerative approach
+        if len(bucket_schemas) <= max_cluster_size:
+            # Small enough - check if they're similar enough
+            avg_similarity = 0.0
+            comparisons = 0
+            for i in range(len(bucket_schemas)):
+                for j in range(i + 1, len(bucket_schemas)):
+                    sim = cosine_similarity(bucket_schemas[i].embedding, bucket_schemas[j].embedding)
+                    avg_similarity += sim
+                    comparisons += 1
+            
+            if comparisons > 0:
+                avg_similarity /= comparisons
+            
+            if avg_similarity >= similarity_threshold:
+                clusters.append(bucket_schemas)
+            else:
+                # Not similar enough - try to split
+                sub_clusters = _agglomerative_cluster(bucket_schemas, similarity_threshold, min_cluster_size, max_cluster_size)
+                clusters.extend(sub_clusters)
+        else:
+            # Too large - cluster using agglomerative method
+            sub_clusters = _agglomerative_cluster(bucket_schemas, similarity_threshold, min_cluster_size, max_cluster_size)
+            clusters.extend(sub_clusters)
+    
+    # Try to merge orphans into nearest clusters
+    for orphan in orphans:
+        best_cluster_idx = None
+        best_similarity = 0.0
+        
+        for idx, cluster in enumerate(clusters):
+            if len(cluster) >= max_cluster_size:
+                continue
+            
+            # Find average similarity to cluster
+            similarities = []
+            for ms in cluster:
+                if ms.embedding and orphan.embedding:
+                    sim = cosine_similarity(ms.embedding, orphan.embedding)
+                    similarities.append(sim)
+            
+            if similarities:
+                avg_sim = sum(similarities) / len(similarities)
+                if avg_sim > best_similarity and avg_sim >= similarity_threshold * 0.8:
+                    best_similarity = avg_sim
+                    best_cluster_idx = idx
+        
+        if best_cluster_idx is not None:
+            clusters[best_cluster_idx].append(orphan)
+    
+    return clusters
+
+
+def _agglomerative_cluster(schemas: List[MicroSchema], 
+                           similarity_threshold: float,
+                           min_size: int,
+                           max_size: int) -> List[List[MicroSchema]]:
+    """
+    Simple agglomerative clustering: start with each schema as its own cluster,
+    merge most similar clusters until threshold is reached.
+    """
+    if len(schemas) <= max_size:
+        return [schemas]
+    
+    # Initialize: each schema is its own cluster
+    clusters = [[ms] for ms in schemas]
+    
+    while True:
+        if len(clusters) == 1:
+            break
+        
+        # Find two most similar clusters
+        best_i, best_j = None, None
+        best_sim = -1.0
+        
+        for i in range(len(clusters)):
+            for j in range(i + 1, len(clusters)):
+                # Compute average similarity between clusters
+                similarities = []
+                for ms1 in clusters[i]:
+                    for ms2 in clusters[j]:
+                        if ms1.embedding and ms2.embedding:
+                            sim = cosine_similarity(ms1.embedding, ms2.embedding)
+                            similarities.append(sim)
+                
+                if similarities:
+                    avg_sim = sum(similarities) / len(similarities)
+                    if avg_sim > best_sim:
+                        best_sim = avg_sim
+                        best_i, best_j = i, j
+        
+        # Merge if similar enough and combined size <= max_size
+        if best_i is not None and best_j is not None:
+            combined_size = len(clusters[best_i]) + len(clusters[best_j])
+            if best_sim >= similarity_threshold and combined_size <= max_size:
+                # Merge clusters
+                clusters[best_i].extend(clusters[best_j])
+                clusters.pop(best_j)
+            else:
+                break
+        else:
+            break
+    
+    # Filter clusters by min_size
+    return [c for c in clusters if len(c) >= min_size]
+
+
+def select_exemplars_from_cluster(cluster: List[MicroSchema], target_count: int = 4) -> List[MicroSchema]:
+    """
+    Select 3-4 diverse exemplars from a cluster.
+    Prioritizes: different paper/year, slightly different wording, same core move.
+    """
+    if len(cluster) <= target_count:
+        return cluster
+    
+    # Group by paper/year for diversity
+    by_paper_year: Dict[str, List[MicroSchema]] = {}
+    for ms in cluster:
+        key = f"{ms.question_item.exam}_{ms.question_item.year}"
+        if key not in by_paper_year:
+            by_paper_year[key] = []
+        by_paper_year[key].append(ms)
+    
+    # Select one from each paper/year, then fill remaining slots
+    exemplars = []
+    used_paper_years = set()
+    
+    # First pass: one from each paper/year
+    for paper_year, schemas in by_paper_year.items():
+        if len(exemplars) < target_count:
+            exemplars.append(schemas[0])
+            used_paper_years.add(paper_year)
+    
+    # Second pass: fill remaining slots with diverse choices
+    remaining = [ms for ms in cluster if ms not in exemplars]
+    for ms in remaining:
+        if len(exemplars) >= target_count:
+            break
+        paper_year = f"{ms.question_item.exam}_{ms.question_item.year}"
+        if paper_year not in used_paper_years or len(exemplars) < target_count:
+            exemplars.append(ms)
+            used_paper_years.add(paper_year)
+    
+    # If still need more, add any remaining
+    while len(exemplars) < target_count and remaining:
+        ms = remaining.pop(0)
+        if ms not in exemplars:
+            exemplars.append(ms)
+    
+    return exemplars[:target_count]
+
+
+def test_core_move_gate(cluster: List[MicroSchema], gemini_client) -> Tuple[bool, str]:
+    """
+    Quality Gate A: Core Move Test
+    Tests if knowing only the core move is sufficient to solve most questions in the cluster.
+    Returns (passes, reason)
+    """
+    if not cluster:
+        return False, "Empty cluster"
+    
+    # Get the most common core move
+    core_moves = [ms.core_move for ms in cluster]
+    most_common_move = max(set(core_moves), key=core_moves.count) if core_moves else ""
+    
+    # Build test prompt
+    question_texts = "\n\n".join([f"Q{idx+1}: {ms.question_item.text[:200]}..." for idx, ms in enumerate(cluster[:5])])
+    
+    prompt = f"""You are testing whether a schema's core move is sufficient to solve questions.
+
+Core Move: {most_common_move}
+
+Questions:
+{question_texts}
+
+If a student knows ONLY this core move (and basic prerequisites), can they solve most of these questions?
+
+Answer with JSON:
+{{
+  "sufficient": true/false,
+  "reason": "Brief explanation"
+}}"""
+    
+    try:
+        response = gemini_client.generate_json(prompt)
+        if response and isinstance(response, dict):
+            sufficient = response.get("sufficient", False)
+            reason = response.get("reason", "")
+            return sufficient, reason
+    except Exception as e:
+        return True, f"Test failed (non-blocking): {e}"
+    
+    return True, "Test completed"
+
+
+def test_generateability_gate(cluster: List[MicroSchema], exemplars: List[MicroSchema], gemini_client) -> Tuple[bool, str]:
+    """
+    Quality Gate B: Generate-ability Test
+    Tests if the schema can generate clearly in-family questions.
+    Returns (passes, reason)
+    """
+    if not exemplars:
+        return False, "No exemplars"
+    
+    # Build exemplar summary
+    exemplar_summary = "\n".join([f"- {ms.qid}: {ms.core_move}" for ms in exemplars[:4]])
+    common_triggers = ", ".join(exemplars[0].key_triggers[:3]) if exemplars and exemplars[0].key_triggers else "N/A"
+    
+    prompt = f"""You are testing whether a schema can generate clearly in-family questions.
+
+Schema Summary:
+- Core Move: {exemplars[0].core_move if exemplars else 'N/A'}
+- Triggers: {common_triggers}
+- Wrong paths: {', '.join(exemplars[0].wrong_paths[:2]) if exemplars and exemplars[0].wrong_paths else 'N/A'}
+
+Exemplar Questions:
+{exemplar_summary}
+
+Generate 3 new questions that match this schema. Then evaluate: Are they clearly in-family with the exemplars?
+
+Answer with JSON:
+{{
+  "generated_questions": ["Q1: ...", "Q2: ...", "Q3: ..."],
+  "in_family": true/false,
+  "reason": "Brief explanation"
+}}"""
+    
+    try:
+        response = gemini_client.generate_json(prompt)
+        if response and isinstance(response, dict):
+            in_family = response.get("in_family", False)
+            reason = response.get("reason", "")
+            return in_family, reason
+    except Exception as e:
+        return True, f"Test failed (non-blocking): {e}"
+    
+    return True, "Test completed"
+
+
+def prompt_schema_from_cluster(cluster: List[MicroSchema], exemplars: List[MicroSchema]) -> str:
+    """
+    Generate prompt for writing full schema from a cluster of micro-schemas.
+    """
+    template = load_prompt_template(FULL_PROMPT_PATH)
+    
+    # Determine prefix from cluster
+    prefix = exemplars[0].prefix_hint if exemplars else "M"
+    
+    # Build exemplar text
+    exemplar_lines = []
+    for ms in exemplars:
+        justification = f"Exemplifies {ms.core_move}"
+        exemplar_lines.append(f"- `{ms.qid}`: {justification}")
+    exemplar_text = "\n".join(exemplar_lines)
+    
+    # Extract common core move (most frequent)
+    core_moves = [ms.core_move for ms in exemplars]
+    most_common_move = max(set(core_moves), key=core_moves.count) if core_moves else ""
+    
+    # Build cluster summary
+    cluster_summary = f"""
+Cluster Summary:
+- Core move: {most_common_move}
+- Representation: {exemplars[0].representation if exemplars else 'unknown'}
+- Object type: {exemplars[0].object_type if exemplars else 'unknown'}
+- Common triggers: {', '.join(exemplars[0].key_triggers[:3]) if exemplars and exemplars[0].key_triggers else 'N/A'}
+- Common wrong paths: {', '.join(exemplars[0].wrong_paths[:2]) if exemplars and exemplars[0].wrong_paths else 'N/A'}
+"""
+    
+    # Replace placeholders
+    return template.replace("{schema_file}", "Schemas.md") \
+                   .replace("{candidate.prefix}", prefix) \
+                   .replace("{prefix_desc}", f"{prefix} = {prefix}") \
+                   .replace("{candidate.title}", f"Schema for {most_common_move}") \
+                   .replace("{candidate.core_move}", most_common_move) \
+                   .replace("{candidate.evidence}", str([ms.qid for ms in exemplars])) \
+                   .replace("{exemplar_text}", exemplar_text) \
+                   .replace("{tmua_note}", "") \
+                   .replace("{limit_text}", "")
+
+
 def prompt_enrich_bullet(candidate: Candidate, target_schema_id: str, section: str, 
                          existing_bullet: str) -> str:
     """Prompt for generating a replacement bullet."""
@@ -2597,8 +3769,682 @@ def prompt_enrich_bullet(candidate: Candidate, target_schema_id: str, section: s
                    .replace("{section}", section) \
                    .replace("{existing_bullet}", existing_bullet) \
                    .replace("{candidate.title}", candidate.title) \
-                   .replace("{candidate.core_move}", candidate.core_move) \
-                   .replace("{candidate.evidence}", str(candidate.evidence))
+                   .replace("{candidate.core_move}", candidate.core_move)
+
+
+# ============================================================================
+# NEW PIPELINE: Full Schema Generation Pipeline (Final Version)
+# ============================================================================
+
+def get_subject_prompt_path(subject: str) -> Path:
+    """Get the micro-schema prompt path for a subject."""
+    subject_lower = subject.lower()
+    if "math" in subject_lower:
+        return MICRO_SCHEMA_MATH_PROMPT
+    elif "physics" in subject_lower:
+        return MICRO_SCHEMA_PHYSICS_PROMPT
+    elif "chemistry" in subject_lower:
+        return MICRO_SCHEMA_CHEMISTRY_PROMPT
+    elif "biology" in subject_lower:
+        return MICRO_SCHEMA_BIOLOGY_PROMPT
+    else:
+        return MICRO_SCHEMA_MATH_PROMPT  # Default fallback
+
+
+def extract_micro_schema_new(question: QuestionItem, gemini_client) -> Optional[MicroSchemaNew]:
+    """
+    Extract micro-schema using subject-specific prompt (new pipeline).
+    Returns None on failure.
+    """
+    try:
+        # Determine subject from question
+        subject_assigned = question.subject or "mathematics"
+        if subject_assigned:
+            # Normalize subject name
+            subject_lower = subject_assigned.lower()
+            if "math" in subject_lower:
+                subject_assigned = "mathematics"
+            elif "physics" in subject_lower:
+                subject_assigned = "physics"
+            elif "chemistry" in subject_lower:
+                subject_assigned = "chemistry"
+            elif "biology" in subject_lower:
+                subject_assigned = "biology"
+        
+        # Load subject-specific prompt
+        prompt_path = get_subject_prompt_path(subject_assigned)
+        template = load_prompt_template(prompt_path)
+        
+        # Build question ID
+        question_id = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+        
+        # Prepare prompt
+        solution_text = question.solution_text if question.solution_text else "Not available"
+        prompt = template.replace("{question_text}", question.text) \
+                       .replace("{subject_assigned}", subject_assigned) \
+                       .replace("{solution_text}", solution_text)
+        
+        # Generate JSON response
+        print(f"[DEBUG] Extracting micro-schema for {question_id}, subject: {subject_assigned}")
+        try:
+            response = gemini_client.generate_json(prompt)
+        except Exception as e:
+            error_str = str(e).lower()
+            error_msg = f"[ERROR] Failed to extract micro-schema for {question_id}"
+            
+            # Check for specific error types
+            if "api" in error_str and ("key" in error_str or "invalid" in error_str or "unauthorized" in error_str or "403" in error_str or "401" in error_str):
+                error_msg += ": API KEY ERROR - Check your GEMINI_API_KEY in .env.local"
+            elif "429" in error_str or "rate limit" in error_str or "resource exhausted" in error_str:
+                error_msg += ": RATE LIMIT ERROR - Too many requests, please wait"
+            elif "timeout" in error_str:
+                error_msg += ": TIMEOUT ERROR - Request took too long"
+            elif "json" in error_str or "parse" in error_str:
+                error_msg += ": JSON PARSE ERROR - Invalid response format"
+            else:
+                error_msg += f": {type(e).__name__} - {str(e)}"
+            
+            print(error_msg)
+            import traceback
+            print(f"[ERROR] Full traceback:\n{traceback.format_exc()}")
+            return None
+
+        # Some Gemini responses may be wrapped in a top-level list; unwrap that.
+        if isinstance(response, list):
+            if not response:
+                print(f"[ERROR] Empty list response for {question_id}")
+                return None
+            response = response[0]
+
+        # Also tolerate a 'candidates' wrapper if present.
+        if isinstance(response, dict) and "candidates" in response and isinstance(response["candidates"], list) and response["candidates"]:
+            response = response["candidates"][0]
+        
+        if not response or not isinstance(response, dict):
+            print(f"[ERROR] Invalid response for {question_id}: expected dict, got {type(response).__name__}")
+            if response:
+                print(f"[ERROR] Response content: {str(response)[:200]}...")
+            return None
+        
+        # Extract fields
+        discard = response.get("discard", False)
+        discard_reason = response.get("reason") if discard else None
+
+        # Subject is now decided in the preclassification step; ignore any
+        # subject_* fields coming back from this prompt and treat the
+        # pre-assigned subject as authoritative.
+        subject_final = subject_assigned
+        subject_confidence = response.get("subject_confidence", "high")
+        
+        # Extract type_bucket (varies by subject)
+        type_bucket = response.get("type_bucket") or \
+                     response.get("reasoning_type") or \
+                     response.get("manipulation_type") or \
+                     response.get("representation_type") or None
+        
+        # Create MicroSchemaNew
+        micro_schema = MicroSchemaNew(
+            question_id=question_id,
+            subject_assigned=subject_assigned,
+            subject_final=subject_final,
+            subject_confidence=subject_confidence,
+            discard=discard,
+            discard_reason=discard_reason,
+            core_move=response.get("core_move"),
+            trigger_signals=response.get("trigger_signals", []),
+            type_bucket=type_bucket,
+            common_wrong_path=response.get("common_wrong_path"),
+            minimal_prerequisite=response.get("minimal_prerequisite"),
+            difficulty_estimate=response.get("difficulty_estimate"),
+            quality_score=0.0,  # Will be computed later
+            embedding=None  # Will be computed later
+        )
+        
+        return micro_schema
+    except Exception as e:
+        qid = f"{question.exam}_{question.section}_{question.year}_Q{question.qnum}".replace(" ", "")
+        print(f"[ERROR] Failed to extract micro-schema for {qid}: {e}")
+        return None
+
+
+def validate_and_discard_micro_schema(ms: MicroSchemaNew) -> bool:
+    """
+    Deterministic validation and discard filtering.
+    Returns True if should be discarded.
+    """
+    # Already marked for discard by LLM
+    if ms.discard:
+        return True
+    
+    # Core move missing
+    if not ms.core_move or not ms.core_move.strip():
+        return True
+    
+    # Trigger signals empty
+    if not ms.trigger_signals or len(ms.trigger_signals) == 0:
+        return True
+    
+    # Core move too short
+    word_count = len(ms.core_move.split())
+    if word_count < 5:
+        return True
+    
+    # Check for vague phrases
+    vague_phrases = [
+        "use formula",
+        "apply principles",
+        "calculate normally",
+        "use correct method",
+        "apply basic",
+        "use the formula",
+        "apply the principles"
+    ]
+    core_move_lower = ms.core_move.lower()
+    for phrase in vague_phrases:
+        if phrase in core_move_lower:
+            return True
+    
+    return False
+
+
+def compute_quality_score(ms: MicroSchemaNew) -> float:
+    """
+    Deterministic quality scoring.
+    Returns quality score (higher is better).
+    """
+    score = 0.0
+    
+    # Core move length (8-20 words is ideal)
+    if ms.core_move:
+        word_count = len(ms.core_move.split())
+        if 8 <= word_count <= 20:
+            score += 3.0
+        elif 5 <= word_count < 8 or 20 < word_count <= 25:
+            score += 1.0
+    
+    # Trigger signals count
+    if ms.trigger_signals and len(ms.trigger_signals) >= 2:
+        score += 2.0
+    
+    # Wrong path is specific (not empty, not too short)
+    if ms.common_wrong_path and len(ms.common_wrong_path.split()) >= 5:
+        score += 2.0
+    
+    # Minimal prerequisite exists
+    if ms.minimal_prerequisite and ms.minimal_prerequisite.strip():
+        score += 1.0
+    
+    # Penalties for vague phrasing (already checked in validation, but double-check)
+    if ms.core_move:
+        vague_phrases = ["use formula", "apply principles", "calculate normally", "use correct method"]
+        core_move_lower = ms.core_move.lower()
+        for phrase in vague_phrases:
+            if phrase in core_move_lower:
+                score -= 5.0
+                break
+    
+    # Discard penalty
+    if ms.discard:
+        score -= 10.0
+    
+    return score
+
+
+def compute_embedding_new(ms: MicroSchemaNew, gemini_client) -> Optional[List[float]]:
+    """
+    Compute embedding for new micro-schema format.
+    Embedding text: subject_final + core_move + trigger_signals + common_wrong_path + minimal_prerequisite
+    """
+    if not ms.core_move:
+        return None
+    
+    # Build embedding text deterministically
+    embed_text = f"{ms.subject_final}\n"
+    embed_text += f"{ms.core_move}\n"
+    
+    if ms.trigger_signals:
+        embed_text += "Triggers: " + ", ".join(ms.trigger_signals) + "\n"
+    
+    if ms.common_wrong_path:
+        embed_text += f"Wrong path: {ms.common_wrong_path}\n"
+    
+    if ms.minimal_prerequisite:
+        embed_text += f"Prerequisite: {ms.minimal_prerequisite}\n"
+    
+    # Use existing compute_embedding function
+    return compute_embedding(embed_text, gemini_client)
+
+
+def anchor_based_grouping(subject: str, anchor_id: str, candidate_pool: List[Dict[str, Any]], 
+                         gemini_client, late_stage: bool = False) -> Dict[str, Any]:
+    """
+    Call grouping prompt to select group of 3/2/1 from candidate pool.
+    Returns grouping result with group_size, group_ids, shared_core_move, confidence.
+    """
+    try:
+        template = load_prompt_template(GROUPING_PROMPT_PATH)
+        
+        # Format candidate micro-schemas for prompt
+        candidates_text = ""
+        for i, cand in enumerate(candidate_pool):
+            candidates_text += f"""
+Candidate {i+1} (ID: {cand['question_id']}):
+- core_move: {cand.get('core_move', 'N/A')}
+- trigger_signals: {', '.join(cand.get('trigger_signals', []))}
+- type_bucket: {cand.get('type_bucket', 'N/A')}
+- common_wrong_path: {cand.get('common_wrong_path', 'N/A')}
+- minimal_prerequisite: {cand.get('minimal_prerequisite', 'N/A')}
+- quality_score: {cand.get('quality_score', 0.0)}
+"""
+        
+        prompt = template.replace("{subject}", subject) \
+                        .replace("{anchor_id}", anchor_id) \
+                        .replace("{candidate_micro_schemas}", candidates_text)
+        
+        if late_stage:
+            prompt += "\n\nNOTE: Late stage - allow singles more freely if no good groups exist."
+        
+        print(f"[DEBUG] Calling grouping prompt for anchor {anchor_id}, {len(candidate_pool)} candidates")
+        response = gemini_client.generate_json(prompt)
+        
+        if response and isinstance(response, dict):
+            result = {
+                "group_size": response.get("group_size", 1),
+                "group_ids": response.get("group_ids", [anchor_id]),
+                "shared_core_move": response.get("shared_core_move"),
+                "why_coherent": response.get("why_coherent", ""),
+                "confidence": response.get("confidence", "low")
+            }
+            print(f"[DEBUG] Grouping result: size={result['group_size']}, ids={result['group_ids']}, confidence={result['confidence']}")
+            return result
+    except Exception as e:
+        print(f"[ERROR] Grouping failed for anchor {anchor_id}: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    # Fallback: return singleton
+    return {
+        "group_size": 1,
+        "group_ids": [anchor_id],
+        "shared_core_move": None,
+        "why_coherent": "Fallback: grouping failed",
+        "confidence": "low"
+    }
+
+
+def write_schema_from_group(subject: str, group_ids: List[str], group_micro_schemas: List[Dict[str, Any]],
+                           question_texts: Dict[str, str], gemini_client) -> Optional[Dict[str, Any]]:
+    """
+    Call schema writing prompt to generate full schema from grouped micro-schemas.
+    Returns schema JSON or None on failure.
+    """
+    try:
+        template = load_prompt_template(WRITING_PROMPT_PATH)
+        
+        # Format grouped micro-schemas
+        grouped_text = ""
+        for i, ms in enumerate(group_micro_schemas):
+            grouped_text += f"""
+Micro-schema {i+1}:
+- id: {ms['question_id']}
+- core_move: {ms.get('core_move', 'N/A')}
+- trigger_signals: {', '.join(ms.get('trigger_signals', []))}
+- type_bucket: {ms.get('type_bucket', 'N/A')}
+- common_wrong_path: {ms.get('common_wrong_path', 'N/A')}
+- minimal_prerequisite: {ms.get('minimal_prerequisite', 'N/A')}
+- difficulty_estimate: {ms.get('difficulty_estimate', 'N/A')}
+"""
+        
+        # Format exemplar question texts
+        exemplar_texts = ""
+        for qid in group_ids:
+            if qid in question_texts:
+                exemplar_texts += f"\nQuestion {qid}:\n{question_texts[qid]}\n"
+        
+        prompt = template.replace("{subject}", subject) \
+                        .replace("{grouped_micro_schemas}", grouped_text) \
+                        .replace("{exemplar_question_texts}", exemplar_texts)
+        
+        print(f"[DEBUG] Writing schema for group {group_ids}, {len(group_micro_schemas)} micro-schemas")
+        response = gemini_client.generate_json(prompt)
+        
+        if response and isinstance(response, dict):
+            # Add exemplar question IDs
+            response["exemplars"] = [
+                {"question_id": qid, "why_it_fits": "Part of grouped micro-schemas"}
+                for qid in group_ids
+            ]
+            print(f"[DEBUG] Schema written successfully: {response.get('title', 'N/A')}")
+            return response
+        
+    except Exception as e:
+        print(f"[ERROR] Schema writing failed for group {group_ids}: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    return None
+
+
+def run_full_schema_pipeline(questions: List[QuestionItem], gemini_client, db, 
+                             progress_callback=None) -> Dict[str, Any]:
+    """
+    Run the full schema generation pipeline.
+    
+    Stages:
+    1. Micro-schema extraction
+    2. Validation & discard filtering
+    3. Quality scoring
+    4. Embedding computation
+    5. Anchor-based grouping (within subject only)
+    6. Schema writing
+    """
+    print(f"[PIPELINE] Starting full schema generation pipeline with {len(questions)} questions")
+    
+    # Initialize database tables
+    print("[PIPELINE] Initializing database tables...")
+    db._init_schema_pipeline_tables()
+    print("[PIPELINE] Database tables initialized")
+    
+    stats = {
+        "total_questions": len(questions),
+        "extracted": 0,
+        "discarded": 0,
+        "validated": 0,
+        "embedded": 0,
+        "schemas_created": 0,
+        "by_subject": {}
+    }
+
+    # PRE-STAGE: Subject classification & front-page / junk filtering
+    def _preclassify(q: QuestionItem) -> Tuple[Optional[str], bool, str]:
+        """
+        Classify a question into mathematics/physics/chemistry/biology, or mark as discard.
+        Returns (subject_key or None, discard, reason).
+        """
+        prompt = f"""You are classifying exam QUESTIONS by subject and filtering out junk pages.
+
+Rules:
+- Choose exactly ONE subject from this set: "mathematics", "physics", "chemistry", "biology".
+- Also decide whether this page should be DISCARDED.
+- Discard pages that are NOT real, self-contained questions (e.g. covers, instructions, specification text,
+  data tables with no question, blank pages, formula sheets).
+- Treat CONTEXT as decisive for subject:
+  * If the content clearly involves physical concepts (force, energy, velocity, acceleration, motion, circuits,
+    voltage, current, resistance, charge, fields, waves, photons, etc.), classify as "physics"
+    EVEN IF the calculations are purely algebraic.
+  * If it is about chemical substances, reactions, moles, pH, equilibrium, rates, binding, etc.,
+    classify as "chemistry" even if the maths is non-trivial.
+  * If it is about biological systems (cells, enzymes, DNA, organisms, physiology, ecology, populations, etc.),
+    classify as "biology".
+  * Only use "mathematics" when the question is about abstract maths (numbers, algebra, functions, calculus,
+    geometry, probability, combinatorics, etc.) with no clear physics/chemistry/biology context.
+
+Question text:
+\"\"\"{q.text[:1800]}\"\"\"
+
+Return ONLY valid JSON with this structure:
+{{
+  "subject": "mathematics|physics|chemistry|biology",
+  "discard": true or false,
+  "reason": "short explanation"
+}}"""
+        try:
+            resp = gemini_client.generate_json(prompt)
+            # Tolerate list/candidates wrappers
+            if isinstance(resp, list):
+                if not resp:
+                    raise ValueError("Empty list response")
+                resp = resp[0]
+            if isinstance(resp, dict) and "candidates" in resp and isinstance(resp["candidates"], list) and resp["candidates"]:
+                resp = resp["candidates"][0]
+            if not isinstance(resp, dict):
+                raise ValueError(f"Non-dict response: {type(resp).__name__}")
+            subject_raw = str(resp.get("subject", "")).strip().lower()
+            if subject_raw not in {"mathematics", "physics", "chemistry", "biology"}:
+                subject_raw = "mathematics"
+            discard = bool(resp.get("discard", False))
+            reason = str(resp.get("reason", ""))
+            return subject_raw, discard, reason
+        except Exception as e:
+            print(f"[WARN] Preclassification failed, discarding question: {e}")
+            return None, True, f"classifier_error: {e}"
+
+    print(f"[PIPELINE] PRE-STAGE: Classifying subjects & filtering junk for {len(questions)} questions...")
+    classified_questions: List[QuestionItem] = []
+    subject_label_map = {
+        "mathematics": "Mathematics",
+        "physics": "Physics",
+        "chemistry": "Chemistry",
+        "biology": "Biology",
+    }
+    for i, q in enumerate(questions):
+        if progress_callback and i % 20 == 0:
+            progress_callback(i, len(questions), f"Classifying subjects: {i}/{len(questions)}")
+        subj_key, discard, reason = _preclassify(q)
+        if discard:
+            stats["discarded"] += 1
+            continue
+        if not subj_key:
+            # Fallback to maths if classifier failed silently
+            subj_key = "mathematics"
+        q.subject = subject_label_map.get(subj_key, "Mathematics")
+        classified_questions.append(q)
+
+    questions = classified_questions
+    stats["total_questions"] = len(questions)
+
+    # STAGE 1: Extract micro-schemas
+    print(f"[PIPELINE] STAGE 1: Extracting micro-schemas from {len(questions)} questions...")
+    if progress_callback:
+        progress_callback(0, len(questions), "Extracting micro-schemas...")
+    
+    micro_schemas = []
+    for i, question in enumerate(questions):
+        if progress_callback and i % 10 == 0:
+            progress_callback(i, len(questions), f"Extracting micro-schemas: {i}/{len(questions)}")
+        
+        if i % 50 == 0:
+            print(f"[PIPELINE] Extracting micro-schema {i+1}/{len(questions)}")
+        
+        ms = extract_micro_schema_new(question, gemini_client)
+        if ms:
+            micro_schemas.append(ms)
+            stats["extracted"] += 1
+        else:
+            print(f"[PIPELINE] Failed to extract micro-schema for question {i+1}")
+    
+    print(f"[PIPELINE] STAGE 1 complete: {stats['extracted']} micro-schemas extracted")
+    
+    # STAGE 2: Validate & discard
+    print(f"[PIPELINE] STAGE 2: Validating {len(micro_schemas)} micro-schemas...")
+    if progress_callback:
+        progress_callback(0, len(micro_schemas), "Validating micro-schemas...")
+    
+    validated_schemas = []
+    for i, ms in enumerate(micro_schemas):
+        if progress_callback and i % 10 == 0:
+            progress_callback(i, len(micro_schemas), f"Validating: {i}/{len(micro_schemas)}")
+        
+        should_discard = validate_and_discard_micro_schema(ms)
+        if should_discard:
+            ms.discard = True
+            ms.discard_reason = ms.discard_reason or "Failed validation"
+            stats["discarded"] += 1
+            if i % 50 == 0:
+                print(f"[PIPELINE] Discarded micro-schema {i+1}: {ms.discard_reason}")
+        else:
+            validated_schemas.append(ms)
+            stats["validated"] += 1
+        
+        # Compute quality score
+        ms.quality_score = compute_quality_score(ms)
+        
+        # Save to database
+        db.save_micro_schema(
+            question_id=ms.question_id,
+            subject_assigned=ms.subject_assigned,
+            subject_final=ms.subject_final,
+            subject_confidence=ms.subject_confidence,
+            discard=ms.discard,
+            discard_reason=ms.discard_reason,
+            core_move=ms.core_move,
+            trigger_signals=ms.trigger_signals,
+            type_bucket=ms.type_bucket,
+            common_wrong_path=ms.common_wrong_path,
+            minimal_prerequisite=ms.minimal_prerequisite,
+            difficulty_estimate=ms.difficulty_estimate,
+            quality_score=ms.quality_score,
+            embedding=None  # Will be computed next
+        )
+    
+    # STAGE 3: Compute embeddings
+    print(f"[PIPELINE] STAGE 3: Computing embeddings for {len(validated_schemas)} micro-schemas...")
+    if progress_callback:
+        progress_callback(0, len(validated_schemas), "Computing embeddings...")
+    
+    for i, ms in enumerate(validated_schemas):
+        if progress_callback and i % 20 == 0:
+            progress_callback(i, len(validated_schemas), f"Embedding: {i}/{len(validated_schemas)}")
+        
+        if i % 50 == 0:
+            print(f"[PIPELINE] Computing embedding {i+1}/{len(validated_schemas)}")
+        
+        embedding = compute_embedding_new(ms, gemini_client)
+        if embedding:
+            ms.embedding = embedding
+            stats["embedded"] += 1
+        else:
+            print(f"[PIPELINE] Failed to compute embedding for {ms.question_id}")
+            
+            # Update database with embedding
+            db.save_micro_schema(
+                question_id=ms.question_id,
+                subject_assigned=ms.subject_assigned,
+                subject_final=ms.subject_final,
+                subject_confidence=ms.subject_confidence,
+                discard=ms.discard,
+                discard_reason=ms.discard_reason,
+                core_move=ms.core_move,
+                trigger_signals=ms.trigger_signals,
+                type_bucket=ms.type_bucket,
+                common_wrong_path=ms.common_wrong_path,
+                minimal_prerequisite=ms.minimal_prerequisite,
+                difficulty_estimate=ms.difficulty_estimate,
+                quality_score=ms.quality_score,
+                embedding=embedding
+            )
+        
+        # Small delay to avoid rate limits
+        if i % 20 == 0:
+            time.sleep(0.5)
+    
+    print(f"[PIPELINE] STAGE 3 complete: {stats['embedded']} embeddings computed")
+    
+    # STAGE 4: Anchor-based grouping (within subject only)
+    print(f"[PIPELINE] STAGE 4: Starting anchor-based grouping...")
+    subjects = ["mathematics", "physics", "chemistry", "biology"]
+    # Map question IDs to texts
+    question_texts = {}
+    for q in questions:
+        qid = f"{q.exam}_{q.section}_{q.year}_Q{q.qnum}".replace(" ", "")
+        question_texts[qid] = q.text
+    
+    for subject in subjects:
+        print(f"[PIPELINE] Processing subject: {subject}")
+        if progress_callback:
+            progress_callback(0, 1, f"Grouping {subject}...")
+        
+        stats["by_subject"][subject] = {"schemas": 0, "questions_grouped": 0}
+        
+        # Get unassigned micro-schemas for this subject
+        assigned_ids = set()
+        iteration = 0
+        
+        while True:
+            iteration += 1
+            unassigned = db.get_unassigned_micro_schemas(subject, assigned_ids, limit=1000)
+            
+            print(f"[PIPELINE] {subject}: iteration {iteration}, {len(unassigned)} unassigned")
+            
+            if not unassigned:
+                print(f"[PIPELINE] {subject}: No more unassigned micro-schemas, moving to next subject")
+                break
+            
+            # Check if late stage
+            late_stage = len(unassigned) <= 20
+            
+            # Pick anchor (highest quality_score, already sorted)
+            anchor = unassigned[0]
+            anchor_id = anchor["question_id"]
+            anchor_embedding = anchor.get("embedding")
+            
+            # Retrieve top 30 similar candidates (using embedding similarity)
+            if anchor_embedding and len(anchor_embedding) > 0:
+                # Compute similarity scores
+                candidates_with_sim = []
+                for cand in unassigned:
+                    cand_embedding = cand.get("embedding")
+                    if cand_embedding and len(cand_embedding) > 0:
+                        sim = cosine_similarity(anchor_embedding, cand_embedding)
+                        candidates_with_sim.append((cand, sim))
+                
+                # Sort by similarity (descending) and take top 30
+                candidates_with_sim.sort(key=lambda x: x[1], reverse=True)
+                candidate_pool = [cand for cand, _ in candidates_with_sim[:30]]
+            else:
+                # Fallback: use quality_score if no embeddings
+                candidate_pool = unassigned[:30]
+            
+            # Call grouping prompt
+            grouping_result = anchor_based_grouping(
+                subject, anchor_id, candidate_pool, gemini_client, late_stage
+            )
+            
+            group_ids = grouping_result["group_ids"]
+            
+            # Get micro-schema data for group
+            group_micro_schemas = [c for c in candidate_pool if c["question_id"] in group_ids]
+            
+            # Write schema
+            schema_result = write_schema_from_group(
+                subject, group_ids, group_micro_schemas, question_texts, gemini_client
+            )
+            
+            if schema_result:
+                # Generate schema ID
+                schema_id = f"{subject[0].upper()}{stats['by_subject'][subject]['schemas'] + 1}"
+                
+                # Save schema to database
+                db.save_schema(
+                    schema_id=schema_id,
+                    subject=subject,
+                    title=schema_result.get("title", f"Schema {schema_id}"),
+                    core_move=schema_result.get("core_move", ""),
+                    trigger_signals=schema_result.get("trigger_signals", []),
+                    boundary_definition=schema_result.get("boundary_definition", ""),
+                    possible_wrong_paths=schema_result.get("possible_wrong_paths", []),
+                    generation_notes=schema_result.get("generation_notes", []),
+                    difficulty_profile=schema_result.get("difficulty_profile", {}),
+                    exemplar_question_ids=group_ids
+                )
+                
+                stats["by_subject"][subject]["schemas"] += 1
+                stats["by_subject"][subject]["questions_grouped"] += len(group_ids)
+                stats["schemas_created"] += 1
+            
+            # Mark as assigned
+            assigned_ids.update(group_ids)
+            
+            # Progress update
+            if progress_callback and iteration % 10 == 0:
+                remaining = len(unassigned) - len(assigned_ids)
+                progress_callback(iteration, 1, f"Grouping {subject}: {remaining} remaining")
+        
+        print(f"[PIPELINE] {subject} complete: {stats['by_subject'][subject]['schemas']} schemas, {stats['by_subject'][subject]['questions_grouped']} questions grouped")
+    
+    print(f"[PIPELINE] Pipeline complete!")
+    print(f"[PIPELINE] Final stats: {stats}")
+    return stats
 
 
 # ----------------------------
@@ -2674,7 +4520,7 @@ class App(tk.Tk):
             messagebox.showerror("Missing GEMINI_API_KEY", "Set GEMINI_API_KEY in .env.local")
             raise SystemExit(1)
 
-        self.gemini = Gemini(api_key=api_key, model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"))
+        self.gemini = Gemini(api_key=api_key, model=os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
 
         self.index: List[QuestionItem] = []
         self.schema_summaries: List[SchemaSummary] = []
@@ -2685,6 +4531,8 @@ class App(tk.Tk):
         self.schema_fullness: Dict[str, Dict[str, int]] = {}
         self.diagram_overrides: Dict[str, Dict[int, bool]] = {}
         self.used_question_ids: set = set()  # Track questions already used in batches
+        self.micro_schema_clusters: List[Tuple[List[MicroSchema], List[MicroSchema]]] = []  # (cluster, exemplars)
+        self.micro_schema_quality: List[Dict[str, Any]] = []  # Quality gate results
 
         self._build_ui()
         
@@ -2761,10 +4609,13 @@ class App(tk.Tk):
         ttk.Checkbutton(top, text="Force rebuild index", variable=self.force_rebuild_var).pack(side="left")
 
         ttk.Button(top, text="Index PDFs", command=self.on_index).pack(side="left", padx=6)
+        ttk.Button(top, text="Index ENGAA Part B only", command=self.on_index_engaa_partb).pack(side="left", padx=6)
         ttk.Button(top, text="View Extraction Report", command=self.on_view_extraction_report).pack(side="left", padx=6)
         ttk.Button(top, text="Review Questions & Solutions", command=self.on_review_questions_solutions).pack(side="left", padx=6)
-        ttk.Button(top, text="Generate candidates (batch)", command=self.on_generate).pack(side="left", padx=6)
-        ttk.Button(top, text="Process All Questions", command=self.on_process_all_questions).pack(side="left", padx=6)
+        # Make micro-schema pipeline the primary/default method (prominent button)
+        generate_btn = ttk.Button(top, text="🚀 Generate Schemas (Micro-Schema Pipeline)", command=self.on_micro_schema_pipeline)
+        generate_btn.pack(side="left", padx=6)
+        ttk.Button(top, text="Review Accepted Questions", command=self.on_review_accepted_questions).pack(side="left", padx=6)
         ttk.Button(top, text="Reload Schemas.md", command=self._load_schemas).pack(side="left", padx=6)
         
         def on_wipe_data():
@@ -3102,4 +4953,728 @@ class App(tk.Tk):
                 else:
                     # Create empty file if it doesn't exist
                     schema_path.parent.mkdir(parents=True, exist_ok=True)
-                    schema_path.write_text(f"#
+                    schema_path.write_text(f"# TMUA {paper_name}\n\n", encoding="utf-8")
+    
+    # Handler methods (stubs - need to be implemented)
+    def on_index(self):
+        """Index PDFs from the papers directory."""
+        force_rebuild = self.force_rebuild_var.get() if hasattr(self, 'force_rebuild_var') else False
+        include_non_papers = self.include_non_papers_var.get() if hasattr(self, 'include_non_papers_var') else False
+        
+        def work():
+            try:
+                self.after(0, lambda: self._set_status("Indexing PDFs..."))
+                self.after(0, lambda: self.progress_frame.pack(fill="x", pady=(0, 5)) if hasattr(self, 'progress_frame') else None)
+                
+                def progress_callback(current, total, filename):
+                    if hasattr(self, 'progress_bar'):
+                        self.after(0, lambda: self.progress_bar.config(maximum=total, value=current))
+                    if hasattr(self, 'progress_label'):
+                        self.after(0, lambda: self.progress_label.config(text=f"Indexing: {filename} ({current}/{total})"))
+                    self.after(0, lambda: self._set_status(f"Indexing: {filename} ({current}/{total})"))
+                
+                # Build or load index
+                self.index = build_or_load_index(
+                    self.papers_dir,
+                    force_rebuild=force_rebuild,
+                    include_non_papers=include_non_papers,
+                    progress_callback=progress_callback
+                )
+                
+                # Hide progress bar
+                if hasattr(self, 'progress_frame'):
+                    self.after(0, lambda: self.progress_frame.pack_forget())
+                
+                # Update UI
+                self.after(0, lambda: self._set_status(f"Indexed {len(self.index)} questions from PDFs"))
+                self.after(0, lambda: messagebox.showinfo("Indexing Complete", 
+                    f"Successfully indexed {len(self.index)} questions from PDFs.\n\n"
+                    f"Mode: {MODE}\n"
+                    f"Force rebuild: {force_rebuild}"))
+                
+                # Update progress display
+                if hasattr(self, 'paper_progress_label'):
+                    self.after(0, lambda: self.paper_progress_label.config(
+                        text=f"Questions: {len(self.index)}/{len(self.index)} (all questions)"))
+                
+            except Exception as e:
+                error_msg = str(e)
+                if hasattr(self, 'progress_frame'):
+                    self.after(0, lambda: self.progress_frame.pack_forget())
+                self.after(0, lambda: messagebox.showerror("Indexing Failed", f"Error: {error_msg}"))
+                self.after(0, lambda: self._set_status(f"Indexing failed: {error_msg}"))
+                import traceback
+                traceback.print_exc()
+        
+        threading.Thread(target=work, daemon=True).start()
+    
+    def on_index_engaa_partb(self):
+        """Index ONLY ENGAA Section 1 Part B papers under scripts/schema_generator/papers/ENGAA."""
+        force_rebuild = self.force_rebuild_var.get() if hasattr(self, 'force_rebuild_var') else False
+        include_non_papers = self.include_non_papers_var.get() if hasattr(self, 'include_non_papers_var') else False
+
+        engaa_dir = self.project_root / "scripts" / "schema_generator" / "papers" / "ENGAA"
+
+        def work():
+            try:
+                self.after(0, lambda: self._set_status("Indexing ENGAA Section 1 Part B PDFs..."))
+                if hasattr(self, 'progress_frame'):
+                    self.after(0, lambda: self.progress_frame.pack(fill="x", pady=(0, 5)))
+
+                def progress_callback(current, total, filename):
+                    if hasattr(self, 'progress_bar'):
+                        self.after(0, lambda: self.progress_bar.config(maximum=total, value=current))
+                    if hasattr(self, 'progress_label'):
+                        self.after(0, lambda: self.progress_label.config(
+                            text=f"ENGAA Part B: {filename} ({current}/{total})"
+                        ))
+                    self.after(0, lambda: self._set_status(
+                        f"Indexing ENGAA Part B: {filename} ({current}/{total})"
+                    ))
+
+                # Build or load index, restricted to ENGAA subtree.
+                self.index = build_or_load_index(
+                    engaa_dir,
+                    force_rebuild=force_rebuild,
+                    include_non_papers=include_non_papers,
+                    progress_callback=progress_callback,
+                )
+
+                # Hide progress bar
+                if hasattr(self, 'progress_frame'):
+                    self.after(0, lambda: self.progress_frame.pack_forget())
+
+                # Update UI
+                self.after(0, lambda: self._set_status(
+                    f"Indexed {len(self.index)} ENGAA Section 1 Part B questions"
+                ))
+                self.after(0, lambda: messagebox.showinfo(
+                    "ENGAA Indexing Complete",
+                    f"Successfully indexed {len(self.index)} ENGAA Section 1 Part B questions.\n\n"
+                    f"Force rebuild: {force_rebuild}"
+                ))
+
+                if hasattr(self, 'paper_progress_label'):
+                    self.after(0, lambda: self.paper_progress_label.config(
+                        text=f"ENGAA Part B questions: {len(self.index)}"
+                    ))
+
+            except Exception as e:
+                error_msg = str(e)
+                if hasattr(self, 'progress_frame'):
+                    self.after(0, lambda: self.progress_frame.pack_forget())
+                self.after(0, lambda: messagebox.showerror(
+                    "ENGAA Indexing Failed",
+                    f"Error: {error_msg}"
+                ))
+                self.after(0, lambda: self._set_status(f"ENGAA indexing failed: {error_msg}"))
+                import traceback
+                traceback.print_exc()
+
+        threading.Thread(target=work, daemon=True).start()
+    
+    def on_view_extraction_report(self):
+        """View extraction report - placeholder."""
+        messagebox.showinfo("Not Implemented", "View extraction report functionality needs to be implemented.")
+    
+    def on_review_questions_solutions(self):
+        """Review all indexed questions and solutions."""
+        if not hasattr(self, 'index') or not self.index:
+            messagebox.showinfo("No Index", "Please index PDFs first using 'Index PDFs' button.")
+            return
+        
+        # Create review window
+        review_window = tk.Toplevel(self)
+        review_window.title("Review Questions & Solutions")
+        review_window.geometry("1200x800")
+        
+        # Top: Filter controls
+        filter_frame = ttk.LabelFrame(review_window, text="Filters")
+        filter_frame.pack(fill="x", padx=10, pady=10)
+        
+        ttk.Label(filter_frame, text="PDF:").pack(side="left", padx=5)
+        pdf_var = tk.StringVar()
+        pdf_combo = ttk.Combobox(filter_frame, textvariable=pdf_var, width=60, state="readonly")
+        pdf_combo.pack(side="left", padx=5)
+        
+        ttk.Label(filter_frame, text="Exam:").pack(side="left", padx=5)
+        exam_var = tk.StringVar()
+        exam_combo = ttk.Combobox(filter_frame, textvariable=exam_var, width=20, state="readonly")
+        exam_combo.pack(side="left", padx=5)
+        
+        # Get unique PDFs and exams
+        unique_pdfs = sorted(set(q.pdf_path for q in self.index))
+        unique_exams = sorted(set(q.exam for q in self.index if q.exam))
+        pdf_combo['values'] = ["All PDFs"] + [Path(p).name for p in unique_pdfs]
+        exam_combo['values'] = ["All Exams"] + unique_exams
+        pdf_combo.current(0)
+        exam_combo.current(0)
+        
+        # Middle: Question list
+        list_frame = ttk.Frame(review_window)
+        list_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # Left: Question list
+        left_frame = ttk.LabelFrame(list_frame, text="Questions")
+        left_frame.pack(side="left", fill="both", expand=True, padx=(0, 5))
+        
+        list_scrollbar = ttk.Scrollbar(left_frame)
+        list_scrollbar.pack(side="right", fill="y")
+        
+        question_listbox = tk.Listbox(left_frame, yscrollcommand=list_scrollbar.set, selectmode=tk.SINGLE, font=("Courier", 9))
+        question_listbox.pack(side="left", fill="both", expand=True)
+        list_scrollbar.config(command=question_listbox.yview)
+        
+        # Right: Question details
+        right_frame = ttk.LabelFrame(list_frame, text="Question Details")
+        right_frame.pack(side="right", fill="both", expand=True, padx=(5, 0))
+        
+        details_text = tk.Text(right_frame, wrap=tk.WORD, font=("Courier", 9))
+        details_scrollbar = ttk.Scrollbar(right_frame, command=details_text.yview)
+        details_text.config(yscrollcommand=details_scrollbar.set)
+        details_text.pack(side="left", fill="both", expand=True)
+        details_scrollbar.pack(side="right", fill="y")
+        
+        # Store filtered questions
+        filtered_questions = []
+        
+        def refresh_list():
+            """Refresh question list based on filters."""
+            question_listbox.delete(0, tk.END)
+            filtered_questions.clear()
+            
+            selected_pdf = pdf_var.get()
+            selected_exam = exam_var.get()
+            
+            for q in self.index:
+                # Apply filters
+                if selected_pdf != "All PDFs":
+                    if Path(q.pdf_path).name != selected_pdf:
+                        continue
+                
+                if selected_exam != "All Exams":
+                    if q.exam != selected_exam:
+                        continue
+                
+                filtered_questions.append(q)
+                
+                # Format display
+                pdf_name = Path(q.pdf_path).name[:30]
+                exam_str = q.exam or "?"
+                year_str = q.year or "?"
+                section_str = q.section or "?"
+                qnum_str = str(q.qnum) if q.qnum else "?"
+                subject_str = f"[{q.subject}]" if q.subject else "[No Subject]"
+                preview = q.text[:60].replace("\n", " ") + "..." if len(q.text) > 60 else q.text.replace("\n", " ")
+                
+                label = f"{pdf_name} | {exam_str} {year_str} {section_str} Q{qnum_str} {subject_str}: {preview}"
+                question_listbox.insert(tk.END, label)
+        
+        def show_details(event=None):
+            """Show details of selected question."""
+            selection = question_listbox.curselection()
+            if not selection:
+                details_text.delete(1.0, tk.END)
+                return
+            
+            idx = selection[0]
+            if idx < len(filtered_questions):
+                q = filtered_questions[idx]
+                
+                details = f"""Question ID: {q.paper_id}
+PDF: {Path(q.pdf_path).name}
+Exam: {q.exam or 'N/A'}
+Section: {q.section or 'N/A'}
+Year: {q.year or 'N/A'}
+Question Number: {q.qnum or 'N/A'}
+Subject: {q.subject or 'N/A (not classified)'}
+
+Question Text:
+{'='*80}
+{q.text}
+{'='*80}
+
+Solution Available: {'Yes' if q.solution_text else 'No'}
+"""
+                if q.solution_text:
+                    details += f"\nSolution:\n{'='*80}\n{q.solution_text}\n{'='*80}\n"
+                
+                if q.skipped_diagram:
+                    details += "\n⚠️ This question was marked as having a diagram (but was included anyway).\n"
+                
+                details_text.delete(1.0, tk.END)
+                details_text.insert(1.0, details)
+        
+        # Bind events
+        pdf_combo.bind("<<ComboboxSelected>>", lambda e: refresh_list())
+        exam_combo.bind("<<ComboboxSelected>>", lambda e: refresh_list())
+        question_listbox.bind("<<ListboxSelect>>", show_details)
+        
+        # Bottom: Stats and actions
+        bottom_frame = ttk.Frame(review_window)
+        bottom_frame.pack(fill="x", padx=10, pady=10)
+        
+        stats_label = ttk.Label(bottom_frame, text="")
+        stats_label.pack(side="left", padx=5)
+        
+        def update_stats():
+            """Update statistics display."""
+            total = len(self.index)
+            filtered = len(filtered_questions)
+            with_solutions = sum(1 for q in filtered_questions if q.solution_text)
+            stats_text = f"Total: {total} questions | Filtered: {filtered} | With Solutions: {with_solutions}"
+            stats_label.config(text=stats_text)
+        
+        ttk.Button(bottom_frame, text="Refresh", command=lambda: [refresh_list(), update_stats()]).pack(side="right", padx=5)
+        ttk.Button(bottom_frame, text="Close", command=review_window.destroy).pack(side="right", padx=5)
+        
+        # Initial load
+        refresh_list()
+        update_stats()
+    
+    def on_review_accepted_questions(self):
+        """Review and manage accepted questions from clusters."""
+        if not self.micro_schema_clusters:
+            messagebox.showinfo("No Clusters", "No accepted clusters to review. Generate schemas first using the Micro-Schema Pipeline.")
+            return
+        
+        # Create review window
+        review_window = tk.Toplevel(self)
+        review_window.title("Review Accepted Questions")
+        review_window.geometry("1000x700")
+        
+        # Top: Cluster selection
+        top_frame = ttk.Frame(review_window)
+        top_frame.pack(fill="x", padx=10, pady=10)
+        
+        ttk.Label(top_frame, text="Cluster:").pack(side="left", padx=5)
+        cluster_var = tk.StringVar()
+        cluster_combo = ttk.Combobox(top_frame, textvariable=cluster_var, width=50, state="readonly")
+        cluster_combo.pack(side="left", padx=5)
+        
+        # Populate cluster list
+        cluster_options = [f"Cluster {i+1} ({len(cluster)} questions, {len(exemplars)} exemplars)" 
+                          for i, (cluster, exemplars) in enumerate(self.micro_schema_clusters)]
+        cluster_combo['values'] = cluster_options
+        if cluster_options:
+            cluster_combo.current(0)
+        
+        # Middle: Question list with checkboxes
+        mid_frame = ttk.Frame(review_window)
+        mid_frame.pack(fill="both", expand=True, padx=10, pady=10)
+        
+        # Create scrollable list
+        list_frame = ttk.Frame(mid_frame)
+        list_frame.pack(fill="both", expand=True)
+        
+        scrollbar = ttk.Scrollbar(list_frame)
+        scrollbar.pack(side="right", fill="y")
+        
+        question_listbox = tk.Listbox(list_frame, yscrollcommand=scrollbar.set, selectmode=tk.EXTENDED)
+        question_listbox.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=question_listbox.yview)
+        
+        # Question details text area
+        details_frame = ttk.LabelFrame(mid_frame, text="Question Details")
+        details_frame.pack(fill="both", expand=True, pady=(10, 0))
+        
+        details_text = tk.Text(details_frame, wrap=tk.WORD, height=10)
+        details_text.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # Store question data
+        current_questions = []
+        
+        def load_cluster():
+            """Load questions for selected cluster."""
+            selection = cluster_combo.current()
+            if selection < 0 or selection >= len(self.micro_schema_clusters):
+                return
+            
+            cluster, exemplars = self.micro_schema_clusters[selection]
+            current_questions.clear()
+            question_listbox.delete(0, tk.END)
+            
+            # Add all questions from cluster
+            for ms in cluster:
+                qid = ms.qid
+                qtext = ms.question_item.text[:100] + "..." if len(ms.question_item.text) > 100 else ms.question_item.text
+                is_exemplar = ms in exemplars
+                label = f"{'[EXEMPLAR] ' if is_exemplar else ''}{qid}: {qtext}"
+                question_listbox.insert(tk.END, label)
+                current_questions.append({
+                    "micro_schema": ms,
+                    "is_exemplar": is_exemplar,
+                    "qid": qid
+                })
+        
+        def show_details(event=None):
+            """Show details of selected question."""
+            selection = question_listbox.curselection()
+            if not selection:
+                details_text.delete(1.0, tk.END)
+                return
+            
+            idx = selection[0]
+            if idx < len(current_questions):
+                ms = current_questions[idx]["micro_schema"]
+                q = ms.question_item
+                
+                details = f"""Question ID: {ms.qid}
+Exam: {q.exam or 'N/A'}
+Section: {q.section or 'N/A'}
+Year: {q.year or 'N/A'}
+Question Number: {q.qnum}
+
+Question Text:
+{q.text}
+
+Core Move: {ms.core_move}
+Triggers: {', '.join(ms.key_triggers)}
+Wrong Paths: {', '.join(ms.wrong_paths)}
+Representation: {ms.representation}
+Difficulty: {ms.difficulty}
+Answer Form: {ms.answer_form}
+
+Solution Available: {'Yes' if q.solution_text else 'No'}
+"""
+                if q.solution_text:
+                    details += f"\nSolution:\n{q.solution_text[:500]}..."
+                
+                details_text.delete(1.0, tk.END)
+                details_text.insert(1.0, details)
+        
+        def delete_selected():
+            """Delete selected questions from cluster."""
+            selection = question_listbox.curselection()
+            if not selection:
+                messagebox.showwarning("No Selection", "Please select questions to delete.")
+                return
+            
+            selected_indices = list(selection)
+            selected_qids = [current_questions[i]["qid"] for i in selected_indices]
+            
+            confirm_msg = f"Delete {len(selected_indices)} question(s)?\n\n" + "\n".join(selected_qids[:5])
+            if len(selected_qids) > 5:
+                confirm_msg += f"\n... and {len(selected_qids) - 5} more"
+            
+            if not messagebox.askyesno("Confirm Delete", confirm_msg):
+                return
+            
+            # Remove from cluster
+            cluster_idx = cluster_combo.current()
+            if cluster_idx >= 0 and cluster_idx < len(self.micro_schema_clusters):
+                cluster, exemplars = self.micro_schema_clusters[cluster_idx]
+                
+                # Remove selected questions
+                indices_to_remove = sorted(selected_indices, reverse=True)
+                for idx in indices_to_remove:
+                    ms_to_remove = current_questions[idx]["micro_schema"]
+                    if ms_to_remove in cluster:
+                        cluster.remove(ms_to_remove)
+                    if ms_to_remove in exemplars:
+                        exemplars.remove(ms_to_remove)
+                
+                # Reload display
+                load_cluster()
+                details_text.delete(1.0, tk.END)
+                
+                messagebox.showinfo("Deleted", f"Deleted {len(selected_indices)} question(s) from cluster.")
+        
+        def save_changes():
+            """Save changes to clusters."""
+            # Clusters are already updated in memory
+            messagebox.showinfo("Saved", "Changes saved. Clusters updated in memory.")
+        
+        # Bind events
+        cluster_combo.bind("<<ComboboxSelected>>", lambda e: load_cluster())
+        question_listbox.bind("<<ListboxSelect>>", show_details)
+        
+        # Bottom: Action buttons
+        bottom_frame = ttk.Frame(review_window)
+        bottom_frame.pack(fill="x", padx=10, pady=10)
+        
+        ttk.Button(bottom_frame, text="Delete Selected", command=delete_selected).pack(side="left", padx=5)
+        ttk.Button(bottom_frame, text="Save Changes", command=save_changes).pack(side="left", padx=5)
+        ttk.Button(bottom_frame, text="Close", command=review_window.destroy).pack(side="right", padx=5)
+        
+        # Load first cluster
+        if cluster_options:
+            load_cluster()
+    
+    def on_preview_questions(self):
+        """Preview questions - placeholder."""
+        messagebox.showinfo("Not Implemented", "Preview questions functionality needs to be implemented.")
+    
+    def on_show_coverage(self):
+        """Show coverage - placeholder."""
+        messagebox.showinfo("Not Implemented", "Show coverage functionality needs to be implemented.")
+    
+    def on_accept_new(self):
+        """Accept as new - placeholder."""
+        messagebox.showinfo("Not Implemented", "Accept as new functionality needs to be implemented.")
+    
+    def on_ignore(self):
+        """Ignore - placeholder."""
+        messagebox.showinfo("Not Implemented", "Ignore functionality needs to be implemented.")
+    
+    def on_accept_all(self):
+        """Accept all - placeholder."""
+        messagebox.showinfo("Not Implemented", "Accept all functionality needs to be implemented.")
+    
+    def on_split(self):
+        """Split - placeholder."""
+        messagebox.showinfo("Not Implemented", "Split functionality needs to be implemented.")
+    
+    def on_reset_used_questions(self):
+        """Reset used questions tracking - placeholder."""
+        messagebox.showinfo("Not Implemented", "Reset used questions functionality needs to be implemented.")
+    
+    def on_select_candidate(self, event=None):
+        """Handle candidate selection from listbox - placeholder."""
+        # This is called when user selects a candidate from the list
+        # For now, just a placeholder
+        pass
+    
+    def _load_embeddings(self):
+        """Load schema embeddings - placeholder."""
+        self.schema_embeddings = {}
+    
+    def _load_meta(self):
+        """Load schema metadata - placeholder."""
+        self.schemas_meta = {}
+        self.schema_fullness = {}
+    
+    def _load_used_questions(self):
+        """Load used questions tracking - placeholder."""
+        self.used_question_ids = set()
+    
+    def _wipe_schema_data(self):
+        """Wipe all schema data for current mode (ESAT or TMUA)."""
+        wiped_files = []
+        
+        try:
+            # Determine which files to wipe based on mode
+            if MODE == "TMUA":
+                schema_files = [TMUA_PAPER1_SCHEMAS_MD, TMUA_PAPER2_SCHEMAS_MD]
+            else:  # ESAT
+                schema_files = [SCHEMAS_MD_DEFAULT]
+            
+            # Wipe schema files (clear content, keep file)
+            for schema_file in schema_files:
+                if schema_file.exists():
+                    schema_file.write_text(f"# {MODE} Schemas\n\n", encoding="utf-8")
+                    wiped_files.append(schema_file.name)
+            
+            # Wipe cache files
+            cache_files = [
+                SCHEMAS_META_JSON,
+                SCHEMA_EMBEDDINGS_JSON,
+                SCHEMA_COVERAGE_JSON,
+                USED_QUESTIONS_JSON,
+                DIAGRAM_OVERRIDES_JSON,
+            ]
+            
+            for cache_file in cache_files:
+                if cache_file.exists():
+                    cache_file.unlink()
+                    wiped_files.append(cache_file.name)
+            
+            # Wipe index (but only if in ESAT mode, or if we want to wipe TMUA index too)
+            # For ESAT, wipe the index. For TMUA, we might want to keep it shared.
+            if MODE == "ESAT" and INDEX_JSON.exists():
+                # Check if index contains only ESAT questions
+                try:
+                    data = json.loads(safe_read_text(INDEX_JSON))
+                    items = [QuestionItem(**x) for x in data]
+                    # Only wipe if all questions are ESAT (not TMUA)
+                    if all(q.exam != "TMUA" for q in items if q.exam):
+                        INDEX_JSON.unlink()
+                        wiped_files.append(INDEX_JSON.name)
+                except:
+                    # If we can't parse, wipe it anyway
+                    INDEX_JSON.unlink()
+                    wiped_files.append(INDEX_JSON.name)
+            
+            # Wipe log files
+            log_files = [
+                CANDIDATES_JSONL,
+                DECISIONS_JSONL,
+            ]
+            
+            for log_file in log_files:
+                if log_file.exists():
+                    log_file.unlink()
+                    wiped_files.append(log_file.name)
+            
+            # Wipe PDF cache (all PDF caches - they'll be regenerated)
+            if PDF_CACHE_DIR.exists():
+                for cache_file in PDF_CACHE_DIR.glob("*.json"):
+                    cache_file.unlink()
+                    wiped_files.append(f"pdf_cache/{cache_file.name}")
+            
+            # Reset in-memory data
+            self.index = []
+            self.schema_summaries = []
+            self.candidates = []
+            self.sim_hits = {}
+            self.schema_embeddings = {}
+            self.schemas_meta = {}
+            self.schema_fullness = {}
+            self.used_question_ids = set()
+            self.micro_schema_clusters = []
+            self.micro_schema_quality = []
+            
+            # Reload schemas (will be empty now)
+            self._load_schemas()
+            self._load_embeddings()
+            self._load_meta()
+            self._load_used_questions()
+            
+            # Update UI
+            if hasattr(self, 'cand_list'):
+                self.cand_list.delete(0, tk.END)
+            if hasattr(self, 'paper_progress_label'):
+                self.paper_progress_label.config(text="Questions: 0/0")
+            
+            self._set_status(f"Wiped {len(wiped_files)} files for {MODE} mode")
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to wipe some files: {e}")
+            import traceback
+            traceback.print_exc()
+        
+        return wiped_files
+    
+    def _renumber_all_schemas(self):
+        """Renumber all schemas - placeholder."""
+        return {}
+    
+    def _split_tmua_schemas_by_paper_type(self):
+        """Split TMUA schemas by paper type - placeholder."""
+        return {"error": "Not implemented"}
+    
+    def on_micro_schema_pipeline(self):
+        """Run the new full schema generation pipeline (final version)."""
+        if not self.index:
+            messagebox.showwarning("No Index", "Please index PDFs first.")
+            return
+        
+        # Include ALL questions (solutions optional, diagrams allowed)
+        # Apply batch filter if set
+        eligible = list(self.index)  # Start with all questions
+        
+        # Get batch filter if it exists (defined later in _build_ui)
+        batch_filter = ""
+        if hasattr(self, 'batch_filter') and self.batch_filter:
+            try:
+                batch_filter = self.batch_filter.get().strip()
+            except:
+                pass
+        if batch_filter:
+            eligible = [q for q in eligible if batch_filter.lower() in str(q).lower()]
+        
+        if not eligible:
+            messagebox.showwarning("No Questions", f"No eligible questions found (filter: '{batch_filter}').")
+            return
+        
+        # Ask for confirmation
+        total = len(eligible)
+        if not messagebox.askyesno("Full Schema Generation Pipeline", 
+            f"This will run the full pipeline on {total} questions:\n\n"
+            f"1. Extract micro-schemas (subject-specific)\n"
+            f"2. Validate & discard filtering\n"
+            f"3. Quality scoring\n"
+            f"4. Embedding computation\n"
+            f"5. Anchor-based grouping (within subject)\n"
+            f"6. Schema writing\n\n"
+            f"This may take a while and use API credits.\n\n"
+            f"Continue?"):
+            return
+        
+        def work():
+            try:
+                # Initialize database
+                db_path = str(Path(__file__).parent.parent / "restructure" / "nsaa_state.db")
+                db = NSAASchemaDB(db_path)
+                
+                def progress_callback(current, total, msg):
+                    self.after(0, lambda: self._set_status(msg))
+                    if hasattr(self, 'progress_bar'):
+                        self.after(0, lambda: self.progress_bar.config(maximum=total, value=current))
+                
+                # Run full pipeline
+                stats = run_full_schema_pipeline(
+                    eligible,
+                    self.gemini,
+                    db,
+                    progress_callback=progress_callback
+                )
+                
+                # Show summary
+                summary = (
+                    f"Full Schema Generation Pipeline Complete:\n\n"
+                    f"Total questions: {stats['total_questions']}\n"
+                    f"Extracted: {stats['extracted']}\n"
+                    f"Discarded: {stats['discarded']}\n"
+                    f"Validated: {stats['validated']}\n"
+                    f"Embedded: {stats['embedded']}\n"
+                    f"Schemas created: {stats['schemas_created']}\n\n"
+                    f"By subject:\n"
+                )
+                for subject, sub_stats in stats['by_subject'].items():
+                    summary += f"  {subject}: {sub_stats['schemas']} schemas, {sub_stats['questions_grouped']} questions\n"
+                
+                self.after(0, lambda: messagebox.showinfo("Pipeline Complete", summary))
+                self.after(0, lambda: self._set_status(
+                    f"Pipeline complete: {stats['schemas_created']} schemas created"))
+                
+            except Exception as e:
+                error_msg = str(e)
+                self.after(0, lambda: messagebox.showerror("Pipeline Failed", f"Error: {error_msg}"))
+                self.after(0, lambda: self._set_status(f"Pipeline failed: {error_msg}"))
+                import traceback
+                traceback.print_exc()
+        
+        threading.Thread(target=work, daemon=True).start()
+    
+    # (Reclassification / clear-schemas handlers removed – pipeline will now
+    # do subject classification up front when generating micro-schemas.)
+    
+    def _on_closing(self):
+        """Handle window closing."""
+        self.destroy()
+
+# ----------------------------
+# Main Entry Point
+# ----------------------------
+
+if __name__ == "__main__":
+    import sys
+    
+    # Get project root and papers directory
+    project_root = Path(__file__).resolve().parent.parent.parent
+    papers_dir = project_root / "scripts" / "schema_generator" / "papers"
+    
+    # Determine schema file based on mode
+    if MODE == "TMUA":
+        schemas_md = TMUA_PAPER1_SCHEMAS_MD  # Default to Paper 1 for UI
+    else:
+        schemas_md = SCHEMAS_MD_DEFAULT
+    
+    # Create UI
+    try:
+        print("Starting Schema Generator UI...")
+        print(f"Mode: {MODE}")
+        print(f"Papers directory: {papers_dir}")
+        print(f"Schemas file: {schemas_md}")
+        app = App(project_root, papers_dir, schemas_md)
+        print("UI initialized. Starting main loop...")
+        app.mainloop()
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        sys.exit(0)
+    except Exception as e:
+        print(f"Error starting schema generator: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
