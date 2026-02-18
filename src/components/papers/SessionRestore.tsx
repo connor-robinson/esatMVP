@@ -28,6 +28,12 @@ export function SessionRestore() {
 
     // Only check if we don't already have a session and user is authenticated
     if (sessionId || !session?.user) {
+      // #region agent log
+      if (sessionId) {
+        const s = usePaperSessionStore.getState();
+        fetch('http://127.0.0.1:7243/ingest/fb1fac12-5625-471f-97ca-fe787ab97f78',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SessionRestore.tsx:skip',message:'SessionRestore skip (sessionId set)',data:{sessionId,pathname,currentQuestionIndex:s.currentQuestionIndex,currentSectionIndex:s.currentSectionIndex},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
+      }
+      // #endregion
       // Clear restoring flag if we already have a session
       if (isRestoring) {
         usePaperSessionStore.setState({ isRestoring: false });
