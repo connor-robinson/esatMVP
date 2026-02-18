@@ -21,14 +21,44 @@ export default function LoginPage() {
   const session = useSupabaseSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isChecking, setIsChecking] = useState(true);
 
-  // Redirect if already logged in
+  // Check session state on mount and when session changes
+  // This ensures we properly detect if user is already logged in
   useEffect(() => {
-    if (session?.user) {
+    const checkSession = async () => {
+      try {
+        // Always check directly from Supabase to avoid stale state
+        const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("[login] Session check error:", sessionError);
+          setIsChecking(false);
+          return;
+        }
+
+        if (currentSession?.user) {
+          const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
+          router.push(redirectTo);
+        } else {
+          setIsChecking(false);
+        }
+      } catch (err) {
+        console.error("[login] Error checking session:", err);
+        setIsChecking(false);
+      }
+    };
+
+    checkSession();
+  }, [supabase, searchParams, router]);
+
+  // Also check when session from context changes
+  useEffect(() => {
+    if (session?.user && !isChecking) {
       const redirectTo = searchParams.get("redirectTo") || "/past-papers/library";
       router.push(redirectTo);
     }
-  }, [session, searchParams, router]);
+  }, [session, searchParams, router, isChecking]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -62,7 +92,7 @@ export default function LoginPage() {
   };
 
   // Show nothing while checking session (prevents flash)
-  if (session?.user) {
+  if (session?.user || isChecking) {
     return null;
   }
 

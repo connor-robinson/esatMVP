@@ -2982,29 +2982,40 @@ def build_or_load_index(papers_dir: Path, force_rebuild: bool = False,
 # ----------------------------
 
 class Gemini:
-    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
+    def __init__(self, api_key: str, model: str = None):
         genai.configure(api_key=api_key)
+        # Default to gemini-2.5-flash (or from env var), fallback chain: 2.5-flash -> 1.5-flash -> pro
+        if model is None:
+            model = os.getenv("SCHEMA_GENERATOR_MODEL", "gemini-2.5-flash")
         self._requested_model = model
-        # Try to create the model, fallback to gemini-1.5-flash if not available
+        # Try to create the model, fallback chain
         try:
             self.model = genai.GenerativeModel(model)
             self._actual_model = model
             print(f"[INFO] Using model: {model}")
         except Exception as e:
-            print(f"[WARN] Model {model} not available, trying gemini-1.5-flash: {e}")
+            print(f"[WARN] Model {model} not available, trying gemini-2.5-flash: {e}")
             try:
-                self.model = genai.GenerativeModel("gemini-1.5-flash")
-                self._actual_model = "gemini-1.5-flash"
-                print(f"[INFO] Using fallback model: gemini-1.5-flash")
-            except Exception:
-                # Last resort: try gemini-pro
-                self.model = genai.GenerativeModel("gemini-pro")
-                self._actual_model = "gemini-pro"
-                print(f"[INFO] Using fallback model: gemini-pro")
+                self.model = genai.GenerativeModel("gemini-2.5-flash")
+                self._actual_model = "gemini-2.5-flash"
+                print(f"[INFO] Using fallback model: gemini-2.5-flash")
+            except Exception as e2:
+                print(f"[WARN] gemini-2.5-flash not available, trying gemini-1.5-flash: {e2}")
+                try:
+                    self.model = genai.GenerativeModel("gemini-1.5-flash")
+                    self._actual_model = "gemini-1.5-flash"
+                    print(f"[INFO] Using fallback model: gemini-1.5-flash")
+                except Exception:
+                    # Last resort: try gemini-pro
+                    self.model = genai.GenerativeModel("gemini-pro")
+                    self._actual_model = "gemini-pro"
+                    print(f"[INFO] Using fallback model: gemini-pro")
         self.api_key = api_key
         self._last_request_time = 0
         self._request_lock = threading.Lock()
-        self._min_delay = 1.0  # Minimum delay between requests (seconds) - increased to avoid rate limits
+        # Make min_delay configurable via environment variable, default to 2.0s to avoid rate limits
+        self._min_delay = float(os.getenv("SCHEMA_GENERATOR_MIN_DELAY", "2.0"))
+        print(f"[INFO] Rate limiting: {self._min_delay}s minimum delay between requests")
     
     def get_model_name(self) -> str:
         """Return the actual model name being used."""
@@ -3019,19 +3030,31 @@ class Gemini:
                 time.sleep(self._min_delay - time_since_last)
             self._last_request_time = time.time()
 
-    def _retry_with_backoff(self, func, max_retries: int = 3, initial_delay: float = 1.0):
+    def _retry_with_backoff(self, func, max_retries: int = 3, initial_delay: float = None):
         """Retry function with exponential backoff for rate limit errors."""
+        if initial_delay is None:
+            # Use longer initial delay for rate limits - configurable via env var
+            initial_delay = float(os.getenv("SCHEMA_GENERATOR_RATE_LIMIT_DELAY", "5.0"))
         delay = initial_delay
         for attempt in range(max_retries):
             try:
                 return func()
             except Exception as e:
                 error_str = str(e)
-                # Check if it's a rate limit error
-                if "429" in error_str or "ResourceExhausted" in error_str or "Resource exhausted" in error_str:
+                # Check if it's a rate limit error (more comprehensive detection)
+                is_rate_limit = (
+                    "429" in error_str or 
+                    "ResourceExhausted" in error_str or 
+                    "Resource exhausted" in error_str or
+                    "rate limit" in error_str.lower() or
+                    "quota" in error_str.lower() or
+                    "too many requests" in error_str.lower()
+                )
+                if is_rate_limit:
                     if attempt < max_retries - 1:
-                        wait_time = delay * (2 ** attempt)  # Exponential backoff
+                        wait_time = delay * (2 ** attempt)  # Exponential backoff: 5s, 10s, 20s
                         print(f"[WARN] Rate limit hit, waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}")
+                        print(f"[WARN] Error details: {error_str[:200]}")
                         time.sleep(wait_time)
                         continue
                     else:
@@ -4156,16 +4179,43 @@ def run_full_schema_pipeline(questions: List[QuestionItem], gemini_client, db,
     }
 
     # PRE-STAGE: Subject classification & front-page / junk filtering
-    def _preclassify(q: QuestionItem) -> Tuple[Optional[str], bool, str]:
+    # Use gemini-2.5-flash for classification (supports JSON mode, cheaper than pro models)
+    # Note: gemini-pro doesn't support JSON mode, so we use flash which is still cheaper
+    classifier_model = os.getenv("SCHEMA_CLASSIFIER_MODEL", "gemini-2.5-flash")
+    classifier_client = Gemini(api_key=gemini_client.api_key, model=classifier_model)
+    actual_classifier_model = classifier_client.get_model_name()
+    print(f"[PIPELINE] Using {actual_classifier_model} for subject classification (batch mode: 10 questions per call)")
+    
+    def _preclassify_batch(question_batch: List[Tuple[int, QuestionItem]]) -> Dict[int, Tuple[Optional[str], bool, str]]:
         """
-        Classify a question into mathematics/physics/chemistry/biology, or mark as discard.
-        Returns (subject_key or None, discard, reason).
+        Classify a batch of questions (up to 10) into mathematics/physics/chemistry/biology, or mark as discard.
+        
+        Args:
+            question_batch: List of (index, QuestionItem) tuples
+            
+        Returns:
+            Dict mapping question index to (subject_key or None, discard, reason)
         """
+        if not question_batch:
+            return {}
+        
+        # Build prompt with all questions, each with a unique ID
+        questions_text = ""
+        question_ids = []
+        for idx, q in question_batch:
+            qid = f"Q{idx}"
+            question_ids.append((idx, qid))
+            q_text = q.text[:1500] if q.text else ""  # Slightly shorter per question to fit 10 in one prompt
+            questions_text += f"""
+--- {qid} ---
+{q_text}
+"""
+        
         prompt = f"""You are classifying exam QUESTIONS by subject and filtering out junk pages.
 
 Rules:
-- Choose exactly ONE subject from this set: "mathematics", "physics", "chemistry", "biology".
-- Also decide whether this page should be DISCARDED.
+- For EACH question, choose exactly ONE subject from this set: "mathematics", "physics", "chemistry", "biology".
+- For EACH question, decide whether it should be DISCARDED.
 - Discard pages that are NOT real, self-contained questions (e.g. covers, instructions, specification text,
   data tables with no question, blank pages, formula sheets).
 - Treat CONTEXT as decisive for subject:
@@ -4179,17 +4229,29 @@ Rules:
   * Only use "mathematics" when the question is about abstract maths (numbers, algebra, functions, calculus,
     geometry, probability, combinatorics, etc.) with no clear physics/chemistry/biology context.
 
-Question text:
-\"\"\"{q.text[:1800]}\"\"\"
+Questions to classify:
+{questions_text}
 
-Return ONLY valid JSON with this structure:
+Return ONLY valid JSON with this structure (an array of results, one per question):
 {{
-  "subject": "mathematics|physics|chemistry|biology",
-  "discard": true or false,
-  "reason": "short explanation"
+  "results": [
+    {{
+      "question_id": "Q0",
+      "subject": "mathematics|physics|chemistry|biology",
+      "discard": true or false,
+      "reason": "short explanation"
+    }},
+    {{
+      "question_id": "Q1",
+      "subject": "mathematics|physics|chemistry|biology",
+      "discard": true or false,
+      "reason": "short explanation"
+    }}
+    // ... one entry for each question in the same order
+  ]
 }}"""
         try:
-            resp = gemini_client.generate_json(prompt)
+            resp = classifier_client.generate_json(prompt)
             # Tolerate list/candidates wrappers
             if isinstance(resp, list):
                 if not resp:
@@ -4199,15 +4261,46 @@ Return ONLY valid JSON with this structure:
                 resp = resp["candidates"][0]
             if not isinstance(resp, dict):
                 raise ValueError(f"Non-dict response: {type(resp).__name__}")
-            subject_raw = str(resp.get("subject", "")).strip().lower()
-            if subject_raw not in {"mathematics", "physics", "chemistry", "biology"}:
-                subject_raw = "mathematics"
-            discard = bool(resp.get("discard", False))
-            reason = str(resp.get("reason", ""))
-            return subject_raw, discard, reason
+            
+            # Extract results array
+            results = resp.get("results", [])
+            if not isinstance(results, list):
+                raise ValueError(f"Expected 'results' array, got {type(results).__name__}")
+            
+            # Build mapping from question_id to result
+            result_map = {}
+            for result in results:
+                if not isinstance(result, dict):
+                    continue
+                qid = result.get("question_id", "")
+                subject_raw = str(result.get("subject", "")).strip().lower()
+                if subject_raw not in {"mathematics", "physics", "chemistry", "biology"}:
+                    subject_raw = "mathematics"
+                discard = bool(result.get("discard", False))
+                reason = str(result.get("reason", ""))
+                result_map[qid] = (subject_raw, discard, reason)
+            
+            # Map back to original indices
+            output = {}
+            for idx, qid in question_ids:
+                if qid in result_map:
+                    output[idx] = result_map[qid]
+                else:
+                    # Missing question - raise error to trigger retry
+                    raise ValueError(f"Question {qid} not found in batch results - incomplete classification")
+            
+            # Verify all questions were classified
+            missing = [idx for idx, _ in question_batch if idx not in output]
+            if missing:
+                raise ValueError(f"Missing classifications for questions: {missing}")
+            
+            return output
+            
         except Exception as e:
-            print(f"[WARN] Preclassification failed, discarding question: {e}")
-            return None, True, f"classifier_error: {e}"
+            # On classifier failure, raise exception to trigger retry (don't default to mathematics)
+            error_msg = f"Batch preclassification failed: {e}"
+            print(f"[ERROR] {error_msg}", flush=True)
+            raise Exception(error_msg) from e
 
     print(f"[PIPELINE] PRE-STAGE: Classifying subjects & filtering junk for {len(questions)} questions...")
     classified_questions: List[QuestionItem] = []
@@ -4217,18 +4310,64 @@ Return ONLY valid JSON with this structure:
         "chemistry": "Chemistry",
         "biology": "Biology",
     }
-    for i, q in enumerate(questions):
-        if progress_callback and i % 20 == 0:
-            progress_callback(i, len(questions), f"Classifying subjects: {i}/{len(questions)}")
-        subj_key, discard, reason = _preclassify(q)
-        if discard:
-            stats["discarded"] += 1
-            continue
-        if not subj_key:
-            # Fallback to maths if classifier failed silently
-            subj_key = "mathematics"
-        q.subject = subject_label_map.get(subj_key, "Mathematics")
-        classified_questions.append(q)
+    
+    # Process questions in batches of 10
+    BATCH_SIZE = 10
+    total_batches = (len(questions) + BATCH_SIZE - 1) // BATCH_SIZE  # Ceiling division
+    print(f"[PIPELINE] Processing {len(questions)} questions in {total_batches} batches (batch size: {BATCH_SIZE})")
+    
+    processed_indices = set()
+    for batch_num, batch_start in enumerate(range(0, len(questions), BATCH_SIZE), 1):
+        batch_end = min(batch_start + BATCH_SIZE, len(questions))
+        batch_questions = [(i, questions[i]) for i in range(batch_start, batch_end)]
+        
+        # Verify all indices in batch are unique and sequential
+        batch_indices = [idx for idx, _ in batch_questions]
+        if len(batch_indices) != len(set(batch_indices)):
+            print(f"[WARN] Batch {batch_num} has duplicate indices!")
+        if batch_indices != list(range(batch_start, batch_end)):
+            print(f"[WARN] Batch {batch_num} indices are not sequential: {batch_indices}")
+        
+        processed_indices.update(batch_indices)
+        
+        if progress_callback:
+            progress_callback(batch_start, len(questions), f"Classifying subjects: batch {batch_num}/{total_batches} ({batch_start}-{batch_end-1}/{len(questions)})")
+        
+        # Classify batch
+        batch_results = _preclassify_batch(batch_questions)
+        
+        # Process results
+        for idx, q in batch_questions:
+            if idx not in batch_results:
+                # Fallback if result missing
+                subj_key, discard, reason = "mathematics", False, "missing_result"
+                print(f"[WARN] Question index {idx} missing from batch results")
+            else:
+                subj_key, discard, reason = batch_results[idx]
+            
+            if discard:
+                stats["discarded"] += 1
+                continue
+            
+            if not subj_key:
+                # Fallback to maths if classifier failed silently
+                subj_key = "mathematics"
+            
+            q.subject = subject_label_map.get(subj_key, "Mathematics")
+            classified_questions.append(q)
+    
+    # Verify all questions were processed
+    expected_indices = set(range(len(questions)))
+    if processed_indices != expected_indices:
+        missing = expected_indices - processed_indices
+        extra = processed_indices - expected_indices
+        print(f"[ERROR] Not all questions were processed!")
+        if missing:
+            print(f"[ERROR] Missing indices: {sorted(missing)}")
+        if extra:
+            print(f"[ERROR] Extra indices: {sorted(extra)}")
+    else:
+        print(f"[PIPELINE] All {len(questions)} questions processed in batches")
 
     questions = classified_questions
     stats["total_questions"] = len(questions)
@@ -4520,7 +4659,9 @@ class App(tk.Tk):
             messagebox.showerror("Missing GEMINI_API_KEY", "Set GEMINI_API_KEY in .env.local")
             raise SystemExit(1)
 
-        self.gemini = Gemini(api_key=api_key, model=os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
+        # Use SCHEMA_GENERATOR_MODEL env var, or let Gemini class use its default (gemini-2.5-flash)
+        model_override = os.getenv("SCHEMA_GENERATOR_MODEL") or os.getenv("GEMINI_MODEL")
+        self.gemini = Gemini(api_key=api_key, model=model_override)
 
         self.index: List[QuestionItem] = []
         self.schema_summaries: List[SchemaSummary] = []

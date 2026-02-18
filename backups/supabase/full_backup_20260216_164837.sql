@@ -1,0 +1,23 @@
+-- ============================================
+-- Supabase Database Full Backup
+-- ============================================
+-- Generated: 2026-02-16 16:50:00
+-- Project: NocalcProject (bcbttpsokwoapjypwwwq)
+-- Project URL: https://bcbttpsokwoapjypwwwq.supabase.co
+-- 
+-- This backup contains:
+-- 1. All table data as SQL INSERT statements
+-- 2. Schema is available in supabase/migrations/ directory
+--
+-- To restore:
+-- 1. Run migrations from supabase/migrations/ first
+-- 2. Then run this SQL file in Supabase SQL Editor
+-- ============================================
+
+-- IMPORTANT: This is a partial backup created via MCP tools
+-- For a complete backup, run: node export_all_data.js
+-- (See README_BACKUP.md for instructions)
+
+-- ============================================
+-- DATA EXPORT SECTION
+-- ============================================

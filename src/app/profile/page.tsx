@@ -196,8 +196,24 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("[profile] Logout error:", error);
+        alert("Failed to logout. Please try again.");
+        setLoading(false);
+        return;
+      }
+      // Wait a moment for the session state to update
+      await new Promise(resolve => setTimeout(resolve, 100));
+      // Force a hard redirect to ensure session is cleared
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("[profile] Logout error:", err);
+      alert("Failed to logout. Please try again.");
+      setLoading(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -212,8 +228,20 @@ export default function ProfilePage() {
       throw new Error(error.error || "Failed to delete account");
     }
 
-    await supabase.auth.signOut();
-    router.push("/login");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("[profile] Logout error after delete:", error);
+      }
+      // Wait a moment for the session state to update
+      await new Promise(resolve => setTimeout(resolve, 100));
+      // Force a hard redirect to ensure session is cleared
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("[profile] Logout error after delete:", err);
+      // Still redirect even if signOut fails
+      window.location.href = "/login";
+    }
   };
 
   const handleChangePassword = async (currentPassword: string, newPassword: string) => {

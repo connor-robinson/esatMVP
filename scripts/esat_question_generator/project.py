@@ -518,13 +518,24 @@ class LLMClient:
                     "connection" in error_str.lower()
                 )
                 
-                if is_transient and attempt < max_retries - 1:
+                # Check for rate limit errors specifically
+                is_rate_limit = (
+                    "rate" in error_str.lower() or 
+                    "quota" in error_str.lower() or
+                    "429" in error_str or
+                    "resource_exhausted" in error_str.lower() or
+                    "too many requests" in error_str.lower()
+                )
+                
+                if (is_transient or is_rate_limit) and attempt < max_retries - 1:
                     # Exponential backoff: wait 2^attempt seconds
                     wait_time = 2 ** attempt
-                    # If it looks like a rate-limit style error, add extra delay
-                    if "rate" in error_str.lower() or "quota" in error_str.lower():
+                    # If it's a rate-limit error, use longer delay
+                    if is_rate_limit:
                         wait_time = max(wait_time, self.rate_limit_delay)
-                    print(f"[DEBUG] Transient error detected, retrying in {wait_time} seconds...")
+                        print(f"[WARN] Rate limit hit, waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}")
+                    else:
+                        print(f"[DEBUG] Transient error detected, retrying in {wait_time} seconds...")
                     time.sleep(wait_time)
                     continue
                 else:
@@ -1765,9 +1776,12 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             curriculum_parser = None
 
     # Configure rate limiting from environment variables
-    min_delay = float(os.environ.get("API_MIN_DELAY", "0.5"))  # Default 0.5s between calls
-    rate_limit_delay = float(os.environ.get("API_RATE_LIMIT_DELAY", "5.0"))  # Default 5s on rate limit
-    llm = LLMClient(api_key=api_key, min_delay=min_delay, rate_limit_delay=rate_limit_delay)
+    # For pro models (gemini-3-pro-preview), use longer delays to avoid rate limits
+    # For flash models (gemini-2.5-flash), shorter delays are fine
+    # Default: 2.0s for pro models, 1.0s for flash models
+    default_min_delay = float(os.environ.get("API_MIN_DELAY", "2.0"))  # Increased default to 2.0s
+    default_rate_limit_delay = float(os.environ.get("API_RATE_LIMIT_DELAY", "10.0"))  # Increased to 10s
+    llm = LLMClient(api_key=api_key, min_delay=default_min_delay, rate_limit_delay=default_rate_limit_delay)
 
     run_id = now_stamp()
     run_dir = os.path.join(base_dir, cfg.out_dir, run_id)
