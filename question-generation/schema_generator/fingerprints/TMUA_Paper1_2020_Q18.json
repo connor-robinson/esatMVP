@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2020_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve equation with absolute value",
+  "core_move_guess": "Consider cases based on the absolute value.",
+  "trigger_cues": [
+    "absolute value",
+    "equation",
+    "find the number of solutions",
+    "sum of the solutions"
+  ],
+  "mini_steps": [
+    "Consider cos x >= 0 case",
+    "Solve quadratic equation 1 - 2cos^2 x = cos x",
+    "Consider cos x < 0 case",
+    "Solve quadratic equation 1 - 2cos^2 x = -cos x",
+    "Check solutions are within 0 <= x <= 180",
+    "Sum valid solutions"
+  ],
+  "wrong_move": "Failing to consider both cases for the absolute value, or incorrectly solving the quadratic equations.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

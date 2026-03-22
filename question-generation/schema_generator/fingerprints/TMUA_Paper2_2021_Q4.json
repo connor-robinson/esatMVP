@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2021_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test claim with specific examples",
+  "core_move_guess": "Test each case to disprove the universal claim.",
+  "trigger_cues": [
+    "claim about integers",
+    "asks for counterexample",
+    "positive integers a, b, and c"
+  ],
+  "mini_steps": [
+    "Understand the claim",
+    "For each case, compute bc",
+    "Check if a is a factor of bc",
+    "Check if a is a factor of b",
+    "Check if a is a factor of c",
+    "Determine if counterexample"
+  ],
+  "wrong_move": "Assuming the claim is true and trying to prove it instead of looking for a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

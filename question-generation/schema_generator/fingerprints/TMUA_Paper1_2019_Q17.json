@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2019_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve inequality via factor sign analysis",
+  "core_move_guess": "Determine intervals where each factor is positive or negative.",
+  "trigger_cues": [
+    "inequality involving trigonometric functions",
+    "product of two expressions",
+    "find fraction of interval"
+  ],
+  "mini_steps": [
+    "Find roots of sin(2\u03b8) - 1/2 = 0",
+    "Find roots of sin \u03b8 - cos \u03b8 = 0",
+    "Determine sign of each factor in intervals defined by roots",
+    "Identify intervals where product is non-negative",
+    "Calculate the length of the intervals",
+    "Divide by the total interval length (\u03c0)"
+  ],
+  "wrong_move": "Assuming that sin(2\u03b8) - 1/2 and sin \u03b8 - cos \u03b8 must both be positive to satisfy the inequality, or only considering one factor.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

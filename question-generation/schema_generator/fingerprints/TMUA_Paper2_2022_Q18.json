@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2022_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test statements with extreme values",
+  "core_move_guess": "Test the statements using extreme values to disprove them.",
+  "trigger_cues": [
+    "minimum",
+    "maximum",
+    "must be true",
+    "sequences of integers"
+  ],
+  "mini_steps": [
+    "Recognize need to test statements",
+    "Consider extreme values to disprove",
+    "Test statement I: a_i = 0, b_i = -N, c_i = N",
+    "Test statement II: a_i = 0, b_i = -N, c_i = N",
+    "Test statement III: a_i = 0, b_i = -N, c_i = N",
+    "Conclude none must be true"
+  ],
+  "wrong_move": "Assuming the statements are true and attempting to prove them algebraically, or not considering negative values.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

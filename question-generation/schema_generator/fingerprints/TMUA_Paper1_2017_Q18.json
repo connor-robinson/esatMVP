@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate transformed functions, solve for parameter",
+  "core_move_guess": "Equate the two function transformations to solve for unknown parameter.",
+  "trigger_cues": [
+    "function transformation",
+    "stretch",
+    "translation",
+    "find parameter"
+  ],
+  "mini_steps": [
+    "Express translation algebraically",
+    "Express stretch algebraically",
+    "Equate the two expressions",
+    "Solve for k using logarithm properties"
+  ],
+  "wrong_move": "Incorrectly applying the transformation rules or making algebraic errors when solving for k.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve inequalities and find intersection",
+  "core_move_guess": "Determine intervals satisfying each inequality and intersect them.",
+  "trigger_cues": [
+    "two inequalities",
+    "find complete set of values",
+    "product of factors"
+  ],
+  "mini_steps": [
+    "Find roots of each factor in each inequality",
+    "Determine sign of each factor in each interval",
+    "Determine sign of product in each interval",
+    "Identify intervals satisfying each inequality",
+    "Find intersection of intervals"
+  ],
+  "wrong_move": "Failing to consider the sign changes at each root or incorrectly combining the intervals from the two inequalities.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

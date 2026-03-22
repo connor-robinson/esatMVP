@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2019_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate integrals via substitution/additivity",
+  "core_move_guess": "Re-express the integral using substitution and additivity.",
+  "trigger_cues": [
+    "integral with shifted argument f(x+1)",
+    "multiple definite integrals",
+    "find the value of an integral"
+  ],
+  "mini_steps": [
+    "Substitute u = x+1 in integral of f(x+1)",
+    "Relate integral from 1 to 2 to integral from 0 to 1",
+    "Express integral from 0 to 2 as sum of integrals from 0 to 1 and 1 to 2",
+    "Solve system of equations for unknown integrals"
+  ],
+  "wrong_move": "Failing to correctly perform the substitution and change the limits of integration, or not recognizing the relationship between the integrals.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

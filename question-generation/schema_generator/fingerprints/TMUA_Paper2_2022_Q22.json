@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2022_Q22",
+  "eligible": true,
+  "reasoning_pattern_hint": "Bound nested functions, deduce max values",
+  "core_move_guess": "Bound the inner functions to constrain the outer functions' range.",
+  "trigger_cues": [
+    "nested trigonometric functions",
+    "asks for maximum values",
+    "multiple functions to compare"
+  ],
+  "mini_steps": [
+    "Recognize range of cos(x) is [-1, 1]",
+    "Recognize range of sin(x) is [-1, 1]",
+    "Bound sin(cos(x)) using range of cos(x)",
+    "Bound cos(sin(cos(x))) using range of sin(cos(x))",
+    "Deduce maximum values m1 to m5",
+    "Compare the maximum values"
+  ],
+  "wrong_move": "Assume all maximum values are 1 because the outer function can be cos(x) or sin(x), without considering the impact of nested functions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

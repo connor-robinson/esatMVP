@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test necessity and sufficiency conditions",
+  "core_move_guess": "Test each condition against examples and counterexamples.",
+  "trigger_cues": [
+    "necessary and sufficient",
+    "two statements",
+    "multiple choice options"
+  ],
+  "mini_steps": [
+    "Understand the meaning of necessary and sufficient",
+    "Analyze condition A",
+    "Analyze condition B",
+    "Analyze condition C",
+    "Analyze condition D",
+    "Select the correct option"
+  ],
+  "wrong_move": "Assuming that R implies S is sufficient to prove necessity and sufficiency, without checking the converse.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

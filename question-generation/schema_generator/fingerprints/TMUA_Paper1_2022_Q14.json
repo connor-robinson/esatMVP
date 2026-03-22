@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Minimize a family of quadratics",
+  "core_move_guess": "Exploit the vertex form of a quadratic to minimize the family of curves.",
+  "trigger_cues": [
+    "family of quadratic curves",
+    "lowest y-coordinate among all curves",
+    "parameter k"
+  ],
+  "mini_steps": [
+    "Rewrite yk in vertex form",
+    "Identify x-coordinate of vertex as -k",
+    "Express y-coordinate of vertex as function of k",
+    "Minimize the y-coordinate with respect to k",
+    "Find the k that minimizes the y-coordinate",
+    "Substitute to find a and b, then a+b"
+  ],
+  "wrong_move": "Failing to complete the square correctly or misinterpreting the role of k in determining the minimum y-value across the family of curves, or only finding stationary points.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

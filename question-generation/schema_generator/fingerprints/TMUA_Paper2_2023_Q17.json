@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2023_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Convert recurring binary to fraction",
+  "core_move_guess": "Convert repeating binary to a fraction.",
+  "trigger_cues": [
+    "recurring base 2 number",
+    "0.0011 repeating"
+  ],
+  "mini_steps": [
+    "Recognize repeating block",
+    "Express as infinite geometric series",
+    "Calculate common ratio",
+    "Apply formula for sum to infinity",
+    "Simplify the fraction"
+  ],
+  "wrong_move": "Failing to recognize the repeating pattern or misapplying the geometric series formula.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

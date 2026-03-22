@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2017_Q25",
+  "eligible": true,
+  "reasoning_pattern_hint": "Find smallest integer satisfying inequality",
+  "core_move_guess": "Test increasing integer values to satisfy inequality.",
+  "trigger_cues": [
+    "G(n) > 150",
+    "smallest positive integer",
+    "G(n) defined as sum"
+  ],
+  "mini_steps": [
+    "Calculate G(1)",
+    "Calculate G(2)",
+    "Calculate G(3)",
+    "Observe pattern in G(n)",
+    "Calculate G(25)",
+    "Verify G(25) > 150"
+  ],
+  "wrong_move": "Attempt to find a closed-form expression for G(n) and solve the inequality directly, which is difficult.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

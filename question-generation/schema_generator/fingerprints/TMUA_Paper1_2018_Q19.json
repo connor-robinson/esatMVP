@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2018_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area ratio to side length",
+  "core_move_guess": "Relate the ratio of triangle areas to the ratio of their corresponding side lengths using the sine area formula.",
+  "trigger_cues": [
+    "two possible triangles",
+    "area ratio is given",
+    "find cosine of angle"
+  ],
+  "mini_steps": [
+    "Recognize ambiguous case of sine rule",
+    "Area = 1/2 * ab * sin(theta)",
+    "Relate areas to sin(theta)",
+    "Use sin(theta) = sin(180 - theta)",
+    "Solve for cos(theta)"
+  ],
+  "wrong_move": "Attempting to use the cosine rule directly without relating the two possible triangles' areas leads to an impasse.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

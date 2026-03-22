@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate derivative, integral, and function values",
+  "core_move_guess": "Exploit the given derivative to find the function, then use the integral to solve for the constant.",
+  "trigger_cues": [
+    "f'(x) = a",
+    "f(0) = 1, f(1) = 2",
+    "integral of f(x) from 0 to 1"
+  ],
+  "mini_steps": [
+    "Integrate f'(x) = a to get f(x) = ax + c",
+    "Use f(0) = 1 to find c = 1",
+    "f(x) = ax + 1",
+    "Evaluate the integral of ax + 1 from 0 to 1",
+    "Set the integral equal to 1 and solve for a"
+  ],
+  "wrong_move": "Failing to include the constant of integration when integrating f'(x) = a, or misinterpreting the definite integral.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

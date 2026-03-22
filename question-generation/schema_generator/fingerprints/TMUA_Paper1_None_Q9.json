@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_None_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Track circle transformations, find final equation",
+  "core_move_guess": "Track the center and radius through transformations.",
+  "trigger_cues": [
+    "circle equation",
+    "transformations: translation, reflection, enlargement",
+    "find the equation of the final circle"
+  ],
+  "mini_steps": [
+    "Find the center and radius of the initial circle",
+    "Apply translation to the center",
+    "Apply reflection to the center",
+    "Apply enlargement to the center and radius",
+    "Write the equation of the final circle"
+  ],
+  "wrong_move": "Failing to correctly apply the transformations to both the center and the radius, or misinterpreting the order of transformations.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

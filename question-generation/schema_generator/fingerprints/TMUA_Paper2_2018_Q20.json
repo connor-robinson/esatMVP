@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2018_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Isolate radical, square, check validity",
+  "core_move_guess": "Isolate the radical term and square the equation.",
+  "trigger_cues": [
+    "equation with nested square roots",
+    "asks for possible values of a parameter",
+    "equation has at least one real solution"
+  ],
+  "mini_steps": [
+    "Isolate one square root",
+    "Square both sides",
+    "Isolate remaining square root",
+    "Square again",
+    "Solve for x in terms of p",
+    "Determine constraints on p for real solutions",
+    "Check for extraneous solutions"
+  ],
+  "wrong_move": "Failing to check for extraneous solutions after squaring, leading to an overestimation of the possible values of p.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

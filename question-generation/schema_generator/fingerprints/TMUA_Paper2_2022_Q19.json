@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate stationary points to roots",
+  "core_move_guess": "Infer the number of real roots from stationary points.",
+  "trigger_cues": [
+    "cubic equation",
+    "distinct real roots",
+    "stationary points",
+    "derivative"
+  ],
+  "mini_steps": [
+    "Find the derivative of the cubic.",
+    "Find the x-coordinates of stationary points.",
+    "Evaluate the cubic at the stationary points.",
+    "Relate the signs of the values at stationary points to the number of real roots."
+  ],
+  "wrong_move": "Assuming that any condition on a and b that leads to two stationary points guarantees three distinct real roots.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

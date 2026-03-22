@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper1_2018_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Symmetry of transformed trigonometric function",
+  "core_move_guess": "Equate argument of sine to values yielding symmetry.",
+  "trigger_cues": [
+    "line of symmetry",
+    "sin (2x \u22124\u03c0/3 )",
+    "smallest positive value"
+  ],
+  "mini_steps": [
+    "Symmetry occurs when sin(2x - 4\u03c0/3) = +/- 1",
+    "Solve 2x - 4\u03c0/3 = \u03c0/2 + n\u03c0",
+    "Find smallest positive x"
+  ],
+  "wrong_move": "Failing to account for the phase shift or the period change of the sine function, or only considering sin(2x-4pi/3) = 1 and not sin(2x-4pi/3) = -1.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

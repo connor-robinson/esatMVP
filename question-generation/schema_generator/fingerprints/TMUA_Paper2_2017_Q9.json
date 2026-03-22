@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2017_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Identify flawed logic in proof",
+  "core_move_guess": "Recognize that factors are not uniquely determined.",
+  "trigger_cues": [
+    "attempted proof",
+    "comment on this proof",
+    "identify the mistake"
+  ],
+  "mini_steps": [
+    "Examine each line of the proof",
+    "Identify the assumptions made in each step",
+    "Determine if the assumptions are valid",
+    "Find the first invalid assumption"
+  ],
+  "wrong_move": "Assuming that a3 = (c-b)(c2+cb+b2) implies a = c-b and a2 = c2+cb+b2, overlooking other factor pairs.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2018_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize expression by assigning values",
+  "core_move_guess": "Maximize difference by assigning extreme values.",
+  "trigger_cues": [
+    "asks for largest possible value",
+    "function with unknown coefficients",
+    "coefficients take specific values"
+  ],
+  "mini_steps": [
+    "Apply remainder theorem",
+    "Express R and S in terms of a, b, c",
+    "Find expression for R - S",
+    "Maximize R - S by assigning values to a, b"
+  ],
+  "wrong_move": "Failing to correctly apply the remainder theorem or making algebraic errors when simplifying the expression for R - S.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

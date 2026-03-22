@@ -1,0 +1,11 @@
+{
+  "qid": "TMUA_Paper1_2022_Q16",
+  "eligible": false,
+  "reasoning_pattern_hint": "No diagram, area of triangle",
+  "core_move_guess": "Skip this question as it requires a diagram.",
+  "trigger_cues": [],
+  "mini_steps": [],
+  "wrong_move": "Attempting to solve without visual representation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 1.0
+}

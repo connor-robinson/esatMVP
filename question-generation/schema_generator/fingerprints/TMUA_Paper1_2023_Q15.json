@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2023_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize distance between two circles",
+  "core_move_guess": "Relate maximum distance to distance between centers plus radii.",
+  "trigger_cues": [
+    "two circles given by equations",
+    "asks for maximum distance",
+    "distance between points on circles"
+  ],
+  "mini_steps": [
+    "Find centers of both circles",
+    "Find radii of both circles",
+    "Calculate distance between centers",
+    "Add radii to center distance for max distance"
+  ],
+  "wrong_move": "Assuming the maximum distance is simply the distance between the centers of the circles, or only adding one radius.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

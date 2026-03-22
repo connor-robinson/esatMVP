@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_None_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve inequality using function properties",
+  "core_move_guess": "Determine the range of x by analyzing function's behavior.",
+  "trigger_cues": [
+    "inequality",
+    "range of x",
+    "function of x",
+    "given condition on x"
+  ],
+  "mini_steps": [
+    "Rewrite the inequality",
+    "Analyze the behavior of the function",
+    "Find critical points",
+    "Determine intervals where inequality holds",
+    "Consider given condition on x",
+    "State the solution"
+  ],
+  "wrong_move": "Assuming the function is monotonic over the entire domain without proper justification, leading to an incorrect solution set.",
+  "answer_form": "algebraic",
+  "confidence": 0.8
+}

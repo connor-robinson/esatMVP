@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2020_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize quadratic, solve inequality on parameter",
+  "core_move_guess": "Relate maximum value of quadratic to parameter by completing the square.",
+  "trigger_cues": [
+    "maximum value",
+    "complete set of values",
+    "quadratic function",
+    "less than"
+  ],
+  "mini_steps": [
+    "Expand the quadratic",
+    "Complete the square",
+    "Express maximum in terms of p",
+    "Set up inequality",
+    "Solve quadratic inequality"
+  ],
+  "wrong_move": "Failing to correctly complete the square or solve the resulting quadratic inequality in p will lead to an incorrect answer.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

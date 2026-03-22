@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2022_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate arc length, area, and perimeter",
+  "core_move_guess": "Relate arc length to radius and angle, then use similarity.",
+  "trigger_cues": [
+    "similar sectors",
+    "arc length",
+    "difference between areas",
+    "difference between perimeters"
+  ],
+  "mini_steps": [
+    "Relate arc length to radius and angle",
+    "Relate area to radius and angle",
+    "Use similarity to relate radii",
+    "Express area difference in terms of radii",
+    "Solve for radii",
+    "Calculate perimeter difference"
+  ],
+  "wrong_move": "Assume the angle is constant and directly relate arc length to perimeter without considering the radii.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2020_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove necessity by counterexample function",
+  "core_move_guess": "Disprove necessity by constructing counterexample functions.",
+  "trigger_cues": [
+    "necessary condition",
+    "integral equation",
+    "function definition",
+    "multiple conditions"
+  ],
+  "mini_steps": [
+    "Understand integral as signed area",
+    "Recognize 'necessary' requires all cases",
+    "Find function satisfying integral equation",
+    "Verify function violates condition I",
+    "Find function satisfying integral equation",
+    "Verify function violates condition II and III"
+  ],
+  "wrong_move": "Assuming sufficiency implies necessity, or not considering functions that satisfy the integral equation but violate the given conditions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

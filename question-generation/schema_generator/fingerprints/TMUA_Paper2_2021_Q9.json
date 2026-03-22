@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2021_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Assess sufficiency of conditions",
+  "core_move_guess": "Test each statement's sufficiency by considering counterexamples or proving necessity.",
+  "trigger_cues": [
+    "sufficient condition",
+    "polynomial f(x)",
+    "real solution"
+  ],
+  "mini_steps": [
+    "I: Cubic always crosses x-axis",
+    "II: Find counterexample: f'(t) = 0 but no real root",
+    "III: f(u)f(v) < 0 implies crossing x-axis",
+    "Deduce which statements are sufficient"
+  ],
+  "wrong_move": "Assuming that f'(t) = 0 implies the existence of a real root for f(x) = 0, without considering counterexamples like quadratics.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

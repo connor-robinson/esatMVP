@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2018_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate inequality to curve bending",
+  "core_move_guess": "Relate the given inequality to the geometric property of curve's concavity.",
+  "trigger_cues": [
+    "inequality involving function values",
+    "condition for all real numbers",
+    "polynomial function"
+  ],
+  "mini_steps": [
+    "Recognize average of function values",
+    "Relate to midpoint of line segment",
+    "Interpret inequality geometrically",
+    "Connect geometry to second derivative",
+    "Infer concavity from inequality"
+  ],
+  "wrong_move": "Assuming that f(x) >= 0 is a necessary condition, without considering the shape of the curve.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

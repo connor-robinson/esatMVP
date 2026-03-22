@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Divisibility condition from binomial expansion",
+  "core_move_guess": "Exploit divisibility rules to simplify binomial coefficients.",
+  "trigger_cues": [
+    "divisible by",
+    "binomial expansion",
+    "coefficient"
+  ],
+  "mini_steps": [
+    "Expand (2 + 3x)^12 using binomial theorem",
+    "Identify the general term",
+    "Determine divisibility condition for 12",
+    "Simplify the divisibility condition",
+    "Count terms satisfying the condition"
+  ],
+  "wrong_move": "Failing to account for the factors of 2 and 3 within the binomial coefficient and the powers of 2 and 3 in each term.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

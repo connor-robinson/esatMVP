@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate tangent angle to geometry",
+  "core_move_guess": "Relate the tangent's angle to a right triangle formed by radii and the line connecting circle centers.",
+  "trigger_cues": [
+    "two circles",
+    "tangent line with positive gradient",
+    "find angle of tangent"
+  ],
+  "mini_steps": [
+    "Recognize equal radii",
+    "Form right triangle with tangent",
+    "Calculate distance between centers",
+    "Determine triangle side lengths",
+    "Calculate tan(theta) from triangle"
+  ],
+  "wrong_move": "Failing to visualize the geometry and attempting to solve algebraically without relating the angle to the triangle formed by the circle centers and tangent line.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

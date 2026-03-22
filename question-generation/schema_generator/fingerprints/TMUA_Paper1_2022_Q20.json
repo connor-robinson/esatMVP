@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to equation parameters",
+  "core_move_guess": "Relate the number of distinct roots to the parameters q and r by considering the intersection points of two functions.",
+  "trigger_cues": [
+    "greatest number of distinct real solutions",
+    "equation involves parameters",
+    "two functions equated"
+  ],
+  "mini_steps": [
+    "Equate f(x) and g(x)",
+    "Analyze roots of f(x): 0, 1, 2",
+    "Analyze roots of g(x): q, r",
+    "Consider multiplicity of roots",
+    "Relate q and r to the roots of f(x) to maximize intersections",
+    "Deduce constraints on q and r"
+  ],
+  "wrong_move": "Assuming that the number of distinct roots is simply the sum of the distinct roots of f(x) and g(x), without considering the multiplicities and how the graphs intersect.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2017_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate arithmetic and geometric sequences",
+  "core_move_guess": "Equate expressions from arithmetic and geometric progressions.",
+  "trigger_cues": [
+    "arithmetic progression",
+    "geometric progression",
+    "common difference",
+    "common ratio"
+  ],
+  "mini_steps": [
+    "Express terms of both progressions using p, d, r",
+    "Relate r and p using the given information",
+    "Express q in terms of p",
+    "Substitute q in arithmetic progression equations",
+    "Eliminate d to get an equation in p",
+    "Solve the polynomial equation for p"
+  ],
+  "wrong_move": "Assuming the common difference and common ratio are equal, or not using the given relationships between the terms.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

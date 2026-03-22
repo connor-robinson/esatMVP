@@ -1,0 +1,159 @@
+{
+  "created_at": "2026-02-16T15:51:33",
+  "mode": "ESAT",
+  "thresholds": {
+    "min_chars": 500,
+    "min_question_length": 40
+  },
+  "summary": {
+    "scanned": 16,
+    "success": 16,
+    "failed": 0
+  },
+  "per_pdf": [
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2016\\NSAA Section 1 2016 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 36019,
+      "question_count": 75,
+      "median_question_length": 675,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:30"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2017\\NSAA Section 1 2017 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 34830,
+      "question_count": 80,
+      "median_question_length": 619,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:30"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2018\\NSAA Section 1 2018 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 32777,
+      "question_count": 73,
+      "median_question_length": 624,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:30"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2019\\NSAA Section 1 2019 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 32765,
+      "question_count": 72,
+      "median_question_length": 594,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:31"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2020\\NSAA Section 1 2020 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 34460,
+      "question_count": 67,
+      "median_question_length": 690,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:31"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2021\\NSAA Section 1 2021 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 29488,
+      "question_count": 70,
+      "median_question_length": 599,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:31"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2022\\NSAA Section 1 2022 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 31545,
+      "question_count": 63,
+      "median_question_length": 745,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:31"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 1\\NSAA Section 1 2023\\NSAA Section 1 2023 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 34411,
+      "question_count": 64,
+      "median_question_length": 724,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2016\\NSAA Section 2 2016 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 0,
+      "question_count": 0,
+      "median_question_length": 0,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2017\\NSAA Section 2 2017 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 0,
+      "question_count": 0,
+      "median_question_length": 0,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2018\\NSAA Section 2 2018 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 0,
+      "question_count": 0,
+      "median_question_length": 0,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2019\\NSAA Section 2 2019 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 22198,
+      "question_count": 24,
+      "median_question_length": 1077,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 28941,
+      "question_count": 60,
+      "median_question_length": 524,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:32"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2021\\NSAA Section 2 2021 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 32032,
+      "question_count": 60,
+      "median_question_length": 646,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:33"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2022\\NSAA Section 2 2022 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 32990,
+      "question_count": 62,
+      "median_question_length": 576,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:33"
+    },
+    {
+      "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2023\\NSAA Section 2 2023 Past Paper.pdf",
+      "status": "SUCCESS",
+      "total_chars": 34766,
+      "question_count": 63,
+      "median_question_length": 637,
+      "failure_reason": null,
+      "extracted_at": "2026-02-16T15:51:33"
+    }
+  ]
+}

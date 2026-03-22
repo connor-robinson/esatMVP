@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Check solutions in original equation",
+  "core_move_guess": "Substitute proposed solutions into original equation to verify.",
+  "trigger_cues": [
+    "proposed solutions given",
+    "equation solving attempt",
+    "identifying error in steps"
+  ],
+  "mini_steps": [
+    "Recognize potential for extraneous solutions",
+    "Substitute x = 5/8 into original equation",
+    "Verify if x = 5/8 satisfies the equation",
+    "Substitute x = 5/2 into original equation",
+    "Verify if x = 5/2 satisfies the equation",
+    "Identify the step where the error occurred"
+  ],
+  "wrong_move": "Assuming all solutions obtained from algebraic manipulation are valid without checking for extraneous solutions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to definite integral",
+  "core_move_guess": "Re-express the area using integral properties.",
+  "trigger_cues": [
+    "area enclosed by curve",
+    "integral limits given",
+    "function defined as a sum",
+    "increasing function"
+  ],
+  "mini_steps": [
+    "Express area as definite integral",
+    "Apply integral additivity property",
+    "Evaluate integral of constant function",
+    "Simplify to find area"
+  ],
+  "wrong_move": "Assuming f(x) is linear and trying to calculate area using trapeziums.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

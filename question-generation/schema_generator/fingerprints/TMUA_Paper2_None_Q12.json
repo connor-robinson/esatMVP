@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_None_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate inequality to variable signs",
+  "core_move_guess": "Deduce variable sign from inequality condition.",
+  "trigger_cues": [
+    "S_n notation",
+    "inequality condition",
+    "cannot be deduced"
+  ],
+  "mini_steps": [
+    "Write out S8 and S6 in terms of a and d",
+    "Substitute into inequality",
+    "Rearrange inequality to isolate d",
+    "Consider cases for sign of a",
+    "Deduce possible signs of d"
+  ],
+  "wrong_move": "Assuming that the first term and common difference must be positive because they are part of a series.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

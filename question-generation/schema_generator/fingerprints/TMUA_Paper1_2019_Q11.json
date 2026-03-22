@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2019_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Substitution and solve quadratic equation",
+  "core_move_guess": "Re-express logarithms and solve quadratic.",
+  "trigger_cues": [
+    "simultaneous equations",
+    "logarithmic equations",
+    "sum of real values"
+  ],
+  "mini_steps": [
+    "Rewrite log equation using log rules",
+    "Substitute variables for log terms",
+    "Express one variable in terms of the other",
+    "Substitute into the other equation",
+    "Solve the resulting quadratic equation",
+    "Find x values and sum them"
+  ],
+  "wrong_move": "Failing to correctly apply logarithm rules or making algebraic errors when solving the quadratic equation.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

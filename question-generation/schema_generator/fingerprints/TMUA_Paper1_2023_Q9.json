@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper1_2023_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify, equate ratio, solve linear",
+  "core_move_guess": "Simplify the expression Q(x) and equate the ratio P(x) : Q(x) to 4:1 to solve for x.",
+  "trigger_cues": [
+    "P(x) and Q(x) defined",
+    "ratio 4:1",
+    "largest value of x"
+  ],
+  "mini_steps": [
+    "Simplify Q(x)",
+    "Set up the equation P(x) / Q(x) = 4/1",
+    "Solve for x"
+  ],
+  "wrong_move": "Incorrectly simplifying Q(x) or setting up the ratio equation upside down (Q(x) / P(x) = 4/1).",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

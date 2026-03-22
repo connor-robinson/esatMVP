@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce sign from integral inequality",
+  "core_move_guess": "Infer the sign of the function from the sign of its integral.",
+  "trigger_cues": [
+    "integral inequality",
+    "claims about function's sign",
+    "necessarily true"
+  ],
+  "mini_steps": [
+    "f(x)^2 >= 0",
+    "deduce integral inequality from f(x)^2 >= 0",
+    "rewrite integral from 0 to 3 as sum",
+    "simplify the integral inequality",
+    "deduce sign of integral from 1 to 3",
+    "infer function's sign from integral sign"
+  ],
+  "wrong_move": "Assuming that the integral inequality directly implies the sign of f(x) without considering the properties of f(x)^2.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

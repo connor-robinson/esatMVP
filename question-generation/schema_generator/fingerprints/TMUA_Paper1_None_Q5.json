@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_None_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Split integral based on sign",
+  "core_move_guess": "Split the integral based on the sign of the function.",
+  "trigger_cues": [
+    "area enclosed",
+    "curve intersects x-axis",
+    "integral required"
+  ],
+  "mini_steps": [
+    "Find x-intercepts",
+    "Split integral at x-intercepts",
+    "Integrate over each interval",
+    "Take absolute value of each integral",
+    "Sum absolute values"
+  ],
+  "wrong_move": "Integrating directly from -2 to 2 without considering the region where the function is negative will lead to incorrect area calculation.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

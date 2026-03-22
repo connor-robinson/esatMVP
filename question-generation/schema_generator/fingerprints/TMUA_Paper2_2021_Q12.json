@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2021_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test statements with counterexamples",
+  "core_move_guess": "Test each statement by seeking counterexamples.",
+  "trigger_cues": [
+    "multiple statements",
+    "true/false question",
+    "polynomials f and g"
+  ],
+  "mini_steps": [
+    "Consider statement I: integral comparison",
+    "Recognize integral as area under curve",
+    "f(x) \u2265 g(x) implies area under f(x) \u2265 area under g(x)",
+    "Consider statement II: derivative comparison",
+    "Seek counterexample: f(x) \u2265 g(x) but f'(x) < g'(x)",
+    "Consider statement III: derivative to function comparison",
+    "Seek counterexample: f'(x) \u2265 g'(x) but f(x) < g(x)"
+  ],
+  "wrong_move": "Assuming a statement is true without rigorous proof or counterexample leads to incorrect conclusions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve inequality by considering cases",
+  "core_move_guess": "Consider cases based on the sign of factors.",
+  "trigger_cues": [
+    "product of expressions",
+    "inequality",
+    "trigonometric functions"
+  ],
+  "mini_steps": [
+    "Rewrite expressions using substitution",
+    "Identify cases based on signs of factors",
+    "Solve inequalities for each case",
+    "Combine solutions"
+  ],
+  "wrong_move": "Expanding the product and trying to solve the resulting inequality directly is a common mistake.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

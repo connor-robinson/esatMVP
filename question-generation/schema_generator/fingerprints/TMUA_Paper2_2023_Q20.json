@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2023_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to coefficients conditions",
+  "core_move_guess": "Re-express quartic equation as a quadratic in x^2 and constrain roots.",
+  "trigger_cues": [
+    "equation of the form x^4 + bx^2 + c = 0",
+    "four distinct real roots",
+    "condition for roots"
+  ],
+  "mini_steps": [
+    "Substitute y = x^2",
+    "Quadratic equation in y",
+    "Condition for two distinct positive real roots in y",
+    "y1 > 0 and y2 > 0",
+    "Relate roots to coefficients (sum and product)",
+    "Product of roots > 0 and sum of roots > 0",
+    "Translate back to b and c"
+  ],
+  "wrong_move": "Assuming that b^2 > 4c is sufficient for four distinct real roots without considering the signs of b and c.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

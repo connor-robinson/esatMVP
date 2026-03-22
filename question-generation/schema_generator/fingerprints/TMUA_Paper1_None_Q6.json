@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve trigonometric equation with substitution",
+  "core_move_guess": "Re-express the trigonometric equation as a quadratic equation.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "range specified",
+    "maximum angle"
+  ],
+  "mini_steps": [
+    "Recognize the equation as quadratic in sin(2x)",
+    "Substitute y = sin(2x)",
+    "Solve the quadratic equation for y",
+    "Find the possible values of 2x",
+    "Find the possible values of x",
+    "Select the maximum value of x within the given range"
+  ],
+  "wrong_move": "Failing to consider the range of possible solutions for x after solving for sin(2x), or incorrectly solving the quadratic equation.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate binomial coefficients to solve",
+  "core_move_guess": "Relate binomial coefficients by division to eliminate variables.",
+  "trigger_cues": [
+    "binomial expansion",
+    "third term",
+    "fourth term",
+    "ascending powers",
+    "descending powers"
+  ],
+  "mini_steps": [
+    "Equate coefficients of x^2 and x^3",
+    "Deduce n from descending power",
+    "Divide equations to eliminate a, b",
+    "Solve for a/b"
+  ],
+  "wrong_move": "Incorrectly expanding the binomial or not recognizing the relationship between the coefficients, leading to complicated equations that are difficult to solve.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

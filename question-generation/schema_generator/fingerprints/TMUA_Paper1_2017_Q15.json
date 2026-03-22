@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2017_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate transformation to area estimation",
+  "core_move_guess": "Relate graph transformations to area under curve.",
+  "trigger_cues": [
+    "trapezium rule",
+    "f(x+1)",
+    "reflection in y=6"
+  ],
+  "mini_steps": [
+    "Sketch y=f(x)",
+    "Relate trapezium rule to area",
+    "Sketch y=f(x+1)",
+    "Relate trapezium rule to area",
+    "Sketch reflection in y=6",
+    "Relate trapezium rule to area"
+  ],
+  "wrong_move": "Assuming all transformations lead to the same area relationship without sketching.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2019_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test given case as counterexample",
+  "core_move_guess": "Test the given equation against each statement to see if it provides a counterexample.",
+  "trigger_cues": [
+    "use the fact",
+    "produce a counterexample",
+    "positive integers",
+    "equation"
+  ],
+  "mini_steps": [
+    "Understand counterexample definition",
+    "Test against statement A: check antecedent",
+    "Test against statement B: rewrite equation",
+    "Test against statement C: check perfect square"
+  ],
+  "wrong_move": "Failing to check if the given case satisfies the antecedent of a conditional statement before attempting to use it as a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

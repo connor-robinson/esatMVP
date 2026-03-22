@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test candidate solutions in intermediate steps",
+  "core_move_guess": "Test candidate solutions against intermediate steps to find the error.",
+  "trigger_cues": [
+    "algebraic manipulation",
+    "identifying error in steps",
+    "intermediate steps given"
+  ],
+  "mini_steps": [
+    "Identify candidate solutions",
+    "Test solutions in final equation",
+    "If incorrect, test in intermediate steps",
+    "Identify first incorrect step"
+  ],
+  "wrong_move": "Assuming that if a solution satisfies a later step, all previous steps are also valid.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Identify pattern from initial terms",
+  "core_move_guess": "Compute initial terms to identify a pattern.",
+  "trigger_cues": [
+    "sequence defined recursively",
+    "asks for a later term",
+    "integral definition"
+  ],
+  "mini_steps": [
+    "Calculate u1 from u0",
+    "Calculate u2 from u1",
+    "Calculate u3 from u2",
+    "Observe the pattern un = 2^n",
+    "Deduce u1000 = 2^1000"
+  ],
+  "wrong_move": "Failing to compute enough terms to confidently identify the pattern, or making an algebraic error in the integration.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

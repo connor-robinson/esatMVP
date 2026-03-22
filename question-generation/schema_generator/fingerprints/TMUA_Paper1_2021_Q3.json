@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simultaneous equations with series terms",
+  "core_move_guess": "Exploit simultaneous equations to solve for series parameters.",
+  "trigger_cues": [
+    "arithmetic progression",
+    "geometric progression",
+    "sum of terms given",
+    "sum to infinity"
+  ],
+  "mini_steps": [
+    "Define arithmetic progression terms",
+    "Define geometric progression terms",
+    "Form simultaneous equations",
+    "Solve for common difference and ratio",
+    "Calculate sum to infinity"
+  ],
+  "wrong_move": "Assuming the common difference/ratio is the same for both progressions, or making algebraic errors while solving the simultaneous equations.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

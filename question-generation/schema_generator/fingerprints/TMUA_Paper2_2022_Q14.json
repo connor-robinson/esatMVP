@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Compare integrals via function properties",
+  "core_move_guess": "Compare integrals by relating integrands to x.",
+  "trigger_cues": [
+    "ordering integrals",
+    "integrals with similar form",
+    "absolute value inside integral"
+  ],
+  "mini_steps": [
+    "Interpret |x-a| as distance",
+    "Relate integral to distance from x",
+    "Compare distances",
+    "Determine inequalities based on distances",
+    "Order integrals based on inequalities"
+  ],
+  "wrong_move": "Attempting to directly evaluate the integrals is significantly more complex and time-consuming.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

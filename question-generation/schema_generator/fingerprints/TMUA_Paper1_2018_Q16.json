@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2018_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Minimize distance via stationary point",
+  "core_move_guess": "Re-express quartic as quadratic to minimize.",
+  "trigger_cues": [
+    "minimises the distance",
+    "stationary point",
+    "curve C has equation y = x2 + bx + 2"
+  ],
+  "mini_steps": [
+    "Find stationary point of quadratic",
+    "Express distance from origin as function of b",
+    "Recognize quartic as quadratic in b^2",
+    "Minimize the quadratic in b^2",
+    "Solve for b"
+  ],
+  "wrong_move": "Failing to recognize the quartic as a quadratic in b^2 and attempting to differentiate the quartic directly.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

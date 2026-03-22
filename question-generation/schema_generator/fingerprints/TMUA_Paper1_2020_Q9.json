@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2020_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots of two quadratics",
+  "core_move_guess": "Relate coefficients to roots, then transform roots.",
+  "trigger_cues": [
+    "quadratic expression factorises",
+    "relate roots of two quadratics",
+    "square root of roots"
+  ],
+  "mini_steps": [
+    "Relate coefficients to roots (sum and product)",
+    "Express new roots in terms of old roots",
+    "Relate new roots to new coefficients",
+    "Match the new quadratic expression"
+  ],
+  "wrong_move": "Directly calculate roots using quadratic formula and then take square roots, which is computationally intensive.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

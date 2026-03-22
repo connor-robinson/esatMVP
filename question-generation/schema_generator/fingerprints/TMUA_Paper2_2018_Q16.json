@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Consider even and odd cases",
+  "core_move_guess": "Consider separate cases based on the parity of n.",
+  "trigger_cues": [
+    "median",
+    "arithmetic progression",
+    "n is a positive integer",
+    "must be true"
+  ],
+  "mini_steps": [
+    "Recognize median depends on parity of n",
+    "Case n is odd: median is a term",
+    "Check statements I, II, III when n is odd",
+    "Case n is even: median is average of two terms",
+    "Check statements I, II, III when n is even"
+  ],
+  "wrong_move": "Assuming that the median is always an integer without considering the even/odd cases for n.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

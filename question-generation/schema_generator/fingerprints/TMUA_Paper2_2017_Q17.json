@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2017_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Negate quantified statement with nested quantifiers",
+  "core_move_guess": "Negate the given 'stapled' definition to find equivalent condition.",
+  "trigger_cues": [
+    "definition with 'for every'",
+    "asks for 'not stapled'",
+    "nested quantifiers"
+  ],
+  "mini_steps": [
+    "Recognize 'not stapled' requires negation",
+    "Negate the outer 'for every' to 'there exists'",
+    "Negate the inner 'there exists' to 'there is no'",
+    "Match the negated form to answer choices"
+  ],
+  "wrong_move": "Failing to correctly negate the nested quantifiers, especially confusing 'for every' and 'there exists'.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

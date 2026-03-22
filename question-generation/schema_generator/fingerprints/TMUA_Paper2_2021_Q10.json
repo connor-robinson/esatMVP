@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2021_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test condition and falsify statement",
+  "core_move_guess": "Test each case to falsify the conditional statement.",
+  "trigger_cues": [
+    "sequence of integers",
+    "conditional statement",
+    "counterexample",
+    "smallest value"
+  ],
+  "mini_steps": [
+    "Understand the conditional statement",
+    "Identify prime numbers in the sequence index",
+    "Check if the corresponding term is a multiple of 3 or 5",
+    "Find the smallest index that violates the condition"
+  ],
+  "wrong_move": "Assuming the statement is true and trying to prove it, instead of finding a counterexample.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate term to binomial expansion",
+  "core_move_guess": "Identify the relevant term in binomial expansion.",
+  "trigger_cues": [
+    "coefficient of x^n",
+    "binomial expansion",
+    "power of a binomial expression"
+  ],
+  "mini_steps": [
+    "Recognize binomial expansion form",
+    "Relate x^4 to x^2 inside the bracket",
+    "Find the term with x^2",
+    "Calculate the coefficient"
+  ],
+  "wrong_move": "Expanding the whole expression instead of focusing on the relevant term is a common mistake.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

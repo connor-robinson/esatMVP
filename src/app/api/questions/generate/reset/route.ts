@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 
-const STATUS_FILE = path.join(process.cwd(), "scripts", "esat_question_generator", ".generation_status.json");
+const STATUS_FILE = path.join(
+  process.cwd(),
+  "question-generation",
+  "esat_question_generator",
+  ".generation_status.json"
+);
 
 interface GenerationStatus {
   status: "idle" | "running" | "completed" | "error";

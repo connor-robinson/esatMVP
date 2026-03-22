@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2018_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate means, sums, and counts",
+  "core_move_guess": "Relate the sums of the sets before and after the exchange using the given means and counts.",
+  "trigger_cues": [
+    "two sets of data",
+    "mean of the set",
+    "data is exchanged",
+    "mean changes"
+  ],
+  "mini_steps": [
+    "Define variables for number of elements",
+    "Express initial sums in terms of means and counts",
+    "Express final sums in terms of means and counts",
+    "Equate total sum before and after exchange",
+    "Solve for the relationship between counts",
+    "Calculate the combined mean"
+  ],
+  "wrong_move": "Assume the number of elements in each set is equal or a simple ratio without proper justification.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

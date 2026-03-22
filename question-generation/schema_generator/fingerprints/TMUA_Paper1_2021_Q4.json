@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize quadratic form via substitution",
+  "core_move_guess": "Re-express the function as a quadratic by substitution.",
+  "trigger_cues": [
+    "exponential terms",
+    "expression to minimize",
+    "2^x term"
+  ],
+  "mini_steps": [
+    "Recognize 2^(2x) as (2^x)^2",
+    "Substitute u = 2^x",
+    "Complete the square",
+    "Find minimum value of quadratic",
+    "Check if minimum is attainable"
+  ],
+  "wrong_move": "Differentiate the original expression directly without substitution, leading to a more complex derivative and potential errors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

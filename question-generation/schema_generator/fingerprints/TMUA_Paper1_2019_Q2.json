@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Quadratic positive definite via discriminant",
+  "core_move_guess": "Constrain the discriminant to ensure positivity.",
+  "trigger_cues": [
+    "positive for all real values of x",
+    "quadratic expression",
+    "complete set of values"
+  ],
+  "mini_steps": [
+    "Rewrite quadratic expression",
+    "Recognize positive definite condition",
+    "Apply discriminant condition: b^2 - 4ac < 0",
+    "Solve the quadratic inequality",
+    "Express the solution as a range for k"
+  ],
+  "wrong_move": "Failing to consider the discriminant condition or incorrectly solving the resulting quadratic inequality.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

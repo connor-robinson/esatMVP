@@ -1,0 +1,6 @@
+# Difficulty weights (normalized to sum to 1.0). Target mix: ~5% Easy, 20% Medium, 55% Hard, 15% Extreme.
+# Edit anytime; simple_generator reloads this file between runs.
+Easy=5
+Medium=20
+Hard=55
+Extreme=15

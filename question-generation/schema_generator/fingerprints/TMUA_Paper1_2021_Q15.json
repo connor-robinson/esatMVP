@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Decompose sum of integrals",
+  "core_move_guess": "Decompose the integral of a sum into a sum of integrals.",
+  "trigger_cues": [
+    "summation inside integral",
+    "nested function f(kx)",
+    "asks for definite integral"
+  ],
+  "mini_steps": [
+    "Rewrite g(x) as a sum of f(2^(r-1)x)",
+    "Express integral of g(x) as sum of integrals",
+    "Recognize each integral as area under transformed f(x)",
+    "Calculate area under f(x) from 0 to 1",
+    "Relate integral of f(2^(r-1)x) to integral of f(x)"
+  ],
+  "wrong_move": "Failing to recognize the integral of f(2^(r-1)x) is related to the area under f(x) and miscalculating the area.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

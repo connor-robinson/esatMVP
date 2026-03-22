@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2022_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Guarantee existence via worst-case scenario",
+  "core_move_guess": "Consider the worst-case scenario to guarantee a condition.",
+  "trigger_cues": [
+    "smallest value of n",
+    "necessarily true",
+    "arithmetic sequence"
+  ],
+  "mini_steps": [
+    "Identify the arithmetic sequence",
+    "Consider the largest possible terms that cannot sum to 74",
+    "Count how many terms can be selected before a pair must sum to 74",
+    "Add one to guarantee the condition"
+  ],
+  "wrong_move": "Assuming a random selection of terms instead of considering the worst-case scenario where no two terms sum to 74.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

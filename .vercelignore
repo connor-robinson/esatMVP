@@ -1,4 +1,3 @@
-# Exclude review-app from main app builds
-# This is a separate Next.js application that should be deployed independently
-review-app/
+# Exclude review-app from main app builds (separate Next.js app)
+question-generation/review-app/
 

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_None_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate integral inequality to function bounds",
+  "core_move_guess": "Constrain the integral using the given inequality.",
+  "trigger_cues": [
+    "inequality involving f(x)^2",
+    "integral of f(x)^2 and f(x)",
+    "bounds on x"
+  ],
+  "mini_steps": [
+    "Recognize -1 <= x <= 1",
+    "Infer -1 <= f(x) <= 1 from f(x)^2 <= 1",
+    "Relate integral of f(x)^2 to integral of f(x)",
+    "Evaluate the integrals",
+    "Check if the integral inequality holds for each option"
+  ],
+  "wrong_move": "Assuming f(x) is always positive or negative within the given interval, leading to incorrect simplification of the integral.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

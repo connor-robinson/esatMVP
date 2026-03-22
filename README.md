@@ -88,12 +88,15 @@ nocalcMVP2_real/
 │   ├── store/              # Zustand state stores
 │   ├── types/              # TypeScript type definitions
 │   └── config/             # Configuration files
-├── scripts/                # Scripts and utilities
-│   ├── utilities/          # One-off Python scripts (migrations, fixes)
-│   ├── backup/             # Database backup scripts
-│   ├── esat_question_generator/  # ESAT question generation tools
-│   ├── tmua_question_generator/  # TMUA question generation tools
-│   └── schema_generator/   # Schema extraction and analysis tools
+├── question-generation/    # ESAT/TMUA pipelines, schema tools, review app (focused workspace)
+│   ├── esat_question_generator/
+│   ├── tmua_question_generator/
+│   ├── schema_generator/
+│   └── review-app/         # Standalone reviewer Next.js app
+├── scripts/                # Other scripts and utilities (not the main generators)
+│   ├── utilities/
+│   ├── backup/
+│   └── ...
 ├── docs/                   # Documentation
 │   ├── guides/             # Active documentation (deployment, security, config)
 │   └── archive/            # Historical documentation

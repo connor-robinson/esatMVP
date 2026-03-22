@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate parameter to inequality condition",
+  "core_move_guess": "Constrain parameter 'a' using extreme case of inequality.",
+  "trigger_cues": [
+    "inequality with parameter",
+    "true for all real x",
+    "complete set of values"
+  ],
+  "mini_steps": [
+    "Consider boundary case",
+    "Substitute x=2",
+    "Solve for 'a'",
+    "Deduce inequality for 'a'"
+  ],
+  "wrong_move": "Assuming a single value of x is sufficient to determine the range of 'a', rather than considering the extreme case where the inequality becomes an equality.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

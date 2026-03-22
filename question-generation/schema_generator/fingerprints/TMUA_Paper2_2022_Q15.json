@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2022_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Rearrange inequality to find range",
+  "core_move_guess": "Re-express the inequality to isolate x and determine its valid range.",
+  "trigger_cues": [
+    "existence quantifier",
+    "inequality",
+    "real number x",
+    "find all values"
+  ],
+  "mini_steps": [
+    "Rearrange inequality: y(1-x) < -x",
+    "Consider x=1 as special case",
+    "If x<1, y < -x/(1-x)",
+    "If x>1, y > -x/(1-x)",
+    "Determine when such y exists",
+    "Find the range of x values"
+  ],
+  "wrong_move": "Failing to consider x=1 as a special case, or incorrectly manipulating the inequality without considering the sign of (1-x).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

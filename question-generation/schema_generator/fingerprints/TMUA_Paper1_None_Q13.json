@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate coefficients to polynomial expansion",
+  "core_move_guess": "Equate coefficients of corresponding terms after expansion.",
+  "trigger_cues": [
+    "coefficient of x^n",
+    "polynomial expansion",
+    "two polynomials are equal"
+  ],
+  "mini_steps": [
+    "Expand (1 + 2x + 3x^2)^6",
+    "Identify the coefficient of x^3",
+    "Expand (1 - ax^2)^5",
+    "Identify the coefficient of x^4",
+    "Equate the coefficients",
+    "Solve for a"
+  ],
+  "wrong_move": "Failing to correctly expand the polynomials or equating the wrong coefficients.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test antecedent and consequent conditions",
+  "core_move_guess": "Test whether antecedent is true and consequent is false.",
+  "trigger_cues": [
+    "counterexample to 'if' statement",
+    "antecedent",
+    "consequent",
+    "check whether functions satisfy condition"
+  ],
+  "mini_steps": [
+    "Understand counterexample: antecedent true, consequent false",
+    "Test if f(x)^2 <= 1 for -1 <= x <= 1 (antecedent)",
+    "Test if f(x) <= 1 for -1 <= x <= 1 (consequent)",
+    "Identify option where antecedent is true",
+    "Verify if consequent is false"
+  ],
+  "wrong_move": "Failing to recognize that a counterexample requires the antecedent to be true and the consequent to be false, or incorrectly evaluating the inequalities.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

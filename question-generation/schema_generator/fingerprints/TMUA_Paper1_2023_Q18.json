@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate slopes via perpendicularity",
+  "core_move_guess": "Relate slopes using the perpendicularity condition to find k.",
+  "trigger_cues": [
+    "right-angled triangle",
+    "vertices given as coordinates",
+    "find the sum of possible values"
+  ],
+  "mini_steps": [
+    "Calculate slopes of lines connecting points",
+    "Apply perpendicularity condition (m1*m2 = -1)",
+    "Form quadratic equation in k",
+    "Solve for k",
+    "Sum the possible values of k"
+  ],
+  "wrong_move": "Assuming a specific pair of sides must be perpendicular, instead of considering all three possibilities.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

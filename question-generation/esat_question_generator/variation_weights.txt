@@ -1,0 +1,4 @@
+# Math1 designer: Sibling vs Far when variation_mode is not forced (env VARIATION_MODE / config).
+# Values are normalized to sum to 1.0. Edit anytime; the next designer call reloads this file.
+Sibling=0.15
+Far=0.85

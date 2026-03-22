@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2019_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Unwind recursive sequence to find pattern",
+  "core_move_guess": "Iterate the recurrence relation to identify a pattern.",
+  "trigger_cues": [
+    "recurrence relation",
+    "asks for a distant term",
+    "nested exponent"
+  ],
+  "mini_steps": [
+    "Compute x2, x3, x4...",
+    "Express terms as powers of 10",
+    "Identify the pattern in the exponent",
+    "Generalize the pattern for x100"
+  ],
+  "wrong_move": "Assuming the sequence converges to a limit and solving for the limit, which is irrelevant to finding a specific term.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

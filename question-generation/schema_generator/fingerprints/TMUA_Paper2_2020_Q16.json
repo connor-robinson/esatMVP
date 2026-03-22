@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2020_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Differentiate composite function within integral",
+  "core_move_guess": "Apply chain rule when differentiating integral with function argument.",
+  "trigger_cues": [
+    "d/dx of integral",
+    "upper limit is f(x) not x",
+    "Fundamental Theorem of Calculus"
+  ],
+  "mini_steps": [
+    "Recognize FTC applies",
+    "Identify upper limit as composite function",
+    "Apply chain rule during differentiation",
+    "Evaluate derivative of composite function",
+    "Compare result with student's calculation"
+  ],
+  "wrong_move": "Applying FTC directly without considering the chain rule for composite upper limits leads to incorrect differentiation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

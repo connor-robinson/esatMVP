@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate summation via series expansion",
+  "core_move_guess": "Exploit properties of logarithms and summation to simplify the expression.",
+  "trigger_cues": [
+    "summation symbol",
+    "logarithm",
+    "nested expression"
+  ],
+  "mini_steps": [
+    "Expand the brackets",
+    "Recognize arithmetic series",
+    "Apply arithmetic series formula",
+    "Simplify using logarithm rules",
+    "Evaluate the final expression"
+  ],
+  "wrong_move": "Incorrectly applying the logarithm rules or the arithmetic series formula leads to errors in simplification.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify logs, constrain domain, find length",
+  "core_move_guess": "Simplify the logarithmic equation and constrain the domain to find the length.",
+  "trigger_cues": [
+    "logarithmic equation",
+    "find the length",
+    "two variables"
+  ],
+  "mini_steps": [
+    "Combine logs",
+    "Remove logs",
+    "Rearrange to linear equation",
+    "Constrain x and y",
+    "Find the length of line segment"
+  ],
+  "wrong_move": "Failing to consider the domain restrictions imposed by the logarithms, leading to an incorrect line segment.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

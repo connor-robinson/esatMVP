@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2019_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Sum coefficients of similar terms",
+  "core_move_guess": "Exploit the binomial theorem to simplify the expression.",
+  "trigger_cues": [
+    "sum of binomial expansions",
+    "find coefficient of x",
+    "series of (1+x)^n"
+  ],
+  "mini_steps": [
+    "Recognize coefficient of x is n in (1+x)^n",
+    "Rewrite the expression as sum of coefficients",
+    "Sum the arithmetic series 0 + 1 + ... + 80",
+    "Calculate the sum using formula n(n+1)/2"
+  ],
+  "wrong_move": "Failing to recognize the arithmetic series and attempting to expand each term individually.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

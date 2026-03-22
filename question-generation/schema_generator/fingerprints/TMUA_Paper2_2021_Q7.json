@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2021_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate bisection to center of shape",
+  "core_move_guess": "Exploit bisection implies passing through centers.",
+  "trigger_cues": [
+    "bisects the area",
+    "circle",
+    "square"
+  ],
+  "mini_steps": [
+    "Line bisects circle area: passes through center",
+    "Line bisects square area: passes through center",
+    "Find center of square",
+    "Find center of circle",
+    "Find equation of line through two centers",
+    "Find x-intercept of line"
+  ],
+  "wrong_move": "Assume the line passes through a vertex of the square or a point on the circle's circumference.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

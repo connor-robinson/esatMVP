@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2021_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate definite integral with symbolic limits",
+  "core_move_guess": "Compute the definite integral using the given limits.",
+  "trigger_cues": [
+    "definite integral",
+    "turning points",
+    "symbolic limits",
+    "polynomial integrand"
+  ],
+  "mini_steps": [
+    "Find x-coordinates of turning points by differentiation",
+    "Set derivative equal to zero",
+    "Solve for x to find alpha and beta",
+    "Substitute limits into the integral",
+    "Evaluate the definite integral",
+    "Simplify the expression"
+  ],
+  "wrong_move": "Failing to correctly evaluate the integral at the limits or making algebraic errors in simplification are common mistakes.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

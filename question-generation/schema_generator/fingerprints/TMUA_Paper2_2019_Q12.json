@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2019_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Compare probabilities via logical implication",
+  "core_move_guess": "Infer probability ordering from subset relationships.",
+  "trigger_cues": [
+    "probability of multiple events",
+    "comparing probabilities",
+    "events imply each other"
+  ],
+  "mini_steps": [
+    "Recognize T implies S",
+    "Recognize T implies R",
+    "Recognize S implies R",
+    "Deduce T < S and T < R",
+    "Deduce S < R",
+    "Combine inequalities to find order"
+  ],
+  "wrong_move": "Assuming independence of events or trying to calculate exact probabilities without considering the logical relationships between the events.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

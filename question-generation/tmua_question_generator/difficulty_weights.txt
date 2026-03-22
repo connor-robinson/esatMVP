@@ -1,0 +1,4 @@
+# TMUA: only Hard and Extreme are used (Easy/Medium ignored). Values normalize to sum to 1.0.
+# Edit mid-run to change the Hard vs Extreme mix.
+Hard=0.5
+Extreme=0.5

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Similar triangles to find ratio",
+  "core_move_guess": "Exploit similar triangles to determine the unknown side length ratio.",
+  "trigger_cues": [
+    "Geometry problem",
+    "Similar triangles",
+    "Ratio of side lengths"
+  ],
+  "mini_steps": [
+    "Identify similar triangles",
+    "Determine corresponding sides",
+    "Calculate the ratio of corresponding sides",
+    "Use the ratio to find the unknown length"
+  ],
+  "wrong_move": "Assume triangles are similar without proper justification or incorrectly identify corresponding sides.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

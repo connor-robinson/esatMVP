@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Exploit recursive definition and linearity",
+  "core_move_guess": "Exploit the recursive definition to simplify the integral.",
+  "trigger_cues": [
+    "recursive definition",
+    "integral with f(x)",
+    "sum of integrals"
+  ],
+  "mini_steps": [
+    "Recognize recursive definition of f_n(x)",
+    "Apply the recursive definition to each integral",
+    "Use linearity of integration",
+    "Simplify the expression",
+    "Evaluate the resulting expression"
+  ],
+  "wrong_move": "Ignoring the recursive definition and attempting to directly integrate each term.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,4 @@
+# TMUA designer: Sibling vs Far when VARIATION_MODE is not set.
+# Values are normalized to sum to 1.0. Edit anytime; the next designer call reloads this file.
+Sibling=0.15
+Far=0.85

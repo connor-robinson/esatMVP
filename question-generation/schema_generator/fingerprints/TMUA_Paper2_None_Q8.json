@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_None_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Combine inequalities to derive new inequality",
+  "core_move_guess": "Check the validity of combined inequalities by considering sign.",
+  "trigger_cues": [
+    "multiple inequalities",
+    "product of expressions",
+    "determine which conditions are necessary"
+  ],
+  "mini_steps": [
+    "Recognize inequalities as constraints",
+    "Consider multiplying inequalities",
+    "Check sign of expressions before multiplying",
+    "Verify if derived inequality holds"
+  ],
+  "wrong_move": "Multiplying inequalities without considering the signs of the expressions involved can lead to incorrect conclusions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

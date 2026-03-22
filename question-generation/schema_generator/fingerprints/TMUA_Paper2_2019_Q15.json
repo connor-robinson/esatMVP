@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2019_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations with logarithms",
+  "core_move_guess": "Exploit logarithm rules to form linear equations.",
+  "trigger_cues": [
+    "logarithms",
+    "same base",
+    "multiple equations"
+  ],
+  "mini_steps": [
+    "Apply log rules: log(ab) = log a + log b",
+    "Apply log rules: log(a^n) = n log a",
+    "Form three linear equations",
+    "Solve for log a, log b, log c",
+    "Substitute back into original equations",
+    "Solve for the base"
+  ],
+  "wrong_move": "Incorrectly applying logarithm rules or making algebraic errors when solving the simultaneous equations.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

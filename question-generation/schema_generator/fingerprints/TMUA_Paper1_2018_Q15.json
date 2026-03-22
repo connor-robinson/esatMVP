@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2018_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize structure via substitution",
+  "core_move_guess": "Re-express the equation using a substitution to simplify.",
+  "trigger_cues": [
+    "expression contains nested powers",
+    "variable appears in exponent",
+    "equation looks quadratic after substitution"
+  ],
+  "mini_steps": [
+    "Recognize 3 as sqrt(3)^2",
+    "Substitute y = sqrt(3)^x",
+    "Solve the resulting quadratic equation for y",
+    "Solve sqrt(3)^x = y for x",
+    "Sum the real solutions for x"
+  ],
+  "wrong_move": "Failing to recognize the relationship between 3 and sqrt(3) and attempting to solve the equation directly without substitution.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

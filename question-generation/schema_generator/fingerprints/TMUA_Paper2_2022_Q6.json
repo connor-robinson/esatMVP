@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2022_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Assess sufficiency using definitions/formulas",
+  "core_move_guess": "Determine what information is needed to calculate the distance L.",
+  "trigger_cues": [
+    "sufficient on its own",
+    "calculate L",
+    "equation of a circle"
+  ],
+  "mini_steps": [
+    "Recall the formula for the distance L between the center and point P",
+    "Recall the formula for the center of the circle given its equation",
+    "Determine what values are needed to apply the formulas",
+    "Check which options provide all the needed values"
+  ],
+  "wrong_move": "Assuming that knowing the coordinates of P is enough to calculate L without knowing the center of the circle.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

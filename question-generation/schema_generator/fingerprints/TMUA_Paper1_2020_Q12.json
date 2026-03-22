@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Bound search space, then count intersections",
+  "core_move_guess": "Constrain the domain to a finite interval, then count intersections.",
+  "trigger_cues": [
+    "equation involves trigonometric and algebraic functions",
+    "asks for number of real solutions",
+    "x in radians"
+  ],
+  "mini_steps": [
+    "Recognize bounds of cosine function",
+    "Recognize domain of square root function",
+    "Determine upper bound for x based on function values",
+    "Sketch both functions",
+    "Count intersections in bounded region"
+  ],
+  "wrong_move": "Attempting to solve the equation algebraically is a common mistake, as it is not easily solvable.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

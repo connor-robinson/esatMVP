@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Necessity via counterexample construction",
+  "core_move_guess": "Test necessity by constructing counterexamples.",
+  "trigger_cues": [
+    "necessary condition",
+    "p(x) increasing",
+    "statements about p(x), p'(x), p''(x)"
+  ],
+  "mini_steps": [
+    "Understand definition of necessary condition",
+    "Statement I: Justify necessity",
+    "Statement II: Construct quadratic counterexample",
+    "Statement III: Construct cubic counterexample"
+  ],
+  "wrong_move": "Assuming that a condition is necessary just because it seems plausible for some examples, without attempting to find a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

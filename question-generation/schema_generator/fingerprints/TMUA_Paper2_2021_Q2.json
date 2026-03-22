@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper2_2021_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate geometry to coordinate geometry",
+  "core_move_guess": "Exploit geometric properties to deduce equation.",
+  "trigger_cues": [
+    "opposite vertices of square",
+    "equation of straight line"
+  ],
+  "mini_steps": [
+    "Find midpoint of AC (center of square)",
+    "Find gradient of AC",
+    "Find gradient of perpendicular bisector (BD)",
+    "Use point-gradient form to find equation of BD"
+  ],
+  "wrong_move": "Assuming the line through B and D has the same gradient as AC, or not using the midpoint.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

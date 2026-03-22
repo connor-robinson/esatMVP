@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2020_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Reduce large numbers using modulo pattern",
+  "core_move_guess": "Simplify the problem by considering remainders modulo 2.",
+  "trigger_cues": [
+    "pattern repeats every 2 units",
+    "large numbers (99, 100)",
+    "identifying point on a spiral"
+  ],
+  "mini_steps": [
+    "Recognize repeating pattern every 2 units",
+    "Reduce coordinates modulo 2",
+    "Map large coordinates to smaller equivalents",
+    "Check if simplified coordinates are on spiral",
+    "Identify the missing point"
+  ],
+  "wrong_move": "Assuming all points with similar parity are on the spiral without checking the specific arrangement.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Sign of derivative determines function",
+  "core_move_guess": "Determine intervals where derivatives are positive/negative.",
+  "trigger_cues": [
+    "increasing/decreasing function",
+    "inequalities in options",
+    "f'(x) and g'(x)"
+  ],
+  "mini_steps": [
+    "Calculate f'(x) and g'(x)",
+    "Find roots of f'(x) and g'(x)",
+    "Determine sign of f'(x) in intervals",
+    "Determine sign of g'(x) in intervals",
+    "Find intervals where f'(x) and g'(x) have opposite signs"
+  ],
+  "wrong_move": "Incorrectly calculate the derivatives or misinterpret the meaning of the derivative's sign.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate discriminant to zero for tangency",
+  "core_move_guess": "Exploit tangency condition to form equations.",
+  "trigger_cues": [
+    "line meets curve at one point",
+    "two tangency conditions",
+    "quadratic equation"
+  ],
+  "mini_steps": [
+    "Substitute line equation into curve equation",
+    "Form quadratic equation",
+    "Set discriminant to zero",
+    "Repeat for second line",
+    "Solve simultaneous equations",
+    "Calculate b-c"
+  ],
+  "wrong_move": "Failing to recognize the tangency condition implies discriminant equals zero, or making algebraic errors when expanding and simplifying the equations.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

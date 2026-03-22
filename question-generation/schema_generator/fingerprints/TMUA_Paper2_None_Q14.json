@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_None_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate function values to graph intersections",
+  "core_move_guess": "Relate number of solutions to intersections of graphs.",
+  "trigger_cues": [
+    "f(x) = a has p solutions",
+    "number of solutions",
+    "polynomial"
+  ],
+  "mini_steps": [
+    "Number of solutions to f(x) = k equals number of intersections of y=f(x) and y=k",
+    "Consider possible quartic shapes (W-shape or single minimum)",
+    "Relate number of intersections to the shape of the quartic",
+    "Deduce the order of p, q, r, s based on the shape"
+  ],
+  "wrong_move": "Failing to consider different possible shapes of the quartic, or assuming a specific shape without justification.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

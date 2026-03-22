@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Counterexample by checking conditions",
+  "core_move_guess": "Test each option against the given conditions.",
+  "trigger_cues": [
+    "counterexample",
+    "if P then Q",
+    "f'(x) > 0",
+    "f(x) > 0"
+  ],
+  "mini_steps": [
+    "Understand 'if P then Q' counterexample",
+    "P is true, Q is false",
+    "Check f'(x) > 0 for all x",
+    "Check f(x) > 0 for all x",
+    "Find option where f'(x) > 0 but f(x) not > 0"
+  ],
+  "wrong_move": "Assuming that if f'(x) > 0 then f(x) must also be > 0, without testing specific values.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

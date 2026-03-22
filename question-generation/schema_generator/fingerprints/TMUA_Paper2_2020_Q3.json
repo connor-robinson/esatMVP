@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2020_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Spot error in algebraic manipulation",
+  "core_move_guess": "Verify each algebraic manipulation step by step.",
+  "trigger_cues": [
+    "algebraic manipulations",
+    "identifying an error",
+    "step-by-step verification"
+  ],
+  "mini_steps": [
+    "Check line (I): 4 = 2 * 2",
+    "Check line (II): expand (9n+1) - (3n-1)",
+    "Simplify the expansion",
+    "Compare with the student's result"
+  ],
+  "wrong_move": "Assuming the initial steps are correct without verification leads to missing the error in line (II).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

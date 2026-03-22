@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2019_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Check antecedent and consequent truth",
+  "core_move_guess": "Verify if each condition satisfies the antecedent and consequent.",
+  "trigger_cues": [
+    "If...then...",
+    "counterexample",
+    "positive integer",
+    "odd number"
+  ],
+  "mini_steps": [
+    "Understand the conjecture",
+    "Check if antecedent is true for each case",
+    "Check if consequent is true for each case",
+    "Identify counterexamples (antecedent true, consequent false)"
+  ],
+  "wrong_move": "Assuming that if the antecedent is false, the case is a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

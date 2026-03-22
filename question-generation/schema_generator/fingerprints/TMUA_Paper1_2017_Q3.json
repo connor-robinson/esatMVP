@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to coordinate geometry",
+  "core_move_guess": "Relate geometric area to coordinate differences.",
+  "trigger_cues": [
+    "find area",
+    "line",
+    "intersects x-axis",
+    "passes through point"
+  ],
+  "mini_steps": [
+    "Sketch the line",
+    "Identify the vertices of the triangle",
+    "Determine base length from x-intercepts",
+    "Calculate triangle area"
+  ],
+  "wrong_move": "Failing to sketch the line and misinterpreting the area.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

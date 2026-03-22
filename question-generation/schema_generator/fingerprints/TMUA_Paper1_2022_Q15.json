@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate coefficients to roots of polynomial",
+  "core_move_guess": "Exploit Vieta's formulas to relate coefficients and roots.",
+  "trigger_cues": [
+    "equation relating algebraic expressions",
+    "least value",
+    "a and b are real numbers"
+  ],
+  "mini_steps": [
+    "Recognize the given equation as a quadratic in x",
+    "Apply Vieta's formulas to relate coefficients to roots",
+    "Express the product ab in terms of the coefficients",
+    "Find the minimum value of the resulting expression",
+    "Consider the discriminant to ensure real roots"
+  ],
+  "wrong_move": "Assuming a and b are independent and trying to minimize them separately without considering the constraint imposed by the equation.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

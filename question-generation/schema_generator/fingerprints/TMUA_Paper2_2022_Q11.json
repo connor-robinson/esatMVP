@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2022_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate inequality to squared expression",
+  "core_move_guess": "Constrain k based on the relationship between x and x^2.",
+  "trigger_cues": [
+    "For all real numbers",
+    "x < k then x^2 < k",
+    "complete set of values"
+  ],
+  "mini_steps": [
+    "Consider x < 0",
+    "Then x^2 > 0",
+    "So x^2 < k requires k > 0",
+    "Consider x >= 0",
+    "Then x < k implies x^2 < k requires k >= 1",
+    "Combine the constraints on k"
+  ],
+  "wrong_move": "Assuming k must be positive without considering negative values of x, or failing to consider the case where 0 < k < 1 and x is close to k.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

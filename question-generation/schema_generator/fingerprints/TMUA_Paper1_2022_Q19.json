@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Triangle inequality and ambiguous case",
+  "core_move_guess": "Constrain side length using triangle inequality and ambiguous case.",
+  "trigger_cues": [
+    "two non-congruent triangles",
+    "side lengths and angle",
+    "30 degrees"
+  ],
+  "mini_steps": [
+    "Apply sine rule to find sin(theta)",
+    "Determine possible values of theta",
+    "Apply triangle inequality to x-1, x^2+6x-5, 17",
+    "Solve inequalities to find range of x",
+    "Consider ambiguous case condition a < b sin(A)"
+  ],
+  "wrong_move": "Failing to consider both the triangle inequality and the ambiguous case condition, or incorrectly applying the sine rule.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

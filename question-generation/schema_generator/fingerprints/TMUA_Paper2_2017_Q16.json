@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test integer input, check derivative.",
+  "core_move_guess": "Test integer inputs to eliminate options.",
+  "trigger_cues": [
+    "counterexample",
+    "f(x) is an integer",
+    "f'(x) is an integer"
+  ],
+  "mini_steps": [
+    "Recognize counterexample requires integer f(x), non-integer f'(x)",
+    "Test x=0, x=1 for integer f(x)",
+    "Eliminate options with non-integer f(x)",
+    "Calculate f'(x) for remaining options",
+    "Test integer x for non-integer f'(x)"
+  ],
+  "wrong_move": "Assuming that if f(x) is an integer for a few integer values of x, then it is an integer for all integer values of x.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

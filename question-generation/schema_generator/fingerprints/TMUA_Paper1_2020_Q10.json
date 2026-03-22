@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Apply transformations sequentially to function",
+  "core_move_guess": "Apply each transformation step-by-step to the equation.",
+  "trigger_cues": [
+    "sequence of transformations",
+    "applied to the curve",
+    "resulting curve"
+  ],
+  "mini_steps": [
+    "Apply translation to x",
+    "Apply translation to y",
+    "Reflect in x-axis (negate y)",
+    "Apply stretch to x",
+    "Simplify the resulting equation"
+  ],
+  "wrong_move": "Incorrectly applying the transformations in the wrong order or misremembering the effect of each transformation on the equation.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

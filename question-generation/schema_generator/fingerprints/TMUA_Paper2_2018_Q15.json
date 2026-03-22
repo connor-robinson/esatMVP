@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Transform function and deduce roots",
+  "core_move_guess": "Relate transformed function's roots to original function's roots.",
+  "trigger_cues": [
+    "f(x) has 3 distinct real roots",
+    "statements about f(x) + 1, f(x + 1), f(-x) - 1",
+    "transformations of functions"
+  ],
+  "mini_steps": [
+    "f(x) = 0 has 3 real roots",
+    "f(x+1) is horizontal translation",
+    "horizontal translation preserves roots",
+    "f(-x) is reflection in y-axis",
+    "reflection preserves roots",
+    "f(x)+1 and f(-x)-1 are vertical translations, may change number of roots"
+  ],
+  "wrong_move": "Assuming vertical translations always preserve the number of real roots without considering turning points.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

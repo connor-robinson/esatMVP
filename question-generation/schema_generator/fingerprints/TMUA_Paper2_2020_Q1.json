@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2020_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate discriminant to intersection condition",
+  "core_move_guess": "Relate the discriminant to the condition for intersection.",
+  "trigger_cues": [
+    "line and curve",
+    "crosses or touches",
+    "complete set of values"
+  ],
+  "mini_steps": [
+    "Equate line and curve equations",
+    "Rearrange into quadratic form",
+    "Calculate the discriminant",
+    "Apply discriminant condition (>=0)",
+    "Solve the inequality"
+  ],
+  "wrong_move": "Failing to consider both cases where the discriminant is greater than or equal to zero, only considering the greater than case.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2021_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve by graphical intersection count",
+  "core_move_guess": "Sketch both sides of the equation and count intersections.",
+  "trigger_cues": [
+    "equation with trigonometric and polynomial terms",
+    "asks for number of solutions",
+    "no direct method to solve"
+  ],
+  "mini_steps": [
+    "Recognize difficulty of direct solution",
+    "Sketch the quadratic function",
+    "Sketch the transformed cosine function",
+    "Count the number of intersections"
+  ],
+  "wrong_move": "Attempting to solve the equation algebraically, without considering the graphical approach, is a common mistake.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

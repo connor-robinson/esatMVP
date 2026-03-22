@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate circle equation to its center",
+  "core_move_guess": "Exploit the completed square form to find the circle's center.",
+  "trigger_cues": [
+    "circle equation",
+    "find the center",
+    "equation of a circle"
+  ],
+  "mini_steps": [
+    "Complete the square for x terms",
+    "Complete the square for y terms",
+    "Rewrite equation in standard circle form",
+    "Identify center coordinates from standard form",
+    "Calculate distance using center and point P"
+  ],
+  "wrong_move": "Failing to complete the square correctly or misinterpreting the standard equation of a circle can lead to an incorrect center.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

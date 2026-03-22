@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2018_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Sine rule ambiguity, unique triangle",
+  "core_move_guess": "Consider ambiguous case of sine rule to constrain p.",
+  "trigger_cues": [
+    "triangle",
+    "side lengths",
+    "angle",
+    "uniquely determines"
+  ],
+  "mini_steps": [
+    "Apply sine rule",
+    "Recognize ambiguous case",
+    "Condition for unique triangle",
+    "Solve inequality for p"
+  ],
+  "wrong_move": "Assuming a unique triangle exists for all values of p and directly solving for PQ without considering the ambiguous case of the sine rule.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

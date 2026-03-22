@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve compound inequality with fractions",
+  "core_move_guess": "Isolate x in each inequality and find intersection.",
+  "trigger_cues": [
+    "two inequalities",
+    "variable in denominator",
+    "find values satisfying both"
+  ],
+  "mini_steps": [
+    "Rewrite inequalities",
+    "Isolate x in each inequality",
+    "Consider cases based on sign of x",
+    "Find solution set for each inequality",
+    "Find intersection of solution sets"
+  ],
+  "wrong_move": "Ignoring the sign of x when multiplying or dividing inequalities leads to incorrect solution sets.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

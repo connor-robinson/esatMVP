@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2017_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Find and exploit repeating sequence",
+  "core_move_guess": "Identify the repeating pattern in each recursive sequence.",
+  "trigger_cues": [
+    "recursive definition",
+    "piecewise function",
+    "large n value"
+  ],
+  "mini_steps": [
+    "Calculate initial terms of f(n)",
+    "Identify repeating pattern in f(n)",
+    "Calculate initial terms of g(n)",
+    "Identify repeating pattern in g(n)",
+    "Determine f(1000) using the pattern",
+    "Determine g(1000) using the pattern",
+    "Calculate f(1000) - g(1000)"
+  ],
+  "wrong_move": "Assume the sequences converge or have a simple closed-form expression, instead of identifying the repeating pattern.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

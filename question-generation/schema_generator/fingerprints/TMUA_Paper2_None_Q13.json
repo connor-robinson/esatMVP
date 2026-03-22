@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Critique proof line by line",
+  "core_move_guess": "Test the sufficiency of each statement in the proof.",
+  "trigger_cues": [
+    "lines of argument",
+    "working through",
+    "check this",
+    "is correct?"
+  ],
+  "mini_steps": [
+    "Recognize proof structure",
+    "Understand the claim in each line",
+    "Check logical validity of each step",
+    "Identify potential edge cases or counterexamples",
+    "Verify consistency with previous steps"
+  ],
+  "wrong_move": "Assuming each line is correct without rigorous verification, especially overlooking the range of variables.",
+  "answer_form": "logic",
+  "confidence": 0.9
+}

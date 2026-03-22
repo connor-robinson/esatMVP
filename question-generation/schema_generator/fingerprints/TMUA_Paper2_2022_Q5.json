@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2022_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test cases against a conditional statement",
+  "core_move_guess": "Test each given case against the stated condition.",
+  "trigger_cues": [
+    "counterexample",
+    "if...then...",
+    "positive integer",
+    "statement about n"
+  ],
+  "mini_steps": [
+    "Understand the conditional statement",
+    "Test n=2: is 2 prime? Is 2^2 + 2 prime?",
+    "Test n=3: is 3 prime? Is 3^2 + 2 prime?",
+    "Test n=4: is 4 prime? Is 4^2 + 2 prime?",
+    "Identify which case(s) satisfy the condition",
+    "Select the option with correct cases"
+  ],
+  "wrong_move": "Assuming the statement is true and trying to prove it, rather than looking for a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

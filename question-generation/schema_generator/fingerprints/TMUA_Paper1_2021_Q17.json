@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate equation to geometric shape",
+  "core_move_guess": "Exploit the equation to deduce a geometric form.",
+  "trigger_cues": [
+    "equation involving x^2 + y^2",
+    "asks for graph sketch",
+    "equation involves trigonometric function"
+  ],
+  "mini_steps": [
+    "Recognize x^2 + y^2 = r^2",
+    "sin(r^2) = 1/2 implies r^2 = constant",
+    "r^2 = constant represents circles",
+    "Determine the relevant range for r^2",
+    "Sketch circles within the given range"
+  ],
+  "wrong_move": "Failing to recognize the equation represents concentric circles or misinterpreting the trigonometric equation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

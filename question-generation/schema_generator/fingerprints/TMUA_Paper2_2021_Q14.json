@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2021_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations with log",
+  "core_move_guess": "Re-express equations to isolate and solve for p.",
+  "trigger_cues": [
+    "simultaneous equations",
+    "logarithmic term",
+    "range of parameter",
+    "real solution"
+  ],
+  "mini_steps": [
+    "Substitute X = 2^x, Y = log2 y",
+    "Subtract equations to eliminate Y",
+    "Solve for X in terms of p",
+    "Solve for Y in terms of p",
+    "Ensure 2^x > 0 and solve for p",
+    "Find the range of p"
+  ],
+  "wrong_move": "Assuming any value of p will yield a real solution without checking the domain of logarithmic and exponential functions.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

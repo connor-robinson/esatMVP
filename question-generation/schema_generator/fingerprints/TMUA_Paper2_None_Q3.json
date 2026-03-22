@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_None_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify integral by expanding and integrating",
+  "core_move_guess": "Re-express the integrand by expanding the square and then integrate term by term.",
+  "trigger_cues": [
+    "integral with polynomial",
+    "fractional powers of x",
+    "square in the integrand"
+  ],
+  "mini_steps": [
+    "Expand the square",
+    "Simplify the expression",
+    "Integrate each term",
+    "Evaluate the definite integral"
+  ],
+  "wrong_move": "Incorrectly applying the power rule for integration or making algebraic errors during expansion.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

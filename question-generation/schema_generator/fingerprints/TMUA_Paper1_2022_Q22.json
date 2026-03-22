@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q22",
+  "eligible": true,
+  "reasoning_pattern_hint": "Visualize intersections of absolute value graphs",
+  "core_move_guess": "Consider different values of a to determine possible intersection counts.",
+  "trigger_cues": [
+    "|...| absolute value",
+    "number of points of intersection",
+    "smallest value that is not possible"
+  ],
+  "mini_steps": [
+    "Recognize absolute value graphs",
+    "Consider different values of 'a'",
+    "Sketch or visualize the graphs",
+    "Count the intersections for each 'a'",
+    "Identify impossible intersection counts"
+  ],
+  "wrong_move": "Assuming a single value of 'a' is sufficient to determine all possible intersection counts, or not considering the effect of the absolute value.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

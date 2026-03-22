@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2017_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Compare function values on an interval",
+  "core_move_guess": "Sketch the graph of tan x to compare with the other functions.",
+  "trigger_cues": [
+    "inequalities of trigonometric functions",
+    "interval specified",
+    "determine which is not true"
+  ],
+  "mini_steps": [
+    "Sketch y=tan x on the same axes",
+    "Visually compare the graphs",
+    "Identify intervals where each inequality holds",
+    "Find the inequality that is never true"
+  ],
+  "wrong_move": "Assume the inequalities hold for all x in the interval without sketching the graph and checking.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

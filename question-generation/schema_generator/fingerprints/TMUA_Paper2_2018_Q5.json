@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2018_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test statements via counterexamples",
+  "core_move_guess": "Test each statement by attempting to construct counterexamples.",
+  "trigger_cues": [
+    "necessarily true",
+    "quadrilateral",
+    "perpendicular diagonals",
+    "statements I and II"
+  ],
+  "mini_steps": [
+    "Draw two perpendicular lines",
+    "Place vertices to violate statement I",
+    "Place vertices to violate statement II",
+    "Conclude neither statement is necessarily true"
+  ],
+  "wrong_move": "Assuming the statements are true and attempting to prove them, rather than looking for counterexamples.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

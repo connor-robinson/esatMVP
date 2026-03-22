@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2023_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve equation by substituting answer choices",
+  "core_move_guess": "Test each option until a valid solution is found.",
+  "trigger_cues": [
+    "what is the value of x?",
+    "multiple choice options",
+    "equation with radicals"
+  ],
+  "mini_steps": [
+    "Substitute each answer choice into the equation",
+    "Simplify both sides of the equation",
+    "Check if both sides are equal",
+    "If equal, the answer choice is correct"
+  ],
+  "wrong_move": "Attempting to directly solve the equation algebraically without considering the multiple-choice options can lead to errors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

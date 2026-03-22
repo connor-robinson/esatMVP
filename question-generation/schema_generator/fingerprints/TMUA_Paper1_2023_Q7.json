@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper1_2023_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to side length, optimize",
+  "core_move_guess": "Relate rectangle area to square side length and maximize.",
+  "trigger_cues": [
+    "square",
+    "rectangle",
+    "perimeter",
+    "area",
+    "largest possible value"
+  ],
+  "mini_steps": [
+    "Perimeter of square to side length",
+    "Express rectangle side lengths in terms of x",
+    "Area of rectangle as function of x",
+    "Set area equal to 20",
+    "Solve quadratic for x",
+    "Choose largest x"
+  ],
+  "wrong_move": "Assuming the rectangle is also a square or not correctly expressing the sides of the rectangle in terms of x, leading to an incorrect area equation.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

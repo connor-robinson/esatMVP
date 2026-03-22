@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Variable substitution and expression manipulation",
+  "core_move_guess": "Substitute variables to simplify and rearrange the equation.",
+  "trigger_cues": [
+    "multiple equations",
+    "logarithms",
+    "asks for equivalent expression"
+  ],
+  "mini_steps": [
+    "Substitute x = log_a b and y = log_a c",
+    "Rewrite log_c d = (log_a b)^2 as log_c d = x^2",
+    "Express d as c^(x^2)",
+    "Rewrite c as a^y",
+    "Express d as (a^y)^(x^2)",
+    "Simplify to d = a^(x^2 * y)"
+  ],
+  "wrong_move": "Incorrectly applying logarithm rules or making algebraic errors when manipulating the equations after substitution.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Analyze function behavior at extremes",
+  "core_move_guess": "Determine the function's asymptotic behavior for large x.",
+  "trigger_cues": [
+    "graph of a function",
+    "dotted lines indicate asymptotes",
+    "behavior for large x"
+  ],
+  "mini_steps": [
+    "Consider x approaching positive infinity",
+    "Consider x approaching negative infinity",
+    "Determine horizontal asymptotes",
+    "Check for vertical asymptotes",
+    "Consider x=0 to find y-intercept",
+    "Match behavior to graph options"
+  ],
+  "wrong_move": "Assuming the function behaves linearly or quadratically for large x, instead of analyzing its asymptotic behavior.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

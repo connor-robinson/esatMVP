@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2019_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize and exploit difference of squares",
+  "core_move_guess": "Re-express the integrand using difference of squares.",
+  "trigger_cues": [
+    "integral to evaluate",
+    "fraction with similar terms",
+    "t-1 in numerator",
+    "sqrt(t) + 1 in denominator"
+  ],
+  "mini_steps": [
+    "Recognize t-1 as difference of squares",
+    "Rewrite t-1 as (sqrt(t) + 1)(sqrt(t) - 1)",
+    "Simplify the fraction",
+    "Integrate the simplified expression",
+    "Use initial condition to find constant of integration",
+    "Evaluate at t=9"
+  ],
+  "wrong_move": "Attempting to integrate the original expression directly without simplification, or missing the difference of squares pattern.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

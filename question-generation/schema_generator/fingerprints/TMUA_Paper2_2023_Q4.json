@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2023_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Exploit symmetry to simplify integrals",
+  "core_move_guess": "Exploit symmetry to cancel out integrals.",
+  "trigger_cues": [
+    "two definite integrals",
+    "similar expressions",
+    "limits are negative of each other"
+  ],
+  "mini_steps": [
+    "Recognize the symmetry in the limits",
+    "Rewrite the second integral",
+    "Combine the integrals",
+    "Simplify the expression",
+    "Evaluate the resulting integral"
+  ],
+  "wrong_move": "Calculate both integrals separately without exploiting the symmetry, leading to more complex calculations and potential errors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

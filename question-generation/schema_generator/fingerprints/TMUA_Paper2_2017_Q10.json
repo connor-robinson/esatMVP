@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2017_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Symmetry implies zero integral",
+  "core_move_guess": "Exploit symmetry properties to evaluate integral.",
+  "trigger_cues": [
+    "integral with symmetric bounds",
+    "function property given",
+    "sufficient condition"
+  ],
+  "mini_steps": [
+    "Recognize integral bounds are symmetric around 2",
+    "Re-express f(x+2) condition as symmetry around x=0",
+    "Relate symmetry to integral value",
+    "Conclude integral is zero"
+  ],
+  "wrong_move": "Assuming f(2)=0 implies the integral is zero, without considering the function's behavior over the entire interval.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

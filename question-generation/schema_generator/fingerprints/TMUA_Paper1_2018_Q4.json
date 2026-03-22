@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2018_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations via discriminant",
+  "core_move_guess": "Substitute and check discriminant to find solution count.",
+  "trigger_cues": [
+    "simultaneous equations",
+    "two distinct real solutions",
+    "real constant"
+  ],
+  "mini_steps": [
+    "Substitute y = a - x into the first equation",
+    "Rearrange into quadratic form: x^2 + 2ax - 4 = 0",
+    "Calculate the discriminant: (2a)^2 - 4 * 1 * (-4)",
+    "Simplify the discriminant: 4a^2 + 16",
+    "Recognize discriminant is always positive",
+    "Conclude there are always two distinct real roots"
+  ],
+  "wrong_move": "Failing to substitute correctly or miscalculating the discriminant, leading to an incorrect condition on 'a'.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

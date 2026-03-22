@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove statement with counterexample",
+  "core_move_guess": "Identify a counterexample to disprove a universal statement.",
+  "trigger_cues": [
+    "statements to evaluate",
+    "counterexample",
+    "disprove"
+  ],
+  "mini_steps": [
+    "Recognize 91 = 7 x 13 is not prime",
+    "Statement 1: Check if 91 disproves it",
+    "Statement 2: Check if 91 disproves it",
+    "Statement 3: Check if 91 disproves it",
+    "Determine which statements are disproved"
+  ],
+  "wrong_move": "Assuming a single example satisfying the condition proves the statement, rather than disproving it.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

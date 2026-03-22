@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Systematic enumeration with constraints",
+  "core_move_guess": "Enumerate possibilities under constraints to minimize range.",
+  "trigger_cues": [
+    "distinct integers",
+    "mean and median given",
+    "smallest possible range"
+  ],
+  "mini_steps": [
+    "Express sets with medians",
+    "Use means to constrain sums",
+    "Enumerate possible integer values",
+    "Consider distinctness constraint",
+    "Calculate range for each combination",
+    "Minimize the range"
+  ],
+  "wrong_move": "Failing to account for the 'distinct integers' constraint, leading to invalid combinations and an incorrect range calculation.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

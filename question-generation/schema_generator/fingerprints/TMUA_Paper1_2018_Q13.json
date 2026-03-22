@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2018_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate derivative sign to function",
+  "core_move_guess": "Infer function's behavior from derivative's sign change.",
+  "trigger_cues": [
+    "graph of derivative",
+    "local minimum",
+    "relate f(x) and f'(x)"
+  ],
+  "mini_steps": [
+    "Recognize local minimum condition: f'(x) = 0",
+    "Local minimum: f'(x) changes from negative to positive",
+    "Identify point where f'(x) = 0",
+    "Check sign change of f'(x) around the point"
+  ],
+  "wrong_move": "Confusing local minimum of f(x) with local minimum/maximum of f'(x).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve quadratic, minimize resulting functions",
+  "core_move_guess": "Exploit quadratic formula to find possible functions.",
+  "trigger_cues": [
+    "two equations involving f(x) and g(x)",
+    "find all possible functions",
+    "find the minimum of all the minima"
+  ],
+  "mini_steps": [
+    "Rearrange first equation to isolate g(x)",
+    "Substitute g(x) into the second equation",
+    "Rearrange into a quadratic in f(x)",
+    "Apply the quadratic formula to solve for f(x)",
+    "Find the minimum value of each possible f(x)",
+    "Determine the minimum of all the minima"
+  ],
+  "wrong_move": "Failing to recognize the quadratic structure and attempting to solve the equations in a different, more complicated way.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

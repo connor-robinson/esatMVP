@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2018_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate coefficients from binomial expansions",
+  "core_move_guess": "Equate coefficients of x^6 from two binomial expansions.",
+  "trigger_cues": [
+    "binomial expansion",
+    "coefficients of x^6",
+    "equal"
+  ],
+  "mini_steps": [
+    "Expand (1 + kx^2)^7, find x^6 term",
+    "Expand (k + x)^10, find x^6 term",
+    "Equate the coefficients",
+    "Solve for k"
+  ],
+  "wrong_move": "Incorrectly applying the binomial theorem or focusing on the wrong term in the expansion.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2018_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test statements with counterexamples",
+  "core_move_guess": "Test each statement by sketching graphs and finding counterexamples.",
+  "trigger_cues": [
+    "Which of the following statements is/are true?",
+    "real constants",
+    "negative real solution",
+    "two distinct real solutions"
+  ],
+  "mini_steps": [
+    "Recognize statements are conditional",
+    "Sketch y=2^x",
+    "Sketch lines y=mx+c for different m, c",
+    "Find counterexample for statement I",
+    "Find counterexample for statement II",
+    "Find counterexample for statement III"
+  ],
+  "wrong_move": "Assuming a statement is true without testing specific cases or failing to consider the full range of possible values for m and c.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

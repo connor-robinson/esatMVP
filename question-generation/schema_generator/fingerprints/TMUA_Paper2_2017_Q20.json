@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2017_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce constraints from failed attempts",
+  "core_move_guess": "Constrain possibilities based on feedback from attempts.",
+  "trigger_cues": [
+    "password problem",
+    "feedback on attempts",
+    "deduce the correct password",
+    "exactly how many are in the correct position"
+  ],
+  "mini_steps": [
+    "abcde gives 0 correct",
+    "cdbea gives 0 correct",
+    "eadbc gives 0 correct",
+    "deduce constraints on letter positions",
+    "enumerate remaining possibilities",
+    "determine number of further attempts"
+  ],
+  "wrong_move": "Assuming the feedback from each attempt provides independent information without considering overlaps in the constraints.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

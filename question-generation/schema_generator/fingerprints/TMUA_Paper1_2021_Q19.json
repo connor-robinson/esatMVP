@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2021_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate solutions to domain range",
+  "core_move_guess": "Constrain the domain based on the number of solutions.",
+  "trigger_cues": [
+    "equation with trigonometric functions",
+    "asks for range of a variable",
+    "number of solutions is specified"
+  ],
+  "mini_steps": [
+    "Solve trigonometric equation",
+    "Find general solutions",
+    "Determine solutions within given range",
+    "Relate number of solutions to range endpoint"
+  ],
+  "wrong_move": "Failing to consider the periodicity of trigonometric functions and incorrectly determining the number of solutions within the given range.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

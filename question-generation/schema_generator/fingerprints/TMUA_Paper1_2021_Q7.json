@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2021_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Exploit symmetry and integral properties",
+  "core_move_guess": "Exploit the symmetry implied by xf(x) > 0 to simplify integrals.",
+  "trigger_cues": [
+    "f(0) = 0",
+    "xf(x) > 0",
+    "integrals with symmetric limits",
+    "absolute value inside integral"
+  ],
+  "mini_steps": [
+    "Deduce sign of f(x) for x > 0 and x < 0",
+    "Split integrals into ranges -2 to 0 and 0 to 2",
+    "Express |f(x)| as -f(x) for x < 0 and f(x) for x > 0",
+    "Set up simultaneous equations using given integrals",
+    "Solve for integral from -2 to 0 of f(x)",
+    "Evaluate integral of f(|x|) from -2 to 0"
+  ],
+  "wrong_move": "Assume f(x) is an even or odd function without proper justification, leading to incorrect simplifications of the integrals.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

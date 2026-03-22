@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_None_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize pattern in sequence, then sum",
+  "core_move_guess": "Identify the repeating pattern in the sequence.",
+  "trigger_cues": [
+    "summation notation",
+    "sequence defined by alternating terms",
+    "alternating (-1)^n terms"
+  ],
+  "mini_steps": [
+    "Calculate first few terms of the sequence",
+    "Recognize the repeating pattern (-3, 3)",
+    "Determine the number of repeating blocks",
+    "Sum the repeating blocks",
+    "Account for any remaining terms"
+  ],
+  "wrong_move": "Failing to recognize the repeating pattern and attempting to directly compute the sum of 39 terms, leading to errors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

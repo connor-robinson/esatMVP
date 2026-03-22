@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2017_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations to find intersection",
+  "core_move_guess": "Solve simultaneous equations by substitution to find intersection points.",
+  "trigger_cues": [
+    "two equations",
+    "intersection",
+    "lines",
+    "circle"
+  ],
+  "mini_steps": [
+    "Find equation of second line",
+    "Substitute y from one equation into the other",
+    "Solve the resulting quadratic equation",
+    "Find x coordinates of intersection",
+    "Substitute x values to find y coordinates"
+  ],
+  "wrong_move": "Failing to correctly find the perpendicular gradient or making algebraic errors when solving the simultaneous equations.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

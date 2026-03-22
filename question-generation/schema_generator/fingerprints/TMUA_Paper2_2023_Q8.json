@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper2_2023_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate equations via variable substitution",
+  "core_move_guess": "Re-express equations using variable substitution to identify equivalent forms.",
+  "trigger_cues": [
+    "equation with a^x",
+    "asks for same number of solutions",
+    "multiple equations to compare"
+  ],
+  "mini_steps": [
+    "Consider equation I: log_a(x) = x",
+    "Substitute x = a^y: log_a(a^y) = a^y",
+    "Simplify: y = a^y, which is the same form as the original equation",
+    "Consider equation II: a^(2x) = x^2",
+    "Take the square root: a^x = x or a^x = -x",
+    "The second equation a^x = -x does not necessarily have the same number of solutions",
+    "Consider equation III: a^(2x) = 2x",
+    "Substitute y = 2x: a^y = y, which is the same form as the original equation"
+  ],
+  "wrong_move": "Assuming that any transformation of the equation preserves the number of solutions without carefully considering the domain and range of the functions involved.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

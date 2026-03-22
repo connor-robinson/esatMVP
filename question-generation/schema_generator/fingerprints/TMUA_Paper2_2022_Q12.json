@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2022_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate quantified statements with counterexamples",
+  "core_move_guess": "Test statements by considering edge cases and counterexamples.",
+  "trigger_cues": [
+    "quantified statements",
+    "for all",
+    "there exists",
+    "real numbers",
+    "positive integers"
+  ],
+  "mini_steps": [
+    "Statement I: x < n for all x, n. Consider large x, e.g., x=10, n=1. False.",
+    "Statement II: For all x, there exists n such that x < n. True, n can be x+1.",
+    "Statement III: There exists x such that for all n, x < n. False, no such x exists.",
+    "Determine which statements are true."
+  ],
+  "wrong_move": "Assuming a statement is true without rigorous proof or failing to consider extreme values as potential counterexamples.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

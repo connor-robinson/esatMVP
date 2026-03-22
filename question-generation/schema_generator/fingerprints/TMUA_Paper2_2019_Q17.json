@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2019_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Eliminate options by implication",
+  "core_move_guess": "Eliminate options that are implied by other options.",
+  "trigger_cues": [
+    "multiple choice with logical statements",
+    "options imply each other",
+    "exactly one option is correct"
+  ],
+  "mini_steps": [
+    "Recognize implication relationships between options",
+    "If X implies Y, eliminate Y",
+    "Consider remaining options",
+    "Test if one option implies another",
+    "Eliminate the implied option",
+    "Select the remaining option"
+  ],
+  "wrong_move": "Assuming that if a statement is true for x > a, it must also be true for x > b, without considering the 'only if' part of the statement.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

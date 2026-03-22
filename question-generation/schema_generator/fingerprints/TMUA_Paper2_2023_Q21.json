@@ -1,0 +1,25 @@
+{
+  "qid": "TMUA_Paper2_2023_Q21",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots of f(x) and g(x)",
+  "core_move_guess": "Relate the roots of a polynomial to the roots of a related polynomial involving its derivative.",
+  "trigger_cues": [
+    "f(x) is a polynomial",
+    "g(x) = x f'(x)",
+    "M real roots of f(x)",
+    "N real roots of g(x)",
+    "possible values of M and N"
+  ],
+  "mini_steps": [
+    "Consider f'(x) roots between f(x) roots",
+    "f'(x) has at least M-1 roots",
+    "g(x) = x f'(x) has roots of f'(x) and x=0",
+    "N >= M-1",
+    "Consider f(x) = x^2, M=1, g(x) = 2x^2, N=1",
+    "Consider f(x) = x, M=1, g(x) = x, N=1",
+    "Consider f(x) = x^2 - 1, M=2, g(x) = 2x^2, N=1"
+  ],
+  "wrong_move": "Assume that the number of roots of f'(x) is always M-1, without considering repeated roots or other possibilities.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

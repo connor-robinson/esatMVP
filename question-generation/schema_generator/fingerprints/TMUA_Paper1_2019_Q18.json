@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Minimize distance using perpendicularity",
+  "core_move_guess": "Exploit geometric properties to minimize distance.",
+  "trigger_cues": [
+    "shortest distance",
+    "curve and line",
+    "perpendicular"
+  ],
+  "mini_steps": [
+    "Recognize shortest distance is perpendicular",
+    "Find the gradient of the line",
+    "Find point on curve with same gradient",
+    "Find equation of perpendicular line",
+    "Calculate distance between point and line"
+  ],
+  "wrong_move": "Attempting to minimize the distance formula directly between a general point on the curve and a general point on the line leads to a more complex problem with two variables.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2023_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate trigonometric equation to solutions",
+  "core_move_guess": "Re-express equation as intersection of trigonometric functions.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "number of solutions",
+    "range for x"
+  ],
+  "mini_steps": [
+    "Rewrite equation as tan(x) = 4sin(x)/x^2",
+    "Consider y = tan(x) and y = 4sin(x)/x^2",
+    "Sketch both graphs",
+    "Count intersection points in the given range"
+  ],
+  "wrong_move": "Attempting to solve the equation algebraically without considering the graphical representation, or incorrectly sketching the graphs.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

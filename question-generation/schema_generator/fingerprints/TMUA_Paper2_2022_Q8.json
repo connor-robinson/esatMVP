@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Analyze necessity and sufficiency conditions",
+  "core_move_guess": "Test sufficiency and necessity by constructing counterexamples.",
+  "trigger_cues": [
+    "necessary and sufficient",
+    "list of integers",
+    "median"
+  ],
+  "mini_steps": [
+    "Understand the definitions of necessary and sufficient conditions",
+    "Consider the case where n is odd",
+    "Consider the case where n is even",
+    "Construct counterexamples to disprove sufficiency or necessity",
+    "Determine the correct logical relationship between P and Q"
+  ],
+  "wrong_move": "Assuming that an odd number of elements always guarantees the median is in the list, without considering specific list arrangements.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

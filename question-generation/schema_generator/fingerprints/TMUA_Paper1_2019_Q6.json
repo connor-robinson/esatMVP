@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2019_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate tangency to distance between centers",
+  "core_move_guess": "Relate the distance between circle centers to the sum/difference of their radii.",
+  "trigger_cues": [
+    "circles have exactly one point in common",
+    "find the difference",
+    "r > 0"
+  ],
+  "mini_steps": [
+    "Recognize tangency implies one point in common",
+    "Distance between centers = sum of radii (external tangency)",
+    "Distance between centers = difference of radii (internal tangency)",
+    "Calculate distance between centers",
+    "Formulate two equations for r",
+    "Find the difference between the two possible r values"
+  ],
+  "wrong_move": "Attempting to solve the system of equations algebraically is a common but difficult approach.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

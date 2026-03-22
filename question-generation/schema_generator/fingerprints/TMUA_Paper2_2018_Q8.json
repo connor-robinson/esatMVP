@@ -1,0 +1,25 @@
+{
+  "qid": "TMUA_Paper2_2018_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test code validity by reversal",
+  "core_move_guess": "Test code validity by considering edge cases after transformation.",
+  "trigger_cues": [
+    "valid code",
+    "reverse order",
+    "U replaced by D"
+  ],
+  "mini_steps": [
+    "I: Reverse valid code",
+    "I: Note reversed code starts with 'D'",
+    "I: Conclude invalid",
+    "II: Substitute U with D",
+    "II: Note substituted code starts with 'D'",
+    "II: Conclude invalid",
+    "III: Add U at start, D at end",
+    "III: Infer profile lifted one unit",
+    "III: Conclude valid"
+  ],
+  "wrong_move": "Assuming a reversed or transformed code is automatically invalid without checking the 'sea level' condition.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

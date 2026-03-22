@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "No intersection implies discriminant condition",
+  "core_move_guess": "Relate no intersection to a discriminant condition.",
+  "trigger_cues": [
+    "graphs do not meet",
+    "quadratic",
+    "linear",
+    "range of possible values"
+  ],
+  "mini_steps": [
+    "Equate two expressions",
+    "Rearrange to quadratic form",
+    "Apply discriminant condition for no real roots",
+    "Solve inequality for m"
+  ],
+  "wrong_move": "Failing to rearrange the equation into the standard quadratic form before applying the discriminant.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

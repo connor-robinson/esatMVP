@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Consider extreme cases to constrain possibilities",
+  "core_move_guess": "Consider center person to constrain truth-teller arrangements.",
+  "trigger_cues": [
+    "3x3 grid",
+    "truth-teller/liar",
+    "smallest and largest number"
+  ],
+  "mini_steps": [
+    "Consider center person is truth-teller",
+    "Neighbors are liars",
+    "Corner people are truth-tellers",
+    "Consider center person is liar",
+    "At least one neighbor is truth-teller",
+    "Analyze remaining positions for truth-tellers/liars"
+  ],
+  "wrong_move": "Assuming a uniform distribution of truth-tellers and liars without considering the constraints imposed by the neighbors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

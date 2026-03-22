@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate intersection to equation roots",
+  "core_move_guess": "Relate intersection points to roots of cubic equation.",
+  "trigger_cues": [
+    "curves intersect at distinct points",
+    "exactly two have positive x-coordinates",
+    "complete range of values"
+  ],
+  "mini_steps": [
+    "Equate the two y expressions",
+    "Rearrange to form a cubic equation in x",
+    "Recognize roots correspond to intersection x-coordinates",
+    "Consider the conditions on the roots (two positive, one negative)",
+    "Analyze the cubic equation to determine k's range"
+  ],
+  "wrong_move": "Failing to consider the condition that exactly two intersection points have positive x-coordinates, leading to an incorrect range for k.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test a conditional statement with counterexamples",
+  "core_move_guess": "Test each number against the condition and primality.",
+  "trigger_cues": [
+    "conditional statement",
+    "counterexample",
+    "whole number",
+    "multiple of 6",
+    "prime"
+  ],
+  "mini_steps": [
+    "Understand the conditional statement",
+    "Identify numbers 1 less or 5 less than a multiple of 6",
+    "Check if each number is prime",
+    "Count the numbers that satisfy the condition but are not prime"
+  ],
+  "wrong_move": "Failing to check both parts of the conditional statement, e.g., only checking if the number is prime or only checking if it's 1 or 5 less than a multiple of 6.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}
