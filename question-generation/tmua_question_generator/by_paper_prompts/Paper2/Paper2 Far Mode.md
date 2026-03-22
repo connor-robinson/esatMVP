@@ -52,7 +52,7 @@ Keep the maths simple; the reasoning is the bottleneck.
 * **No approximation required**: All reasoning must be exact, using only spec techniques
 * **If your idea would require approximation, long expansion, or off-spec techniques, redesign**: The question must be solvable with clean, exact reasoning using only Section 1/2 spec techniques
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses a truth-tellers/liars wrapper around a polynomial root condition", "Presents as a proof ordering question but tests quantifier negation")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags (Section 1 and Section 2) and explaining the collapse (e.g., "Uses M1 and Arg2 - the polynomial condition reduces to a standard discriminant check")
@@ -65,7 +65,7 @@ Keep the maths simple; the reasoning is the bottleneck.
 - Do not make distractors “random near-misses”: every wrong option must correspond to a distinct reasoning failure.
 
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses a truth-tellers/liars wrapper around a polynomial root condition", "Presents as a proof ordering question but tests quantifier negation")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags (Section 1 and Section 2) and explaining the collapse (e.g., "Uses M1 and Arg2 - the polynomial condition reduces to a standard discriminant check")
@@ -78,7 +78,7 @@ Keep the maths simple; the reasoning is the bottleneck.
 - Do not make distractors “random near-misses”: every wrong option must correspond to a distinct reasoning failure.
 
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses a truth-tellers/liars wrapper around a polynomial root condition", "Presents as a proof ordering question but tests quantifier negation")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags (Section 1 and Section 2) and explaining the collapse (e.g., "Uses M1 and Arg2 - the polynomial condition reduces to a standard discriminant check")

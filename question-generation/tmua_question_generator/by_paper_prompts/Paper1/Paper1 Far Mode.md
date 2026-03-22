@@ -59,7 +59,7 @@ You can use one (or at most two) of these FAR “remix operators”, or invent y
 * **No graph-reading crutches**: If the question doesn't show a graph, don't require reading values off a plot
 * **If your idea would require approximation, long expansion, or reading values off a plot, redesign**: The question must be solvable with clean, exact algebra using only Section 1 spec techniques
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags and explaining the collapse (e.g., "Uses MM1 and MM4 - the absolute value unwraps to a standard quadratic equation")
@@ -72,7 +72,7 @@ You can use one (or at most two) of these FAR “remix operators”, or invent y
 * **No graph-reading crutches**: If the question doesn't show a graph, don't require reading values off a plot
 * **If your idea would require approximation, long expansion, or reading values off a plot, redesign**: The question must be solvable with clean, exact algebra using only Section 1 spec techniques
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags and explaining the collapse (e.g., "Uses MM1 and MM4 - the absolute value unwraps to a standard quadratic equation")
@@ -85,7 +85,7 @@ You can use one (or at most two) of these FAR “remix operators”, or invent y
 * **No graph-reading crutches**: If the question doesn't show a graph, don't require reading values off a plot
 * **If your idea would require approximation, long expansion, or reading values off a plot, redesign**: The question must be solvable with clean, exact algebra using only Section 1 spec techniques
 
-**What to output in Designer YAML**
+**What to output in Designer JSON**
 
 * `surface_twist`: 1-2 sentences describing what makes this feel different (e.g., "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure")
 * `why_still_on_spec`: 1-2 sentences naming exact spec tags and explaining the collapse (e.g., "Uses MM1 and MM4 - the absolute value unwraps to a standard quadratic equation")

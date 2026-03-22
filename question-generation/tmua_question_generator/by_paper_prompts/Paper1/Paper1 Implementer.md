@@ -42,7 +42,7 @@ Use your knowledge of the **TMUA Paper 1 curriculum specification** and what aut
 
 You will receive:
 
-1. A structured **idea plan** in YAML from the Designer AI (schema + intended wrong paths + task signature etc.)
+1. A structured **idea plan** in JSON from the Designer AI (schema + intended wrong paths + task signature etc.)
 2. One or more **TMUA reference questions** and their **official solutions** (for calibration)
 
 ### **Calibration rule (CRITICAL)**
@@ -233,9 +233,9 @@ The `key_insight` field should be a short prompt that helps a stuck student star
 
 ## **Output format (MANDATORY)**
 
-Return your response **only** in raw YAML format.
+Return your response **only** as raw JSON (one object).
 
-**CRITICAL YAML FORMATTING RULES**
+**CRITICAL JSON FORMATTING RULES**
 
 1. **NO markdown code fences** in your final output
 2. **Double-escape all backslashes** in LaTeX (e.g., `\\frac`, `\\sqrt`, `\\ge`, `\\implies`)
@@ -256,17 +256,15 @@ Return your response **only** in raw YAML format.
    - **Distractor map**: Wrap ALL mathematical content in `$...$`
      - ✅ `A: "This uses $f'(x)$ instead of $f(x)$.`
      - ❌ `A: "This uses f'(x) instead of f(x)."` (no $...$ - WILL FAIL)
-4. Use correct indentation (2 spaces)
-5. **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
-   - ❌ `E: False log law: $\log_3(...)$` (will break YAML)
-   - ✅ `E: "False log law: $\\log_3(...)$"` (correctly quoted)
-   - ❌ `A: Section #1: Find the value` (will break YAML)
-   - ✅ `A: "Section #1: Find the value"` (correctly quoted)
+4. **JSON strings only**: Every object key must be double-quoted; string values use double quotes with `\"` and `\\` escaped as required.
+5. **Special characters in strings**: Colons, `#`, etc. are fine *inside* JSON strings; only `"`, `\`, and raw line breaks need escaping.
+   - ✅ `"E": "False log law: $\\\\log_3(...)$"`
+   - ✅ `"A": "Section #1: Find the value"`
 6. **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
 
-Required structure:
+Required structure (pseudo-layout — your answer must be **one valid JSON object** with quoted keys; the block below is not valid JSON as written):
 
-```yaml
+```text
 question:
   stem: >
     (Concise TMUA Paper 1 style stem)
@@ -379,7 +377,7 @@ If any check fails, revise.
 * Set MCQ default to **6 options** with allowance up to **8**, matching common TMUA formatting. 
 * Strengthened “no-calc engineering” guidance to match TMUA solution patterns (clean substitutions, factorisation, perfect-square discriminants, etc.). 
 
-If you paste your current TMUA Designer YAML output format (the fields it will actually emit), I can tighten the “Input you will receive” section so the Implementer explicitly checks each field and fails fast when something’s missing.
+If you paste your current TMUA Designer JSON output format (the fields it will actually emit), I can tighten the “Input you will receive” section so the Implementer explicitly checks each field and fails fast when something’s missing.
 
 
 
@@ -427,7 +425,7 @@ Use your knowledge of the **TMUA Paper 1 curriculum specification** and what aut
 
 You will receive:
 
-1. A structured **idea plan** in YAML from the Designer AI (schema + intended wrong paths + task signature etc.)
+1. A structured **idea plan** in JSON from the Designer AI (schema + intended wrong paths + task signature etc.)
 2. One or more **TMUA reference questions** and their **official solutions** (for calibration)
 
 ### **Calibration rule (CRITICAL)**
@@ -618,9 +616,9 @@ The `key_insight` field should be a short prompt that helps a stuck student star
 
 ## **Output format (MANDATORY)**
 
-Return your response **only** in raw YAML format.
+Return your response **only** as raw JSON (one object).
 
-**CRITICAL YAML FORMATTING RULES**
+**CRITICAL JSON FORMATTING RULES**
 
 1. **NO markdown code fences** in your final output
 2. **Double-escape all backslashes** in LaTeX (e.g., `\\frac`, `\\sqrt`, `\\ge`, `\\implies`)
@@ -641,17 +639,15 @@ Return your response **only** in raw YAML format.
    - **Distractor map**: Wrap ALL mathematical content in `$...$`
      - ✅ `A: "This uses $f'(x)$ instead of $f(x)$.`
      - ❌ `A: "This uses f'(x) instead of f(x)."` (no $...$ - WILL FAIL)
-4. Use correct indentation (2 spaces)
-5. **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
-   - ❌ `E: False log law: $\log_3(...)$` (will break YAML)
-   - ✅ `E: "False log law: $\\log_3(...)$"` (correctly quoted)
-   - ❌ `A: Section #1: Find the value` (will break YAML)
-   - ✅ `A: "Section #1: Find the value"` (correctly quoted)
+4. **JSON strings only**: Every object key must be double-quoted; string values use double quotes with `\"` and `\\` escaped as required.
+5. **Special characters in strings**: Colons, `#`, etc. are fine *inside* JSON strings; only `"`, `\`, and raw line breaks need escaping.
+   - ✅ `"E": "False log law: $\\\\log_3(...)$"`
+   - ✅ `"A": "Section #1: Find the value"`
 6. **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
 
-Required structure:
+Required structure (pseudo-layout — your answer must be **one valid JSON object** with quoted keys; the block below is not valid JSON as written):
 
-```yaml
+```text
 question:
   stem: >
     (Concise TMUA Paper 1 style stem)
@@ -764,5 +760,5 @@ If any check fails, revise.
 * Set MCQ default to **6 options** with allowance up to **8**, matching common TMUA formatting. 
 * Strengthened “no-calc engineering” guidance to match TMUA solution patterns (clean substitutions, factorisation, perfect-square discriminants, etc.). 
 
-If you paste your current TMUA Designer YAML output format (the fields it will actually emit), I can tighten the “Input you will receive” section so the Implementer explicitly checks each field and fails fast when something’s missing.
+If you paste your current TMUA Designer JSON output format (the fields it will actually emit), I can tighten the “Input you will receive” section so the Implementer explicitly checks each field and fails fast when something’s missing.
 

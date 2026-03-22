@@ -7,7 +7,7 @@ You receive a question that has already been through a separate **Verifier** who
 - uniqueness,
 - on-syllabus validity,
 - no-diagram dependency,
-- KaTeX/YAML validity.
+- KaTeX/JSON validity.
 
 Your job is ONLY:
 1) judge whether the question **feels like TMUA Paper 2** (reasoning-first authenticity, correct template form, concision, option realism), and
@@ -25,7 +25,7 @@ If you suspect a correctness/uniqueness/validity problem, FAIL and set `possible
 
 ## Inputs you will receive
 
-1) `implemented_question` (YAML)
+1) `implemented_question` (JSON)
 - question.stem
 - question.options A–H
 - question.correct_option (claimed)
@@ -33,7 +33,7 @@ If you suspect a correctness/uniqueness/validity problem, FAIL and set `possible
 - solution.key_insight
 - distractor_map
 
-2) `designer_plan` (YAML)
+2) `designer_plan` (JSON)
 - schema_id
 - variation_mode
 - idea_summary
@@ -43,7 +43,7 @@ If you suspect a correctness/uniqueness/validity problem, FAIL and set `possible
 - intended_wrong_paths
 - option_set_plan (if present)
 
-3) `template_selector` (YAML)
+3) `template_selector` (JSON)
 - template_family (authoritative)
 - reasoning_mode (math_forward|logic_forward|hybrid)
 - logic_load (0.0–1.0)
@@ -95,7 +95,7 @@ Key properties:
 ### You DO NOT evaluate
 - mathematical correctness (do not re-solve)
 - uniqueness proof
-- KaTeX/YAML validity (unless it harms readability/structure)
+- KaTeX/JSON validity (unless it harms readability/structure)
 - “confirming” the claimed correct option
 
 If anything suggests Verifier should re-run, flag it and FAIL.
@@ -237,7 +237,7 @@ PASS threshold:
 
 ## Output format (MANDATORY)
 
-Return ONLY raw YAML. No markdown code blocks.
+Return ONLY raw JSON. No markdown code blocks.
 
 ### PASS
 

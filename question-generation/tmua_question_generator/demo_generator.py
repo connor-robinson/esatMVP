@@ -436,86 +436,58 @@ class DemoGeneratorUI:
     
     def on_stage_complete(self, stage: str, output: Any):
         """Callback when a stage completes."""
-        import yaml
-        
         self.append_to_stage(stage, f"\n[{datetime.now().strftime('%H:%M:%S')}] COMPLETE")
-        
-        # Format output based on stage
-        if stage == "Designer":
-            self.append_to_stage(stage, "\nDesigner Output (YAML):")
+
+        def _fmt(obj: Any) -> str:
             try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+                return json.dumps(obj, ensure_ascii=False, indent=2, default=str)
+            except Exception:
+                return str(obj)
+
+        if stage == "Designer":
+            self.append_to_stage(stage, "\nDesigner Output (JSON):")
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Graph Decision":
             self.append_to_stage(stage, f"\nGraph Decision: {output}")
-        
+
         elif stage == "Template Selector":
-            self.append_to_stage(stage, "\nTemplate Selector Output (YAML):")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, "\nTemplate Selector Output (JSON):")
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Implementer":
             self.append_to_stage(stage, "\nImplementer Output:")
             q_pkg = output.get("question", {}) if isinstance(output, dict) else {}
             if q_pkg:
                 self.append_to_stage(stage, f"Stem: {q_pkg.get('stem', '')[:200]}...")
                 self.append_to_stage(stage, f"Options: {list(q_pkg.get('options', {}).keys())}")
-            
-            # Show graph_intent if present
+
             if "_graph_intent" in output:
                 self.append_to_stage(stage, "\nGraph Intent:")
-                try:
-                    yaml_str = yaml.safe_dump(output["_graph_intent"], sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                except:
-                    self.append_to_stage(stage, str(output["_graph_intent"]))
-        
+                self.append_to_stage(stage, _fmt(output["_graph_intent"]))
+
         elif stage == "Graph Generation" or stage == "Graph Regen":
             self.append_to_stage(stage, f"\nGraph Generation Result:")
             if isinstance(output, dict):
-                try:
-                    yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                except:
-                    self.append_to_stage(stage, str(output))
+                self.append_to_stage(stage, _fmt(output))
             else:
                 self.append_to_stage(stage, str(output))
-        
+
         elif stage == "Verifier":
             self.append_to_stage(stage, "\nVerifier Report:")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Style Checker":
             self.append_to_stage(stage, "\nStyle Checker Report:")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, _fmt(output))
+
         else:
-            # Generic output
-            try:
-                if isinstance(output, dict):
-                    yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                else:
-                    self.append_to_stage(stage, str(output))
-            except:
+            if isinstance(output, dict):
+                self.append_to_stage(stage, _fmt(output))
+            else:
                 self.append_to_stage(stage, str(output))
-        
+
         self.append_to_stage("Summary", f"✓ {stage} complete")
-    
     def on_stage_error(self, stage: str, error: str):
         """Callback when a stage errors."""
         self.append_to_stage(stage, f"\n[{datetime.now().strftime('%H:%M:%S')}] ERROR: {error}")
@@ -972,86 +944,58 @@ class DemoGeneratorUI:
     
     def on_stage_complete(self, stage: str, output: Any):
         """Callback when a stage completes."""
-        import yaml
-        
         self.append_to_stage(stage, f"\n[{datetime.now().strftime('%H:%M:%S')}] COMPLETE")
-        
-        # Format output based on stage
-        if stage == "Designer":
-            self.append_to_stage(stage, "\nDesigner Output (YAML):")
+
+        def _fmt(obj: Any) -> str:
             try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+                return json.dumps(obj, ensure_ascii=False, indent=2, default=str)
+            except Exception:
+                return str(obj)
+
+        if stage == "Designer":
+            self.append_to_stage(stage, "\nDesigner Output (JSON):")
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Graph Decision":
             self.append_to_stage(stage, f"\nGraph Decision: {output}")
-        
+
         elif stage == "Template Selector":
-            self.append_to_stage(stage, "\nTemplate Selector Output (YAML):")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, "\nTemplate Selector Output (JSON):")
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Implementer":
             self.append_to_stage(stage, "\nImplementer Output:")
             q_pkg = output.get("question", {}) if isinstance(output, dict) else {}
             if q_pkg:
                 self.append_to_stage(stage, f"Stem: {q_pkg.get('stem', '')[:200]}...")
                 self.append_to_stage(stage, f"Options: {list(q_pkg.get('options', {}).keys())}")
-            
-            # Show graph_intent if present
+
             if "_graph_intent" in output:
                 self.append_to_stage(stage, "\nGraph Intent:")
-                try:
-                    yaml_str = yaml.safe_dump(output["_graph_intent"], sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                except:
-                    self.append_to_stage(stage, str(output["_graph_intent"]))
-        
+                self.append_to_stage(stage, _fmt(output["_graph_intent"]))
+
         elif stage == "Graph Generation" or stage == "Graph Regen":
             self.append_to_stage(stage, f"\nGraph Generation Result:")
             if isinstance(output, dict):
-                try:
-                    yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                except:
-                    self.append_to_stage(stage, str(output))
+                self.append_to_stage(stage, _fmt(output))
             else:
                 self.append_to_stage(stage, str(output))
-        
+
         elif stage == "Verifier":
             self.append_to_stage(stage, "\nVerifier Report:")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, _fmt(output))
+
         elif stage == "Style Checker":
             self.append_to_stage(stage, "\nStyle Checker Report:")
-            try:
-                yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                self.append_to_stage(stage, yaml_str)
-            except:
-                self.append_to_stage(stage, str(output))
-        
+            self.append_to_stage(stage, _fmt(output))
+
         else:
-            # Generic output
-            try:
-                if isinstance(output, dict):
-                    yaml_str = yaml.safe_dump(output, sort_keys=False, default_flow_style=False, allow_unicode=True)
-                    self.append_to_stage(stage, yaml_str)
-                else:
-                    self.append_to_stage(stage, str(output))
-            except:
+            if isinstance(output, dict):
+                self.append_to_stage(stage, _fmt(output))
+            else:
                 self.append_to_stage(stage, str(output))
-        
+
         self.append_to_stage("Summary", f"✓ {stage} complete")
-    
     def on_stage_error(self, stage: str, error: str):
         """Callback when a stage errors."""
         self.append_to_stage(stage, f"\n[{datetime.now().strftime('%H:%M:%S')}] ERROR: {error}")

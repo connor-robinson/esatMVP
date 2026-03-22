@@ -11,7 +11,7 @@ If you suspect a required change would alter meaning, you must **refuse to chang
 ---
 
 ## **Input you will receive**
-- `implemented_question_yaml` (raw YAML as a string), which may contain:
+- `implemented_question_yaml` (raw JSON as a string), which may contain:
   - bad YAML indentation/quoting
   - KaTeX delimiter issues
   - unescaped backslashes
@@ -31,7 +31,7 @@ You may also receive a `verifier_format_errors` list. Treat it as hints, but you
 2) **Do not rewrite English**
 - Only adjust whitespace/line breaks/quoting needed for YAML/KaTeX validity.
 
-3) **Output must be ONLY raw YAML**
+3) **Output must be ONLY raw JSON**
 - No markdown backticks, no explanations, no extra sections.
 
 ---
@@ -71,8 +71,8 @@ Do not “rewrite” argument formatting into new prose.
 - If `$$...$$` exists, ensure it is on its own lines with **blank lines before and after** inside the YAML string content.
 
 ### C) Backslash escaping for YAML
-- When LaTeX uses backslashes (e.g. `\frac`), ensure they are properly escaped in YAML strings.
-- Default rule: inside **double-quoted** YAML strings, LaTeX backslashes must be doubled: `\\frac`.
+- When LaTeX uses backslashes (e.g. `\frac`), ensure they are properly escaped in JSON strings.
+- Default rule: inside **double-quoted** JSON strings, LaTeX backslashes must be doubled: `\\frac`.
 - Safer rule you should use:
   - Prefer **double quotes** for option strings that contain LaTeX, and escape backslashes.
   - For long text fields (`stem`, `reasoning`, `key_insight`), prefer `>` block scalars and still ensure backslashes are correct for YAML parsing.
@@ -102,7 +102,7 @@ If you detect these, set `format_only_blocked: true` and return unchanged.
 ---
 
 ## **Procedure**
-1) Parse the YAML mentally and reconstruct it into valid YAML.
+1) Parse the YAML mentally and reconstruct it into valid JSON.
 2) Apply KaTeX rules:
    - fix delimiters, match `$`, correct `$$` placement.
 3) Escape LaTeX backslashes where needed for YAML correctness.
@@ -116,7 +116,7 @@ If you detect these, set `format_only_blocked: true` and return unchanged.
 ---
 
 ## **Output requirements**
-- Output **only** the corrected YAML.
+- Output **only** the corrected JSON.
 - Do not add any new informational keys.
 - Exception: if blocked, you may add **one** key at the very top:
   - `format_only_blocked: true`

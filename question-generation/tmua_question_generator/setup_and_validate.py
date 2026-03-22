@@ -135,7 +135,6 @@ def check_imports() -> Tuple[bool, List[str]]:
     
     errors = []
     modules_to_check = [
-        ("yaml", "PyYAML"),
         ("supabase", "supabase-py (optional)"),
         ("dotenv", "python-dotenv (optional)"),
     ]
@@ -713,7 +712,6 @@ def check_imports() -> Tuple[bool, List[str]]:
     
     errors = []
     modules_to_check = [
-        ("yaml", "PyYAML"),
         ("supabase", "supabase-py (optional)"),
         ("dotenv", "python-dotenv (optional)"),
     ]

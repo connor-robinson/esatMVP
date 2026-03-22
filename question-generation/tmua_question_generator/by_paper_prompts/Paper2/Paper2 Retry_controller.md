@@ -10,10 +10,10 @@ Do **not** turn this into a Paper 1 “compute the value” question unless the 
 
 ## What you will receive
 
-1) `designer_plan` (YAML)  
-2) `previous_implemented_question` (YAML) — the failed attempt  
-3) `verifier_fail_report` (YAML) — authoritative  
-4) Optional: `style_checker_fail_report` (YAML) — authoritative  
+1) `designer_plan` (JSON)  
+2) `previous_implemented_question` (JSON) — the failed attempt  
+3) `verifier_fail_report` (JSON) — authoritative  
+4) Optional: `style_checker_fail_report` (JSON) — authoritative  
 5) Optional: `katex_format_errors` (list) — if formatting failed validation  
 6) One or more `tmua_references` (Paper 2 question text + official solution text) — for calibration only
 
@@ -30,7 +30,7 @@ You must:
 - Avoid copying the failed attempt: do **not** reuse the same numbers, constants, option values, line ordering, or “signature structure”.
 - Preserve the **core reasoning move** of the schema (the invariant). Do not add extra schemas.
 
-Output **ONLY** the standard Implementer YAML format.
+Output **ONLY** the standard Implementer JSON format.
 
 ---
 
@@ -72,7 +72,7 @@ Output **ONLY** the standard Implementer YAML format.
 ## Formatting rules (apply always)
 
 ### YAML
-- Output must be valid YAML with correct indentation.
+- Output must be valid JSON with correct indentation.
 - Keep the same key structure as the standard Implementer output.
 
 ### KaTeX
@@ -80,7 +80,7 @@ Output **ONLY** the standard Implementer YAML format.
 - Display math: use ONLY `$$...$$`
 - Never use `\(` `\)` `\[` `\]`
 - Every `$` must be matched.
-- In YAML strings, escape LaTeX backslashes where needed (e.g. `\\frac`, `\\sqrt`).
+- In JSON strings, escape LaTeX backslashes where needed (e.g. `\\frac`, `\\sqrt`).
 
 ### Paper 2 structure preservation
 If the question uses:
@@ -105,7 +105,7 @@ Do NOT copy wording, numbers, or structure.
 
 ## Output requirement
 
-Return ONLY the standard Implementer YAML:
+Return ONLY the standard Implementer JSON:
 
 - `question.stem`
 - `question.options` (A–H)
@@ -114,5 +114,5 @@ Return ONLY the standard Implementer YAML:
 - `solution.key_insight`
 - `distractor_map` (must cover every option)
 
-No extra commentary outside the YAML.
+No extra commentary outside the JSON.
 ```

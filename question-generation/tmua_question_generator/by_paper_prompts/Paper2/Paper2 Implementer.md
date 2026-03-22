@@ -50,7 +50,7 @@ Maths may appear, but difficulty should come from **inference and validity**, no
 
 ## **Inputs you will receive**
 
-### 1) `designer_plan` (YAML)
+### 1) `designer_plan` (JSON)
 Includes (minimum):
 - `schema_id`
 - `variation_mode` (SIBLING|FAR)
@@ -64,7 +64,7 @@ Includes (minimum):
 - `intended_wrong_paths` (3–6)
 - `no_diagram_confirmation`
 
-### 2) `template_selector` (YAML)
+### 2) `template_selector` (JSON)
 Authoritative for implementation shape:
 - `template_family` (must match the injected Template Block)
 - `reasoning_mode` (math_forward|logic_forward|hybrid)
@@ -232,23 +232,23 @@ If any global rule here conflicts with the template block, follow the template b
 
 ---
 
-## **KaTeX + YAML formatting (CRITICAL)**
+## **KaTeX + JSON formatting (CRITICAL)**
 
 ### KaTeX delimiters
 - Inline math: ONLY `$...$`
 - Display math: ONLY `$$...$$`
 - Never use `\(` `\)` `\[` `\]`
 - Every `$` must be matched
-- Display math must have blank lines before and after (inside the YAML text block)
+- Display math must have blank lines before and after (inside JSON string values block)
 
-### YAML/escaping
-- Output must be valid YAML with 2-space indentation
+### JSON escaping
+- Output must be valid JSON with 2-space indentation
 - **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
-  - ❌ `E: False log law: $\log_3(...)$` (will break YAML)
+  - ❌ `E: False log law: $\log_3(...)$` (invalid unless the option value is a proper JSON string)
   - ✅ `E: "False log law: $\log_3(...)$"` (correctly quoted)
 - **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
 - No markdown code fences in the final output
-- Escape LaTeX backslashes appropriately in YAML strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
+- Escape LaTeX backslashes appropriately in JSON strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
 - If you use double quotes for option strings, ensure escaping is correct
 
 ### Options must be KaTeX-safe
@@ -259,7 +259,7 @@ If any global rule here conflicts with the template block, follow the template b
 
 ## **Output format (MANDATORY)**
 
-Return ONLY raw YAML. No markdown code blocks.
+Return ONLY raw JSON. No markdown code blocks.
 
 Required structure:
 
@@ -361,9 +361,9 @@ graph_intent:
 - No ambiguity in domains/wording
 - Reasoning-driven, not grind-driven
 - Options are justified by distinct wrong paths
-- KaTeX + YAML valid
+- KaTeX + JSON valid
 
-If any check fails, revise before outputting YAML.
+If any check fails, revise before outputting JSON.
 
 
 
@@ -417,7 +417,7 @@ Maths may appear, but difficulty should come from **inference and validity**, no
 
 ## **Inputs you will receive**
 
-### 1) `designer_plan` (YAML)
+### 1) `designer_plan` (JSON)
 Includes (minimum):
 - `schema_id`
 - `variation_mode` (SIBLING|FAR)
@@ -431,7 +431,7 @@ Includes (minimum):
 - `intended_wrong_paths` (3–6)
 - `no_diagram_confirmation`
 
-### 2) `template_selector` (YAML)
+### 2) `template_selector` (JSON)
 Authoritative for implementation shape:
 - `template_family` (must match the injected Template Block)
 - `reasoning_mode` (math_forward|logic_forward|hybrid)
@@ -599,23 +599,23 @@ If any global rule here conflicts with the template block, follow the template b
 
 ---
 
-## **KaTeX + YAML formatting (CRITICAL)**
+## **KaTeX + JSON formatting (CRITICAL)**
 
 ### KaTeX delimiters
 - Inline math: ONLY `$...$`
 - Display math: ONLY `$$...$$`
 - Never use `\(` `\)` `\[` `\]`
 - Every `$` must be matched
-- Display math must have blank lines before and after (inside the YAML text block)
+- Display math must have blank lines before and after (inside JSON string values block)
 
-### YAML/escaping
-- Output must be valid YAML with 2-space indentation
+### JSON escaping
+- Output must be valid JSON with 2-space indentation
 - **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
-  - ❌ `E: False log law: $\log_3(...)$` (will break YAML)
+  - ❌ `E: False log law: $\log_3(...)$` (invalid unless the option value is a proper JSON string)
   - ✅ `E: "False log law: $\log_3(...)$"` (correctly quoted)
 - **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
 - No markdown code fences in the final output
-- Escape LaTeX backslashes appropriately in YAML strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
+- Escape LaTeX backslashes appropriately in JSON strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
 - If you use double quotes for option strings, ensure escaping is correct
 
 ### Options must be KaTeX-safe
@@ -626,7 +626,7 @@ If any global rule here conflicts with the template block, follow the template b
 
 ## **Output format (MANDATORY)**
 
-Return ONLY raw YAML. No markdown code blocks.
+Return ONLY raw JSON. No markdown code blocks.
 
 Required structure:
 
@@ -728,6 +728,6 @@ graph_intent:
 - No ambiguity in domains/wording
 - Reasoning-driven, not grind-driven
 - Options are justified by distinct wrong paths
-- KaTeX + YAML valid
+- KaTeX + JSON valid
 
-If any check fails, revise before outputting YAML.
+If any check fails, revise before outputting JSON.

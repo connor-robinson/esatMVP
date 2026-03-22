@@ -17,7 +17,7 @@ If you suspect a maths/correctness problem, FAIL and flag it as `possible_verifi
 
 ## Inputs you will receive
 
-1) `implemented_question` (YAML)
+1) `implemented_question` (JSON)
 - stem
 - options A–H
 - correct_option (claimed)
@@ -25,7 +25,7 @@ If you suspect a maths/correctness problem, FAIL and flag it as `possible_verifi
 - key_insight
 - distractor_map
 
-2) `designer_plan` (YAML)
+2) `designer_plan` (JSON)
 - schema_id
 - variation_mode
 - idea_summary
@@ -159,7 +159,7 @@ Do not attempt to resolve it yourself.
 
 ## Output format (MANDATORY)
 
-Return ONLY raw YAML. No markdown code blocks.
+Return ONLY raw JSON. No markdown code blocks.
 
 ### PASS
 

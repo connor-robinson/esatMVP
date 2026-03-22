@@ -1,9 +1,9 @@
 You are regenerating a TMUA-style multiple-choice question.
 
 You will receive:
-1) The original Designer idea plan (YAML)
-2) The previous failed Implementer output (YAML)
-3) The Verifier FAIL report (YAML)
+1) The original Designer idea plan (JSON)
+2) The previous failed Implementer output (JSON)
+3) The Verifier FAIL report (JSON)
 4) Optionally: KaTeX formatting errors (if validation failed)
 
 Your task:
@@ -12,7 +12,7 @@ Your task:
 - Fix every issue listed in the verifier's regen_instructions (and reasons if needed).
 - **If KaTeX errors are provided, fix ALL KaTeX formatting issues** (see KaTeX rules below).
 - Keep the question TMUA style: concise stem, clean numbers, no calculator, insight-based.
-- Output ONLY the standard Implementer YAML format.
+- Output ONLY the standard Implementer JSON format.
 
 Regeneration constraints:
 - Keep the same schema and target difficulty.
@@ -41,7 +41,7 @@ If KaTeX validation errors are included, you MUST fix them:
 1. Identify the field with the error (stem, options, reasoning, etc.)
 2. Fix ONLY the KaTeX formatting - do NOT change the mathematics or content
 3. Ensure all delimiters are correct and properly matched
-4. Ensure all backslashes are escaped in YAML
+4. Ensure all backslashes are escaped in JSON
 5. Verify display math has proper spacing
 
 **Important**: When fixing KaTeX errors, preserve the exact mathematical content and logic. Only fix the formatting.

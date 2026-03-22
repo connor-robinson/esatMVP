@@ -75,7 +75,7 @@ You will be given:
 * a **schema** (the core reasoning pattern you must preserve),
 * a **reference TMUA question** (style calibration),
 * the **official solution** to that reference (difficulty + step-count calibration),
-* a **variation_seed** (SIBLING or FAR) **already selected by the pipeline** — your YAML `variation_mode` must match it; do not pick or override the mode yourself.
+* a **variation_seed** (SIBLING or FAR) **already selected by the pipeline** — your JSON `variation_mode` must match it; do not pick or override the mode yourself.
 
 The schema is the "invariant".
 The reference question/solution tells you what "TMUA Paper 1 difficulty and pacing" looks like.
@@ -115,186 +115,50 @@ If you violate any rule, your output is invalid.
 
 ## **Output format (MANDATORY)**
 
-Return your response **only** in raw YAML format.
+Return **one JSON object only**. No markdown fences, no commentary before `{` or after `}`.
 
-**CRITICAL**: Do NOT use markdown backticks or markdown code blocks in your response. Return ONLY the raw YAML string.
+JSON rules (invalid JSON aborts the pipeline):
+- Every string uses double quotes; escape `"` and `\` inside strings.
+- Use `\n` inside strings for line breaks (no YAML-style block scalars).
+- Colons, percent signs, currency symbols, and normal Unicode are fine inside strings.
+- For inequalities in prose fields, keep wrapped tokens `{<}`, `{>}`, `{<=}`, `{>=}` inside the string.
 
-**REQUIRED FIELDS CHECKLIST (DO NOT OMIT ANY)**:
-- ✅ `schema_id`: The schema ID you received
-- ✅ `paper`: Always "paper1" for Paper 1
-- ✅ `variation_mode`: Either "SIBLING" or "FAR"
-- ✅ `section1_primary_tag`: A Section 1 tag (MM1..MM8 or M1..M7) - **CRITICAL, DO NOT OMIT**
-- ✅ `section1_secondary_tags`: A list of 0-2 Section 1 tags, or [] if none - **CRITICAL, DO NOT OMIT** (use [] if no secondary tags)
-- ✅ `graph_hint`: One of "required", "optional", "none"
-- ✅ `why_still_on_spec`: Explanation text - **REQUIRED**
-- ✅ All other fields as shown in the YAML structure below
+Required keys (all must be present):
+- `schema_id` (string)
+- `paper` (string; use `"paper1"` for Paper 1)
+- `variation_mode` (`"SIBLING"` or `"FAR"` — must match the pipeline seed)
+- `idea_summary`, `reference_alignment` (strings)
+- `task_signature` (string, exactly one of: `parameter_condition`, `count_solutions`, `max_or_min`, `range_or_inequality`, `coefficient_or_counting`, `exact_value`, `intersection_geometry`, `area_between_curves`)
+- `tool_footprint` (array of 2–5 short strings)
+- `section1_primary_tag` (string, MM1–MM8 or M1–M7)
+- `section1_secondary_tags` (array of 0–2 strings; use `[]` if none)
+- `graph_hint`: `"required"` | `"optional"` | `"none"`
+- `surface_twist` (string; `""` for SIBLING)
+- `why_still_on_spec` (string)
+- `constraints_used` (array of strings)
+- `intended_wrong_paths` (array of 3–6 strings)
+- `difficulty_rationale` (string)
+- `mcq_viability`: object `{"viable": true, "reason": "..."}`
 
-```yaml
-schema_id: <schema id>
-paper: paper1  # REQUIRED: Always "paper1" for Paper 1 questions
-variation_mode: <SIBLING|FAR>
+Example shape (illustrative):
 
-idea_summary: >
-  One or two sentences describing the core reasoning the student must perform.
-
-reference_alignment: >
-  Briefly explain (2–4 sentences) how the step-count and difficulty match the reference solution,
-  and why the surface is not a near-copy.
-
-task_signature:
-  - parameter_condition
-  - count_solutions
-  - max_or_min
-  - range_or_inequality
-  - coefficient_or_counting
-  - exact_value
-  - intersection_geometry
-  - area_between_curves
-  (choose exactly one)
-
-tool_footprint:
-  - 2 to 5 short tags describing what kinds of moves appear (no named techniques)
-  - examples of tags: "symmetry", "intersection picture", "monotonicity", "root-structure",
-    "domain restriction", "simple substitution", "clean cancellation", "piecewise reasoning"
-  (list only what applies)
-
-section1_primary_tag: <REQUIRED>
-  # **CRITICAL**: The primary Section 1 tag (MM1..MM8 or M1..M7)
-  # This is the main topic the question tests
-  # MUST be one of: MM1, MM2, MM3, MM4, MM5, MM6, MM7, MM8, M1, M2, M3, M4, M5, M6, M7
-  # Example: "MM4" or "MM6"
-  # DO NOT OMIT THIS FIELD
-
-section1_secondary_tags: <REQUIRED>
-  # **CRITICAL**: 0-2 additional Section 1 tags (MM1..MM8 or M1..M7)
-  # MUST be a list (even if empty): use [] for no secondary tags
-  # Maximum 2 tags allowed
-  # Example: ["MM1"] or ["MM4", "MM6"] or []
-  # DO NOT OMIT THIS FIELD - use [] if no secondary tags
-
-# Legacy format (for backwards compatibility - will be auto-converted):
-# syllabus_tags: ["MM4", "MM6"]  # Will be converted to section1_primary_tag="MM4", section1_secondary_tags=["MM6"]
-
-graph_hint: <required|optional|none>
-  # Schema-driven decision:
-  # - "required": Schema explicitly implies graphical reasoning (intersection counting, regions R/S, transformation chain, qualitative roots from shape)
-  # - "optional": Graph might help comprehension but not necessary (code will decide via quota)
-  # - "none": No graph needed
-
-surface_twist: >
-  # FAR mode only (leave empty for SIBLING mode)
-  # 1-2 sentences: What makes this FAR mode question feel different/novel/unexpected
-  # Examples: "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure"
-
-why_still_on_spec: >
-  # Always required (both SIBLING and FAR)
-  # 1-2 sentences: Name the exact spec tags and explain why the solution collapses to standard TMUA moves
-  # Example: "Uses MM1 (algebraic manipulation) and MM4 (quadratic functions) - the absolute value unwraps to a standard quadratic equation"
-
-constraints_used:
-  - short descriptions of the given conditions (e.g. "exactly one x-intercept", "two intersections")
-  - do not include equations or numbers
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"f'(x) {>} 0"` or `"x {<=} 5"`
-
-intended_wrong_paths:
-  - 3 to 6 short descriptions of the most likely reasoning mistakes
-  - each must plausibly lead to a wrong MCQ option
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"Assuming f(x) {<} g(x)"`
-
-difficulty_rationale: >
-  One short paragraph explaining why this is TMUA Paper 1 difficulty (fast, clean, no grind).
-
-mcq_viability:
-  viable: yes
-  reason: >
-    Why the wrong paths naturally produce believable distractors (not arithmetic slips).
+```json
+{
+  "schema_id": "M_example",
+  "paper": "paper1",
+  "variation_mode": "SIBLING",
+  "idea_summary": "…",
+  "reference_alignment": "…",
+  "task_signature": "count_solutions",
+  "tool_footprint": ["symmetry", "monotonicity"],
+  "section1_primary_tag": "MM4",
+  "section1_secondary_tags": [],
+  "graph_hint": "none",
+  "surface_twist": "",
+  "why_still_on_spec": "…",
+  "constraints_used": ["…"],
+  "intended_wrong_paths": ["…", "…", "…"],
+  "difficulty_rationale": "…",
+  "mcq_viability": { "viable": true, "reason": "…" }
+}
 ```
-  # MUST be a list (even if empty): use [] for no secondary tags
-  # Maximum 2 tags allowed
-  # Example: ["MM1"] or ["MM4", "MM6"] or []
-  # DO NOT OMIT THIS FIELD - use [] if no secondary tags
-
-# Legacy format (for backwards compatibility - will be auto-converted):
-# syllabus_tags: ["MM4", "MM6"]  # Will be converted to section1_primary_tag="MM4", section1_secondary_tags=["MM6"]
-
-graph_hint: <required|optional|none>
-  # Schema-driven decision:
-  # - "required": Schema explicitly implies graphical reasoning (intersection counting, regions R/S, transformation chain, qualitative roots from shape)
-  # - "optional": Graph might help comprehension but not necessary (code will decide via quota)
-  # - "none": No graph needed
-
-surface_twist: >
-  # FAR mode only (leave empty for SIBLING mode)
-  # 1-2 sentences: What makes this FAR mode question feel different/novel/unexpected
-  # Examples: "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure"
-
-why_still_on_spec: >
-  # Always required (both SIBLING and FAR)
-  # 1-2 sentences: Name the exact spec tags and explain why the solution collapses to standard TMUA moves
-  # Example: "Uses MM1 (algebraic manipulation) and MM4 (quadratic functions) - the absolute value unwraps to a standard quadratic equation"
-
-constraints_used:
-  - short descriptions of the given conditions (e.g. "exactly one x-intercept", "two intersections")
-  - do not include equations or numbers
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"f'(x) {>} 0"` or `"x {<=} 5"`
-
-intended_wrong_paths:
-  - 3 to 6 short descriptions of the most likely reasoning mistakes
-  - each must plausibly lead to a wrong MCQ option
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"Assuming f(x) {<} g(x)"`
-
-difficulty_rationale: >
-  One short paragraph explaining why this is TMUA Paper 1 difficulty (fast, clean, no grind).
-
-mcq_viability:
-  viable: yes
-  reason: >
-    Why the wrong paths naturally produce believable distractors (not arithmetic slips).
-```
-  # MUST be a list (even if empty): use [] for no secondary tags
-  # Maximum 2 tags allowed
-  # Example: ["MM1"] or ["MM4", "MM6"] or []
-  # DO NOT OMIT THIS FIELD - use [] if no secondary tags
-
-# Legacy format (for backwards compatibility - will be auto-converted):
-# syllabus_tags: ["MM4", "MM6"]  # Will be converted to section1_primary_tag="MM4", section1_secondary_tags=["MM6"]
-
-graph_hint: <required|optional|none>
-  # Schema-driven decision:
-  # - "required": Schema explicitly implies graphical reasoning (intersection counting, regions R/S, transformation chain, qualitative roots from shape)
-  # - "optional": Graph might help comprehension but not necessary (code will decide via quota)
-  # - "none": No graph needed
-
-surface_twist: >
-  # FAR mode only (leave empty for SIBLING mode)
-  # 1-2 sentences: What makes this FAR mode question feel different/novel/unexpected
-  # Examples: "Uses absolute value folding to disguise a quadratic", "Presents as a sequence but collapses to polynomial root structure"
-
-why_still_on_spec: >
-  # Always required (both SIBLING and FAR)
-  # 1-2 sentences: Name the exact spec tags and explain why the solution collapses to standard TMUA moves
-  # Example: "Uses MM1 (algebraic manipulation) and MM4 (quadratic functions) - the absolute value unwraps to a standard quadratic equation"
-
-constraints_used:
-  - short descriptions of the given conditions (e.g. "exactly one x-intercept", "two intersections")
-  - do not include equations or numbers
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"f'(x) {>} 0"` or `"x {<=} 5"`
-
-intended_wrong_paths:
-  - 3 to 6 short descriptions of the most likely reasoning mistakes
-  - each must plausibly lead to a wrong MCQ option
-  - **CRITICAL**: If describing inequalities, wrap them: use `{<}` for less than, `{>}` for greater than, `{<=}` for less than or equal, `{>=}` for greater than or equal
-  - Example: `"Assuming f(x) {<} g(x)"`
-
-difficulty_rationale: >
-  One short paragraph explaining why this is TMUA Paper 1 difficulty (fast, clean, no grind).
-
-mcq_viability:
-  viable: yes
-  reason: >
-    Why the wrong paths naturally produce believable distractors (not arithmetic slips).

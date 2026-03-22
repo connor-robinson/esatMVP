@@ -80,7 +80,7 @@ Analyze the provided question and assign:
    - If the question is primarily about logical reasoning, argument structure, or proof techniques → use Section 2 tag
    - If the question is primarily about mathematical knowledge/techniques → use Section 1 tag
 
-3. **Output format MUST be YAML dictionary**, not a list or other structure
+3. **Output format MUST be JSON object**, not a list or other structure
 
 4. **Required fields:**
    - `primary_tag`: String (e.g., "Arg1", "MM6", "Prf2")
@@ -94,9 +94,9 @@ Analyze the provided question and assign:
 
 ## **Output Format (MANDATORY)**
 
-You MUST output valid YAML in this exact structure:
+You MUST output valid JSON in this exact structure:
 
-```yaml
+```json
 primary_tag: "Arg2"
 secondary_tags:
   - "MM4"
@@ -115,7 +115,7 @@ reasoning: "The question primarily tests understanding of necessary vs sufficien
 ## **Examples**
 
 **Example 1: Reasoning-focused (Section 2 primary)**
-```yaml
+```json
 primary_tag: "Prf1"
 secondary_tags:
   - "MM6"
@@ -124,7 +124,7 @@ reasoning: "The question tests proof by contradiction (Prf1) applied to a differ
 ```
 
 **Example 2: Mathematical knowledge-focused (Section 1 primary)**
-```yaml
+```json
 primary_tag: "MM7"
 secondary_tags:
   - "MM8"
@@ -133,7 +133,7 @@ reasoning: "This is primarily an integration problem (MM7) that requires underst
 ```
 
 **Example 3: Pure reasoning (Section 2 only)**
-```yaml
+```json
 primary_tag: "Err2"
 secondary_tags: []
 primary_confidence: 0.90
@@ -146,7 +146,7 @@ reasoning: "The question asks students to identify an invalid inference trap in 
 
 - Paper 2 questions can use BOTH Section 1 and Section 2 tags
 - Primary tag should reflect the main focus of the question
-- Always return a YAML dictionary, never a list
+- Always return a JSON object, never a list
 - Primary tag is required, secondary tags can be empty list if not applicable
 - Be specific and accurate in tag assignment
 

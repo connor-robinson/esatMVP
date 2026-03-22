@@ -10,7 +10,7 @@ You only choose the best **template_family** (question form archetype) for the g
 
 ## Inputs you will receive
 
-1) `designer_plan` (YAML)
+1) `designer_plan` (JSON)
 Includes:
 - schema_id
 - idea_summary
@@ -77,7 +77,7 @@ In particular:
 
 ## Output format (MANDATORY)
 
-Return ONLY raw YAML. No markdown code blocks.
+Return ONLY raw JSON. No markdown code blocks.
 
 Example output shape (do not include backticks in your actual output):
 

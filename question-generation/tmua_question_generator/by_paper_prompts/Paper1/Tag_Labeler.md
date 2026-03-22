@@ -53,7 +53,7 @@ Analyze the provided question and assign:
 1. **Paper 1 ONLY**: Only use tags from Section 1 topics (MM1-MM8, M1-M7)
    - Do NOT use Paper 2 tags (Arg1-Arg4, Prf1-Prf5, Err1-Err2)
 
-2. **Output format MUST be YAML dictionary**, not a list or other structure
+2. **Output format MUST be JSON object**, not a list or other structure
 
 3. **Required fields:**
    - `primary_tag`: String (e.g., "MM1")
@@ -67,9 +67,9 @@ Analyze the provided question and assign:
 
 ## **Output Format (MANDATORY)**
 
-You MUST output valid YAML in this exact structure:
+You MUST output valid JSON in this exact structure:
 
-```yaml
+```json
 primary_tag: "MM1"
 secondary_tags:
   - "MM3"
@@ -89,7 +89,7 @@ reasoning: "The question primarily tests algebraic manipulation and function com
 ## **Examples**
 
 **Example 1: Single topic**
-```yaml
+```json
 primary_tag: "MM6"
 secondary_tags: []
 primary_confidence: 0.98
@@ -97,7 +97,7 @@ reasoning: "This is a straightforward differentiation problem using the chain ru
 ```
 
 **Example 2: Multiple topics**
-```yaml
+```json
 primary_tag: "MM4"
 secondary_tags:
   - "MM8"
@@ -111,7 +111,7 @@ reasoning: "The question primarily tests trigonometric identities (MM4), require
 ## **Remember**
 
 - Paper 1 questions use ONLY Section 1 topics (MM1-MM8, M1-M7)
-- Always return a YAML dictionary, never a list
+- Always return a JSON object, never a list
 - Primary tag is required, secondary tags can be empty list if not applicable
 - Be specific and accurate in tag assignment
 

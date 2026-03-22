@@ -122,7 +122,7 @@ def get_default_models_config() -> ModelsConfig:
 @dataclass
 class RunConfig:
     max_implementer_retries: int = 2
-    max_designer_retries: int = 2  # if designer outputs invalid YAML, etc.
+    max_designer_retries: int = 2  # if designer outputs invalid JSON, etc.
     seed: Optional[int] = None
     difficulty_weights: Dict[str, float] = None  # type: ignore
     schema_weights: Optional[Dict[str, float]] = None  # optional weighting by schema_id
@@ -284,7 +284,7 @@ def safe_json_load(text: str, strip_markdown: bool = False, strip_prompt: bool =
 
 def normalize_implementer_output(obj: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Normalise Implementer YAML into the expected structure.
+    Normalise Implementer JSON-shaped dict into the expected structure.
 
     Some models nest `solution` under `question.solution` instead of top-level.
     This function promotes it to the top-level `solution` key so downstream
@@ -432,7 +432,7 @@ def _inject_tmua_variation_policy(
     header = (
         "\n\n------------------------------------------------------------\n\n"
         "# VARIATION CONTRACT (mandatory)\n\n"
-        f"Set variation_mode in your YAML output to exactly \"{mode.upper()}\".\n\n"
+        f"Set variation_mode in your JSON output to exactly \"{mode.upper()}\".\n\n"
     )
     return designer_body + header + blob + "\n", True
 
@@ -449,7 +449,7 @@ def _tmua_designer_user_prompt(
         f"variation_seed: {seed}",
         "",
         "Apply the variation policy in your system instructions. "
-        f"Your YAML must set variation_mode to exactly \"{seed}\" (SIBLING or FAR).",
+        f"Your JSON must set variation_mode to exactly \"{seed}\" (SIBLING or FAR).",
         "",
         "# Schema (invariant — preserve this reasoning pattern)",
         schema_block,
@@ -490,7 +490,7 @@ def _tmua_designer_user_prompt(
         [
             f"Target difficulty: {difficulty}",
             "",
-            "Return raw YAML only in the format specified in your system instructions.",
+            "Return raw JSON only in the format specified in your system instructions.",
         ]
     )
     return "\n".join(lines)
@@ -1353,22 +1353,19 @@ Schema:
 
 Target difficulty: {difficulty}
 
-Return exactly one idea plan in the required YAML format."""
+Return exactly one idea plan in the required JSON format."""
 
     txt = llm.generate(model=models.designer, system_prompt=system_prompt, user_prompt=user, temperature=0.7)
-    # Try to load YAML, with prompt stripping if needed
     try:
         obj = safe_json_load(txt, strip_prompt=False)
     except ValueError as e:
         error_msg = str(e)
-        # If error suggests prompt contamination (e.g., "expected a single document" with prompt text)
-        if "expected a single document" in error_msg or "You are a" in txt[:200]:
-            # Try again with prompt stripping
+        if "JSON parsing error" in error_msg or "You are a" in txt[:200]:
             obj = safe_json_load(txt, strip_prompt=True)
         else:
             raise
     if not isinstance(obj, dict) or "schema_id" not in obj:
-        raise ValueError(f"Designer output invalid YAML/object. Raw output:\n{txt}")
+        raise ValueError(f"Designer output invalid JSON/object. Raw output:\n{txt}")
 
     if is_tmua and mode_lower:
         obj["variation_mode"] = mode_lower.upper()
@@ -1392,14 +1389,14 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     schema_id = idea_plan.get("schema_id", "M1")
     subject_prompts = get_subject_prompts(prompts, schema_id)
     
-    user = "Designer idea plan (YAML):\n" + prompt_json_dumps(idea_plan)
+    user = "Designer idea plan (JSON):\n" + prompt_json_dumps(idea_plan)
     txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     
     # Check if output is empty or suspiciously short
     if not txt or not txt.strip():
         raise ValueError(f"Implementer output is empty. This usually means the AI didn't generate any output.")
     
-    # Check if output looks like it might be empty YAML or just whitespace
+    # Check if output looks like it might be empty JSON or just whitespace
     cleaned_check = txt.strip()
     if len(cleaned_check) < 10 or cleaned_check in ['null', '~', '{}', '[]']:
         raise ValueError(f"Implementer output appears to be empty or invalid. Raw output:\n{txt[:500]}...")
@@ -1409,16 +1406,15 @@ def implementer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ide
     except ValueError as e:
         error_msg = str(e)
         # If error suggests prompt contamination, try with prompt stripping
-        if "expected a single document" in error_msg or "You are a" in txt[:200] or "TMUA" in txt[:200]:
+        if "JSON parsing error" in error_msg or "You are a" in txt[:200] or "TMUA" in txt[:200]:
             try:
                 obj = safe_json_load(txt, strip_prompt=True)
             except Exception as e2:
-                raise ValueError(f"Implementer output failed to parse as YAML (even after prompt stripping): {e2}\n\nRaw output:\n{txt[:500]}...")
-        elif "empty or contains only whitespace" in error_msg or "YAML parsed to None" in error_msg:
-            # Provide more helpful error message for empty YAML
-            raise ValueError(f"Implementer output is empty or invalid YAML. This may indicate the AI didn't follow the output format.\n\nRaw output (first 500 chars):\n{txt[:500]}...")
+                raise ValueError(f"Implementer output failed to parse as JSON (even after prompt stripping): {e2}\n\nRaw output:\n{txt[:500]}...")
+        elif "empty input after stripping" in error_msg or "JSON parsed to null" in error_msg:
+            raise ValueError(f"Implementer output is empty or invalid JSON. This may indicate the AI didn't follow the output format.\n\nRaw output (first 500 chars):\n{txt[:500]}...")
         else:
-            raise ValueError(f"Implementer output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+            raise ValueError(f"Implementer output failed to parse as JSON: {e}\n\nRaw output:\n{txt[:500]}...")
 
     # Normalise common structural quirks from the Implementer
     obj = normalize_implementer_output(obj)
@@ -1476,11 +1472,11 @@ def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, questi
     # Filter verifier prompt to include only relevant subject instructions
     filtered_prompt = filter_prompt_by_subject(verifier_src, subject)
     
-    user = "Question package to verify (YAML):\n" + prompt_json_dumps(question_with_subject)
+    user = "Question package to verify (JSON):\n" + prompt_json_dumps(question_with_subject)
     txt = llm.generate(model=models.verifier, system_prompt=filtered_prompt, user_prompt=user, temperature=0.2)
     obj = safe_json_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
-        raise ValueError(f"Verifier output invalid YAML/object. Raw output:\n{txt}")
+        raise ValueError(f"Verifier output invalid JSON/object. Raw output:\n{txt}")
     obj["_raw_text"] = txt
     return obj
 
@@ -1546,11 +1542,11 @@ def style_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, question_
             else:
                 raise FileNotFoundError(f"Style checker prompt not found at {style_checker_path}")
     
-    user = "Package to style-check (YAML):\n" + prompt_json_dumps(payload)
+    user = "Package to style-check (JSON):\n" + prompt_json_dumps(payload)
     txt = llm.generate(model=models.style_judge, system_prompt=style_checker_prompt, user_prompt=user, temperature=0.3)
     obj = safe_json_load(txt)
     if not isinstance(obj, dict) or "verdict" not in obj:
-        raise ValueError(f"Style checker output invalid YAML/object. Raw output:\n{txt}")
+        raise ValueError(f"Style checker output invalid JSON/object. Raw output:\n{txt}")
     obj["_raw_text"] = txt
     return obj
 
@@ -1601,7 +1597,7 @@ def classifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, ques
     user = f"""Available curriculum topics:
 {topics_text}
 
-Question package (YAML):
+Question package (JSON):
 {prompt_json_dumps(question_obj)}
 
 Analyze the question and assign appropriate curriculum tags."""
@@ -1614,90 +1610,37 @@ Analyze the question and assign appropriate curriculum tags."""
         temperature=0.3
     )
     
-    # Try to load YAML with improved error handling and retry logic
-    # Classifier output may contain markdown formatting, so strip it first
     max_retries = 3
     obj = None
-    last_error = None
-    
+    last_error: Optional[ValueError] = None
+
     for attempt in range(max_retries):
         try:
-            # Always strip markdown on first attempt (classifier often outputs markdown)
-            # On retries, markdown is already stripped in the fix section below
-            strip_md = (attempt == 0)  # Strip markdown on first attempt
-            # Also strip prompt contamination (explanatory text before YAML)
+            strip_md = attempt == 0
             obj = safe_json_load(txt, strip_markdown=strip_md, strip_prompt=(attempt == 0))
-            break  # Success
+            break
         except ValueError as e:
             last_error = e
-            error_msg = str(e)
-            
-            # If YAML parsing fails, try more aggressive preprocessing
-            if "YAML parsing error" in error_msg or "mapping values" in error_msg or "scanning an alias" in error_msg or "expected alphabetic" in error_msg:
-                if attempt < max_retries - 1:
-                    # Try to fix: strip markdown, quote unquoted values with colons
-                    # Strip markdown formatting first (always do this on retry, even if already done)
-                    txt = strip_markdown_formatting(txt)
-                    
-                    # Also strip code fences in case they were added
-                    txt = strip_code_fences(txt)
-                    
-                    # Then try to fix unquoted colons
-                    lines = txt.split('\n')
-                    fixed_lines = []
-                    for line in lines:
-                        # Skip comments and empty lines
-                        if not line.strip() or line.strip().startswith('#'):
-                            fixed_lines.append(line)
-                            continue
-                        
-                        # Check for key: value pattern
-                        if ':' in line and not line.strip().startswith('-'):
-                            # Try to split on first colon
-                            colon_pos = line.find(':')
-                            if colon_pos > 0:
-                                key_part = line[:colon_pos].rstrip()
-                                value_part = line[colon_pos + 1:].lstrip()
-                                
-                                # If value has another colon and isn't quoted/math, quote it
-                                if ':' in value_part:
-                                    # Check if it's already quoted or is math
-                                    is_quoted = (value_part.startswith('"') and value_part.endswith('"')) or \
-                                               (value_part.startswith("'") and value_part.endswith("'"))
-                                    is_math = value_part.startswith('$') and value_part.endswith('$')
-                                    
-                                    if not is_quoted and not is_math:
-                                        # Quote the value
-                                        # CRITICAL: Escape backslashes first to prevent YAML escape sequence errors
-                                        escaped_value = value_part.replace('\\', '\\\\')  # Escape all backslashes
-                                        escaped_value = escaped_value.replace('"', '\\"')  # Then escape quotes
-                                        fixed_lines.append(f"{key_part}: \"{escaped_value}\"")
-                                        continue
-                        
-                        fixed_lines.append(line)
-                    
-                    txt = '\n'.join(fixed_lines)
-                    continue  # Retry with fixed text
-                else:
-                    # Last attempt failed, raise with context
-                    raise ValueError(
-                        f"Classifier YAML parsing failed after {max_retries} attempts. "
-                        f"Error: {error_msg}\n"
-                        f"First 500 chars of output:\n{txt[:500]}"
-                    )
-            else:
-                # Not a YAML parsing error, re-raise
-                raise
-    
+            if attempt < max_retries - 1:
+                txt = strip_markdown_formatting(txt)
+                txt = strip_code_fences(txt)
+                continue
+            raise ValueError(
+                f"Classifier JSON parsing failed after {max_retries} attempts. "
+                f"Error: {e}\n"
+                f"First 500 chars of output:\n{txt[:500]}"
+            ) from e
+
     if obj is None:
         raise ValueError(f"Failed to parse classifier output: {last_error}")
-    
-    # CRITICAL: Validate that obj is a dictionary, not a list or other type
+
     if not isinstance(obj, dict):
-        raise ValueError(f"Classifier output is not a dictionary. Got {type(obj).__name__}: {obj}\n\n"
-                        f"This usually means the AI output YAML was a list or other non-dict structure.\n"
-                        f"Raw output (first 500 chars):\n{txt[:500]}")
-    
+        raise ValueError(
+            f"Classifier output is not a dictionary. Got {type(obj).__name__}: {obj}\n\n"
+            f"This usually means the model returned a JSON array or other non-object at the top level.\n"
+            f"Raw output (first 500 chars):\n{txt[:500]}"
+        )
+
     # Validate output based on subject
     prefix = schema_id[0].upper()
     if prefix == 'M':
@@ -1876,7 +1819,7 @@ def tag_labeler_station(llm: LLMClient, prompts: Prompts, models: ModelsConfig, 
     user = f"""Available curriculum topics for {paper}:
 {topics_text}
 
-Question package (YAML):
+Question package (JSON):
 {prompt_json_dumps(question_obj)}
 
 Analyze the question and assign appropriate curriculum tags according to the TMUA {paper} curriculum structure."""
@@ -1892,13 +1835,13 @@ Analyze the question and assign appropriate curriculum tags according to the TMU
             temperature=0.3
         )
         
-        # Load YAML with markdown stripping (Tag_Labeler may output markdown)
+        # Parse JSON with markdown stripping (Tag_Labeler may wrap output in prose or fences)
         obj = safe_json_load(txt, strip_markdown=True, strip_prompt=True)
         
         # CRITICAL: Validate that obj is a dictionary, not a list
         if not isinstance(obj, dict):
             raise ValueError(f"Tag Labeler output is not a dictionary. Got {type(obj).__name__}: {obj}\n\n"
-                           f"This usually means the AI output YAML was a list or other non-dict structure.\n"
+                           f"This usually means the model returned non-object JSON at the top level.\n"
                            f"Raw output (first 500 chars):\n{txt[:500]}")
         
         # Validate required fields
@@ -2000,10 +1943,10 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
         + "\nprevious_attempt:\n"
         + prompt_json_dumps(previous_attempt)
         + "\nverifier_report:\n"
-        + yaml.safe_dump(verifier_report, sort_keys=False)
+        + prompt_json_dumps(verifier_report)
     )
     if style_report:
-        user += "\nstyle_report:\n" + yaml.safe_dump(style_report, sort_keys=False)
+        user += "\nstyle_report:\n" + prompt_json_dumps(style_report)
 
     txt = llm.generate(model=models.implementer, system_prompt=subject_prompts['implementer'], user_prompt=user, temperature=0.6)
     try:
@@ -2011,13 +1954,13 @@ def implementer_regen_call(llm: LLMClient, prompts: Prompts, models: ModelsConfi
     except ValueError as e:
         error_msg = str(e)
         # If error suggests prompt contamination, try with prompt stripping
-        if "expected a single document" in error_msg or "You are a" in txt[:200] or "TMUA" in txt[:200]:
+        if "JSON parsing error" in error_msg or "You are a" in txt[:200] or "TMUA" in txt[:200]:
             try:
                 obj = safe_json_load(txt, strip_prompt=True)
             except Exception as e2:
-                raise ValueError(f"Implementer regen output failed to parse as YAML (even after prompt stripping): {e2}\n\nRaw output:\n{txt[:500]}...")
+                raise ValueError(f"Implementer regen output failed to parse as JSON (even after prompt stripping): {e2}\n\nRaw output:\n{txt[:500]}...")
         else:
-            raise ValueError(f"Implementer regen output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+            raise ValueError(f"Implementer regen output failed to parse as JSON: {e}\n\nRaw output:\n{txt[:500]}...")
 
     # Normalise common structural quirks from the Implementer
     obj = normalize_implementer_output(obj)
@@ -2065,7 +2008,10 @@ def extract_verdict(obj: Dict[str, Any]) -> str:
     return str(obj.get("verdict", "")).strip().upper()
 
 def extract_severity(obj: Dict[str, Any]) -> str:
-    return str(obj.get("severity", "")).strip()
+    s = obj.get("severity", "")
+    if isinstance(s, list) and s:
+        return str(s[0]).strip()
+    return str(s).strip()
 
 def is_fixable(severity: str) -> bool:
     return severity == "fixable_with_regeneration"
@@ -2214,9 +2160,9 @@ def fix_katex_issues(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
     
     # If still not found, use a default minimal prompt
     if not katex_fixer_prompt:
-        katex_fixer_prompt = """You are a KaTeX formatting expert. Fix ONLY the KaTeX formatting errors in the provided YAML.
+        katex_fixer_prompt = """You are a KaTeX formatting expert. Fix ONLY the KaTeX formatting errors in the provided JSON question package.
 Do NOT change any mathematical content, numbers, or logic. Only fix markup syntax (e.g., $ delimiters, escaping).
-Return the complete fixed question package in YAML format."""
+Return the complete fixed question package as one JSON object (same keys as the input package)."""
         print(f"⚠ Warning: KaTeX fixer prompt not found. Using default prompt.")
     
     # Format error report
@@ -2230,8 +2176,8 @@ Return the complete fixed question package in YAML format."""
     
     # Build user prompt
     user_prompt = (
-        "Original question package (YAML):\n"
-        + yaml.safe_dump(question_obj, sort_keys=False)
+        "Original question package (JSON):\n"
+        + prompt_json_dumps(question_obj)
         + "\n\n"
         + error_report
         + "\n\n"
@@ -2239,7 +2185,7 @@ Return the complete fixed question package in YAML format."""
         + "CRITICAL: Do NOT change any mathematical content, logic, numeric values, or algebraic operators. "
         + "Only escape/repair markup (e.g., fix $ delimiters, escape special characters). "
         + "Preserve all numbers, equations, and mathematical meaning exactly as they are. "
-        + "Return the complete fixed question package in YAML format."
+        + "Return the complete fixed question package as one JSON object."
     )
     
     # Call LLM with format_fixer model if available, otherwise use implementer
@@ -2254,7 +2200,7 @@ Return the complete fixed question package in YAML format."""
     try:
         fixed_obj = safe_json_load(txt)
     except Exception as e:
-        raise ValueError(f"KaTeX fixer output failed to parse as YAML: {e}\n\nRaw output:\n{txt[:500]}...")
+        raise ValueError(f"KaTeX fixer output failed to parse as JSON: {e}\n\nRaw output:\n{txt[:500]}...")
     
     # Normalize output (same as implementer)
     fixed_obj = normalize_implementer_output(fixed_obj)
@@ -2538,7 +2484,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     stats["by_schema"].setdefault(schema_id, {"attempted": 0, "accepted": 0, "rejected": 0})
     stats["by_schema"][schema_id]["attempted"] += 1
 
-    # Designer (with limited retries for malformed YAML)
+    # Designer (with limited retries for malformed JSON)
     if callbacks and "on_stage_start" in callbacks:
         callbacks["on_stage_start"]("Designer", f"Designing idea for {schema_id} ({difficulty})")
     
@@ -2565,7 +2511,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         except ValueError as e:
             # Check if this is a YAML parsing error
             error_str = str(e)
-            is_yaml_error = "YAML" in error_str or "yaml" in error_str.lower()
+            is_yaml_error = ("JSON parsing error" in error_str or "YAML" in error_str or "yaml" in error_str.lower())
             
             designer_err = error_str
             if callbacks and "on_stage_error" in callbacks:
@@ -2584,7 +2530,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             
             # Print helpful error message
             if is_yaml_error:
-                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1}: Invalid YAML detected")
+                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1}: Invalid JSON detected")
                 print(f"   Error: {error_str[:200]}...")
                 if d_try < cfg.max_designer_retries:
                     print(f"   → Retrying with new AI generation...")
@@ -3030,11 +2976,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         except ValueError as e:
             # Check if this is a YAML parsing error
             error_msg = str(e)
-            is_yaml_error = "YAML" in error_msg or "yaml" in error_msg.lower() or "parsing" in error_msg.lower()
+            is_yaml_error = ("JSON parsing error" in error_msg or "YAML" in error_msg or "yaml" in error_msg.lower() or "parsing" in error_msg.lower())
             
             # Print error to console for debugging
             if is_yaml_error:
-                print(f"\n⚠ Implementer attempt {attempt + 1}/{cfg.max_implementer_retries + 1}: Invalid YAML detected")
+                print(f"\n⚠ Implementer attempt {attempt + 1}/{cfg.max_implementer_retries + 1}: Invalid JSON detected")
                 print(f"   Error: {error_msg[:300]}...")
                 if attempt < cfg.max_implementer_retries:
                     print(f"   → Retrying with new AI generation...")
@@ -3062,8 +3008,8 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             error_msg = str(e)
             # Print error to console for debugging
             print(f"\n⚠ Error at attempt {attempt + 1}: {error_msg[:300]}")
-            if "YAML" in error_msg or "invalid" in error_msg.lower():
-                print("  → This looks like a YAML parsing/validation issue")
+            if "JSON" in error_msg or "YAML" in error_msg or "invalid" in error_msg.lower():
+                print("  → This looks like a JSON/YAML parsing or validation issue")
             if "question" in error_msg.lower() or "solution" in error_msg.lower():
                 print("  → Missing required fields in Implementer output")
             
@@ -3381,10 +3327,10 @@ class PipelineGUI:
         self.details_text.config(state=tk.DISABLED)
     
     def format_yaml(self, data: Any) -> str:
-        """Format data as YAML string"""
+        """Format pipeline output for display (JSON; name kept for UI compatibility)."""
         try:
-            return yaml.safe_dump(data, sort_keys=False, default_flow_style=False, allow_unicode=True)
-        except:
+            return prompt_json_dumps(data)
+        except Exception:
             return str(data)
     
     def start_generation(self):
@@ -3682,4 +3628,3 @@ if __name__ == "__main__":
         run_gui()
     else:
         main()
-              
