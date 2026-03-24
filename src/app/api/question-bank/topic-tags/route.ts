@@ -1,125 +1,98 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
-import type { AiGeneratedQuestionRow } from "@/lib/supabase/types";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { NextResponse } from 'next/server';
+import { createServerClient } from '@/lib/supabase/server';
+import type { AiGeneratedQuestionRow } from '@/lib/supabase/types';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import {
+  buildCodeToTitleMapFromCurriculum,
+  labelForQuestionBankTagWithMap,
+} from '@/lib/questionBank/topicTagLabelsCore';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 type TopicOption = { value: string; label: string };
 
-function buildTopicLabel(raw: string, curriculum: any | null): string {
-  if (!raw) return raw;
+const PAGE_SIZE = 1000;
 
-  const subjectPrefixes = [
-    "Math 1",
-    "Math 2",
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Paper 1",
-    "Paper 2",
-    "Mathematics 1",
-    "Mathematics 2",
-  ];
-  for (const prefix of subjectPrefixes) {
-    const pattern = new RegExp(`^${prefix}\\s*-\\s*`, "i");
-    if (pattern.test(raw)) return raw.replace(pattern, "").trim();
-  }
-
-  if (!curriculum?.papers) return raw;
-
-  let paperId = "";
-  let cleanCode = raw;
-  if (raw.startsWith("M1-")) {
-    paperId = "math1";
-    cleanCode = raw.replace("M1-", "");
-  } else if (raw.startsWith("M2-")) {
-    paperId = "math2";
-    cleanCode = raw.replace("M2-", "");
-  } else if (raw.startsWith("P-")) {
-    paperId = "physics";
-    cleanCode = raw.replace("P-", "");
-  } else if (raw.startsWith("biology-")) {
-    paperId = "biology";
-    cleanCode = raw.replace("biology-", "");
-  } else if (raw.startsWith("chemistry-")) {
-    paperId = "chemistry";
-    cleanCode = raw.replace("chemistry-", "");
-  }
-
-  const allPapers = curriculum.papers || [];
-  const candidatePapers = paperId
-    ? allPapers.filter((p: any) => p.paper_id === paperId)
-    : allPapers;
-  for (const paper of candidatePapers) {
-    const topics = paper.topics || [];
-    const t =
-      topics.find((x: any) => x.code === cleanCode) ||
-      topics.find((x: any) => x.code === cleanCode.replace(/^[A-Z]+/, "")) ||
-      topics.find((x: any) => x.code === raw);
-    if (t?.title) return String(t.title);
-  }
-
-  return raw;
+/** Tags that are only digits (e.g. "1", "07") — bad legacy/ingest data, not ESAT codes like M1/MM1. */
+function isPlaceholderNumericTag(tag: string): boolean {
+  const t = tag.trim();
+  return t.length > 0 && /^\d+$/.test(t);
 }
 
 /**
  * GET /api/question-bank/topic-tags
- * Distinct primary_tag + secondary_tags from approved questions (for filter UI).
+ * Distinct primary_tag + secondary_tags from all questions shown in the bank
+ * (same visibility as GET /api/question-bank/questions — not limited to approved).
  */
 export async function GET() {
   try {
     const supabase = createServerClient();
-    let curriculum: any | null = null;
+
+    let codeMap = new Map<string, string>();
     try {
       const curriculumPath = join(
         process.cwd(),
-        "scripts/esat_question_generator/curriculum/ESAT_CURRICULUM.json",
+        'question-generation/esat_question_generator/curriculum/ESAT_CURRICULUM.json',
       );
-      curriculum = JSON.parse(readFileSync(curriculumPath, "utf8"));
+      const curriculum = JSON.parse(readFileSync(curriculumPath, 'utf8'));
+      codeMap = buildCodeToTitleMapFromCurriculum(curriculum);
     } catch {
-      curriculum = null;
+      codeMap = new Map();
     }
 
-    const { data, error } = await supabase
-      .from("ai_generated_questions")
-      .select("primary_tag, secondary_tags")
-      .eq("status", "approved")
-      .limit(10000);
-
-    if (error) {
-      console.error("[topic-tags] Error:", error);
-      return NextResponse.json(
-        { tags: [] as string[], options: [] as TopicOption[] },
-        { status: 200 },
-      );
-    }
-
-    const rows = (data ?? []) as Pick<
-      AiGeneratedQuestionRow,
-      "primary_tag" | "secondary_tags"
-    >[];
     const set = new Set<string>();
-    for (const row of rows) {
-      const pt = row.primary_tag;
-      if (pt && typeof pt === "string" && pt.trim()) set.add(pt.trim());
-      const st = row.secondary_tags;
-      if (Array.isArray(st)) {
-        for (const t of st) {
-          if (t && typeof t === "string" && t.trim()) set.add(t.trim());
+    let offset = 0;
+
+    for (;;) {
+      const { data, error } = await supabase
+        .from('ai_generated_questions')
+        .select('primary_tag, secondary_tags')
+        .neq('status', 'deleted')
+        .order('id', { ascending: true })
+        .range(offset, offset + PAGE_SIZE - 1);
+
+      if (error) {
+        console.error('[topic-tags] Error:', error);
+        return NextResponse.json(
+          { tags: [] as string[], options: [] as TopicOption[] },
+          { status: 200 },
+        );
+      }
+
+      const rows = (data ?? []) as Pick<
+        AiGeneratedQuestionRow,
+        'primary_tag' | 'secondary_tags'
+      >[];
+
+      if (rows.length === 0) break;
+
+      for (const row of rows) {
+        const pt = row.primary_tag;
+        if (pt && typeof pt === 'string' && pt.trim()) set.add(pt.trim());
+        const st = row.secondary_tags;
+        if (Array.isArray(st)) {
+          for (const t of st) {
+            if (t && typeof t === 'string' && t.trim()) set.add(t.trim());
+          }
         }
       }
+
+      if (rows.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
     }
 
-    const tags = Array.from(set).sort((a, b) => a.localeCompare(b));
+    const tags = Array.from(set)
+      .filter((t) => !isPlaceholderNumericTag(t))
+      .sort((a, b) => a.localeCompare(b));
     const options: TopicOption[] = tags.map((value) => ({
       value,
-      label: buildTopicLabel(value, curriculum),
+      label: labelForQuestionBankTagWithMap(value, codeMap),
     }));
+
     return NextResponse.json({ tags, options });
   } catch (e) {
-    console.error("[topic-tags]", e);
+    console.error('[topic-tags]', e);
     return NextResponse.json(
       { tags: [] as string[], options: [] as TopicOption[] },
       { status: 200 },

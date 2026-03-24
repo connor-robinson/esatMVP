@@ -19,7 +19,7 @@ import {
   useSupabaseSession,
 } from '@/components/auth/SupabaseSessionProvider';
 import { UserIcon, LogInIcon } from '@/components/icons';
-import { X, AlertCircle } from 'lucide-react';
+import { X, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const PAST_PAPERS_COLOR = '#5B8D94';
@@ -29,7 +29,9 @@ interface SessionProgressBarProps {
   embedded?: boolean;
 }
 
-export function SessionProgressBar({ embedded = false }: SessionProgressBarProps) {
+export function SessionProgressBar({
+  embedded = false,
+}: SessionProgressBarProps) {
   const router = useRouter();
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
@@ -58,6 +60,7 @@ export function SessionProgressBar({ embedded = false }: SessionProgressBarProps
   // Keep hooks before any conditional return to avoid hook-order crashes
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [isQuitting, setIsQuitting] = useState(false);
+  const [docFullscreen, setDocFullscreen] = useState(false);
 
   // Handle Escape key to close modal
   useEffect(() => {
@@ -75,6 +78,32 @@ export function SessionProgressBar({ embedded = false }: SessionProgressBarProps
       document.removeEventListener('keydown', handleEscape);
     };
   }, [showQuitModal, isQuitting]);
+
+  useEffect(() => {
+    if (!embedded) return;
+    const sync = () => {
+      const d = document as Document & {
+        fullscreenElement?: Element | null;
+        webkitFullscreenElement?: Element | null;
+      };
+      setDocFullscreen(
+        !!(d.fullscreenElement ?? d.webkitFullscreenElement),
+      );
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener(
+      'webkitfullscreenchange',
+      sync as EventListener,
+    );
+    sync();
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        sync as EventListener,
+      );
+    };
+  }, [embedded]);
 
   if (!sessionId) return null;
 
@@ -325,6 +354,28 @@ export function SessionProgressBar({ embedded = false }: SessionProgressBarProps
     setIsQuitting(false);
   };
 
+  const toggleBrowserFullscreen = async () => {
+    const root = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+    const doc = document as Document & {
+      webkitExitFullscreen?: () => Promise<void> | void;
+      webkitFullscreenElement?: Element | null;
+    };
+    try {
+      if (document.fullscreenElement ?? doc.webkitFullscreenElement) {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else await doc.webkitExitFullscreen?.();
+      } else if (root.requestFullscreen) {
+        await root.requestFullscreen();
+      } else {
+        await root.webkitRequestFullscreen?.();
+      }
+    } catch {
+      /* user gesture or unsupported */
+    }
+  };
+
   const loginHref =
     typeof window !== 'undefined' &&
     window.location.pathname &&
@@ -501,11 +552,32 @@ export function SessionProgressBar({ embedded = false }: SessionProgressBarProps
                   }}
                   className='px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap hover:bg-white/5 transition-colors cursor-pointer'
                 >
-                  {isMarkingInfo ? 'Paper completed' : 'Paper in progress'} - {paperDisplayName}
+                  {isMarkingInfo ? 'Paper completed' : 'Paper in progress'} -{' '}
+                  {paperDisplayName}
                 </button>
               </div>
             </div>
           </div>
+
+          {embedded && (
+            <button
+              type='button'
+              onClick={() => {
+                void toggleBrowserFullscreen();
+              }}
+              className='ml-1 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/10 text-white/60 hover:text-white/90'
+              title={docFullscreen ? 'Exit full screen' : 'Full screen'}
+              aria-label={
+                docFullscreen ? 'Exit full screen' : 'Enter full screen'
+              }
+            >
+              {docFullscreen ? (
+                <Minimize2 className='h-5 w-5' strokeWidth={2.2} />
+              ) : (
+                <Maximize2 className='h-5 w-5' strokeWidth={2.2} />
+              )}
+            </button>
+          )}
 
           {/* Quit button (X) - positioned between progress bar and user icon */}
           <button

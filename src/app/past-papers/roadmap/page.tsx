@@ -2,34 +2,36 @@
  * Papers Roadmap page - Linear, unlock-based practice structure
  */
 
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { Container } from "@/components/layout/Container";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { useSubscription } from "@/hooks/useSubscription";
-import { UpgradeCTA } from "@/components/subscription/UpgradeCTA";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Container } from '@/components/layout/Container';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
+import { useSubscription } from '@/hooks/useSubscription';
+import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
 import {
   getRoadmapStages,
   getRoadmapStagesSync,
   type RoadmapStage,
-} from "@/lib/papers/roadmapConfig";
+} from '@/lib/papers/roadmapConfig';
 import {
   getStageCompletionCount,
   getStageCompletion,
-} from "@/lib/papers/roadmapCompletion";
-import { RoadmapList } from "@/components/papers/roadmap/RoadmapList";
-import { RoadmapTimeline } from "@/components/papers/roadmap/RoadmapTimeline";
-import { RoadmapAnalytics } from "@/components/papers/roadmap/RoadmapAnalytics";
-import { getSectionForRoadmapPart } from "@/lib/papers/roadmapConfig";
-import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
-import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { getPaper, getQuestions } from "@/lib/supabase/questions";
-import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import type { PaperSection, Question, Paper } from "@/types/papers";
-import type { RoadmapPart } from "@/lib/papers/roadmapConfig";
+} from '@/lib/papers/roadmapCompletion';
+import { RoadmapList } from '@/components/papers/roadmap/RoadmapList';
+import { RoadmapTimeline } from '@/components/papers/roadmap/RoadmapTimeline';
+import { RoadmapAnalytics } from '@/components/papers/roadmap/RoadmapAnalytics';
+import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
+import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
+import { usePaperSessionStore } from '@/store/paperSessionStore';
+import { getPaper, getQuestions } from '@/lib/supabase/questions';
+import { examNameToPaperType } from '@/lib/papers/paperConfig';
+import type { PaperSection, Question, Paper } from '@/types/papers';
+import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
+import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
+import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
 
 const FREE_ROADMAP_ITEMS = 3;
 
@@ -41,25 +43,38 @@ export default function PapersRoadmapPage() {
   const [stages, setStages] = useState<RoadmapStage[]>([]);
   const [unlockedStages, setUnlockedStages] = useState<Set<string>>(new Set());
   const [completionData, setCompletionData] = useState<
-    Map<string, { completed: number; total: number; parts: Map<string, boolean> }>
+    Map<
+      string,
+      { completed: number; total: number; parts: Map<string, boolean> }
+    >
   >(new Map());
   const [loading, setLoading] = useState(true);
-  const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(null);
-  const [examPreference, setExamPreference] = useState<'ESAT' | 'TMUA' | null>(null);
+  const [replaceModalOpen, setReplaceModalOpen] = useState(false);
+  const [replaceConfirming, setReplaceConfirming] = useState(false);
+  const pendingRoadmapStartRef = useRef<{
+    stage: RoadmapStage;
+    selectedParts: RoadmapPart[];
+  } | null>(null);
+  const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(
+    null,
+  );
+  const [examPreference, setExamPreference] = useState<'ESAT' | 'TMUA' | null>(
+    null,
+  );
 
   // Load user exam preference
   useEffect(() => {
     async function loadExamPreference() {
       if (!session?.user?.id) return;
-      
+
       try {
-        const response = await fetch("/api/profile/preferences");
+        const response = await fetch('/api/profile/preferences');
         if (response.ok) {
           const data = await response.json();
           setExamPreference(data.exam_preference || null);
         }
       } catch (error) {
-        console.error("[roadmap] Error loading exam preference:", error);
+        console.error('[roadmap] Error loading exam preference:', error);
       }
     }
     loadExamPreference();
@@ -70,26 +85,31 @@ export default function PapersRoadmapPage() {
     async function loadStages() {
       try {
         const loadedStages = await getRoadmapStages();
-        
+
         // Debug: Log all stages by exam type
-        const stagesByExam = loadedStages.reduce((acc, stage) => {
-          if (!acc[stage.examName]) acc[stage.examName] = [];
-          acc[stage.examName].push(stage.id);
-          return acc;
-        }, {} as Record<string, string[]>);
-        
+        const stagesByExam = loadedStages.reduce(
+          (acc, stage) => {
+            if (!acc[stage.examName]) acc[stage.examName] = [];
+            acc[stage.examName].push(stage.id);
+            return acc;
+          },
+          {} as Record<string, string[]>,
+        );
+
         // Debug: Check for duplicates
-        const stageIds = loadedStages.map(s => s.id);
-        const duplicates = stageIds.filter((id, index) => stageIds.indexOf(id) !== index);
+        const stageIds = loadedStages.map((s) => s.id);
+        const duplicates = stageIds.filter(
+          (id, index) => stageIds.indexOf(id) !== index,
+        );
         if (duplicates.length > 0) {
-          console.warn("[roadmap] Duplicate stage IDs found:", duplicates);
+          console.warn('[roadmap] Duplicate stage IDs found:', duplicates);
         }
-        
+
         // Roadmap shows ALL exams regardless of preference (preference only affects other views)
         // Don't filter by examPreference - users should see all available practice materials
         setStages(loadedStages);
       } catch (error) {
-        console.error("[roadmap] Error loading stages:", error);
+        console.error('[roadmap] Error loading stages:', error);
         // Fallback to sync version if async fails
         const syncStages = getRoadmapStagesSync();
         // Roadmap shows ALL exams regardless of preference
@@ -116,13 +136,20 @@ export default function PapersRoadmapPage() {
         if (session?.user?.id) {
           // OPTIMIZATION: Load all completed sessions once, then process in memory
           // This avoids hundreds of sequential database queries
-          const { loadAllCompletedSessions, getStageCompletionFromSessions } = await import('@/lib/papers/roadmapCompletion');
-          const sessionsByPaperName = await loadAllCompletedSessions(session.user.id);
+          const { loadAllCompletedSessions, getStageCompletionFromSessions } =
+            await import('@/lib/papers/roadmapCompletion');
+          const sessionsByPaperName = await loadAllCompletedSessions(
+            session.user.id,
+          );
 
           // Process all stages (now async due to part-level checking)
           for (const stage of stages) {
-            const parts = await getStageCompletionFromSessions(session.user.id, sessionsByPaperName, stage);
-            
+            const parts = await getStageCompletionFromSessions(
+              session.user.id,
+              sessionsByPaperName,
+              stage,
+            );
+
             let completed = 0;
             for (const [_, isCompleted] of parts) {
               if (isCompleted) {
@@ -160,7 +187,9 @@ export default function PapersRoadmapPage() {
         for (let i = 0; i < stages.length; i++) {
           const stage = stages[i];
           const data = completionMap.get(stage.id);
-          const isCompleted = (data?.completed || 0) === (data?.total || stage.parts.length) && (data?.total || 0) > 0;
+          const isCompleted =
+            (data?.completed || 0) === (data?.total || stage.parts.length) &&
+            (data?.total || 0) > 0;
 
           let isUnlocked = false;
           if (i === 0) {
@@ -172,8 +201,11 @@ export default function PapersRoadmapPage() {
             // 2. This stage is already completed (handles backward completion)
             const prevStage = stages[i - 1];
             const prevData = completionMap.get(prevStage.id);
-            const isPrevCompleted = (prevData?.completed || 0) === (prevData?.total || prevStage.parts.length) && (prevData?.total || 0) > 0;
-            
+            const isPrevCompleted =
+              (prevData?.completed || 0) ===
+                (prevData?.total || prevStage.parts.length) &&
+              (prevData?.total || 0) > 0;
+
             isUnlocked = isPrevCompleted || isCompleted;
           }
 
@@ -189,7 +221,7 @@ export default function PapersRoadmapPage() {
         setUnlockedStages(unlocked);
         setCurrentStageIndex(currentIndex ?? 0);
       } catch (error) {
-        console.error("[roadmap] Error loading completion data:", error);
+        console.error('[roadmap] Error loading completion data:', error);
         // Set default completion data on error to prevent infinite loading
         const defaultCompletionMap = new Map<
           string,
@@ -213,19 +245,17 @@ export default function PapersRoadmapPage() {
     loadCompletionData();
   }, [session?.user?.id, stages]);
 
-
-  // Handle stage start with selected parts
-  const handleStartStage = useCallback(
+  const executeStartStage = useCallback(
     async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
       try {
         if (selectedParts.length === 0) {
-          console.error("[roadmap] No parts selected");
+          console.error('[roadmap] No parts selected');
           return;
         }
 
         // Group selected parts by paper (paperName + examType combination)
         const partsByPaper = new Map<string, typeof selectedParts>();
-        selectedParts.forEach(part => {
+        selectedParts.forEach((part) => {
           const paperKey = `${part.paperName}-${part.examType}`;
           if (!partsByPaper.has(paperKey)) {
             partsByPaper.set(paperKey, []);
@@ -248,21 +278,21 @@ export default function PapersRoadmapPage() {
 
         // Collect sections from ALL selected parts (not just primary)
         const allSections = new Set<PaperSection>();
-        const paperType = examNameToPaperType(stage.examName) || "NSAA";
+        const paperType = examNameToPaperType(stage.examName) || 'NSAA';
 
         // Handle TMUA differently - use section mapping
-        if (paperType === "TMUA") {
-          selectedParts.forEach(part => {
+        if (paperType === 'TMUA') {
+          selectedParts.forEach((part) => {
             // TMUA uses Paper 1 / Paper 2 as sections
-            if (part.paperName === "Paper 1") {
-              allSections.add("Paper 1");
-            } else if (part.paperName === "Paper 2") {
-              allSections.add("Paper 2");
+            if (part.paperName === 'Paper 1') {
+              allSections.add('Paper 1');
+            } else if (part.paperName === 'Paper 2') {
+              allSections.add('Paper 2');
             }
           });
         } else {
           // Collect sections from ALL selected parts across all papers
-          selectedParts.forEach(part => {
+          selectedParts.forEach((part) => {
             const section = getSectionForRoadmapPart(part, stage.examName);
             allSections.add(section);
           });
@@ -271,44 +301,51 @@ export default function PapersRoadmapPage() {
         // Load questions from ALL papers that have selected parts
         const allPapers = new Map<string, Paper>();
         const allQuestionsByPaper = new Map<number, Question[]>();
-        
-        console.log("[roadmap] Loading papers for selected parts:", {
+
+        console.log('[roadmap] Loading papers for selected parts:', {
           selectedPartsCount: selectedParts.length,
           papersCount: partsByPaper.size,
-          paperKeys: Array.from(partsByPaper.keys())
+          paperKeys: Array.from(partsByPaper.keys()),
         });
-        
+
         for (const [paperKey, parts] of partsByPaper.entries()) {
           const firstPartInPaper = parts[0];
-          const paper = await getPaper(stage.examName, stage.year, firstPartInPaper.paperName, firstPartInPaper.examType);
-          
+          const paper = await getPaper(
+            stage.examName,
+            stage.year,
+            firstPartInPaper.paperName,
+            firstPartInPaper.examType,
+          );
+
           if (!paper) {
-            console.error("[roadmap] Paper not found for stage", {
+            console.error('[roadmap] Paper not found for stage', {
               examName: stage.examName,
               year: stage.year,
               paperName: firstPartInPaper.paperName,
               examType: firstPartInPaper.examType,
-              stageId: stage.id
+              stageId: stage.id,
             });
-            
+
             // Show user-friendly error message
-            alert(`Paper not found: ${stage.examName} ${stage.year} ${firstPartInPaper.paperName} (${firstPartInPaper.examType}). Please check if this paper exists in the database.`);
+            alert(
+              `Paper not found: ${stage.examName} ${stage.year} ${firstPartInPaper.paperName} (${firstPartInPaper.examType}). Please check if this paper exists in the database.`,
+            );
             return;
           }
-          
-          console.log("[roadmap] Loaded paper:", {
+
+          console.log('[roadmap] Loaded paper:', {
             paperKey,
             paperId: paper.id,
             paperName: paper.paperName,
             partsCount: parts.length,
-            parts: parts.map(p => `${p.partLetter}: ${p.partName}`)
+            parts: parts.map((p) => `${p.partLetter}: ${p.partName}`),
           });
-          
+
           allPapers.set(paperKey, paper);
           const questions = await getQuestions(paper.id);
-          console.log("[roadmap] Loaded questions from paper:", {
+          console.log('[roadmap] Loaded questions from paper:', {
             paperId: paper.id,
-            questionsCount: questions.length
+            questionsCount: questions.length,
           });
           allQuestionsByPaper.set(paper.id, questions);
         }
@@ -316,25 +353,29 @@ export default function PapersRoadmapPage() {
         // Get primary paper for session metadata
         const primaryPaper = allPapers.get(primaryPaperKey);
         if (!primaryPaper) {
-          console.error("[roadmap] Primary paper not found");
+          console.error('[roadmap] Primary paper not found');
           return;
         }
 
         // Combine questions from all papers and filter to match ALL selected parts
         let matchingQuestions: Question[] = [];
 
-        console.log("[roadmap] Filtering questions:", {
+        console.log('[roadmap] Filtering questions:', {
           allSections: Array.from(allSections),
           paperType,
-          totalPapers: allQuestionsByPaper.size
+          totalPapers: allQuestionsByPaper.size,
         });
 
-        if (paperType === "TMUA") {
+        if (paperType === 'TMUA') {
           // For TMUA, combine questions from all papers and filter by section
           for (const [paperId, questions] of allQuestionsByPaper.entries()) {
             const totalQuestions = questions.length;
             const filtered = questions.filter((q: Question, index: number) => {
-              const section = deriveTmuaSectionFromQuestion(q, index, totalQuestions);
+              const section = deriveTmuaSectionFromQuestion(
+                q,
+                index,
+                totalQuestions,
+              );
               return Array.from(allSections).includes(section);
             });
             matchingQuestions = [...matchingQuestions, ...filtered];
@@ -346,46 +387,57 @@ export default function PapersRoadmapPage() {
           // might exist in both sections, so we need to use the paperName from the roadmap config
           // to distinguish them. However, if they're in the same paper, we rely on the database
           // structure to have them properly distinguished (e.g., via examType or other fields).
-          
+
           for (const [paperKey, parts] of partsByPaper.entries()) {
             const paper = allPapers.get(paperKey);
             if (!paper) continue;
-            
+
             const questions = allQuestionsByPaper.get(paper.id) || [];
-            console.log("[roadmap] Filtering questions for paper:", {
+            console.log('[roadmap] Filtering questions for paper:', {
               paperKey,
               paperId: paper.id,
               paperName: paper.paperName,
               questionsCount: questions.length,
-              partsToMatch: parts.map(p => `${p.partLetter}: ${p.partName} (${p.paperName})`)
+              partsToMatch: parts.map(
+                (p) => `${p.partLetter}: ${p.partName} (${p.paperName})`,
+              ),
             });
-            
+
             // Log sample questions for debugging Section 2
             if (paper.paperName === 'Section 2' && questions.length > 0) {
-              console.log("[roadmap] Sample Section 2 questions:", questions.slice(0, 3).map(q => ({
-                questionNumber: q.questionNumber,
-                partLetter: q.partLetter,
-                partName: q.partName
-              })));
+              console.log(
+                '[roadmap] Sample Section 2 questions:',
+                questions.slice(0, 3).map((q) => ({
+                  questionNumber: q.questionNumber,
+                  partLetter: q.partLetter,
+                  partName: q.partName,
+                })),
+              );
             }
-            
+
             const filtered = questions.filter((q: Question) => {
-              return parts.some(part => {
+              return parts.some((part) => {
                 // Normalize strings for comparison (case-insensitive, trimmed)
-                const qPartLetter = (q.partLetter || '').toString().trim().toLowerCase();
-                const qPartName = (q.partName || '').toString().trim().toLowerCase();
+                const qPartLetter = (q.partLetter || '')
+                  .toString()
+                  .trim()
+                  .toLowerCase();
+                const qPartName = (q.partName || '')
+                  .toString()
+                  .trim()
+                  .toLowerCase();
                 const partLetter = part.partLetter.trim().toLowerCase();
                 const partName = part.partName.trim().toLowerCase();
-                
+
                 // Check if question matches this part (case-insensitive)
                 // Since Section 1 and Section 2 are separate papers, all questions in a paper
                 // belong to that section, so we just need to match partLetter/partName
-                const partLetterMatches = 
+                const partLetterMatches =
                   qPartLetter === partLetter ||
                   qPartLetter.includes(partLetter) ||
                   partLetter.includes(qPartLetter);
-                
-                const partNameMatches = 
+
+                const partNameMatches =
                   qPartName === partName ||
                   qPartName.includes(partName) ||
                   partName.includes(qPartName);
@@ -394,14 +446,20 @@ export default function PapersRoadmapPage() {
 
                 if (!partMatches) {
                   // Debug logging for first few non-matching questions
-                  if (paper.paperName === 'Section 2' && questions.indexOf(q) < 3) {
-                    console.log("[roadmap] Section 2 question not matching:", {
+                  if (
+                    paper.paperName === 'Section 2' &&
+                    questions.indexOf(q) < 3
+                  ) {
+                    console.log('[roadmap] Section 2 question not matching:', {
                       questionNumber: q.questionNumber,
                       qPartLetter: q.partLetter,
                       qPartName: q.partName,
-                      partToMatch: { partLetter: part.partLetter, partName: part.partName },
+                      partToMatch: {
+                        partLetter: part.partLetter,
+                        partName: part.partName,
+                      },
                       partLetterMatches,
-                      partNameMatches
+                      partNameMatches,
                     });
                   }
                   return false;
@@ -409,8 +467,9 @@ export default function PapersRoadmapPage() {
 
                 // Apply question range filter if specified (for ENGAA Section 1 Part A split)
                 if (part.questionRange) {
-                  const inRange = q.questionNumber >= part.questionRange.start && 
-                                 q.questionNumber <= part.questionRange.end;
+                  const inRange =
+                    q.questionNumber >= part.questionRange.start &&
+                    q.questionNumber <= part.questionRange.end;
                   if (!inRange) return false;
                 }
 
@@ -422,33 +481,38 @@ export default function PapersRoadmapPage() {
                 return true;
               });
             });
-            
-            console.log("[roadmap] Filtered questions for paper:", {
+
+            console.log('[roadmap] Filtered questions for paper:', {
               paperKey,
               beforeCount: questions.length,
-              afterCount: filtered.length
+              afterCount: filtered.length,
             });
-            
+
             matchingQuestions = [...matchingQuestions, ...filtered];
           }
         }
-        
-        console.log("[roadmap] Total matching questions:", matchingQuestions.length);
+
+        console.log(
+          '[roadmap] Total matching questions:',
+          matchingQuestions.length,
+        );
 
         if (matchingQuestions.length === 0) {
-          console.error("[roadmap] No matching questions found for stage");
+          console.error('[roadmap] No matching questions found for stage');
           return;
         }
 
         // Get question number range
-        const questionNumbers = matchingQuestions.map((q: Question) => q.questionNumber).sort((a: number, b: number) => a - b);
+        const questionNumbers = matchingQuestions
+          .map((q: Question) => q.questionNumber)
+          .sort((a: number, b: number) => a - b);
         const questionStart = questionNumbers[0];
         const questionEnd = questionNumbers[questionNumbers.length - 1];
         const totalQuestions = questionNumbers.length;
 
         // Calculate time (1.48 min per question, or 75 min per section for TMUA)
         let timeLimitMinutes: number;
-        if (paperType === "TMUA") {
+        if (paperType === 'TMUA') {
           timeLimitMinutes = Array.from(allSections).length * 75;
         } else {
           timeLimitMinutes = Math.ceil(totalQuestions * 1.48);
@@ -474,26 +538,63 @@ export default function PapersRoadmapPage() {
         // If we have questions from multiple papers, set them directly
         // Otherwise, use the standard loadQuestions
         if (allPapers.size > 1) {
-          console.log("[roadmap] Multiple papers detected, setting questions directly:", {
-            papersCount: allPapers.size,
-            totalQuestions: matchingQuestions.length,
-            sections: Array.from(allSections)
-          });
+          console.log(
+            '[roadmap] Multiple papers detected, setting questions directly:',
+            {
+              papersCount: allPapers.size,
+              totalQuestions: matchingQuestions.length,
+              sections: Array.from(allSections),
+            },
+          );
           // Set questions directly since we've already loaded and filtered from all papers
           setQuestions(matchingQuestions);
         } else {
           // Single paper - use standard loading
-          console.log("[roadmap] Single paper, using standard loadQuestions");
+          console.log('[roadmap] Single paper, using standard loadQuestions');
           await loadQuestions(primaryPaper.id);
         }
-        
-        router.push("/past-papers/solve");
+
+        router.push('/past-papers/solve');
       } catch (error) {
-        console.error("[roadmap] Error starting stage:", error);
+        console.error('[roadmap] Error starting stage:', error);
       }
     },
-    [router, startSession, loadQuestions]
+    [router, startSession, loadQuestions, setQuestions],
   );
+
+  const handleStartStage = useCallback(
+    async (stage: RoadmapStage, selectedParts: RoadmapPart[]) => {
+      if (await shouldConfirmReplacePaperSession()) {
+        pendingRoadmapStartRef.current = { stage, selectedParts };
+        setReplaceModalOpen(true);
+        return;
+      }
+      await executeStartStage(stage, selectedParts);
+    },
+    [executeStartStage],
+  );
+
+  const handleCancelReplaceSession = useCallback(() => {
+    pendingRoadmapStartRef.current = null;
+    setReplaceModalOpen(false);
+    setReplaceConfirming(false);
+  }, []);
+
+  const handleConfirmReplaceSession = useCallback(async () => {
+    const pending = pendingRoadmapStartRef.current;
+    pendingRoadmapStartRef.current = null;
+    if (!pending) {
+      setReplaceModalOpen(false);
+      return;
+    }
+    setReplaceConfirming(true);
+    try {
+      await executeStartStage(pending.stage, pending.selectedParts);
+    } finally {
+      setReplaceConfirming(false);
+      setReplaceModalOpen(false);
+    }
+  }, [executeStartStage]);
 
   // Refresh completion data
   const refreshCompletionData = useCallback(async () => {
@@ -505,9 +606,10 @@ export default function PapersRoadmapPage() {
 
       if (session?.user?.id) {
         // Sync cache with database on refresh (will use cache if valid)
-        const { syncWithDatabase } = await import('@/lib/papers/completionCache');
+        const { syncWithDatabase } =
+          await import('@/lib/papers/completionCache');
         const completedIds = await syncWithDatabase(session.user.id);
-        
+
         for (const stage of stages) {
           const count = await getStageCompletionCount(session.user.id, stage);
           const parts = await getStageCompletion(session.user.id, stage);
@@ -531,7 +633,7 @@ export default function PapersRoadmapPage() {
 
       setCompletionData(completionMap);
     } catch (error) {
-      console.error("[roadmap] Error refreshing completion data:", error);
+      console.error('[roadmap] Error refreshing completion data:', error);
     }
 
     setLoading(false);
@@ -547,16 +649,18 @@ export default function PapersRoadmapPage() {
   if (loading) {
     return (
       <Container>
-        <PageHeader title="Practice Roadmap" />
-        <div className="py-12 text-center text-white/50">Loading...</div>
+        <PageHeader title='Practice Roadmap' />
+        <div className='py-12 text-center text-white/50'>Loading...</div>
       </Container>
     );
   }
 
   // Limit to first N items for free users
-  const visibleStages = hasFullAccess ? stages : stages.slice(0, FREE_ROADMAP_ITEMS);
+  const visibleStages = hasFullAccess
+    ? stages
+    : stages.slice(0, FREE_ROADMAP_ITEMS);
   const visibleUnlocked = new Set(
-    visibleStages.map((s) => s.id).filter((id) => unlockedStages.has(id))
+    visibleStages.map((s) => s.id).filter((id) => unlockedStages.has(id)),
   );
   const visibleCurrentIndex =
     currentStageIndex !== null && currentStageIndex < visibleStages.length
@@ -585,8 +689,8 @@ export default function PapersRoadmapPage() {
   return (
     <Container>
       {/* Custom Title Section with proper padding */}
-      <div className="pt-8 pb-6">
-        <h1 className="text-2xl font-semibold uppercase tracking-wider text-white/90">
+      <div className='pt-8 pb-6'>
+        <h1 className='text-2xl font-semibold uppercase tracking-wider text-white/90'>
           Practice Roadmap
         </h1>
       </div>
@@ -599,11 +703,11 @@ export default function PapersRoadmapPage() {
       />
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
-      <div className="pt-4 pb-8">
-        <div className="flex gap-8 lg:gap-12">
+      <div className='pt-4 pb-8'>
+        <div className='flex gap-8 lg:gap-12'>
           {/* Left: Timeline (15-20% width, hidden on mobile) */}
-          <div className="w-[18%] flex-shrink-0 hidden lg:block">
-            <div className="sticky top-8">
+          <div className='w-[18%] flex-shrink-0 hidden lg:block'>
+            <div className='sticky top-8'>
               <RoadmapTimeline
                 stages={visibleStages}
                 nodePositions={nodePositions}
@@ -613,7 +717,7 @@ export default function PapersRoadmapPage() {
           </div>
 
           {/* Right: Roadmap List (80-85% width, full width on mobile) */}
-          <div className="flex-1 min-w-0 lg:w-[82%]">
+          <div className='flex-1 min-w-0 lg:w-[82%]'>
             <RoadmapList
               nodes={timelineNodes}
               completionData={completionData}
@@ -622,14 +726,20 @@ export default function PapersRoadmapPage() {
               timelineNodePositions={nodePositions}
             />
             {!hasFullAccess && (
-              <div className="mt-8">
-                <UpgradeCTA feature="the full roadmap" />
+              <div className='mt-8'>
+                <UpgradeCTA feature='the full roadmap' />
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <ReplaceActivePaperModal
+        open={replaceModalOpen}
+        onCancel={handleCancelReplaceSession}
+        onConfirm={handleConfirmReplaceSession}
+        isConfirming={replaceConfirming}
+      />
     </Container>
   );
 }
-

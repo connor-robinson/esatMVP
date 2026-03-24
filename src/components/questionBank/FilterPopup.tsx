@@ -1,50 +1,94 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { X, Search, ChevronDown, Play } from "lucide-react";
-import type { TestTypeFilter, SubjectFilter, DifficultyFilter, AttemptedFilter, AttemptResultFilter, QuestionBankFilters } from "@/types/questionBank";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useMemo } from 'react';
+import { X, Search, ChevronDown, Play } from 'lucide-react';
+import type {
+  TestTypeFilter,
+  SubjectFilter,
+  DifficultyFilter,
+  AttemptedFilter,
+  AttemptResultFilter,
+  QuestionBankFilters,
+} from '@/types/questionBank';
+import { cn } from '@/lib/utils';
+import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 
 interface FilterPopupProps {
   isOpen: boolean;
   onClose: () => void;
   filters: QuestionBankFilters;
   onFilterChange: (filters: QuestionBankFilters) => void;
-  onStartSession?: (config: { count: number; topics: string[]; difficulties: string[] }) => void;
+  onStartSession?: (config: {
+    count: number;
+    topics: string[];
+    difficulties: string[];
+  }) => void;
 }
 
-const subjectTypeOptions: ('ESAT' | 'TMUA' | 'BOTH')[] = ['ESAT', 'TMUA', 'BOTH'];
-const esatSubjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
+const subjectTypeOptions: ('ESAT' | 'TMUA' | 'BOTH')[] = [
+  'ESAT',
+  'TMUA',
+  'BOTH',
+];
+const esatSubjects: SubjectFilter[] = [
+  'Math 1',
+  'Math 2',
+  'Physics',
+  'Chemistry',
+  'Biology',
+];
 const tmuaSubjects: SubjectFilter[] = ['Paper 1', 'Paper 2'];
 const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
-const attemptResults: AttemptResultFilter[] = ['Mixed Results', 'Unseen', 'Incorrect Before'];
+const attemptResults: AttemptResultFilter[] = [
+  'Mixed Results',
+  'Unseen',
+  'Incorrect Before',
+];
 
 // Used only if /api/question-bank/topic-tags returns empty
 const FALLBACK_TOPIC_TAGS = [
-  'Calculus', 'Algebra', 'Trigonometry', 'Geometry', 'Statistics', 'Probability',
-  'Kinematics', 'Dynamics', 'Energy', 'Waves', 'Electricity', 'Magnetism',
-  'Organic Chemistry', 'Inorganic Chemistry', 'Physical Chemistry', 'Analytical Chemistry',
-  'Cell Biology', 'Genetics', 'Evolution', 'Ecology', 'Physiology', 'Anatomy',
+  'Calculus',
+  'Algebra',
+  'Trigonometry',
+  'Geometry',
+  'Statistics',
+  'Probability',
+  'Kinematics',
+  'Dynamics',
+  'Energy',
+  'Waves',
+  'Electricity',
+  'Magnetism',
+  'Organic Chemistry',
+  'Inorganic Chemistry',
+  'Physical Chemistry',
+  'Analytical Chemistry',
+  'Cell Biology',
+  'Genetics',
+  'Evolution',
+  'Ecology',
+  'Physiology',
+  'Anatomy',
 ];
 
 // Subject colors - borderless version (using signature colors from config/colors.ts)
 const subjectColors: Record<SubjectFilter, string> = {
-  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
+  All: 'bg-white/10 hover:bg-white/15 text-white/90',
   'Math 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
   'Math 2': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
-  'Physics': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
-  'Chemistry': 'bg-[#854952]/20 hover:bg-[#854952]/30 text-[#ef7d7d]',
-  'Biology': 'bg-[#506141]/20 hover:bg-[#506141]/30 text-[#85BC82]',
+  Physics: 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
+  Chemistry: 'bg-[#854952]/20 hover:bg-[#854952]/30 text-[#ef7d7d]',
+  Biology: 'bg-[#506141]/20 hover:bg-[#506141]/30 text-[#85BC82]',
   'Paper 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
   'Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
 };
 
 // Subject type colors (ESAT/TMUA/BOTH)
 const subjectTypeColors: Record<'ESAT' | 'TMUA' | 'BOTH', string> = {
-  'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0]',
-  'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa]',
-  'BOTH': 'bg-white/10 hover:bg-white/15 text-white/90',
+  ESAT: 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0]',
+  TMUA: 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa]',
+  BOTH: 'bg-white/10 hover:bg-white/15 text-white/90',
 };
 
 export function FilterPopup({
@@ -59,7 +103,11 @@ export function FilterPopup({
   const [sessionMode, setSessionMode] = useState(false);
   const [sessionCount, setSessionCount] = useState(20);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(['Easy', 'Medium', 'Hard']);
+  const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>([
+    'Easy',
+    'Medium',
+    'Hard',
+  ]);
   const [dbTopicTags, setDbTopicTags] = useState<string[]>([]);
   const [dbTopicOptions, setDbTopicOptions] = useState<
     Array<{ value: string; label: string }>
@@ -76,15 +124,28 @@ export function FilterPopup({
     return m;
   }, [dbTopicOptions]);
 
+  const topicRowLabel = (topic: string) => {
+    const fromMap = topicOptionMap.get(topic);
+    if (fromMap && fromMap.trim() && fromMap !== topic) return fromMap;
+    const fb = labelForQuestionBankTag(topic);
+    if (fb && fb !== topic) return fb;
+    return fromMap || topic;
+  };
+
   useEffect(() => {
     if (!isOpen) return;
     setTopicTagsLoading(true);
     fetch('/api/question-bank/topic-tags')
       .then((r) => (r.ok ? r.json() : { tags: [] }))
-      .then((d: { tags?: string[]; options?: Array<{ value: string; label: string }> }) => {
-        setDbTopicTags(Array.isArray(d.tags) ? d.tags : []);
-        setDbTopicOptions(Array.isArray(d.options) ? d.options : []);
-      })
+      .then(
+        (d: {
+          tags?: string[];
+          options?: Array<{ value: string; label: string }>;
+        }) => {
+          setDbTopicTags(Array.isArray(d.tags) ? d.tags : []);
+          setDbTopicOptions(Array.isArray(d.options) ? d.options : []);
+        },
+      )
       .catch(() => {
         setDbTopicTags([]);
         setDbTopicOptions([]);
@@ -115,7 +176,12 @@ export function FilterPopup({
   const selectedAttemptResults = getSelectedAttemptResults();
 
   // Determine subject type from testType filter
-  const subjectType: 'ESAT' | 'TMUA' | 'BOTH' = filters.testType === 'ESAT' ? 'ESAT' : filters.testType === 'TMUA' ? 'TMUA' : 'BOTH';
+  const subjectType: 'ESAT' | 'TMUA' | 'BOTH' =
+    filters.testType === 'ESAT'
+      ? 'ESAT'
+      : filters.testType === 'TMUA'
+        ? 'TMUA'
+        : 'BOTH';
 
   // Get available subjects based on subject type
   const availableSubjects = useMemo(() => {
@@ -155,16 +221,24 @@ export function FilterPopup({
         onFilterChange({ ...filters, attemptResult: ['Mixed Results'] });
       } else {
         // Remove "Unseen" if it's selected (not available for Attempted)
-        const filtered = selectedAttemptResults.filter(r => r !== 'Unseen');
+        const filtered = selectedAttemptResults.filter((r) => r !== 'Unseen');
         if (filtered.length !== selectedAttemptResults.length) {
-          onFilterChange({ ...filters, attemptResult: filtered.length > 0 ? filtered : ['Mixed Results'] });
+          onFilterChange({
+            ...filters,
+            attemptResult: filtered.length > 0 ? filtered : ['Mixed Results'],
+          });
         }
       }
     } else {
       // For "Mix", remove any invalid selections (shouldn't happen, but just in case)
-      const validResults = selectedAttemptResults.filter(r => availableAttemptResults.includes(r));
+      const validResults = selectedAttemptResults.filter((r) =>
+        availableAttemptResults.includes(r),
+      );
       if (validResults.length !== selectedAttemptResults.length) {
-        onFilterChange({ ...filters, attemptResult: validResults.length > 0 ? validResults : [] });
+        onFilterChange({
+          ...filters,
+          attemptResult: validResults.length > 0 ? validResults : [],
+        });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -173,12 +247,12 @@ export function FilterPopup({
   // Prevent scrolling on body when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 
@@ -199,17 +273,23 @@ export function FilterPopup({
   const toggleSubject = (subject: SubjectFilter) => {
     const current = getSelectedSubjects();
     const newSubjects = current.includes(subject)
-      ? current.filter(s => s !== subject)
+      ? current.filter((s) => s !== subject)
       : [...current, subject];
-    onFilterChange({ ...filters, subject: newSubjects.length > 0 ? newSubjects : 'All' });
+    onFilterChange({
+      ...filters,
+      subject: newSubjects.length > 0 ? newSubjects : 'All',
+    });
   };
 
   const toggleDifficulty = (difficulty: DifficultyFilter) => {
     const current = getSelectedDifficulties();
     const newDifficulties = current.includes(difficulty)
-      ? current.filter(d => d !== difficulty)
+      ? current.filter((d) => d !== difficulty)
       : [...current, difficulty];
-    onFilterChange({ ...filters, difficulty: newDifficulties.length > 0 ? newDifficulties : 'All' });
+    onFilterChange({
+      ...filters,
+      difficulty: newDifficulties.length > 0 ? newDifficulties : 'All',
+    });
   };
 
   const handleAttemptedStatusChange = (attemptedStatus: AttemptedFilter) => {
@@ -219,13 +299,19 @@ export function FilterPopup({
   const toggleAttemptResult = (attemptResult: AttemptResultFilter) => {
     const current = getSelectedAttemptResults();
     const newResults = current.includes(attemptResult)
-      ? current.filter(r => r !== attemptResult)
+      ? current.filter((r) => r !== attemptResult)
       : [...current, attemptResult];
-    onFilterChange({ ...filters, attemptResult: newResults.length > 0 ? newResults : [] });
+    onFilterChange({
+      ...filters,
+      attemptResult: newResults.length > 0 ? newResults : [],
+    });
   };
 
   const selectAllSubjects = () => {
-    onFilterChange({ ...filters, subject: availableSubjects as SubjectFilter[] });
+    onFilterChange({
+      ...filters,
+      subject: availableSubjects as SubjectFilter[],
+    });
   };
 
   const clearAllSubjects = () => {
@@ -260,18 +346,16 @@ export function FilterPopup({
   };
 
   const toggleTopic = (topic: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topic) 
-        ? prev.filter(t => t !== topic)
-        : [...prev, topic]
+    setSelectedTopics((prev) =>
+      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic],
     );
   };
 
   const toggleSessionDifficulty = (difficulty: string) => {
-    setSelectedDifficulties(prev => 
-      prev.includes(difficulty) 
-        ? prev.filter(d => d !== difficulty)
-        : [...prev, difficulty]
+    setSelectedDifficulties((prev) =>
+      prev.includes(difficulty)
+        ? prev.filter((d) => d !== difficulty)
+        : [...prev, difficulty],
     );
   };
 
@@ -287,46 +371,48 @@ export function FilterPopup({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className='fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8'>
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      <div
+        className='absolute inset-0 bg-black/60 backdrop-blur-sm'
         onClick={onClose}
       />
 
       {/* Modal Content */}
-      <div className="relative bg-neutral-900 rounded-organic-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className='relative bg-neutral-900 rounded-organic-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col'>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 bg-white/[0.02] border-b border-white/10">
-          <h2 className="text-xl font-semibold uppercase tracking-wider text-white/70">Filter & Settings</h2>
+        <div className='flex items-center justify-between p-6 bg-white/[0.02] border-b border-white/10'>
+          <h2 className='text-xl font-semibold uppercase tracking-wider text-white/70'>
+            Filter & Settings
+          </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-            aria-label="Close filters"
+            className='w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors'
+            aria-label='Close filters'
           >
-            <X className="w-5 h-5 text-white/70" />
+            <X className='w-5 h-5 text-white/70' />
           </button>
         </div>
 
         {/* Content Area - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+        <div className='flex-1 overflow-y-auto p-6 space-y-8'>
           {/* Subject Type Filter (ESAT/TMUA/BOTH) */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
+            <div className='flex items-center justify-between mb-3'>
+              <label className='block text-xs font-medium text-white/50 uppercase tracking-wide'>
                 Subject
               </label>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className='flex flex-wrap gap-2'>
               {subjectTypeOptions.map((type) => (
                 <button
                   key={type}
                   onClick={() => handleSubjectTypeChange(type)}
                   className={cn(
-                    "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                    'px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature',
                     subjectType === type
-                      ? subjectTypeColors[type] + " scale-105"
-                      : "bg-white/5 hover:bg-white/10 text-white/60"
+                      ? subjectTypeColors[type] + ' scale-105'
+                      : 'bg-white/5 hover:bg-white/10 text-white/60',
                   )}
                 >
                   {type}
@@ -337,44 +423,50 @@ export function FilterPopup({
 
           {/* Topics Filter (Math 1, Math 2, etc.) */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
+            <div className='flex items-center justify-between mb-3'>
+              <label className='block text-xs font-medium text-white/50 uppercase tracking-wide'>
                 Topics
               </label>
-              <div className="flex gap-2">
+              <div className='flex gap-2'>
                 {selectedSubjects.length > 0 ? (
                   <button
                     onClick={clearAllSubjects}
-                    className="px-3 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                    className='px-3 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                   >
                     Clear All
                   </button>
                 ) : (
                   <button
-                    onClick={() => onFilterChange({ ...filters, subject: availableSubjects as SubjectFilter[] })}
-                    className="px-3 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                    onClick={() =>
+                      onFilterChange({
+                        ...filters,
+                        subject: availableSubjects as SubjectFilter[],
+                      })
+                    }
+                    className='px-3 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                   >
                     Select All
                   </button>
                 )}
               </div>
             </div>
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className='flex flex-wrap gap-2 items-center'>
               {availableSubjects.map((subject, index) => {
                 // Show separator after ESAT subjects when BOTH is selected
-                const showSeparator = subjectType === 'BOTH' && index === esatSubjects.length;
+                const showSeparator =
+                  subjectType === 'BOTH' && index === esatSubjects.length;
                 return (
-                  <div key={subject} className="flex items-center gap-2">
+                  <div key={subject} className='flex items-center gap-2'>
                     {showSeparator && (
-                      <span className="text-white/30 text-lg font-bold">|</span>
+                      <span className='text-white/30 text-lg font-bold'>|</span>
                     )}
                     <button
                       onClick={() => toggleSubject(subject)}
                       className={cn(
-                        "px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                        'px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature',
                         selectedSubjects.includes(subject)
-                          ? subjectColors[subject] + " scale-105"
-                          : "bg-white/5 hover:bg-white/10 text-white/60"
+                          ? subjectColors[subject] + ' scale-105'
+                          : 'bg-white/5 hover:bg-white/10 text-white/60',
                       )}
                     >
                       {subject}
@@ -386,48 +478,53 @@ export function FilterPopup({
           </div>
 
           {/* Difficulty, Attempted Status, Review Status */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             {/* Difficulty Filter */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
+              <div className='flex items-center justify-between mb-3'>
+                <label className='block text-xs font-medium text-white/50 uppercase tracking-wide'>
                   Difficulty
                 </label>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   {selectedDifficultiesFilter.length > 0 ? (
                     <button
                       onClick={clearAllDifficulties}
-                      className="px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                      className='px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                     >
                       Clear
                     </button>
                   ) : (
                     <button
                       onClick={selectAllDifficulties}
-                      className="px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                      className='px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                     >
                       All
                     </button>
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className='flex flex-col gap-2'>
                 {difficulties.map((difficulty) => {
-                  const isSelected = selectedDifficultiesFilter.includes(difficulty);
+                  const isSelected =
+                    selectedDifficultiesFilter.includes(difficulty);
                   const getDifficultyColor = () => {
-                    if (!isSelected) return "bg-white/5 hover:bg-white/10 text-white/60";
-                    if (difficulty === 'Easy') return "bg-[#506141]/20 text-[#85BC82]";
-                    if (difficulty === 'Medium') return "bg-[#967139]/20 text-[#b8a066]";
-                    if (difficulty === 'Hard') return "bg-[#854952]/20 text-[#ef7d7d]";
-                    return "bg-white/5 hover:bg-white/10 text-white/60";
+                    if (!isSelected)
+                      return 'bg-white/5 hover:bg-white/10 text-white/60';
+                    if (difficulty === 'Easy')
+                      return 'bg-[#506141]/20 text-[#85BC82]';
+                    if (difficulty === 'Medium')
+                      return 'bg-[#967139]/20 text-[#b8a066]';
+                    if (difficulty === 'Hard')
+                      return 'bg-[#854952]/20 text-[#ef7d7d]';
+                    return 'bg-white/5 hover:bg-white/10 text-white/60';
                   };
                   return (
                     <button
                       key={difficulty}
                       onClick={() => toggleDifficulty(difficulty)}
                       className={cn(
-                        "w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left",
-                        getDifficultyColor()
+                        'w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left',
+                        getDifficultyColor(),
                       )}
                     >
                       {difficulty}
@@ -439,19 +536,19 @@ export function FilterPopup({
 
             {/* Attempted Status Filter */}
             <div>
-              <label className="block text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">
+              <label className='block text-xs font-medium text-white/50 mb-3 uppercase tracking-wide'>
                 User Status
               </label>
-              <div className="flex flex-col gap-2">
+              <div className='flex flex-col gap-2'>
                 {attemptedStatuses.map((status) => (
                   <button
                     key={status}
                     onClick={() => handleAttemptedStatusChange(status)}
                     className={cn(
-                      "w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left",
+                      'w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left',
                       filters.attemptedStatus === status
-                        ? "bg-primary/20 text-primary"
-                        : "bg-white/5 hover:bg-white/10 text-white/60"
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-white/5 hover:bg-white/10 text-white/60',
                     )}
                   >
                     {status}
@@ -462,15 +559,15 @@ export function FilterPopup({
 
             {/* Attempt Result Filter */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-xs font-medium text-white/50 uppercase tracking-wide">
+              <div className='flex items-center justify-between mb-3'>
+                <label className='block text-xs font-medium text-white/50 uppercase tracking-wide'>
                   Attempt Result
                 </label>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   {selectedAttemptResults.length > 0 ? (
                     <button
                       onClick={clearAllAttemptResults}
-                      className="px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                      className='px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                     >
                       Clear
                     </button>
@@ -478,7 +575,7 @@ export function FilterPopup({
                     availableAttemptResults.length > 1 && (
                       <button
                         onClick={selectAllAttemptResults}
-                        className="px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors"
+                        className='px-2 py-1 text-xs font-medium text-white/50 hover:text-white/70 transition-colors'
                       >
                         All
                       </button>
@@ -486,21 +583,22 @@ export function FilterPopup({
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className='flex flex-col gap-2'>
                 {availableAttemptResults.map((result) => {
                   const isSelected = selectedAttemptResults.includes(result);
-                  const isDisabled = filters.attemptedStatus === 'New' && result === 'Unseen';
+                  const isDisabled =
+                    filters.attemptedStatus === 'New' && result === 'Unseen';
                   return (
                     <button
                       key={result}
                       onClick={() => !isDisabled && toggleAttemptResult(result)}
                       disabled={isDisabled}
                       className={cn(
-                        "w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left",
+                        'w-full px-4 py-2.5 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature text-left',
                         isSelected
-                          ? "bg-white/20 text-white/70"
-                          : "bg-white/5 hover:bg-white/10 text-white/60",
-                        isDisabled && "opacity-50 cursor-not-allowed"
+                          ? 'bg-white/20 text-white/70'
+                          : 'bg-white/5 hover:bg-white/10 text-white/60',
+                        isDisabled && 'opacity-50 cursor-not-allowed',
                       )}
                     >
                       {result}
@@ -513,50 +611,62 @@ export function FilterPopup({
 
           {/* Topic Selector */}
           <div>
-            <label className="block text-xs font-medium text-white/50 mb-3 uppercase tracking-wide">
+            <label className='block text-xs font-medium text-white/50 mb-3 uppercase tracking-wide'>
               Topic
             </label>
-            <div className="relative">
+            <div className='relative'>
               <button
                 onClick={() => setShowTopicDropdown(!showTopicDropdown)}
-                className="w-full px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-organic-md text-sm text-white/90 transition-all duration-fast text-left flex items-center justify-between"
+                className='w-full px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-organic-md text-sm text-white/90 transition-all duration-fast text-left flex items-center justify-between'
               >
-                <span className="truncate">{searchInput || 'Select or search topics...'}</span>
-                <ChevronDown className={cn("w-4 h-4 text-white/40 transition-transform", showTopicDropdown && "rotate-180")} />
+                <span className='truncate'>
+                  {searchInput || 'Select or search topics...'}
+                </span>
+                <ChevronDown
+                  className={cn(
+                    'w-4 h-4 text-white/40 transition-transform',
+                    showTopicDropdown && 'rotate-180',
+                  )}
+                />
               </button>
-              
+
               {showTopicDropdown && (
-                <div className="absolute z-50 w-full mt-2 bg-neutral-800 rounded-organic-md shadow-xl max-h-60 overflow-y-auto">
-                  <div className="sticky top-0 bg-neutral-800 p-2 border-b border-white/10">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                <div className='absolute z-50 w-full mt-2 bg-neutral-800 rounded-organic-md shadow-xl max-h-60 overflow-y-auto'>
+                  <div className='sticky top-0 bg-neutral-800 p-2 border-b border-white/10'>
+                    <div className='relative'>
+                      <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40' />
                       <input
-                        type="text"
+                        type='text'
                         value={searchInput}
                         onChange={(e) => handleSearchChange(e.target.value)}
-                        placeholder="Search or type custom topic..."
-                        className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-md text-sm text-white/90 placeholder:text-white/40 focus:bg-white/10 focus:border-primary/30 focus:outline-none"
+                        placeholder='Search or type custom topic...'
+                        className='w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-md text-sm text-white/90 placeholder:text-white/40 focus:bg-white/10 focus:border-primary/30 focus:outline-none'
                         onClick={(e) => e.stopPropagation()}
                       />
                     </div>
                   </div>
-                  
-                  <div className="p-1">
-                    {searchInput && !topicValues.some(t => t.toLowerCase() === searchInput.toLowerCase()) && (
-                      <button
-                        onClick={() => handleTopicSelect(searchInput)}
-                        className="w-full px-3 py-2 text-left text-sm text-primary hover:bg-white/5 rounded-md transition-colors"
-                      >
-                        Use &quot;{searchInput}&quot;
-                      </button>
-                    )}
+
+                  <div className='p-1'>
+                    {searchInput &&
+                      !topicValues.some(
+                        (t) => t.toLowerCase() === searchInput.toLowerCase(),
+                      ) && (
+                        <button
+                          onClick={() => handleTopicSelect(searchInput)}
+                          className='w-full px-3 py-2 text-left text-sm text-primary hover:bg-white/5 rounded-md transition-colors'
+                        >
+                          Use &quot;{searchInput}&quot;
+                        </button>
+                      )}
                     {topicTagsLoading && dbTopicTags.length === 0 && (
-                      <div className="px-3 py-2 text-xs text-white/40">Loading topics…</div>
+                      <div className='px-3 py-2 text-xs text-white/40'>
+                        Loading topics…
+                      </div>
                     )}
                     {topicValues
                       .filter((topic) => {
                         if (!searchInput) return true;
-                        const label = topicOptionMap.get(topic) || topic;
+                        const label = topicRowLabel(topic);
                         const s = searchInput.toLowerCase();
                         return (
                           topic.toLowerCase().includes(s) ||
@@ -567,9 +677,9 @@ export function FilterPopup({
                         <button
                           key={topic}
                           onClick={() => handleTopicSelect(topic)}
-                          className="w-full px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5 rounded-md transition-colors"
+                          className='w-full px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5 rounded-md transition-colors'
                         >
-                          {topicOptionMap.get(topic) || topic}
+                          {topicRowLabel(topic)}
                         </button>
                       ))}
                   </div>
@@ -579,43 +689,49 @@ export function FilterPopup({
           </div>
 
           {/* Session Mode Section */}
-          <div className="pt-6 border-t border-white/10">
-            <div className="flex items-center justify-between mb-4">
+          <div className='pt-6 border-t border-white/10'>
+            <div className='flex items-center justify-between mb-4'>
               <div>
-                <h3 className="text-sm font-semibold text-white/90 mb-1">Random Questions Session</h3>
-                <p className="text-xs text-white/50">Practice with a set of random questions</p>
+                <h3 className='text-sm font-semibold text-white/90 mb-1'>
+                  Random Questions Session
+                </h3>
+                <p className='text-xs text-white/50'>
+                  Practice with a set of random questions
+                </p>
               </div>
               <button
                 onClick={() => setSessionMode(!sessionMode)}
                 className={cn(
-                  "relative w-12 h-6 rounded-full transition-all duration-fast ease-signature",
-                  sessionMode ? "bg-primary" : "bg-white/10"
+                  'relative w-12 h-6 rounded-full transition-all duration-fast ease-signature',
+                  sessionMode ? 'bg-primary' : 'bg-white/10',
                 )}
               >
-                <div className={cn(
-                  "absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all duration-fast ease-signature",
-                  sessionMode ? "translate-x-6" : "translate-x-0"
-                )} />
+                <div
+                  className={cn(
+                    'absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all duration-fast ease-signature',
+                    sessionMode ? 'translate-x-6' : 'translate-x-0',
+                  )}
+                />
               </button>
             </div>
 
             {sessionMode && (
-              <div className="space-y-4 bg-white/5 rounded-organic-md p-4">
+              <div className='space-y-4 bg-white/5 rounded-organic-md p-4'>
                 {/* Number of Questions */}
                 <div>
-                  <label className="block text-xs font-medium text-white/70 mb-2">
+                  <label className='block text-xs font-medium text-white/70 mb-2'>
                     Number of Questions
                   </label>
-                  <div className="flex gap-2">
+                  <div className='flex gap-2'>
                     {[10, 20, 50, 100].map((count) => (
                       <button
                         key={count}
                         onClick={() => setSessionCount(count)}
                         className={cn(
-                          "flex-1 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                          'flex-1 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature',
                           sessionCount === count
-                            ? "bg-primary/20 text-primary"
-                            : "bg-white/5 hover:bg-white/10 text-white/60"
+                            ? 'bg-primary/20 text-primary'
+                            : 'bg-white/5 hover:bg-white/10 text-white/60',
                         )}
                       >
                         {count}
@@ -626,19 +742,19 @@ export function FilterPopup({
 
                 {/* Topic Selection (Multi-select) */}
                 <div>
-                  <label className="block text-xs font-medium text-white/70 mb-2">
+                  <label className='block text-xs font-medium text-white/70 mb-2'>
                     Topics (Optional - leave empty for all)
                   </label>
-                  <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                  <div className='flex flex-wrap gap-2 max-h-32 overflow-y-auto'>
                     {topicValues.map((topic) => (
                       <button
                         key={topic}
                         onClick={() => toggleTopic(topic)}
                         className={cn(
-                          "px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all duration-fast ease-signature",
+                          'px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all duration-fast ease-signature',
                           selectedTopics.includes(topic)
-                            ? "bg-primary/20 text-primary"
-                            : "bg-white/5 hover:bg-white/10 text-white/60"
+                            ? 'bg-primary/20 text-primary'
+                            : 'bg-white/5 hover:bg-white/10 text-white/60',
                         )}
                       >
                         {topicOptionMap.get(topic) || topic}
@@ -649,19 +765,19 @@ export function FilterPopup({
 
                 {/* Difficulty Selection (Multi-select) */}
                 <div>
-                  <label className="block text-xs font-medium text-white/70 mb-2">
+                  <label className='block text-xs font-medium text-white/70 mb-2'>
                     Difficulties
                   </label>
-                  <div className="flex gap-2">
+                  <div className='flex gap-2'>
                     {['Easy', 'Medium', 'Hard'].map((difficulty) => (
                       <button
                         key={difficulty}
                         onClick={() => toggleSessionDifficulty(difficulty)}
                         className={cn(
-                          "flex-1 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature",
+                          'flex-1 px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature',
                           selectedDifficulties.includes(difficulty)
-                            ? "bg-primary/20 text-primary"
-                            : "bg-white/5 hover:bg-white/10 text-white/60"
+                            ? 'bg-primary/20 text-primary'
+                            : 'bg-white/5 hover:bg-white/10 text-white/60',
                         )}
                       >
                         {difficulty}
@@ -673,9 +789,9 @@ export function FilterPopup({
                 {/* Start Session Button */}
                 <button
                   onClick={handleStartSession}
-                  className="w-full mt-4 px-6 py-3 bg-primary text-neutral-900 rounded-organic-md font-semibold hover:bg-primary-hover transition-all duration-fast ease-signature flex items-center justify-center gap-2"
+                  className='w-full mt-4 px-6 py-3 bg-primary text-neutral-900 rounded-organic-md font-semibold hover:bg-primary-hover transition-all duration-fast ease-signature flex items-center justify-center gap-2'
                 >
-                  <Play className="w-4 h-4" />
+                  <Play className='w-4 h-4' />
                   Start Session
                 </button>
               </div>
@@ -684,10 +800,10 @@ export function FilterPopup({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/10 bg-white/[0.02] flex justify-end">
+        <div className='p-4 border-t border-white/10 bg-white/[0.02] flex justify-end'>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white/90 rounded-organic-md font-medium transition-all duration-fast text-sm"
+            className='px-6 py-2 bg-white/5 hover:bg-white/10 text-white/90 rounded-organic-md font-medium transition-all duration-fast text-sm'
           >
             Done
           </button>
