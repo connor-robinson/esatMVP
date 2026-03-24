@@ -446,12 +446,12 @@ export default function PapersRoadmapPage() {
         const questionEnd = questionNumbers[questionNumbers.length - 1];
         const totalQuestions = questionNumbers.length;
 
-        // Calculate time (1.5 min per question, or 75 min per section for TMUA)
+        // Calculate time (1.48 min per question, or 75 min per section for TMUA)
         let timeLimitMinutes: number;
         if (paperType === "TMUA") {
           timeLimitMinutes = Array.from(allSections).length * 75;
         } else {
-          timeLimitMinutes = Math.ceil(totalQuestions * 1.5);
+          timeLimitMinutes = Math.ceil(totalQuestions * 1.48);
         }
 
         // Create variant string (use primary paper for metadata)

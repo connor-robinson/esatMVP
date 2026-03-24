@@ -939,25 +939,6 @@ export default function PapersSolvePage() {
     return 'default';
   };
 
-  if (!sessionId) {
-    return (
-      <Container size='lg'>
-        <div className='text-center py-12'>
-          <div className='text-neutral-400'>
-            No active session found. Please start a new session.
-          </div>
-          <Button
-            variant='primary'
-            className='mt-4'
-            onClick={() => router.push('/papers/library')}
-          >
-            Start New Session
-          </Button>
-        </div>
-      </Container>
-    );
-  }
-
   // Update URL based on current state for better tracking
   useEffect(() => {
     if (!sessionId) return;
@@ -986,6 +967,25 @@ export default function PapersSolvePage() {
       window.history.replaceState({}, '', newPath);
     }
   }, [sessionId, isMarkingInfo, sectionInstructionTimer, isSectionMode]);
+
+  if (!sessionId) {
+    return (
+      <Container size='lg'>
+        <div className='text-center py-12'>
+          <div className='text-neutral-400'>
+            No active session found. Please start a new session.
+          </div>
+          <Button
+            variant='primary'
+            className='mt-4'
+            onClick={() => router.push('/papers/library')}
+          >
+            Start New Session
+          </Button>
+        </div>
+      </Container>
+    );
+  }
 
   // Show marking info page if active
   if (isMarkingInfo) {

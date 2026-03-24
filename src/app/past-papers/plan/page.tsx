@@ -245,12 +245,12 @@ export default function PapersPlanPage() {
       const questionStart = questionNumbers[0];
       const questionEnd = questionNumbers[questionNumbers.length - 1];
 
-      // Calculate time limit (1.5 min per question, or 75 min per section for TMUA)
+      // Calculate time limit (1.48 min per question, or 75 min per section for TMUA)
       let timeLimitMinutes: number;
       if (paperType === "TMUA") {
         timeLimitMinutes = selectedSections.length * 75;
       } else {
-        timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.5);
+        timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
       }
 
       // Create variant string

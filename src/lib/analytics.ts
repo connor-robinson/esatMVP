@@ -19,6 +19,9 @@ import {
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 
+/** Used when a drill question has no topicId so session totals match per-topic stats and DB saves */
+export const SESSION_FALLBACK_TOPIC_ID = "__session_general__";
+
 /**
  * Fetch topic rankings (Personal and Global)
  * Returns ALL attempts sorted by score

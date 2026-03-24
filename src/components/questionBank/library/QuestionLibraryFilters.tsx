@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
@@ -57,6 +58,11 @@ export function QuestionLibraryFilters({
   }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [dropdownRect, setDropdownRect] = useState<{
+      top: number;
+      left: number;
+      width: number;
+    } | null>(null);
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -68,6 +74,28 @@ export function QuestionLibraryFilters({
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+      if (!isOpen || !dropdownRef.current) return;
+
+      const updatePosition = () => {
+        if (!dropdownRef.current) return;
+        const rect = dropdownRef.current.getBoundingClientRect();
+        setDropdownRect({
+          top: rect.bottom + 8,
+          left: rect.left,
+          width: rect.width,
+        });
+      };
+
+      updatePosition();
+      window.addEventListener("resize", updatePosition);
+      window.addEventListener("scroll", updatePosition, true);
+      return () => {
+        window.removeEventListener("resize", updatePosition);
+        window.removeEventListener("scroll", updatePosition, true);
+      };
+    }, [isOpen]);
 
     const getSelectedLabel = () => {
       if (value === "ALL") return placeholder;
@@ -95,62 +123,71 @@ export function QuestionLibraryFilters({
           />
         </button>
 
-        <AnimatePresence>
-          {isOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setIsOpen(false)}
-              />
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-full mt-2 w-full bg-white/5 backdrop-blur-xl rounded-lg shadow-2xl z-50 overflow-hidden"
-              >
-                <div className="max-h-60 overflow-y-auto">
-                  {options.map((option) => {
-                    const isSelected = value === "ALL" 
-                      ? option.value === "ALL"
-                      : Array.isArray(value)
-                        ? value.includes(option.value as string)
-                        : value === option.value;
-                    
-                    return (
-                      <button
-                        key={String(option.value)}
-                        type="button"
-                        onClick={() => {
-                          if (option.value === "ALL") {
-                            onChange("ALL");
-                          } else if (Array.isArray(value)) {
-                            const newValue = isSelected
-                              ? value.filter(v => v !== option.value)
-                              : [...value, option.value as string];
-                            onChange(newValue.length > 0 ? newValue : "ALL");
-                          } else {
-                            onChange(option.value);
-                          }
-                          setIsOpen(false);
-                        }}
-                        className={cn(
-                          "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
-                          isSelected
-                            ? "bg-white/10 text-white"
-                            : "text-white/70 hover:bg-white/5 hover:text-white"
-                        )}
-                      >
-                        {isSelected && <span className="text-primary">✓</span>}
-                        {option.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            </>
+        {typeof window !== "undefined" &&
+          createPortal(
+            <AnimatePresence>
+              {isOpen && dropdownRect && (
+                <>
+                  <div
+                    className="fixed inset-0 z-[9998]"
+                    onClick={() => setIsOpen(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.16 }}
+                    className="fixed bg-[#1b2028] border border-white/15 rounded-lg shadow-2xl z-[9999] overflow-hidden"
+                    style={{
+                      top: dropdownRect.top,
+                      left: dropdownRect.left,
+                      width: dropdownRect.width,
+                    }}
+                  >
+                    <div className="max-h-60 overflow-y-auto">
+                      {options.map((option) => {
+                        const isSelected = value === "ALL"
+                          ? option.value === "ALL"
+                          : Array.isArray(value)
+                            ? value.includes(option.value as string)
+                            : value === option.value;
+
+                        return (
+                          <button
+                            key={String(option.value)}
+                            type="button"
+                            onClick={() => {
+                              if (option.value === "ALL") {
+                                onChange("ALL");
+                              } else if (Array.isArray(value)) {
+                                const newValue = isSelected
+                                  ? value.filter(v => v !== option.value)
+                                  : [...value, option.value as string];
+                                onChange(newValue.length > 0 ? newValue : "ALL");
+                              } else {
+                                onChange(option.value);
+                              }
+                              setIsOpen(false);
+                            }}
+                            className={cn(
+                              "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2 bg-[#1b2028]",
+                              isSelected
+                                ? "text-white ring-1 ring-primary/40"
+                                : "text-white/85 hover:bg-[#232b36] hover:text-white"
+                            )}
+                          >
+                            {isSelected && <span className="text-primary">✓</span>}
+                            {option.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>,
+            document.body
           )}
-        </AnimatePresence>
       </div>
     );
   };

@@ -106,12 +106,8 @@ export function Navbar() {
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
 
-  // Render progress bar if session is active
-  if (hasActiveSession) {
-    return <SessionProgressBar />;
-  }
-
   return (
+    <>
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
@@ -261,6 +257,8 @@ export function Navbar() {
         </div>
       </div>
     </nav>
+    {hasActiveSession && <SessionProgressBar embedded />}
+    </>
   );
 }
 

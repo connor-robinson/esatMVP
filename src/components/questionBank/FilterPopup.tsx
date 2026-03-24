@@ -20,12 +20,12 @@ const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
 const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
 const attemptResults: AttemptResultFilter[] = ['Mixed Results', 'Unseen', 'Incorrect Before'];
 
-// Common curriculum topics for dropdown
-const curriculumTopics = [
+// Used only if /api/question-bank/topic-tags returns empty
+const FALLBACK_TOPIC_TAGS = [
   'Calculus', 'Algebra', 'Trigonometry', 'Geometry', 'Statistics', 'Probability',
   'Kinematics', 'Dynamics', 'Energy', 'Waves', 'Electricity', 'Magnetism',
   'Organic Chemistry', 'Inorganic Chemistry', 'Physical Chemistry', 'Analytical Chemistry',
-  'Cell Biology', 'Genetics', 'Evolution', 'Ecology', 'Physiology', 'Anatomy'
+  'Cell Biology', 'Genetics', 'Evolution', 'Ecology', 'Physiology', 'Anatomy',
 ];
 
 // Subject colors - borderless version (using signature colors from config/colors.ts)
@@ -60,6 +60,37 @@ export function FilterPopup({
   const [sessionCount, setSessionCount] = useState(20);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(['Easy', 'Medium', 'Hard']);
+  const [dbTopicTags, setDbTopicTags] = useState<string[]>([]);
+  const [dbTopicOptions, setDbTopicOptions] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
+  const [topicTagsLoading, setTopicTagsLoading] = useState(false);
+
+  const topicValues = useMemo(
+    () => (dbTopicTags.length > 0 ? dbTopicTags : FALLBACK_TOPIC_TAGS),
+    [dbTopicTags],
+  );
+  const topicOptionMap = useMemo(() => {
+    const m = new Map<string, string>();
+    dbTopicOptions.forEach((o) => m.set(o.value, o.label));
+    return m;
+  }, [dbTopicOptions]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setTopicTagsLoading(true);
+    fetch('/api/question-bank/topic-tags')
+      .then((r) => (r.ok ? r.json() : { tags: [] }))
+      .then((d: { tags?: string[]; options?: Array<{ value: string; label: string }> }) => {
+        setDbTopicTags(Array.isArray(d.tags) ? d.tags : []);
+        setDbTopicOptions(Array.isArray(d.options) ? d.options : []);
+      })
+      .catch(() => {
+        setDbTopicTags([]);
+        setDbTopicOptions([]);
+      })
+      .finally(() => setTopicTagsLoading(false));
+  }, [isOpen]);
 
   // Convert filters to arrays for multi-select
   const getSelectedSubjects = (): SubjectFilter[] => {
@@ -511,7 +542,7 @@ export function FilterPopup({
                   </div>
                   
                   <div className="p-1">
-                    {searchInput && !curriculumTopics.some(t => t.toLowerCase() === searchInput.toLowerCase()) && (
+                    {searchInput && !topicValues.some(t => t.toLowerCase() === searchInput.toLowerCase()) && (
                       <button
                         onClick={() => handleTopicSelect(searchInput)}
                         className="w-full px-3 py-2 text-left text-sm text-primary hover:bg-white/5 rounded-md transition-colors"
@@ -519,15 +550,26 @@ export function FilterPopup({
                         Use &quot;{searchInput}&quot;
                       </button>
                     )}
-                    {curriculumTopics
-                      .filter(topic => !searchInput || topic.toLowerCase().includes(searchInput.toLowerCase()))
+                    {topicTagsLoading && dbTopicTags.length === 0 && (
+                      <div className="px-3 py-2 text-xs text-white/40">Loading topics…</div>
+                    )}
+                    {topicValues
+                      .filter((topic) => {
+                        if (!searchInput) return true;
+                        const label = topicOptionMap.get(topic) || topic;
+                        const s = searchInput.toLowerCase();
+                        return (
+                          topic.toLowerCase().includes(s) ||
+                          label.toLowerCase().includes(s)
+                        );
+                      })
                       .map((topic) => (
                         <button
                           key={topic}
                           onClick={() => handleTopicSelect(topic)}
                           className="w-full px-3 py-2 text-left text-sm text-white/80 hover:bg-white/5 rounded-md transition-colors"
                         >
-                          {topic}
+                          {topicOptionMap.get(topic) || topic}
                         </button>
                       ))}
                   </div>
@@ -588,7 +630,7 @@ export function FilterPopup({
                     Topics (Optional - leave empty for all)
                   </label>
                   <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                    {curriculumTopics.map((topic) => (
+                    {topicValues.map((topic) => (
                       <button
                         key={topic}
                         onClick={() => toggleTopic(topic)}
@@ -599,7 +641,7 @@ export function FilterPopup({
                             : "bg-white/5 hover:bg-white/10 text-white/60"
                         )}
                       >
-                        {topic}
+                        {topicOptionMap.get(topic) || topic}
                       </button>
                     ))}
                   </div>

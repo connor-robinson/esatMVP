@@ -24,7 +24,12 @@ import { cn } from '@/lib/utils';
 
 const PAST_PAPERS_COLOR = '#5B8D94';
 
-export function SessionProgressBar() {
+interface SessionProgressBarProps {
+  /** When true, render as a slim bar below the main navbar (hybrid layout) */
+  embedded?: boolean;
+}
+
+export function SessionProgressBar({ embedded = false }: SessionProgressBarProps) {
   const router = useRouter();
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
@@ -49,6 +54,27 @@ export function SessionProgressBar() {
     questions,
     isMarkingInfo,
   } = usePaperSessionStore();
+
+  // Keep hooks before any conditional return to avoid hook-order crashes
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [isQuitting, setIsQuitting] = useState(false);
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    if (!showQuitModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isQuitting) {
+        setShowQuitModal(false);
+        setIsQuitting(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showQuitModal, isQuitting]);
 
   if (!sessionId) return null;
 
@@ -250,8 +276,6 @@ export function SessionProgressBar() {
   };
 
   const progressSegments = getProgressSegments();
-  const [showQuitModal, setShowQuitModal] = useState(false);
-  const [isQuitting, setIsQuitting] = useState(false);
 
   const handleQuit = async () => {
     setShowQuitModal(true);
@@ -301,23 +325,6 @@ export function SessionProgressBar() {
     setIsQuitting(false);
   };
 
-  // Handle Escape key to close modal
-  useEffect(() => {
-    if (!showQuitModal) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isQuitting) {
-        setShowQuitModal(false);
-        setIsQuitting(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [showQuitModal, isQuitting]);
-
   const loginHref =
     typeof window !== 'undefined' &&
     window.location.pathname &&
@@ -326,18 +333,32 @@ export function SessionProgressBar() {
       ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
       : `/login?redirectTo=${encodeURIComponent('/past-papers/library')}`;
 
+  const outerClass = embedded
+    ? 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+    : 'sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md';
+  const rowHeight = embedded ? 'h-12' : 'h-16';
+
   return (
-    <nav className='sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md'>
+    <nav className={outerClass}>
       <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
-        <div className='flex h-16 items-center justify-between'>
-          {/* Logo */}
-          <div className='flex items-center'>
-            <Link href='/' className='interaction-scale'>
-              <span className='text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white'>
-                No-Calc
+        <div className={cn('flex items-center justify-between', rowHeight)}>
+          {/* Logo — hidden when embedded (main Navbar already shows it) */}
+          {!embedded && (
+            <div className='flex items-center'>
+              <Link href='/' className='interaction-scale'>
+                <span className='text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white'>
+                  No-Calc
+                </span>
+              </Link>
+            </div>
+          )}
+          {embedded && (
+            <div className='flex-shrink-0 pr-3'>
+              <span className='text-[10px] font-mono uppercase tracking-wider text-white/50'>
+                Paper
               </span>
-            </Link>
-          </div>
+            </div>
+          )}
 
           {/* Progress Bar Section */}
           <div className='flex-1 mx-8 relative'>
@@ -515,50 +536,52 @@ export function SessionProgressBar() {
             </svg>
           </button>
 
-          {/* User icon / Login */}
-          <div className='flex items-center'>
-            {session?.user ? (
-              <Link
-                href='/profile'
-                className={cn(
-                  'relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale',
-                  'hover:bg-white/5',
-                )}
-              >
-                <UserIcon
-                  size='md'
-                  className='text-white/70 hover:text-white/90'
-                />
-                <div className='absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center'>
-                  <svg
-                    viewBox='0 0 12 12'
-                    fill='none'
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='w-2.5 h-2.5'
-                  >
-                    <path
-                      d='M2.5 6L5 8.5L9.5 3.5'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='text-neutral-900'
-                    />
-                  </svg>
-                </div>
-              </Link>
-            ) : (
-              <Link
-                href={loginHref}
-                className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale'
-              >
-                <LogInIcon
-                  size='md'
-                  className='text-white/70 hover:text-white/90'
-                />
-              </Link>
-            )}
-          </div>
+          {/* User icon / Login (hide on embedded secondary bar) */}
+          {!embedded && (
+            <div className='flex items-center'>
+              {session?.user ? (
+                <Link
+                  href='/profile'
+                  className={cn(
+                    'relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale',
+                    'hover:bg-white/5',
+                  )}
+                >
+                  <UserIcon
+                    size='md'
+                    className='text-white/70 hover:text-white/90'
+                  />
+                  <div className='absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center'>
+                    <svg
+                      viewBox='0 0 12 12'
+                      fill='none'
+                      xmlns='http://www.w3.org/2000/svg'
+                      className='w-2.5 h-2.5'
+                    >
+                      <path
+                        d='M2.5 6L5 8.5L9.5 3.5'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        className='text-neutral-900'
+                      />
+                    </svg>
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  href={loginHref}
+                  className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale'
+                >
+                  <LogInIcon
+                    size='md'
+                    className='text-white/70 hover:text-white/90'
+                  />
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

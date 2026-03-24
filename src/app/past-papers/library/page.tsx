@@ -127,24 +127,22 @@ export default function PapersLibraryPage() {
   // Add a specific section (Section 1, Section 2, etc.)
   const handleAddSection = (paper: Paper, sectionName: string, subjectParts: PaperSection[]) => {
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
-    
-    // Get the first subject from this section as default
-    const firstSubject = subjectParts.length > 0 ? subjectParts[0] : null;
-    
+
     if (existingPaper) {
-      // Paper already selected, add the first subject from this section
-      if (firstSubject) {
+      // Paper already selected, add all subjects from this section
+      if (subjectParts.length > 0) {
         const newSections = new Map(existingPaper.selectedSections);
-        const sectionSubjects = newSections.get(sectionName) || new Set<PaperSection>();
-        sectionSubjects.add(firstSubject);
+        const sectionSubjects =
+          newSections.get(sectionName) || new Set<PaperSection>();
+        subjectParts.forEach((subject) => sectionSubjects.add(subject));
         newSections.set(sectionName, sectionSubjects);
         handleUpdateSections(paper.id, newSections);
       }
     } else {
-      // Add paper with first subject from this section
+      // Add paper with all subjects from this section
       const newSections = new Map<string, Set<PaperSection>>();
-      if (firstSubject) {
-        newSections.set(sectionName, new Set([firstSubject]));
+      if (subjectParts.length > 0) {
+        newSections.set(sectionName, new Set(subjectParts));
       }
       setSelectedPapers((prev) => [
         ...prev,
@@ -335,12 +333,12 @@ export default function PapersLibraryPage() {
       const questionStart = questionNumbers[0];
       const questionEnd = questionNumbers[questionNumbers.length - 1];
 
-      // Calculate time limit (1.5 min per question, or 75 min per section for TMUA)
+      // Calculate time limit (1.48 min per question, or 75 min per section for TMUA)
       let timeLimitMinutes: number;
       if (paperType === "TMUA") {
         timeLimitMinutes = selectedSections.length * 75;
       } else {
-        timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.5);
+        timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
       }
 
       // Create variant string
@@ -361,12 +359,30 @@ export default function PapersLibraryPage() {
         selectedSections: selectedSections.length > 0 ? selectedSections : undefined,
       });
 
-      // Load questions and navigate
       await loadQuestions(paper.id);
+
+      const storeAfter = usePaperSessionStore.getState();
+      if (storeAfter.questionsError) {
+        setError(
+          `Could not load "${paper.examName} ${paper.examYear}" (paper #${paper.id}): ${storeAfter.questionsError}`,
+        );
+        return;
+      }
+      if (!storeAfter.questions || storeAfter.questions.length === 0) {
+        setError(
+          `No questions loaded for "${paper.examName} ${paper.examYear}" (#${paper.id}). Try different sections or contact support.`,
+        );
+        return;
+      }
+
       router.push("/past-papers/solve");
     } catch (err) {
       console.error("[library] Error starting session:", err);
-      setError(err instanceof Error ? err.message : "Failed to start session");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to start session. Try another paper or contact support.",
+      );
     } finally {
       setIsStartingSession(false);
     }

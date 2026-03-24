@@ -205,7 +205,10 @@ export function PaperColumn({
               p.examName === paper.examName &&
               p.examYear === paper.examYear &&
               p.id !== paper.id &&
-              (paperType === "NSAA" || paperType === "ENGAA" || paperType === "ESAT")
+              (paperType === "NSAA" ||
+                paperType === "ENGAA" ||
+                paperType === "ESAT" ||
+                paperType === "TMUA")
           );
 
           const currentQuestions = await getQuestions(paper.id);

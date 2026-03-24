@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy, useRef } from "react";
 import { Container } from "@/components/layout/Container";
 import type {
   TimeRange,
@@ -54,18 +54,25 @@ async function fetchLeaderboard(
   const profilesMap = new Map<string, string>();
   
   if (userIds.length > 0) {
-    const { data: profilesData, error: profilesError } = await supabase
-      .from("profiles")
-      .select("id, display_name")
-      .in("id", userIds);
-    
-    // Handle missing table gracefully
-    if (profilesError && profilesError.code === '42P01') {
-      console.warn('[leaderboard] profiles table does not exist, using anonymous names');
-    } else if (profilesData) {
-      profilesData.forEach((profile: any) => {
-        profilesMap.set(profile.id, profile.display_name || "Anonymous User");
-      });
+    const CHUNK = 80;
+    for (let i = 0; i < userIds.length; i += CHUNK) {
+      const slice = userIds.slice(i, i + CHUNK);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", slice);
+
+      if (profilesError && profilesError.code === "42P01") {
+        console.warn(
+          "[leaderboard] profiles table does not exist, using anonymous names",
+        );
+        break;
+      }
+      if (profilesData) {
+        profilesData.forEach((profile: any) => {
+          profilesMap.set(profile.id, profile.display_name || "Anonymous User");
+        });
+      }
     }
   }
 
@@ -121,6 +128,14 @@ async function fetchLeaderboard(
     .filter((entry) => entry.questionsAnswered > 0); // Only show users with activity
 }
 
+const leaderboardCache = new Map<string, LeaderboardEntry[]>();
+
+function sortAndRank(entries: LeaderboardEntry[]): LeaderboardEntry[] {
+  return entries
+    .sort((a, b) => b.score - a.score)
+    .map((entry, index) => ({ ...entry, rank: index + 1 }));
+}
+
 export default function LeaderboardPage() {
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
@@ -128,24 +143,59 @@ export default function LeaderboardPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load leaderboard (reacts to topic changes)
   useEffect(() => {
     if (!session?.user) {
       setLeaderboardData([]);
       return;
     }
 
-    fetchLeaderboard(supabase, session.user.id, selectedTopic).then((entries) => {
-      const sorted = entries
-        .sort((a, b) => b.score - a.score)
-        .map((entry, index) => ({ ...entry, rank: index + 1 }));
-      setLeaderboardData(sorted);
-    });
+    const cacheKey = `${session.user.id}:${selectedTopic}`;
+    const cached = leaderboardCache.get(cacheKey);
+    if (cached) {
+      setLeaderboardData(cached);
+      setLeaderboardLoading(false);
+    } else {
+      setLeaderboardLoading(true);
+    }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      const run = async () => {
+        if (leaderboardCache.has(cacheKey)) {
+          setLeaderboardData(leaderboardCache.get(cacheKey)!);
+          setLeaderboardLoading(false);
+          return;
+        }
+        setLeaderboardLoading(true);
+        try {
+          const entries = await fetchLeaderboard(
+            supabase,
+            session.user!.id,
+            selectedTopic,
+          );
+          const sorted = sortAndRank(entries);
+          leaderboardCache.set(cacheKey, sorted);
+          setLeaderboardData(sorted);
+        } finally {
+          setLeaderboardLoading(false);
+        }
+      };
+      void run();
+    }, 280);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [session?.user, supabase, selectedTopic]);
 
   return (
     <Container size="lg" className="py-10 space-y-8">
+      {leaderboardLoading && leaderboardData.length === 0 && (
+        <div className="h-12 rounded-lg bg-surface-elevated animate-pulse" />
+      )}
       <Suspense fallback={<div className="h-96 bg-surface-elevated rounded-lg animate-pulse" />}>
         <GlobalView
           leaderboardData={leaderboardData}
