@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2020_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Convert between radians and degrees",
+  "core_move_guess": "Equate radian and degree measures to convert units.",
+  "trigger_cues": [
+    "function evaluation",
+    "calculator only works in degrees",
+    "x in radians"
+  ],
+  "mini_steps": [
+    "Recognize need for unit conversion",
+    "Use \u03c0 rad = 180\u00b0",
+    "Solve for 1 rad",
+    "Substitute into the function"
+  ],
+  "wrong_move": "Forgetting to convert the argument of the sine function from radians to degrees, or converting x but not sin(x).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2017_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Substitution and simplification of equations",
+  "core_move_guess": "Substitute to reduce the number of variables.",
+  "trigger_cues": [
+    "two equations",
+    "expressions involving 2x and 2y",
+    "one equation quadratic in form"
+  ],
+  "mini_steps": [
+    "Recognize 22x as (2x)2",
+    "Substitute a = 2x and b = 2y",
+    "Solve the linear equation for a in terms of b",
+    "Substitute into the quadratic equation",
+    "Solve for b",
+    "Find a and then x and y"
+  ],
+  "wrong_move": "Failing to recognize the relationship between 2x and 22x and attempting to solve the equations directly without substitution.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

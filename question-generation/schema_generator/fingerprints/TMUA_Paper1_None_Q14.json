@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate sum to individual geometric series",
+  "core_move_guess": "Exploit the relationship between the sum and individual geometric series to solve for common ratios.",
+  "trigger_cues": [
+    "geometric progressions",
+    "sum of two geometric progressions",
+    "first three terms given"
+  ],
+  "mini_steps": [
+    "Recognize T, U as geometric series",
+    "Recognize S as sum of T and U",
+    "Express terms of T, U, S using common ratios",
+    "Form equations based on given terms of S",
+    "Solve for the common ratios",
+    "Select the correct answer"
+  ],
+  "wrong_move": "Assuming the sum S is also a geometric progression and trying to find a common ratio for S directly.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2017_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate exponential forms via substitution",
+  "core_move_guess": "Substitute a specific value to constrain the functions.",
+  "trigger_cues": [
+    "graphs of two functions",
+    "exponential function",
+    "comparing exponential functions",
+    "positive real number"
+  ],
+  "mini_steps": [
+    "Recognize f(x) as exponential",
+    "Substitute x=1",
+    "Evaluate f(1) > a",
+    "Substitute x=1 into options",
+    "Compare results to f(1) > a",
+    "Deduce constraints on b and k"
+  ],
+  "wrong_move": "Focusing on the general shape of exponential graphs without using a specific point to derive constraints leads to an inconclusive comparison.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

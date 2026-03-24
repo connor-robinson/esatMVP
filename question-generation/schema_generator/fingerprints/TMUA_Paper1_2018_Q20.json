@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2018_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Pair terms using trig identity",
+  "core_move_guess": "Exploit the complementary angle identity to pair terms.",
+  "trigger_cues": [
+    "sum of sin squared terms",
+    "angles from 0 to 90 degrees",
+    "arithmetic progression of angles"
+  ],
+  "mini_steps": [
+    "Recognize sin^2(x) + sin^2(90-x) = 1",
+    "Pair sin^2(0) with sin^2(90)",
+    "Pair sin^2(1) with sin^2(89)",
+    "Pair sin^2(2) with sin^2(88)",
+    "Identify sin^2(45) as the unpaired term",
+    "Sum the pairs and the unpaired term"
+  ],
+  "wrong_move": "Failing to pair terms and attempting to directly sum the squares of sines, or forgetting the sin^2(45) term.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

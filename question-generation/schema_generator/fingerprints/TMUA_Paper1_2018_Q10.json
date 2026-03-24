@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2018_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize product given interval constraints",
+  "core_move_guess": "Maximize the absolute values within the given intervals.",
+  "trigger_cues": [
+    "|...| <= constant",
+    "greatest possible value",
+    "product of variables"
+  ],
+  "mini_steps": [
+    "Solve |2-x| <= 6 for x",
+    "Solve |y+2| <= 4 for y",
+    "Find interval for x: -4 <= x <= 8",
+    "Find interval for y: -6 <= y <= 2",
+    "Maximize |x| within its interval",
+    "Maximize |y| within its interval",
+    "Multiply max |x| and max |y|"
+  ],
+  "wrong_move": "Failing to consider negative values when maximizing |x| and |y|, or incorrectly solving the absolute value inequalities.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

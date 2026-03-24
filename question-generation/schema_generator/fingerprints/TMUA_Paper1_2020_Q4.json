@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2020_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate progressions, solve simultaneous equations",
+  "core_move_guess": "Equate terms from different progressions to form equations.",
+  "trigger_cues": [
+    "geometric progression",
+    "arithmetic progression",
+    "terms are also terms of",
+    "sum to infinity"
+  ],
+  "mini_steps": [
+    "Define variables for both progressions",
+    "Equate corresponding terms",
+    "Formulate equations",
+    "Use sum to infinity formula",
+    "Solve simultaneous equations",
+    "Find the first term"
+  ],
+  "wrong_move": "Incorrectly applying the sum to infinity formula or making algebraic errors when solving the simultaneous equations.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

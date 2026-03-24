@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2023_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate transformations to minimum point",
+  "core_move_guess": "Equate the transformed functions' minimum points.",
+  "trigger_cues": [
+    "f(x) given",
+    "transformations of f(x)",
+    "same minimum point",
+    "k > 0 and c > 0",
+    "expression for k in terms of c"
+  ],
+  "mini_steps": [
+    "Find minimum point of f(x) = x^2 - 6x",
+    "Express minimum point of f(kx)",
+    "Express minimum point of f(x-c)",
+    "Equate the x-coordinates of the minimum points",
+    "Solve for k in terms of c"
+  ],
+  "wrong_move": "Assuming the minimum point is at x=0 or misinterpreting the effect of the transformations on the minimum point's location.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

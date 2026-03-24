@@ -1,0 +1,26 @@
+{
+  "qid": "TMUA_Paper2_2019_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate transformations to function arguments",
+  "core_move_guess": "Relate transformations of the graph to changes in the function's argument.",
+  "trigger_cues": [
+    "graph transformations",
+    "reflection in y-axis",
+    "translation",
+    "identical functions"
+  ],
+  "mini_steps": [
+    "Reflection in y-axis: x -> -x",
+    "Translation by -2: x -> x+2",
+    "g(x) = f(-x+2)",
+    "Translation by -2: x -> x+2",
+    "Reflection in y-axis: x -> -x",
+    "h(x) = f(-(x+2)) = f(-x-2)",
+    "g(x) = h(x) implies f(-x+2) = f(-x-2)",
+    "Let y = -x+2, then f(y) = f(y-4)",
+    "f(x) = f(x-4) equivalent to f(x) = f(x+4)"
+  ],
+  "wrong_move": "Incorrectly applying the transformations in the wrong order or misinterpreting the effect on the function's argument.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

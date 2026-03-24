@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2018_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate infinite sums of GP powers",
+  "core_move_guess": "Exploit relationships between infinite geometric series.",
+  "trigger_cues": [
+    "sum to infinity",
+    "geometric progression",
+    "squares of terms",
+    "cubes of terms"
+  ],
+  "mini_steps": [
+    "Express sum to infinity as a/(1-r)",
+    "Write equations for given sums",
+    "Solve for a and r",
+    "Calculate sum to infinity of cubes"
+  ],
+  "wrong_move": "Assuming the common ratio is the same for all the series without proper justification or algebraic manipulation.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

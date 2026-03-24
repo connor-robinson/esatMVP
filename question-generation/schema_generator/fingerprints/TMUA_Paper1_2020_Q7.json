@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2020_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations by substitution",
+  "core_move_guess": "Re-express equations to facilitate substitution and solving.",
+  "trigger_cues": [
+    "two equations",
+    "two unknowns",
+    "asks for sum of unknowns"
+  ],
+  "mini_steps": [
+    "Express equations in powers of 2",
+    "Simplify equations",
+    "Isolate one variable in one equation",
+    "Substitute into the other equation",
+    "Solve for one variable",
+    "Solve for the other variable",
+    "Calculate the sum"
+  ],
+  "wrong_move": "Failing to simplify equations before attempting to solve them leads to more complex algebra and increased chance of error.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2018_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate symmetry to functional equation",
+  "core_move_guess": "Relate the symmetry condition x=a to an equivalent functional equation.",
+  "trigger_cues": [
+    "symmetry about x=a",
+    "functional equation",
+    "necessary and sufficient"
+  ],
+  "mini_steps": [
+    "Recognize symmetry implies f(a+x) = f(a-x)",
+    "Test each condition against the symmetry requirement",
+    "Condition I: f(a-x) = f(a+x) directly represents symmetry",
+    "Condition II: f(2a-x) = f(x) represents symmetry",
+    "Condition III: f(a-x) = f(x) does not represent symmetry"
+  ],
+  "wrong_move": "Assuming any functional equation implies symmetry without proper verification or failing to visualize the graph.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

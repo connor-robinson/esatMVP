@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2022_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate stationary points to derivative roots",
+  "core_move_guess": "Equate the derivative to zero and count roots.",
+  "trigger_cues": [
+    "stationary points",
+    "curve with equation",
+    "number of stationary points"
+  ],
+  "mini_steps": [
+    "Find the derivative of the given function",
+    "Set the derivative equal to zero",
+    "Solve the resulting equation for x",
+    "Count the number of distinct real roots"
+  ],
+  "wrong_move": "Failing to correctly differentiate the polynomial or incorrectly solving the resulting cubic equation, leading to an incorrect number of stationary points.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

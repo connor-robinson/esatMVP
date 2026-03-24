@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate logical statements and variants",
+  "core_move_guess": "Determine the truth value of logical statements.",
+  "trigger_cues": [
+    "statement about a pentagon",
+    "contrapositive",
+    "converse",
+    "which of the following is/are true?"
+  ],
+  "mini_steps": [
+    "Understand the original statement",
+    "Understand the definition of contrapositive",
+    "Understand the definition of converse",
+    "Evaluate the truth value of each statement",
+    "Select the correct option"
+  ],
+  "wrong_move": "Assuming the converse or contrapositive is always true, without proper evaluation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

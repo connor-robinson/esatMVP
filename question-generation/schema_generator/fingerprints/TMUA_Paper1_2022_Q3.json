@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2022_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve quadratic in cos^2, find solutions",
+  "core_move_guess": "Re-express the equation as a quadratic in cos^2(x).",
+  "trigger_cues": [
+    "cos^4(x)",
+    "cos^2(x)",
+    "interval 0 to 2pi"
+  ],
+  "mini_steps": [
+    "Substitute y = cos^2(x)",
+    "Solve quadratic equation for y",
+    "Find cos(x) values from y",
+    "Determine angles x in [0, 2pi] for each cos(x)"
+  ],
+  "wrong_move": "Failing to consider the range of cos^2(x) or cos(x) when solving for x, leading to extraneous solutions.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

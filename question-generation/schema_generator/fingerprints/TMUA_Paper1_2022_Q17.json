@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2022_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize area of inscribed rectangle",
+  "core_move_guess": "Express the area of the rectangle as a function of x and maximize it.",
+  "trigger_cues": [
+    "rectangle inscribed in region",
+    "find maximum area",
+    "curves defined by functions"
+  ],
+  "mini_steps": [
+    "Find intersection points of the curves",
+    "Express rectangle width as function of x",
+    "Express rectangle height as function of x",
+    "Area = width * height",
+    "Differentiate area with respect to x",
+    "Set derivative to zero and solve for x",
+    "Check endpoints and critical points for maximum"
+  ],
+  "wrong_move": "Failing to find the correct expressions for the width and height of the rectangle, or not considering the domain of x.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

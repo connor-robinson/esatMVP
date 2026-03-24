@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2018_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate solutions via transformed function",
+  "core_move_guess": "Relate solutions of transformed trigonometric equation to original.",
+  "trigger_cues": [
+    "equation cos x = c has two solutions",
+    "cos^2 2x = c^2",
+    "0 < x < 3/2 pi"
+  ],
+  "mini_steps": [
+    "Recognize cos^2 2x = c^2 implies cos 2x = +/- c",
+    "Relate solutions of cos 2x = c and cos 2x = -c",
+    "Consider the range of 2x",
+    "Determine number of solutions for each case"
+  ],
+  "wrong_move": "Failing to consider both positive and negative roots when taking the square root, or incorrectly determining the range of 2x.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

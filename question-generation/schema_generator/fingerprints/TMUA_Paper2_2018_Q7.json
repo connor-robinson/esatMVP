@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2018_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Find pattern in sequence of solutions",
+  "core_move_guess": "Exploit arithmetic sequence properties to find common terms.",
+  "trigger_cues": [
+    "two arithmetic progressions",
+    "common terms",
+    "Nth such number",
+    "remainder"
+  ],
+  "mini_steps": [
+    "List terms of both sequences",
+    "Identify first few common terms",
+    "Recognize common terms form an A.P.",
+    "Find common difference of new A.P.",
+    "Calculate the 20th term",
+    "Find remainder when divided by 7"
+  ],
+  "wrong_move": "Assuming the 20th term can be found by simply finding the 20th term of each sequence and comparing them, without considering the pattern of common terms.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

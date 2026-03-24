@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2021_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate geometry to algebraic equation",
+  "core_move_guess": "Equate the radius to the center's distance from y-axis.",
+  "trigger_cues": [
+    "circle equation",
+    "tangent to y-axis",
+    "necessary and sufficient condition"
+  ],
+  "mini_steps": [
+    "Complete the square to find circle center and radius",
+    "Recognize tangency implies radius equals distance to y-axis",
+    "Set radius equal to absolute value of x-coordinate of center",
+    "Square both sides of the equation",
+    "Simplify and solve for the condition"
+  ],
+  "wrong_move": "Equating the radius to the x-coordinate of the center without considering the sign, or not squaring the equation to eliminate the square root.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

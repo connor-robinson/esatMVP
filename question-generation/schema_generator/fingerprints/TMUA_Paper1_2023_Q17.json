@@ -1,0 +1,25 @@
+{
+  "qid": "TMUA_Paper1_2023_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate amplitude to range difference",
+  "core_move_guess": "Relate the difference between maximum and minimum values to the amplitude of the cosine function.",
+  "trigger_cues": [
+    "difference between maximum and minimum values",
+    "a cos x",
+    "a > 0"
+  ],
+  "mini_steps": [
+    "Recognize max value of cos(x) is 1",
+    "Recognize min value of cos(x) is -1",
+    "Maximum of a cos(x) is a",
+    "Minimum of a cos(x) is -a",
+    "Difference is a - (-a) = 2a",
+    "Solve 2a = 3 for a",
+    "Since a > 0, consider only positive solution",
+    "Consider absolute value of a",
+    "Consider a < 0"
+  ],
+  "wrong_move": "Failing to consider that the difference between the max and min is twice the amplitude, or incorrectly handling the absolute value.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

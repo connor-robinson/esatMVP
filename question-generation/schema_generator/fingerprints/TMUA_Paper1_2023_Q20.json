@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2023_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate infinite sum to finite value",
+  "core_move_guess": "Determine the condition for the infinite sum to converge.",
+  "trigger_cues": [
+    "infinite geometric series",
+    "sum is a finite number",
+    "probability question"
+  ],
+  "mini_steps": [
+    "Recognize geometric series",
+    "Condition for convergence: |r| < 1",
+    "Express common ratio r in terms of k",
+    "Solve inequality |k/7| < 1",
+    "Find integer values of k in given range",
+    "Calculate probability"
+  ],
+  "wrong_move": "Assuming the series always converges and calculating the sum for all possible values of k, without checking the convergence condition.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Complete the square, apply circle condition",
+  "core_move_guess": "Re-express the equation by completing the square, then constrain the radius to be positive.",
+  "trigger_cues": [
+    "equation of the form x^2 + y^2 + ... = 0",
+    "asks for values of a parameter",
+    "describes a circle"
+  ],
+  "mini_steps": [
+    "Complete the square for x terms",
+    "Complete the square for y terms",
+    "Rewrite equation in circle form (x-a)^2 + (y-b)^2 = r^2",
+    "Identify the expression for r^2",
+    "Set r^2 > 0",
+    "Solve the inequality for p"
+  ],
+  "wrong_move": "Failing to complete the square correctly or forgetting that the radius squared must be positive for the equation to represent a circle.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

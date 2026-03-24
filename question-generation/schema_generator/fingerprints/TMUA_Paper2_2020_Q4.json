@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2020_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test each case against definition",
+  "core_move_guess": "Test each given case against the problem's definition.",
+  "trigger_cues": [
+    "counterexample",
+    "following is/are",
+    "positive integer",
+    "greater than"
+  ],
+  "mini_steps": [
+    "Understand the definition of counterexample",
+    "Check N > 6 condition for each case",
+    "If N > 6, attempt to express N as sum of two non-primes > 1",
+    "If impossible, it's a counterexample"
+  ],
+  "wrong_move": "Failing to check all possible sums of non-primes greater than 1, or misidentifying prime numbers.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

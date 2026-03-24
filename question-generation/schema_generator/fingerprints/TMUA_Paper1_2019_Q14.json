@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2019_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous trigonometric equations",
+  "core_move_guess": "Re-express trigonometric equations as linear system.",
+  "trigger_cues": [
+    "simultaneous equations",
+    "sin 2x",
+    "cos 2x",
+    "0\u25e6\u2264x \u2264360\u25e6"
+  ],
+  "mini_steps": [
+    "Let S = sin 2x and C = cos 2x",
+    "Solve the linear equations for S and C",
+    "Find 2x from S and C",
+    "Divide by 2 to find x",
+    "Consider all solutions in the range",
+    "Sum the possible values of x"
+  ],
+  "wrong_move": "Failing to consider all possible solutions for 2x within the appropriate range before dividing by 2, or making algebraic errors when solving for S and C.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

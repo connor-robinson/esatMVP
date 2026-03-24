@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize pattern in recursively defined sequence",
+  "core_move_guess": "Identify the general term of the recursively defined sequence.",
+  "trigger_cues": [
+    "recursively defined sequence",
+    "summation notation",
+    "find a pattern"
+  ],
+  "mini_steps": [
+    "Calculate first few terms of the sequence",
+    "Identify pattern: f_n(x) = 10^(n-1) * x^10",
+    "Rewrite the summation using the pattern",
+    "Recognize geometric progression",
+    "Apply the formula for the sum of a geometric progression",
+    "Simplify the expression"
+  ],
+  "wrong_move": "Assuming the recursive definition is simple and not computing enough terms to see the emerging pattern, or making an algebraic error when calculating the terms.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2017_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve geometric progression for infinite sum",
+  "core_move_guess": "Relate terms to find the common ratio and then apply the sum to infinity formula.",
+  "trigger_cues": [
+    "geometric progression",
+    "first term",
+    "fourth term",
+    "sum to infinity"
+  ],
+  "mini_steps": [
+    "Relate the first and fourth terms using the common ratio: a*r^3 = fourth term",
+    "Solve for the common ratio r",
+    "Check |r| < 1 for convergence of infinite sum",
+    "Apply the sum to infinity formula: S = a / (1 - r)",
+    "Simplify the expression to match one of the options"
+  ],
+  "wrong_move": "Incorrectly calculating the common ratio or failing to check if |r| < 1 before applying the sum to infinity formula.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

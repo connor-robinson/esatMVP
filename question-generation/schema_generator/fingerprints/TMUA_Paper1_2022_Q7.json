@@ -1,0 +1,25 @@
+{
+  "qid": "TMUA_Paper1_2022_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve simultaneous equations by elimination",
+  "core_move_guess": "Eliminate variables by manipulating equations to find unknowns.",
+  "trigger_cues": [
+    "sequence defined by a recurrence relation",
+    "given initial values of the sequence",
+    "find a later term in the sequence",
+    "recurrence relation involves unknown parameters"
+  ],
+  "mini_steps": [
+    "Substitute given values into recurrence relation",
+    "Create equations with p and q as unknowns",
+    "Multiply equations to prepare for elimination",
+    "Subtract equations to eliminate p",
+    "Solve for q",
+    "Substitute q back to find p",
+    "Substitute p and q into recurrence relation",
+    "Calculate the next term x_4"
+  ],
+  "wrong_move": "Assuming the sequence is arithmetic or geometric and trying to find a common difference or ratio.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2019_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Inequality manipulation with negative numbers",
+  "core_move_guess": "Reverse inequality signs when multiplying/dividing by negative numbers.",
+  "trigger_cues": [
+    "inequality",
+    "negative numbers",
+    "a < b < c < 0",
+    "must be true"
+  ],
+  "mini_steps": [
+    "Recognize a, b, c are negative",
+    "Multiply/divide inequality by a negative number",
+    "Reverse the inequality sign",
+    "Check if the resulting inequality matches the statement"
+  ],
+  "wrong_move": "Failing to reverse the inequality sign when multiplying or dividing by a negative number will lead to incorrect conclusions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

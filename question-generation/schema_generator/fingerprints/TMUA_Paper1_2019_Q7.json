@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2019_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Minimize quadratic expression after differentiation",
+  "core_move_guess": "Differentiate, then minimize the resulting quadratic.",
+  "trigger_cues": [
+    "gradient of curve",
+    "minimises the gradient",
+    "expression for y",
+    "at x = -1"
+  ],
+  "mini_steps": [
+    "Expand the expression for y",
+    "Differentiate y with respect to x",
+    "Substitute x = -1 into dy/dx",
+    "Differentiate the resulting expression with respect to q",
+    "Set the derivative equal to zero",
+    "Solve for q"
+  ],
+  "wrong_move": "Failing to expand the expression before differentiating, or incorrectly differentiating the expression.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

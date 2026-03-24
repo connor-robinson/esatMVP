@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2021_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Spot the invalid algebraic manipulation",
+  "core_move_guess": "Identify the step that introduces extraneous solutions.",
+  "trigger_cues": [
+    "algebraic manipulation",
+    "error in argument",
+    "square root",
+    "negative values"
+  ],
+  "mini_steps": [
+    "Recognize sin^2(x) + cos^2(x) = 1",
+    "Isolate cos^2(x)",
+    "Take the square root",
+    "Consider the sign of cos(x)"
+  ],
+  "wrong_move": "Ignoring the sign when taking the square root leads to an incorrect conclusion.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

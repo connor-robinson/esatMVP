@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to polynomial coefficients",
+  "core_move_guess": "Exploit factor theorem to form equations.",
+  "trigger_cues": [
+    "factors of polynomial",
+    "find unknown coefficients"
+  ],
+  "mini_steps": [
+    "Recognize factors imply roots",
+    "Apply factor theorem: f(a) = 0 if (x-a) is a factor",
+    "Substitute roots into polynomial",
+    "Solve resulting simultaneous equations",
+    "Calculate 2p + q"
+  ],
+  "wrong_move": "Expanding the cubic and equating coefficients is more complex and error-prone.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

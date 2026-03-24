@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2017_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate vertex shift to parameter change",
+  "core_move_guess": "Relate the change in vertex position to the change in the parameter B.",
+  "trigger_cues": [
+    "quadratic",
+    "vertex",
+    "parameter change",
+    "B > b"
+  ],
+  "mini_steps": [
+    "Complete the square for both quadratics",
+    "Identify vertex coordinates in terms of parameters",
+    "Relate B > b to horizontal shift",
+    "Relate B > b to vertical shift",
+    "Deduce the new vertex position relative to the old"
+  ],
+  "wrong_move": "Assuming the vertical shift is in the same direction as the horizontal shift, or not completing the square correctly.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

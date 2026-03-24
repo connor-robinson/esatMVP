@@ -1,0 +1,25 @@
+{
+  "qid": "TMUA_Paper1_2022_Q21",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate intersection to distance between centers",
+  "core_move_guess": "Relate intersection to distance between circle centers.",
+  "trigger_cues": [
+    "two circles",
+    "intersection",
+    "probability",
+    "range for center"
+  ],
+  "mini_steps": [
+    "Circles intersect if distance < sum of radii",
+    "Sum of radii = 5 + 4 = 9",
+    "Region of possible centers is a rectangle",
+    "Area of rectangle = 4 * 6 = 24",
+    "Region of intersecting centers is circle radius 9",
+    "Area of intersecting region is intersection of circle and rectangle",
+    "Intersection area is pi*r^2 = pi",
+    "Probability = area of intersection / area of rectangle"
+  ],
+  "wrong_move": "Assume the region of possible centers is a circle and calculate the probability based on the ratio of areas of two circles.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

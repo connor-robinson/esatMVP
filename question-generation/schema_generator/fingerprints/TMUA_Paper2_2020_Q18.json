@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Eliminate cases by contradiction/impossibility",
+  "core_move_guess": "Exploit the properties of polynomials to constrain coefficients.",
+  "trigger_cues": [
+    "polynomial",
+    "always positive",
+    "necessarily true"
+  ],
+  "mini_steps": [
+    "Consider f(x) - g(x) as a single polynomial",
+    "Recognize a cubic must cross the x-axis",
+    "Deduce leading coefficient must be zero",
+    "Consider quadratic and linear cases",
+    "Apply similar crossing argument",
+    "Relate conditions to statements I, II, III"
+  ],
+  "wrong_move": "Assuming that f(x) - g(x) being always positive implies that each individual term in the polynomial must be positive, or that the coefficients must satisfy certain inequalities without considering the overall shape of the polynomial.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

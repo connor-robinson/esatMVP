@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2020_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove 'for all' via counterexample",
+  "core_move_guess": "Provide a counterexample to disprove universal statement.",
+  "trigger_cues": [
+    "prove whether the following statement is true or false",
+    "for all real numbers",
+    "student's proof"
+  ],
+  "mini_steps": [
+    "Recognize 'for all' statement",
+    "Understand counterexample disproves 'for all'",
+    "Check given counterexample",
+    "Evaluate student's logic"
+  ],
+  "wrong_move": "Believing that a single example proves a 'for all' statement, or misunderstanding the requirements of a valid counterexample (e.g., thinking the counterexample needs to satisfy the original inequality).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2019_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Factorize and test integer solutions",
+  "core_move_guess": "Exploit factorization to constrain possible integer solutions.",
+  "trigger_cues": [
+    "arithmetic series",
+    "integer terms",
+    "sum is an integer",
+    "asks which statements must be true"
+  ],
+  "mini_steps": [
+    "Write down the formula for the sum of an arithmetic series",
+    "Simplify the equation",
+    "Recognize the need for integer factorization",
+    "List factor pairs of 40",
+    "Test each factor pair for possible solutions of a and d",
+    "Check which statements are always true"
+  ],
+  "wrong_move": "Assuming that if a statement is true for some solutions, it must be true for all solutions, without testing all factor pairs.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

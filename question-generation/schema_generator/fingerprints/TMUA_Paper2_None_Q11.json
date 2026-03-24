@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate statements using constraints",
+  "core_move_guess": "Test statements against polynomial properties.",
+  "trigger_cues": [
+    "polynomial intersects x-axis at x=-p and x=p",
+    "three statements to evaluate",
+    "p > 0"
+  ],
+  "mini_steps": [
+    "Statement 1: derivative zero between -p and p",
+    "Statement 2: integral from 0 to p is area between curve and x-axis",
+    "Statement 3: y = -f(-x) reflection in both axes",
+    "Evaluate statement 1: true",
+    "Evaluate statement 2: true",
+    "Evaluate statement 3: true"
+  ],
+  "wrong_move": "Assuming that if a statement looks plausible in a specific case, it is generally true, without considering the constraints provided.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

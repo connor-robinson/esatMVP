@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper2_2020_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove sufficiency by counterexample",
+  "core_move_guess": "Construct a counterexample to disprove sufficiency.",
+  "trigger_cues": [
+    "sufficient condition",
+    "parallelogram",
+    "square",
+    "geometric properties"
+  ],
+  "mini_steps": [
+    "Consider condition I",
+    "Recall properties of rhombus",
+    "Rhombus satisfies condition I but is not a square",
+    "Consider condition II",
+    "Rhombus satisfies condition II but is not a square",
+    "Consider condition III",
+    "Rectangle satisfies condition III but is not a square"
+  ],
+  "wrong_move": "Assuming that satisfying a property individually guarantees the shape is a square, without considering other parallelograms.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

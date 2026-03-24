@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2022_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots of polynomial equations",
+  "core_move_guess": "Re-express trigonometric functions as polynomial roots.",
+  "trigger_cues": [
+    "solutions are given in terms of cos",
+    "asks for equation with solutions in terms of sin",
+    "polynomial equation"
+  ],
+  "mini_steps": [
+    "Recognize relationship between cos and sin",
+    "Substitute x^2 for cos^2(theta)",
+    "Use sin^2(theta) = 1 - cos^2(theta) to rewrite equation",
+    "Substitute 1-x^2 for sin^2(theta)",
+    "Rearrange to get the new polynomial equation"
+  ],
+  "wrong_move": "Failing to recognize the trigonometric identity and attempting to directly solve for the angles.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

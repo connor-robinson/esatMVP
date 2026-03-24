@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2021_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate probability to ratio, divisibility",
+  "core_move_guess": "Relate the given probability to a ratio in lowest terms to deduce divisibility constraints.",
+  "trigger_cues": [
+    "probability given as a fraction",
+    "asks for necessary conditions",
+    "divisibility mentioned in options"
+  ],
+  "mini_steps": [
+    "Express probability as a ratio",
+    "Recognize lowest terms implication",
+    "Deduce divisibility of total students",
+    "Check necessity of each condition"
+  ],
+  "wrong_move": "Assuming that the given numbers of students must be the exact numbers, rather than multiples.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

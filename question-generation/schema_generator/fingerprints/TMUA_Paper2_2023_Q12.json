@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Identify error in algebraic manipulation",
+  "core_move_guess": "Test the validity of each algebraic step.",
+  "trigger_cues": [
+    "if and only if",
+    "inequality",
+    "completing the square"
+  ],
+  "mini_steps": [
+    "Recognize step IV is incorrect",
+    "Because it omits the negative root case from step III",
+    "Step III implies -2 < x^2 - 1 < 2",
+    "Consider x^2 - 1 > -2, so x^2 > -1 which is always true",
+    "Consider x^2 - 1 < 2, so x^2 < 3",
+    "Therefore -sqrt(3) < x < sqrt(3)"
+  ],
+  "wrong_move": "Ignoring the negative root when taking the square root in inequalities is a common mistake.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

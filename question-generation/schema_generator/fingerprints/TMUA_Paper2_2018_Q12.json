@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper2_2018_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Negate nested quantified statement correctly",
+  "core_move_guess": "Negate the nested quantifiers in order.",
+  "trigger_cues": [
+    "quantifiers: 'for any', 'there exists'",
+    "nested quantifiers",
+    "negation of a statement"
+  ],
+  "mini_steps": [
+    "Negate 'for any N, P' to 'there exists N such that not P'",
+    "Negate 'there exists K such that Q' to 'for all K, not Q'",
+    "Negate 'for all m, R' to 'there exists m such that not R'"
+  ],
+  "wrong_move": "Incorrectly negate the quantifiers or change the order of quantifiers.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

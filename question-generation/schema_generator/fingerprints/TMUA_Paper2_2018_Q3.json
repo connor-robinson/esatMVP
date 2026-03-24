@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test cases against a general statement",
+  "core_move_guess": "Test each case by calculating average speed and comparing.",
+  "trigger_cues": [
+    "counterexample",
+    "average speed",
+    "two parts",
+    "statement"
+  ],
+  "mini_steps": [
+    "Calculate total distance for each case",
+    "Calculate total time for each case",
+    "Calculate average speed (total distance / total time)",
+    "Compare calculated average speed with (u+v)/2",
+    "Identify cases where the average speed is different"
+  ],
+  "wrong_move": "Assuming average speed is always (u+v)/2 without verification.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

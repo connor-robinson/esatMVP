@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate circle equations, eliminate quadratic terms",
+  "core_move_guess": "Subtract equations to eliminate quadratic terms and find linear relation.",
+  "trigger_cues": [
+    "two circles",
+    "same radius",
+    "intersect at two distinct points",
+    "equation of the straight line"
+  ],
+  "mini_steps": [
+    "Write equations of both circles",
+    "Expand the brackets",
+    "Subtract equations to eliminate x^2 and y^2",
+    "Simplify to get equation of line"
+  ],
+  "wrong_move": "Failing to expand the brackets correctly or making an algebraic error when subtracting the equations leads to an incorrect linear equation.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

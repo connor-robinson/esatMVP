@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Substitute to simplify exponential equation",
+  "core_move_guess": "Substitute a variable to transform the equation into a simpler form.",
+  "trigger_cues": [
+    "exponentials with related bases",
+    "equation involving powers",
+    "simplification needed"
+  ],
+  "mini_steps": [
+    "Recognize 9^x as (3^x)^2",
+    "Substitute u = 3^x",
+    "Rewrite the equation in terms of u",
+    "Solve for u",
+    "Solve for x using x = log_3(u)"
+  ],
+  "wrong_move": "Failing to recognize the relationship between 9^x and 3^x and attempting to solve the equation directly without substitution.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

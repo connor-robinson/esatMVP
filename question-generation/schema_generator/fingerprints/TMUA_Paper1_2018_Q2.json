@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2018_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate sums, solve linear equation",
+  "core_move_guess": "Equate two different expressions for the sum.",
+  "trigger_cues": [
+    "arithmetic progression",
+    "sum of first n terms",
+    "equal"
+  ],
+  "mini_steps": [
+    "Express sum of first 5 terms",
+    "Express sum of first 8 terms",
+    "Equate the two expressions",
+    "Simplify and rearrange to a = ..."
+  ],
+  "wrong_move": "Incorrectly applying or recalling the formula for the sum of an arithmetic progression, or making algebraic errors in simplification.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

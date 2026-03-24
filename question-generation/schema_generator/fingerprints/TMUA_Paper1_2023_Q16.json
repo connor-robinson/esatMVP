@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2023_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to turning points",
+  "core_move_guess": "Relate the existence of three distinct real roots to the location of the turning points of the cubic function.",
+  "trigger_cues": [
+    "cubic function",
+    "three distinct real roots",
+    "range of possible values"
+  ],
+  "mini_steps": [
+    "Find the derivative of f(x)",
+    "Find the x-coordinates of the turning points",
+    "Evaluate f(x) at the turning points",
+    "Apply condition for three distinct real roots: f(x_max) > 0 and f(x_min) < 0",
+    "Express the condition in terms of m and n",
+    "Solve for the range of n"
+  ],
+  "wrong_move": "Failing to consider the condition that m > 0 or incorrectly determining the location of the turning points, leading to an incorrect range for n.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

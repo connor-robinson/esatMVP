@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Assess logical equivalence via contrapositive",
+  "core_move_guess": "Re-express each statement in contrapositive form to assess logical equivalence.",
+  "trigger_cues": [
+    "logical equivalence",
+    "implication",
+    "sufficient condition",
+    "theorem"
+  ],
+  "mini_steps": [
+    "Recognize the original statement as an implication",
+    "Write the contrapositive of the original statement",
+    "Write the contrapositive of each option",
+    "Compare each contrapositive with the original",
+    "Determine equivalence based on contrapositive comparison"
+  ],
+  "wrong_move": "Assuming that the converse of a statement is logically equivalent to the original statement, or not understanding the definition of sufficient condition.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

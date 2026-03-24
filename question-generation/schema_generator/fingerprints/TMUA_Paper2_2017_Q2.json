@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper2_2017_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate gradient to perpendicular line",
+  "core_move_guess": "Exploit perpendicularity to find coordinates and area.",
+  "trigger_cues": [
+    "rectangle",
+    "perpendicular",
+    "coordinates given",
+    "area"
+  ],
+  "mini_steps": [
+    "Find gradient of PQ",
+    "Find gradient of perpendicular line QR",
+    "Find equation of line QR",
+    "Find x-intercept of QR (point R)",
+    "Calculate length of PQ",
+    "Calculate length of QR",
+    "Calculate area of rectangle PQRS"
+  ],
+  "wrong_move": "Failing to correctly calculate the gradient of the perpendicular line, or using incorrect lengths to calculate the area.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

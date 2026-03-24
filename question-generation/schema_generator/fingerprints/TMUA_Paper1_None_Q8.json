@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve trigonometric equation with range",
+  "core_move_guess": "Re-express the equation in terms of a single trigonometric function and solve within the appropriate range.",
+  "trigger_cues": [
+    "equation with trigonometric functions",
+    "range specified for variable",
+    "solve for variable"
+  ],
+  "mini_steps": [
+    "Recognize the angle is 2x",
+    "Convert equation to sin 2x",
+    "Solve quadratic equation in sin 2x",
+    "Find all solutions for 2x within 0 to 720 degrees",
+    "Divide by 2 to find solutions for x",
+    "Calculate p-q"
+  ],
+  "wrong_move": "Failing to consider the range of 2x (0 to 720 degrees) and only finding solutions within 0 to 360 degrees, thus missing some solutions.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper1_2019_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve geometric series with ratio constraint",
+  "core_move_guess": "Re-express the sum condition as a polynomial equation for the common ratio.",
+  "trigger_cues": [
+    "geometric sequence",
+    "sum of first n terms",
+    "ratio constraint",
+    "7th term given"
+  ],
+  "mini_steps": [
+    "Express sum of first 6 terms",
+    "Express sum of first 3 terms",
+    "Equate sums with the given ratio",
+    "Simplify to polynomial equation in r^3",
+    "Solve for r^3, then r",
+    "Use 7th term to find first term"
+  ],
+  "wrong_move": "Assuming r=1 is always invalid without checking the implications for the given conditions, or not recognizing the factorization trick with R = r^3.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

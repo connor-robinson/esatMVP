@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper1_2018_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Distance between circles via centers",
+  "core_move_guess": "Exploit the geometry to relate shortest distance to center distance and radii.",
+  "trigger_cues": [
+    "two circles",
+    "shortest distance",
+    "equations given"
+  ],
+  "mini_steps": [
+    "Find centers and radii from equations",
+    "Calculate distance between centers",
+    "Subtract radii from center distance"
+  ],
+  "wrong_move": "Failing to account for the radii of both circles when calculating the shortest distance.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

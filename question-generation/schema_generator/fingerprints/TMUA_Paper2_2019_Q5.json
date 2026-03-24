@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper2_2019_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test necessity/sufficiency with counterexamples",
+  "core_move_guess": "Test necessity by searching for a counterexample.",
+  "trigger_cues": [
+    "necessary",
+    "sufficient",
+    "divisible",
+    "positive integers"
+  ],
+  "mini_steps": [
+    "Understand the definition of necessary and sufficient",
+    "Assume the condition is necessary",
+    "Search for a counterexample to necessity",
+    "If counterexample found, condition is not necessary",
+    "Assume the condition is sufficient",
+    "Search for a counterexample to sufficiency",
+    "If counterexample found, condition is not sufficient"
+  ],
+  "wrong_move": "Assuming divisibility rules for primes apply to composite numbers.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

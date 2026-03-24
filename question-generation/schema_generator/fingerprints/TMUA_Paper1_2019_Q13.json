@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize quadratic form after substitution",
+  "core_move_guess": "Re-express the expression as a quadratic by substitution.",
+  "trigger_cues": [
+    "expression with sin x and 2^(sin x)",
+    "asks for maximum value",
+    "quadratic-like structure"
+  ],
+  "mini_steps": [
+    "Substitute u = 2^(sin x)",
+    "Recognize quadratic form in u",
+    "Complete the square or find vertex",
+    "Determine range of u (0 < u <= 2)",
+    "Find maximum value within the range"
+  ],
+  "wrong_move": "Failing to recognize the quadratic form and attempting to directly maximize using calculus or trigonometric identities without substitution.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

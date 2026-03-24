@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate discriminant to intersection points",
+  "core_move_guess": "Relate the discriminant of a quadratic to the number of intersection points.",
+  "trigger_cues": [
+    "two points of intersection",
+    "graphs of equations",
+    "complete set of values"
+  ],
+  "mini_steps": [
+    "Set equations equal",
+    "Rearrange to quadratic form",
+    "Discriminant > 0 for two solutions",
+    "Ensure both roots are non-negative",
+    "Consider the midpoint of the roots"
+  ],
+  "wrong_move": "Failing to consider the non-negativity constraint on the square root, or only considering the discriminant.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

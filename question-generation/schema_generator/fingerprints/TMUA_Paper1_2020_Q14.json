@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2020_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate area integral to a value",
+  "core_move_guess": "Equate the definite integral of the difference between two functions to the given area.",
+  "trigger_cues": [
+    "area enclosed",
+    "curve",
+    "line",
+    "area is given"
+  ],
+  "mini_steps": [
+    "Find intersection points of line and curve",
+    "Set up definite integral of difference",
+    "Evaluate the definite integral",
+    "Equate result to given area",
+    "Solve for the unknown parameter"
+  ],
+  "wrong_move": "Failing to consider both positive and negative regions, or not recognizing the symmetry and only calculating one region.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2022_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate logs via base change",
+  "core_move_guess": "Re-express logarithmic equations using base change and substitution.",
+  "trigger_cues": [
+    "logarithmic equations",
+    "multiple variables",
+    "asks for an equation relating variables"
+  ],
+  "mini_steps": [
+    "Rewrite log equations using base change formula",
+    "Substitute to eliminate variables",
+    "Simplify the resulting expression",
+    "Rewrite back into logarithmic form"
+  ],
+  "wrong_move": "Incorrectly applying log rules or making algebraic errors during substitution and simplification.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

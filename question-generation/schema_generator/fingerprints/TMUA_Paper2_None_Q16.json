@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate similar triangles via scale factor",
+  "core_move_guess": "Exploit similar triangles to determine the scale factor.",
+  "trigger_cues": [
+    "diagram with nested triangles",
+    "lengths of corresponding sides given",
+    "find the value of k"
+  ],
+  "mini_steps": [
+    "Identify similar triangles",
+    "Determine the scale factor",
+    "Relate sides using scale factor",
+    "Solve for unknown length",
+    "Relate unknown length to k",
+    "Solve for k"
+  ],
+  "wrong_move": "Assuming all triangles are similar without proper justification or incorrectly identifying corresponding sides.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

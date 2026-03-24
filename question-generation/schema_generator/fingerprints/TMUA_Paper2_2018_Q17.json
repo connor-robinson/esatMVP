@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Apply number theory theorem to options",
+  "core_move_guess": "Test each statement against the given theorem.",
+  "trigger_cues": [
+    "theorem provided",
+    "awkward prime factors",
+    "squaresum",
+    "prime factorisation"
+  ],
+  "mini_steps": [
+    "Understand the squaresum theorem",
+    "Analyse statement A: square numbers are squaresums",
+    "Analyse statement B: product of squaresums is a squaresum",
+    "Analyse statement C: squaresum product implies squaresums",
+    "Analyse statement D: non-squaresum times awkward primes"
+  ],
+  "wrong_move": "Assuming the theorem is too complex and trying to find counterexamples without using the prime factorisation property.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

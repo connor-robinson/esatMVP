@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test cases to eliminate options",
+  "core_move_guess": "Test specific functions to eliminate incorrect options.",
+  "trigger_cues": [
+    "\u2019if\u2019 and \u2018only if\u2019 conditions",
+    "first and second derivatives",
+    "trapezium rule overestimate"
+  ],
+  "mini_steps": [
+    "Recognize 'only if' implies necessity",
+    "Find counterexample to 'only if' conditions",
+    "Eliminate options with 'only if'",
+    "Test remaining options with another function",
+    "Check if the condition holds and trapezium rule over/underestimates",
+    "Deduce correct 'if' condition"
+  ],
+  "wrong_move": "Assuming that a single condition on the first and second derivative is sufficient to guarantee an overestimate or underestimate using the trapezium rule, without testing different cases.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

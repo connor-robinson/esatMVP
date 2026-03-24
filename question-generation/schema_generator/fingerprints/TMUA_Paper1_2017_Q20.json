@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to side length",
+  "core_move_guess": "Relate the area of the octagon to the side length of the square.",
+  "trigger_cues": [
+    "regular octagon",
+    "area of the octagon",
+    "square",
+    "side length"
+  ],
+  "mini_steps": [
+    "Relate octagon area to square area",
+    "Express octagon area in terms of square side",
+    "Calculate the ratio"
+  ],
+  "wrong_move": "Assume the octagon's side length is directly related to the square's side length without considering the corner triangles.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

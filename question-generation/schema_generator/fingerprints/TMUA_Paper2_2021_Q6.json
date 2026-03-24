@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2021_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots/stationary points to polynomial",
+  "core_move_guess": "Relate the number of roots of a polynomial to the number of stationary points.",
+  "trigger_cues": [
+    "statements about roots",
+    "statements about derivative roots",
+    "necessary/sufficient"
+  ],
+  "mini_steps": [
+    "P: f(x) = 0 has 3 real roots",
+    "Q: f'(x) = 0 has 2 real roots",
+    "If f(x) has 3 roots, f'(x) has at least 2 roots",
+    "Consider examples to disprove sufficiency",
+    "Consider examples to disprove necessity",
+    "Determine the correct logical relationship"
+  ],
+  "wrong_move": "Assuming that 3 roots of f(x) implies exactly 2 roots of f'(x), or vice versa, without considering edge cases or higher-degree polynomials.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

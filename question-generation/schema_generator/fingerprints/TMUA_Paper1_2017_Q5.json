@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve differential equation with constant",
+  "core_move_guess": "Constrain constant of integration using given point.",
+  "trigger_cues": [
+    "differential equation",
+    "find value at a point",
+    "y in terms of x"
+  ],
+  "mini_steps": [
+    "Integrate to find general solution",
+    "Substitute point to find constant",
+    "Write particular solution",
+    "Evaluate at required x value"
+  ],
+  "wrong_move": "Ignore the constant of integration, or incorrectly determine it.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

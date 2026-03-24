@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate transformation to integral estimate",
+  "core_move_guess": "Relate graph transformations to the effect on the trapezium rule's estimate.",
+  "trigger_cues": [
+    "trapezium rule",
+    "underestimate",
+    "function transformation",
+    "integral"
+  ],
+  "mini_steps": [
+    "Recognize trapezium rule gives underestimate for concave function",
+    "Analyze effect of each transformation on the function graph",
+    "Determine if transformation changes concavity",
+    "Identify transformation leading to overestimate (convex function)"
+  ],
+  "wrong_move": "Assuming that any transformation will change an underestimate to an overestimate without considering the shape of the transformed function.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2019_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Necessity and sufficiency with sketch",
+  "core_move_guess": "Test necessity and sufficiency by sketching counterexamples.",
+  "trigger_cues": [
+    "necessary but not sufficient",
+    "quadrilateral",
+    "geometric properties",
+    "multiple choice"
+  ],
+  "mini_steps": [
+    "Sketch a general quadrilateral",
+    "Consider option A: PQ = SR and PS parallel to QR",
+    "Check if the condition is necessary for a parallelogram",
+    "Check if the condition is sufficient for a parallelogram",
+    "Sketch a counterexample where PQ = SR and PS parallel to QR, but it's not a parallelogram",
+    "Conclude option A is necessary but not sufficient"
+  ],
+  "wrong_move": "Assuming that a condition that 'looks right' is sufficient without rigorous proof or counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

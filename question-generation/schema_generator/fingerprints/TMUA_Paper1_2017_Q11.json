@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Find pattern by calculating more terms",
+  "core_move_guess": "Calculate further terms to identify the underlying pattern.",
+  "trigger_cues": [
+    "sequence defined recursively",
+    "initial terms given",
+    "no obvious pattern"
+  ],
+  "mini_steps": [
+    "Calculate x4, x5, x6...",
+    "Observe repeating pattern",
+    "Identify the period of the sequence",
+    "Determine the remainder when 2017 is divided by the period",
+    "Find the corresponding term in the repeating pattern"
+  ],
+  "wrong_move": "Assume a simple arithmetic or geometric progression without calculating further terms.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA 2020 Section 2",
+    "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA 2020 Section 2.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 12,
+    "text": "12 \nA 4.0 k\u020d fixed resistor is connected in series with a light dependent resistor (LDR) across a \n100 V dc power supply. \n \nThe current in the LDR is 5.0 mA. \n \nThe intensity of light falling on the LDR now decreases and the voltage across the fixed resistor \nchanges by 50%. \n \nWhat is the change in the resistance of the LDR as a result of the change in intensity? \n \n \n \nA \n8.0 k\u020d \n \nB",
+    "skipped_diagram": false,
+    "solution_text": null,
+    "solution_pdf_path": null
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA 2020 Section 2",
+    "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA 2020 Section 2.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 21,
+    "text": "21 \nThe table gives standard enthalpy change data measured at 25 \u00b0C. \n \nreaction \nstandard enthalpy change / kJ mol\u20131 \nH(g) + Br(g) \u013a HBr(g) \n\u2013 366 \nH(g) + Br(g) \u013a H+(g) + Br \u2013(g) \n+ 968 \nHBr(g) \u013a H+(aq) + Br \u2013(aq) \n\u2013 92 \n \n \nWhat is the standard enthalpy change for the following reaction at 25 \u00b0C? \n \nH+(g) + Br \u2013(g) \u013a H+(aq) + Br\u2013(aq) \n \n \n \nA \n\u2013 510 kJ mol\u20131 \n \nB \n+ 510 kJ mol\u20131 \n \nC \n\u2013 694 kJ mol\u20131 \n \nD \n+ 694 kJ mol\u20131 \n \nE \n\u20131242 kJ mol\u20131 \n \nF \n+1242 kJ mol\u20131 \n \nG \n\u20131426 kJ mol\u20131 \n \nH \n+1426 kJ mol\u20131",
+    "skipped_diagram": false,
+    "solution_text": null,
+    "solution_pdf_path": null
+  },
+  {
+    "paper_id": "NSAA_Section2_2020_NSAA 2020 Section 2",
+    "pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA 2020 Section 2.pdf",
+    "year": "2020",
+    "exam": "NSAA",
+    "section": "Section 2",
+    "qnum": 36,
+    "text": "36 \nEllingham diagrams show how the quantity \u01fbG for a reaction varies over a range of \ntemperatures. \n \nThe \u01fbG values for different reactions can be combined using Hess\u2019s law. \n \nFor a reaction to be able to occur, the overall value of \u01fbG must be less than zero. \n \n \n \n \nUsing the Ellingham diagram shown, which one of the following statements is correct? \n \n \n \nA \nNickel can reduce tin(IV) oxide at 300 \u00b0C. \n \nB \nCarbon can reduce chromium(III) oxide at 1500 \u00b0C forming carbon dioxide and chromium. \n \nC \nChromium(III) oxide and nickel oxide will decompose to their elements at all the \ntemperatures shown. \n \nD \nChromium will react with steam at all the temperatures shown. \n \nE \nNickel oxide can be reduced by carbon at 300 \u00b0C forming carbon monoxide and nickel.",
+    "skipped_diagram": false,
+    "solution_text": "C\nPHYS\nQ56\nE\nCHEM\nQ76\nC\nBIOL\n\nD\nCHEM\nQ56\nD\nBIOL",
+    "solution_pdf_path": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\scripts\\schema_generator\\papers\\NSAA Section 2\\NSAA Section 2 2020\\NSAA Section 2 2020 Answer Key.pdf"
+  }
+]

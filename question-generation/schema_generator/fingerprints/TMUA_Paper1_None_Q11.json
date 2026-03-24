@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Substitution and solve quadratic equation",
+  "core_move_guess": "Re-express exponential terms as quadratic to solve.",
+  "trigger_cues": [
+    "exponential terms",
+    "equation to solve",
+    "2^x terms"
+  ],
+  "mini_steps": [
+    "Recognize 4^(x) as (2^(x))^2",
+    "Substitute y = 2^(2x)",
+    "Form quadratic equation in y",
+    "Solve for y",
+    "Substitute back to find x",
+    "Calculate log base 10"
+  ],
+  "wrong_move": "Failing to recognize the quadratic form and attempting to directly solve the exponential equation.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

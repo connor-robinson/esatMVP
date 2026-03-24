@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots of two quadratics",
+  "core_move_guess": "Relate the roots of the modified quadratic to the original roots.",
+  "trigger_cues": [
+    "two quadratics",
+    "roots of quadratics",
+    "inequality involving a quadratic",
+    "c < 0"
+  ],
+  "mini_steps": [
+    "Solve x^2 + bcx + c^3 = 0 using the quadratic formula",
+    "Express the roots in terms of c and the roots of x^2 + bx + c = 0",
+    "Determine the roots of the modified quadratic are pc and qc",
+    "Determine the correct inequality based on the sign of c and the order of p and q"
+  ],
+  "wrong_move": "Failing to relate the roots of the modified quadratic to the original quadratic, or making a sign error when considering c < 0.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

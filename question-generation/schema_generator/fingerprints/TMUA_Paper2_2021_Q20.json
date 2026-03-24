@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2021_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Iterative function, integral evaluation",
+  "core_move_guess": "Exploit iterative definition to find pattern.",
+  "trigger_cues": [
+    "iterative function definition",
+    "absolute value",
+    "definite integral"
+  ],
+  "mini_steps": [
+    "Calculate f1(x)",
+    "Calculate f2(x)",
+    "Calculate f3(x)",
+    "Identify the pattern: fn(x) = nx for x >= 0, fn(x) = 0 for x < 0",
+    "Evaluate the integral of f99(x) from -1 to 1",
+    "Integral from -1 to 0 is 0, integral from 0 to 1 is 99x",
+    "Evaluate the integral of 99x from 0 to 1"
+  ],
+  "wrong_move": "Failing to notice the pattern and trying to compute f99(x) directly, or incorrectly handling the absolute value.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

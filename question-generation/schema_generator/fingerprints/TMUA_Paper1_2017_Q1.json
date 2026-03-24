@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Integrate, use initial condition to solve",
+  "core_move_guess": "Integrate the derivative to find the original function.",
+  "trigger_cues": [
+    "given dy/dx",
+    "find y",
+    "y = 5 when x = 1"
+  ],
+  "mini_steps": [
+    "Expand the fraction",
+    "Integrate term by term",
+    "Substitute x=1 and y=5",
+    "Solve for the constant of integration"
+  ],
+  "wrong_move": "Forgetting the constant of integration or making a mistake when integrating the terms.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

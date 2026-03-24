@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2018_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate integrals to areas geometrically",
+  "core_move_guess": "Express definite integrals as areas and solve.",
+  "trigger_cues": [
+    "definite integrals",
+    "area enclosed by curve",
+    "polynomial function",
+    "roots given"
+  ],
+  "mini_steps": [
+    "Sketch the curve",
+    "Identify areas A, B, C",
+    "Express integrals in terms of A, B, C",
+    "Solve simultaneous equations for A, B, C",
+    "Calculate A + B + C"
+  ],
+  "wrong_move": "Assuming the integrals directly give the areas without considering the sign due to regions below the x-axis.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to cubic graph features",
+  "core_move_guess": "Relate number of real roots to the position of local extrema.",
+  "trigger_cues": [
+    "cubic equation",
+    "exactly one real root",
+    "sufficient condition"
+  ],
+  "mini_steps": [
+    "Sketch cubic graph",
+    "Find stationary points",
+    "Relate roots to extrema positions",
+    "Translate extrema conditions to 'a' bounds",
+    "Check each option for sufficiency"
+  ],
+  "wrong_move": "Assuming any condition that allows one real root is sufficient, without checking the other options.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

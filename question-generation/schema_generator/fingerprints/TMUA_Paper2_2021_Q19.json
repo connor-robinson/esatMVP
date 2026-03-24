@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2021_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify and solve trigonometric equation",
+  "core_move_guess": "Re-express the equation using trigonometric identities and solve.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "square roots",
+    "equation equals zero"
+  ],
+  "mini_steps": [
+    "Rewrite using difference of squares",
+    "Simplify square roots to get |cos \u03b8| and |sin \u03b8|",
+    "Consider cases based on sign of cos \u03b8 and sin \u03b8",
+    "Solve sin \u03b8 / |sin \u03b8| + cos \u03b8 / |cos \u03b8| = 0",
+    "Determine valid \u03b8 values within range"
+  ],
+  "wrong_move": "Assuming that sqrt(x^2) = x without considering absolute value, leading to incorrect simplification and solutions.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

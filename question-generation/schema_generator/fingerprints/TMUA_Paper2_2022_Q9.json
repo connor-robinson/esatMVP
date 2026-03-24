@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Identify flaw in given proof",
+  "core_move_guess": "Identify the false deduction in the proof.",
+  "trigger_cues": [
+    "attempted proof",
+    "best describes this proof",
+    "claim"
+  ],
+  "mini_steps": [
+    "Recognize the structure of the attempted proof",
+    "Identify the claim being made",
+    "Examine each step of the proof for logical validity",
+    "Find the step where the reasoning fails",
+    "Relate the error to the overall claim"
+  ],
+  "wrong_move": "Assuming the discriminant test implies irreducibility over all numbers, not just rationals, or that irreducibility implies primality.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

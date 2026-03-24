@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate sums of geometric progressions",
+  "core_move_guess": "Exploit the properties of geometric series to simplify the given equation and solve for k.",
+  "trigger_cues": [
+    "geometric sequence",
+    "sum of first n terms",
+    "Sn",
+    "S30 \u2013 S20 \u0d4c k S10"
+  ],
+  "mini_steps": [
+    "Express Sn in terms of a and r",
+    "Substitute into S30 \u2013 S20 \u0d4c k S10",
+    "Simplify the equation",
+    "Solve for k in terms of r",
+    "Find the smallest integer value for k given r > 1"
+  ],
+  "wrong_move": "Assuming that the difference in sums can be directly related to k without proper algebraic manipulation and simplification of the geometric series formula.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

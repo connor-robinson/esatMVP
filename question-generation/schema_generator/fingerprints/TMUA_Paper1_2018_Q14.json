@@ -1,0 +1,30 @@
+{
+  "qid": "TMUA_Paper1_2018_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simultaneous equations with logarithms",
+  "core_move_guess": "Exploit simultaneous equations to eliminate a variable.",
+  "trigger_cues": [
+    "line equation",
+    "logarithm",
+    "two points on the line",
+    "find possible values"
+  ],
+  "mini_steps": [
+    "Substitute points into line equation",
+    "log2(p) = 3m + 4 and 4 = m*log2(p) + 4",
+    "Solve for m in second equation: m = 0 or log2(p) = 0",
+    "If m = 0, log2(p) = 4, so p = 16",
+    "If log2(p) != 0, m != undefined",
+    "Solve for m in first equation: m = (log2(p) - 4)/3",
+    "Equate the two expressions for m",
+    "(log2(p) - 4)/3 = (4 - 4)/log2(p)",
+    "log2(p) = 4, so p = 16",
+    "Solve for p: log2(p)^2 = 12 + 4log2(p)",
+    "Let x = log2(p), solve quadratic x^2 - 4x - 12 = 0",
+    "x = 6 or x = -2",
+    "p = 2^6 = 64 or p = 2^-2 = 1/4"
+  ],
+  "wrong_move": "Failing to consider the case where m = 0, or making algebraic errors when solving the simultaneous equations.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

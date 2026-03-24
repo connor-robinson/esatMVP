@@ -52,7 +52,12 @@ interface GenerationStatus {
   error?: string;
 }
 
-const STATUS_FILE = path.join(process.cwd(), "scripts", "esat_question_generator", ".generation_status.json");
+const ESAT_GEN_DIR = path.join(
+  process.cwd(),
+  "question-generation",
+  "esat_question_generator"
+);
+const STATUS_FILE = path.join(ESAT_GEN_DIR, ".generation_status.json");
 
 function readStatus(): GenerationStatus {
   try {
@@ -125,12 +130,7 @@ export async function POST(request: Request) {
     console.log("[API] Status initialized:", status);
 
     // Start generation in background
-    const scriptPath = path.join(
-      process.cwd(),
-      "scripts",
-      "esat_question_generator",
-      "generate_with_progress.py"
-    );
+    const scriptPath = path.join(ESAT_GEN_DIR, "generate_with_progress.py");
     console.log("[API] Script path:", scriptPath);
     console.log("[API] Script exists:", fs.existsSync(scriptPath));
     
@@ -185,12 +185,12 @@ export async function POST(request: Request) {
     const pythonCmd = process.platform === "win32" ? "python" : "python3";
     const command = `${pythonCmd} "${scriptPath}"`;
     console.log("[API] Executing command:", command);
-    console.log("[API] Working directory:", path.join(process.cwd(), "scripts", "esat_question_generator"));
-    
+    console.log("[API] Working directory:", ESAT_GEN_DIR);
+
     execAsync(
       command,
       {
-        cwd: path.join(process.cwd(), "scripts", "esat_question_generator"),
+        cwd: ESAT_GEN_DIR,
         env,
         // Don't fail on non-zero exit codes - the script may complete with failures
         // but that's still a successful execution

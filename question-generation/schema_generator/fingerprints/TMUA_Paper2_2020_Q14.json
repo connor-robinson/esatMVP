@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove statements with counterexamples",
+  "core_move_guess": "Disprove statements by constructing counterexamples.",
+  "trigger_cues": [
+    "True/False statement",
+    "Arithmetic sequence",
+    "Property P defined"
+  ],
+  "mini_steps": [
+    "Understand property P",
+    "Consider statement I: ad < 0",
+    "Construct a counterexample where ad < 0 but property P fails",
+    "Consider statement II: d is even",
+    "Construct a counterexample where d is odd but property P holds",
+    "Conclude both statements are false"
+  ],
+  "wrong_move": "Assuming that ad < 0 automatically implies property P, or assuming that if property P holds, d must be even without considering counterexamples.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Apply trapezium rule, simplify logarithm",
+  "core_move_guess": "Apply trapezium rule with given number of strips.",
+  "trigger_cues": [
+    "trapezium rule",
+    "3 strips",
+    "logarithm",
+    "definite integral"
+  ],
+  "mini_steps": [
+    "Calculate strip width",
+    "Calculate y-values at each point",
+    "Apply trapezium rule formula",
+    "Simplify logarithm terms"
+  ],
+  "wrong_move": "Incorrectly calculating strip width or applying the trapezium rule formula, or making errors when simplifying logarithms.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

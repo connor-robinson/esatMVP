@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test cases to validate statements",
+  "core_move_guess": "Test specific triangle types to validate each statement.",
+  "trigger_cues": [
+    "acute-angled or obtuse-angled",
+    "number of straight lines",
+    "at least one of which is right-angled",
+    "which of the following statements is/are true?"
+  ],
+  "mini_steps": [
+    "Consider acute triangle",
+    "Determine number of right-angled divisions",
+    "Consider obtuse triangle",
+    "Determine number of right-angled divisions",
+    "Relate findings to statements I, II, III"
+  ],
+  "wrong_move": "Assuming all triangles have the same number of possible divisions without considering different types.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

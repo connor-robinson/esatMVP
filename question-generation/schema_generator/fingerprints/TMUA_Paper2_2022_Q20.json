@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2022_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce function from graph properties",
+  "core_move_guess": "Identify key features of each graph to match functions.",
+  "trigger_cues": [
+    "graphs of trigonometric functions",
+    "multiple functions to match",
+    "given interval for x"
+  ],
+  "mini_steps": [
+    "Recognize y = (cos x)(sin x) = (sin x)(cos x)",
+    "Eliminate options based on identical graphs",
+    "Identify key features of cos^2(x) graph (always positive)",
+    "Identify key features of sin^2(x) graph (always positive)",
+    "Determine graph features based on x-values (e.g., x = pi/2)"
+  ],
+  "wrong_move": "Assuming the order of functions in the question matches the order of graphs in the options without proper analysis.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

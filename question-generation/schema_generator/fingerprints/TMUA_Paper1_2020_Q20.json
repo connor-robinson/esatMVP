@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2020_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Roots of cubic via quadratic factor",
+  "core_move_guess": "Equate roots of linear and quadratic factors to reduce cases.",
+  "trigger_cues": [
+    "cubic equation",
+    "exactly two distinct values",
+    "factorisation"
+  ],
+  "mini_steps": [
+    "Factorize the cubic equation",
+    "Consider cases for repeated roots",
+    "Case 1: Linear root equals one quadratic root",
+    "Case 2: Quadratic has repeated root",
+    "Solve for 'a' in each case",
+    "Check for distinct roots"
+  ],
+  "wrong_move": "Assuming the quadratic factor always contributes two distinct roots, neglecting the possibility of repeated roots or a shared root with the linear factor.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Complete the square, find area",
+  "core_move_guess": "Complete the square to find the radius and center of each circle, then find the area between consecutive circles and sum the areas.",
+  "trigger_cues": [
+    "equation of circle",
+    "area between circles",
+    "process continues"
+  ],
+  "mini_steps": [
+    "Complete the square for circle equation",
+    "Find radius in terms of n",
+    "Area of circle in terms of n",
+    "Area between Cn+1 and Cn",
+    "Sum the areas from n=1 to n=99"
+  ],
+  "wrong_move": "Attempting to find the intersection points of the circles or directly calculating the shaded area without simplifying the expression for the area between consecutive circles.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

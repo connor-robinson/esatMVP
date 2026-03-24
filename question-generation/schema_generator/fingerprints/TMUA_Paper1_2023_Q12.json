@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper1_2023_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve trigonometric equation by factoring",
+  "core_move_guess": "Factorize trigonometric equation to find solutions.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "find all solutions",
+    "sin^2(x)",
+    "cos^2(x)",
+    "tan^2(x)"
+  ],
+  "mini_steps": [
+    "Rewrite tan^2(x) as sin^2(x)/cos^2(x)",
+    "Simplify equation by multiplying with cos^2(x)",
+    "Rearrange and factor out sin^2(x)",
+    "Solve sin^2(x) = 0",
+    "Solve 1 - 2cos^2(x) = 0",
+    "Find solutions for x in given range"
+  ],
+  "wrong_move": "Dividing by sin^2(x) without considering the case where sin^2(x) = 0, thus losing solutions.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

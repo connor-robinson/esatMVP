@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify expression then differentiate each term",
+  "core_move_guess": "Re-express the given expression to facilitate differentiation.",
+  "trigger_cues": [
+    "expression with brackets and fractional power",
+    "asks for dy/dx",
+    "multiple choice options with similar terms"
+  ],
+  "mini_steps": [
+    "Expand the brackets",
+    "Split the fraction into separate terms",
+    "Differentiate each term using power rule",
+    "Simplify the resulting expression",
+    "Match with the given options"
+  ],
+  "wrong_move": "Applying the quotient rule directly without simplifying the expression first, leading to more complex algebra and increased chance of error.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Equate exponent to zero, solve",
+  "core_move_guess": "Equate the exponent of x to zero to find the constant term.",
+  "trigger_cues": [
+    "constant term",
+    "expansion",
+    "binomial"
+  ],
+  "mini_steps": [
+    "Recognize constant term has x^0",
+    "Find general term in binomial expansion",
+    "Set exponent of x to 0",
+    "Solve for k",
+    "Substitute k into general term",
+    "Calculate the value"
+  ],
+  "wrong_move": "Incorrectly calculating the binomial coefficient or not accounting for the alternating sign.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

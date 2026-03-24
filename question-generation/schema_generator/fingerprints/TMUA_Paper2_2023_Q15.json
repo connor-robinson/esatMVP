@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2023_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test sufficiency by logical implication",
+  "core_move_guess": "Test each option by checking if it implies exactly three of the other statements.",
+  "trigger_cues": [
+    "sufficient condition",
+    "exactly three",
+    "logical statements",
+    "inequalities"
+  ],
+  "mini_steps": [
+    "Understand logical implication",
+    "For each option, check which statements it implies",
+    "Count the number of implied statements",
+    "Identify the option that implies exactly three statements"
+  ],
+  "wrong_move": "Assuming that the sufficient condition must be the most restrictive statement, rather than testing the implications.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

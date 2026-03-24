@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2018_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Disprove inequality by counterexample",
+  "core_move_guess": "Test inequalities with extreme values to disprove.",
+  "trigger_cues": [
+    "asks 'must be true'",
+    "inequality comparison",
+    "variables with ordering constraint"
+  ],
+  "mini_steps": [
+    "Recognize 'must be true' requires proof or disproof",
+    "Consider using counterexamples to disprove",
+    "Choose values satisfying given constraints",
+    "Substitute values into inequality",
+    "Check if inequality holds",
+    "If false, inequality is not universally true"
+  ],
+  "wrong_move": "Assuming the inequality is true and attempting to prove it algebraically, rather than looking for a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2019_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate discriminant to graphical properties",
+  "core_move_guess": "Relate the discriminant to the number of intersections with the x-axis.",
+  "trigger_cues": [
+    "quadratic",
+    "intersects the x-axis at two distinct points",
+    "possible values that p and q could take"
+  ],
+  "mini_steps": [
+    "Recall discriminant condition for two distinct real roots",
+    "Express discriminant in terms of p and q",
+    "Apply the condition (discriminant > 0)",
+    "Consider the constraint p > 0",
+    "Interpret the inequality as a region in the p-q plane",
+    "Match the region to the given graphs"
+  ],
+  "wrong_move": "Assuming that the coefficient of x^2 (p) must be positive to have two intersections, without considering the discriminant.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2023_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate gradient/intercept to coefficients",
+  "core_move_guess": "Re-express gradient and intercept in terms of a, b, and c.",
+  "trigger_cues": [
+    "ax + by = c",
+    "positive gradient",
+    "positive y-intercept",
+    "necessary but not sufficient"
+  ],
+  "mini_steps": [
+    "Rewrite equation as y = (-a/b)x + c/b",
+    "Gradient = -a/b",
+    "y-intercept = c/b",
+    "-a/b > 0 (positive gradient)",
+    "c/b > 0 (positive y-intercept)",
+    "Analyze inequalities to find necessary but not sufficient condition"
+  ],
+  "wrong_move": "Assuming that a > 0, b > 0, and c > 0 leads to a positive gradient and y-intercept without considering the signs of the ratios.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

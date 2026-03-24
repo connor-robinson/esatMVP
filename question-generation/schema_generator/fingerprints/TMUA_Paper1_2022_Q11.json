@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate product and difference to find minimum",
+  "core_move_guess": "Re-express the equations to find a solvable form.",
+  "trigger_cues": [
+    "two equations",
+    "f(x) - g(x)",
+    "f(x)g(x)",
+    "minimum value"
+  ],
+  "mini_steps": [
+    "Rewrite f(x) - g(x) = 2sin(x) as f(x) = g(x) + 2sin(x)",
+    "Substitute into f(x)g(x) = cos^2(x)",
+    "Solve the quadratic for g(x)",
+    "Express f(x) in terms of sin(x) and cos(x)",
+    "Find the minimum of f(x) by completing the square"
+  ],
+  "wrong_move": "Failing to recognize the quadratic form and attempting to directly solve for f(x) or g(x) from the original equations.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

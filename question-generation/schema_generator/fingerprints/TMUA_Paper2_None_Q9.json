@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_None_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to congruence conditions",
+  "core_move_guess": "Relate equality of areas to possible congruence conditions.",
+  "trigger_cues": [
+    "congruent triangles",
+    "equal areas",
+    "three statements to evaluate"
+  ],
+  "mini_steps": [
+    "Recall SSS, SAS, ASA congruence conditions",
+    "Express area equality as equation",
+    "Relate area equation to angle equality",
+    "Consider supplementary angles",
+    "Evaluate each statement based on congruence conditions"
+  ],
+  "wrong_move": "Assuming sin B = sin Y implies B = Y, neglecting the supplementary angle case.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

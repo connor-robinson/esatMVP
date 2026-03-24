@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2021_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate derivative sign to function's monotonicity",
+  "core_move_guess": "Relate sign of derivative to increasing/decreasing behavior.",
+  "trigger_cues": [
+    "find fraction of interval",
+    "f(x) is decreasing",
+    "given function f(x)"
+  ],
+  "mini_steps": [
+    "Rewrite f(x) using fractional exponents",
+    "Differentiate f(x)",
+    "Find when f'(x) < 0",
+    "Solve the inequality for x",
+    "Calculate the fraction of the interval"
+  ],
+  "wrong_move": "Failing to correctly differentiate the function or solve the resulting inequality, or not recognizing the relationship between the sign of the derivative and the function's monotonicity.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

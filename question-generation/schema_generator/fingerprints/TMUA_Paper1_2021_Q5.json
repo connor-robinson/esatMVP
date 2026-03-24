@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Apply function rule and solve equation",
+  "core_move_guess": "Re-express function values using the given rule and solve the resulting equation.",
+  "trigger_cues": [
+    "function definition with conditions",
+    "equation involving function values",
+    "multiple of 3 condition"
+  ],
+  "mini_steps": [
+    "Rewrite f(9) as f(3)f(3)",
+    "Rewrite f(16) as 16",
+    "Rewrite f(24) as f(3)f(8)",
+    "Rewrite f(8) as 8",
+    "Substitute into the given equation",
+    "Solve the quadratic equation for f(3)"
+  ],
+  "wrong_move": "Incorrectly applying the function rule, for example, assuming f(mn) = f(m)f(n) always or misinterpreting the 'multiple of 3' condition.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

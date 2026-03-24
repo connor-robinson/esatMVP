@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2022_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Recognize invariant under translation",
+  "core_move_guess": "Exploit the invariance of the cubic term under translation.",
+  "trigger_cues": [
+    "sequence of translations",
+    "cubic polynomial",
+    "identify possible results"
+  ],
+  "mini_steps": [
+    "Recognize translations preserve the x^3 term",
+    "Check if x^3 coefficient is 1",
+    "Eliminate option III",
+    "Consider f(x) -> f(x+a) translation",
+    "Expand (x+a)^3 and compare with options I and II",
+    "Determine which options match the form"
+  ],
+  "wrong_move": "Assuming that any cubic polynomial is a translation of x^3 without checking the coefficient of the x^3 term or the relationships between other coefficients.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

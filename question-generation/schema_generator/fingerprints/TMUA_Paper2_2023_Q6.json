@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2023_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Check validity of proof steps",
+  "core_move_guess": "Identify the first incorrect step in the argument.",
+  "trigger_cues": [
+    "student's attempt",
+    "which of the following best describes this attempt?",
+    "lines I, II, III, IV, V, VI, VII"
+  ],
+  "mini_steps": [
+    "Understand the student's argument",
+    "Check the validity of each step",
+    "Identify the first incorrect step",
+    "Select the option that matches the error"
+  ],
+  "wrong_move": "Assuming that the argument is correct without verifying each step.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

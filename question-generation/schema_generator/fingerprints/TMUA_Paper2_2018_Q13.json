@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2018_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test validity of proof steps",
+  "core_move_guess": "Test the implication with a counterexample.",
+  "trigger_cues": [
+    "attempted proof",
+    "\ufb01rst error",
+    "trigonometric functions"
+  ],
+  "mini_steps": [
+    "Recognize the conjecture claims implication",
+    "Consider counterexamples to disprove",
+    "Recall quadrants and trig function signs",
+    "Find \u03b8 where tan \u03b8 > 0 and sin \u03b8 + cos \u03b8 < 1",
+    "Identify error by substituting counterexample"
+  ],
+  "wrong_move": "Assuming the conjecture is true without testing, or focusing only on algebraic manipulations without considering the domain and range of trigonometric functions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

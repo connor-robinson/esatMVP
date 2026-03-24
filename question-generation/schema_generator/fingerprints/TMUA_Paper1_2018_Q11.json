@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2018_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate normal gradient to curve gradient",
+  "core_move_guess": "Equate normal line equation to curve's derivative expression.",
+  "trigger_cues": [
+    "line is normal to curve",
+    "find a coordinate",
+    "equation of line given"
+  ],
+  "mini_steps": [
+    "Find derivative of curve",
+    "Relate derivative to normal gradient",
+    "Express normal gradient in terms of p",
+    "Equate normal gradient to m",
+    "Solve for p"
+  ],
+  "wrong_move": "Failing to correctly relate the gradient of the normal to the derivative of the curve, or making algebraic errors when solving for p.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

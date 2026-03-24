@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Consider cases based on absolute values",
+  "core_move_guess": "Consider all sign possibilities to remove absolute values.",
+  "trigger_cues": [
+    "absolute values",
+    "|x| + |y|",
+    "find the area"
+  ],
+  "mini_steps": [
+    "Recognize absolute values imply cases",
+    "Identify four quadrants/cases",
+    "Express equation without absolute values in each quadrant",
+    "Sketch the graph in each quadrant",
+    "Recognize the shape as a square",
+    "Calculate the area of the square"
+  ],
+  "wrong_move": "Failing to consider all four cases for the signs of x and y, leading to an incomplete or incorrect graph.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

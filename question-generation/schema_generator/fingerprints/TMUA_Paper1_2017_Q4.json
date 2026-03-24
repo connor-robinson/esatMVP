@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Apply remainder theorem with substitution",
+  "core_move_guess": "Exploit the remainder theorem to find the value of p.",
+  "trigger_cues": [
+    "polynomial divided by linear expression",
+    "asks for a variable within the polynomial",
+    "remainder is given"
+  ],
+  "mini_steps": [
+    "Recognize remainder theorem applicability",
+    "Set up f(x) = (3x^2 + 8x - 3)(px - 1)",
+    "Apply remainder theorem: f(-1) = 24",
+    "Substitute x = -1 into f(x)",
+    "Solve for p"
+  ],
+  "wrong_move": "Expanding the brackets of f(x) is a more complex approach that increases the chance of making a mistake.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

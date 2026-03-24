@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify trigonometric expression, find range",
+  "core_move_guess": "Re-express the function in terms of cosine and simplify.",
+  "trigger_cues": [
+    "trigonometric function",
+    "find maximum and minimum values",
+    "sin^2(x) and cos(x) present"
+  ],
+  "mini_steps": [
+    "Rewrite sin^2(x) as 1 - cos^2(x)",
+    "Factorize the denominator",
+    "Cancel common factors",
+    "Find maximum of 1/(cos x + 2)",
+    "Find minimum of 1/(cos x + 2)",
+    "Calculate the difference"
+  ],
+  "wrong_move": "Failing to simplify the expression before attempting to find the maximum and minimum values, or incorrectly cancelling factors without checking for undefined points.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

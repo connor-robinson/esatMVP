@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2023_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Exploit HCF property in recurrence",
+  "core_move_guess": "Exploit the recurrence relation to deduce divisibility properties.",
+  "trigger_cues": [
+    "recurrence relation",
+    "highest common factor",
+    "divisibility",
+    "sequence"
+  ],
+  "mini_steps": [
+    "HCF(u_n, u_{n+1}) = HCF(u_{n+1}, u_{n+2})",
+    "HCF(a, b) = 7 implies a = 7x, b = 7y",
+    "u_3 = 7x + 7y = 7(x+y)",
+    "u_n is always a multiple of 7",
+    "Check statements I, II, and III"
+  ],
+  "wrong_move": "Assuming that if u1 is not a factor of u2, it cannot be a factor of any subsequent term without considering the recurrence relation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

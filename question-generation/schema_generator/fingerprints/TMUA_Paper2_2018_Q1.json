@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2018_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify expression then find derivative",
+  "core_move_guess": "Re-express the function using index laws before differentiating.",
+  "trigger_cues": [
+    "fraction with x terms",
+    "find the derivative",
+    "x > 0"
+  ],
+  "mini_steps": [
+    "Simplify the expression using index laws",
+    "Differentiate the simplified expression",
+    "Substitute x = 4 into the derivative",
+    "Calculate the numerical value"
+  ],
+  "wrong_move": "Differentiating the original expression directly without simplification often leads to errors.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

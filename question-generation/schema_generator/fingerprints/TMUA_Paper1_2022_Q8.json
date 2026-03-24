@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2022_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate logarithms to find unknown",
+  "core_move_guess": "Re-express logarithmic terms using base change.",
+  "trigger_cues": [
+    "logarithmic expressions",
+    "unknown variable in logarithm",
+    "different bases"
+  ],
+  "mini_steps": [
+    "Change base of log_5(x) to base 2",
+    "Simplify the expression",
+    "Equate to log_2(M)",
+    "Solve for M"
+  ],
+  "wrong_move": "Incorrectly applying logarithm rules, such as assuming log(a) - log(b) = log(a-b).",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

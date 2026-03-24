@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2020_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate conditional statements with counterexamples",
+  "core_move_guess": "Test each statement with counterexamples to find the only true one.",
+  "trigger_cues": [
+    "\"exactly one of the following is true\"",
+    "conditional statements",
+    "\"only if\"",
+    "\"if and only if\""
+  ],
+  "mini_steps": [
+    "Understand 'only if' as implication",
+    "Recognize 'if and only if' as equivalence",
+    "Test each statement with simple examples",
+    "Identify statements falsified by examples",
+    "Confirm remaining statement holds true"
+  ],
+  "wrong_move": "Assuming 'only if' is the same as 'if', leading to incorrect evaluation of the conditional statements.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

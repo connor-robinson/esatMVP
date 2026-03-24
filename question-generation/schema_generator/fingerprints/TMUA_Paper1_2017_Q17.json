@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2017_Q17",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate sum of a function series",
+  "core_move_guess": "Exploit formula for sum of first n integers.",
+  "trigger_cues": [
+    "summation notation",
+    "function of n",
+    "inequality involving n"
+  ],
+  "mini_steps": [
+    "Calculate F(n) using integration or geometry",
+    "Express G(n) as sum of F(r) from r=1 to n",
+    "Simplify summation using F(r) = 1/(2r)",
+    "Apply formula for sum of first n integers",
+    "Solve inequality for n"
+  ],
+  "wrong_move": "Failing to correctly calculate F(n) or incorrectly applying the summation formula will lead to errors.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

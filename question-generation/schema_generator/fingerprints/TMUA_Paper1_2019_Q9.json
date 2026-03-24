@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2019_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Find intersection, compute area between curves",
+  "core_move_guess": "Equate curves and integrate to find area.",
+  "trigger_cues": [
+    "area enclosed between curves",
+    "two equations given",
+    "positive constant p"
+  ],
+  "mini_steps": [
+    "Rearrange equations to y=f(x) form",
+    "Equate expressions to find intersection points",
+    "Integrate difference of functions between intersection points",
+    "Evaluate definite integral",
+    "Simplify expression to match answer choices"
+  ],
+  "wrong_move": "Incorrectly rearranging equations or setting up the integral with wrong bounds or functions.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce circle equation from geometric properties",
+  "core_move_guess": "Infer the circle's center and radius from given points.",
+  "trigger_cues": [
+    "circle equation",
+    "two points on circumference",
+    "tangent to x-axis"
+  ],
+  "mini_steps": [
+    "Center is (2, a)",
+    "Radius is |a|",
+    "Distance from center to (3,3) equals radius",
+    "Distance from center to (7,5) equals radius",
+    "Solve for a",
+    "Substitute a into circle equation"
+  ],
+  "wrong_move": "Assuming the center lies on the x-axis or misinterpreting the tangency condition.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

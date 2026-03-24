@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_None_Q20",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate area to side length",
+  "core_move_guess": "Relate the area of the square to the length of its side.",
+  "trigger_cues": [
+    "area of square",
+    "side length",
+    "ratio"
+  ],
+  "mini_steps": [
+    "Area of square = side^2",
+    "Side length = sqrt(area)",
+    "Ratio of areas",
+    "Ratio of side lengths",
+    "Relate ratios of areas to ratios of side lengths"
+  ],
+  "wrong_move": "Assume the ratio of areas is the same as the ratio of side lengths without squaring.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

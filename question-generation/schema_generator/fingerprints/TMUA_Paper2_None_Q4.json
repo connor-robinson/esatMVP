@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_None_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Systematic checking of statement truth values",
+  "core_move_guess": "Test each statement's truth value against constraints.",
+  "trigger_cues": [
+    "multiple statements about urn contents",
+    "statements can be true or false",
+    "deduce possible urn contents"
+  ],
+  "mini_steps": [
+    "Assume a statement is true",
+    "Deduce possible urn contents",
+    "Check consistency with other statements",
+    "If inconsistent, statement is false",
+    "Repeat for other statements",
+    "Find consistent scenario"
+  ],
+  "wrong_move": "Assuming a statement is true without checking consistency with other statements, leading to contradictions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -4,7 +4,13 @@ import { join } from 'path';
 
 export async function GET() {
   try {
-    const curriculumPath = join(process.cwd(), 'scripts/esat_question_generator/curriculum/ESAT_CURRICULUM.json');
+    const curriculumPath = join(
+      process.cwd(),
+      'question-generation',
+      'esat_question_generator',
+      'curriculum',
+      'ESAT_CURRICULUM.json'
+    );
     console.log('[Curriculum API] Reading curriculum from:', curriculumPath);
     const content = readFileSync(curriculumPath, 'utf8');
     const curriculum = JSON.parse(content);

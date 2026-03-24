@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Transform and interpret geometric transformation",
+  "core_move_guess": "Sketch the curve to visualize the transformation.",
+  "trigger_cues": [
+    "equation of a curve",
+    "rotated 90 degrees",
+    "point of rotation",
+    "equation of the new curve"
+  ],
+  "mini_steps": [
+    "Complete the square to find vertex",
+    "Sketch the original curve",
+    "Determine the new vertex after rotation",
+    "Deduce the equation of the transformed curve",
+    "Expand to match answer choices"
+  ],
+  "wrong_move": "Failing to account for the shift in the vertex when rotating the curve, or incorrectly applying the rotation transformation.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

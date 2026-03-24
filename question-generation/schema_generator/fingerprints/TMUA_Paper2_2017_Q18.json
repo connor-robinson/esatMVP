@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q18",
+  "eligible": true,
+  "reasoning_pattern_hint": "Check inequality sign with logarithm",
+  "core_move_guess": "Check if the logarithm base is between 0 and 1 to flip the inequality sign.",
+  "trigger_cues": [
+    "inequality with exponents",
+    "logarithm applied to inequality",
+    "positive integer n"
+  ],
+  "mini_steps": [
+    "Recognize inequality with exponents",
+    "Apply logarithm to both sides",
+    "Check the base of the logarithm",
+    "Flip inequality sign if base < 1",
+    "Solve for n"
+  ],
+  "wrong_move": "Forgetting to flip the inequality sign when taking the logarithm with a base between 0 and 1 is a common mistake.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

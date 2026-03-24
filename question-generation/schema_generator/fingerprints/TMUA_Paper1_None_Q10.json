@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_None_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve graphically by counting intersections",
+  "core_move_guess": "Sketch graphs to determine number of solutions.",
+  "trigger_cues": [
+    "asks for number of solutions",
+    "equation is difficult to solve exactly",
+    "trigonometric function",
+    "variable in denominator"
+  ],
+  "mini_steps": [
+    "Rearrange equation to tan x = 1/x",
+    "Recognize exact solution is difficult",
+    "Sketch y = tan x and y = 1/x",
+    "Count intersections within given range"
+  ],
+  "wrong_move": "Attempting to solve the equation algebraically will likely lead to a dead end, as it is a transcendental equation.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

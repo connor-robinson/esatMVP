@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce constraints from decimal addition",
+  "core_move_guess": "Infer digit constraints by considering carry-over in decimal addition.",
+  "trigger_cues": [
+    "standard form",
+    "decimal addition",
+    "statements must be true"
+  ],
+  "mini_steps": [
+    "Write as column addition",
+    "Consider carry-over from hundredths to tenths",
+    "Deduce b > 9",
+    "Eliminate other options based on constraints",
+    "Check if other statements are necessarily true"
+  ],
+  "wrong_move": "Assuming that a carry-over is necessary from the thousandths column, or not considering the constraints imposed by the decimal representation.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

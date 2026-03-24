@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2017_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate coefficients via algebraic constraints",
+  "core_move_guess": "Equate coefficients and solve for unknowns.",
+  "trigger_cues": [
+    "coefficient of x^n",
+    "8 times",
+    "smallest possible value"
+  ],
+  "mini_steps": [
+    "Find coefficient of x^4",
+    "Find coefficient of x^2",
+    "Relate coefficients: 5ab^4 = 8 * 10a^3b^2",
+    "Simplify and solve for b in terms of a",
+    "Find a+b in terms of a",
+    "Minimize a+b"
+  ],
+  "wrong_move": "Failing to consider both positive and negative roots when taking the square root, or making algebraic errors in simplification.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

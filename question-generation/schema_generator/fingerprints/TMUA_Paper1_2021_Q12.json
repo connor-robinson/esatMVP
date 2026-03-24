@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2021_Q12",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate minima of two functions",
+  "core_move_guess": "Exploit the minimum of one function to constrain another.",
+  "trigger_cues": [
+    "two functions",
+    "minimum value given",
+    "p is a real number"
+  ],
+  "mini_steps": [
+    "Complete the square for the first function",
+    "Find x at minimum of first function",
+    "Solve for p^4",
+    "Solve for p^2 (positive root)",
+    "Complete the square for the second function",
+    "Find minimum of second function using p^2 value"
+  ],
+  "wrong_move": "Assume p can be negative when taking the square root, leading to incorrect p value and subsequent wrong minimum for the second function.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

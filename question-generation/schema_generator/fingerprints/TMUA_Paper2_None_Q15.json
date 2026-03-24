@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_None_Q15",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate discriminant to root properties",
+  "core_move_guess": "Relate the discriminant to the condition on root difference.",
+  "trigger_cues": [
+    "quadratic",
+    "difference between the roots",
+    "condition on the difference"
+  ],
+  "mini_steps": [
+    "Find roots using quadratic formula",
+    "Express difference between roots",
+    "Relate difference to discriminant",
+    "Solve inequalities involving discriminant"
+  ],
+  "wrong_move": "Failing to consider the discriminant's non-negativity for real roots or incorrectly manipulating the inequalities.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

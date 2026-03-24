@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper2_2022_Q7",
+  "eligible": true,
+  "reasoning_pattern_hint": "Analyze conditional statements' truth values",
+  "core_move_guess": "Determine the truth values of conditional statements and their related forms.",
+  "trigger_cues": [
+    "conditional statement",
+    "y-intercept",
+    "x-intercept",
+    "converse",
+    "contrapositive"
+  ],
+  "mini_steps": [
+    "Express the line equation: y = mx + c",
+    "Relate y-intercept to c",
+    "Relate x-intercept to -c/m",
+    "Analyze the condition: if c < 0, then -c/m > 0",
+    "Determine the sign of m",
+    "Evaluate the truth of the converse and contrapositive"
+  ],
+  "wrong_move": "Assuming the original statement is true without considering the relationship between the slope and intercepts, leading to incorrect conclusions about the converse and contrapositive.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

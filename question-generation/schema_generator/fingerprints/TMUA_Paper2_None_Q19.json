@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_None_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce 3D structure from 2D projections",
+  "core_move_guess": "Infer spatial arrangement from orthogonal projections.",
+  "trigger_cues": [
+    "plan view",
+    "front elevation",
+    "layers",
+    "3D object from 2D views"
+  ],
+  "mini_steps": [
+    "Recognize object fits in 3x3 cube",
+    "Consider plan view (top-down)",
+    "Consider front elevation",
+    "Deduce cube presence in layers from projections",
+    "Combine information from both views",
+    "Determine the total number of cubes"
+  ],
+  "wrong_move": "Failing to systematically combine information from the plan and front elevation, leading to an incomplete or incorrect reconstruction of the 3D object.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

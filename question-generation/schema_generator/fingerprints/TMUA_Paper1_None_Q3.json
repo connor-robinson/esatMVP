@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_None_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Factorize cubic, match coefficients, solve",
+  "core_move_guess": "Equate coefficients after polynomial expansion to find unknowns.",
+  "trigger_cues": [
+    "cubic polynomial",
+    "unknown coefficients",
+    "factorized form"
+  ],
+  "mini_steps": [
+    "Expand (ax+b)^3",
+    "Equate coefficients with given cubic",
+    "Solve for a, b, p",
+    "Factorize second cubic",
+    "Identify factors, given (x+2)",
+    "Deduce remaining factors"
+  ],
+  "wrong_move": "Incorrectly expanding (ax+b)^3 or making algebraic errors when solving for the coefficients will lead to an incorrect value for p or incorrect factorization of the second cubic.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

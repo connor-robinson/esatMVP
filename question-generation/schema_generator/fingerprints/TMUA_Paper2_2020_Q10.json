@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2020_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Combine inequalities, test counterexamples",
+  "core_move_guess": "Combine inequalities to derive a new inequality.",
+  "trigger_cues": [
+    "multiple inequalities",
+    "variables on both sides",
+    "which must be true"
+  ],
+  "mini_steps": [
+    "Add inequalities",
+    "Simplify the result",
+    "Derive a < d",
+    "Test counterexample for b < c",
+    "Show a + b + c + d > 0"
+  ],
+  "wrong_move": "Assuming that if an approach doesn't immediately yield a result, the statement must be false, without attempting a counterexample.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

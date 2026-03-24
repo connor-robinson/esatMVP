@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2020_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Use quadrant to determine sign",
+  "core_move_guess": "Constrain the possible values using quadrant information.",
+  "trigger_cues": [
+    "given tan \u03b8 = 2",
+    "180\u25e6< \u03b8 < 360\u25e6",
+    "find the value of cos \u03b8"
+  ],
+  "mini_steps": [
+    "Identify quadrant of \u03b8",
+    "Determine sign of cos \u03b8 in that quadrant",
+    "Use tan \u03b8 to find cos \u03b8 ignoring sign",
+    "Apply correct sign to cos \u03b8"
+  ],
+  "wrong_move": "Failing to consider the quadrant and sign of cos \u03b8, or sketching the triangle in the wrong quadrant leading to an incorrect sign.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

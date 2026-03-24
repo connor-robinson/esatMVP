@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2020_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify by invariance under transformation",
+  "core_move_guess": "Exploit invariance under vertical stretch to simplify.",
+  "trigger_cues": [
+    "quadratic function",
+    "areas of regions equal",
+    "not enough information"
+  ],
+  "mini_steps": [
+    "Recognize invariance of q and area ratio under vertical stretch",
+    "Set k=1 for simplicity",
+    "Calculate area of R",
+    "Calculate area of S",
+    "Equate areas and solve for q"
+  ],
+  "wrong_move": "Assuming the need to find the exact quadratic without simplification, making the problem unnecessarily complex.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

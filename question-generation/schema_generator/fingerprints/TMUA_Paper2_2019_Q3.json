@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper2_2019_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Deduce from factored expression",
+  "core_move_guess": "Factor and exploit the zero product property.",
+  "trigger_cues": [
+    "given equation",
+    "which of the following must be true"
+  ],
+  "mini_steps": [
+    "Rearrange equation to ab - ac = 0",
+    "Factor out a: a(b-c) = 0",
+    "Deduce a = 0 or b - c = 0",
+    "Evaluate each statement against the deduction"
+  ],
+  "wrong_move": "Dividing by 'a' without considering the case where a = 0 leads to an incorrect conclusion.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

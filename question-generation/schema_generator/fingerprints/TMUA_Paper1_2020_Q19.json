@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2020_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate quadratic at strategic points",
+  "core_move_guess": "Test integer values around the symmetry axis.",
+  "trigger_cues": [
+    "find lowest positive integer",
+    "quadratic expression",
+    "expression > 0"
+  ],
+  "mini_steps": [
+    "Recognize quadratic form",
+    "Find or estimate symmetry axis",
+    "Test integer values near axis",
+    "Check if f(x) > 0"
+  ],
+  "wrong_move": "Assuming a simple factorization or direct algebraic solution is possible, instead of strategically testing values.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

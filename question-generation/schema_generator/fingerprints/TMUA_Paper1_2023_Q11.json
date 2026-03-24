@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2023_Q11",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve trigonometric equation; count solutions",
+  "core_move_guess": "Re-express the equation to isolate the cosine term, then find solutions within the given interval.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "interval specified",
+    "count solutions"
+  ],
+  "mini_steps": [
+    "Isolate the cosine term",
+    "Solve for the angle",
+    "Find all solutions in the given interval",
+    "Count the number of solutions"
+  ],
+  "wrong_move": "Forgetting to consider all solutions within the given interval, or not accounting for the periodicity of the cosine function.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

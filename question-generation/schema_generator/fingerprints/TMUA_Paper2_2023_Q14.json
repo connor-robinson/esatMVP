@@ -1,0 +1,23 @@
+{
+  "qid": "TMUA_Paper2_2023_Q14",
+  "eligible": true,
+  "reasoning_pattern_hint": "Factor and analyze trigonometric equation",
+  "core_move_guess": "Factor the trigonometric equation and analyze the resulting solutions based on the parameter p.",
+  "trigger_cues": [
+    "trigonometric equation",
+    "parameter p",
+    "number of solutions",
+    "range 0 \u2264 x \u2264 2\u03c0"
+  ],
+  "mini_steps": [
+    "Factor out sin x",
+    "Solve sin x = 0",
+    "Solve cos^2 x = p^2",
+    "Analyze solutions for cos x = p and cos x = -p",
+    "Consider the range 0 \u2264 x \u2264 2\u03c0",
+    "Determine the number of distinct solutions based on p"
+  ],
+  "wrong_move": "Failing to consider the range of x or incorrectly counting the number of solutions for each factor.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

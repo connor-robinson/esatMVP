@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper1_2023_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate infinite sum using special value",
+  "core_move_guess": "Evaluate the infinite sum by recognizing a binomial expansion.",
+  "trigger_cues": [
+    "infinite sum",
+    "binomial coefficients",
+    "sum to infinity"
+  ],
+  "mini_steps": [
+    "Recognize binomial coefficient form",
+    "Relate to binomial expansion (1+x)^n",
+    "Identify x and n",
+    "Substitute x and n into binomial expansion",
+    "Evaluate the expression"
+  ],
+  "wrong_move": "Failing to recognize the binomial expansion and attempting to sum the series term by term.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

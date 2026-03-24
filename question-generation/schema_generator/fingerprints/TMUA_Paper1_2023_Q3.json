@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2023_Q3",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate integral to given value",
+  "core_move_guess": "Relate the requested integral to the given integral.",
+  "trigger_cues": [
+    "two definite integrals",
+    "unknown constants a, b",
+    "find a + b"
+  ],
+  "mini_steps": [
+    "Recognize the integral of 1/(ax+b) is related to ln(ax+b)",
+    "Evaluate the definite integral",
+    "Solve the resulting equations for a and b",
+    "Calculate a + b"
+  ],
+  "wrong_move": "Attempt to solve for a and b independently without recognizing the relationship between the two integrals.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

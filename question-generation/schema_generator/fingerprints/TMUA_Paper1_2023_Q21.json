@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2023_Q21",
+  "eligible": true,
+  "reasoning_pattern_hint": "Solve differential equation by integrating",
+  "core_move_guess": "Integrate the given expression to find f(x).",
+  "trigger_cues": [
+    "differential equation",
+    "dy/dx",
+    "find f(x)"
+  ],
+  "mini_steps": [
+    "Recognize differential equation form",
+    "Integrate -6/x^2 with respect to x",
+    "Rewrite -6/x^2 as -6x^-2",
+    "Apply power rule for integration",
+    "Evaluate integral as 6x^-1",
+    "Rewrite as 6/x"
+  ],
+  "wrong_move": "Forgetting the power rule for integration or incorrectly applying it, leading to an incorrect expression for f(x).",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_None_Q10",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test inequalities with positive/negative values",
+  "core_move_guess": "Test each inequality with positive and negative values to disprove sufficiency.",
+  "trigger_cues": [
+    "inequalities",
+    "x < y",
+    "positive or negative"
+  ],
+  "mini_steps": [
+    "Recognize x and y can be positive or negative",
+    "Understand 'sufficient' means the condition always implies x < y",
+    "Test each option with positive x, y",
+    "Test each option with negative x, y",
+    "Disprove sufficiency by finding counterexamples"
+  ],
+  "wrong_move": "Assuming x and y are positive and not considering negative values, leading to incorrect conclusions about the sufficiency of the conditions.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

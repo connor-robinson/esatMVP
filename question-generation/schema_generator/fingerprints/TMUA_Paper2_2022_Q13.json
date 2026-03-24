@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2022_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate geometric condition to algebraic equation",
+  "core_move_guess": "Relate the geometric condition (right angle) to an algebraic equation using Pythagoras' theorem.",
+  "trigger_cues": [
+    "kite",
+    "diagonals meet at O",
+    "right angle",
+    "necessary and sufficient"
+  ],
+  "mini_steps": [
+    "Recognize SPQ is right angle implies SQ is hypotenuse",
+    "Apply Pythagoras' theorem: SQ^2 = SP^2 + PQ^2",
+    "Express side lengths in terms of x, y, z",
+    "Simplify the equation",
+    "Match the simplified equation to the answer choices"
+  ],
+  "wrong_move": "Assuming properties of special kites (e.g., rhombus) or making incorrect assumptions about the relationships between the side lengths and diagonals.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

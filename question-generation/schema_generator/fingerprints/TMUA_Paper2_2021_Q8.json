@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2021_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate condition to a given statement",
+  "core_move_guess": "Test the necessity and sufficiency of a condition by considering examples and counterexamples.",
+  "trigger_cues": [
+    "necessary and sufficient",
+    "polynomial p(x)",
+    "statement about p(x)"
+  ],
+  "mini_steps": [
+    "Understand the given statement (*)",
+    "Consider p(a) = p(b) implies (*)",
+    "Consider (*) implies p(a) = p(b)",
+    "Find a counterexample where (*) holds but p(a) != p(b)",
+    "Conclude about necessity and sufficiency"
+  ],
+  "wrong_move": "Assuming p(a) = p(b) is necessary without considering cases where p'(c) = 0 even if p(a) != p(b).",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2020_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate factors to polynomial coefficients",
+  "core_move_guess": "Equate polynomial to factored form to find coefficients.",
+  "trigger_cues": [
+    "'(ax + b) is a factor'",
+    "polynomial expression",
+    "find coefficients"
+  ],
+  "mini_steps": [
+    "Recognize factors imply roots",
+    "Substitute roots into polynomial",
+    "Solve the system of equations",
+    "Calculate the target expression"
+  ],
+  "wrong_move": "Attempting to expand the factored form and match coefficients directly without using the factor theorem can lead to errors.",
+  "answer_form": "rational",
+  "confidence": 0.9
+}

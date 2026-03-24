@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2021_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate sum by breaking integral",
+  "core_move_guess": "Decompose the summation's integral into a sum of integrals.",
+  "trigger_cues": [
+    "summation of integrals",
+    "integral from n to n+1",
+    "evaluate a summation"
+  ],
+  "mini_steps": [
+    "Break up integral from 0 to r",
+    "Recognize integral from n to n+1 equals n+1",
+    "Simplify sum of integers",
+    "Evaluate summation of simplified terms"
+  ],
+  "wrong_move": "Attempting to find a closed-form expression for the summation directly, without breaking down the integral first.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

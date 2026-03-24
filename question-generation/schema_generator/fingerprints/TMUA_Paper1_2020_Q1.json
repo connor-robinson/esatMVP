@@ -1,0 +1,19 @@
+{
+  "qid": "TMUA_Paper1_2020_Q1",
+  "eligible": true,
+  "reasoning_pattern_hint": "Simplify expression before differentiating",
+  "core_move_guess": "Re-express the function as a sum of power terms before differentiating.",
+  "trigger_cues": [
+    "fraction with polynomial in numerator",
+    "asks for derivative",
+    "expression requires simplification"
+  ],
+  "mini_steps": [
+    "Rewrite the expression as a sum of powers of x",
+    "Apply power rule to each term",
+    "Simplify the resulting expression"
+  ],
+  "wrong_move": "Differentiate the quotient directly without simplifying the expression first, leading to a more complex calculation and higher chance of error.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

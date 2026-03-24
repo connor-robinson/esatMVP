@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2023_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Evaluate integral via piecewise function",
+  "core_move_guess": "Re-express the integral as a sum of integrals over integer intervals.",
+  "trigger_cues": [
+    "ceiling function",
+    "definite integral",
+    "integer result expected"
+  ],
+  "mini_steps": [
+    "Recognize ceiling function creates steps",
+    "Split integral at integer boundaries",
+    "Evaluate ceiling function on each interval",
+    "Compute integral of constant on each interval",
+    "Sum the results"
+  ],
+  "wrong_move": "Treating the ceiling function as a continuous function and directly integrating x/2.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

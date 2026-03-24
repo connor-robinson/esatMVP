@@ -1,0 +1,24 @@
+{
+  "qid": "TMUA_Paper1_2017_Q6",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate tangent, radius, and circle",
+  "core_move_guess": "Exploit tangency to derive a condition on parameters.",
+  "trigger_cues": [
+    "tangent to the circle",
+    "find the value of k",
+    "circle equation",
+    "point (20,0)"
+  ],
+  "mini_steps": [
+    "Equation of circle: x^2 + y^2 = 144",
+    "Tangent passes through (20, 0)",
+    "Equation of tangent: y = m(x - 20)",
+    "Substitute tangent equation into circle equation",
+    "Discriminant of quadratic = 0 (tangency condition)",
+    "Solve for m",
+    "Relate m and k"
+  ],
+  "wrong_move": "Failing to recognize the tangency condition implies a repeated root and thus a zero discriminant, leading to unnecessary complications.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

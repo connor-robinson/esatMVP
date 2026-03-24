@@ -24,6 +24,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pipeline.log
 
 # local env files
 .env*.local
@@ -49,8 +50,15 @@ next-env.d.ts
 # OS
 Thumbs.db
 
-# Question generator status
-scripts/
+# Question generators: ignore bulky artifacts (sources stay tracked under question-generation/)
+question-generation/**/runs/
+question-generation/**/backups/
+question-generation/**/__pycache__/
+question-generation/**/*.pyc
+question-generation/**/.generation_status.json
+# Legacy path (if anything remains)
+scripts/**/__pycache__/
+scripts/**/*.pyc
 
 # Backups (contain real data)
 supabase_backups/

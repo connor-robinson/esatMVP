@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper2_2019_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Maximize spacing under given constraints",
+  "core_move_guess": "Maximize the gap between seated people to minimize their number.",
+  "trigger_cues": [
+    "smallest number",
+    "next person must sit next to someone",
+    "circular table"
+  ],
+  "mini_steps": [
+    "Realize next person must sit next to someone implies no gap of 3",
+    "Minimize people by maximizing gaps",
+    "Arrange people with gaps of 2",
+    "Count the number of people"
+  ],
+  "wrong_move": "Assume a uniform distribution of people around the table without considering the 'next person' constraint.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

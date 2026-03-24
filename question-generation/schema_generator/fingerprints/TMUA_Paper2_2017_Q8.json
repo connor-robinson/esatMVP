@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper2_2017_Q8",
+  "eligible": true,
+  "reasoning_pattern_hint": "Estimate and compare numerical expressions",
+  "core_move_guess": "Estimate the value of each expression and compare.",
+  "trigger_cues": [
+    "compare values",
+    "multiple expressions",
+    "smallest value"
+  ],
+  "mini_steps": [
+    "Estimate log2 7",
+    "Calculate (2\u22123 + 2\u22122)\u22121",
+    "Estimate 2(\u03c0/3)",
+    "Rationalise denominator of 1/4\u221a2 \u22121",
+    "Calculate 4 sin2(\u03c0/4)",
+    "Compare the estimated/calculated values"
+  ],
+  "wrong_move": "Failing to simplify or approximate all expressions before comparison, leading to errors.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

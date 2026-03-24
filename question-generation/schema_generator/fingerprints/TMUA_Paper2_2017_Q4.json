@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2017_Q4",
+  "eligible": true,
+  "reasoning_pattern_hint": "Consider periodicity of trigonometric functions",
+  "core_move_guess": "Consider all possible solutions within the period.",
+  "trigger_cues": [
+    "find all possible values",
+    "trigonometric functions",
+    "tan x = constant"
+  ],
+  "mini_steps": [
+    "Recognize tan x has period \u03c0",
+    "Find general solution for x",
+    "Substitute into sin 2x",
+    "Simplify trigonometric expression",
+    "Identify all possible values"
+  ],
+  "wrong_move": "Assume the first solution found is the only solution without considering periodicity.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

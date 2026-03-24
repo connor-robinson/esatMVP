@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2023_Q16",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate parallelism to equation coefficients",
+  "core_move_guess": "Relate parallelism/perpendicularity to coefficient conditions.",
+  "trigger_cues": [
+    "three equations",
+    "parallel lines",
+    "perpendicular lines",
+    "coefficients a, b, c"
+  ],
+  "mini_steps": [
+    "Express parallelism/perpendicularity in terms of slopes",
+    "Express slopes in terms of coefficients",
+    "Derive conditions on a, b, c for parallel/perpendicular lines",
+    "Test given options against derived conditions"
+  ],
+  "wrong_move": "Assuming a simple relationship between a, b, and c without rigorous derivation, leading to incorrect conclusions about parallelism or perpendicularity.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

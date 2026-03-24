@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2019_Q13",
+  "eligible": true,
+  "reasoning_pattern_hint": "Exploit symmetry and trigonometric identities",
+  "core_move_guess": "Exploit symmetry to relate integrals and trigonometric identities to relate functions.",
+  "trigger_cues": [
+    "integral approximation",
+    "overestimate",
+    "sin^2(x)",
+    "cos^2(x)"
+  ],
+  "mini_steps": [
+    "Recognize sin^2(x) is symmetric about y-axis",
+    "Relate integral from -b to -a to integral from a to b",
+    "Use sin^2(x) + cos^2(x) = 1",
+    "Relate integral of cos^2(x) to integral of sin^2(x)"
+  ],
+  "wrong_move": "Assuming that overestimate implies the function is increasing or convex, without considering symmetry.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

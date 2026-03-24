@@ -1,0 +1,22 @@
+{
+  "qid": "TMUA_Paper1_2020_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate coefficients to symmetry, roots",
+  "core_move_guess": "Equate completing-the-square form to symmetry condition.",
+  "trigger_cues": [
+    "quadratic equation",
+    "line of symmetry",
+    "touches x-axis at one point"
+  ],
+  "mini_steps": [
+    "Complete the square",
+    "Relate completed square to symmetry line",
+    "Solve for p",
+    "Relate touching x-axis to discriminant",
+    "Solve for q",
+    "Calculate p + 8q"
+  ],
+  "wrong_move": "Failing to relate the 'touches x-axis' condition to the discriminant or the completed square form, leading to an incorrect value for q.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}

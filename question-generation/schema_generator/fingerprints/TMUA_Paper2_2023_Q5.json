@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2023_Q5",
+  "eligible": true,
+  "reasoning_pattern_hint": "Test cases against a universal claim",
+  "core_move_guess": "Test each case to disprove the universal claim.",
+  "trigger_cues": [
+    "universal claim",
+    "for all",
+    "counterexample"
+  ],
+  "mini_steps": [
+    "Substitute values from each case into the equation",
+    "Evaluate both sides of the equation for each case",
+    "Check if the equation holds true for each case",
+    "Identify cases where the equation is false",
+    "Select the option with all counterexamples"
+  ],
+  "wrong_move": "Assuming the claim is true and trying to prove it, rather than looking for counterexamples.",
+  "answer_form": "multiple_choice_logic",
+  "confidence": 0.9
+}

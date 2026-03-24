@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2018_Q9",
+  "eligible": true,
+  "reasoning_pattern_hint": "Relate roots to turning points",
+  "core_move_guess": "Relate number of roots to turning points' locations.",
+  "trigger_cues": [
+    "cubic equation",
+    "three distinct real solutions",
+    "constant c"
+  ],
+  "mini_steps": [
+    "Find derivative",
+    "Find stationary points",
+    "Evaluate y at stationary points",
+    "Relate turning points to x-axis intersections"
+  ],
+  "wrong_move": "Attempting to directly solve the cubic equation for its roots.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

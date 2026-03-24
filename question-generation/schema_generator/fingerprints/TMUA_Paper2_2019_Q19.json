@@ -1,0 +1,21 @@
+{
+  "qid": "TMUA_Paper2_2019_Q19",
+  "eligible": true,
+  "reasoning_pattern_hint": "Nested surds simplification by squaring",
+  "core_move_guess": "Re-express nested surds as perfect squares.",
+  "trigger_cues": [
+    "nested square roots",
+    "surds",
+    "simplification required"
+  ],
+  "mini_steps": [
+    "Recognize nested surds",
+    "Express inner terms as (a - b)^2",
+    "Simplify square roots",
+    "Combine terms",
+    "Obtain final simplified expression"
+  ],
+  "wrong_move": "Incorrectly expanding or simplifying the square roots, or making algebraic errors when combining terms.",
+  "answer_form": "algebraic",
+  "confidence": 0.9
+}

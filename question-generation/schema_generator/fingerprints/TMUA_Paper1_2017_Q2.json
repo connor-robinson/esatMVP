@@ -1,0 +1,20 @@
+{
+  "qid": "TMUA_Paper1_2017_Q2",
+  "eligible": true,
+  "reasoning_pattern_hint": "Expand, differentiate, and substitute",
+  "core_move_guess": "Differentiate the expanded expression twice and substitute the given value.",
+  "trigger_cues": [
+    "find f''(1)",
+    "given f(x) as expression"
+  ],
+  "mini_steps": [
+    "Expand the expression",
+    "Differentiate once",
+    "Differentiate again",
+    "Substitute x = 1",
+    "Simplify to find the value of f''(1)"
+  ],
+  "wrong_move": "Incorrectly simplifying negative powers of x or making errors during differentiation.",
+  "answer_form": "integer",
+  "confidence": 0.9
+}
