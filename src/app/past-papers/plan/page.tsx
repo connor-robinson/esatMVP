@@ -274,7 +274,7 @@ export default function PapersPlanPage() {
           paper.examType || 'Official',
         );
 
-        startSession({
+        await startSession({
           paperId: paper.id,
           paperName: paperTypeName,
           paperVariant: variantString,

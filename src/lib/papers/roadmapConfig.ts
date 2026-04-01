@@ -548,94 +548,64 @@ export const ROADMAP_STAGES: RoadmapStage[] = [
 ];
 
 /**
- * Get available TMUA years from database (for both Paper 1 and Paper 2)
- */
-async function getAvailableTmuaYears(): Promise<number[]> {
-  try {
-    // Dynamic import to avoid SSR issues
-    const { getPapersByExam } = await import('@/lib/supabase/questions');
-    const papers = await getPapersByExam('TMUA');
-    // Get all unique years that have either Paper 1 or Paper 2
-    const allYears = papers
-      .filter(p => p.paperName === 'Paper 1' || p.paperName === 'Paper 2')
-      .map(p => p.examYear)
-      .filter((year): year is number => typeof year === 'number');
-    const uniqueYears = [...new Set(allYears)]
-      .sort((a, b) => a - b); // Sort ascending (2016 to current year)
-    return uniqueYears;
-  } catch (error) {
-    console.error('[roadmapConfig] Error fetching TMUA years:', error);
-    // Fallback to common years if database query fails
-    const currentYear = new Date().getFullYear();
-    const years: number[] = [];
-    for (let year = 2016; year <= currentYear; year++) {
-      years.push(year);
-    }
-    return years;
-  }
-}
-
-/**
- * Check if a TMUA paper exists in the database
- */
-async function checkTmuaPaperExists(year: number, paperName: string): Promise<boolean> {
-  try {
-    const { getPaper } = await import('@/lib/supabase/questions');
-    const paper = await getPaper('TMUA', year, paperName, 'Official');
-    return paper !== null;
-  } catch (error) {
-    return false;
-  }
-}
-
-/**
  * Generate TMUA stages dynamically (Paper 1 and Paper 2 grouped in one stage per year)
+ * Uses a single getPapersByExam query instead of two DB calls per year.
  */
 async function generateTmuaStages(): Promise<RoadmapStage[]> {
-  const years = await getAvailableTmuaYears();
+  const { getPapersByExam } = await import('@/lib/supabase/questions');
+  const papers = await getPapersByExam('TMUA');
+
+  const byYear = new Map<number, { paper1: boolean; paper2: boolean }>();
+  for (const p of papers) {
+    if (p.examType !== 'Official') continue;
+    if (p.paperName !== 'Paper 1' && p.paperName !== 'Paper 2') continue;
+    const y = p.examYear;
+    if (typeof y !== 'number') continue;
+    let row = byYear.get(y);
+    if (!row) {
+      row = { paper1: false, paper2: false };
+      byYear.set(y, row);
+    }
+    if (p.paperName === 'Paper 1') row.paper1 = true;
+    if (p.paperName === 'Paper 2') row.paper2 = true;
+  }
+
+  const years = [...byYear.keys()].sort((a, b) => a - b);
   const stages: RoadmapStage[] = [];
-  
+
   for (const year of years) {
-    // Check if Paper 1 exists
-    const paper1Exists = await checkTmuaPaperExists(year, 'Paper 1');
-    // Check if Paper 2 exists
-    const paper2Exists = await checkTmuaPaperExists(year, 'Paper 2');
-    
-    // Only create stage if at least one paper exists
-    if (paper1Exists || paper2Exists) {
-      const parts: RoadmapPart[] = [];
-      
-      // Add Paper 1 if it exists
-      if (paper1Exists) {
-        parts.push({
-          partLetter: 'Paper 1',
-          partName: 'Paper 1',
-          paperName: 'Paper 1',
-          examType: 'Official',
-        });
-      }
-      
-      // Add Paper 2 if it exists
-      if (paper2Exists) {
-        parts.push({
-          partLetter: 'Paper 2',
-          partName: 'Paper 2',
-          paperName: 'Paper 2',
-          examType: 'Official',
-        });
-      }
-      
-      // Create single stage with both papers (if both exist) or just one
-      stages.push({
-        id: `tmua-${year}`,
-        year,
-        examName: 'TMUA' as ExamName,
-        label: 'Advanced Practice',
-        parts,
+    const flags = byYear.get(year);
+    if (!flags) continue;
+    const { paper1: paper1Exists, paper2: paper2Exists } = flags;
+    if (!paper1Exists && !paper2Exists) continue;
+
+    const parts: RoadmapPart[] = [];
+    if (paper1Exists) {
+      parts.push({
+        partLetter: 'Paper 1',
+        partName: 'Paper 1',
+        paperName: 'Paper 1',
+        examType: 'Official',
       });
     }
+    if (paper2Exists) {
+      parts.push({
+        partLetter: 'Paper 2',
+        partName: 'Paper 2',
+        paperName: 'Paper 2',
+        examType: 'Official',
+      });
+    }
+
+    stages.push({
+      id: `tmua-${year}`,
+      year,
+      examName: 'TMUA' as ExamName,
+      label: 'Advanced Practice',
+      parts,
+    });
   }
-  
+
   return stages;
 }
 

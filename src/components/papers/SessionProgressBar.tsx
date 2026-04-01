@@ -55,6 +55,8 @@ export function SessionProgressBar({
     allSectionsQuestions,
     questions,
     isMarkingInfo,
+    paperFullscreenShowMainNavbar,
+    setPaperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
 
   // Keep hooks before any conditional return to avoid hook-order crashes
@@ -86,9 +88,9 @@ export function SessionProgressBar({
         fullscreenElement?: Element | null;
         webkitFullscreenElement?: Element | null;
       };
-      setDocFullscreen(
-        !!(d.fullscreenElement ?? d.webkitFullscreenElement),
-      );
+      const fs = !!(d.fullscreenElement ?? d.webkitFullscreenElement);
+      setDocFullscreen(fs);
+      setPaperFullscreenShowMainNavbar(!fs);
     };
     document.addEventListener('fullscreenchange', sync);
     document.addEventListener(
@@ -103,7 +105,7 @@ export function SessionProgressBar({
         sync as EventListener,
       );
     };
-  }, [embedded]);
+  }, [embedded, setPaperFullscreenShowMainNavbar]);
 
   if (!sessionId) return null;
 
@@ -384,8 +386,14 @@ export function SessionProgressBar({
       ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
       : `/login?redirectTo=${encodeURIComponent('/past-papers/library')}`;
 
+  const immersiveNoMainNav =
+    embedded &&
+    docFullscreen &&
+    !paperFullscreenShowMainNavbar;
   const outerClass = embedded
-    ? 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+    ? immersiveNoMainNav
+      ? 'sticky top-0 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+      : 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
     : 'sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md';
   const rowHeight = embedded ? 'h-12' : 'h-16';
 

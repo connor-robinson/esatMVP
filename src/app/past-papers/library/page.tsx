@@ -368,7 +368,9 @@ export default function PapersLibraryPage() {
         const paperTypeName =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
 
-        startSession({
+        // Must await: startSession sets sessionId/paperId after async in-progress cleanup;
+        // loadQuestions reads store state and breaks navigation if it runs too early.
+        await startSession({
           paperId: paper.id,
           paperName: paperTypeName,
           paperVariant: variantString,

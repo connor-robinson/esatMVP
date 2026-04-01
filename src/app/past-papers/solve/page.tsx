@@ -25,6 +25,7 @@ import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { mapPartToSection } from '@/lib/papers/sectionMapping';
 import { prefetchImages } from '@/lib/papers/prefetch';
 import { useSessionActivity } from '@/hooks/useSessionActivity';
+import { usePaperSessionHydrated } from '@/hooks/usePaperSessionHydrated';
 import type { Letter, PaperType } from '@/types/papers';
 
 const LETTERS: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -82,6 +83,8 @@ export default function PapersSolvePage() {
     isMarkingInfo,
     setIsMarkingInfo,
   } = usePaperSessionStore();
+
+  const paperStoreHydrated = usePaperSessionHydrated();
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -236,19 +239,33 @@ export default function PapersSolvePage() {
       loadedPaperIdRef.current !== paperId;
 
     if (shouldLoad) {
-      loadedPaperIdRef.current = paperId;
-      loadQuestions(paperId).then(() => {
-        // After questions load, ensure we're on the correct question
-        // Preserve currentQuestionIndex from restored state
-        const state = usePaperSessionStore.getState();
-        const targetIndex = state.currentQuestionIndex;
-        if (targetIndex >= 0 && targetIndex < state.questions.length) {
-          navigateToQuestion(targetIndex);
-        } else if (state.questions.length > 0) {
-          // If index is invalid, navigate to first question
-          navigateToQuestion(0);
-        }
-      });
+      loadQuestions(paperId)
+        .then(() => {
+          const state = usePaperSessionStore.getState();
+          if (state.questionsError) {
+            loadedPaperIdRef.current = null;
+            return;
+          }
+          loadedPaperIdRef.current = paperId;
+
+          let targetIndex = state.currentQuestionIndex;
+          const firstInFirstSection = state.allSectionsQuestions?.[0]?.[0];
+          if (firstInFirstSection && state.questions.length > 0) {
+            const gi = state.questions.findIndex(
+              (q) => q.id === firstInFirstSection.id,
+            );
+            if (gi >= 0) targetIndex = gi;
+          }
+
+          if (targetIndex >= 0 && targetIndex < state.questions.length) {
+            navigateToQuestion(targetIndex);
+          } else if (state.questions.length > 0) {
+            navigateToQuestion(0);
+          }
+        })
+        .catch(() => {
+          loadedPaperIdRef.current = null;
+        });
     }
   }, [
     sessionId,
@@ -259,6 +276,13 @@ export default function PapersSolvePage() {
     loadQuestions,
     navigateToQuestion,
   ]);
+
+  useEffect(() => {
+    if (!paperStoreHydrated || isRestoring) return;
+    if (!sessionId) {
+      router.replace('/past-papers/library');
+    }
+  }, [paperStoreHydrated, sessionId, isRestoring, router]);
 
   // Track if we've started answering questions for current section (to prevent re-initializing timer)
   const sectionStartedRef = useRef<Set<number>>(new Set());
@@ -369,27 +393,6 @@ export default function PapersSolvePage() {
     currentSectionIndex,
     sectionInstructionTimer,
   ]);
-
-  // Show loading if session is being restored
-  if (isRestoring) {
-    return (
-      <Container size='lg'>
-        <div className='flex items-center justify-center min-h-screen'>
-          <div className='text-center space-y-4'>
-            <LoadingSpinner size='md' />
-            <p className='text-sm text-white/60'>Restoring session...</p>
-          </div>
-        </div>
-      </Container>
-    );
-  }
-
-  // Redirect if no active session
-  useEffect(() => {
-    if (!sessionId && !isRestoring) {
-      router.push('/past-papers/library');
-    }
-  }, [sessionId, isRestoring, router]);
 
   // Apply background color to body with smooth transition
   useEffect(() => {
@@ -514,6 +517,9 @@ export default function PapersSolvePage() {
 
   const currentSectionQuestion = currentSectionQuestions[sectionQuestionIndex];
 
+  /** Prefer section-scoped question so the first visible item matches section mode grouping */
+  const displayQuestion = currentSectionQuestion ?? currentQuestion;
+
   // Find the full index in the questions array for answer storage
   let fullQuestionIndex = currentQuestionIndex;
   if (allSectionsQuestions.length > 0 && currentSectionQuestion) {
@@ -585,7 +591,7 @@ export default function PapersSolvePage() {
 
   // Get the actual question number from the question object
   const currentQuestionNumber =
-    currentQuestion?.questionNumber ??
+    displayQuestion?.questionNumber ??
     questionRange.start + currentQuestionIndex;
 
   // Get current section boundaries
@@ -968,6 +974,29 @@ export default function PapersSolvePage() {
     }
   }, [sessionId, isMarkingInfo, sectionInstructionTimer, isSectionMode]);
 
+  if (!paperStoreHydrated) {
+    return (
+      <Container size='lg'>
+        <div className='flex items-center justify-center min-h-[50vh]'>
+          <LoadingSpinner size='md' />
+        </div>
+      </Container>
+    );
+  }
+
+  if (isRestoring) {
+    return (
+      <Container size='lg'>
+        <div className='flex items-center justify-center min-h-screen'>
+          <div className='text-center space-y-4'>
+            <LoadingSpinner size='md' />
+            <p className='text-sm text-white/60'>Restoring session...</p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
   if (!sessionId) {
     return (
       <Container size='lg'>
@@ -978,7 +1007,7 @@ export default function PapersSolvePage() {
           <Button
             variant='primary'
             className='mt-4'
-            onClick={() => router.push('/papers/library')}
+            onClick={() => router.push('/past-papers/library')}
           >
             Start New Session
           </Button>
@@ -1059,14 +1088,14 @@ export default function PapersSolvePage() {
                 </Button>
               </div>
             </div>
-          ) : currentQuestion ? (
+          ) : displayQuestion ? (
             // QUESTION DIV HEIGHT: Change '80vh' below to adjust question div height
             <div
               className='-mb-8'
               style={{ minHeight: '80vh', height: '80vh' }}
             >
               <QuestionDisplay
-                question={currentQuestion}
+                question={displayQuestion}
                 questionNumber={currentQuestionNumber}
                 remainingTime={remainingTime}
                 totalTimeMinutes={totalTimeMinutes}
@@ -1075,7 +1104,7 @@ export default function PapersSolvePage() {
                 isFlaggedForReview={isFlaggedForReview}
                 onReviewFlagToggle={handleReviewFlagToggle}
                 paperName={paperName}
-                currentQuestion={currentQuestion}
+                currentQuestion={displayQuestion}
               />
             </div>
           ) : (

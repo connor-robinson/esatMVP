@@ -44,8 +44,15 @@ export function Navbar() {
   const [activePress, setActivePress] = useState<string | null>(null);
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
-  const { sessionId, endedAt, justQuitSessionId, justQuitTimestamp } =
-    usePaperSessionStore();
+  const {
+    sessionId,
+    endedAt,
+    justQuitSessionId,
+    justQuitTimestamp,
+    paperFullscreenShowMainNavbar,
+    setPaperFullscreenShowMainNavbar,
+  } = usePaperSessionStore();
+  const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark } = useTheme();
 
   // Show progress bar if there's an active session
@@ -56,6 +63,35 @@ export function Navbar() {
     Date.now() - justQuitTimestamp < 5000;
   const hasActiveSession =
     sessionId !== null && endedAt === null && !isJustQuit;
+
+  useEffect(() => {
+    const sync = () => {
+      const d = document as Document & {
+        webkitFullscreenElement?: Element | null;
+      };
+      setDocFullscreen(
+        !!(document.fullscreenElement ?? d.webkitFullscreenElement),
+      );
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener(
+      'webkitfullscreenchange',
+      sync as EventListener,
+    );
+    sync();
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        sync as EventListener,
+      );
+    };
+  }, []);
+
+  const showMainNavStrip =
+    !hasActiveSession ||
+    !docFullscreen ||
+    paperFullscreenShowMainNavbar;
 
   const currentSection = pathname.startsWith('/mental-maths')
     ? 'skills'
@@ -124,6 +160,19 @@ export function Navbar() {
 
   return (
     <>
+      {hasActiveSession &&
+        docFullscreen &&
+        !paperFullscreenShowMainNavbar && (
+          <button
+            type='button'
+            onClick={() => setPaperFullscreenShowMainNavbar(true)}
+            className='fixed top-3 left-4 z-[100] rounded-lg border border-white/15 bg-background/90 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-text shadow-lg backdrop-blur-md transition-opacity duration-200 hover:bg-surface-subtle'
+            aria-label='Show site navigation'
+          >
+            No-Calc
+          </button>
+        )}
+      {showMainNavStrip && (
       <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md'>
         <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
           <div className='flex h-16 items-center justify-between'>
@@ -288,6 +337,7 @@ export function Navbar() {
           </div>
         </div>
       </nav>
+      )}
       {hasActiveSession && <SessionProgressBar embedded />}
     </>
   );

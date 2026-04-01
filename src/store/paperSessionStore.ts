@@ -158,6 +158,10 @@ interface PaperSessionState {
   saveSessionToIndexedDB: () => Promise<void>;
   loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
+
+  /** When false during browser fullscreen + paper session, main Navbar is hidden (immersive). */
+  paperFullscreenShowMainNavbar: boolean;
+  setPaperFullscreenShowMainNavbar: (show: boolean) => void;
 }
 
 const initialAnswer = (): Answer => ({
@@ -218,6 +222,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       justQuitSessionId: null,
       justQuitTimestamp: null,
       isMarkingInfo: false,
+
+      paperFullscreenShowMainNavbar: true,
       
       notes: '',
       sessionPersistPromise: null,
@@ -355,6 +361,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sectionStartTimes: [],
           sectionStarts: {},
           isMarkingInfo: false,
+          paperFullscreenShowMainNavbar: true,
         });
 
         const payload = {
@@ -1176,6 +1183,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionPersistPromise: null,
           pendingPersistQueue: [],
           isMarkingInfo: false,
+          paperFullscreenShowMainNavbar: true,
         });
         
         // Clear quit flag after a delay (5 seconds) to allow for any delayed restoration attempts
@@ -1976,6 +1984,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             });
           }
         }
+      },
+
+      setPaperFullscreenShowMainNavbar: (show: boolean) => {
+        set({ paperFullscreenShowMainNavbar: show });
       },
       
       setIsMarkingInfo: (isMarkingInfo: boolean) => {

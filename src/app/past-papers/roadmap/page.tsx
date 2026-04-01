@@ -117,7 +117,7 @@ export default function PapersRoadmapPage() {
       }
     }
     loadStages();
-  }, [examPreference]);
+  }, []);
 
   // Load completion data
   useEffect(() => {
@@ -134,20 +134,15 @@ export default function PapersRoadmapPage() {
         >();
 
         if (session?.user?.id) {
-          // OPTIMIZATION: Load all completed sessions once, then process in memory
-          // This avoids hundreds of sequential database queries
-          const { loadAllCompletedSessions, getStageCompletionFromSessions } =
+          const { getCompletedPartIds, getStageCompletionFromSessions } =
             await import('@/lib/papers/roadmapCompletion');
-          const sessionsByPaperName = await loadAllCompletedSessions(
-            session.user.id,
-          );
+          const completedPartIds = await getCompletedPartIds(session.user.id);
 
-          // Process all stages (now async due to part-level checking)
           for (const stage of stages) {
             const parts = await getStageCompletionFromSessions(
               session.user.id,
-              sessionsByPaperName,
               stage,
+              completedPartIds,
             );
 
             let completed = 0;
@@ -521,8 +516,7 @@ export default function PapersRoadmapPage() {
         // Create variant string (use primary paper for metadata)
         const variantString = `${stage.year}-${firstPart.paperName}-${firstPart.examType}`;
 
-        // Start session (use primary paper ID, but questions are already filtered)
-        startSession({
+        await startSession({
           paperId: primaryPaper.id,
           paperName: paperType,
           paperVariant: variantString,
@@ -743,3 +737,4 @@ export default function PapersRoadmapPage() {
     </Container>
   );
 }
+
