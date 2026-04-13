@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { QuestionPanel } from "@/components/QuestionPanel";
 import { SolutionPanel } from "@/components/SolutionPanel";
 import { ReviewSidebar } from "@/components/ReviewSidebar";
 import { FiltersPanel } from "@/components/FiltersPanel";
+import { GenerationSourcePanel } from "@/components/GenerationSourcePanel";
 import { useReviewQuestions } from "@/hooks/useReviewQuestions";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
 import type { ReviewFilters } from "@/types/review";
@@ -14,13 +16,12 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 
 type ReviewWorkspaceProps = {
   initialQuestionId?: string | null;
-  showDashboardBack?: boolean;
 };
 
-export function ReviewWorkspace({
-  initialQuestionId = null,
-  showDashboardBack = false,
-}: ReviewWorkspaceProps) {
+export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspaceProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const {
     currentQuestion,
     loading,
@@ -33,10 +34,6 @@ export function ReviewWorkspace({
     setCurrentQuestion,
   } = useReviewQuestions({ initialQuestionId });
 
-  const [checklistItems, setChecklistItems] = useState<boolean[]>([
-    false, false, false, false, false,
-  ]);
-  const [optionalChecklistItem, setOptionalChecklistItem] = useState(false);
   const [isGoodQuestion, setIsGoodQuestion] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [notification, setNotification] = useState<{
@@ -44,7 +41,6 @@ export function ReviewWorkspace({
     message: string;
   } | null>(null);
   const [notificationFading, setNotificationFading] = useState(false);
-  const [hasShownAnswer, setHasShownAnswer] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
@@ -60,6 +56,8 @@ export function ReviewWorkspace({
     updateSolutionReasoning,
     updateKeyInsight,
     updateDistractor,
+    reorderOption,
+    updateCorrectOption,
     updateDifficulty,
     updatePaper,
     updatePrimaryTag,
@@ -67,15 +65,26 @@ export function ReviewWorkspace({
     removeSecondaryTag,
     startEditingField,
     stopEditingField,
+    resolveAutoDiagramStemChoice,
   } = useQuestionEditor(currentQuestion, (updated) => {
     setCurrentQuestion(updated);
     setNotification({ type: "success", message: "Changes saved" });
   });
 
+  /**
+   * `/review` (queue) uses a random shuffle; a full reload without `?id=` loads a different question.
+   * Keep the URL in sync so refresh stays on the same row (edits no longer look “reverted”).
+   */
   useEffect(() => {
-    setChecklistItems([false, false, false, false, false]);
-    setOptionalChecklistItem(false);
-    setHasShownAnswer(false);
+    if (pathname !== "/review") return;
+    if (!currentQuestion?.id) return;
+    if (typeof window === "undefined") return;
+    const cur = new URLSearchParams(window.location.search).get("id");
+    if (cur === currentQuestion.id) return;
+    router.replace(`/review?id=${encodeURIComponent(currentQuestion.id)}`, { scroll: false });
+  }, [pathname, currentQuestion?.id, router]);
+
+  useEffect(() => {
     setIsGoodQuestion(false);
   }, [currentQuestion?.id]);
 
@@ -122,36 +131,13 @@ export function ReviewWorkspace({
     }
   }, [notification]);
 
-  const handleChecklistChange = (index: number, checked: boolean) => {
-    setChecklistItems((prev) => {
-      const newItems = [...prev];
-      newItems[index] = checked;
-      return newItems;
-    });
-  };
-
-  const allChecked = checklistItems.every((item) => item === true);
-
   const handleApprove = async () => {
     if (!currentQuestion) return;
-
-    if (!hasShownAnswer) {
-      alert("You must show the answer at least once before approving this question.");
-      return;
-    }
-
-    if (!allChecked) {
-      alert("Please complete all checklist items before approving this question.");
-      return;
-    }
 
     setIsApproving(true);
     try {
       await approveQuestion(currentQuestion.id, isGoodQuestion);
       setNotification({ type: "success", message: "Question approved successfully!" });
-      setHasShownAnswer(false);
-      setChecklistItems([false, false, false, false, false]);
-      setOptionalChecklistItem(false);
       setIsGoodQuestion(false);
     } catch {
       setNotification({ type: "error", message: "Failed to approve question" });
@@ -167,9 +153,6 @@ export function ReviewWorkspace({
     try {
       await deleteQuestion(currentQuestion.id);
       setNotification({ type: "success", message: "Question deleted successfully!" });
-      setHasShownAnswer(false);
-      setChecklistItems([false, false, false, false, false]);
-      setOptionalChecklistItem(false);
       setIsGoodQuestion(false);
     } catch {
       setNotification({ type: "error", message: "Failed to delete question" });
@@ -197,36 +180,30 @@ export function ReviewWorkspace({
   };
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="min-h-screen flex items-start">
       <ReviewSidebar
-        checklistItems={checklistItems}
-        optionalChecklistItem={optionalChecklistItem}
-        onChecklistChange={handleChecklistChange}
-        onOptionalChecklistChange={setOptionalChecklistItem}
         onApprove={handleApprove}
         onDelete={handleDelete}
         onSkip={handleSkip}
         onFilters={handleFilters}
         currentQuestionId={currentQuestion?.id}
-        canApprove={allChecked}
+        canApprove={!!currentQuestion && !isApproving && !isDeleting}
         isApproving={isApproving}
         isDeleting={isDeleting}
         isGoodQuestion={isGoodQuestion}
         onGoodQuestionChange={setIsGoodQuestion}
       />
 
-      <div className="flex-1 flex flex-col gap-4 p-4 overflow-y-auto relative">
-        {showDashboardBack && (
-          <div className="flex-shrink-0 flex items-center gap-3 -mt-1 mb-1">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 rounded-organic-md border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-mono text-white/85 hover:bg-white/[0.08] hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
-              Back to dashboard
-            </Link>
-          </div>
-        )}
+      <div className="flex flex-1 min-w-0 flex-col gap-3 p-4 pb-10 relative">
+        <div className="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 pr-28">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-organic-md border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-mono text-white/85 hover:bg-white/[0.08] hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
+            Back to dashboard
+          </Link>
+        </div>
 
         <div className="absolute top-4 right-4 z-40 flex items-center gap-2">
           <span className="text-sm font-mono text-white/90 tabular-nums">
@@ -258,63 +235,73 @@ export function ReviewWorkspace({
           </div>
         )}
 
-        <div className="min-h-[45%] flex-shrink-0">
-          {loading ? (
-            <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
-              <div className="text-white/60 font-mono">Loading question...</div>
-            </div>
-          ) : error ? (
-            <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
-              <div className="text-red-400 font-mono">{error}</div>
-            </div>
-          ) : !currentQuestion ? (
-            <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
-              <div className="text-center">
-                <div className="text-white/60 font-mono text-lg mb-2">
-                  No questions pending review
-                </div>
-                <div className="text-white/40 font-mono text-sm">
-                  All questions have been reviewed
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col">
+            {loading ? (
+              <div className="flex min-h-[200px] items-center justify-center rounded-organic-lg border border-white/10 bg-white/[0.02] py-16">
+                <div className="text-white/60 font-mono">Loading question...</div>
+              </div>
+            ) : error ? (
+              <div className="flex min-h-[200px] items-center justify-center rounded-organic-lg border border-white/10 bg-white/[0.02] py-16">
+                <div className="text-red-400 font-mono">{error}</div>
+              </div>
+            ) : !currentQuestion ? (
+              <div className="flex min-h-[200px] items-center justify-center rounded-organic-lg border border-white/10 bg-white/[0.02] py-16">
+                <div className="text-center">
+                  <div className="mb-2 font-mono text-lg text-white/60">
+                    No questions match your filters
+                  </div>
+                  <div className="font-mono text-sm text-white/40">
+                    Try widening filters (e.g. All papers) — the queue loads up to 500 rows.
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : editedQuestion ? (
-            <QuestionPanel
-              question={editedQuestion}
-              editingField={editingField}
-              onQuestionStemChange={updateQuestionStem}
-              onOptionChange={updateOption}
-              onAddOption={addOption}
-              onRemoveOption={removeOption}
-              onDistractorChange={updateDistractor}
-              onAnswerShown={() => setHasShownAnswer(true)}
-              onDifficultyChange={updateDifficulty}
-              onPaperChange={updatePaper}
-              onPrimaryTagChange={updatePrimaryTag}
-              onAddSecondaryTag={addSecondaryTag}
-              onRemoveSecondaryTag={removeSecondaryTag}
-              onStartEditingField={startEditingField}
-              onStopEditingField={stopEditingField}
-            />
-          ) : null}
+            ) : editedQuestion ? (
+              <QuestionPanel
+                question={editedQuestion}
+                editingField={editingField}
+                onQuestionStemChange={updateQuestionStem}
+                onOptionChange={updateOption}
+                onAddOption={addOption}
+                onRemoveOption={removeOption}
+                onDistractorChange={updateDistractor}
+                onReorderOption={reorderOption}
+                onCorrectOptionChange={updateCorrectOption}
+                onDifficultyChange={updateDifficulty}
+                onPaperChange={updatePaper}
+                onPrimaryTagChange={updatePrimaryTag}
+                onAddSecondaryTag={addSecondaryTag}
+                onRemoveSecondaryTag={removeSecondaryTag}
+                onStartEditingField={startEditingField}
+                onStopEditingField={stopEditingField}
+                onResolveAutoDiagramStem={resolveAutoDiagramStemChoice}
+              />
+            ) : null}
+          </div>
+
+          <div className="flex flex-col">
+            {loading || !currentQuestion ? (
+              <div className="flex min-h-[200px] items-center justify-center rounded-organic-lg border border-white/10 bg-white/[0.02] py-16">
+                <div className="text-white/60 font-mono">Loading solution...</div>
+              </div>
+            ) : editedQuestion ? (
+              <SolutionPanel
+                question={editedQuestion}
+                editingField={editingField}
+                onSolutionReasoningChange={updateSolutionReasoning}
+                onKeyInsightChange={updateKeyInsight}
+                onStartEditingField={startEditingField}
+                onStopEditingField={stopEditingField}
+              />
+            ) : null}
+          </div>
         </div>
 
-        <div className="flex-1 min-h-[500px]">
-          {loading || !currentQuestion ? (
-            <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
-              <div className="text-white/60 font-mono">Loading solution...</div>
-            </div>
-          ) : editedQuestion ? (
-            <SolutionPanel
-              question={editedQuestion}
-              editingField={editingField}
-              onSolutionReasoningChange={updateSolutionReasoning}
-              onKeyInsightChange={updateKeyInsight}
-              onStartEditingField={startEditingField}
-              onStopEditingField={stopEditingField}
-            />
-          ) : null}
-        </div>
+        {!loading && editedQuestion ? (
+          <div className="relative z-[2] flex-shrink-0 border-t border-white/10 bg-background pt-4 pb-6 shadow-[0_-8px_24px_rgba(0,0,0,0.35)]">
+            <GenerationSourcePanel question={editedQuestion} />
+          </div>
+        ) : null}
       </div>
 
       <FiltersPanel
@@ -322,6 +309,10 @@ export function ReviewWorkspace({
         onClose={() => setShowFilters(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
+        onNavigateToReview={(questionId) => {
+          setShowFilters(false);
+          router.push(`/review?id=${encodeURIComponent(questionId)}`, { scroll: false });
+        }}
       />
     </div>
   );

@@ -27,13 +27,13 @@ If KaTeX validation errors are included, you MUST fix them:
 - **Unmatched `$` signs**: Ensure every opening `$` has a matching closing `$`
 - **Wrong delimiters**: Replace `\[`, `\(`, `\]`, `\)` with `$$` or `$`
 - **Display math spacing**: Ensure `$$` blocks have blank lines before and after
-- **Unescaped backslashes**: In YAML, escape all LaTeX backslashes (`\frac` → `\\frac`)
+- **Unescaped backslashes**: In JSON strings, escape all LaTeX backslashes (`\frac` → `\\frac`)
 - **For Chemistry/Biology**: Ensure `\ce` commands are properly escaped (`\\ce{...}`)
 
 ### KaTeX Rules (Quick Reference):
 - Use ONLY `$...$` for inline and `$$...$$` for display math
 - Display math must have blank lines before and after
-- In YAML, escape all backslashes: `\\frac`, `\\sqrt`, `\\ce`, etc.
+- In JSON strings, escape all backslashes: `\\frac`, `\\sqrt`, `\\ce`, etc.
 - For Chemistry/Biology: Use `\\ce{formula}` for chemical formulas
 - Never use `\[`, `\(`, `\]`, `\)` delimiters
 
@@ -41,7 +41,7 @@ If KaTeX validation errors are included, you MUST fix them:
 1. Identify the field with the error (stem, options, reasoning, etc.)
 2. Fix ONLY the KaTeX formatting - do NOT change the mathematics or content
 3. Ensure all delimiters are correct and properly matched
-4. Ensure all backslashes are escaped in YAML
+4. Ensure all backslashes are escaped in JSON strings
 5. Verify display math has proper spacing
 
 **Important**: When fixing KaTeX errors, preserve the exact mathematical content and logic. Only fix the formatting.

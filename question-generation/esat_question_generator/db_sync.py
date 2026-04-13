@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import re
-from typing import Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 # Configure UTF-8 encoding for Windows console
@@ -26,35 +26,51 @@ if sys.platform == "win32":
         sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
 try:
+    from pipeline_log import init_pipeline_log, plog
+except ImportError:
+
+    def plog(*args, **kwargs):
+        pass
+
+    def init_pipeline_log(*args, **kwargs):
+        return ""
+
+try:
+    from correct_option_reconcile import reconcile_correct_option
+except ImportError:
+
+    def reconcile_correct_option(question, distractor_map, solution=None):
+        return None, None
+
+
+try:
     from supabase import create_client, Client
     _SUPABASE_AVAILABLE = True
 except ImportError:
     _SUPABASE_AVAILABLE = False
-    print("Warning: supabase-py not installed. Database sync will be disabled.")
-    print("Install with: pip install supabase")
-
-
-def is_postgrest_unknown_column_error(err: BaseException, column_name: str) -> bool:
-    """
-    True if the error from Supabase/PostgREST indicates the given column is not in the API schema.
-
-    Remote projects may omit optional columns (e.g. ``paper`` for Math 1/2); inserts/updates must retry without them.
-    """
-    err_s = str(err).lower()
-    col = column_name.lower()
-    if col not in err_s:
-        return False
-    return any(
-        marker in err_s
-        for marker in (
-            "pgrst204",
-            "schema cache",
-            "could not find",
-            "not find the",
-            "does not exist",
-            "42703",  # PostgreSQL undefined_column
-        )
+    plog(
+        "db_sync",
+        "supabase_py_missing",
+        level="warning",
+        detail={"hint": "pip install supabase"},
+        echo=True,
+        spacer=True,
     )
+
+
+def canonical_ai_question_status(status: str) -> str:
+    """
+    Map legacy review statuses to DB values after migration ``20260126200132_restructure_ai_questions_status.sql``:
+    allowed values are ``pending``, ``approved``, ``deleted`` only.
+    """
+    s = (status or "").strip()
+    if s in ("pending_review", "needs_revision"):
+        return "pending"
+    if s in ("rejected",):
+        return "deleted"
+    if s in ("pending", "approved", "deleted"):
+        return s
+    return "pending"
 
 
 def normalize_math_spacing(text: str) -> str:
@@ -174,6 +190,33 @@ def normalize_question_math_spacing(question_data: Dict[str, Any]) -> Dict[str, 
     return normalized
 
 
+def solution_text_fields_for_db(solution: Any) -> tuple[str, str]:
+    """
+    Map ``question_package.solution`` to ``(solution_reasoning, solution_key_insight)``
+    for ``ai_generated_questions``, including folding ``steps`` / ``solution_steps``.
+    """
+    if not isinstance(solution, dict):
+        return "", ""
+
+    def _str_field(val: Any) -> str:
+        if val is None:
+            return ""
+        if isinstance(val, str):
+            return val
+        return str(val)
+
+    reasoning = _str_field(solution.get("reasoning"))
+    if not reasoning.strip():
+        try:
+            from project import synthesize_reasoning_from_solution_steps
+
+            reasoning = synthesize_reasoning_from_solution_steps(solution) or ""
+        except ImportError:
+            pass
+    key_insight = _str_field(solution.get("key_insight"))
+    return reasoning.strip(), key_insight.strip()
+
+
 class DatabaseSync:
     """Handles syncing questions to Supabase database."""
     
@@ -206,10 +249,17 @@ class DatabaseSync:
         self.supabase_key = supabase_key or os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
         
         if not self.supabase_url or not self.supabase_key:
-            print("Warning: Supabase credentials not found. Database sync disabled.")
-            print("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.")
-            print(f"SUPABASE_URL: {'SET' if self.supabase_url else 'NOT SET'}")
-            print(f"SUPABASE_SERVICE_ROLE_KEY: {'SET' if self.supabase_key else 'NOT SET'}")
+            plog(
+                "db_sync",
+                "credentials_missing",
+                level="warning",
+                detail={
+                    "SUPABASE_URL": "SET" if self.supabase_url else "NOT SET",
+                    "SUPABASE_SERVICE_ROLE_KEY": "SET" if self.supabase_key else "NOT SET",
+                },
+                echo=True,
+                spacer=True,
+            )
             self.client = None
             self.enabled = False
             return
@@ -218,11 +268,11 @@ class DatabaseSync:
             self.client = create_client(self.supabase_url, self.supabase_key)
             self.enabled = True
         except Exception as e:
-            print(f"[DB_SYNC] Error initializing Supabase client: {e}")
+            plog("db_sync", "client_init_error", level="error", detail={"error": str(e)}, echo=True)
             self.client = None
             self.enabled = False
     
-    def sync_question(self, question_item: Dict[str, Any], status: str = "pending_review") -> Optional[str]:
+    def sync_question(self, question_item: Dict[str, Any], status: str = "pending") -> Optional[str]:
         """
         Sync a question to the database.
         
@@ -231,16 +281,24 @@ class DatabaseSync:
         
         Args:
             question_item: Question item from pipeline (from build_bank_item)
-            status: Status to assign (default: pending_review, but will only save if verifier+style pass)
+            status: Status to assign (default: pending — use canonical_ai_question_status values)
             
         Returns:
             Database ID if successful, None otherwise (if question doesn't pass checks)
         """
         if not self.enabled or not self.client:
-            print(f"[DB_SYNC] Database sync not enabled for {question_item.get('id', 'unknown')}")
+            plog(
+                "db_sync",
+                "sync_disabled",
+                detail={"generation_id": question_item.get("id", "unknown")},
+                echo=False,
+            )
             return None
         
+        gen_id = ""
         try:
+            gen_id = (question_item.get("id") or "").strip()
+
             # Only save questions that pass both verifier and style judge
             verifier_report = question_item.get("verifier_report", {})
             style_report = question_item.get("style_report", {})
@@ -250,10 +308,33 @@ class DatabaseSync:
             
             if verifier_verdict != "PASS" or style_verdict != "PASS":
                 # Don't save questions that don't pass both checks
-                print(f"[DB_SYNC] Question {question_item.get('id', 'unknown')} rejected: Verifier={verifier_verdict}, Style={style_verdict}")
+                plog(
+                    "db_sync",
+                    "question_not_saved_verifier_style",
+                    detail={
+                        "id": question_item.get("id", "unknown"),
+                        "verifier": verifier_verdict,
+                        "style": style_verdict,
+                    },
+                    echo=False,
+                )
                 return None
             
-            # Use the status parameter passed in (defaults to pending_review for new questions)
+            db_status = canonical_ai_question_status(status)
+
+            if gen_id:
+                existing_uuid = self.get_question_db_id(gen_id)
+                if existing_uuid:
+                    plog(
+                        "db_sync",
+                        "insert_skip_exists",
+                        detail={
+                            "generation_id": gen_id,
+                            "db_id_prefix": (existing_uuid or "")[:8],
+                        },
+                        echo=False,
+                    )
+                    return existing_uuid
             
             # Extract question data
             question_pkg = question_item.get("question_package", {})
@@ -261,28 +342,82 @@ class DatabaseSync:
             solution = question_pkg.get("solution", {})
             distractor_map = question_pkg.get("distractor_map", {})
             
-            # Extract correct_option and validate
-            correct_option = question.get("correct_option", "").strip().upper()
-            # If empty or invalid, use fallback
+            # Extract correct_option; reconcile with distractor_map / solution when mismatched
+            correct_option = (question.get("correct_option") or "").strip().upper()[:1]
+            dm_raw = distractor_map if isinstance(distractor_map, dict) else {}
+            reco, reco_reason = reconcile_correct_option(question, dm_raw, solution)
+            if reco and reco in "ABCDEFGH":
+                if reco != correct_option:
+                    plog(
+                        "db_sync",
+                        "correct_option_reconciled",
+                        detail={"from": correct_option or None, "to": reco, "reason": reco_reason},
+                        echo=True,
+                    )
+                correct_option = reco
+                question["correct_option"] = reco
+
             if not correct_option or correct_option not in "ABCDEFGH":
-                correct_option = "A"
+                letters: List[str] = []
+                opts = question.get("options")
+                if isinstance(opts, dict):
+                    for k in opts.keys():
+                        c = str(k).strip().upper()[:1]
+                        if c in "ABCDEFGH":
+                            letters.append(c)
+                    letters = sorted(set(letters))
+                correct_option = letters[0] if letters else "A"
+                question["correct_option"] = correct_option
+                plog(
+                    "db_sync",
+                    "correct_option_invalid_fallback",
+                    detail={
+                        "fallback": correct_option,
+                        "had_option_keys": bool(letters),
+                    },
+                    level="warning",
+                    echo=True,
+                )
             
             # Extract tags if available
-            tags_data = question_item.get("tags", {})
+            tags_raw = question_item.get("tags", {})
+            tags_data = tags_raw if isinstance(tags_raw, dict) else {}
             primary_tag_code = tags_data.get("primary_tag") if tags_data else None
             secondary_tags_codes = tags_data.get("secondary_tags", []) if tags_data else []
             tags_confidence_raw = tags_data.get("confidence") if tags_data else None
             tags_labeled_at = tags_data.get("labeled_at") if tags_data else None
             tags_labeled_by = tags_data.get("labeled_by") if tags_data else None
-            
-            # Extract paper field (Math 1 / Math 2) for math questions
-            paper = tags_data.get("paper") if tags_data else None
-            
-            # Map tag codes to curriculum text names
-            # Determine paper_id for ESAT based on schema_id and paper value
-            schema_id = question_item.get("schema_id", "")
+
+            schema_id = (question_item.get("schema_id") or "").strip()
+            explicit_tt = (question_item.get("test_type") or "").strip().upper()
+            # ESAT mathematics schemas use ``M_<hash>`` ids, same string pattern as TMUA Paper 1 — do not infer TMUA from prefix.
+            env_tt = (os.environ.get("PIPELINE_TEST_TYPE") or "").strip().upper()
+            if explicit_tt in ("ESAT", "TMUA"):
+                test_type_row = explicit_tt
+            elif env_tt == "TMUA":
+                test_type_row = "TMUA"
+            elif env_tt == "ESAT":
+                test_type_row = "ESAT"
+            else:
+                test_type_row = "ESAT"
+
+            raw_idea = question_item.get("idea_plan")
+            idea_plan_d = raw_idea if isinstance(raw_idea, dict) else {}
+            # Pipeline-only: ESAT Math 1/2 or TMUA Paper1/2 — never a DB column (use ``subjects``).
+            paper = (
+                question_item.get("paper")
+                or tags_data.get("paper")
+                or idea_plan_d.get("paper")
+            )
+            if test_type_row == "TMUA" and paper not in ("Paper1", "Paper2"):
+                if schema_id.startswith("R_"):
+                    paper = "Paper2"
+                elif schema_id.startswith("M_"):
+                    paper = "Paper1"
+
+            # Map tag codes to curriculum text names (ESAT curriculum only when not TMUA schema row)
             paper_id = None
-            if schema_id:
+            if test_type_row == "ESAT" and schema_id:
                 first_char = schema_id[0].upper()
                 if first_char == "M":
                     if paper == "Math 1":
@@ -321,15 +456,32 @@ class DatabaseSync:
                             for k, v in tags_confidence_raw.items()
                         }
                 except Exception as e:
-                    print(f"[DB_SYNC] Warning: Could not map tags to text: {e}")
+                    plog(
+                        "db_sync",
+                        "tag_map_failed",
+                        level="warning",
+                        detail={"error": str(e)},
+                        echo=False,
+                    )
                     # Fall back to original codes
                     primary_tag = primary_tag_code
                     secondary_tags = secondary_tags_codes
                     tags_confidence = tags_confidence_raw
             
-            # Determine subjects field based on schema_id and paper
+            # DB ``subjects`` (NOT NULL): ESAT papers or TMUA Paper 1 / Paper 2
             subjects = None
-            if schema_id:
+            if test_type_row == "TMUA":
+                if schema_id.startswith("R_"):
+                    subjects = "Paper 2"
+                elif schema_id.startswith("M_"):
+                    subjects = "Paper 1"
+                elif paper == "Paper2":
+                    subjects = "Paper 2"
+                elif paper == "Paper1":
+                    subjects = "Paper 1"
+                else:
+                    subjects = "Paper 1"
+            elif schema_id:
                 first_char = schema_id[0].upper()
                 if first_char == "M":
                     if paper == "Math 1":
@@ -337,7 +489,7 @@ class DatabaseSync:
                     elif paper == "Math 2":
                         subjects = "Math 2"
                     else:
-                        subjects = "Math 1"  # Default to Math 1
+                        subjects = "Math 1"
                 elif first_char == "P":
                     subjects = "Physics"
                 elif first_char == "C":
@@ -345,17 +497,20 @@ class DatabaseSync:
                 elif first_char == "B":
                     subjects = "Biology"
             
+            reasoning_db, key_insight_db = solution_text_fields_for_db(solution)
+
             # Prepare database record
+            snap = question_item.get("schema_block_snapshot")
             db_record = {
                 "generation_id": question_item.get("id", ""),
                 "schema_id": question_item.get("schema_id", ""),
                 "difficulty": question_item.get("difficulty", ""),
-                "status": status,
+                "status": canonical_ai_question_status(str(db_status)),
                 "question_stem": question.get("stem", ""),
                 "options": question.get("options", {}),
                 "correct_option": correct_option,
-                "solution_reasoning": solution.get("reasoning", ""),
-                "solution_key_insight": solution.get("key_insight", ""),
+                "solution_reasoning": reasoning_db or "",
+                "solution_key_insight": key_insight_db or "",
                 "distractor_map": distractor_map,
                 "idea_plan": question_item.get("idea_plan", {}),
                 "verifier_report": question_item.get("verifier_report", {}),
@@ -366,6 +521,8 @@ class DatabaseSync:
                 "run_id": question_item.get("_run_id", ""),
                 "created_at": question_item.get("created_at", datetime.now().isoformat()),
             }
+            if snap and str(snap).strip():
+                db_record["schema_block_snapshot"] = str(snap).strip()
             
             # Normalize math spacing in text fields
             db_record = normalize_question_math_spacing(db_record)
@@ -381,50 +538,46 @@ class DatabaseSync:
                 db_record["tags_labeled_at"] = tags_labeled_at
             if tags_labeled_by:
                 db_record["tags_labeled_by"] = tags_labeled_by
-            # Paper column (math only): required for Math 1 vs 2 filtering and UI stats
-            if schema_id and str(schema_id)[0].upper() == "M" and paper in ("Math 1", "Math 2"):
-                db_record["paper"] = paper
 
-            # Add subjects field (required)
+            # Add subjects field (required; replaces removed ``paper`` column — see 20260126200135_rename_paper_to_subjects.sql)
             if subjects:
                 db_record["subjects"] = subjects
+            elif test_type_row == "TMUA":
+                db_record["subjects"] = (
+                    "Paper 2" if schema_id.startswith("R_") else "Paper 1"
+                )
+            elif schema_id:
+                first_char = schema_id[0].upper()
+                if first_char == "M":
+                    db_record["subjects"] = "Math 1"
+                elif first_char == "P":
+                    db_record["subjects"] = "Physics"
+                elif first_char == "C":
+                    db_record["subjects"] = "Chemistry"
+                elif first_char == "B":
+                    db_record["subjects"] = "Biology"
+                else:
+                    db_record["subjects"] = "Math 1"
             else:
-                # Fallback: try to infer from schema_id
-                schema_id = question_item.get("schema_id", "")
-                if schema_id:
-                    first_char = schema_id[0].upper()
-                    if first_char == "M":
-                        db_record["subjects"] = "Math 1"  # Default
-                    elif first_char == "P":
-                        db_record["subjects"] = "Physics"
-                    elif first_char == "C":
-                        db_record["subjects"] = "Chemistry"
-                    elif first_char == "B":
-                        db_record["subjects"] = "Biology"
-                else:
-                    db_record["subjects"] = "Math 1"  # Ultimate fallback
-            
-            # Insert into database (retry without `paper` if column missing in Supabase schema)
-            def _insert(rec: dict):
-                return self.client.table("ai_generated_questions").insert(rec).execute()
+                db_record["subjects"] = "Math 1"
 
-            try:
-                result = _insert(db_record)
-            except Exception as insert_err:
-                if "paper" in db_record and is_postgrest_unknown_column_error(insert_err, "paper"):
-                    print(
-                        "[DB_SYNC] Retrying insert without `paper` (column not in remote schema). "
-                        "Add optional: ALTER TABLE ai_generated_questions ADD COLUMN paper text; "
-                        "then reload PostgREST schema for Math 1/2 bank stats."
-                    )
-                    rec2 = {k: v for k, v in db_record.items() if k != "paper"}
-                    result = _insert(rec2)
-                else:
-                    raise
+            db_record["test_type"] = test_type_row
+            # PostgREST rejects unknown columns; legacy code or merges must never send ``paper``.
+            db_record.pop("paper", None)
+
+            result = self.client.table("ai_generated_questions").insert(db_record).execute()
 
             if result.data and len(result.data) > 0:
                 db_id = result.data[0].get("id")
-                print(f"[DB_SYNC] ✓ Successfully saved {question_item.get('id', 'unknown')} to database (ID: {db_id[:8]}...)")
+                plog(
+                    "db_sync",
+                    "insert_ok",
+                    detail={
+                        "generation_id": question_item.get("id", "unknown"),
+                        "db_id_prefix": (db_id or "")[:8],
+                    },
+                    echo=False,
+                )
                 return db_id
             else:
                 # Insert returned no data - check for errors
@@ -433,7 +586,13 @@ class DatabaseSync:
                     error_msg = str(result.error)
                 elif hasattr(result, 'message'):
                     error_msg = str(result.message)
-                print(f"[DB_SYNC] Insert failed for {question_item.get('id', 'unknown')}: {error_msg}")
+                plog(
+                    "db_sync",
+                    "insert_failed",
+                    level="warning",
+                    detail={"id": question_item.get("id", "unknown"), "error": error_msg},
+                    echo=False,
+                )
                 return None
                 
         except Exception as e:
@@ -444,15 +603,46 @@ class DatabaseSync:
             # 23505 = duplicate key (question already exists - this is fine!)
             # 23514 = check constraint violation
             if "23505" in error_str or "duplicate" in error_str.lower():
-                # Duplicate key - question already exists, this is fine (silent)
+                if gen_id:
+                    existing_uuid = self.get_question_db_id(gen_id)
+                    if existing_uuid:
+                        plog(
+                            "db_sync",
+                            "insert_ok_after_duplicate",
+                            detail={
+                                "generation_id": gen_id,
+                                "db_id_prefix": (existing_uuid or "")[:8],
+                            },
+                            echo=False,
+                        )
+                        return existing_uuid
                 return None
             elif "23514" in error_str or "check constraint" in error_str.lower():
-                # Check constraint violation - log it as it might indicate a data issue
-                print(f"[DB_SYNC] Constraint violation for {question_item.get('id', 'unknown')}: {error_str[:200]}")
+                plog(
+                    "db_sync",
+                    "constraint_violation",
+                    level="error",
+                    detail={
+                        "id": question_item.get("id", "unknown"),
+                        "error": error_str[:1200],
+                    },
+                    echo=True,
+                    spacer=True,
+                )
                 return None
             else:
                 # Unknown error - log it
-                print(f"[DB_SYNC] Exception syncing {question_item.get('id', 'unknown')}: {error_str[:200]}")
+                plog(
+                    "db_sync",
+                    "sync_exception",
+                    level="error",
+                    detail={
+                        "id": question_item.get("id", "unknown"),
+                        "error": error_str[:1200],
+                    },
+                    echo=True,
+                    spacer=True,
+                )
                 return None
     
     def update_question_status(self, generation_id: str, status: str) -> bool:
@@ -471,31 +661,60 @@ class DatabaseSync:
         
         try:
             update_data = {
-                "status": status,
+                "status": canonical_ai_question_status(status),
             }
-            
+
             result = self.client.table("ai_generated_questions")\
                 .update(update_data)\
                 .eq("generation_id", generation_id)\
                 .execute()
             
             if result.data and len(result.data) > 0:
-                try:
-                    print(f"✓ Updated question {generation_id} status to {status}")
-                except UnicodeEncodeError:
-                    print(f"[OK] Updated question {generation_id} status to {status}")
+                plog(
+                    "db_sync",
+                    "status_updated",
+                    detail={"generation_id": generation_id, "status": status},
+                    echo=False,
+                )
                 return True
             else:
-                print(f"⚠ Warning: Question {generation_id} not found for status update")
+                plog(
+                    "db_sync",
+                    "status_update_not_found",
+                    level="warning",
+                    detail={"generation_id": generation_id},
+                    echo=False,
+                )
                 return False
-                
+
         except Exception as e:
-            try:
-                print(f"✗ Error updating question {generation_id}: {e}")
-            except UnicodeEncodeError:
-                print(f"[ERROR] Error updating question {generation_id}: {e}")
+            plog(
+                "db_sync",
+                "status_update_error",
+                level="error",
+                detail={"generation_id": generation_id, "error": str(e)},
+                echo=False,
+            )
             return False
     
+    def get_question_db_id(self, generation_id: str) -> Optional[str]:
+        """Return Postgres ``id`` (uuid) for ``generation_id``, or None."""
+        if not self.enabled or not self.client or not (generation_id or "").strip():
+            return None
+        try:
+            result = (
+                self.client.table("ai_generated_questions")
+                .select("id")
+                .eq("generation_id", generation_id.strip())
+                .limit(1)
+                .execute()
+            )
+            if result.data and len(result.data) > 0:
+                return result.data[0].get("id")
+        except Exception as e:
+            plog("db_sync", "get_question_db_id_error", detail={"error": str(e)}, echo=False)
+        return None
+
     def question_exists(self, generation_id: str) -> bool:
         """
         Check if a question already exists in the database.
@@ -506,24 +725,11 @@ class DatabaseSync:
         Returns:
             True if exists, False otherwise
         """
-        if not self.enabled or not self.client:
-            return False
-        
-        try:
-            result = self.client.table("ai_generated_questions")\
-                .select("id")\
-                .eq("generation_id", generation_id)\
-                .limit(1)\
-                .execute()
-            
-            return result.data and len(result.data) > 0
-        except Exception as e:
-            print(f"Error checking question existence: {e}")
-            return False
+        return self.get_question_db_id(generation_id) is not None
 
 
 def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
-                               status: str = "pending_review") -> Optional[str]:
+                               status: str = "pending") -> Optional[str]:
     """
     Convenience function to sync a question from the pipeline.
     
@@ -532,11 +738,12 @@ def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
     Args:
         question_item: Question item from pipeline (from build_bank_item)
         base_dir: Base directory (not used, kept for compatibility)
-        status: Status to assign (default: pending_review, but only saved if verifier+style pass)
+        status: Status to assign (default: pending; legacy pending_review is mapped automatically)
         
     Returns:
         Database ID if successful, None otherwise (if question doesn't pass checks)
     """
+    init_pipeline_log(base_dir)
     sync = DatabaseSync()
     return sync.sync_question(question_item, status)
 

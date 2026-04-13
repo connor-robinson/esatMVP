@@ -9,6 +9,7 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
+import { sanitizeStemTable } from "@/lib/sanitizeStemSvg";
 
 export interface MathSegment {
   type: "text" | "inline" | "display";
@@ -173,6 +174,22 @@ export function parseMathContent(text: string): MathSegment[] {
   return segments;
 }
 
+/**
+ * DB/JSON often stores LaTeX with doubled backslashes (e.g. `\\frac`, `\\ge`).
+ * KaTeX expects `\frac`, `\ge`. Collapse `\\` when it starts a TeX control sequence.
+ * Iterates so `\\\frac` also becomes `\frac`. Does not trim `\\` before newlines/spaces.
+ */
+export function normalizeDoubledBackslashesInMath(tex: string): string {
+  if (tex == null || tex === "") return tex;
+  let out = String(tex);
+  let prev: string;
+  do {
+    prev = out;
+    out = out.replace(/\\\\(?=[a-zA-Z\\{])/g, "\\");
+  } while (out !== prev);
+  return out;
+}
+
 export function renderMath(
   math: string,
   displayMode: boolean = false
@@ -180,15 +197,17 @@ export function renderMath(
   if (math == null) return null;
   const mathStr = String(math);
   if (!mathStr) return null;
-  
+
+  const normalized = normalizeDoubledBackslashesInMath(mathStr.trim());
+
   try {
-    return katex.renderToString(mathStr, {
+    return katex.renderToString(normalized, {
       throwOnError: false,
       displayMode,
       strict: false,
     });
   } catch (error) {
-    console.error("[KaTeX] Rendering error:", error, "for math:", mathStr);
+    console.error("[KaTeX] Rendering error:", error, "for math:", normalized);
     return null;
   }
 }
@@ -368,9 +387,11 @@ export function renderMathContent(text: string): string {
   for (const segment of segments) {
     if (segment.type === "text") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      // Don't escape HTML if it's already a table (contains <table>)
-      if (contentStr.includes('<table>')) {
-        htmlParts.push(contentStr);
+      // Raw HTML tables (e.g. pasted) use <table ...> not the literal substring "<table>"
+      if (/<table\b/i.test(contentStr)) {
+        htmlParts.push(
+          `<div class="stem-table">${sanitizeStemTable(contentStr)}</div>`
+        );
       } else {
         const escaped = contentStr
           .replace(/&/g, "&amp;")

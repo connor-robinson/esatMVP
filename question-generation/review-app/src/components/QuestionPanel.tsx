@@ -2,10 +2,99 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import { MathContent } from "./shared/MathContent";
+import { StemContent } from "./shared/StemContent";
+import { DiagramInsertToolbar } from "./DiagramInsertToolbar";
+import { WalkthroughVideoPlayer } from "./WalkthroughVideoPlayer";
 import { cn } from "@/lib/utils";
-import { Eye, Pencil, X, Plus, ChevronDown } from "lucide-react";
+import { Eye, Pencil, X, Plus, ChevronDown, ChevronUp, Video } from "lucide-react";
 import { getQuestionTagText, formatTagDisplay, getPaperType, getTopicsForPaper, type TopicOption } from "@/lib/curriculum";
 import type { ReviewQuestion } from "@/types/review";
+
+function WalkthroughUploadBanner({
+  questionId,
+  initialCode,
+}: {
+  questionId: string;
+  initialCode?: string | null;
+}) {
+  const [code, setCode] = useState<string | null>(() => {
+    const c = initialCode?.trim();
+    return c ? c.toUpperCase() : null;
+  });
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fromProp = initialCode?.trim() ? initialCode.trim().toUpperCase() : null;
+    if (fromProp) {
+      setCode(fromProp);
+      setErr(null);
+      return;
+    }
+
+    let cancel = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/review/ensure-media-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questionId }),
+        });
+        const j = (await r.json()) as { media_upload_code?: string; error?: string };
+        if (!r.ok) {
+          throw new Error(j.error || "Failed to get upload code");
+        }
+        if (!cancel) {
+          setCode(j.media_upload_code ?? null);
+          setErr(null);
+        }
+      } catch (e: unknown) {
+        if (!cancel) {
+          setErr(e instanceof Error ? e.message : String(e));
+        }
+      }
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, [questionId, initialCode]);
+
+  const uploaderUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/uploader`
+      : "/uploader";
+
+  if (err) {
+    return (
+      <div className="mx-4 mb-2 rounded-lg border border-amber-700/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-100">
+        Walkthrough upload: {err} Ensure{" "}
+        <span className="font-mono">NEXT_PUBLIC_SUPABASE_URL</span> and{" "}
+        <span className="font-mono">NEXT_PUBLIC_SUPABASE_ANON_KEY</span> are set on
+        Vercel. If you do not use the service role key, run{" "}
+        <span className="font-mono">review_walkthrough_rls.sql</span> in Supabase.
+      </div>
+    );
+  }
+  if (!code) {
+    return (
+      <div className="mx-4 mb-2 text-xs text-white/40">Loading walkthrough code…</div>
+    );
+  }
+  return (
+    <div className="mx-4 my-3 rounded-xl border-2 border-amber-300/70 bg-amber-100/[0.07] p-4">
+      <p className="text-xs font-semibold text-amber-100/90 uppercase tracking-wide mb-2">
+        iPad walkthrough (screen + mic)
+      </p>
+      <p className="text-center text-4xl font-black tracking-[0.2em] text-white font-mono mb-3">
+        {code}
+      </p>
+      <p className="text-xs text-white/50 mb-1">On iPad, open</p>
+      <p className="text-sm font-mono text-sky-300 break-all">{uploaderUrl}</p>
+      <p className="text-xs text-white/40 mt-2">
+        Enter the code above, then upload your single video file.
+      </p>
+    </div>
+  );
+}
 
 interface QuestionPanelProps {
   question: ReviewQuestion;
@@ -15,6 +104,8 @@ interface QuestionPanelProps {
   onAddOption?: () => string | null;
   onRemoveOption?: (letter: string) => void;
   onDistractorChange?: (letter: string, value: string) => void;
+  onReorderOption?: (letter: string, direction: "up" | "down") => void;
+  onCorrectOptionChange?: (letter: string) => void;
   onAnswerShown?: () => void;
   onDifficultyChange?: (value: 'Easy' | 'Medium' | 'Hard' | 'Extreme') => void;
   onPaperChange?: (value: string | null) => void;
@@ -23,6 +114,8 @@ interface QuestionPanelProps {
   onRemoveSecondaryTag?: (tag: string) => void;
   onStartEditingField?: (fieldName: string) => void;
   onStopEditingField?: () => void;
+  /** Quality-gate auto-SVG left a pre-diagram stem snapshot; pick final version. */
+  onResolveAutoDiagramStem?: (choice: "keep_diagram" | "revert") => void | Promise<void>;
 }
 
 export function QuestionPanel({
@@ -33,6 +126,8 @@ export function QuestionPanel({
   onAddOption,
   onRemoveOption,
   onDistractorChange,
+  onReorderOption,
+  onCorrectOptionChange,
   onAnswerShown,
   onDifficultyChange,
   onPaperChange,
@@ -41,14 +136,20 @@ export function QuestionPanel({
   onRemoveSecondaryTag,
   onStartEditingField,
   onStopEditingField,
+  onResolveAutoDiagramStem,
 }: QuestionPanelProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   const [editingPill, setEditingPill] = useState<string | null>(null);
   const [emptySecondaryTags, setEmptySecondaryTags] = useState<string[]>([]);
   const pillDropdownRefs = useRef<{ [key: string]: HTMLSelectElement | null }>({});
+  const questionStemRef = useRef<HTMLTextAreaElement>(null);
   
   const options = question.options || {};
   const optionLetters = Object.keys(options).sort();
+  /** `question_stem_before_auto_diagram` populated in DB → show Before / Current compare strip. */
+  const hasStemBeforeAutoDiagram =
+    typeof question.question_stem_before_auto_diagram === "string" &&
+    question.question_stem_before_auto_diagram.trim().length > 0;
   const secondaryTags = question.secondary_tags || [];
   const paperType = getPaperType(question);
   const availablePapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
@@ -114,14 +215,14 @@ export function QuestionPanel({
 
   if (!question || !question.id) {
     return (
-      <div className="h-full flex items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10">
+      <div className="flex min-h-[200px] items-center justify-center bg-white/[0.02] rounded-organic-lg border border-white/10 py-16">
         <div className="text-white/60 font-mono">Invalid question data</div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10">
+    <div className="flex flex-col bg-white/[0.02] rounded-organic-lg border border-white/10">
       {/* Header with editable pills */}
       <div className="flex flex-wrap items-center gap-2 p-4 border-b border-white/10 flex-shrink-0">
         {/* ESAT/TMUA Label - not editable */}
@@ -130,6 +231,16 @@ export function QuestionPanel({
             {paperType}
           </span>
         )}
+
+        {question.screen_video_storage_path?.trim() ? (
+          <span
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-organic-md text-xs font-mono bg-emerald-500/20 text-emerald-200 border border-emerald-400/45"
+            title="Walkthrough video is linked to this question"
+          >
+            <Video className="w-3.5 h-3.5 shrink-0 opacity-90" aria-hidden />
+            Video attached
+          </span>
+        ) : null}
         
         {/* Difficulty - Editable Pill */}
         {editingPill === 'difficulty' ? (
@@ -146,20 +257,21 @@ export function QuestionPanel({
               question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
               question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
               question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]',
-              question.difficulty === 'Extreme' && 'bg-[#5c3d6e]/25 text-[#c9a0dc]'
+              question.difficulty === 'Extreme' &&
+                'bg-purple-600/30 text-purple-200 border border-purple-400/35 ring-1 ring-purple-400/20'
             )}
             style={{
               backgroundColor: question.difficulty === 'Easy' ? 'rgba(80, 97, 65, 0.2)' :
                               question.difficulty === 'Medium' ? 'rgba(150, 113, 57, 0.2)' :
                               question.difficulty === 'Hard' ? 'rgba(133, 73, 82, 0.2)' :
-                              question.difficulty === 'Extreme' ? 'rgba(92, 61, 110, 0.25)' :
+                              question.difficulty === 'Extreme' ? 'rgba(147, 51, 234, 0.28)' :
                               '#0f1114'
             }}
           >
             <option value="Easy" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Easy</option>
             <option value="Medium" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Medium</option>
             <option value="Hard" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Hard</option>
-            <option value="Extreme" style={{ backgroundColor: '#0f1114', color: 'rgba(255, 255, 255, 0.9)' }}>Extreme</option>
+            <option value="Extreme" style={{ backgroundColor: '#2e1064', color: '#e9d5ff' }}>Extreme</option>
           </select>
         ) : (
           <button
@@ -169,7 +281,8 @@ export function QuestionPanel({
               question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
               question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
               question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]',
-              question.difficulty === 'Extreme' && 'bg-[#5c3d6e]/25 text-[#c9a0dc]'
+              question.difficulty === 'Extreme' &&
+                'bg-purple-600/30 text-purple-200 border border-purple-400/35 ring-1 ring-purple-400/20'
             )}
           >
             {question.difficulty}
@@ -360,10 +473,157 @@ export function QuestionPanel({
         ))}
       </div>
 
-      {/* Content - fully expanded */}
-      <div className="flex-1 overflow-visible p-6 space-y-6">
+      <WalkthroughUploadBanner
+        questionId={question.id}
+        initialCode={question.media_upload_code ?? null}
+      />
+      <WalkthroughVideoPlayer
+        questionId={question.id}
+        storagePath={question.screen_video_storage_path}
+      />
+
+      {(question.quality_gate_assessed_at ||
+        question.quality_gate_verdict ||
+        question.quality_gate_reason) && (
+        <div className="mx-4 mb-2 rounded-lg border border-violet-400/25 bg-violet-500/[0.07] px-3 py-2 text-xs text-white/85">
+          <div className="font-mono text-violet-200/95 mb-1.5">Question checker (AI)</div>
+          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-white/65 font-mono mb-2">
+            {question.quality_gate_verdict ? (
+              <span>
+                Verdict:{" "}
+                <span className="text-violet-100/95">{question.quality_gate_verdict}</span>
+              </span>
+            ) : null}
+            {question.quality_gate_action ? (
+              <span>
+                Action:{" "}
+                <span className="text-violet-100/95">{question.quality_gate_action}</span>
+              </span>
+            ) : null}
+            {question.quality_gate_model ? (
+              <span title="Model used for scoring">
+                Model: <span className="text-white/80">{question.quality_gate_model}</span>
+              </span>
+            ) : null}
+            {question.quality_gate_job_id ? (
+              <span title="Run id from the checker job">
+                Run:{" "}
+                <span className="text-white/70 break-all">{question.quality_gate_job_id}</span>
+              </span>
+            ) : null}
+            {question.quality_gate_assessed_at ? (
+              <span title="When the AI last scored this row">
+                At:{" "}
+                <span className="text-white/55">{question.quality_gate_assessed_at}</span>
+              </span>
+            ) : null}
+          </div>
+          {question.quality_gate_reason ? (
+            <div className="space-y-1">
+              <div className="text-[10px] uppercase tracking-wide text-white/45">What the model said</div>
+              <pre className="max-h-56 overflow-y-auto whitespace-pre-wrap rounded-md bg-black/35 p-2 text-[11px] leading-relaxed text-white/80 border border-white/10">
+                {question.quality_gate_reason}
+              </pre>
+            </div>
+          ) : (
+            <p className="text-white/45 text-[11px]">
+              No reasoning text on this row (older run or DB column empty).
+            </p>
+          )}
+        </div>
+      )}
+
+      {(question.quality_gate_calibration_tier === "gold" ||
+        question.quality_gate_graph_candidate) && (
+        <div className="mx-4 mb-2 space-y-2 rounded-lg border border-white/15 bg-white/[0.04] px-3 py-2 text-xs text-white/85">
+          {question.quality_gate_calibration_tier === "gold" && (
+            <div className="space-y-1">
+              <div className="font-mono text-amber-200/95">
+                Calibration: <span className="text-amber-100">gold</span> (elite pool)
+              </div>
+              {question.quality_gate_calibration_notes ? (
+                <p className="text-white/75 leading-relaxed pl-0.5 border-l-2 border-amber-400/40 pl-2">
+                  {question.quality_gate_calibration_notes}
+                </p>
+              ) : null}
+            </div>
+          )}
+          {question.quality_gate_graph_candidate && (
+            <div className="space-y-1">
+              <div className="font-mono text-sky-200/95">
+                Graph / diagram candidate — review stem, then add SVG. Suggested notes:
+              </div>
+              {question.quality_gate_graph_notes ? (
+                <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap rounded-md bg-black/30 p-2 text-[11px] leading-relaxed text-white/80 border border-white/10">
+                  {question.quality_gate_graph_notes}
+                </pre>
+              ) : (
+                <p className="text-white/45">No graph notes on row; open full row or re-run gate.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="p-6 space-y-6">
         {/* Question Stem */}
         <div className="space-y-2">
+          {hasStemBeforeAutoDiagram && (
+              <div className="rounded-xl border border-sky-500/35 bg-sky-950/25 px-4 py-3 space-y-3">
+                <p className="text-xs font-mono text-sky-200/95 leading-relaxed">
+                  Auto-generated diagram (quality gate / backfill) updated the stem. Compare both
+                  versions, then accept one — this clears the snapshot on the row.
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
+                    <div className="text-[10px] font-mono uppercase tracking-wide text-white/50">
+                      Before (no auto diagram)
+                    </div>
+                    <div
+                      className="text-white/90 font-serif text-sm leading-relaxed"
+                      style={{
+                        fontFamily: "'Times New Roman', Times, serif",
+                        lineHeight: 1.75,
+                      }}
+                    >
+                      <StemContent content={question.question_stem_before_auto_diagram} />
+                    </div>
+                    {onResolveAutoDiagramStem ? (
+                      <button
+                        type="button"
+                        onClick={() => void onResolveAutoDiagramStem("revert")}
+                        className="w-full rounded-organic-md border border-amber-400/40 bg-amber-950/40 px-3 py-2 text-xs font-mono text-amber-100 hover:bg-amber-900/50 transition-colors"
+                      >
+                        Use this version (remove diagram from stem)
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
+                    <div className="text-[10px] font-mono uppercase tracking-wide text-white/50">
+                      Current (with diagram)
+                    </div>
+                    <div
+                      className="text-white/90 font-serif text-sm leading-relaxed"
+                      style={{
+                        fontFamily: "'Times New Roman', Times, serif",
+                        lineHeight: 1.75,
+                      }}
+                    >
+                      <StemContent content={question.question_stem} />
+                    </div>
+                    {onResolveAutoDiagramStem ? (
+                      <button
+                        type="button"
+                        onClick={() => void onResolveAutoDiagramStem("keep_diagram")}
+                        className="w-full rounded-organic-md border border-sky-400/40 bg-sky-950/50 px-3 py-2 text-xs font-mono text-sky-100 hover:bg-sky-900/50 transition-colors"
+                      >
+                        Keep diagram version
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            )}
           <div className="flex items-center gap-2">
             <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
               Question
@@ -390,20 +650,33 @@ export function QuestionPanel({
             )}
           </div>
           {editingField === 'question_stem' ? (
-            <textarea
-              value={question.question_stem}
-              onChange={(e) => onQuestionStemChange(e.target.value)}
-              onBlur={() => onStopEditingField?.()}
-              autoFocus
-              className="w-full min-h-[120px] p-4 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-base resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
-              style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.8' }}
-            />
+            <div className="space-y-2">
+              <DiagramInsertToolbar
+                stemRef={questionStemRef}
+                stemValue={question.question_stem}
+                onStemChange={onQuestionStemChange}
+              />
+              <textarea
+                ref={questionStemRef}
+                value={question.question_stem}
+                onChange={(e) => onQuestionStemChange(e.target.value)}
+                onBlur={() => onStopEditingField?.()}
+                autoFocus
+                className="w-full min-h-[120px] p-4 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-base resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.8' }}
+              />
+            </div>
+          ) : hasStemBeforeAutoDiagram && onResolveAutoDiagramStem ? (
+            <p className="text-xs text-white/45 font-mono leading-relaxed">
+              Active stem is the &ldquo;Current (with diagram)&rdquo; column above until you choose a
+              version. Use the pencil to edit the stem manually.
+            </p>
           ) : (
-            <div 
+            <div
               className="text-white/95 font-serif text-base leading-relaxed"
-              style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.8' }}
+              style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: "1.8" }}
             >
-              <MathContent content={question.question_stem} />
+              <StemContent content={question.question_stem} />
             </div>
           )}
         </div>
@@ -411,8 +684,17 @@ export function QuestionPanel({
         {/* Options */}
         <div className="space-y-3">
           {/* Column Headers */}
-          <div className="flex items-start gap-3">
-            <div className="w-10"></div> {/* Spacer for letter column */}
+          <div className="flex items-start gap-2">
+            <div className="flex gap-2 shrink-0 items-start">
+              {onReorderOption ? <div className="w-8" aria-hidden /> : null}
+              <div className="w-11 flex justify-center">
+                {showAnswer && onCorrectOptionChange ? (
+                  <span className="text-[9px] font-mono text-white/35 uppercase text-center leading-tight pt-0.5">
+                    OK
+                  </span>
+                ) : null}
+              </div>
+            </div>
             <div className="flex-1 flex items-start gap-3">
               <div className={showAnswer ? "flex-[0.2]" : "flex-1"}>
                 <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
@@ -438,13 +720,61 @@ export function QuestionPanel({
             const distractorText = question.distractor_map && typeof question.distractor_map === 'object' 
               ? question.distractor_map[letter] 
               : null;
-            const showDistractor = showAnswer && distractorText && !isCorrect;
             const isEditingOption = editingField === `option_${letter}`;
             const isEditingDistractor = editingField === `distractor_${letter}`;
+            const optIdx = optionLetters.indexOf(letter);
+            const canMoveUp = optIdx > 0;
+            const canMoveDown = optIdx >= 0 && optIdx < optionLetters.length - 1;
             
             return (
               <div key={letter} className="space-y-2">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
+                  {onReorderOption ? (
+                    <div className="flex flex-col gap-0.5 shrink-0 pt-1">
+                      <button
+                        type="button"
+                        disabled={!canMoveUp}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => canMoveUp && onReorderOption(letter, "up")}
+                        className={cn(
+                          "p-1 rounded-organic-md border border-white/15 transition-colors",
+                          canMoveUp
+                            ? "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                            : "bg-white/[0.02] text-white/20 cursor-not-allowed border-white/5"
+                        )}
+                        title="Move option up"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" strokeWidth={2.5} />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={!canMoveDown}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => canMoveDown && onReorderOption(letter, "down")}
+                        className={cn(
+                          "p-1 rounded-organic-md border border-white/15 transition-colors",
+                          canMoveDown
+                            ? "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                            : "bg-white/[0.02] text-white/20 cursor-not-allowed border-white/5"
+                        )}
+                        title="Move option down"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ) : null}
+                  <div className="flex flex-col items-center gap-1.5 shrink-0 w-11">
+                    {showAnswer && onCorrectOptionChange ? (
+                      <input
+                        type="radio"
+                        name={`correct-option-${question.id}`}
+                        checked={isCorrect}
+                        onChange={() => onCorrectOptionChange(letter)}
+                        className="h-3.5 w-3.5 accent-[#85BC82] cursor-pointer"
+                        title="Set as correct answer"
+                        aria-label={`Mark option ${letter} as correct`}
+                      />
+                    ) : null}
                   <div className={cn(
                     "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-colors",
                     showAnswer && isCorrect
@@ -452,6 +782,7 @@ export function QuestionPanel({
                       : "bg-white/10 text-white/70"
                   )}>
                     {letter}
+                  </div>
                   </div>
                   <div className="flex-1 flex items-start gap-3">
                     {/* Option */}
@@ -511,27 +842,39 @@ export function QuestionPanel({
                       )}
                     </div>
                     
-                    {/* Distractor explanation - Right column */}
+                    {/* Why incorrect / correct — Right column */}
                     {showAnswer && (
                       <div className="flex-[0.8]">
-                        {showDistractor ? (
+                        {isCorrect ? (
+                          <div className="p-3 rounded-organic-md border border-[#85BC82]/25 bg-[#85BC82]/5 text-sm text-[#85BC82]/90 font-mono">
+                            Correct answer (use radio to change)
+                          </div>
+                        ) : onDistractorChange ? (
                           <div className="p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
-                            {isEditingDistractor && onDistractorChange ? (
+                            {isEditingDistractor ? (
                               <textarea
-                                value={distractorText || ''}
+                                value={distractorText ?? ""}
                                 onChange={(e) => onDistractorChange(letter, e.target.value)}
                                 onBlur={() => onStopEditingField?.()}
                                 autoFocus
-                                className="w-full min-h-[60px] p-2 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50"
+                                placeholder="Why this option could be incorrect…"
+                                className="w-full min-h-[72px] p-2 rounded-organic-md bg-white/5 border border-white/10 text-white/90 font-serif text-sm resize-y focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 placeholder:text-white/30"
                                 style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.6' }}
                               />
                             ) : (
                               <div className="flex items-start gap-2">
-                                <div className="flex-1">
-                                  <MathContent content={distractorText} />
+                                <div className="flex-1 min-h-[2rem]">
+                                  {distractorText?.trim() ? (
+                                    <MathContent content={distractorText} />
+                                  ) : (
+                                    <span className="text-white/35 italic text-sm font-serif">
+                                      No explanation yet — use the pencil to add why this could be incorrect.
+                                    </span>
+                                  )}
                                 </div>
                                 {onStartEditingField && (
                                   <button
+                                    type="button"
                                     onClick={() => {
                                       if (isEditingDistractor) {
                                         onStopEditingField?.();
@@ -545,7 +888,11 @@ export function QuestionPanel({
                                         ? "bg-primary/20 hover:bg-primary/30 text-primary"
                                         : "bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80"
                                     )}
-                                    title={isEditingDistractor ? "Stop editing" : "Edit explanation"}
+                                    title={
+                                      distractorText?.trim()
+                                        ? "Edit why this could be incorrect"
+                                        : "Add why this could be incorrect"
+                                    }
                                   >
                                     <Pencil className="w-3 h-3" />
                                   </button>
@@ -554,9 +901,7 @@ export function QuestionPanel({
                             )}
                           </div>
                         ) : (
-                          <div className="p-3 text-sm text-white/30 font-serif italic">
-                            {isCorrect ? "Correct answer" : "—"}
-                          </div>
+                          <div className="p-3 text-sm text-white/30 font-serif italic">—</div>
                         )}
                       </div>
                     )}

@@ -4,12 +4,9 @@ import { useState } from "react";
 import { CheckCircle2, BarChart3, Info, X, Trash2, SkipForward, Bug } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BugReportModal } from "./BugReportModal";
+import { ReviewStatsBreakdown } from "./ReviewStatsBreakdown";
 
 interface ReviewSidebarProps {
-  checklistItems: boolean[];
-  optionalChecklistItem: boolean;
-  onChecklistChange: (index: number, checked: boolean) => void;
-  onOptionalChecklistChange: (checked: boolean) => void;
   onApprove: () => void;
   onDelete: () => void;
   onSkip: () => void;
@@ -23,20 +20,7 @@ interface ReviewSidebarProps {
   onGoodQuestionChange: (checked: boolean) => void;
 }
 
-const CHECKLIST_LABELS = [
-  "No formatting issues and reads well",
-  "The answer is correct, solution is OK",
-  "The question is ESAT / TMUA level",
-  "The tags (subject, difficulty) are reasonable",
-];
-
-const OPTIONAL_CHECKLIST_LABEL = "Added or changed options and explanations to make question more tricky (if there are more pitfalls)";
-
 export function ReviewSidebar({
-  checklistItems,
-  optionalChecklistItem,
-  onChecklistChange,
-  onOptionalChecklistChange,
   onApprove,
   onDelete,
   onSkip,
@@ -55,7 +39,7 @@ export function ReviewSidebar({
 
   return (
     <>
-      <div className="w-[280px] h-screen flex flex-col bg-white/[0.02] border-r border-white/10 flex-shrink-0 overflow-hidden">
+      <div className="w-[280px] flex flex-col bg-white/[0.02] border-r border-white/10 flex-shrink-0">
         {/* Info and Bug Report Buttons */}
         <div className="p-4 border-b border-white/10 flex-shrink-0">
           <div className="flex gap-2">
@@ -82,45 +66,9 @@ export function ReviewSidebar({
           </div>
         </div>
 
-        {/* Checklist Section */}
-        <div className="flex-1 p-4 space-y-4 overflow-hidden">
-        <h3 className="text-sm font-mono text-white/60 uppercase tracking-wide mb-4">
-          Review Checklist
-        </h3>
-        <div className="space-y-3">
-          {CHECKLIST_LABELS.map((label, index) => (
-            <label
-              key={index}
-              className="flex items-start gap-3 cursor-pointer group"
-            >
-              <input
-                type="checkbox"
-                checked={checklistItems[index] || false}
-                onChange={(e) => onChecklistChange(index, e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-primary focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 cursor-pointer"
-              />
-              <span className="text-sm text-white/80 font-mono leading-relaxed group-hover:text-white/90 transition-colors">
-                {index + 1}. {label}
-              </span>
-            </label>
-          ))}
-          
-          {/* Optional Checklist Item */}
-          <label className="flex items-start gap-3 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={optionalChecklistItem}
-              onChange={(e) => onOptionalChecklistChange(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded border-white/20 bg-white/5 text-primary focus:ring-2 focus:ring-primary/50 focus:ring-offset-0 cursor-pointer"
-            />
-            <div className="flex-1">
-              <span className="text-sm text-white/60 font-mono leading-relaxed group-hover:text-white/70 transition-colors italic">
-                Optional: {OPTIONAL_CHECKLIST_LABEL}
-              </span>
-            </div>
-          </label>
+        <div className="flex flex-col">
+          <ReviewStatsBreakdown />
         </div>
-      </div>
 
       {/* Good Question Checkbox */}
       <div className="p-4 border-t border-white/10 flex-shrink-0">
@@ -152,7 +100,7 @@ export function ReviewSidebar({
           {/* Approve Button */}
           <button
             onClick={onApprove}
-            disabled={!canApprove || isApproving || isDeleting}
+            disabled={!canApprove}
             className={cn(
               "flex-1 px-4 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium whitespace-nowrap",
               canApprove && !isApproving && !isDeleting
@@ -272,7 +220,7 @@ export function ReviewSidebar({
 
               <div>
                 <h3 className="text-white/90 font-semibold mb-2">6. Mark as Good Question</h3>
-                <p className="text-white/70">Before approving, if you feel this is a great question, check "Mark as good question". This should be rare (maybe 1 in 10-20 questions). Use this for questions that are actually challenging, fitting and interesting with an elegant solution.</p>
+                <p className="text-white/70">{`Before approving, if you feel this is a great question, check "Mark as good question". This should be rare (maybe 1 in 10-20 questions). Use this for questions that are actually challenging, fitting and interesting with an elegant solution.`}</p>
               </div>
             </div>
           </div>

@@ -51,3 +51,24 @@
   }
 }
 
+@layer components {
+  /* Inline SVG blocks pasted into question stems */
+  .stem-diagram svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* HTML tables in stems / math content */
+  .stem-table {
+    white-space: normal;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .stem-table table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9em;
+  }
+}
+

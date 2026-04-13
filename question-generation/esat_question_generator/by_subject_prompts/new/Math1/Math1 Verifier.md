@@ -44,7 +44,7 @@ Must contain:
 - question.stem
 - question.options (A–H)
 - question.correct_option (claimed)
-- solution.reasoning
+- solution.reasoning (must be a **worked** solution: enough intermediate steps/equations that a reader sees **how** the correct option is reached — not only a final value or letter)
 - solution.key_insight
 - distractor_map (entry for every option used)
 - (optional) graph_intent (ONLY if final_graph_role != "none")
@@ -62,6 +62,7 @@ Independently and from scratch:
 
 1) Re-solve the question yourself, ignoring the provided solution.
 2) Determine the true correct option.
+2b) **Claimed letter vs worked solution:** Check that **`question.correct_option`** is exactly that letter **and** that the **final simplified answer** in the Implementer’s `solution.reasoning` (what the stem actually asks for — e.g. the conditional probability, not an intermediate joint probability) **matches** `question.options[correct_option]` in meaning. If the reasoning’s last substantive conclusion corresponds to a **different** option letter than `question.correct_option`, FAIL (`correct_option_mismatch_with_worked_solution`).
 3) Check uniqueness: exactly one defensible correct option.
 4) Check syllabus: every step uses ESAT Math 1-appropriate techniques; no hidden extra assumptions.
 5) Check no-calc feasibility (validity, not difficulty).
@@ -75,16 +76,19 @@ If any check fails: FAIL.
 
 ## Syllabus rule (ESAT Math 1) — NON-NEGOTIABLE
 
-The question must be solvable using ESAT Math 1 techniques only (as per your curriculum tags).
+The question must be solvable using **L6 / standard A-level Mathematics (core)** techniques only — not Further Mathematics — and must match real ESAT Math 1 **pace**: comparatively **little** emphasis on differentiation and integration versus pure algebra, graphs, trig, and sequences.
+
 FAIL as off_syllabus if the solution requires, for example:
 - higher-level methods beyond the declared Math 1 scope
 - unintroduced theorems/identities not typical for ESAT Math 1
+- **heavy calculus**: long chains of product/quotient/implicit differentiation, integration as the dominant method, integration by parts, elaborate substitution integrals, partial-fractions integration drills, or volumes of revolution as the core workload
+- **differentiation of non-polynomials (pipeline rule)**: FAIL as off_syllabus (or katex_formatting-adjacent structural issue) if the intended solution requires differentiating $\sin x$, $\cos x$, $\tan x$, $\ln x$, $\log x$, $e^x$, $e^{kx}$, $a^x$, or any expression whose derivative is not in the **polynomial-in-$x$** family after simplification. Allowed: sums/constant multiples of **positive integer powers** of $x$, and $(ax+b)^n$ with integer $n \ge 1$. Trig/exp/log may appear in the item only where **no differentiation** of those forms is required.
 - multi-page calculus / advanced trig / heavy algebraic manipulation that is not “engineered to collapse”
 - any technique inconsistent with the designer_plan primary/secondary tags (if tags are provided)
 
 Spec-tool sufficiency check:
 - List the main “moves” used in your solution.
-- FAIL as off_syllabus if any move is outside ESAT Math 1 or contradicts declared tags.
+- FAIL as off_syllabus if any move is outside ESAT Math 1, contradicts declared tags, or reads like **Further Maths / university** calculus rather than **light L6** use.
 
 
 ## Uniqueness checks (STRICT)
@@ -155,6 +159,13 @@ G5) View sanity:
 If any graph validation fails: FAIL as graph_validation_error.
 
 
+## Solution exposition (validity)
+
+FAIL as `katex_formatting` or `structural_flaw` (choose the closer fit) if `solution.reasoning` is **answer-only**: it states the result or correct letter but does not show the main reasoning chain (key rearrangements, equations, or case analysis) that produces it.
+
+Do **not** fail for concise solutions that still contain that chain.
+
+
 ## KaTeX + JSON formatting checks (CRITICAL)
 
 - Use ONLY $...$ for inline math and $$...$$ for display math
@@ -162,7 +173,7 @@ If any graph validation fails: FAIL as graph_validation_error.
 - Every $ must be matched
 - Display math must have blank lines before and after (inside JSON string values)
 - In JSON string values, LaTeX backslashes must be escaped where required (e.g. \\frac, \\sqrt)
-- All options containing ANY math must be wrapped in $...$
+- Every **math fragment** in an option must be in `$...$` (not bare `\\frac`, bare inequalities, etc.). Mixed text+math options: **do not** require the whole option string to be one math span—only the symbols/expressions. Pure-formula options may be a single `$...$`.
   e.g. A: "$\\frac{3}{2}$" not A: "\\frac{3}{2}"
 
 If formatting is wrong: FAIL as katex_formatting.

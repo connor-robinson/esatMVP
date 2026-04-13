@@ -8,7 +8,7 @@ Focuses on delimiter correctness, block formatting rules, and sanity checks.
 
 import re
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 
 @dataclass
@@ -376,6 +376,130 @@ def format_lint_errors(errors: List[LintError]) -> List[str]:
         List of formatted error strings
     """
     return [f"{e.code}: {e.message}" for e in errors]
+
+
+_SINGLE_LINE_DISPLAY_BLOCK = re.compile(r"(?<!\$)\$\$([^$\n]+?)\$\$(?!\$)")
+
+# Entire line is only one display pair (common implementer slip: ``...\\n$$ inner $$`` with no
+# isolated ``$$`` lines — breaks the "``$$`` alone on its line" rule).
+_LINE_SINGLE_DISPLAY_PAIR = re.compile(r"^(?P<prefix>\s*)\$\$(?P<inner>[^\$]*)\$\$(?P<suffix>\s*)$")
+
+
+def _expand_non_pure_display_lines(text: str) -> str:
+    """
+    Turn a line that consists solely of ``$$ inner $$`` (optional surrounding whitespace)
+    into the canonical multiline block so ``fix_display_math_newlines`` / lint rules apply.
+    """
+    if "$$" not in text:
+        return text
+    lines = text.split("\n")
+    out: List[str] = []
+    for line in lines:
+        m = _LINE_SINGLE_DISPLAY_PAIR.match(line)
+        if m and m.group("inner").strip():
+            prefix = m.group("prefix") or ""
+            inner = m.group("inner").strip()
+            suffix = m.group("suffix") or ""
+            out.append(f"{prefix}\n\n$$\n{inner}\n$$\n")
+            if suffix.strip():
+                out.append(suffix)
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
+def _expand_single_line_display_blocks(text: str) -> str:
+    """Turn ``$$ expr $$`` on one line into a multiline block with isolated ``$$`` lines."""
+    if "$$" not in text:
+        return text
+    prev = None
+    while prev != text:
+        prev = text
+        m = _SINGLE_LINE_DISPLAY_BLOCK.search(text)
+        if not m:
+            break
+        inner = m.group(1).strip()
+        rep = "\n\n$$\n" + inner + "\n$$\n\n"
+        text = text[: m.start()] + rep + text[m.end() :]
+    return text
+
+
+def _ensure_blank_lines_around_display_markers(text: str) -> str:
+    """
+    Ensure a blank line before each opening ``$$`` and after each closing ``$$``
+    (matches lint rules for non-first / non-last lines).
+    """
+    if "$$" not in text:
+        return text
+    lines = text.split("\n")
+    out: List[str] = []
+    in_disp = False
+    for line in lines:
+        st = line.strip()
+        if st == "$$":
+            if not in_disp:
+                if out and out[-1].strip() != "":
+                    out.append("")
+                in_disp = True
+            else:
+                in_disp = False
+            out.append(line.rstrip())
+            continue
+        out.append(line)
+    lines = out
+    out = []
+    in_disp = False
+    n = len(lines)
+    for i, line in enumerate(lines):
+        st = line.strip()
+        if st == "$$":
+            if not in_disp:
+                in_disp = True
+                out.append(line.rstrip())
+            else:
+                in_disp = False
+                out.append(line.rstrip())
+                j = i + 1
+                while j < n and not lines[j].strip():
+                    j += 1
+                if j < n and lines[j].strip() and lines[j].strip() != "$$":
+                    out.append("")
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
+def fix_display_math_newlines(text: str) -> str:
+    """
+    Deterministic repair for common implementer slips:
+    - ``$$ ... $$`` squeezed onto one line (``$$`` must be alone on its line).
+    - A full line that is only ``$$ inner $$`` (not isolated marker lines).
+    - Missing blank lines around display blocks.
+
+    Safe to run on stems, reasoning, step bodies, etc.
+    """
+    if not text or "$$" not in text:
+        return text
+    t = _expand_non_pure_display_lines(text)
+    t = _expand_single_line_display_blocks(t)
+    t = _ensure_blank_lines_around_display_markers(t)
+    return t
+
+
+def deep_apply_display_math_fix(obj: object, fixfn: Callable[[str], str] = fix_display_math_newlines) -> None:
+    """In-place: run ``fixfn`` on every string value under dicts/lists that contains ``$$``."""
+    if isinstance(obj, dict):
+        for k, v in list(obj.items()):
+            if isinstance(v, str) and "$$" in v:
+                obj[k] = fixfn(v)
+            else:
+                deep_apply_display_math_fix(v, fixfn)
+    elif isinstance(obj, list):
+        for i, item in enumerate(obj):
+            if isinstance(item, str) and "$$" in item:
+                obj[i] = fixfn(item)
+            else:
+                deep_apply_display_math_fix(item, fixfn)
 
 
 if __name__ == "__main__":

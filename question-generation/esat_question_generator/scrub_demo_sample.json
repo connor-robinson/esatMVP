@@ -1,0 +1,1560 @@
+[
+  {
+    "id": "c844911e-2972-447e-9ea7-2a2501d65139",
+    "generation_id": "M15-Hard-fb503151ec",
+    "schema_id": "M15",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "Mathematics 1 - Ratio and proportion",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly combines the ratios by finding a common multiple for the shared quantity $y$, leading to $x:y:z = 15:10:8$. The subsequent calculation of $\\frac{x}{x+y+z} = \\frac{15}{33} = \\frac{5}{11}$ is correct.",
+        "The question is unambiguous, requires no calculator, and is appropriate for the ESAT/ENGAA level, testing fundamental ratio manipulation.",
+        "All distractors represent plausible errors, such as naive combination of ratios or misinterpretation of ratio order."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly combines the ratios by finding a common multiple for the shared quantity $y$, leading to $x:y:z = 15:10:8$. The subsequent calculation of $\\frac{x}{x+y+z} = \\frac{15}{33} = \\frac{5}{11}$ is correct.\n  - The question is unambiguous, requires no calculator, and is appropriate for the ESAT/ENGAA level, testing fundamental ratio manipulation.\n  - All distractors represent plausible errors, such as naive combination of ratios or misinterpretation of ratio order.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "errors": [
+          {
+            "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model, limit: 25, model: gemini-3-pro\\nPlease retry in 22.31519187s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_requests_per_model', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3-pro'}, 'quotaValue': '25'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '22s'}]}}",
+            "stage": "REWRITE_FAILED",
+            "timestamp": "2025-12-30T14:02:38.518706"
+          }
+        ],
+        "run_id": "1bf15b8a-546c-4911-aedb-8e0e88d1c834",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 10,
+        "authenticity": 10,
+        "plausibility": 10,
+        "no_calculator": 10,
+        "one_idea_purity": 10,
+        "distractor_realism": 10
+      },
+      "summary": "This question is an excellent example of a fundamental ratio problem suitable for ESAT/ENGAA. It is concise, requires no calculator, and tests a single clear idea. The distractors are particularly strong, representing common and plausible errors.",
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This question is an excellent example of a fundamental ratio problem suitable for ESAT/ENGAA. It is concise, requires no calculator, and tests a single clear idea. The distractors are particularly strong, representing common and plausible errors."
+    },
+    "question_stem": "Three quantities, $x$, $y$ and $z$, are related by the ratios $x:y = 3:2$ and $y:z = 5:4$.\nWhich of the following gives the value of $\\frac{x}{x+y+z}$?\n",
+    "options": {
+      "A": "3/14",
+      "B": "1/4",
+      "C": "1/3",
+      "D": "2/5",
+      "E": "5/11"
+    },
+    "correct_option": "E",
+    "solution_reasoning": "We are given two ratios, $x:y = 3:2$ and $y:z = 5:4$. To express the relationship as a single ratio $x:y:z$, we must find a common value for the shared term, $y$. The lowest common multiple of the $y$ -parts, 2 and 5, is 10.\n\nWe scale the ratios to match this common value:\n$x:y = 3:2 = 15:10$\n$y:z = 5:4 = 10:8$\n\nThis allows us to form a single combined ratio: $x:y:z = 15:10:8$.\n\nThe required fraction is $\\frac{x}{x+y+z}$. Using the parts from our combined ratio, the total number of parts is $15+10+8 = 33$. The fraction is therefore:\n\n$$ \n\\frac{15}{33} = \\frac{5}{11}\n$$",
+    "_scrub_demo_tag": "good_challenging_best_style",
+    "_stem_chars": 152,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 60.0
+  },
+  {
+    "id": "e06d3136-15b6-4962-a41d-c705b20643ce",
+    "generation_id": "M29-Hard-3993899b00",
+    "schema_id": "M29",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "Mathematics 1 - Ratio and proportion",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly applies the definition of average speed (total distance / total time) and accurately calculates the time for each segment.",
+        "The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level.",
+        "The distractors represent common conceptual errors in calculating average speed, such as using the arithmetic mean, harmonic mean, or incorrectly weighting speeds by distance fractions."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly applies the definition of average speed (total distance / total time) and accurately calculates the time for each segment.\n  - The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level.\n  - The distractors represent common conceptual errors in calculating average speed, such as using the arithmetic mean, harmonic mean, or incorrectly weighting speeds by distance fractions.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "run_id": "4aa63d11-9b17-4c46-84ab-17e7fa3f59f6",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 10,
+        "authenticity": 10,
+        "plausibility": 10,
+        "no_calculator": 10,
+        "one_idea_purity": 10,
+        "distractor_realism": 10
+      },
+      "summary": "This is a classic average speed problem, perfectly suited for an ESAT/ENGAA paper. It is concise, tests a fundamental concept, and has clean arithmetic. The distractors are exceptionally well-chosen, targeting common misconceptions about calculating average speed.",
+      "verdict": "PASS",
+      "_raw_text": "```yaml\nverdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This is a classic average speed problem, perfectly suited for an ESAT/ENGAA paper. It is concise, tests a fundamental concept, and has clean arithmetic. The distractors are exceptionally well-chosen, targeting common misconceptions about calculating average speed.\n```"
+    },
+    "question_stem": "A car travels a certain distance. The first one-third of the distance is covered at a constant speed of $30\\,\\mathrm{m\\,s^{-1}}$. The remaining distance is covered at a constant speed of $90\\,\\mathrm{m\\,s^{-1}}$.\n\nWhat is the average speed of the car for the entire journey?\n",
+    "options": {
+      "A": "$45\\,\\mathrm{m\\,s^{-1}}$",
+      "B": "$50\\,\\mathrm{m\\,s^{-1}}$",
+      "C": "$54\\,\\mathrm{m\\,s^{-1}}$",
+      "D": "$60\\,\\mathrm{m\\,s^{-1}}$",
+      "E": "$70\\,\\mathrm{m\\,s^{-1}}$"
+    },
+    "correct_option": "C",
+    "solution_reasoning": "Let the total distance be $d$. The average speed is the total distance divided by the total time taken.\n\nThe time taken for the first third of the distance is:\n\n$$\nt_1 = \\frac{d/3}{30} = \\frac{d}{90}\n$$\n\nThe time taken for the remaining two-thirds is:\n\n$$\nt_2 = \\frac{2d/3}{90} = \\frac{2d}{270} = \\frac{d}{135}\n$$\n\nThe total time $T$ is the sum of these times:\n\n$$\nT = \\frac{d}{90} + \\frac{d}{135} = \\frac{3d}{270} + \\frac{2d}{270} = \\frac{5d}{270} = \\frac{d}{54}\n$$\n\nFinally, the average speed is:\n\n$$\n\\text{Average Speed} = \\frac{d}{T} = \\frac{d}{d/54} = 54\\,\\mathrm{m\\,s^{-1}}\n$$",
+    "_scrub_demo_tag": "good_challenging_best_style",
+    "_stem_chars": 275,
+    "_calc_flags": [
+      "diff_words"
+    ],
+    "_syllabus_score": 2,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 60.0
+  },
+  {
+    "id": "fcb3636f-ef56-468d-b4fe-fd5e1bb25d4f",
+    "generation_id": "M67-Hard-09e9c65768",
+    "schema_id": "M67",
+    "subjects": "Math 2",
+    "status": "pending",
+    "primary_tag": "Mathematics 2 - Exponentials and logarithms",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly linearises the given equation by taking natural logarithms, identifies the gradient as $3 \\ln \\beta$, and accurately calculates the gradient from the given points. The final value for $\\beta$ is correctly derived.",
+        "The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level, testing understanding of linearisation and logarithmic properties.",
+        "All distractors represent plausible reasoning errors, such as ignoring coefficients, sign errors, or confusing logarithmic values with the base."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly linearises the given equation by taking natural logarithms, identifies the gradient as $3 \\ln \\beta$, and accurately calculates the gradient from the given points. The final value for $\\beta$ is correctly derived.\n  - The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level, testing understanding of linearisation and logarithmic properties.\n  - All distractors represent plausible reasoning errors, such as ignoring coefficients, sign errors, or confusing logarithmic values with the base.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "run_id": "4aa63d11-9b17-4c46-84ab-17e7fa3f59f6",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 10,
+        "authenticity": 10,
+        "plausibility": 10,
+        "no_calculator": 10,
+        "one_idea_purity": 10,
+        "distractor_realism": 10
+      },
+      "summary": "This question is an excellent example of an ESAT/ENGAA-style problem. It concisely tests the ability to linearise an exponential relationship using logarithms and interpret the gradient from given points. The calculations are clean and suitable for a no-calculator environment, and the distractors are exceptionally well-crafted, targeting common conceptual and algebraic errors.",
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This question is an excellent example of an ESAT/ENGAA-style problem. It concisely tests the ability to linearise an exponential relationship using logarithms and interpret the gradient from given points. The calculations are clean and suitable for a no-calculator environment, and the distractors are exceptionally well-crafted, targeting common conceptual and algebraic errors."
+    },
+    "question_stem": "Variables $x$ and $y$ are related by the equation $y = \\alpha \\beta^{\\frac{3}{x}}$, where $\\alpha$ and $\\beta$ are constants.\nA graph of $\\ln y$ against $\\frac{1}{x}$ is a straight line passing through the points $(1, 14)$ and $(3, 2)$.\nWhich of the following is the value of $\\beta$?\n",
+    "options": {
+      "A": "$e^{-6}$",
+      "B": "$e^{-2}$",
+      "C": "$e^{-1/2}$",
+      "D": "$e^{2}$",
+      "E": "$e^{6}$",
+      "F": "$-2$"
+    },
+    "correct_option": "B",
+    "solution_reasoning": "We linearise the relationship by taking natural logarithms of both sides:\n\n$$\n\\ln y = \\ln \\left( \\alpha \\beta^{\\frac{3}{x}} \\right) = \\ln \\alpha + \\frac{3}{x} \\ln \\beta\n$$\n\nThis equation represents a straight line when plotting $\\ln y$ against $\\frac{1}{x}$. Comparing this to the form $Y = c + mX$, we see that the gradient is $3 \\ln \\beta$.\n\nWe calculate the actual gradient using the given points $(1, 14)$ and $(3, 2)$:\n\n$$\nm = \\frac{2 - 14}{3 - 1} = \\frac{-12}{2} = -6\n$$\n\nEquating the two expressions for the gradient:\n\n$$\n3 \\ln \\beta = -6 \\implies \\ln \\beta = -2\n$$\n\nThus, $\\beta = e^{-2}$.",
+    "_scrub_demo_tag": "good_challenging_best_style",
+    "_stem_chars": 285,
+    "_calc_flags": [
+      "log_tex",
+      "exp_tex"
+    ],
+    "_syllabus_score": 3,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 60.0
+  },
+  {
+    "id": "cdb94f31-0376-4f7f-a6e8-deef81a4309c",
+    "generation_id": "M16-Hard-e1cc0449e0",
+    "schema_id": "M16",
+    "subjects": "Math 2",
+    "status": "pending",
+    "primary_tag": "Mathematics 2 - Differentiation and integration",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly applies differentiation for the stationary point condition and definite integration for the integral condition, leading to a system of two linear equations that is solved accurately.",
+        "The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level, testing fundamental calculus and algebraic manipulation.",
+        "All distractors represent plausible reasoning errors, such as misinterpreting conditions, algebraic sign errors, or solving for the wrong variable."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly applies differentiation for the stationary point condition and definite integration for the integral condition, leading to a system of two linear equations that is solved accurately.\n  - The question is unambiguous, solvable without a calculator, and appropriate for the ESAT/ENGAA level, testing fundamental calculus and algebraic manipulation.\n  - All distractors represent plausible reasoning errors, such as misinterpreting conditions, algebraic sign errors, or solving for the wrong variable.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "errors": [
+          {
+            "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model, limit: 25, model: gemini-3-pro\\nPlease retry in 55.405558623s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_requests_per_model', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3-pro'}, 'quotaValue': '25'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '55s'}]}}",
+            "stage": "REWRITE_FAILED",
+            "timestamp": "2025-12-30T14:02:05.208871"
+          },
+          {
+            "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model, limit: 25, model: gemini-3-pro\\nPlease retry in 20.245901342s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_requests_per_model', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3-pro'}, 'quotaValue': '25'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '20s'}]}}",
+            "stage": "REWRITE_FAILED",
+            "timestamp": "2025-12-30T14:07:40.464620"
+          }
+        ],
+        "run_id": "4aa63d11-9b17-4c46-84ab-17e7fa3f59f6",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 10,
+        "authenticity": 10,
+        "plausibility": 10,
+        "no_calculator": 10,
+        "one_idea_purity": 10,
+        "distractor_realism": 10
+      },
+      "summary": "This question is an excellent example of an ESAT/ENGAA-style problem. It concisely tests fundamental calculus concepts (differentiation for stationary points, definite integration) and algebraic manipulation to solve a system of equations. The solution path is direct and clean, requiring no calculator, and all distractors are highly realistic, stemming from common conceptual or algebraic errors.",
+      "verdict": "PASS",
+      "_raw_text": "```yaml\nverdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This question is an excellent example of an ESAT/ENGAA-style problem. It concisely tests fundamental calculus concepts (differentiation for stationary points, definite integration) and algebraic manipulation to solve a system of equations. The solution path is direct and clean, requiring no calculator, and all distractors are highly realistic, stemming from common conceptual or algebraic errors.\n```"
+    },
+    "question_stem": "The function $f(x)$ is defined by $f(x) = ax^2 + bx$, where $a$ and $b$ are constants. The curve $y = f(x)$ has a stationary point at $x = 1$. The integral $\\int_0^1 f(x) \\, \\mathrm{d}x = 4$.\nWhat is the value of $a$?\n",
+    "options": {
+      "A": "-24",
+      "B": "-6",
+      "C": "-4",
+      "D": "3",
+      "E": "12"
+    },
+    "correct_option": "B",
+    "solution_reasoning": "The curve has a stationary point at $x=1$, which implies $f'(1) = 0$. Differentiating $f(x)$ gives $f'(x) = 2ax + b$, so:\n\n$$\n2a(1) + b = 0 \\implies b = -2a\n$$\n\nNext, we evaluate the definite integral:\n\n$$\n\\int_0^1 (ax^2 + bx) \\, \\mathrm{d}x = \\left[ \\frac{ax^3}{3} + \\frac{bx^2}{2} \\right]_0^1 = \\frac{a}{3} + \\frac{b}{2}\n$$\n\nWe are given that this integral equals $4$, so:\n\n$$\n\\frac{a}{3} + \\frac{b}{2} = 4\n$$\n\nMultiplying by $6$ clears the fractions to give $2a + 3b = 24$. Substituting $b = -2a$ into this equation yields:\n\n$$\n2a + 3(-2a) = 24 \\implies -4a = 24\n$$\n\nThus, $a = -6$.",
+    "_scrub_demo_tag": "good_challenging_best_style",
+    "_stem_chars": 218,
+    "_calc_flags": [
+      "int_words"
+    ],
+    "_syllabus_score": 2,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 60.0
+  },
+  {
+    "id": "2514c8b1-9308-4085-8124-d4ca9cf42116",
+    "generation_id": "M_09226618-Medium-bed4ffa78e",
+    "schema_id": "M_09226618",
+    "subjects": "Math 1",
+    "status": "approved",
+    "primary_tag": "4",
+    "difficulty": "Medium",
+    "verifier_report": {
+      "notes": [
+        "Verified the property profiles for each of the three functions ($x^2+1$, $x^3$, $e^x$) from scratch.",
+        "The profiles are unique: [YES, NO, YES] for $x^2+1$, [NO, YES, NO] for $x^3$, and [NO, NO, YES] for $e^x$.",
+        "These unique profiles map directly to the functions $f(x)$, $g(x)$, and $h(x)$ respectively, leading to a single correct assignment.",
+        "All required skills (differentiation of polynomials/exponentials, solving simple equations, knowledge of function ranges) are core ESAT Math 1 syllabus.",
+        "KaTeX formatting, including escaped backslashes for commands and newlines in arrays, is correct throughout the JSON."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Verified the property profiles for each of the three functions ($x^2+1$, $x^3$, $e^x$) from scratch.\",\n    \"The profiles are unique: [YES, NO, YES] for $x^2+1$, [NO, YES, NO] for $x^3$, and [NO, NO, YES] for $e^x$.\",\n    \"These unique profiles map directly to the functions $f(x)$, $g(x)$, and $h(x)$ respectively, leading to a single correct assignment.\",\n    \"All required skills (differentiation of polynomials/exponentials, solving simple equations, knowledge of function ranges) are core ESAT Math 1 syllabus.\",\n    \"KaTeX formatting, including escaped backslashes for commands and newlines in arrays, is correct throughout the JSON.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The FAR variation is executed perfectly, transforming a biological classification task into a pure mathematics one while retaining the core logical structure and difficulty.",
+        "The stem is concise, clear, and uses appropriate exam tone and mathematical notation.",
+        "All calculations required to evaluate the properties for each function are simple and entirely no-calculator friendly.",
+        "Distractors are well-designed, targeting common misconceptions about function behavior (e.g., the range of e^x or the second derivative of x^3), which is excellent for a discriminating question."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 29,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 4,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question mirrors the logical deduction and synthesis pace of the reference, requiring systematic evaluation of properties and matching. The mathematical properties are standard for ESAT Math 1, making the difficulty comparable to the biological fact recall in the reference. The length of the stem and options is also very similar.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The FAR variation is executed perfectly, transforming a biological classification task into a pure mathematics one while retaining the core logical structure and difficulty.\",\n    \"The stem is concise, clear, and uses appropriate exam tone and mathematical notation.\",\n    \"All calculations required to evaluate the properties for each function are simple and entirely no-calculator friendly.\",\n    \"Distractors are well-designed, targeting common misconceptions about function behavior (e.g., the range of e^x or the second derivative of x^3), which is excellent for a discriminating question.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 29,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 5,
+          "option_realism": 5,
+          "insight_quality": 4,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question mirrors the logical deduction and synthesis pace of the reference, requiring systematic evaluation of properties and matching. The mathematical properties are standard for ESAT Math 1, making the difficulty comparable to the biological fact recall in the reference. The length of the stem and options is also very similar.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "Three properties of a function $y=F(x)$ are defined:\n\nProperty 1: $F(x) \\ge 1$ for all real $x$.\nProperty 2: The equation $F(x) = 0$ has exactly one real root.\nProperty 3: $\\frac{d^2y}{dx^2} > 0$ for all real $x$.\n\nThe table shows whether three specific functions, $f(x)$, $g(x)$, and $h(x)$, satisfy these properties.\n\n$$ \n\\begin{array}{c|ccc} \n\\text{Function} & \\text{Property 1} & \\text{Property 2} & \\text{Property 3} \\\\ \n\\hline \nf(x) & \\text{YES} & \\text{NO} & \\text{YES} \\\\ \ng(x) & \\text{NO} & \\text{YES} & \\text{NO} \\\\ \nh(x) & \\text{NO} & \\text{NO} & \\text{YES} \n\\end{array} \n$$ \n\nWhich row in the following table correctly identifies the functions?",
+    "options": {
+      "A": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{A} & x^2+1 & x^3 & e^x \\end{array}$$",
+      "B": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{B} & e^x & x^3 & x^2+1 \\end{array}$$",
+      "C": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{C} & x^2+1 & e^x & x^3 \\end{array}$$",
+      "D": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{D} & x^3 & x^2+1 & e^x \\end{array}$$",
+      "E": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{E} & e^x & x^2+1 & x^3 \\end{array}$$",
+      "F": "$$\\begin{array}{c|ccc} & f(x) & g(x) & h(x) \\\\ \\hline \\text{F} & x^3 & e^x & x^2+1 \\end{array}$$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "A",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 656,
+    "_calc_flags": [
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Medium",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "827279a0-ceb7-47bf-9f1f-0a53d31f1ffe",
+    "generation_id": "M_09226618-Hard-2e54af0758",
+    "schema_id": "M_09226618",
+    "subjects": "Math 1",
+    "status": "approved",
+    "primary_tag": "4",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "Re-solved from scratch. My analysis of the properties of p(x), q(x), and r(x) matches the provided solution.",
+        "p(x) is odd, has 3 distinct roots, 2 stationary points, and is unbounded. This uniquely matches Z.",
+        "q(x) is even, has 3 distinct roots, 3 stationary points, and is unbounded above. This uniquely matches Y.",
+        "r(x) is even, has 3 distinct roots, 3 stationary points, and has a global maximum (bounded above). This uniquely matches X.",
+        "The mapping is therefore X=r(x), Y=q(x), Z=p(x), which is option F.",
+        "All required techniques (checking for even functions, finding roots of factorable polynomials, differentiation to find stationary points, and determining end behaviour/bounds from the leading term) are core ESAT Math 1 syllabus topics.",
+        "The calculations are straightforward and do not require a calculator."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"F\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Re-solved from scratch. My analysis of the properties of p(x), q(x), and r(x) matches the provided solution.\",\n    \"p(x) is odd, has 3 distinct roots, 2 stationary points, and is unbounded. This uniquely matches Z.\",\n    \"q(x) is even, has 3 distinct roots, 3 stationary points, and is unbounded above. This uniquely matches Y.\",\n    \"r(x) is even, has 3 distinct roots, 3 stationary points, and has a global maximum (bounded above). This uniquely matches X.\",\n    \"The mapping is therefore X=r(x), Y=q(x), Z=p(x), which is option F.\",\n    \"All required techniques (checking for even functions, finding roots of factorable polynomials, differentiation to find stationary points, and determining end behaviour/bounds from the leading term) are core ESAT Math 1 syllabus topics.\",\n    \"The calculations are straightforward and do not require a calculator.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "F"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The FAR mode is excellently implemented, repurposing the NSAA Section 1 classification table structure from biology to pure mathematics while maintaining authenticity.",
+        "The stem is concise and the table format is clear, mirroring the reference's presentation style.",
+        "The question effectively tests a range of core ESAT Math 1 concepts (even/odd functions, distinct roots, stationary points, global bounds) in a single, integrated task.",
+        "The functions are well-chosen to include common pitfalls, such as repeated roots at x=0 and distinguishing between the degree of a polynomial and the number of its stationary points, making it discriminating."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 29,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 4,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"slightly_harder\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question is structurally identical to the NSAA reference, requiring classification based on a table of properties. The mathematical content requires systematic evaluation of multiple standard calculus and algebra properties for three functions. This is slightly harder than the reference due to the number of distinct mathematical concepts to evaluate and the presence of subtle traps (e.g., counting distinct roots for $x^2(x^2-1)=0$), aligning well with the 'Hard' target difficulty.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The FAR mode is excellently implemented, repurposing the NSAA Section 1 classification table structure from biology to pure mathematics while maintaining authenticity.\",\n    \"The stem is concise and the table format is clear, mirroring the reference's presentation style.\",\n    \"The question effectively tests a range of core ESAT Math 1 concepts (even/odd functions, distinct roots, stationary points, global bounds) in a single, integrated task.\",\n    \"The functions are well-chosen to include common pitfalls, such as repeated roots at x=0 and distinguishing between the degree of a polynomial and the number of its stationary points, making it discriminating.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 29,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 5,
+          "option_realism": 5,
+          "insight_quality": 4,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question is structurally identical to the NSAA reference, requiring classification based on a table of properties. The mathematical content requires systematic evaluation of multiple standard calculus and algebra properties for three functions. This is slightly harder than the reference due to the number of distinct mathematical concepts to evaluate and the presence of subtle traps (e.g., counting distinct roots for $x^2(x^2-1)=0$), aligning well with the 'Hard' target difficulty.",
+        "difficulty_vs_reference": "slightly_harder",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "Three functions are defined by:\n\n$$p(x) = x^3 - x$$\n$$q(x) = x^4 - x^2$$\n$$r(x) = 2x^2 - x^4$$\n\nThese functions correspond, in some order, to the functions X, Y, and Z in the table, which summarises four of their properties.\n\n| Function | Property 1: `f` is an even function | Property 2: `f(x)=0` has exactly 3 distinct real roots | Property 3: `f'(x)=0` has exactly 3 distinct real roots | Property 4: `f` has a global maximum |\n|:---:|:---:|:---:|:---:|:---:|\n| **X** | Yes | Yes | Yes | Yes |\n| **Y** | Yes | Yes | Yes | No |\n| **Z** | No | Yes | No | No |\n\nWhich row correctly identifies the functions X, Y, and Z?",
+    "options": {
+      "A": "$X=p(x), Y=q(x), Z=r(x)$",
+      "B": "$X=p(x), Y=r(x), Z=q(x)$",
+      "C": "$X=q(x), Y=p(x), Z=r(x)$",
+      "D": "$X=q(x), Y=r(x), Z=p(x)$",
+      "E": "$X=r(x), Y=p(x), Z=q(x)$",
+      "F": "$X=r(x), Y=q(x), Z=p(x)$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "We need to determine the properties for each function and match them to the profiles for X, Y, and Z.\n\nThe four properties are:\n1. Even function: $f(-x) = f(x)$\n2. Exactly 3 distinct real roots for $f(x)=0$\n3. Exactly 3 distinct real roots for $f'(x)=0$\n4. Has a global maximum (i.e., is bounded above)\n\nLet's analyse each function:\n\n**Analysis of $p(x) = x^3 - x$:**\n1.  **Even?** $p(-x) = (-x)^3 - (-x) = -x^3 + x = -p(x)$. No, it is odd.\n2.  **Roots?** $p(x) = x(x^2-1) = x(x-1)(x+1) = 0$. The roots are $x=-1, 0, 1$. There are exactly 3 distinct real roots. Yes.\n3.  **Stationary points?** $p'(x) = 3x^2 - 1$. $p'(x)=0$ gives $x^2 = \\frac{1}{3}$, so $x = \\pm \\frac{1}{\\sqrt{3}}$. There are only 2 distinct stationary points. No.\n4.  **Global maximum?** As $x \\to \\infty$, $p(x) \\to \\infty$. A cubic polynomial is unbounded. No.\n\nProfile for $p(x)$: (No, Yes, No, No). This matches function **Z**.\n\n**Analysis of $q(x) = x^4 - x^2$:**\n1.  **Even?** $q(-x) = (-x)^4 - (-x)^2 = x^4 - x^2 = q(x)$. Yes.\n2.  **Roots?** $q(x) = x^2(x^2-1) = x^2(x-1)(x+1) = 0$. The roots are $x=-1, 0, 1$. There are exactly 3 distinct real roots (the root at $x=0$ is a repeated root). Yes.\n3.  **Stationary points?** $q'(x) = 4x^3 - 2x = 2x(2x^2-1)$. $q'(x)=0$ gives $x=0$ or $x^2 = \\frac{1}{2}$, so $x = 0, \\pm \\frac{1}{\\sqrt{2}}$. There are exactly 3 distinct stationary points. Yes.\n4.  **Global maximum?** The leading term is $x^4$, which has a positive coefficient. As $x \\to \\pm\\infty$, $q(x) \\to \\infty$. The function is unbounded above. No.\n\nProfile for $q(x)$: (Yes, Yes, Yes, No). This matches function **Y**.\n\n**Analysis of $r(x) = 2x^2 - x^4$:**\n1.  **Even?** $r(-x) = 2(-x)^2 - (-x)^4 = 2x^2 - x^4 = r(x)$. Yes.\n2.  **Roots?** $r(x) = x^2(2-x^2) = 0$. The roots are $x=0$ and $x^2=2$, so $x = 0, \\pm\\sqrt{2}$. There are exactly 3 distinct real roots. Yes.\n3.  **Stationary points?** $r'(x) = 4x - 4x^3 = 4x(1-x^2)$. $r'(x)=0$ gives $x=0, \\pm 1$. There are exactly 3 distinct stationary points. Yes.\n4.  **Global maximum?** The leading term is $-x^4$, which has a negative coefficient. As $x \\to \\pm\\infty$, $r(x) \\to -\\infty$. The function is bounded above and thus has a global maximum. Yes.\n\nProfile for $r(x)$: (Yes, Yes, Yes, Yes). This matches function **X**.\n\nSo, the correct assignment is:\n$X = r(x)$\n$Y = q(x)$\n$Z = p(x)$\n\nThis corresponds to option F.",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 619,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "6d922b3b-c284-4afd-8c33-3b5ba4235a91",
+    "generation_id": "M_19f7cfc3-Hard-197a13b705",
+    "schema_id": "M_19f7cfc3",
+    "subjects": "Math 1",
+    "status": "approved",
+    "primary_tag": "3",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "Re-solved the question from scratch and confirmed the result is 80 L.",
+        "The steps involve unit conversions (L to cm^3, mg to g), density calculations, and percentage calculations, all of which are on-syllabus for ESAT Math 1 (Number and Ratio).",
+        "All numerical calculations are straightforward and do not require a calculator (e.g., 200000 * 2.5, 500000 * 0.0002, 120 / 1.5).",
+        "The question explicitly states the assumption that the total volume remains 200 litres, avoiding ambiguity.",
+        "The provided solution reasoning is clear and follows the correct logical path."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"C\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Re-solved the question from scratch and confirmed the result is 80 L.\",\n    \"The steps involve unit conversions (L to cm^3, mg to g), density calculations, and percentage calculations, all of which are on-syllabus for ESAT Math 1 (Number and Ratio).\",\n    \"All numerical calculations are straightforward and do not require a calculator (e.g., 200000 * 2.5, 500000 * 0.0002, 120 / 1.5).\",\n    \"The question explicitly states the assumption that the total volume remains 200 litres, avoiding ambiguity.\",\n    \"The provided solution reasoning is clear and follows the correct logical path.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "C"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The question perfectly captures the ESAT Math 1 / NSAA Section 1 style: pure mathematical reasoning (ratios, percentages, unit conversions) presented in a minimal, practical context.",
+        "The explicit assumption that 'total volume of the mixture in the tank is assumed to remain 200 litres' is an excellent touch, typical of NSAA problems that simplify extraneous details to focus on the core mathematical challenge.",
+        "The numbers are exceptionally well-engineered, allowing for clean, no-calculator arithmetic throughout the multi-step solution.",
+        "Distractors are highly plausible, stemming from common errors in unit conversion, percentage interpretation, or neglecting initial quantities, which is ideal for a 'Hard' difficulty MCQ."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 29,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 4,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question's difficulty and length are very comparable to Reference 1. Both require a multi-step chain of calculations involving percentages, densities/concentrations, and unit conversions. The arithmetic is clean and well-engineered for no-calculator execution, matching the 'Hard' target by demanding sustained accuracy across several steps rather than complex individual calculations.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question perfectly captures the ESAT Math 1 / NSAA Section 1 style: pure mathematical reasoning (ratios, percentages, unit conversions) presented in a minimal, practical context.\",\n    \"The explicit assumption that 'total volume of the mixture in the tank is assumed to remain 200 litres' is an excellent touch, typical of NSAA problems that simplify extraneous details to focus on the core mathematical challenge.\",\n    \"The numbers are exceptionally well-engineered, allowing for clean, no-calculator arithmetic throughout the multi-step solution.\",\n    \"Distractors are highly plausible, stemming from common errors in unit conversion, percentage interpretation, or neglecting initial quantities, which is ideal for a 'Hard' difficulty MCQ.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 29,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 5,
+          "option_realism": 5,
+          "insight_quality": 4,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question's difficulty and length are very comparable to Reference 1. Both require a multi-step chain of calculations involving percentages, densities/concentrations, and unit conversions. The arithmetic is clean and well-engineered for no-calculator execution, matching the 'Hard' target by demanding sustained accuracy across several steps rather than complex individual calculations.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A tank contains 200 litres of a solution with a density of $2.5\\text{ g/cm}^3$. The solution contains $0.02\\%$ by mass of an active ingredient. To this tank, $800\\text{ cm}^3$ of a concentrated supplement is added. The supplement has a density of $2.5\\text{ g/cm}^3$ and contains $10\\%$ by mass of the same active ingredient. The total volume of the mixture in the tank is assumed to remain 200 litres.\n\nThis mixture is to be applied to a field of area $4000\\text{ m}^2$ at a rate of $30\\text{ mg}$ of active ingredient per $\\text{m}^2$. What volume of the final mixture, in litres, is required for this application?",
+    "options": {
+      "A": "$8$",
+      "B": "$20$",
+      "C": "$80$",
+      "D": "$120$",
+      "E": "$180$",
+      "F": "$200$"
+    },
+    "correct_option": "C",
+    "solution_reasoning": "The solution requires several steps involving unit conversions and percentage calculations.\n\nFirst, calculate the mass of the active ingredient initially in the tank. We need to use consistent units, so we convert litres to $\\text{cm}^3$ ( $1\\text{ L} = 1000\\text{ cm}^3$).\n\nInitial volume of solution = $200\\text{ L} = 200 \\times 1000\\text{ cm}^3 = 200,000\\text{ cm}^3$.\nMass of initial solution = Volume $\\times$ Density = $200,000\\text{ cm}^3 \\times 2.5\\text{ g/cm}^3 = 500,000\\text{ g}$.\nMass of initial ingredient = $500,000\\text{ g} \\times 0.02\\% = 500,000 \\times \\frac{0.02}{100} = 500,000 \\times 0.0002 = 100\\text{ g}$.\n\nSecond, calculate the mass of the active ingredient added in the supplement.\n\nVolume of supplement = $800\\text{ cm}^3$.\nMass of supplement = Volume $\\times$ Density = $800\\text{ cm}^3 \\times 2.5\\text{ g/cm}^3 = 2000\\text{ g}$.\nMass of added ingredient = $2000\\text{ g} \\times 10\\% = 2000 \\times \\frac{10}{100} = 200\\text{ g}$.\n\nThird, calculate the concentration of the final mixture.\n\nTotal mass of active ingredient = $100\\text{ g} + 200\\text{ g} = 300\\text{ g}$.\nTotal volume of the mixture is given as $200\\text{ L}$.\nConcentration = $\\frac{\\text{Total Mass}}{\\text{Total Volume}} = \\frac{300\\text{ g}}{200\\text{ L}} = 1.5\\text{ g/L}$.\n\nFourth, calculate the total mass of active ingredient required for the application. We need to convert milligrams to grams ( $1\\text{ g} = 1000\\text{ mg}$).\n\nTotal mass required = Area $\\times$ Application Rate = $4000\\text{ m}^2 \\times 30\\text{ mg/m}^2 = 120,000\\text{ mg}$.\nTotal mass required in grams = $\\frac{120,000}{1000} = 120\\text{ g}$.\n\nFinally, calculate the required volume of the final mixture.\n\nRequired Volume = $\\frac{\\text{Total Mass Required}}{\\text{Concentration}} = \\frac{120\\text{ g}}{1.5\\text{ g/L}} = \\frac{120}{3/2} = 120 \\times \\frac{2}{3} = 40 \\times 2 = 80\\text{ L}$.",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 616,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "de8e3595-b7f6-4b00-8b11-bd75d1a8e588",
+    "generation_id": "M_36f743f9-Hard-102de9045f",
+    "schema_id": "M_36f743f9",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "7",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly applies the independence rule: P(Odd and Positive) = P(Odd) * P(Positive).",
+        "P(Positive) is consistently 1/2 for the union in both cases, as each subset has 50% positive elements.",
+        "The core calculation correctly determines P(Odd) for the union by averaging the proportions from the two equal-sized sets.",
+        "Case 1: P(Odd) = (0.5 + 0.5) / 2 = 1/2. Final P = 1/2 * 1/2 = 1/4.",
+        "Case 2: P(Odd) = (0 + 0.5) / 2 = 1/4. Final P = 1/4 * 1/2 = 1/8.",
+        "The calculations are straightforward and do not require a calculator.",
+        "The question is unambiguous and all distractors are verifiably incorrect."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The solution correctly applies the independence rule: P(Odd and Positive) = P(Odd) * P(Positive).\",\n    \"P(Positive) is consistently 1/2 for the union in both cases, as each subset has 50% positive elements.\",\n    \"The core calculation correctly determines P(Odd) for the union by averaging the proportions from the two equal-sized sets.\",\n    \"Case 1: P(Odd) = (0.5 + 0.5) / 2 = 1/2. Final P = 1/2 * 1/2 = 1/4.\",\n    \"Case 2: P(Odd) = (0 + 0.5) / 2 = 1/4. Final P = 1/4 * 1/2 = 1/8.\",\n    \"The calculations are straightforward and do not require a calculator.\",\n    \"The question is unambiguous and all distractors are verifiably incorrect.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "This is an excellent example of a FAR question, successfully translating the logical structure of a biological probability problem into a pure mathematical context.",
+        "The question is highly insight-driven, requiring candidates to correctly identify independent events and understand how to average proportions from equal-sized sets.",
+        "The distractors are exceptionally well-engineered, targeting specific and plausible conceptual errors, which enhances the question's discriminatory power.",
+        "All calculations are simple fractions, ensuring the problem remains no-calculator friendly and focuses on logical reasoning over arithmetic grind.",
+        "The stem is slightly longer than the ideal 2-5 lines, but its clear bullet-point structure and directive tone prevent it from feeling verbose or overwhelming."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 29,\n    \"breakdown\": {\n      \"stem_tone\": 4,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question perfectly mirrors the logical structure and arithmetic complexity of Reference 1. Both require understanding independent probabilities and combining proportions from different sources. Given the 'Hard' target difficulty, being 'similar' to a challenging NSAA reference is appropriate.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"This is an excellent example of a FAR question, successfully translating the logical structure of a biological probability problem into a pure mathematical context.\",\n    \"The question is highly insight-driven, requiring candidates to correctly identify independent events and understand how to average proportions from equal-sized sets.\",\n    \"The distractors are exceptionally well-engineered, targeting specific and plausible conceptual errors, which enhances the question's discriminatory power.\",\n    \"All calculations are simple fractions, ensuring the problem remains no-calculator friendly and focuses on logical reasoning over arithmetic grind.\",\n    \"The stem is slightly longer than the ideal 2-5 lines, but its clear bullet-point structure and directive tone prevent it from feeling verbose or overwhelming.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 29,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 4,
+          "option_realism": 5,
+          "insight_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question perfectly mirrors the logical structure and arithmetic complexity of Reference 1. Both require understanding independent probabilities and combining proportions from different sources. Given the 'Hard' target difficulty, being 'similar' to a challenging NSAA reference is appropriate.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "Sets of non-zero integers are classified as Type A or Type B.\n\n- In a Type A set, 100% of the integers are even.\n- In a Type B set, 50% of the integers are odd.\n\nIn any set of either type, 50% of the integers are positive. An integer's sign is independent of its parity.\n\nTwo disjoint sets, $S_1$ and $S_2$, have equal size. An integer is chosen at random from the union $S_1 \\cup S_2$.\n\nWhat is the probability that the integer is odd and positive in Case 1, and what is this probability in Case 2?\n\n- Case 1: Both $S_1$ and $S_2$ are Type B.\n- Case 2: One of $S_1, S_2$ is Type A and the other is Type B.",
+    "options": {
+      "A": "Case 1: $\\frac{1}{4}$, Case 2: $\\frac{1}{8}$",
+      "B": "Case 1: $\\frac{1}{8}$, Case 2: $\\frac{1}{4}$",
+      "C": "Case 1: $\\frac{1}{2}$, Case 2: $\\frac{1}{4}$",
+      "D": "Case 1: $\\frac{1}{4}$, Case 2: $\\frac{3}{8}$",
+      "E": "Case 1: $\\frac{1}{8}$, Case 2: $0$",
+      "F": "Case 1: $\\frac{1}{4}$, Case 2: $\\frac{1}{4}$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Let $O$ be the event that a chosen integer is odd, and $Pos$ be the event that it is positive.\nSince sign is independent of parity, the desired probability is $P(O \\cap Pos) = P(O) \\times P(Pos)$.\n\nWe are given that in any set, 50% of the integers are positive. This property holds for the union $S_1 \\cup S_2$. Thus, $P(Pos) = \\frac{1}{2}$.\n\nThe problem reduces to finding the probability $P(O)$ of choosing an odd integer from the union $S_1 \\cup S_2$ in each case.\n\nLet the size of $S_1$ be $N$, and the size of $S_2$ be $N$. The size of the union $S_1 \\cup S_2$ is $2N$.\n\n**Case 1: Both $S_1$ and $S_2$ are Type B.**\n\n- A Type B set has 50% odd integers.\n- Number of odd integers in $S_1$ is $0.5N$.\n- Number of odd integers in $S_2$ is $0.5N$.\n- Total number of odd integers in $S_1 \\cup S_2$ is $0.5N + 0.5N = N$.\n- The probability of choosing an odd integer is $P(O) = \\frac{N}{2N} = \\frac{1}{2}$.\n- Therefore, the probability of being odd and positive is $P(O \\cap Pos) = P(O) \\times P(Pos) = \\frac{1}{2} \\times \\frac{1}{2} = \\frac{1}{4}$.\n\n**Case 2: One set is Type A and the other is Type B.**\n\n- A Type A set has 0% odd integers (100% even).\n- Let $S_1$ be Type A and $S_2$ be Type B.\n- Number of odd integers in $S_1$ is $0 \\times N = 0$.\n- Number of odd integers in $S_2$ is $0.5N$.\n- Total number of odd integers in $S_1 \\cup S_2$ is $0 + 0.5N = 0.5N$.\n- The probability of choosing an odd integer is $P(O) = \\frac{0.5N}{2N} = \\frac{1}{4}$.\n- Therefore, the probability of being odd and positive is $P(O \\cap Pos) = P(O) \\times P(Pos) = \\frac{1}{4} \\times \\frac{1}{2} = \\frac{1}{8}$.\n\nSo, the probabilities are $\\frac{1}{4}$ for Case 1 and $\\frac{1}{8}$ for Case 2.",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 606,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "e706a877-9628-4aff-8832-eb5d230258a3",
+    "generation_id": "M_3ded199f-Medium-cc2cab65bf",
+    "schema_id": "M_3ded199f",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "5",
+    "difficulty": "Medium",
+    "verifier_report": {
+      "notes": [
+        "Verified the sequence of transformations: $(0.2, 1.5) \\to (0.6, 1.5) \\to (0.6, 4.5) \\to (0.3, 4.5) \\to Q(1.5, 4.5)$.",
+        "Verified the gradient calculation: $m = 4.5 / 1.5 = 3$.",
+        "Verified the final evaluation: The line is $y=3x$. The target x-coordinate is $1.2m = 1.2 \\times 3 = 3.6$. The corresponding y-coordinate is $y = 3 \\times 3.6 = 10.8$.",
+        "All arithmetic is feasible without a calculator.",
+        "The question uses standard A-level coordinate geometry techniques (transformations, gradients, line equations), fully compliant with the ESAT Math 1 syllabus.",
+        "All options are distinct numerical values and there is no ambiguity in the question stem.",
+        "KaTeX formatting and JSON structure are valid."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"D\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Verified the sequence of transformations: $(0.2, 1.5) \\\\to (0.6, 1.5) \\\\to (0.6, 4.5) \\\\to (0.3, 4.5) \\\\to Q(1.5, 4.5)$.\",\n    \"Verified the gradient calculation: $m = 4.5 / 1.5 = 3$.\",\n    \"Verified the final evaluation: The line is $y=3x$. The target x-coordinate is $1.2m = 1.2 \\\\times 3 = 3.6$. The corresponding y-coordinate is $y = 3 \\\\times 3.6 = 10.8$.\",\n    \"All arithmetic is feasible without a calculator.\",\n    \"The question uses standard A-level coordinate geometry techniques (transformations, gradients, line equations), fully compliant with the ESAT Math 1 syllabus.\",\n    \"All options are distinct numerical values and there is no ambiguity in the question stem.\",\n    \"KaTeX formatting and JSON structure are valid.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "D"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The FAR mode is executed very effectively, completely transforming the surface context while retaining the underlying arithmetic structure and difficulty.",
+        "The sequential application of transformations and the final algebraic interpretation provide a good test of careful execution and reading comprehension.",
+        "The distractors are well-crafted, directly targeting plausible misinterpretations or omissions, which is characteristic of strong NSAA questions.",
+        "All calculations are clean and suitable for mental arithmetic, demonstrating excellent no-calculator engineering."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 28,\n    \"breakdown\": {\n      \"stem_tone\": 4,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 4,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question's multi-step nature, requiring careful tracking of transformations and precise interpretation of the final instruction, aligns well with the methodical calculation and conceptual application demanded by the provided NSAA references. The arithmetic complexity is appropriate for a no-calculator environment.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The FAR mode is executed very effectively, completely transforming the surface context while retaining the underlying arithmetic structure and difficulty.\",\n    \"The sequential application of transformations and the final algebraic interpretation provide a good test of careful execution and reading comprehension.\",\n    \"The distractors are well-crafted, directly targeting plausible misinterpretations or omissions, which is characteristic of strong NSAA questions.\",\n    \"All calculations are clean and suitable for mental arithmetic, demonstrating excellent no-calculator engineering.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 28,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 4,
+          "option_realism": 5,
+          "insight_quality": 4,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question's multi-step nature, requiring careful tracking of transformations and precise interpretation of the final instruction, aligns well with the methodical calculation and conceptual application demanded by the provided NSAA references. The arithmetic complexity is appropriate for a no-calculator environment.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A point $P$ initially has coordinates $(0.2, 1.5)$.\n\nThe point undergoes a sequence of four transformations in order:\n1. A stretch parallel to the $x$ -axis, scale factor 3.\n2. A stretch parallel to the $y$ -axis, scale factor 3.\n3. A stretch parallel to the $x$ -axis, scale factor $\\frac{1}{2}$.\n4. A translation by the vector $\\begin{pmatrix} 1.2 \\\\ 0 \\end{pmatrix}$.\n\nLet the final position of the point be $Q$.\nA straight line $L$ passes through the origin and the point $Q$. The gradient of $L$ is $m$.\n\nWhat is the $y$ -coordinate of the point on line $L$ whose $x$ -coordinate is $1.2m$?",
+    "options": {
+      "A": "$3.6$",
+      "B": "$5.4$",
+      "C": "$7.5$",
+      "D": "$10.8$",
+      "E": "$13.5$",
+      "F": "$43.2$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Let the initial point be $P_0 = (0.2, 1.5)$. We apply the transformations in sequence.\n\n1.  **Stretch parallel to the $x$ -axis, scale factor 3:**\n    The new coordinates are $(0.2 \\times 3, 1.5) = (0.6, 1.5)$.\n\n2.  **Stretch parallel to the $y$ -axis, scale factor 3:**\n    The new coordinates are $(0.6, 1.5 \\times 3) = (0.6, 4.5)$.\n\n3.  **Stretch parallel to the $x$ -axis, scale factor $\\frac{1}{2}$:**\n    The new coordinates are $(0.6 \\times \\frac{1}{2}, 4.5) = (0.3, 4.5)$.\n\n4.  **Translation by the vector $\\begin{pmatrix} 1.2 \\\\ 0 \\end{pmatrix}$:**\n    The final coordinates of point $Q$ are $(0.3 + 1.2, 4.5 + 0) = (1.5, 4.5)$.\n\nThe line $L$ passes through the origin $(0,0)$ and $Q=(1.5, 4.5)$. The equation of the line is $y=mx$. The gradient $m$ is given by:\n\n$$\nm = \\frac{\\Delta y}{\\Delta x} = \\frac{4.5 - 0}{1.5 - 0} = \\frac{4.5}{1.5} = 3 \n$$\n\n\nThe equation of line $L$ is therefore $y = 3x$.\n\nWe need to find the $y$ -coordinate of the point on this line where the $x$ -coordinate is $1.2m$. First, we calculate this required $x$ -coordinate:\n\n$$\nx_{new} = 1.2m = 1.2 \\times 3 = 3.6 \n$$\n\n\nNow, we substitute this $x$ -coordinate into the equation of the line $L$ to find the corresponding $y$ -coordinate:\n\n$$\ny_{new} = 3x_{new} = 3 \\times 3.6 = 10.8 \n$$\n\n\nThus, the required $y$ -coordinate is $10.8$.",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 595,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Medium",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "cc4e4db7-53c0-4b7b-b9e8-1991af355a60",
+    "generation_id": "M_529070f5-Medium-3f6fcd7ad8",
+    "schema_id": "M_529070f5",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "4",
+    "difficulty": "Medium",
+    "verifier_report": {
+      "notes": [
+        "The solution was re-derived from scratch.",
+        "The effect of a 3-step cycle is to multiply both coordinates by 1/2.",
+        "After 99 steps (33 cycles), y_99 = (1/2)^33 * y_0 = 2^-33 * 2^40 = 2^7.",
+        "For n=100, the rule is n = 100 = 1 (mod 3), which is Rule 1: y_n = 2 * y_{n-1}.",
+        "y_100 = 2 * y_99 = 2 * 2^7 = 2^8.",
+        "All options are distinct powers of 2, ensuring uniqueness.",
+        "The problem uses standard A-level techniques for sequences and exponents.",
+        "KaTeX and JSON formatting rules are correctly followed."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"C\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The solution was re-derived from scratch.\",\n    \"The effect of a 3-step cycle is to multiply both coordinates by 1/2.\",\n    \"After 99 steps (33 cycles), y_99 = (1/2)^33 * y_0 = 2^-33 * 2^40 = 2^7.\",\n    \"For n=100, the rule is n = 100 = 1 (mod 3), which is Rule 1: y_n = 2 * y_{n-1}.\",\n    \"y_100 = 2 * y_99 = 2 * 2^7 = 2^8.\",\n    \"All options are distinct powers of 2, ensuring uniqueness.\",\n    \"The problem uses standard A-level techniques for sequences and exponents.\",\n    \"KaTeX and JSON formatting rules are correctly followed.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "C"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The question perfectly captures the NSAA Math 1 vibe, abstracting a multi-step process into a pure mathematical recurrence relation.",
+        "The core insight of analysing the 3-step cycle to find the overall transformation is elegant and typical of NSAA problems.",
+        "All calculations involve powers of 2, making it perfectly suited for a no-calculator environment.",
+        "Distractors are well-crafted, targeting common errors like off-by-one cycle counts or misapplying the final step's rule."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 29,\n    \"breakdown\": {\n      \"stem_tone\": 4,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question effectively abstracts the multi-step tracking logic found in the biological references into a pure mathematical sequence problem. The mathematical reasoning required (cycle analysis, modulo arithmetic, exponent manipulation) is a good fit for a 'Medium' difficulty NSAA Math 1 question, requiring insight rather than just rote calculation. The length of the stem is appropriate for defining the cyclic rules.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question perfectly captures the NSAA Math 1 vibe, abstracting a multi-step process into a pure mathematical recurrence relation.\",\n    \"The core insight of analysing the 3-step cycle to find the overall transformation is elegant and typical of NSAA problems.\",\n    \"All calculations involve powers of 2, making it perfectly suited for a no-calculator environment.\",\n    \"Distractors are well-crafted, targeting common errors like off-by-one cycle counts or misapplying the final step's rule.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 29,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 4,
+          "option_realism": 5,
+          "insight_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question effectively abstracts the multi-step tracking logic found in the biological references into a pure mathematical sequence problem. The mathematical reasoning required (cycle analysis, modulo arithmetic, exponent manipulation) is a good fit for a 'Medium' difficulty NSAA Math 1 question, requiring insight rather than just rote calculation. The length of the stem is appropriate for defining the cyclic rules.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A sequence of coordinate pairs $(x_n, y_n)$, for integers $n \\ge 0$, starts with $(x_0, y_0) = (2^{40}, 2^{40})$.\n\nFor $n \\ge 1$, the term $(x_n, y_n)$ is generated from the previous term $(x_{n-1}, y_{n-1})$ according to one of three rules determined by the value of $n$:\n\n- Rule 1: If $n \\equiv 1 \\pmod 3$, then $(x_n, y_n) = (x_{n-1}, 2y_{n-1})$.\n- Rule 2: If $n \\equiv 2 \\pmod 3$, then $(x_n, y_n) = (\\frac{1}{2}x_{n-1}, \\frac{1}{2}y_{n-1})$.\n- Rule 3: If $n \\equiv 0 \\pmod 3$, then $(x_n, y_n) = (x_{n-1}, \\frac{1}{2}y_{n-1})$.\n\nWhat is the value of $y_{100}$?",
+    "options": {
+      "A": "$2^6$",
+      "B": "$2^7$",
+      "C": "$2^8$",
+      "D": "$2^9$",
+      "E": "$2^{10}$",
+      "F": "$2^{11}$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Let's analyse the effect of one full cycle of three steps, starting from a generic term $(x_k, y_k)$.\n\nStep 1 (applying Rule 1): The $y$ -coordinate is doubled.\n\n\n$$\n(x_{k+1}, y_{k+1}) = (x_k, 2y_k)\n$$\n\n\n\n\nStep 2 (applying Rule 2): Both coordinates are halved.\n\n\n$$\n(x_{k+2}, y_{k+2}) = (\\frac{1}{2}x_{k+1}, \\frac{1}{2}y_{k+1}) = (\\frac{1}{2}x_k, \\frac{1}{2}(2y_k)) = (\\frac{1}{2}x_k, y_k)\n$$\n\n\n\n\nStep 3 (applying Rule 3): The $y$ -coordinate is halved.\n\n\n$$\n(x_{k+3}, y_{k+3}) = (x_{k+2}, \\frac{1}{2}y_{k+2}) = (\\frac{1}{2}x_k, \\frac{1}{2}y_k)\n$$\n\n\n\n\nSo, over one complete 3-step cycle, both coordinates are multiplied by $\\frac{1}{2}$.\n\nWe want to find $y_{100}$. We can find the state at $n=99$ first, as 99 is a multiple of 3.\n$n=99$ corresponds to $99/3 = 33$ full cycles.\n\nAfter 33 cycles, the initial coordinates $(x_0, y_0)$ will have been halved 33 times.\n\n\n\n$$\ny_{99} = (\\frac{1}{2})^{33} y_0 = 2^{-33} \\times 2^{40} = 2^{40-33} = 2^7\n$$\n\n\n\n\nNow we need to find the term for $n=100$. We use the state at $n=99$ as our $(x_{n-1}, y_{n-1})$.\nWe must determine which rule applies for $n=100$. Since $100 = 3 \\times 33 + 1$, we have $100 \\equiv 1 \\pmod 3$. Therefore, Rule 1 applies.\n\nRule 1 states: $(x_{100}, y_{100}) = (x_{99}, 2y_{99})$.\n\nSo, we have:\n\n\n\n$$\ny_{100} = 2 \\times y_{99} = 2 \\times 2^7 = 2^8\n$$\n\n\n\n\nThe correct value is $2^8$.",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 565,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": false,
+    "_difficulty": "Medium",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "5a519931-7677-46fc-9453-6cd70a189324",
+    "generation_id": "M83-Hard-2896d814d0",
+    "schema_id": "M83",
+    "subjects": "Math 1",
+    "status": "pending",
+    "primary_tag": "Mathematics 1 - Algebra",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly identifies that titration stoichiometry depends on the total moles of acid and base, not on the strength of the base or its degree of dissociation. The reaction with the acid drives the weak base equilibrium to completion.",
+        "The question is clear, unambiguous, and solvable without a calculator.",
+        "The difficulty and style are appropriate for ESAT/ENGAA, testing a key conceptual understanding in chemistry.",
+        "The distractors are well-designed, targeting common misconceptions regarding weak base dissociation and titration stoichiometry."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly identifies that titration stoichiometry depends on the total moles of acid and base, not on the strength of the base or its degree of dissociation. The reaction with the acid drives the weak base equilibrium to completion.\n  - The question is clear, unambiguous, and solvable without a calculator.\n  - The difficulty and style are appropriate for ESAT/ENGAA, testing a key conceptual understanding in chemistry.\n  - The distractors are well-designed, targeting common misconceptions regarding weak base dissociation and titration stoichiometry.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "errors": [
+          {
+            "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model, limit: 25, model: gemini-3-pro\\nPlease retry in 2.705986473s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_requests_per_model', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3-pro'}, 'quotaValue': '25'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '2s'}]}}",
+            "stage": "REWRITE_FAILED",
+            "timestamp": "2025-12-30T14:01:57.909716"
+          }
+        ],
+        "run_id": "1bf15b8a-546c-4911-aedb-8e0e88d1c834",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 9,
+        "authenticity": 9,
+        "plausibility": 9,
+        "no_calculator": 10,
+        "one_idea_purity": 10,
+        "distractor_realism": 9
+      },
+      "summary": "This question is an excellent conceptual test of titration stoichiometry, specifically addressing a common misconception regarding weak bases. It is concise, requires no calculation, and its distractors are well-crafted to target specific misunderstandings, making it highly suitable for an ESAT/ENGAA paper.",
+      "verdict": "PASS",
+      "_raw_text": "```yaml\nverdict: PASS\nscores:\n  authenticity: 9\n  one_idea_purity: 10\n  no_calculator: 10\n  elegance: 9\n  distractor_realism: 9\n  plausibility: 9\nsummary: >\n  This question is an excellent conceptual test of titration stoichiometry, specifically addressing a common misconception regarding weak bases. It is concise, requires no calculation, and its distractors are well-crafted to target specific misunderstandings, making it highly suitable for an ESAT/ENGAA paper.\n```"
+    },
+    "question_stem": "Two separate titrations are performed on identical aliquots of a dilute nitric acid solution ( $HNO_3$).\n\nIn the first titration, a strong monoprotic base of concentration $C_S$ is added. The volume of base required to reach the equivalence point is $V$.\nIn the second titration, a weak monoprotic base of concentration $C_W$ is added. The volume of base required to reach the equivalence point is also $V$.\nThe weak base has a degree of dissociation $\\alpha$ (where $0 < \\alpha < 1$).\nWhich of the following expressions correctly relates $C_W$ and $C_S$?\n",
+    "options": {
+      "A": "$C_W = \\alpha C_S$",
+      "B": "$C_W = \\frac{C_S}{\\alpha}$",
+      "C": "$C_W = C_S$",
+      "D": "$C_W = \\frac{C_S}{1-\\alpha}$"
+    },
+    "correct_option": "C",
+    "solution_reasoning": "The equivalence point of a titration is reached when the number of moles of base added is stoichiometrically equal to the number of moles of acid initially present. Since both the acid and the bases are monoprotic, this is a 1:1 molar ratio.\n\nLet $n_{\\text{acid}}$ be the number of moles of $HNO_3$ in each identical aliquot.\n\nFor the first titration with the strong base, the number of moles of base added to reach the equivalence point is $n_S = C_S V$. By definition, $n_S = n_{\\text{acid}}$.\n\nFor the second titration with the weak base, the number of moles of base added is $n_W = C_W V$. Similarly, $n_W = n_{\\text{acid}}$.\n\nThe crucial point is that a titration reaction goes to completion. Even though the weak base is only partially dissociated on its own, the presence of the strong acid drives the equilibrium to the right, ensuring all the weak base molecules react. Therefore, the degree of dissociation, $\\alpha$, does not affect the volume required for neutralization.\n\nSince both titrations neutralize the same amount of acid, we must have:\n\n$$\nC_S V = C_W V\n$$\n\nAs the volume $V$ is the same and non-zero, we can divide by $V$, which gives:\n\n$$\nC_S = C_W\n$$",
+    "_scrub_demo_tag": "likely_too_long_stem",
+    "_stem_chars": 556,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": true,
+    "_difficulty": "Hard",
+    "_style_combined_score": 56.0
+  },
+  {
+    "id": "83379b75-9ca9-4d9c-8220-cf9f240c64cb",
+    "generation_id": "M90-Medium-fe4296f316",
+    "schema_id": "M90",
+    "subjects": "Math 2",
+    "status": "pending",
+    "primary_tag": "Mathematics 2 - Differentiation and integration",
+    "difficulty": "Medium",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly identifies and utilizes the properties of odd and even functions over a symmetric interval. The calculation is accurate.",
+        "The difficulty and style are appropriate for the target exams, requiring a key insight (odd/even functions) rather than extensive computation.",
+        "The distractors are well-designed, representing common conceptual errors such as forgetting to multiply by two for even functions, or misidentifying the parity of terms."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly identifies and utilizes the properties of odd and even functions over a symmetric interval. The calculation is accurate.\n  - The difficulty and style are appropriate for the target exams, requiring a key insight (odd/even functions) rather than extensive computation.\n  - The distractors are well-designed, representing common conceptual errors such as forgetting to multiply by two for even functions, or misidentifying the parity of terms.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "errors": [
+          {
+            "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_requests_per_model, limit: 25, model: gemini-3-pro\\nPlease retry in 37.652035697s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_requests_per_model', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3-pro'}, 'quotaValue': '25'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '37s'}]}}",
+            "stage": "REWRITE_FAILED",
+            "timestamp": "2025-12-30T14:02:23.248495"
+          }
+        ],
+        "run_id": "4aa63d11-9b17-4c46-84ab-17e7fa3f59f6",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 10,
+        "authenticity": 9,
+        "plausibility": 9,
+        "no_calculator": 10,
+        "one_idea_purity": 9,
+        "distractor_realism": 9
+      },
+      "summary": "This question perfectly aligns with ESAT/ENGAA style, testing a fundamental calculus property (odd/even functions over symmetric intervals) with minimal computation. The distractors are well-chosen, reflecting common conceptual errors.",
+      "verdict": "PASS",
+      "_raw_text": "```yaml\nverdict: PASS\nscores:\n  authenticity: 9\n  one_idea_purity: 9\n  no_calculator: 10\n  elegance: 10\n  distractor_realism: 9\n  plausibility: 9\nsummary: >\n  This question perfectly aligns with ESAT/ENGAA style, testing a fundamental calculus property (odd/even functions over symmetric intervals) with minimal computation. The distractors are well-chosen, reflecting common conceptual errors.\n```"
+    },
+    "question_stem": "What is the value of the following integral? $$\\int_{-1}^{1} \\left( 9x^2 - 4x + 2 + e^{x^2}\\sin(\\pi x) \\right) \\, dx$$",
+    "options": {
+      "A": "0",
+      "B": "5",
+      "C": "6",
+      "D": "10",
+      "E": "14"
+    },
+    "correct_option": "D",
+    "solution_reasoning": "The integral is defined over the symmetric interval $[-1, 1]$. We inspect the integrand for odd and even functions.\n\nThe term $-4x$ is odd. The term $e^{x^2}\\sin(\\pi x)$ is the product of an even function ( $e^{x^2}$) and an odd function ( $\\sin(\\pi x)$), making it odd. The integral of any odd function over $[-1, 1]$ is zero.\n\nThis leaves only the even terms, $9x^2 + 2$. We evaluate the integral by doubling the result over the positive half $[0, 1]$:\n\n$$\nI = \\int_{-1}^{1} (9x^2 + 2) \\, dx = 2 \\int_{0}^{1} (9x^2 + 2) \\, dx\n$$\n\nComputing the antiderivative:\n\n$$\nI = 2 \\left[ 3x^3 + 2x \\right]_0^1\n$$\n\nSubstituting the limits:\n\n$$\nI = 2(3(1)^3 + 2(1) - 0) = 2(5) = 10\n$$",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 118,
+    "_calc_flags": [
+      "trig_tex",
+      "exp_tex",
+      "diff_words",
+      "int_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Medium",
+    "_style_combined_score": 56.0
+  },
+  {
+    "id": "9d8d54f4-2308-4ab0-b562-ae51dd51ea16",
+    "generation_id": "M_132df403-Hard-e360327cad",
+    "schema_id": "M_132df403",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "Re-solved the problem from scratch, confirming the derivation.",
+        "y = ln(sin(2x))",
+        "dy/dx = (1/sin(2x)) * cos(2x) * 2 = 2cot(2x)",
+        "d²y/dx² = 2 * (-csc²(2x)) * 2 = -4csc²(2x)",
+        "From y = ln(sin(2x)), we get e^y = sin(2x).",
+        "d²y/dx² = -4 / sin²(2x) = -4 / (e^y)² = -4e^(-2y).",
+        "Comparing to ke^(cy), we find k = -4 and c = -2.",
+        "k + c = -4 + (-2) = -6.",
+        "The domain 0 < x < pi/4 ensures sin(2x) > 0, so ln(sin(2x)) is well-defined.",
+        "All steps are standard calculus techniques within the ESAT Math 2 syllabus."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Re-solved the problem from scratch, confirming the derivation.\",\n    \"y = ln(sin(2x))\",\n    \"dy/dx = (1/sin(2x)) * cos(2x) * 2 = 2cot(2x)\",\n    \"d²y/dx² = 2 * (-csc²(2x)) * 2 = -4csc²(2x)\",\n    \"From y = ln(sin(2x)), we get e^y = sin(2x).\",\n    \"d²y/dx² = -4 / sin²(2x) = -4 / (e^y)² = -4e^(-2y).\",\n    \"Comparing to ke^(cy), we find k = -4 and c = -2.\",\n    \"k + c = -4 + (-2) = -6.\",\n    \"The domain 0 < x < pi/4 ensures sin(2x) > 0, so ln(sin(2x)) is well-defined.\",\n    \"All steps are standard calculus techniques within the ESAT Math 2 syllabus.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The stem is perfectly concise and uses appropriate exam tone, clearly setting out the task.",
+        "The question embodies a strong ESAT Math 2 vibe, testing core calculus skills (chain rule, derivatives of logs/trig functions) combined with algebraic manipulation.",
+        "The structural thinking required, particularly the substitution of `e^y = sin(2x)` to express the second derivative in terms of `y`, is excellent and rewards insight.",
+        "The options are well-chosen, representing common errors, and the entire problem is perfectly engineered for no-calculator execution."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"slightly_harder\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question is mathematically more intricate than the provided physics references, requiring multiple applications of the chain rule and a non-trivial algebraic substitution. This aligns with the 'Hard' target difficulty, as it tests deeper mathematical manipulation skills while remaining concise and non-grindy.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The stem is perfectly concise and uses appropriate exam tone, clearly setting out the task.\",\n    \"The question embodies a strong ESAT Math 2 vibe, testing core calculus skills (chain rule, derivatives of logs/trig functions) combined with algebraic manipulation.\",\n    \"The structural thinking required, particularly the substitution of `e^y = sin(2x)` to express the second derivative in terms of `y`, is excellent and rewards insight.\",\n    \"The options are well-chosen, representing common errors, and the entire problem is perfectly engineered for no-calculator execution.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question is mathematically more intricate than the provided physics references, requiring multiple applications of the chain rule and a non-trivial algebraic substitution. This aligns with the 'Hard' target difficulty, as it tests deeper mathematical manipulation skills while remaining concise and non-grindy.",
+        "difficulty_vs_reference": "slightly_harder",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A curve is defined by the equation $y = \\ln(\\sin(2x))$ for $0 < x < \\frac{\\pi}{4}$.\n\nThe second derivative, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$, can be expressed in the form $ke^{cy}$ for some constants $k$ and $c$.\n\nWhat is the value of $k+c$?",
+    "options": {
+      "A": "$-6$",
+      "B": "$-5$",
+      "C": "$-4$",
+      "D": "$0$",
+      "E": "$2$",
+      "F": "$6$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Step 1:\n\nStep 1: Find the first derivative, $\\frac{\\mathrm{d}y}{\\mathrm{d}x}$\n\nWe are given the function $y = \\ln(\\sin(2x))$. We use the chain rule, letting $u = \\sin(2x)$.\nThen $y = \\ln(u)$, so $\\frac{\\mathrm{d}y}{\\mathrm{d}u} = \\frac{1}{u}$.\nAlso, $\\frac{\\mathrm{d}u}{\\mathrm{d}x} = \\cos(2x) \\cdot 2 = 2\\cos(2x)$.\nBy the chain rule, $\\frac{\\mathrm{d}y}{\\mathrm{d}x} = \\frac{\\mathrm{d}y}{\\mathrm{d}u} \\cdot \\frac{\\mathrm{d}u}{\\mathrm{d}x} = \\frac{1}{\\sin(2x)} \\cdot 2\\cos(2x) = \\frac{2\\cos(2x)}{\\sin(2x)} = 2\\cot(2x)$.\n\nStep 2:\n\nStep 2: Find the second derivative, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$\n\nNow we differentiate $\\frac{\\mathrm{d}y}{\\mathrm{d}x} = 2\\cot(2x)$ with respect to $x$. \nWe know that the derivative of $\\cot(v)$ is $-\\csc^2(v)$. Using the chain rule again with $v=2x$, we have:\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = \\frac{\\mathrm{d}}{\\mathrm{d}x}(2\\cot(2x)) = 2 \\cdot (-\\csc^2(2x)) \\cdot \\frac{\\mathrm{d}}{\\mathrm{d}x}(2x)\n$$\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = 2 \\cdot (-\\csc^2(2x)) \\cdot 2 = -4\\csc^2(2x)\n$$\n\nStep 3:\n\nStep 3: Express the second derivative in terms of $y$\n\nThe second derivative is $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = -4\\csc^2(2x) = -\\frac{4}{\\sin^2(2x)}$.\nFrom the original equation, $y = \\ln(\\sin(2x))$. We can rearrange this to express $\\sin(2x)$ in terms of $y$:\n\n$$\ne^y = \\sin(2x)\n$$\n\nNow, we substitute this into our expression for the second derivative:\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = -\\frac{4}{(\\sin(2x))^2} = -\\frac{4}{(e^y)^2} = -\\frac{4}{e^{2y}} = -4e^{-2y}\n$$\n\nStep 4:\n\nStep 4: Identify the constants and find their sum\n\nWe are given that $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$ is in the form $ke^{cy}$.\nBy comparing this with our result, $-4e^{-2y}$, we can identify the constants:\n$k = -4$\n$c = -2$\nThe required value is $k+c = -4 + (-2) = -6$.\n\nThe correct answer is $-6$, which corresponds to option A.",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 246,
+    "_calc_flags": [
+      "trig_tex",
+      "log_tex",
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "98e9ab7f-edeb-44b4-b986-e6ab225cccd2",
+    "generation_id": "M_132df403-Hard-5a9d1de0bf",
+    "schema_id": "M_132df403",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "Re-solved the problem from scratch, confirming the provided solution.",
+        "Step 1: Differentiated y = (x^2 - 4)e^{-kx} using the product rule to get dy/dx = e^{-kx}(2x - k(x^2 - 4)).",
+        "Step 2: Used the condition that the gradient is 2 at x=0 to find k = 1/2.",
+        "Step 3: Found the x-intercepts by setting y=0, which gives x^2 - 4 = 0. The positive intercept is x=2.",
+        "Step 4: Evaluated the derivative at x=2 with k=1/2, which simplifies to 4e^{-1}.",
+        "The question is unambiguous and all steps are standard calculus techniques within the ESAT Math 2 syllabus.",
+        "The calculation simplifies nicely, making it feasible without a calculator.",
+        "All distractors are verified to be incorrect and correspond to plausible errors."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Re-solved the problem from scratch, confirming the provided solution.\",\n    \"Step 1: Differentiated y = (x^2 - 4)e^{-kx} using the product rule to get dy/dx = e^{-kx}(2x - k(x^2 - 4)).\",\n    \"Step 2: Used the condition that the gradient is 2 at x=0 to find k = 1/2.\",\n    \"Step 3: Found the x-intercepts by setting y=0, which gives x^2 - 4 = 0. The positive intercept is x=2.\",\n    \"Step 4: Evaluated the derivative at x=2 with k=1/2, which simplifies to 4e^{-1}.\",\n    \"The question is unambiguous and all steps are standard calculus techniques within the ESAT Math 2 syllabus.\",\n    \"The calculation simplifies nicely, making it feasible without a calculator.\",\n    \"All distractors are verified to be incorrect and correspond to plausible errors.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The stem is perfectly concise and direct, setting a clear mathematical task.",
+        "The question embodies the ESAT Math 2 vibe, requiring careful application of calculus rules and multi-step deduction without excessive computation.",
+        "The structural thinking is excellent, rewarding candidates who correctly apply the product rule, solve for the constant, and recognize the simplification at the x-intercept.",
+        "Distractors are exceptionally well-engineered, targeting common calculus errors (sign errors, wrong intercept) and conceptual misunderstandings (gradient at intercept is zero)."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"slightly_harder\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question requires a similar multi-step deductive process as Reference 2 (finding a parameter, then evaluating a derivative). The calculus involved (product rule with an exponential) is slightly more complex than the simple polynomial differentiation in Reference 2, justifying 'slightly_harder' for a 'Hard' target difficulty. The structural insight that a term vanishes at the x-intercept is a hallmark of good ESAT design.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The stem is perfectly concise and direct, setting a clear mathematical task.\",\n    \"The question embodies the ESAT Math 2 vibe, requiring careful application of calculus rules and multi-step deduction without excessive computation.\",\n    \"The structural thinking is excellent, rewarding candidates who correctly apply the product rule, solve for the constant, and recognize the simplification at the x-intercept.\",\n    \"Distractors are exceptionally well-engineered, targeting common calculus errors (sign errors, wrong intercept) and conceptual misunderstandings (gradient at intercept is zero).\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question requires a similar multi-step deductive process as Reference 2 (finding a parameter, then evaluating a derivative). The calculus involved (product rule with an exponential) is slightly more complex than the simple polynomial differentiation in Reference 2, justifying 'slightly_harder' for a 'Hard' target difficulty. The structural insight that a term vanishes at the x-intercept is a hallmark of good ESAT design.",
+        "difficulty_vs_reference": "slightly_harder",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A curve has the equation $y = (x^2 - 4)e^{-kx}$ for some constant $k$.\n\nThe gradient of the curve at the point where $x=0$ is $2$.\n\nWhat is the gradient of the curve at its positive $x$ -intercept?",
+    "options": {
+      "A": "$4e^{-1}$",
+      "B": "$4e$",
+      "C": "$-4e$",
+      "D": "$-4e^{-1}$",
+      "E": "$0$",
+      "F": "$2$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Step 1:\n\nUsing the product rule, $\\frac{dy}{dx} = v\\frac{du}{dx} + u\\frac{dv}{dx}$:\n\n$$\n\\frac{dy}{dx} = (e^{-kx})(2x) + (x^2 - 4)(-ke^{-kx})\n$$\n\n$$\n\\frac{dy}{dx} = e^{-kx} \\left( 2x - k(x^2 - 4) \\right)\n$$\n\nStep 2:\n\nWe are given that the gradient at $x=0$ is $2$. We substitute $x=0$ into the expression for the derivative:\n\n$$\n\\left. \\frac{dy}{dx} \\right|_{x=0} = e^{-k(0)} \\left( 2(0) - k(0^2 - 4) \\right)\n$$\n\n$$\n2 = e^0 (0 - k(-4))\n$$\n\n$$\n2 = 1(4k)\n$$\n\n$$\nk = \\frac{2}{4} = \\frac{1}{2}\n$$\n\nStep 3:\n\nThe $x$ -intercepts occur when $y=0$.\n\n$$\n(x^2 - 4)e^{-kx} = 0\n$$\n\nSince $e^{-kx}$ is always positive, we must have $x^2 - 4 = 0$.\nThis gives $x^2 = 4$, so $x = 2$ or $x = -2$.\nThe positive $x$ -intercept is at $x=2$.\n\nStep 4:\n\nWe need to evaluate $\\frac{dy}{dx}$ at $x=2$, using $k=\\frac{1}{2}$.\nThe derivative is $\\frac{dy}{dx} = e^{-x/2} \\left( 2x - \\frac{1}{2}(x^2 - 4) \\right)$.\nSubstituting $x=2$:\n\n$$\n\\left. \\frac{dy}{dx} \\right|_{x=2} = e^{-2/2} \\left( 2(2) - \\frac{1}{2}(2^2 - 4) \\right)\n$$\n\n$$\n= e^{-1} \\left( 4 - \\frac{1}{2}(4 - 4) \\right)\n$$\n\n$$\n= e^{-1} (4 - 0) = 4e^{-1}\n$$\n\nThe gradient of the curve at its positive $x$ -intercept is $4e^{-1}$.",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 197,
+    "_calc_flags": [
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "ad180203-a08c-4ca4-af7b-3342cfef5bfa",
+    "generation_id": "M_132df403-Hard-eb06ed528e",
+    "schema_id": "M_132df403",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "Re-solved the problem from scratch, confirming all steps.",
+        "Step 1: Used the stationary point condition (dy/dx = 0 at x=e) to correctly find k=1.",
+        "Step 2: Differentiated dy/dx using the quotient rule to find d^2y/dx^2 = (ln(x) - 2) / x^2.",
+        "Step 3: Evaluated the second derivative at x=e^3, which simplifies to 1/e^6 or e^-6.",
+        "Step 4: Compared the result to M*e^-6 to find M=1.",
+        "All calculations are exact and do not require a calculator.",
+        "The question is fully specified by the text and requires no diagram.",
+        "The mathematical techniques (differentiation of logs, quotient rule, properties of logarithms and exponents) are all within the ESAT Math 2 syllabus.",
+        "KaTeX and JSON formatting are correct."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"D\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"Re-solved the problem from scratch, confirming all steps.\",\n    \"Step 1: Used the stationary point condition (dy/dx = 0 at x=e) to correctly find k=1.\",\n    \"Step 2: Differentiated dy/dx using the quotient rule to find d^2y/dx^2 = (ln(x) - 2) / x^2.\",\n    \"Step 3: Evaluated the second derivative at x=e^3, which simplifies to 1/e^6 or e^-6.\",\n    \"Step 4: Compared the result to M*e^-6 to find M=1.\",\n    \"All calculations are exact and do not require a calculator.\",\n    \"The question is fully specified by the text and requires no diagram.\",\n    \"The mathematical techniques (differentiation of logs, quotient rule, properties of logarithms and exponents) are all within the ESAT Math 2 syllabus.\",\n    \"KaTeX and JSON formatting are correct.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "D"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The question perfectly captures the ESAT Mathematics 2 vibe, focusing on core calculus concepts (stationary points, second derivatives, quotient rule, logarithms) without extraneous context.",
+        "The multi-step structure effectively tests a candidate's ability to string together several mathematical operations accurately, aligning well with a 'Hard' difficulty target.",
+        "The no-calculator engineering is excellent, with all values involving 'e' and 'ln x' simplifying cleanly.",
+        "Distractors are highly plausible, stemming from common errors in differentiation and parameter handling, making the options realistic and diagnostic."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"slightly_harder\",\n    \"length_feel_vs_reference\": \"longer\",\n    \"notes\": \"The implemented question is a pure mathematics problem, whereas the references are physics problems. While the structural path (find parameter -> differentiate -> evaluate -> solve for multiplier) is aligned as per the designer plan, the mathematical execution required for this calculus problem (quotient rule, logarithms, second derivative) is more involved than the algebraic manipulation in the physics references. This makes it feel slightly harder in terms of pure mathematical complexity. The multi-step nature also makes it feel longer than individual parts of the reference questions, which is appropriate for a 'Hard' target.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question perfectly captures the ESAT Mathematics 2 vibe, focusing on core calculus concepts (stationary points, second derivatives, quotient rule, logarithms) without extraneous context.\",\n    \"The multi-step structure effectively tests a candidate's ability to string together several mathematical operations accurately, aligning well with a 'Hard' difficulty target.\",\n    \"The no-calculator engineering is excellent, with all values involving 'e' and 'ln x' simplifying cleanly.\",\n    \"Distractors are highly plausible, stemming from common errors in differentiation and parameter handling, making the options realistic and diagnostic.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The implemented question is a pure mathematics problem, whereas the references are physics problems. While the structural path (find parameter -> differentiate -> evaluate -> solve for multiplier) is aligned as per the designer plan, the mathematical execution required for this calculus problem (quotient rule, logarithms, second derivative) is more involved than the algebraic manipulation in the physics references. This makes it feel slightly harder in terms of pure mathematical complexity. The multi-step nature also makes it feel longer than individual parts of the reference questions, which is appropriate for a 'Hard' target.",
+        "difficulty_vs_reference": "slightly_harder",
+        "length_feel_vs_reference": "longer"
+      }
+    },
+    "question_stem": "A curve C has gradient function\n\n$$\n\\frac{\\mathrm{d}y}{\\mathrm{d}x} = \\frac{k - \\ln x}{x}\n$$\n\nfor $x > 0$, where $k$ is a real constant.\n\nThe curve has a stationary point at $x = e$.\n\nThe value of the second derivative, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$, at the point $x = e^3$ is $M e^{-6}$.\n\nFind the value of $M$.",
+    "options": {
+      "A": "$-3$",
+      "B": "$-1$",
+      "C": "$0$",
+      "D": "$1$",
+      "E": "$2$",
+      "F": "$3$"
+    },
+    "correct_option": "D",
+    "solution_reasoning": "Step 1:\n\nFind the constant $k$\n\nThe curve has a stationary point at $x=e$, which means $\\frac{\\mathrm{d}y}{\\mathrm{d}x} = 0$ when $x=e$. We substitute these values into the gradient function:\n\n$$\n\\frac{k - \\ln e}{e} = 0\n$$\n\nSince $\\ln e = 1$, this simplifies to:\n\n$$\n\\frac{k - 1}{e} = 0\n$$\n\nThis implies $k - 1 = 0$, so $k = 1$.\n\nStep 2:\n\nFind the second derivative\n\nNow that we know $k=1$, the gradient function is:\n\n$$\n\\frac{\\mathrm{d}y}{\\mathrm{d}x} = \\frac{1 - \\ln x}{x}\n$$\n\nTo find the second derivative, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$, we use the quotient rule. Let $u = 1 - \\ln x$ and $v = x$. Then $\\frac{\\mathrm{d}u}{\\mathrm{d}x} = -\\frac{1}{x}$ and $\\frac{\\mathrm{d}v}{\\mathrm{d}x} = 1$.\n\nThe quotient rule is $\\frac{\\mathrm{d}}{\\mathrm{d}x}\\left(\\frac{u}{v}\\right) = \\frac{v\\frac{\\mathrm{d}u}{\\mathrm{d}x} - u\\frac{\\mathrm{d}v}{\\mathrm{d}x}}{v^2}$.\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = \\frac{x(-\\frac{1}{x}) - (1 - \\ln x)(1)}{x^2}\n$$\n\n$$\n= \\frac{-1 - (1 - \\ln x)}{x^2} = \\frac{-1 - 1 + \\ln x}{x^2} = \\frac{\\ln x - 2}{x^2}\n$$\n\nStep 3:\n\nEvaluate at $x = e^3$ and find $M$\n\nWe need to find the value of the second derivative at $x = e^3$.\n\n$$\n\\left. \\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} \\right|_{x=e^3} = \\frac{\\ln(e^3) - 2}{(e^3)^2}\n$$\n\nUsing the logarithm property $\\ln(a^b) = b\\ln a$, we have $\\ln(e^3) = 3\\ln e = 3$. The denominator is $(e^3)^2 = e^6$.\n\n$$\n= \\frac{3 - 2}{e^6} = \\frac{1}{e^6} = e^{-6}\n$$\n\nWe are given that this value is equal to $M e^{-6}$.\n\n$$\n M e^{-6} = 1 \\cdot e^{-6}\n$$\n\nTherefore, $M=1$.\n\nThe correct value of $M$ is $1$.",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 320,
+    "_calc_flags": [
+      "log_tex",
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "524e015c-4251-47f5-b127-3dac25d87e54",
+    "generation_id": "M_132df403-Hard-114248d4bb",
+    "schema_id": "M_132df403",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution requires finding a constant from an initial condition, differentiating a product involving an exponential function, and solving a linear equation.",
+        "The differentiation step correctly requires both the product rule and the chain rule, which are on-spec for ESAT Math 2 (MM5).",
+        "All calculations are exact and simplify cleanly, making it feasible without a calculator.",
+        "The options are distinct integers, and there is no ambiguity in the question stem."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"D\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The solution requires finding a constant from an initial condition, differentiating a product involving an exponential function, and solving a linear equation.\",\n    \"The differentiation step correctly requires both the product rule and the chain rule, which are on-spec for ESAT Math 2 (MM5).\",\n    \"All calculations are exact and simplify cleanly, making it feasible without a calculator.\",\n    \"The options are distinct integers, and there is no ambiguity in the question stem.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "D"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The question perfectly captures the ESAT Math 2 style: pure mathematics, concise stem, and a clear sequence of calculus steps.",
+        "Excellent no-calculator engineering, with the `e^{-1}` term cancelling out cleanly at the final stage, rewarding accurate differentiation over complex arithmetic.",
+        "The distractors are exceptionally well-designed, each corresponding to a common and plausible differentiation error (e.g., chain rule omission, product rule misapplication, sign errors), which enhances the question's discriminatory power.",
+        "The 'FAR' transformation from a mechanics context to a pure calculus problem is very successful, maintaining the core mathematical structure while presenting a fresh surface."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"slightly_harder\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question mirrors the multi-step structure of Reference 2 (NSAA 2) by requiring the determination of an initial constant, followed by differentiation and evaluation to find a final constant. The differentiation step in this question (product rule combined with chain rule for an exponential) is slightly more complex than the simple polynomial differentiation in Reference 2, justifying the 'slightly_harder' rating, especially given the 'Hard' target difficulty. The overall length and number of distinct steps feel comparable.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question perfectly captures the ESAT Math 2 style: pure mathematics, concise stem, and a clear sequence of calculus steps.\",\n    \"Excellent no-calculator engineering, with the `e^{-1}` term cancelling out cleanly at the final stage, rewarding accurate differentiation over complex arithmetic.\",\n    \"The distractors are exceptionally well-designed, each corresponding to a common and plausible differentiation error (e.g., chain rule omission, product rule misapplication, sign errors), which enhances the question's discriminatory power.\",\n    \"The 'FAR' transformation from a mechanics context to a pure calculus problem is very successful, maintaining the core mathematical structure while presenting a fresh surface.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question mirrors the multi-step structure of Reference 2 (NSAA 2) by requiring the determination of an initial constant, followed by differentiation and evaluation to find a final constant. The differentiation step in this question (product rule combined with chain rule for an exponential) is slightly more complex than the simple polynomial differentiation in Reference 2, justifying the 'slightly_harder' rating, especially given the 'Hard' target difficulty. The overall length and number of distinct steps feel comparable.",
+        "difficulty_vs_reference": "slightly_harder",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "The gradient function of a curve is given by\n\n$$\n\\frac{\\mathrm{d}y}{\\mathrm{d}x} = kx e^{-x^2}\n$$\n\nfor some constant $k$. At the point where $x=1$, the gradient is $4e^{-1}$.\n\nThe second derivative at this point satisfies the equation\n\n$$\n\\left. \\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} \\right|_{x=1} + c e^{-1} = 8e^{-1}\n$$\n\nwhere $c$ is a constant. Find the value of $c$.",
+    "options": {
+      "A": "$-4$",
+      "B": "$0$",
+      "C": "$4$",
+      "D": "$12$",
+      "E": "$16$",
+      "F": "$20$"
+    },
+    "correct_option": "D",
+    "solution_reasoning": "The solution is a three-step process: find $k$, find the second derivative, and then solve for $c$.\n\n**Step 1: Find the constant $k$.**\nWe are given the gradient function $\\frac{\\mathrm{d}y}{\\mathrm{d}x} = kx e^{-x^2}$.\nWe are also given that at $x=1$, the gradient is $4e^{-1}$.\nSubstituting these values into the gradient function:\n\n$$\nk(1) e^{-(1)^2} = 4e^{-1}\n$$\n\n$$\nk e^{-1} = 4e^{-1}\n$$\n\nThis implies that $k=4$.\n\n**Step 2: Find the second derivative.**\nNow we have the specific gradient function $\\frac{\\mathrm{d}y}{\\mathrm{d}x} = 4x e^{-x^2}$.\nTo find the second derivative, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2}$, we must differentiate this expression with respect to $x$. This requires the product rule.\nLet $u = 4x$ and $v = e^{-x^2}$.\nThen $\\frac{\\mathrm{d}u}{\\mathrm{d}x} = 4$.\nUsing the chain rule, $\\frac{\\mathrm{d}v}{\\mathrm{d}x} = e^{-x^2} \\times (-2x) = -2x e^{-x^2}$.\n\nApplying the product rule, $\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = u \\frac{\\mathrm{d}v}{\\mathrm{d}x} + v \\frac{\\mathrm{d}u}{\\mathrm{d}x}$:\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = (4x)(-2x e^{-x^2}) + (e^{-x^2})(4)\n$$\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = -8x^2 e^{-x^2} + 4e^{-x^2}\n$$\n\n$$\n\\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} = 4e^{-x^2}(1 - 2x^2)\n$$\n\n**Step 3: Evaluate at $x=1$ and solve for $c$.**\nWe need to find the value of the second derivative at $x=1$:\n\n$$\n\\left. \\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} \\right|_{x=1} = 4e^{-(1)^2}(1 - 2(1)^2) = 4e^{-1}(1 - 2) = 4e^{-1}(-1) = -4e^{-1}\n$$\n\nNow substitute this value into the given equation:\n\n$$\n\\left. \\frac{\\mathrm{d}^2y}{\\mathrm{d}x^2} \\right|_{x=1} + c e^{-1} = 8e^{-1}\n$$\n\n$$\n-4e^{-1} + c e^{-1} = 8e^{-1}\n$$\n\nDividing the entire equation by $e^{-1}$ (which is non-zero):\n\n$$\n-4 + c = 8\n$$\n\n$$\nc = 12\n$$",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 368,
+    "_calc_flags": [
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "a85f3c11-7b2f-4e22-9de1-e80936faea3e",
+    "generation_id": "M_145e2e97-Extreme-0298d89be5",
+    "schema_id": "M_145e2e97",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Extreme",
+    "verifier_report": {
+      "notes": [
+        "The question requires finding the maximum of the gradient function, g(x) = dy/dx, and then finding the y-coordinate at that point.",
+        "Step 1: Differentiated g(x) using the product rule to find g'(x) = cos^4(x) - 3sin^2(x)cos^2(x).",
+        "Step 2: Solved g'(x) = 0, which yields critical points at x = pi/2 and x = pi/6 within the domain [0, pi/2].",
+        "Step 3: Verified that the maximum gradient occurs at x = pi/6 by checking the value of g(x) at the critical points and endpoints (g(0)=0, g(pi/2)=0, g(pi/6) = 3sqrt(3)/16).",
+        "Step 4: Calculated the y-coordinate by evaluating the definite integral y = ∫[0 to pi/6] sin(x)cos^3(x) dx.",
+        "Step 5: The integral evaluates to [-1/4 * cos^4(x)] from 0 to pi/6, which correctly yields 7/64.",
+        "All techniques used (product rule, solving trig equations, integration by recognition/substitution) are standard for ESAT Math 2."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The question requires finding the maximum of the gradient function, g(x) = dy/dx, and then finding the y-coordinate at that point.\",\n    \"Step 1: Differentiated g(x) using the product rule to find g'(x) = cos^4(x) - 3sin^2(x)cos^2(x).\",\n    \"Step 2: Solved g'(x) = 0, which yields critical points at x = pi/2 and x = pi/6 within the domain [0, pi/2].\",\n    \"Step 3: Verified that the maximum gradient occurs at x = pi/6 by checking the value of g(x) at the critical points and endpoints (g(0)=0, g(pi/2)=0, g(pi/6) = 3sqrt(3)/16).\",\n    \"Step 4: Calculated the y-coordinate by evaluating the definite integral y = ∫[0 to pi/6] sin(x)cos^3(x) dx.\",\n    \"Step 5: The integral evaluates to [-1/4 * cos^4(x)] from 0 to pi/6, which correctly yields 7/64.\",\n    \"All techniques used (product rule, solving trig equations, integration by recognition/substitution) are standard for ESAT Math 2.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The stem is perfectly concise and adopts an authentic ESAT Math 2 tone, immediately setting up a pure mathematics problem.",
+        "The question demands a high level of structural thinking, requiring candidates to correctly identify that 'maximum gradient' implies finding the maximum of the derivative function, which then necessitates a second derivative and subsequent integration.",
+        "The no-calculator engineering is excellent; all trigonometric values and calculations lead to clean, exact fractional answers.",
+        "The distractors are exceptionally well-crafted, targeting specific, plausible errors such as incorrect critical points, finding the maximum of y instead of the gradient, or common integration mistakes. This significantly enhances the question's discriminatory power."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"much_harder\",\n    \"length_feel_vs_reference\": \"longer\",\n    \"notes\": \"The question is significantly harder than Reference 1 (f) due to the multi-step nature involving a more complex product rule differentiation, solving a trigonometric equation, and then a reverse chain rule integration, all in sequence. Reference 1 (f) is a single differentiation and substitution. The conceptual leap required (maximising the derivative, then integrating it) is also more demanding. It feels 'longer' in terms of the chain of distinct mathematical operations, but not 'much longer' in terms of algebraic grind. This aligns well with the 'Extreme' difficulty target, as it tests a dense application of Math 2 concepts without becoming off-spec or overly computational.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The stem is perfectly concise and adopts an authentic ESAT Math 2 tone, immediately setting up a pure mathematics problem.\",\n    \"The question demands a high level of structural thinking, requiring candidates to correctly identify that 'maximum gradient' implies finding the maximum of the derivative function, which then necessitates a second derivative and subsequent integration.\",\n    \"The no-calculator engineering is excellent; all trigonometric values and calculations lead to clean, exact fractional answers.\",\n    \"The distractors are exceptionally well-crafted, targeting specific, plausible errors such as incorrect critical points, finding the maximum of y instead of the gradient, or common integration mistakes. This significantly enhances the question's discriminatory power.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question is significantly harder than Reference 1 (f) due to the multi-step nature involving a more complex product rule differentiation, solving a trigonometric equation, and then a reverse chain rule integration, all in sequence. Reference 1 (f) is a single differentiation and substitution. The conceptual leap required (maximising the derivative, then integrating it) is also more demanding. It feels 'longer' in terms of the chain of distinct mathematical operations, but not 'much longer' in terms of algebraic grind. This aligns well with the 'Extreme' difficulty target, as it tests a dense application of Math 2 concepts without becoming off-spec or overly computational.",
+        "difficulty_vs_reference": "much_harder",
+        "length_feel_vs_reference": "longer"
+      }
+    },
+    "question_stem": "A curve passes through the origin and its gradient in the domain $0 \\le x \\le \\frac{\\pi}{2}$ is given by\n\n$$\n\\frac{dy}{dx} = \\sin(x) \\cos^3(x)\n$$\n\nWhat is the $y$ -coordinate of the point on the curve where the gradient is a maximum?",
+    "options": {
+      "A": "$\\frac{7}{64}$",
+      "B": "$\\frac{15}{64}$",
+      "C": "$\\frac{1}{4}$",
+      "D": "$\\frac{7}{16}$",
+      "E": "$\\frac{\\sqrt{3}}{16}$",
+      "F": "$\\frac{3\\sqrt{3}}{16}$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Step 1:\n\nLet the gradient function be $g(x) = \\frac{dy}{dx} = \\sin(x) \\cos^3(x)$. To find the value of $x$ where the gradient is a maximum, we need to find the stationary points of $g(x)$ by solving $g'(x) = 0$.\n\nStep 2:\n\nDifferentiate $g(x)$ using the product rule. Let $u = \\sin(x)$ and $v = \\cos^3(x)$. Then $u' = \\cos(x)$ and $v' = 3\\cos^2(x)(-\\sin(x)) = -3\\sin(x)\\cos^2(x)$.\n\n$$\ng'(x) = u'v + uv' = (\\cos x)(\\cos^3 x) + (\\sin x)(-3\\sin x \\cos^2 x) = \\cos^4(x) - 3\\sin^2(x)\\cos^2(x)\n$$\n\nStep 3:\n\nSet $g'(x) = 0$ and solve for $x$ in the domain $0 \\le x \\le \\frac{\\pi}{2}$.\n\n$$\n\\cos^2(x)(\\cos^2(x) - 3\\sin^2(x)) = 0\n$$\n\nStep 4:\n\nThis gives two possibilities. Either $\\cos^2(x) = 0$, which means $x = \\frac{\\pi}{2}$, or $\\cos^2(x) - 3\\sin^2(x) = 0$. At the endpoints $x=0$ and $x=\\frac{\\pi}{2}$, the gradient $g(x)$ is 0, which is a minimum. The maximum must occur at the other stationary point.\n\nStep 5:\n\nSolve $\\cos^2(x) = 3\\sin^2(x)$. Dividing by $\\cos^2(x)$ (which is non-zero for this solution) gives $1 = 3\\tan^2(x)$, so $\\tan^2(x) = \\frac{1}{3}$. In the given domain, $\\tan(x) = \\frac{1}{\\sqrt{3}}$, which means $x = \\frac{\\pi}{6}$.\n\nStep 6:\n\nThe question asks for the $y$ -coordinate at this point. Since the curve passes through the origin, we can find the $y$ -coordinate by integrating the gradient function from $0$ to $\\frac{\\pi}{6}$.\n\n$$\ny\\left(\\frac{\\pi}{6}\\right) = \\int_0^{\\pi/6} \\sin(x)\\cos^3(x) \\, dx\n$$\n\nStep 7:\n\nThis integral is of the form $\\int -f'(x)[f(x)]^n dx$ where $f(x) = \\cos(x)$. The integral evaluates to $-\\frac{1}{4}[f(x)]^{n+1}$.\n\n$$\n\\int \\sin(x)\\cos^3(x) \\, dx = -\\frac{1}{4}\\cos^4(x) + C\n$$\n\nStep 8:\n\nEvaluate the definite integral:\n\n$$\ny\\left(\\frac{\\pi}{6}\\right) = \\left[ -\\frac{1}{4}\\cos^4(x) \\right]_0^{\\pi/6} = \\left(-\\frac{1}{4}\\cos^4\\left(\\frac{\\pi}{6}\\right)\\right) - \\left(-\\frac{1}{4}\\cos^4(0)\\right)\n$$\n\nStep 9:\n\nSubstitute the exact values $\\cos(\\frac{\\pi}{6}) = \\frac{\\sqrt{3}}{2}$ and $\\cos(0) = 1$.\n\n$$\ny\\left(\\frac{\\pi}{6}\\right) = -\\frac{1}{4}\\left(\\frac{\\sqrt{3}}{2}\\right)^4 + \\frac{1}{4}(1)^4 = -\\frac{1}{4}\\left(\\frac{9}{16}\\right) + \\frac{1}{4} = -\\frac{9}{64} + \\frac{16}{64} = \\frac{7}{64}\n$$",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 233,
+    "_calc_flags": [
+      "trig_tex",
+      "diff_words",
+      "int_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Extreme",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "26a43d31-ed9e-401f-9f46-cb2b2a5c4161",
+    "generation_id": "M_145e2e97-Medium-742fcb7ffa",
+    "schema_id": "M_145e2e97",
+    "subjects": "Math 2",
+    "status": "approved",
+    "primary_tag": "M2-MM7",
+    "difficulty": "Medium",
+    "verifier_report": {
+      "notes": [
+        "The core task is to find the minimum value of the gradient function, not the original function.",
+        "My independent solution confirms the provided steps: find the first derivative (gradient), find the second derivative, set the second derivative to zero to find the x-coordinate of the minimum gradient, and substitute this x-coordinate back into the first derivative expression.",
+        "Calculation steps: y' = x*ln(x) + x/2. y'' = ln(x) + 1 + 1/2 = ln(x) + 3/2. y''=0 implies x = exp(-3/2). Minimum gradient is y'(exp(-3/2)) = exp(-3/2)*(-3/2) + exp(-3/2)/2 = -exp(-3/2).",
+        "The solution is mathematically sound and the correct option is A.",
+        "All distractors are confirmed to be incorrect and correspond to plausible student errors as described in the distractor map (e.g., finding the x-coordinate, finding the y-value, or finding the minimum of the original function)."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The core task is to find the minimum value of the gradient function, not the original function.\",\n    \"My independent solution confirms the provided steps: find the first derivative (gradient), find the second derivative, set the second derivative to zero to find the x-coordinate of the minimum gradient, and substitute this x-coordinate back into the first derivative expression.\",\n    \"Calculation steps: y' = x*ln(x) + x/2. y'' = ln(x) + 1 + 1/2 = ln(x) + 3/2. y''=0 implies x = exp(-3/2). Minimum gradient is y'(exp(-3/2)) = exp(-3/2)*(-3/2) + exp(-3/2)/2 = -exp(-3/2).\",\n    \"The solution is mathematically sound and the correct option is A.\",\n    \"All distractors are confirmed to be incorrect and correspond to plausible student errors as described in the distractor map (e.g., finding the x-coordinate, finding the y-value, or finding the minimum of the original function).\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The stem is perfectly concise and adopts an authentic exam tone.",
+        "The question tests a key conceptual understanding: distinguishing between minimizing a function and minimizing its gradient, which is a strong discriminator for structural thinking.",
+        "The calculus steps involving the product rule and logarithms are standard for Mathematics 2, and the numerical values are elegantly no-calculator friendly.",
+        "The distractors are exceptionally well-designed, targeting common conceptual errors and calculation mistakes, enhancing the question's diagnostic power."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"esat_math2_vibe\": 5,\n      \"thinking_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"similar\",\n    \"length_feel_vs_reference\": \"similar\",\n    \"notes\": \"The question's core task of finding the extremum of a derivative (minimum gradient) directly mirrors the mathematical structure required for 'maximum speed' in the provided references. The multi-step calculus (two differentiations, solving, then substituting back into the first derivative) aligns well with the expected depth for a medium-difficulty ESAT Math 2 question.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The stem is perfectly concise and adopts an authentic exam tone.\",\n    \"The question tests a key conceptual understanding: distinguishing between minimizing a function and minimizing its gradient, which is a strong discriminator for structural thinking.\",\n    \"The calculus steps involving the product rule and logarithms are standard for Mathematics 2, and the numerical values are elegantly no-calculator friendly.\",\n    \"The distractors are exceptionally well-designed, targeting common conceptual errors and calculation mistakes, enhancing the question's diagnostic power.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "stem_tone": 5,
+          "option_realism": 5,
+          "esat_math2_vibe": 5,
+          "thinking_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The question's core task of finding the extremum of a derivative (minimum gradient) directly mirrors the mathematical structure required for 'maximum speed' in the provided references. The multi-step calculus (two differentiations, solving, then substituting back into the first derivative) aligns well with the expected depth for a medium-difficulty ESAT Math 2 question.",
+        "difficulty_vs_reference": "similar",
+        "length_feel_vs_reference": "similar"
+      }
+    },
+    "question_stem": "A curve has equation $y = \\frac{1}{2}x^2 \\ln x$ for $x {>} 0$.\n\nWhat is the minimum gradient of the curve?",
+    "options": {
+      "A": "$-e^{-3/2}$",
+      "B": "$-e^{-1/2}$",
+      "C": "$-\\frac{1}{4e}$",
+      "D": "$-\\frac{3}{4}e^{-3}$",
+      "E": "$e^{-3/2}$",
+      "F": "$2e^{3/2}$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "Step 1:\n\nThe gradient of the curve is given by the first derivative, $\\frac{dy}{dx}$. We use the product rule for $u(x)v(x)$, which is $u'v + uv'$. Let $u = \\frac{1}{2}x^2$ and $v = \\ln x$. Then $u' = x$ and $v' = \\frac{1}{x}$.\n\n$$\n\\frac{dy}{dx} = (x)(\\ln x) + \\left(\\frac{1}{2}x^2\\right)\\left(\\frac{1}{x}\\right) = x \\ln x + \\frac{1}{2}x\n$$\n\nStep 2:\n\nTo find the minimum gradient, we need to find the stationary points of the gradient function $\\frac{dy}{dx}$. This occurs when its derivative, the second derivative of the original function $\\frac{d^2y}{dx^2}$, is equal to zero.\n\n$$\n\\frac{d^2y}{dx^2} = \\frac{d}{dx}\\left(x \\ln x + \\frac{1}{2}x\\right)\n$$\n\nUsing the product rule again for $x \\ln x$:\n\n$$\n\\frac{d}{dx}(x \\ln x) = (1)(\\ln x) + (x)\\left(\\frac{1}{x}\\right) = \\ln x + 1\n$$\n\nSo, the second derivative is:\n\n$$\n\\frac{d^2y}{dx^2} = (\\ln x + 1) + \\frac{1}{2} = \\ln x + \\frac{3}{2}\n$$\n\nSet the second derivative to zero to find the x-coordinate of the minimum gradient:\n\n$$\n\\ln x + \\frac{3}{2} = 0 \\implies \\ln x = -\\frac{3}{2} \\implies x = e^{-3/2}\n$$\n\nStep 3:\n\nTo confirm this corresponds to a minimum gradient, we can check the sign of the third derivative, $\\frac{d^3y}{dx^3}$, or the sign of the second derivative around $x=e^{-3/2}$. Let's use the second derivative test on the gradient function. The derivative of $\\frac{d^2y}{dx^2}$ is $\\frac{d^3y}{dx^3} = \\frac{1}{x}$. At $x = e^{-3/2}$, $\\frac{d^3y}{dx^3} = \\frac{1}{e^{-3/2}} = e^{3/2} > 0$. Since this is positive, the stationary point of the gradient function is a minimum.\n\nStep 4:\n\nSubstitute the value $x = e^{-3/2}$ back into the expression for the gradient, $\\frac{dy}{dx} = x \\ln x + \\frac{1}{2}x$.\n\n$$\n\\text{Minimum gradient} = (e^{-3/2})\\ln(e^{-3/2}) + \\frac{1}{2}(e^{-3/2})\n$$\n\n$$\n= (e^{-3/2})\\left(-\\frac{3}{2}\\right) + \\frac{1}{2}e^{-3/2}\n$$\n\n$$\n= \\left(-\\frac{3}{2} + \\frac{1}{2}\\right)e^{-3/2} = (-1)e^{-3/2} = -e^{-3/2}\n$$\n\nThe minimum gradient of the curve is $-e^{-3/2}$.",
+    "_scrub_demo_tag": "heuristic_heavy_calculus_tex",
+    "_stem_chars": 106,
+    "_calc_flags": [
+      "log_tex",
+      "exp_tex",
+      "diff_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": false,
+    "_difficulty": "Medium",
+    "_style_combined_score": 0.0
+  },
+  {
+    "id": "90046ca7-9f00-4827-9877-a982be0f0972",
+    "generation_id": "M59-Hard-3262dd9c32",
+    "schema_id": "M59",
+    "subjects": "Math 2",
+    "status": "pending",
+    "primary_tag": "Mathematics 2 - Differentiation and integration",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The solution correctly calculates the velocity and displacement in two stages, identifying the turning point where velocity becomes zero as the location of maximum displacement. The calculations are accurate.",
+        "The question is unambiguous, solvable without a calculator, and appropriate for ESAT/ENGAA level, requiring a good understanding of kinematics and the distinction between displacement and distance.",
+        "The distractors are well-designed, corresponding to plausible errors such as ignoring initial velocity, calculating displacement at the end of the interval, or confusing displacement with total distance travelled."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "verdict: PASS\nconfidence: high\nnotes:\n  - The solution correctly calculates the velocity and displacement in two stages, identifying the turning point where velocity becomes zero as the location of maximum displacement. The calculations are accurate.\n  - The question is unambiguous, solvable without a calculator, and appropriate for ESAT/ENGAA level, requiring a good understanding of kinematics and the distinction between displacement and distance.\n  - The distractors are well-designed, corresponding to plausible errors such as ignoring initial velocity, calculating displacement at the end of the interval, or confusing displacement with total distance travelled.",
+      "confidence": "high",
+      "processing": {
+        "stage": "DONE",
+        "run_id": "4aa63d11-9b17-4c46-84ab-17e7fa3f59f6",
+        "status": "done"
+      }
+    },
+    "style_report": {
+      "scores": {
+        "elegance": 9,
+        "authenticity": 10,
+        "plausibility": 10,
+        "no_calculator": 10,
+        "one_idea_purity": 9,
+        "distractor_realism": 10
+      },
+      "summary": "This is an excellent kinematics question, perfectly suited for an ESAT/ENGAA paper. It concisely tests the understanding of piecewise constant acceleration, initial conditions, and crucially, the distinction between maximum displacement and displacement at the end of an interval, as well as total distance travelled. The calculations are straightforward and ideal for a no-calculator environment, and the distractors are exceptionally well-designed, targeting common conceptual errors.",
+      "verdict": "PASS",
+      "_raw_text": "```yaml\nverdict: PASS\nscores:\n  authenticity: 10\n  one_idea_purity: 9\n  no_calculator: 10\n  elegance: 9\n  distractor_realism: 10\n  plausibility: 10\nsummary: >\n  This is an excellent kinematics question, perfectly suited for an ESAT/ENGAA paper. It concisely tests the understanding of piecewise constant acceleration, initial conditions, and crucially, the distinction between maximum displacement and displacement at the end of an interval, as well as total distance travelled. The calculations are straightforward and ideal for a no-calculator environment, and the distractors are exceptionally well-designed, targeting common conceptual errors.\n```"
+    },
+    "question_stem": "A particle moves along a straight line. At time $t=0$, it passes the origin with a velocity of $2\\,\\mathrm{m\\,s^{-1}}$.\nThe acceleration $a$ of the particle varies with time $t$ as follows: $$a = \\begin{cases}  2\\,\\mathrm{m\\,s^{-2}} & \\text{for } 0 \\le t \\le 2\\,\\mathrm{s} \\\\ -2\\,\\mathrm{m\\,s^{-2}} & \\text{for } 2 < t \\le 6\\,\\mathrm{s} \\end{cases}$$ What is the maximum displacement of the particle from the origin during the interval $0 \\le t \\le 6\\,\\mathrm{s}$?\n",
+    "options": {
+      "A": "$4\\,\\mathrm{m}$",
+      "B": "$8\\,\\mathrm{m}$",
+      "C": "$16\\,\\mathrm{m}$",
+      "D": "$17\\,\\mathrm{m}$",
+      "E": "$18\\,\\mathrm{m}$"
+    },
+    "correct_option": "D",
+    "solution_reasoning": "We analyze the motion in two stages.\n\n**Stage 1 ( $0 \\le t \\le 2$):**\nWith initial velocity $u=2\\,\\mathrm{m\\,s^{-1}}$ and acceleration $a=2\\,\\mathrm{m\\,s^{-2}}$, the velocity and displacement at $t=2$ are:\n\n$$\nv(2) = 2 + 2(2) = 6\\,\\mathrm{m\\,s^{-1}}\n$$\n\n$$\ns(2) = 2(2) + \\frac{1}{2}(2)(2^2) = 8\\,\\mathrm{m}\n$$\n\n**Stage 2 ( $2 < t \\le 6$):**\nThe particle enters this stage with $u=6\\,\\mathrm{m\\,s^{-1}}$ and acceleration $a=-2\\,\\mathrm{m\\,s^{-2}}$. Maximum displacement occurs when the velocity reaches zero:\n\n$$\nv(t') = 6 - 2t' = 0 \\implies t' = 3\\,\\mathrm{s}\n$$\n\nThis corresponds to a total time of $t = 2 + 3 = 5\\,\\mathrm{s}$, which is within the interval. The additional displacement gained during these $3$ seconds is:\n\n$$\n\\Delta s = 6(3) + \\frac{1}{2}(-2)(3^2) = 18 - 9 = 9\\,\\mathrm{m}\n$$\n\nThe total maximum displacement is $s(2) + \\Delta s = 8 + 9 = 17\\,\\mathrm{m}$.",
+    "_scrub_demo_tag": "heuristic_physics_chem_lex_in_math_row",
+    "_stem_chars": 465,
+    "_calc_flags": [],
+    "_syllabus_score": 0,
+    "_physics_lex_hint": true,
+    "_difficulty": "Hard",
+    "_style_combined_score": 58.0
+  },
+  {
+    "id": "ab063ed1-8032-490b-ae9e-20f8c6c2745a",
+    "generation_id": "M_10456965-Hard-22ba0e4517",
+    "schema_id": "M_10456965",
+    "subjects": "Math 1",
+    "status": "approved",
+    "primary_tag": "4",
+    "difficulty": "Hard",
+    "verifier_report": {
+      "notes": [
+        "The displacement of P is s(t) = t^3 - 6t^2.",
+        "The minimum displacement occurs when v(t) = s'(t) = 0, which gives t=0 or t=4. The second derivative s''(t) = 6t - 12 is positive at t=4, confirming a minimum. So, t_1 = 4.",
+        "Q travels pi/2 radians in 4 seconds, so the angular speed is omega = pi/8 rad/s.",
+        "P returns to the origin when s(t) = t^2(t-6) = 0. The first time after t=0 is t_2 = 6.",
+        "At t=6, the angle for Q is theta = omega * t_2 = (pi/8) * 6 = 3pi/4.",
+        "The coordinates are (2*cos(3pi/4), 2*sin(3pi/4)) = (2*(-sqrt(2)/2), 2*(sqrt(2)/2)) = (-sqrt(2), sqrt(2)).",
+        "All steps are on-syllabus for ESAT Math 1 (calculus kinematics, coordinate geometry, trigonometry)."
+      ],
+      "checks": {
+        "syllabus": "pass",
+        "uniqueness": "pass",
+        "correctness": "pass",
+        "graph_validation": "n/a",
+        "katex_formatting": "pass",
+        "diagram_dependency": "pass",
+        "no_calc_feasibility": "pass"
+      },
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"correct_option_verified\": \"A\",\n  \"checks\": {\n    \"correctness\": \"pass\",\n    \"uniqueness\": \"pass\",\n    \"syllabus\": \"pass\",\n    \"no_calc_feasibility\": \"pass\",\n    \"diagram_dependency\": \"pass\",\n    \"katex_formatting\": \"pass\",\n    \"graph_validation\": \"n/a\"\n  },\n  \"notes\": [\n    \"The displacement of P is s(t) = t^3 - 6t^2.\",\n    \"The minimum displacement occurs when v(t) = s'(t) = 0, which gives t=0 or t=4. The second derivative s''(t) = 6t - 12 is positive at t=4, confirming a minimum. So, t_1 = 4.\",\n    \"Q travels pi/2 radians in 4 seconds, so the angular speed is omega = pi/8 rad/s.\",\n    \"P returns to the origin when s(t) = t^2(t-6) = 0. The first time after t=0 is t_2 = 6.\",\n    \"At t=6, the angle for Q is theta = omega * t_2 = (pi/8) * 6 = 3pi/4.\",\n    \"The coordinates are (2*cos(3pi/4), 2*sin(3pi/4)) = (2*(-sqrt(2)/2), 2*(sqrt(2)/2)) = (-sqrt(2), sqrt(2)).\",\n    \"All steps are on-syllabus for ESAT Math 1 (calculus kinematics, coordinate geometry, trigonometry).\"\n  ]\n}\n```",
+      "confidence": "high",
+      "correct_option_verified": "A"
+    },
+    "style_report": {
+      "flags": {
+        "too_easy": false,
+        "too_hard": false,
+        "too_wordy": false,
+        "too_puzzle_like": false,
+        "possible_verifier_miss": false
+      },
+      "notes": [
+        "The question demonstrates excellent ESAT Math 1 authenticity, combining calculus kinematics and circular motion in a pure mathematical context.",
+        "It is highly insight-driven, requiring candidates to correctly identify and apply multiple mathematical tools (integration, differentiation for minimum, solving polynomial roots, circular coordinates) without explicit prompting.",
+        "The no-calculator engineering is flawless, leading to clean integer times and standard exact trigonometric values.",
+        "The distractors are exceptionally well-crafted, each corresponding to a plausible and common conceptual error, making the question highly discriminating."
+      ],
+      "verdict": "PASS",
+      "_raw_text": "```json\n{\n  \"verdict\": \"PASS\",\n  \"confidence\": \"high\",\n  \"style_score\": {\n    \"total\": 30,\n    \"breakdown\": {\n      \"stem_tone\": 5,\n      \"nsaa_vibe\": 5,\n      \"insight_quality\": 5,\n      \"no_calc_engineering\": 5,\n      \"option_realism\": 5,\n      \"distractor_plausibility\": 5\n    }\n  },\n  \"difficulty_calibration\": {\n    \"difficulty_vs_reference\": \"much_harder\",\n    \"length_feel_vs_reference\": \"longer\",\n    \"notes\": \"The implemented question is significantly harder than the reference. The reference involves a direct application of constant acceleration kinematics and then a simple conversion for rotational angle. This question requires calculus (integration, finding stationary points, solving cubic roots) to derive two distinct times from P's motion, which then need to be correctly applied to calibrate and predict Q's circular motion. The synthesis of multiple concepts and the depth of calculus understanding required elevate its difficulty considerably, aligning with the 'Extreme' target.\"\n  },\n  \"flags\": {\n    \"too_easy\": false,\n    \"too_hard\": false,\n    \"too_wordy\": false,\n    \"too_puzzle_like\": false,\n    \"possible_verifier_miss\": false\n  },\n  \"notes\": [\n    \"The question demonstrates excellent ESAT Math 1 authenticity, combining calculus kinematics and circular motion in a pure mathematical context.\",\n    \"It is highly insight-driven, requiring candidates to correctly identify and apply multiple mathematical tools (integration, differentiation for minimum, solving polynomial roots, circular coordinates) without explicit prompting.\",\n    \"The no-calculator engineering is flawless, leading to clean integer times and standard exact trigonometric values.\",\n    \"The distractors are exceptionally well-crafted, each corresponding to a plausible and common conceptual error, making the question highly discriminating.\"\n  ]\n}\n```",
+      "confidence": "high",
+      "style_score": {
+        "total": 30,
+        "breakdown": {
+          "nsaa_vibe": 5,
+          "stem_tone": 5,
+          "option_realism": 5,
+          "insight_quality": 5,
+          "no_calc_engineering": 5,
+          "distractor_plausibility": 5
+        }
+      },
+      "difficulty_calibration": {
+        "notes": "The implemented question is significantly harder than the reference. The reference involves a direct application of constant acceleration kinematics and then a simple conversion for rotational angle. This question requires calculus (integration, finding stationary points, solving cubic roots) to derive two distinct times from P's motion, which then need to be correctly applied to calibrate and predict Q's circular motion. The synthesis of multiple concepts and the depth of calculus understanding required elevate its difficulty considerably, aligning with the 'Extreme' target.",
+        "difficulty_vs_reference": "much_harder",
+        "length_feel_vs_reference": "longer"
+      }
+    },
+    "question_stem": "A point P starts at the origin and moves on the x-axis with velocity $v = 3t^2 - 12t$ for $t \\ge 0$.\nA point Q starts at $(2,0)$ and moves counterclockwise on the circle $x^2+y^2=4$ at a constant angular speed.\n\nThe first time P reaches its minimum displacement is the same as the first time Q reaches $(0,2)$.\n\nWhat are the coordinates of Q when P returns to the origin for the first time after $t=0$?",
+    "options": {
+      "A": "$(-\\sqrt{2}, \\sqrt{2})$",
+      "B": "$(0, -2)$",
+      "C": "$(-2, 0)$",
+      "D": "$( -\\frac{\\sqrt{2}}{2}, \\frac{\\sqrt{2}}{2} )$",
+      "E": "$(\\sqrt{2}, -\\sqrt{2})$",
+      "F": "$(0, 2)$"
+    },
+    "correct_option": "A",
+    "solution_reasoning": "First, we find the displacement of point P, $s_P(t)$, by integrating its velocity $v(t)$.\n$$ s_P(t) = \\int (3t^2 - 12t) \\, dt = t^3 - 6t^2 + C $$\nSince P starts at the origin, $s_P(0) = 0$, which implies $C=0$. So, $s_P(t) = t^3 - 6t^2$.\n\nNext, we find the time when P reaches its minimum displacement. This occurs at a stationary point, where $\\frac{ds_P}{dt} = v(t) = 0$.\n$$ 3t^2 - 12t = 0 \\implies 3t(t-4) = 0 $$ The solutions are $t=0$ and $t=4$. To confirm which corresponds to a minimum, we check the second derivative: $\\frac{d^2s_P}{dt^2} = \\frac{dv}{dt} = 6t - 12$. At $t=4$, the second derivative is $6(4)-12 = 12 > 0$, confirming a minimum. Let this time be $t_1 = 4$.\n\nWe are told that at $t_1=4$, Q first reaches the point $(0,2)$. The circle $x^2+y^2=4$ has radius $r=2$. Q starts at $(2,0)$ and moves counterclockwise. Reaching $(0,2)$ corresponds to a rotation of $\\frac{\\pi}{2}$ radians. The constant angular speed $\\omega$ is therefore:\n$$ \\omega = \\frac{\\text{angle}}{\\text{time}} = \\frac{\\pi/2}{4} = \\frac{\\pi}{8} \\text{ rad s}^{-1} $$\n\nNow, we find the time when P returns to the origin for $t>0$. This is when $s_P(t) = 0$.\n$$ t^3 - 6t^2 = 0 \\implies t^2(t-6) = 0 $$ The solutions are $t=0$ and $t=6$. The first time after $t=0$ is $t_2=6$.\n\nFinally, we find the coordinates of Q at time $t_2=6$. The total angle $\\theta$ turned by Q is:\n$$ \\theta = \\omega \\times t_2 = \\frac{\\pi}{8} \\times 6 = \\frac{6\\pi}{8} = \\frac{3\\pi}{4} $$\nThe coordinates of Q are given by $(r \\cos \\theta, r \\sin \\theta)$ with $r=2$.\n$$ x = 2 \\cos\\left(\\frac{3\\pi}{4}\\right) = 2 \\left(-\\frac{\\sqrt{2}}{2}\\right) = -\\sqrt{2} $$ $$ y = 2 \\sin\\left(\\frac{3\\pi}{4}\\right) = 2 \\left(\\frac{\\sqrt{2}}{2}\\right) = \\sqrt{2} $$ The coordinates of Q are $(-\\sqrt{2}, \\sqrt{2})$.",
+    "_scrub_demo_tag": "heuristic_physics_chem_lex_in_math_row",
+    "_stem_chars": 402,
+    "_calc_flags": [
+      "trig_tex",
+      "diff_words",
+      "int_words"
+    ],
+    "_syllabus_score": 5,
+    "_physics_lex_hint": true,
+    "_difficulty": "Hard",
+    "_style_combined_score": 0.0
+  }
+]

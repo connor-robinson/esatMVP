@@ -11,7 +11,7 @@ Default is report-only (JSONL + summary). Use --apply to write DB + schema file 
 Use --show-text for test runs: prints initial DB extract and rewrite text side-by-side.
 
 Environment:
-  GEMINI_API_KEY     required
+  GOOGLE_CLOUD_PROJECT + GOOGLE_CLOUD_LOCATION required
   MODEL_EXEMPLAR_CLEANER  default gemini-2.5-flash (2.0-flash-lite is 404 for many new keys)
   GEMINI_MIN_DELAY   optional pacing between calls (default 0.35 for this script)
 """
@@ -235,9 +235,10 @@ def main() -> None:
 
     safe_load_dotenv(".env.local")
     safe_load_dotenv("../.env.local")
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        raise SystemExit("Set GEMINI_API_KEY (e.g. in .env.local).")
+    cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+    cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
+    if not cloud_project or not cloud_location:
+        raise SystemExit("Set GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION (e.g. in .env.local).")
 
     base_dir = os.path.abspath(args.base_dir)
     prefixes = tuple(p.strip().upper() for p in args.prefixes.split(",") if p.strip())
@@ -260,7 +261,7 @@ def main() -> None:
     report_path = run_dir / "report.jsonl"
 
     min_delay = float(os.environ.get("GEMINI_MIN_DELAY", "0.35"))
-    llm = LLMClient(api_key=api_key, min_delay=min_delay, rate_limit_delay=8.0)
+    llm = LLMClient(api_key="", min_delay=min_delay, rate_limit_delay=8.0)
 
     to_remove: Set[str] = set()
     to_rewrite: Dict[str, str] = {}

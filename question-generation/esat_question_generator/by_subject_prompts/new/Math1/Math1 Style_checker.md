@@ -30,7 +30,7 @@ INPUTS YOU WILL RECEIVE
 - question.stem
 - options A–F (or A–H)
 - correct_option
-- solution.reasoning
+- solution.reasoning (should be concise NSAA-style, but must still show **how** the answer is reached — not answer-only)
 - solution.key_insight
 - distractor_map
 
@@ -65,6 +65,7 @@ An authentic ESAT / NSAA Section 1 maths question should:
 - Avoid contest-puzzle tricks.
 - Avoid long expansions or algebraic grind.
 - Avoid proof-style reasoning.
+- Match **real ESAT Math 1 balance**: **L6 core** only — comparatively **little** differentiation/integration vs algebra, graphs, trig, sequences; **no** calculus-heavy items (long product/quotient rules, integration as the main task). **Differentiation (when present) must be polynomial-only** (powers of $x$ / $(ax+b)^n$); **FAIL** `too_hard` or note in `notes` if the item centres on differentiating $\sin/\ln/e^x$-type expressions.
 
 Difficulty must come from:
 spotting structure — not computation.

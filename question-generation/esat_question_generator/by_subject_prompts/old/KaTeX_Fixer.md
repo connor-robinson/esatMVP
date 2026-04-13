@@ -67,7 +67,7 @@ $$
 
 ### Chemistry Extension (`\ce`) Support
 - For Chemistry/Biology questions: Use `\ce{...}` for chemical formulas
-- In YAML, escape as `\\ce{...}`
+- In JSON strings, escape as `\\ce{...}`
 - Example: `The reaction is $\\ce{H2 + Cl2 -> 2HCl}$`
 - Example display:
   ```

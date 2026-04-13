@@ -107,11 +107,11 @@ If unsure, **FAIL**.
 
 ---
 
-## **Output format (MANDATORY YAML)**
+## **Output format (MANDATORY JSON)**
 
 ### If PASS
 
-```yaml
+```json
 verdict: PASS
 scores:
   authenticity: <0-10>
@@ -126,7 +126,7 @@ summary: >
 
 ### If FAIL
 
-```yaml
+```json
 verdict: FAIL
 scores:
   authenticity: <0-10>

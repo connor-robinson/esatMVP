@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function ReviewQuestionPage({ params }: Props) {
-  return <ReviewWorkspace initialQuestionId={params.id} showDashboardBack />;
+  return <ReviewWorkspace initialQuestionId={params.id} />;
 }

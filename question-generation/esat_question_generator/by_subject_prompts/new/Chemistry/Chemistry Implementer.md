@@ -147,11 +147,21 @@ Preferred style:
 
 ------------------------------------------------------------
 
+Simultaneous equations (readability)
+
+If the stem gives **two or more equations** (e.g. simultaneous relations or coupled expressions the candidate must use together), put **each equation on its own line**. In the JSON `stem` string, separate them with `\n` after the first equation (or its math block). Do not run both on one continuous line when they should read as separate rows.
+
+------------------------------------------------------------
+
 Output JSON structure
 
 Return raw JSON only.
 
+**Pipeline contract:** use top-level **`question`** / **`solution`** / **`distractor_map`** (stem in **`question.stem`**, not **`question_text`**). Fill **`distractor_map`** for **every** option. **Display `$$`:** only `$$` on delimiter lines; body lines in between; blank lines (`\n\n`) around blocks. **JSON:** only valid string escapes (`\\` for TeX).
+
 JSON syntax (critical): output one valid JSON object. String values use `"..."`; escape `"` and `\`. Colons, `%`, state symbols, and Unicode in prose are fine **inside** strings.
+
+**KaTeX surface (avoid verifier failures):** any formula, equation, half-equation, or standalone symbol in **stem, options, reasoning, key_insight, step/worked fields, final_answer text, and distractor_map** must sit inside `$...$` (with `\ce{...}` etc. as you already do). Use `\n\n` before/after each `$$...$$` block. Do not use Markdown backticks for math.
 
 Illustrative shape (replace placeholders with real content; add option keys G/H only when needed):
 
@@ -173,7 +183,7 @@ Illustrative shape (replace placeholders with real content; add option keys G/H 
   },
   "solution": {
     "key_insight": "The main chemistry idea that makes the question quick.",
-    "reasoning": "Why the correct answer is right; brief notes on distractors if helpful."
+    "reasoning": "Worked solution: show the main steps to the correct answer (not answer-only); may note distractors briefly."
   },
   "distractor_map": {
     "A": "What mistake this option corresponds to.",
@@ -197,6 +207,17 @@ Illustrative shape (replace placeholders with real content; add option keys G/H 
 
 ------------------------------------------------------------
 
+Solution reasoning (`solution.reasoning`)
+
+Show **how** the correct option is reached (stoichiometry, equilibrium reasoning, proportionality steps, species accounting, etc.) — not only a final number or letter.
+
+- **Forbidden**: answer-only lines with no derivation.
+- **Required**: the main chemical/logical steps that justify the correct option.
+
+Keep `key_insight` short; put the working in `reasoning`.
+
+------------------------------------------------------------
+
 Final checks before answering
 
 - Short, realistic ESAT Chemistry stem
@@ -206,6 +227,7 @@ Final checks before answering
 - Supplied data only if genuinely useful
 - Statement-combo format only if natural
 - `\ce{...}` syntax clean and valid where used
+- KaTeX: `\n\n` around `$$` blocks; math in `$...$` in stem, steps, distractor_map (no backticks for math)
 - No invalid JSON (trailing commas, unescaped quotes in strings)
 
 Return ONLY raw JSON.

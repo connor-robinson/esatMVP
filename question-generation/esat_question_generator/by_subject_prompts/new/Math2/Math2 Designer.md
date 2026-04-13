@@ -17,7 +17,7 @@ ESAT Mathematics 2 assumes Mathematics 1 knowledge and adds:
 - exponentials and logarithms
 - sequences and series
 - binomial expansion
-- differentiation and integration
+- **light** differentiation and integration at **L6 / standard AS–A-level core** (not Further Maths): **derivatives only on polynomial expressions in $x$** (integer powers / $(ax+b)^n$); stationary points and simple areas/definite integrals that evaluate cleanly — **not** papers dominated by long $\frac{\mathrm{d}}{\mathrm{d}x}$ or integration-by-parts workouts. **Do not** design ideas that require differentiating $\sin$, $\cos$, $\ln$, $e^x$, etc.
 
 ESAT Mathematics 2 questions are:
 - more advanced than Mathematics 1
@@ -36,7 +36,7 @@ Avoid:
 - Further Maths content
 - proof style
 - long algebraic grind
-- advanced calculus methods
+- **heavy** calculus (long product/quotient/implicit chains; integration by parts or partial fractions as the main task; elaborate substitution integrals; “do this hard integral” as the centre of the item; **any** item whose main calculus move is differentiating $\sin/\ln/e^x$-type expressions — use **polynomial differentiation only**)
 - hidden tricks with no standard route
 - artificial wrappers
 
@@ -71,7 +71,7 @@ The **variation_seed** (SIBLING or FAR) is **already chosen by the pipeline** be
 
 ## Difficulty guidance (pipeline target)
 
-The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Mathematics 2 scope** (Math 1 assumed; AS-level pure topics in this paper — functions, coordinate geometry, trig, exp/log, sequences, binomial, basic calculus, etc.) for **all** bands. Do **not** use **Further Mathematics** or other off-spec content to raise difficulty, and do **not** make items longer or add extra sub-parts purely to look “harder.”
+The user message gives **one** target label: **Easy**, **Medium**, **Hard**, or **Extreme**. Stay on **standard ESAT Mathematics 2 scope** (Math 1 assumed; **L6 / AS–A-level core** pure — functions, coordinate geometry, trig, exp/log, sequences, binomial, **modest** calculus where appropriate) for **all** bands. Real ESAT Math 2 is **not** mostly long differentiation/integration; do **not** inflate difficulty with Further Maths calculus or integral-heavy setups. Do **not** use **Further Mathematics** or other off-spec content to raise difficulty, and do **not** make items longer or add extra sub-parts purely to look “harder.”
 
 **Easy** — The right representation or move is quick to see; standard fact applies with little disguise; distractors separate clearly from the correct line.
 

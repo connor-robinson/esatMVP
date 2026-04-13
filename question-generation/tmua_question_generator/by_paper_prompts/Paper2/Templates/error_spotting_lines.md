@@ -31,4 +31,4 @@ You must implement the Designer plan using the **student-working / line-labelled
 - Ensure all necessary domain/definitions are stated in the stem.
 
 #### Output contract reminder
-Your YAML `question.stem` must include the labelled lines, preserved exactly.
+Your JSON `question.stem` must include the labelled lines, preserved exactly.

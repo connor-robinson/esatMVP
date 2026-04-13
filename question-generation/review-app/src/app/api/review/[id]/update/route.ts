@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { getReviewSupabase } from '@/lib/supabaseService';
 import { normalizeReviewQuestion } from '@/lib/utils';
 import type { ReviewQuestion } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
+
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+  Pragma: 'no-cache',
+} as const;
 
 /**
  * PATCH /api/review/[id]/update
@@ -14,36 +19,39 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    // Check environment variables first
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('[Review API] Missing environment variables:', {
+    const supabaseUrl = (
+      process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
+    )?.trim();
+    const hasAnon = !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+    const hasService = !!process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+    if (!supabaseUrl || (!hasAnon && !hasService)) {
+      console.error('[Review API] Missing Supabase env:', {
         hasUrl: !!supabaseUrl,
-        hasKey: !!supabaseKey,
+        hasAnon,
+        hasService,
       });
       return NextResponse.json(
-        { 
-          error: 'Server configuration error', 
-          details: 'Missing Supabase environment variables',
-          hasUrl: !!supabaseUrl,
-          hasKey: !!supabaseKey,
+        {
+          error: "Server configuration error",
+          details:
+            "Set SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL) and either NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY",
         },
-        { status: 500 }
+        { status: 500, headers: NO_STORE_HEADERS }
       );
     }
 
-    const supabase = createServerClient();
+    const supabase = getReviewSupabase();
     const resolvedParams = await Promise.resolve(params);
     const { id } = resolvedParams;
     const body = await request.json();
-    
-    console.log('[Review API] Update request:', {
+
+    console.log('[review-persist] PATCH /update incoming', {
       id,
       bodyKeys: Object.keys(body),
+      correct_option_raw: body.correct_option,
       hasQuestionStem: 'question_stem' in body,
       hasOptions: 'options' in body,
+      hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY?.trim(),
     });
 
     // Get current user session (optional - for logging reviewer)
@@ -64,11 +72,39 @@ export async function PATCH(
     if (body.question_stem !== undefined) {
       updates.question_stem = body.question_stem;
     }
+    if (body.question_stem_before_auto_diagram !== undefined) {
+      const v = body.question_stem_before_auto_diagram;
+      if (v !== null && typeof v !== "string") {
+        return NextResponse.json(
+          {
+            error: "Invalid question_stem_before_auto_diagram",
+            details: "Must be a string or null.",
+          },
+          { status: 400, headers: NO_STORE_HEADERS }
+        );
+      }
+      updates.question_stem_before_auto_diagram = v === null || v === "" ? null : v;
+    }
     if (body.options !== undefined) {
       updates.options = body.options;
     }
     if (body.correct_option !== undefined) {
-      updates.correct_option = body.correct_option;
+      const co = String(body.correct_option).trim().toUpperCase();
+      if (!/^[A-H]$/.test(co)) {
+        console.error('[review-persist] invalid correct_option rejected', {
+          id,
+          raw: body.correct_option,
+          normalized: co,
+        });
+        return NextResponse.json(
+          {
+            error: 'Invalid correct_option',
+            details: 'Must be a single letter A through H (case-insensitive).',
+          },
+          { status: 400, headers: NO_STORE_HEADERS }
+        );
+      }
+      updates.correct_option = co;
     }
     if (body.solution_reasoning !== undefined) {
       updates.solution_reasoning = body.solution_reasoning;
@@ -80,6 +116,16 @@ export async function PATCH(
       updates.distractor_map = body.distractor_map;
     }
     if (body.difficulty !== undefined) {
+      const allowed = ['Easy', 'Medium', 'Hard', 'Extreme'] as const;
+      if (typeof body.difficulty !== 'string' || !allowed.includes(body.difficulty as (typeof allowed)[number])) {
+        return NextResponse.json(
+          {
+            error: 'Invalid difficulty',
+            details: `Must be one of: ${allowed.join(', ')}`,
+          },
+          { status: 400, headers: NO_STORE_HEADERS }
+        );
+      }
       updates.difficulty = body.difficulty;
     }
     if (body.subjects !== undefined) {
@@ -116,7 +162,7 @@ export async function PATCH(
           details: checkError.message,
           code: checkError.code,
         },
-        { status: 500 }
+        { status: 500, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -127,14 +173,15 @@ export async function PATCH(
           error: 'Question not found',
           details: `No question found with ID: ${id}`,
         },
-        { status: 404 }
+        { status: 404, headers: NO_STORE_HEADERS }
       );
     }
 
-    console.log('[Review API] Question exists, proceeding with update:', {
+    console.log('[review-persist] Supabase update executing', {
       id,
       currentStatus: existingQuestion.status,
       updateKeys: Object.keys(updates),
+      correct_option: updates.correct_option,
       hasUserId: !!userId,
     });
 
@@ -182,7 +229,7 @@ export async function PATCH(
             userId: userId,
           },
         },
-        { status: 500 }
+        { status: 500, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -200,7 +247,7 @@ export async function PATCH(
           details: `No question found with ID: ${id}. Update may have been blocked by RLS policies.`,
           code: 'NOT_FOUND',
         },
-        { status: 404 }
+        { status: 404, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -215,7 +262,7 @@ export async function PATCH(
           details: `Update succeeded but no question data was returned`,
           code: 'NO_DATA',
         },
-        { status: 404 }
+        { status: 404, headers: NO_STORE_HEADERS }
       );
     }
 
@@ -228,15 +275,35 @@ export async function PATCH(
       normalizedQuestion.options = {};
     }
 
-    console.log('[Review API] Update successful:', { 
-      id, 
+    console.log('[review-persist] Update successful (RETURNING row)', {
+      id,
       updatedFields: Object.keys(updates),
+      correct_option: normalizedQuestion.correct_option,
+      updated_at: normalizedQuestion.updated_at,
       questionStemPreview: normalizedQuestion.question_stem?.substring(0, 50),
-      hasOptions: !!normalizedQuestion.options,
       optionsKeys: Object.keys(normalizedQuestion.options || {}),
     });
+
+    const { data: verifyRow, error: verifyErr } = await supabase
+      .from('ai_generated_questions')
+      .select('question_stem, correct_option, updated_at')
+      .eq('id', id)
+      .maybeSingle();
+    console.log('[review-persist] PATCH read-after-write SELECT', {
+      id,
+      hasServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY?.trim(),
+      verifyErr: verifyErr?.message ?? null,
+      correct_option_returning: (updatedQuestion as { correct_option?: string }).correct_option,
+      correct_option_select: verifyRow?.correct_option,
+      updated_at_select: verifyRow?.updated_at,
+      correctMatches:
+        verifyRow?.correct_option === (updatedQuestion as { correct_option?: string }).correct_option,
+    });
     
-    return NextResponse.json({ question: normalizedQuestion });
+    return NextResponse.json(
+      { question: normalizedQuestion },
+      { headers: NO_STORE_HEADERS }
+    );
   } catch (error: any) {
     console.error('[Review API] Unexpected error:', {
       error,
@@ -251,7 +318,7 @@ export async function PATCH(
         details: error?.message || 'Unknown error occurred',
         type: error?.name || 'Error',
       },
-      { status: 500 }
+      { status: 500, headers: NO_STORE_HEADERS }
     );
   }
 }

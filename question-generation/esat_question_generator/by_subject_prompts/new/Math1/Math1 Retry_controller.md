@@ -80,6 +80,7 @@ D) off_syllabus
 - Regenerate using only ESAT Math 1-appropriate moves:
   - Replace any outside-scope technique with an on-syllabus route
   - Keep the same invariant category, but simpler atoms
+  - If differentiation was the issue: use **polynomials in $x$** only (powers / $(ax+b)^n$); never “fix” by switching to $\sin/\ln/e^x$ derivatives
 
 E) Style_checker FAIL (too_easy / too_hard / too_wordy / too_puzzle_like)
 - Keep correctness intact, adjust ONLY style calibration:

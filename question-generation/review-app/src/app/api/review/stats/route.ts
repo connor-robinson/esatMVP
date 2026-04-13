@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { getReviewSupabase } from '@/lib/supabaseService';
+import { REVIEW_FILTER_TMUA_POSTGREST_OR } from '@/lib/curriculum';
 import type { ReviewStats, PaperType } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
@@ -17,19 +18,35 @@ function matchesSubject(row: any, subjects: string[]): boolean {
  * Helper function to count questions using the new hierarchy
  * Fetches all questions and filters in memory for accurate counting
  */
-async function countQuestions(supabase: any, paperType: string | null, subjects: string[], statusFilter?: string): Promise<number> {
+async function countQuestions(
+  supabase: any,
+  paperType: string | null,
+  subjects: string[],
+  statusFilter?: string | string[],
+  schemaReclassOnly?: boolean
+): Promise<number> {
   // Build query with filters
   let fetchQuery = supabase
     .from('ai_generated_questions')
     .select('test_type, subjects', { count: 'exact', head: true });
   
+  if (schemaReclassOnly) {
+    fetchQuery = fetchQuery.not('schema_reclass_review_tier', 'is', null);
+  }
+
   if (statusFilter) {
-    fetchQuery = fetchQuery.eq('status', statusFilter);
+    if (Array.isArray(statusFilter)) {
+      fetchQuery = fetchQuery.in('status', statusFilter);
+    } else {
+      fetchQuery = fetchQuery.eq('status', statusFilter);
+    }
+  } else {
+    fetchQuery = fetchQuery.neq('status', 'deleted');
   }
   
-  // Apply test_type filter if specified
+  // TMUA: `test_type` is often unset/ESAT on legacy rows; TMUA is identified by `subjects` Paper 1/2.
   if (paperType === 'TMUA') {
-    fetchQuery = fetchQuery.eq('test_type', 'TMUA');
+    fetchQuery = fetchQuery.or(REVIEW_FILTER_TMUA_POSTGREST_OR);
   } else if (paperType === 'ESAT') {
     fetchQuery = fetchQuery.or('test_type.eq.ESAT,test_type.is.null');
   }
@@ -55,17 +72,22 @@ async function countQuestions(supabase: any, paperType: string | null, subjects:
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerClient();
+    const supabase = getReviewSupabase();
     const { searchParams } = new URL(request.url);
 
     const paperType = searchParams.get('paperType') as PaperType | null;
     const subjectsParam = searchParams.get('subjects');
     const subjects = subjectsParam ? subjectsParam.split(',').filter(s => s.trim()) : [];
+    const schemaReclassOnly = searchParams.get('schemaReclass') === '1';
 
     // Get counts using the subjects column
-    const total = await countQuestions(supabase, paperType, subjects);
-    const approved = await countQuestions(supabase, paperType, subjects, 'approved');
-    const pending = await countQuestions(supabase, paperType, subjects, 'pending');
+    const total = await countQuestions(supabase, paperType, subjects, undefined, schemaReclassOnly);
+    const approved = await countQuestions(supabase, paperType, subjects, 'approved', schemaReclassOnly);
+    const pending = await countQuestions(supabase, paperType, subjects, [
+      'pending',
+      'pending_review',
+      'needs_revision',
+    ], schemaReclassOnly);
 
     const stats: ReviewStats = {
       total: total || 0,

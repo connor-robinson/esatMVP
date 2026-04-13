@@ -15,12 +15,24 @@ Candidate Assumptions
 
 Assume the candidate:
 - knows all Mathematics 1 content,
-- has strong AS-level pure mathematics,
-- is fluent in functions, coordinate geometry, trigonometry, exponentials/logs, sequences, binomial expansion, and basic differentiation/integration,
+- has strong **L6 / standard AS–A-level pure mathematics** (core — **not** Further Mathematics),
+- is fluent in functions, coordinate geometry, trigonometry, exponentials/logs, sequences, binomial expansion, and **school-level** calculus **used sparingly** — with **differentiation restricted as below**,
 - is time-pressured,
 - has no calculator.
 
 Do not assume Further Mathematics.
+
+------------------------------------------------------------
+
+L6 scope — differentiation and integration (CRITICAL)
+
+The real ESAT Mathematics 2 paper uses **some** calculus, but it is **not** dominated by long differentiation-and-integration grind. Difficulty should come from **structure and insight**, not from “evaluate this heavy integral.”
+
+- **Differentiation — hard rule (this pipeline):** If the candidate must compute a derivative, gradient, tangent, or stationary point **via differentiation**, the expression to differentiate must be **polynomial in the variable** (sums/constant multiples of **positive integer powers** of $x$, or $(ax+b)^n$ with integer $n \ge 1$). **Do not** require differentiation of $\sin x$, $\cos x$, $\tan x$, $\ln x$, $\log x$, $e^x$, $e^{kx}$, $a^x$, or chains/products/quotients whose derivative introduces those. Trig / exp / log may appear elsewhere for algebra, graphs, sequences, or interpretation — **not** as the quantity being differentiated.
+- **Integration**: **basic** definite integrals and antiderivatives that **collapse cleanly**; **prefer polynomial integrands** when calculus is central (same spirit as the differentiation cap). **Avoid** integration by parts as the main trick, repeated “clever” substitutions, partial fractions as the bulk of the question, and integrals dominated by $\sin/\cos/e^{kx}/\ln$ when the item is meant to test calculus mechanics.
+- If the same idea can be done with graphs, logs, parameters, or trig without heavy calculus, **prefer that**.
+
+When in doubt, **reduce calculus** to stay faithful to **L6 core** ESAT scope.
 
 ------------------------------------------------------------
 
@@ -110,6 +122,12 @@ Choose values so that:
 
 ------------------------------------------------------------
 
+Simultaneous equations (readability)
+
+If the stem gives **two or more equations** that form a **system** (simultaneous equations), put **each equation on its own line** so candidates can scan them easily. In the JSON `stem` string, use a **line break** between them: end the first equation’s text (or its `$$...$$` block), then `\n`, then start the next equation on the following line. Do **not** glue both equations onto one continuous line when they should read as separate rows.
+
+------------------------------------------------------------
+
 Multiple-Choice Requirements
 
 - Default to 6 options (A–F).
@@ -148,9 +166,42 @@ The key_insight must:
 
 ------------------------------------------------------------
 
+Solution reasoning (`solution.reasoning`)
+
+This field is the **worked solution** (for review and downstream use). It must show **how** the correct option is obtained — the main rearrangements, substitutions, limits, or tangency conditions — not only the final value or letter.
+
+- **Required**: a clear chain from the stem to the answer (key equations in `$...$` or `$$...$$` where they matter).
+- **Forbidden**: answer-only lines such as “So $k=\frac{1}{e}$” or “Option A” **without** preceding working that derives it.
+- **Balance**: no syllabus creep and no grind; include each non-obvious step a strong candidate would still write.
+
+Keep `key_insight` short; put the detail in `reasoning`.
+
+------------------------------------------------------------
+
+**`question.correct_option` must match the worked solution (CRITICAL)**
+
+- Set **`question.correct_option`** to the **single letter** (A–F) whose **option text** is the **final answer** produced by your worked `solution.reasoning` — the quantity the stem asks for, after all simplification.
+- **Do not** set `correct_option` to an intermediate result that also appears as another option (e.g. a partial expression when the stem asks for a **fully simplified** or **conditional** final form).
+- Before outputting JSON, **re-read** the last substantive conclusion in `solution.reasoning` and confirm it matches **`question.options[correct_option]`** in meaning (same formula / same value).
+- Optionally end the reasoning with one explicit sentence: “Therefore the correct answer is **X**.” where **X** is that letter — this must agree with `question.correct_option`.
+
+------------------------------------------------------------
+
 Output Format
 
 Return raw JSON only.
+
+**Pipeline JSON contract (do not violate):**
+- Top-level keys MUST include **`question`** (object), **`solution`** (object), **`distractor_map`** (object). Put the stem in **`question.stem`**, not a top-level **`question_text`** field.
+- **`question.options`** MUST be an object `{"A":"...", "B":"...", ...}` (preferred).
+- **`distractor_map`** MUST have a **non-empty string for every option key** (wrong options: name the typical slip; correct key: state it matches the worked solution).
+
+**Display math (`$$…$$`) inside strings (KaTeX gate):**
+- A line that contains `$$` must contain **only** `$$`.
+- Put the TeX **between** opening and closing `$$` lines, each on its own line.
+- Use a **blank line** before the opening `$$` and after the closing `$$` in the string (`\n\n` in JSON).
+
+**JSON escapes:** only valid JSON escapes after `\`. LaTeX uses `\\` in strings; never emit invalid escapes like `\c`.
 
 JSON syntax (critical — invalid JSON aborts the pipeline):
 - Output exactly **one JSON object**. No text before `{` or after `}`.
@@ -159,9 +210,10 @@ JSON syntax (critical — invalid JSON aborts the pipeline):
 - Symbols such as `:`, `%`, `£`, units, and ordinary Unicode text are **allowed inside JSON strings** — only `"`, `\`, and raw line breaks in strings need care.
 
 Follow all KaTeX and formatting rules strictly:
-- All options must be wrapped in $...$.
-- All math in solution must use $...$ or $$...$$.
-- All LaTeX backslashes must be double-escaped.
+- **Options:** every **mathematical** fragment must be in `$...$`. If an option mixes plain English with math, wrap **only the math**; if an option is **only** a formula, you may wrap the **entire** option in one `$...$`.
+- **Inline math everywhere:** all math in **`question.stem`**, **`solution.reasoning`**, **`solution.key_insight`**, **every nested step field** (`step_body`, `calculation`, …), **`solution.final_answer`** text if present, and **`distractor_map`** must use `$...$`. Do **not** use Markdown backticks for math—use `$...$` even inside tables.
+- Display blocks: `$$...$$` only as specified (isolated `$$` lines; `\n\n` before/after each block). Do **not** use `\(…\)` or `\[…\]`.
+- All LaTeX backslashes must be double-escaped in JSON strings.
 - Distractor map is mandatory and must explain specific logical errors.
 
 ------------------------------------------------------------
@@ -172,9 +224,10 @@ Before responding, verify:
 - Short, exact stem.
 - One dominant structural idea.
 - 3–6 clean steps.
-- Exactly one correct option.
+- Exactly one correct option, and **`question.correct_option` is the letter of the option that matches the final line of the worked solution** (not an intermediate).
 - All distractors are meaningful.
 - Fully no-calculator.
+- **KaTeX:** every `$$` block has `\n\n` before/after; all inline math and step fields use `$...$`; no backticks for math.
 - Feels distinct from Mathematics 1 by using genuine Mathematics 2 content.
 - Not derivative of any specific past question.
 

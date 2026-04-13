@@ -80,8 +80,8 @@ reasoning: "The question primarily tests algebraic manipulation and function com
 
 **DO NOT output:**
 - Lists of tags without a dictionary structure
-- Markdown formatting around the YAML
-- Explanatory text before or after the YAML block
+- Markdown formatting around the JSON
+- Explanatory text before or after the JSON object
 - Any structure other than the dictionary format shown above
 
 ---

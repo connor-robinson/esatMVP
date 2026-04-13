@@ -43,7 +43,7 @@ Must contain:
 - question.stem
 - question.options (A–H)
 - question.correct_option (claimed)
-- solution.reasoning
+- solution.reasoning (must be a **worked** solution: enough intermediate steps that a reader sees **how** the correct option is reached — not only a final value or letter)
 - solution.key_insight
 - distractor_map (entry for every option used)
 - (optional) graph_intent (ONLY if final_graph_role != "none")
@@ -58,6 +58,7 @@ Independently and from scratch:
 
 1) Re-solve the question yourself, ignoring the provided solution.
 2) Determine the true correct option.
+2b) **Claimed letter vs worked solution:** Check that **`question.correct_option`** is exactly that letter **and** that the **final simplified answer** in the Implementer’s `solution.reasoning` matches **`question.options[correct_option]`** in meaning (not an intermediate expression that also appears as another option). If the reasoning’s final conclusion corresponds to a **different** letter than `question.correct_option`, FAIL (`correct_option_mismatch_with_worked_solution`).
 3) Check uniqueness: exactly one defensible correct option.
 4) Check syllabus: every step uses ESAT Math 2-appropriate techniques; no hidden extra assumptions.
 5) Check no-calc feasibility (validity, not difficulty).
@@ -70,18 +71,21 @@ If any check fails: FAIL.
 
 ## Syllabus rule (ESAT Math 2) — NON-NEGOTIABLE
 
-The question must be solvable using ESAT Math 2 techniques only (with Math 1 assumed knowledge allowed).
+The question must be solvable using **L6 / standard AS–A-level core** techniques only (with Math 1 assumed) — **not** Further Mathematics. The real exam has **limited** calculus relative to algebra, graphs, trig, logs, sequences, and binomial structure; do not treat Math 2 as “integral practice.”
+
 FAIL as off_syllabus if the solution requires, for example:
 - Further Maths content
 - advanced methods beyond the declared Math 2 scope
 - unintroduced theorems/identities not typical for ESAT Math 2
-- substitution/integration methods outside the permitted style
+- **heavy calculus**: integration by parts or partial fractions as the **main** workload; long product/quotient/implicit differentiation chains; elaborate substitution integrals; improper integrals beyond a simple standard case; any calculus that reads like STEP or university style
+- **differentiation of non-polynomials (pipeline rule)**: FAIL as off_syllabus if the intended solution requires differentiating $\sin x$, $\cos x$, $\tan x$, $\ln x$, $\log x$, $e^x$, $e^{kx}$, $a^x$, or similar. Allowed when differentiation is used: **polynomial in $x$** (sums/constant multiples of positive integer powers, and $(ax+b)^n$ with integer $n \ge 1$). Trig/exp/log may appear where they are **not** the object of differentiation.
+- substitution/integration methods outside **short, standard L6** use
 - heavy algebraic manipulation that is not engineered to collapse
 - any technique inconsistent with the designer_plan primary/secondary tags (if tags are provided)
 
 Spec-tool sufficiency check:
 - List the main “moves” used in your solution.
-- FAIL as off_syllabus if any move is outside ESAT Math 2 or contradicts declared tags.
+- FAIL as off_syllabus if any move is outside ESAT Math 2, contradicts declared tags, or overuses calculus beyond **authentic ESAT Math 2** balance.
 
 ## Uniqueness checks (STRICT)
 
@@ -146,6 +150,13 @@ G5) View sanity:
 
 If any graph validation fails: FAIL as graph_validation_error.
 
+## Solution exposition (validity)
+
+FAIL as `katex_formatting` or `structural_flaw` (choose the closer fit) if `solution.reasoning` is **answer-only**: it states the result or correct letter but does not show the main reasoning chain that produces it.
+
+Do **not** fail for concise solutions that still contain that chain.
+
+
 ## KaTeX + JSON formatting checks (CRITICAL)
 
 - Use ONLY $...$ for inline math and $$...$$ for display math
@@ -153,7 +164,7 @@ If any graph validation fails: FAIL as graph_validation_error.
 - Every $ must be matched
 - Display math must have blank lines before and after (inside JSON string values)
 - In JSON string values, LaTeX backslashes must be escaped where required (e.g. \frac, \sqrt)
-- All options containing ANY math must be wrapped in $...$
+- Every **math fragment** in an option must be in `$...$`. Mixed text+math: wrap math only; pure-formula options may be one `$...$`.
   e.g. A: "$\frac{3}{2}$" not A: "\frac{3}{2}"
 
 If formatting is wrong: FAIL as katex_formatting.

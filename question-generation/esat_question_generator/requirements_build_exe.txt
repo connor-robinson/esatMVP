@@ -1,0 +1,3 @@
+# Optional: build standalone Windows app
+#   pip install -r requirements_build_exe.txt
+pyinstaller>=6.0

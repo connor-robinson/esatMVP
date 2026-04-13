@@ -18,9 +18,14 @@ export function MathContent({ content, className }: MathContentProps) {
   const [renderedHtml, setRenderedHtml] = useState<string>("");
 
   useEffect(() => {
-    const contentStr = content != null ? String(content) : "";
-    
-    if (!contentStr) {
+    // Treat only null/undefined as empty — 0, "0", and "$0$" must render (Boolean(0) is false).
+    if (content == null) {
+      setRenderedHtml("");
+      return;
+    }
+    const contentStr = String(content);
+
+    if (contentStr.length === 0) {
       setRenderedHtml("");
       return;
     }
@@ -41,7 +46,10 @@ export function MathContent({ content, className }: MathContentProps) {
     }
   }, [content]);
 
-  if (!content) {
+  if (content == null) {
+    return null;
+  }
+  if (String(content).length === 0) {
     return null;
   }
 

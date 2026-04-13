@@ -34,6 +34,18 @@ except ImportError:
     print("Install with: pip install supabase")
 
 
+def canonical_ai_question_status(status: str) -> str:
+    """Align with ``ai_generated_questions.status`` check constraint (pending / approved / deleted)."""
+    s = (status or "").strip()
+    if s in ("pending_review", "needs_revision"):
+        return "pending"
+    if s in ("rejected",):
+        return "deleted"
+    if s in ("pending", "approved", "deleted"):
+        return s
+    return "pending"
+
+
 def normalize_math_spacing(text: str) -> str:
     """
     Normalizes spacing around math delimiters ($ and $$) in text.
@@ -254,7 +266,7 @@ class DatabaseSync:
             self.client = None
             self.enabled = False
     
-    def sync_question(self, question_item: Dict[str, Any], status: str = "pending_review") -> Optional[str]:
+    def sync_question(self, question_item: Dict[str, Any], status: str = "pending") -> Optional[str]:
         """
         Sync a question to the database.
         
@@ -263,7 +275,7 @@ class DatabaseSync:
         
         Args:
             question_item: Question item from pipeline (from build_bank_item)
-            status: Status to assign (default: pending_review, but will only save if verifier+style pass)
+            status: Status to assign (default: pending; legacy values are mapped to allowed DB statuses)
             
         Returns:
             Database ID if successful, None otherwise (if question doesn't pass checks)
@@ -284,8 +296,8 @@ class DatabaseSync:
                 # Don't save questions that don't pass both checks
                 print(f"[DB_SYNC] Question {question_item.get('id', 'unknown')} rejected: Verifier={verifier_verdict}, Style={style_verdict}")
                 return None
-            
-            # Use the status parameter passed in (defaults to pending_review for new questions)
+
+            db_status = canonical_ai_question_status(status)
             
             # Extract question data
             question_pkg = question_item.get("question_package", {})
@@ -417,7 +429,7 @@ class DatabaseSync:
                 "generation_id": question_item.get("id", ""),
                 "schema_id": question_item.get("schema_id", ""),
                 "difficulty": question_item.get("difficulty", ""),
-                "status": status,
+                "status": db_status,
                 "question_stem": question.get("stem", ""),
                 "options": question.get("options", {}),
                 "correct_option": correct_option,
@@ -465,7 +477,9 @@ class DatabaseSync:
                         db_record["subjects"] = "Paper 1"  # Default
                 else:
                     db_record["subjects"] = "Paper 1"  # Ultimate fallback
-            
+
+            db_record.pop("paper", None)
+
             # Insert into database
             result = self.client.table("ai_generated_questions").insert(db_record).execute()
             
@@ -518,7 +532,7 @@ class DatabaseSync:
         
         try:
             update_data = {
-                "status": status,
+                "status": canonical_ai_question_status(status),
             }
             
             result = self.client.table("ai_generated_questions")\
@@ -570,7 +584,7 @@ class DatabaseSync:
 
 
 def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
-                               status: str = "pending_review") -> Optional[str]:
+                               status: str = "pending") -> Optional[str]:
     """
     Convenience function to sync a question from the pipeline.
     
@@ -579,7 +593,7 @@ def sync_question_from_pipeline(question_item: Dict[str, Any], base_dir: str,
     Args:
         question_item: Question item from pipeline (from build_bank_item)
         base_dir: Base directory (not used, kept for compatibility)
-        status: Status to assign (default: pending_review, but only saved if verifier+style pass)
+        status: Status to assign (default: pending; legacy pending_review maps to pending)
         
     Returns:
         Database ID if successful, None otherwise (if question doesn't pass checks)

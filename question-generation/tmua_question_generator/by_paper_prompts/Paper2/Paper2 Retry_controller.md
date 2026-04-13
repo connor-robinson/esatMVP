@@ -71,7 +71,7 @@ Output **ONLY** the standard Implementer JSON format.
 
 ## Formatting rules (apply always)
 
-### YAML
+### JSON
 - Output must be valid JSON with correct indentation.
 - Keep the same key structure as the standard Implementer output.
 

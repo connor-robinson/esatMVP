@@ -46,10 +46,9 @@ if env_path.exists():
     load_dotenv(env_path)
 
 from project import LLMClient, load_prompts, classifier_call, ModelsConfig, read_text
-from curriculum_parser import CurriculumParser
+from curriculum_parser import CurriculumParser, coerce_classifier_topic_code
 from db_sync import (
     DatabaseSync,
-    is_postgrest_unknown_column_error,
     normalize_math_spacing,
     normalize_question_math_spacing,
 )
@@ -374,11 +373,14 @@ Example CORRECT:
             secondary_tags = tag_result.get("secondary_tags", [])
             tags_confidence = tag_result.get("primary_confidence", 0.0)
             
-            # Normalize primary tag
+            # Normalize primary tag (coerce bare Physics/Biology digits first)
             if primary_tag:
-                normalized_primary = self.curriculum_parser.normalize_topic_code(primary_tag)
+                coerced = coerce_classifier_topic_code(schema_id, primary_tag)
+                normalized_primary = self.curriculum_parser.normalize_topic_code(coerced)
                 if normalized_primary:
                     primary_tag = normalized_primary
+                elif coerced != primary_tag:
+                    primary_tag = coerced
             
             # Normalize secondary tags
             normalized_secondary = []
@@ -389,7 +391,8 @@ Example CORRECT:
                     tag_code = str(tag)
                 
                 if tag_code:
-                    normalized_tag = self.curriculum_parser.normalize_topic_code(tag_code)
+                    coerced = coerce_classifier_topic_code(schema_id, tag_code)
+                    normalized_tag = self.curriculum_parser.normalize_topic_code(coerced)
                     if normalized_tag:
                         normalized_secondary.append(normalized_tag)
             
@@ -401,7 +404,8 @@ Example CORRECT:
                         tag_code = tag.get("code", "")
                         tag_conf = tag.get("confidence", 0.0)
                         if tag_code:
-                            normalized_tag = self.curriculum_parser.normalize_topic_code(tag_code)
+                            coerced = coerce_classifier_topic_code(schema_id, tag_code)
+                            normalized_tag = self.curriculum_parser.normalize_topic_code(coerced)
                             if normalized_tag:
                                 confidence_dict[normalized_tag] = tag_conf
             
@@ -414,9 +418,11 @@ Example CORRECT:
                 "tags_labeled_by": "batch_process"
             }
             
-            # For Math, also set paper field
+            # For Math, sync subjects from classifier paper (``paper`` column was removed; use ``subjects``)
             if schema_id[0].upper() == "M" and "paper" in tag_result:
-                db_updates["paper"] = tag_result["paper"]
+                p = tag_result["paper"]
+                if p in ("Math 1", "Math 2"):
+                    db_updates["subjects"] = p
             
             return True, db_updates, None
         
@@ -462,15 +468,15 @@ Example CORRECT:
             if primary_tag and primary_tag in secondary_tags:
                 errors.append(f"primary_tag {primary_tag} also in secondary_tags")
             
-            # For Math: check paper matches primary_tag
+            # For Math: check subjects matches primary_tag (legacy rows may still have ``paper`` in memory)
             schema_id = question.get("schema_id", "")
             if schema_id[0].upper() == "M":
-                paper = question.get("paper")
-                if primary_tag and paper:
-                    if primary_tag.startswith("M1-") and paper != "Math 1":
-                        errors.append(f"primary_tag M1-* but paper is {paper}")
-                    elif primary_tag.startswith("M2-") and paper != "Math 2":
-                        errors.append(f"primary_tag M2-* but paper is {paper}")
+                subj = question.get("subjects") or question.get("paper")
+                if primary_tag and subj:
+                    if primary_tag.startswith("M1-") and subj != "Math 1":
+                        errors.append(f"primary_tag M1-* but subjects is {subj}")
+                    elif primary_tag.startswith("M2-") and subj != "Math 2":
+                        errors.append(f"primary_tag M2-* but subjects is {subj}")
             
             if errors:
                 return False, f"Verification failed: {', '.join(errors)}"
@@ -505,15 +511,8 @@ Example CORRECT:
             return False, f"Render test error: {str(e)}"
     
     def _apply_question_update(self, question_id: str, update_data: Dict[str, Any]) -> None:
-        """PATCH ai_generated_questions; omit ``paper`` if the remote table has no such column."""
-        try:
-            self.db_sync.client.table("ai_generated_questions").update(update_data).eq("id", question_id).execute()
-        except Exception as e:
-            if "paper" in update_data and is_postgrest_unknown_column_error(e, "paper"):
-                without_paper = {k: v for k, v in update_data.items() if k != "paper"}
-                self.db_sync.client.table("ai_generated_questions").update(without_paper).eq("id", question_id).execute()
-            else:
-                raise
+        """PATCH ai_generated_questions."""
+        self.db_sync.client.table("ai_generated_questions").update(update_data).eq("id", question_id).execute()
     
     def save_stage_result(
         self,
@@ -907,10 +906,10 @@ def main():
     
     args = parser.parse_args()
     
-    # Check API key
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        print("ERROR: Missing GEMINI_API_KEY environment variable")
+    cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+    cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
+    if not cloud_project or not cloud_location:
+        print("ERROR: Missing GOOGLE_CLOUD_PROJECT or GOOGLE_CLOUD_LOCATION")
         sys.exit(1)
     
     # Initialize components
@@ -919,7 +918,7 @@ def main():
         print("ERROR: Database sync not enabled. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         sys.exit(1)
     
-    llm = LLMClient(api_key=api_key)
+    llm = LLMClient(api_key="")
     
     # Load prompts
     base_dir = Path(__file__).parent

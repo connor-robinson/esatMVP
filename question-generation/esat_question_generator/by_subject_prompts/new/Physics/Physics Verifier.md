@@ -145,7 +145,7 @@ If any graph validation fails: FAIL as graph_validation_error.
 - Every $ must be matched
 - Display math must have blank lines before and after
 - In JSON string values, LaTeX backslashes must be escaped where required
-- All options containing any math must be wrapped in $...$
+- Every math fragment in an option must be in `$...$` (mixed text+math: math only in delimiters; a purely symbolic answer may be one `$...$`).
 
 If formatting is wrong: FAIL as katex_formatting.
 

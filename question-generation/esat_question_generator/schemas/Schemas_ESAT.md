@@ -1,6 +1,3 @@
-# ESAT Schemas
-
-```markdown
 ## **B_0d8b548c. Evaluate Genetic Conditions and Evolutionary Implications**
 
 **Core move:** Analyze descriptive genetic information, including recessive/dominant traits and heterozygote advantage, to evaluate statements about allele frequency, disease prevalence, and selective pressures in a population.
@@ -27,12 +24,7 @@ Ensure that the provided information clearly supports or refutes the statements 
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q56_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_0d90450b. Calculate Enthalpy Change from Bond Energies**
+## **C_0d90450b. Calculate Enthalpy Change from Bond Energies**
 
 **Core move:** Apply Hess's Law using mean bond energies to determine the enthalpy change of a reaction or an unknown bond energy.
 
@@ -59,11 +51,6 @@ This is a core concept in chemical thermodynamics, not biology.
 - `NSAA_2019_Section1_Q53_NSAA_Sec`: The question explicitly asks for the 'overall enthalpy change for the reaction' and provides 'bond enthalpies', which requires applying Hess's Law using mean bond energies to calculate the enthalpy change of the reaction, directly matching the core move of schema B_0d90450b.
 - `NSAA_2023_Section1_Q50_NSAA_Sec`: The question requires using the provided enthalpy change of a reaction and several known bond energies to calculate an unknown mean bond energy (C-H). This directly applies Hess's Law using mean bond energies, which is the core move of schema B_0d90450b.
 
----
-```
-
-
-```markdown
 ## **B_118f9bea. Unit Conversion and Proportional Calculation**
 
 **Core move:** Apply proportional relationships and unit conversion factors to determine a physical quantity in a specified unit.
@@ -90,12 +77,7 @@ Vary the physical context (e.g., astrophysics, cellular biology, chemical bond l
 - `NSAA_2017_Section1_Q54_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q51_NSAA_Sec`: The question requires several steps of proportional calculation and unit conversion: first, scaling up the amount of chlorine per dm³ to the total daily volume of water; then, converting the mass of chlorine from mg to g, g to moles using molar mass, and finally moles to volume using the molar volume at room temperature and pressure. This aligns perfectly with applying proportional relationships and unit conversion factors to determine a physical quantity in a specified unit.
 
----
-```
-
-
-```markdown
-## **B_13978330. Calculate Total Energy Change from Stoichiometry**
+## **C_13978330. Calculate Total Energy Change from Stoichiometry**
 
 **Core move:** Apply the given molar energy change and reaction stoichiometry to calculate the total heat released or absorbed for a specific amount of reactant consumed or product formed.
 
@@ -117,11 +99,6 @@ The final answer should be in appropriate energy units (e.g., kJ).
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q54_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_1625e63a. Evaluate Cellular Processes and Mechanisms**
 
 **Core move:** Assess statements for accuracy regarding the steps, conditions, or outcomes of fundamental cellular processes.
@@ -148,12 +125,7 @@ Ensure the process is clearly defined in the question or options.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q64_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_31431176. Compare Relative Reactivity via Electrochemical Cells**
+## **C_31431176. Compare Relative Reactivity via Electrochemical Cells**
 
 **Core move:** Relate the measured potential difference (voltage) in an electrochemical cell to the relative reactivity (tendency to form positive ions) of different metals.
 
@@ -177,12 +149,7 @@ The diagram shows a voltmeter, implying a measurement of potential difference wh
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q58_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_35930931. Relate Atomic Mass to Isotopic Composition**
+## **C_35930931. Relate Atomic Mass to Isotopic Composition**
 
 **Core move:** Integrate data from formula mass, ionic charge, and subatomic particle counts to determine an element's average atomic mass or isotopic abundances.
 
@@ -211,12 +178,7 @@ Provide necessary relative atomic masses for common elements if not standard kno
 - `NSAA_2022_Section1_Q53_NSAA_Sec`: The question requires calculating the atomic number of element X from the total electron count in a molecule (XF3), then using this information, along with given isotopic relationships (neutrons vs protons) and relative abundances, to determine the average relative atomic mass of element X. This directly aligns with the schema's core move of integrating data from subatomic particle counts and isotopic composition to determine an element's average atomic mass.
 - `NSAA_2023_Section1_Q52_NSAA_Sec`: The question requires calculating the relative abundances of two isotopes given their mass numbers and the element's relative atomic mass, which directly matches the core move of determining an element's isotopic abundances from average atomic mass and subatomic particle counts (mass numbers).
 
----
-```
-
-
-```markdown
-## **B_4a905fc5. Quantitative Analysis via Titration Stoichiometry**
+## **C_4a905fc5. Quantitative Analysis via Titration Stoichiometry**
 
 **Core move:** Apply stoichiometric principles derived from balanced chemical equations to calculate unknown solution concentrations from titration data, including necessary unit conversions.
 
@@ -248,12 +210,7 @@ Can involve mono-, di-, or triprotic acids/bases or different redox reactions to
 - `NSAA_2023_Section1_Q54_NSAA_Sec`: The question requires using titration data (volumes and concentrations of acid and base) to apply stoichiometric principles to determine a molar ratio (moles of acid to moles of base), which allows for deduction about the acid's proticity. This directly aligns with the 'Core Move' of applying stoichiometric principles derived from balanced chemical equations from titration data.
 - `NSAA_2023_Section1_Q57_NSAA_Sec`: This question requires applying stoichiometric principles to calculate the unknown volume of a reactant solution needed for complete reaction, given the amount of another reactant and the solution's concentration. This is a direct application of the quantitative analysis and stoichiometric calculations described in the core move, including necessary unit conversions, even if it's not presented as a classical 'titration to find unknown concentration'.
 
----
-```
-
-
-```markdown
-## **B_4febad60. Calculate Temperature Change from Thermal Energy**
+## **P_4febad60. Calculate Temperature Change from Thermal Energy**
 
 **Core move:** Apply the specific heat capacity formula (Q = mcΔT) to determine the temperature change or final temperature of a substance given its mass, specific heat capacity, and absorbed or released thermal energy.
 
@@ -276,12 +233,7 @@ The specific heat capacity can be given in J kg⁻¹ °C⁻¹ or J g⁻¹ °C⁻
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q54_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_53939452. Stoichiometry of Gas-Producing Reactions**
+## **C_53939452. Stoichiometry of Gas-Producing Reactions**
 
 **Core move:** Apply stoichiometric relationships derived from a balanced chemical equation to calculate the volume of a gaseous product from a given mass of solid reactant.
 
@@ -310,12 +262,7 @@ The options should include common miscalculation results to test for understandi
 - `NSAA_2020_Section1_Q57_NSAA_Sec`: This question requires applying stoichiometric relationships derived from a balanced chemical equation to determine the relative amounts (masses) of hydrogen gas produced from equal masses of different reactants. Although the schema mentions 'volume' of gas, the core thinking pattern of using stoichiometry to quantify a gaseous product from a given mass of reactant is identical, leading to a comparison of mass loss.
 - `NSAA_2023_Section1_Q53_NSAA_Sec`: The question requires determining the stoichiometric relationship between a solid reactant (copper) and a gaseous product (gaseous oxide of nitrogen) from a balanced chemical equation, and then using this relationship along with molar volume to calculate the volume of the gas. This directly matches the core move of applying stoichiometric relationships from a balanced equation to calculate the volume of a gaseous product from a given amount of solid reactant.
 
----
-```
-
-
-```markdown
-## **B_5b7d0491. Deduce Unknown Product Formula from Reaction Stoichiometry**
+## **C_5b7d0491. Deduce Unknown Product Formula from Reaction Stoichiometry**
 
 **Core move:** Apply stoichiometric principles, including electron transfer and mass balance, to deduce the empirical formula of an unknown product from given reactant quantities and known products.
 
@@ -340,12 +287,7 @@ Questions can vary by providing total mass or volume, requiring prior calculatio
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q58_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_62cda313. Calculate Moles and Identify Components in Gas Mixtures**
+## **C_62cda313. Calculate Moles and Identify Components in Gas Mixtures**
 
 **Core move:** Apply gas laws and molar relationships (Avogadro's number, molar volume) to determine the amount in moles of individual components within a gas mixture and identify them based on their relative proportions or known compositions.
 
@@ -370,12 +312,7 @@ Emphasize unit consistency throughout the calculations.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q52_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_637723b8. Separating Liquid Mixtures by Physical Properties**
+## **C_637723b8. Separating Liquid Mixtures by Physical Properties**
 
 **Core move:** Select and justify appropriate separation techniques for liquid mixtures based on the distinct physical properties of their components.
 
@@ -400,12 +337,7 @@ Ensure the problem explicitly states or implies that the components do not react
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q50_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_7a9e4059. Comparing Strong and Weak Acids**
+## **C_7a9e4059. Comparing Strong and Weak Acids**
 
 **Core move:** Distinguish between strong and weak acids by analyzing their ionization behavior and resulting chemical properties at equivalent concentrations.
 
@@ -430,12 +362,7 @@ May involve identifying the nature of an unknown acid based on experimental data
 - `NSAA_2016_Section1_Q49_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section1_Q54_NSAA_Sec`: The question presents ionization information for phosphoric(V) acid (a weak, polyprotic acid) and the pH of hydrochloric acid (a strong acid) at a given concentration. The core task, 'Which of the following statements about these acids is/are correct?', inherently requires distinguishing between strong and weak acids based on their ionization behavior and chemical properties, directly matching the schema's core move.
 
----
-```
-
-
-```markdown
-## **B_7c9a508f. Deduce Unknown Product from Partial Stoichiometry**
+## **C_7c9a508f. Deduce Unknown Product from Partial Stoichiometry**
 
 **Core move:** Apply the principle of conservation of mass to determine the elemental composition of an unknown product, given partial stoichiometric information for a balanced chemical equation.
 
@@ -459,12 +386,7 @@ The question might specify properties of the unknown (e.g., 'does not contain co
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q46_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_7d9f73e5. Stoichiometric and Qualitative Analysis of Comparative Reactions**
+## **C_7d9f73e5. Stoichiometric and Qualitative Analysis of Comparative Reactions**
 
 **Core move:** Apply stoichiometric principles to balanced chemical equations and chemical concepts to quantitatively and qualitatively compare outcomes or properties of related chemical reactions.
 
@@ -487,12 +409,7 @@ Often includes options that test common misconceptions about reaction conditions
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q49_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_88cb9833. Separating Liquid Mixtures by Physical Properties**
+## **C_88cb9833. Separating Liquid Mixtures by Physical Properties**
 
 **Core move:** Apply knowledge of miscibility, density, and boiling points to select appropriate techniques for separating components of a liquid mixture.
 
@@ -518,11 +435,6 @@ Consider the state of the mixture at each step of the separation process.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q51_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_8ee2a647. Evaluate Fundamental Biological Concepts**
 
 **Core move:** Evaluate multiple biological statements for accuracy based on fundamental knowledge of cells, tissues, organs, and physiological processes.
@@ -546,12 +458,7 @@ The correct option often requires a precise and accurate understanding of a spec
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q56_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_9abb7e35. Limiting Reactant Stoichiometry Calculation**
+## **C_9abb7e35. Limiting Reactant Stoichiometry Calculation**
 
 **Core move:** Apply stoichiometric relationships derived from a balanced chemical equation to identify the limiting reactant and calculate the maximum theoretical yield of a product, given initial quantities of multiple reactants.
 
@@ -576,12 +483,7 @@ Questions can involve reactants in different states (solid, liquid, gas), requir
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q53_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_a7eaca0a. Calculate Molar Enthalpy Change from Calorimetry Data**
+## **C_a7eaca0a. Calculate Molar Enthalpy Change from Calorimetry Data**
 
 **Core move:** Apply experimental calorimetry data (mass, specific heat capacity, temperature change) and reactant stoichiometry to determine the molar enthalpy change of a reaction.
 
@@ -606,12 +508,7 @@ This pattern frequently involves a multi-step calculation combining calculations
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q57_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_a8db39d8. Stoichiometry of Electrolysis Products**
+## **C_a8db39d8. Stoichiometry of Electrolysis Products**
 
 **Core move:** Apply stoichiometric principles derived from half-equations to relate quantities of products formed at different electrodes during electrolysis.
 
@@ -638,12 +535,7 @@ Can be extended to include calculations involving charge (Faraday's laws) if cur
 - `NSAA_2016_Section1_Q53_NSAA_Sec`: The question presents half-equations for electrolysis and asks to make deductions from them, which requires applying stoichiometric principles to compare or relate the products and other species formed at the electrodes, directly aligning with the core move of schema B_a8db39d8.
 - `NSAA_2020_Section1_Q59_NSAA_Sec`: The question requires calculating the mass of a product (aluminium) formed during electrolysis, given the rate of electron flow. This directly involves applying stoichiometric principles from the reduction half-equation (Al³⁺ + 3e⁻ → Al) to relate the quantity of electrons to the quantity of aluminium produced, which is the core move of the 'Stoichiometry of Electrolysis Products' schema.
 
----
-```
-
-
-```markdown
-## **B_b2055da6. Factors Influencing Reaction Rate**
+## **C_b2055da6. Factors Influencing Reaction Rate**
 
 **Core move:** Predict changes in reaction rate based on alterations to concentration, temperature, surface area, or catalyst properties.
 
@@ -669,11 +561,6 @@ Include scenarios where multiple factors are changed simultaneously to assess un
 - `NSAA_2016_Section1_Q50_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section1_Q67_NSAA_Sec`: The question describes an experiment investigating how pH, an environmental factor affecting enzyme (catalyst) properties, influences the rate of an enzyme-catalyzed reaction. The production of phenolphthalein, indicated by color change, is a direct measure of the reaction rate. This directly aligns with the schema's core move of predicting or understanding changes in reaction rate based on alterations to catalyst properties (enzymes are biological catalysts) or environmental factors affecting them.
 
----
-```
-
-
-```markdown
 ## **B_b2e6087b. Calculate DNA Base Composition**
 
 **Core move:** Apply Chargaff's rules and DNA complementary base pairing to determine the proportions of each nucleotide in a DNA molecule.
@@ -696,11 +583,6 @@ Ensure the provided information is sufficient to unambiguously calculate all bas
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q63_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_b9061248. Analyze Inheritance Patterns in Pedigree Charts**
 
 **Core move:** Infer genotypes and inheritance pathways by interpreting familial pedigree charts for specific genetic conditions.
@@ -727,11 +609,6 @@ Consider scenarios where new mutations might arise, though this is less common i
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q65_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_b9245b43. Mechanism of Organismal Response to Stimuli**
 
 **Core move:** Explain the step-by-step mechanism by which an organism responds to an environmental stimulus, identifying the key internal factors and cellular processes involved.
@@ -756,11 +633,6 @@ Can involve scenarios where a particular factor (e.g., hormone) is absent or alt
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q61_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_ba3774f0. Calculating Mendelian Inheritance Probabilities**
 
 **Core move:** Determine the probability of specific offspring genotypes or phenotypes by applying Mendelian inheritance principles, often deducing parental genotypes from pedigree information.
@@ -788,12 +660,7 @@ Questions may involve combining probabilities from two or more independent event
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q64_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_bcd4a7ef. Quantitative Analysis of Mixtures by Selective Precipitation**
+## **C_bcd4a7ef. Quantitative Analysis of Mixtures by Selective Precipitation**
 
 **Core move:** Use the mass of a selectively precipitated product to determine the initial mass of a specific component within a mixture through stoichiometric calculations.
 
@@ -820,11 +687,6 @@ Calculations should involve multiple steps (mass to moles, moles of product to m
 - `NSAA_2021_Section1_Q59_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q59_NSAA_Sec`: This question requires determining the initial mass of an impure mixture (bauxite) needed to produce a target mass of a specific product (aluminium). This involves working backward from the product mass, applying stoichiometric calculations (molar masses and mole ratios) to find the mass of the pure component within the mixture (hydrated aluminium oxide), and then using the given mass percentage to find the total mass of the initial mixture. This aligns well with the core move of using a product's mass and stoichiometry to analyze components in a mixture, even if the product is obtained by extraction rather than selective precipitation.
 
----
-```
-
-
-```markdown
 ## **B_c88e9f9b. Inferring Origin of Genetic Anomalies**
 
 **Core move:** Infer the likely origin and timing of a genetic mutation or chromosomal abnormality based on observed inheritance patterns and phenotypic expression.
@@ -850,11 +712,6 @@ Consider the implications of the mutation's origin for future offspring recurren
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q66_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_cf1b2bda. Calculating Population Size with Fixed Ratios Across Generations**
 
 **Core move:** Determine the size of a specific sub-population in a future generation by iteratively calculating total population growth based on reproductive output and applying a given fixed ratio for a specific characteristic.
@@ -879,12 +736,7 @@ Questions often involve a constant multiplication factor for population growth.
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q59_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **B_d2a3d95c. Determine Stoichiometric Coefficients in Equations**
+## **C_d2a3d95c. Determine Stoichiometric Coefficients in Equations**
 
 **Core move:** Apply the principle of conservation of atoms and charge to determine the stoichiometric coefficients of reactants and products in a chemical equation.
 
@@ -910,12 +762,7 @@ The method for balancing (inspection, algebraic, half-reaction) is implicitly te
 - `NSAA_2018_Section1_Q51_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section1_Q55_NSAA_Sec`: This question requires using the principle of conservation of atoms (C, H, O) to first deduce the formula of the alkane (CnH2n+2) from the given gas volume ratios (which represent mole ratios), and then to determine the stoichiometric coefficients 'a', 'b', and 'c' for oxygen, carbon dioxide, and water, respectively. The core move of determining stoichiometric coefficients by applying conservation principles is directly aligned.
 
----
-```
-
-
-```markdown
-## **B_d4225699. Synchronization Frequency from Multiple Delays**
+## **P_d4225699. Synchronization Frequency from Multiple Delays**
 
 **Core move:** Calculate individual delay times for multiple events and then determine the fundamental period required for all delays to be integer multiples of this period, finally converting the fundamental period to frequency.
 
@@ -939,11 +786,6 @@ Pay careful attention to units (meters, seconds, Hertz) throughout calculations.
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q48_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_d9242dec. Ecological Population Estimation from Samples**
 
 **Core move:** Apply standard ecological sampling formulas to estimate population parameters from collected quadrat or transect data.
@@ -970,11 +812,6 @@ Ensure the total number of sampling units and their size (if density is relevant
 - `NSAA_2018_Section1_Q58_NSAA_Sec`: The question describes an investigation involving repeated sampling (net sweeps) to count organisms (tadpoles) in a specific area/volume. This data would then be used to estimate the larger population or its density, which directly aligns with the core move of applying ecological sampling formulas to estimate population parameters from collected data, analogous to quadrat or transect methods.
 - `NSAA_2019_Section1_Q59_NSAA_Sec`: The question describes the methodology for an ecological survey using quadrats to estimate population size in a larger area, which directly aligns with the 'Core Move' of applying standard ecological sampling formulas to estimate population parameters from collected quadrat data.
 
----
-```
-
-
-```markdown
 ## **B_dba04f99. Counting Specific Alleles in a Population**
 
 **Core move:** Calculate the total count of a specific allele within a population by summing contributions from individuals of known genotypes.
@@ -1000,11 +837,6 @@ Can be a precursor to calculating allele frequencies.
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q59_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_e3e9c5c0. Tracking Gene Copies in Molecular Biology**
 
 **Core move:** Trace the number of copies of a specific gene or DNA sequence through stages of a genetic engineering process, applying knowledge of cell biology and molecular genetics.
@@ -1029,11 +861,6 @@ Pay attention to specific phrases like 'one copy of gene removed' or 'one modifi
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q62_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_e620b36b. Explaining Adaptation via Natural Selection**
 
 **Core move:** Explain how environmental selective pressures drive the survival and prevalence of organisms possessing advantageous heritable traits.
@@ -1058,12 +885,7 @@ Can involve different types of selective pressures (e.g., predation, disease, po
 - `NSAA_2016_Section1_Q55_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q56_NSAA_Sec`: This question requires understanding the relative frequencies of different types of mutations (beneficial, harmful, neutral) in a population, which is a fundamental concept underpinning how natural selection operates and drives adaptation. The proportions are determined by the rarity of beneficial mutations, the commonality and often detrimental nature of harmful mutations, and the high frequency of neutral mutations, all of which are critical inputs to explaining adaptation via natural selection.
 
----
-```
-
-
-```markdown
-## **B_f08f1192. Determine Molar Mass from Elemental Mass Fractions and Stoichiometric Atom Count**
+## **C_f08f1192. Determine Molar Mass from Elemental Mass Fractions and Stoichiometric Atom Count**
 
 **Core move:** Exploit known mass fractions of elements and a stoichiometrically determined atom count for one specific element to calculate the relative molar mass of a compound.
 
@@ -1086,11 +908,6 @@ Problems can be varied by making the stoichiometric inference more complex or by
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q59_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **B_f2359591. Analyze Genetic Mutations and Protein Synthesis**
 
 **Core move:** Apply the genetic code to translate DNA/mRNA sequences into amino acid sequences and predict the effect of specific base mutations on the resulting protein.
@@ -1117,11 +934,6 @@ Ensure the provided sequence length is manageable for manual translation.
 - `NSAA_2017_Section1_Q70_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section1_Q65_NSAA_Sec`: The question asks what aspects of a protein may remain unchanged after a gene mutation, which directly requires applying knowledge of the genetic code and predicting the effect (or lack thereof) of base changes on the resulting amino acid sequence and protein, matching the core move of analyzing genetic mutations and protein synthesis.
 
----
-```
-
-
-```markdown
 ## **B_fab78c80. Predicting Water Movement by Osmosis**
 
 **Core move:** Predict the direction of net water movement across a partially permeable membrane based on differences in solute concentration or water potential.
@@ -1146,11 +958,6 @@ Emphasize the role of the partially permeable membrane.
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q62_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_05432d25. Calculate Relative Atomic Mass from Isotopic Data**
 
 **Core move:** Compute the weighted average of isotopic mass numbers, after determining these numbers from subatomic particle counts and given relative abundances.
@@ -1178,11 +985,6 @@ The calculation is a weighted average, so the result should typically be a non-i
 - `NSAA_2017_Section1_Q52_NSAA_Sec`: The question requires calculating the percentage abundance of isotopes given the relative atomic mass and individual isotopic masses. This is an application of the weighted average principle described in the core move, where the unknown is the abundance rather than the overall average.
 - `NSAA_2023_Section1_Q43_NSAA_Sec`: The question requires determining the relative atomic mass (Ar) by computing the weighted average of the isotopic masses, using the relative abundances provided in the chart. This directly matches the core move of calculating a weighted average from isotopic data.
 
----
-```
-
-
-```markdown
 ## **C_05b89da3. Comparing Product Yields from Stoichiometric Equivalence**
 
 **Core move:** Compare the quantitative yield of a common product across multiple chemical reactions by applying stoichiometric principles to identical initial reactant amounts.
@@ -1207,11 +1009,6 @@ Questions should focus on the *comparison* of quantities (mass, moles, volume) r
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q44_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_05d6f963. Interpreting Data for Fractional Separation**
 
 **Core move:** Order components of a mixture for separation by fractional distillation using given boiling point data.
@@ -1238,11 +1035,6 @@ Can ask for order of vaporization, condensation, or collection.
 - `NSAA_2018_Section1_Q41_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section1_Q41_NSAA_Sec`: The question requires ordering the collection of gases by fractional distillation using their given boiling points, which directly aligns with the core move of ordering components for separation by fractional distillation based on boiling point data.
 
----
-```
-
-
-```markdown
 ## **C_11b180e1. Deriving Balanced Net Ionic Equations**
 
 **Core move:** Derive and balance net ionic equations for chemical reactions by identifying spectator ions and ensuring conservation of atoms and charge.
@@ -1271,11 +1063,6 @@ Multiple-choice options should include common mistakes such as unbalanced equati
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_1294369e. Calculating Total Moles of Ions in Solution**
 
 **Core move:** Calculate the total moles of ions produced by the dissolution of a given amount of an ionic compound in solution, considering its stoichiometry.
@@ -1301,11 +1088,6 @@ Clearly distinguish between moles of the compound and moles of ions.
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q45_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_14b510b2. Characterizing Strong Acid Solutions**
 
 **Core move:** Deduce the chemical and physical characteristics of a strong acid solution based on its concentration and definition.
@@ -1331,11 +1113,6 @@ Can be extended to strong bases as well, requiring similar deductive reasoning.
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_1537b1f8. Identifying Organic Reaction Products**
 
 **Core move:** Predict the major organic product(s) by recognizing the functional groups, reagents, and reaction conditions.
@@ -1365,11 +1142,6 @@ May involve multi-step syntheses or named reactions as part of the context.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q49_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_17f28fe3. Identifying Unknowns through Reaction Sequences**
 
 **Core move:** Deduce the identity of unknown chemical substances by analyzing a series of described reactions, their products, and characteristic observations.
@@ -1393,12 +1165,7 @@ Ensure a unique answer is derivable from the given information.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q47_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_19cbc1d0. Calculate Average Speed of Oscillating Particle**
+## **P_19cbc1d0. Calculate Average Speed of Oscillating Particle**
 
 **Core move:** Apply the definition of average speed to an object undergoing simple harmonic motion, using its amplitude and frequency.
 
@@ -1421,11 +1188,6 @@ Questions can vary by providing amplitude, frequency, period, or angular frequen
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q36_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_1ab35d9c. Analyze Organic Reaction Mechanisms**
 
 **Core move:** Deduce reaction pathways, intermediate structures, and products by applying principles of electron movement and and stability.
@@ -1454,12 +1216,7 @@ Ensure all formal charges and lone pairs are correctly represented
 - `NSAA_2021_Section1_Q46_NSAA_Sec`: The question requires identifying the repeating unit of a polymer, which is the product of an addition polymerization reaction from its monomer. This involves deducing the structure of a reaction product by applying the principles of how a double bond breaks and forms new single bonds in an organic reaction, aligning with the core move of deducing reaction products.
 - `NSAA_2023_Section1_Q42_NSAA_Sec`: The question requires deducing the structure of an addition polymer, which is a product formed through an organic reaction mechanism (addition polymerization). This involves understanding the breaking of the C=C double bond and the formation of new C-C single bonds between monomers, aligning with the core move of deducing products by applying principles of electron movement.
 
----
-```
-
-
-```markdown
-## **C_1d9567bf. Analyze Motion with Changing Mass and Constant Force**
+## **P_1d9567bf. Analyze Motion with Changing Mass and Constant Force**
 
 **Core move:** Apply Newton's Second Law to determine the instantaneous acceleration and its rate of change for an object experiencing a constant net force while its mass changes over time.
 
@@ -1483,12 +1240,7 @@ Often requires understanding the inverse relationship: a = F/m, so if F is const
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_24a7e618. Calculating Ideal Transformer Properties**
+## **P_24a7e618. Calculating Ideal Transformer Properties**
 
 **Core move:** Apply the ideal transformer equations relating voltage, current, and turns ratio to determine an unknown electrical property in a transformer circuit.
 
@@ -1512,11 +1264,6 @@ Units must be consistent throughout the calculation (e.g., Volts, Amperes, dimen
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q34_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_25ef6348. Identifying Compounds by Physical and Chemical Properties**
 
 **Core move:** Classify or identify a chemical compound by integrating its physical state properties (melting/boiling points) with its electrical conductivity behavior in solid, liquid, and aqueous solution phases.
@@ -1540,12 +1287,7 @@ Vary the specific properties (e.g., solubility, density, state at room temperatu
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_27001b74. Calculate Distance/Time from Differential Speeds**
+## **P_27001b74. Calculate Distance/Time from Differential Speeds**
 
 **Core move:** Apply kinematic equations to determine an unknown variable (distance or time) when two entities travel the same distance at different constant speeds, resulting in a known time difference in their arrival.
 
@@ -1568,12 +1310,7 @@ Can be extended to scenarios where entities start at different times or from dif
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_30453dc9. Analyzing Thermal Energy Transfer Mechanisms**
+## **P_30453dc9. Analyzing Thermal Energy Transfer Mechanisms**
 
 **Core move:** Identify the primary modes of thermal energy transfer (conduction, convection, radiation) applicable to given objects based on their properties, temperature, and environment, and compare their relative rates.
 
@@ -1598,12 +1335,7 @@ Common setups involve comparing dull black vs. shiny silver surfaces, or objects
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_321432b7. Interrelating Cuboid Physical Quantities**
+## **P_321432b7. Interrelating Cuboid Physical Quantities**
 
 **Core move:** Apply the relationships between mass, density, volume, force (weight), pressure, and surface area of a cuboid, including geometric properties, to solve for an unknown quantity.
 
@@ -1630,11 +1362,6 @@ This type of problem frequently appears in introductory physics or engineering c
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_3a9dad0f. Predicting Constituent Element Collection via Electrolysis**
 
 **Core move:** Determine the products formed at the anode and cathode during the aqueous electrolysis of a compound, then evaluate if these products correspond to the constituent elements of the original compound, considering the reactivity series and competitive discharge.
@@ -1659,11 +1386,6 @@ Ensure the question clearly defines what needs to be 'collected' (e.g., specific
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q47_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_4140fef9. Deducing Subatomic Particle Relationships for Isoelectronic Species**
 
 **Core move:** Infer the relative numbers of protons and electrons for isoelectronic atoms and ions based on their charge and classification.
@@ -1687,11 +1409,6 @@ Questions often ask for 'always correct' statements, requiring general understan
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q44_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_4787eeca. Optimize Reaction Conditions for Yield and Rate**
 
 **Core move:** Evaluate various experimental conditions to determine the setup that achieves a specified product yield in the shortest possible reaction time.
@@ -1716,11 +1433,6 @@ Ensure clear distinction between conditions that affect rate and conditions that
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q53_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_4bcc248e. Molar Mass Calculation in Condensation Reactions**
 
 **Core move:** Determine the molar mass of an unknown reactant or product by applying the mass change associated with a condensation reaction.
@@ -1745,12 +1457,7 @@ Can be extended to include isomers of alcohols/carboxylic acids, but the carbon 
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q49_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_4db6391e. Circuit Analysis with Ohm's and Power Laws**
+## **P_4db6391e. Circuit Analysis with Ohm's and Power Laws**
 
 **Core move:** Apply Ohm's Law and the power formula, combined with rules for series and parallel connections, to determine unknown electrical quantities within a DC circuit.
 
@@ -1773,11 +1480,6 @@ May require solving systems of equations for more complex circuits (e.g., Kirchh
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_576bd07d. Interpreting Exam Instructions**
 
 **Core move:** Extract and synthesize critical procedural and logistical information from exam instructions to formulate a test-taking strategy.
@@ -1803,11 +1505,6 @@ This schema applies across different subjects, not exclusively to Chemistry.
 - `NSAA_2022_Section2_Q60_NSAA_Sec`: The provided text consists of exam instructions, and the core move of schema C_576bd07d is to 'Extract and synthesize critical procedural and logistical information from exam instructions to formulate a test-taking strategy', which directly applies to analyzing these instructions.
 - `NSAA_2023_Section2_Q60_NSAA_Sec`: The provided text consists of exam instructions, and the schema 'Interpreting Exam Instructions' (C_576bd07d) specifically addresses the core move of extracting and synthesizing information from such instructions to formulate a test-taking strategy.
 
----
-```
-
-
-```markdown
 ## **C_5885c264. Predict Effects on Equilibrium and Rate**
 
 **Core move:** Predict how changes in temperature, pressure, concentration, or the addition of a catalyst affect the equilibrium position, yield, and/or reaction rate of a reversible reaction.
@@ -1839,11 +1536,6 @@ Can include scenarios involving concentration changes of reactants/products.
 - `NSAA_2023_Section1_Q41_NSAA_Sec`: The question asks to predict how a change in pressure affects the rate of a chemical reaction involving gaseous reactants and to provide the reason. This directly aligns with the core move of schema C_5885c264, which is to 'Predict how changes in ... pressure ... affect the ... reaction rate'.
 - `NSAA_2023_Section2_Q75_NSAA_Sec`: The question describes the use of the temperature coefficient (Q10) to 'analyse the effect of increasing temperature on the rate of DNA replication'. This directly aligns with the core move of schema C_5885c264, which is to 'predict how changes in temperature...affect the...reaction rate'. Q10 is a quantitative tool used for this analysis and subsequent prediction.
 
----
-```
-
-
-```markdown
 ## **C_5ff5623b. Constructing Ionic Compound Formulas**
 
 **Core move:** Derive the chemical formula of an ionic compound by recalling common ion charges and balancing them to achieve electrical neutrality.
@@ -1867,11 +1559,6 @@ Charges for polyatomic ions and common transition metals usually need to be reca
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q46_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_66f83de2. Mixture Composition by Mass and Volume**
 
 **Core move:** Calculate the percentage of a component in a mixture by mass, given its percentage by volume and the densities of all components, or vice versa.
@@ -1896,11 +1583,6 @@ Questions can be reversed, asking for volume percentage from mass percentage.
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q34_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_71f3cf3e. Calculating Gas Volume Change from Stoichiometry at RTP/STP**
 
 **Core move:** Calculate the change in gas volume for a reaction by determining the change in moles of gaseous substances and applying the molar volume at the specified temperature and pressure.
@@ -1928,11 +1610,6 @@ The 'change in volume' refers to the difference in total gaseous volume from rea
 - `NSAA_2017_Section1_Q47_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section1_Q51_NSAA_Sec`: The question requires using stoichiometric ratios from a balanced chemical equation to determine the volumes of gaseous reactants consumed and products formed, and then summing them to find the total final gas volume. This directly aligns with the schema's core move of 'calculating the change in moles of gaseous substances and applying the molar volume at the specified temperature and pressure', as gas volumes are directly proportional to moles under the given conditions.
 
----
-```
-
-
-```markdown
 ## **C_725309e1. Calculate Chromatographic Retention Factors and Distances**
 
 **Core move:** Apply the concept of retention factor (Rf) constancy to calculate unknown distances moved by components or the solvent front in chromatography.
@@ -1957,11 +1634,6 @@ Can involve a single component or multiple components to assess understanding of
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q49_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_7deb363a. Stoichiometry in Neutralization Reactions**
 
 **Core move:** Apply stoichiometric principles to calculate an unknown quantity (mass, moles, concentration, or volume) of a reactant or product in an acid-base neutralization reaction.
@@ -1989,11 +1661,6 @@ This pattern often involves multi-step calculations (e.g., moles from concentrat
 - `NSAA_2020_Section1_Q50_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q53_NSAA_Sec`: This question requires calculating the volume of an acid needed to neutralize a base, which directly involves applying stoichiometric principles (mole ratio from the diprotic acid nature, and concentration-volume relationship) in an acid-base neutralization reaction to find an unknown quantity.
 
----
-```
-
-
-```markdown
 ## **C_7ed108c3. Identifying Unknown Product via Stoichiometric Balancing**
 
 **Core move:** Deduce the identity of an unknown chemical product in a reaction by applying conservation of atoms and given stoichiometric ratios to balance the chemical equation.
@@ -2018,11 +1685,6 @@ The question typically provides specific clues about the unknown substance's pro
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q52_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_885cfd41. Identifying Essential Data for Molecular Formula Determination**
 
 **Core move:** Recognize the general formula of a compound from its structural description and identify the minimum specific quantitative information required to determine its exact molecular formula.
@@ -2048,11 +1710,6 @@ Emphasize that the information must be quantitative to determine the exact numbe
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q44_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_8d4a2ec9. Interpret Chromatograms for Component Identification**
 
 **Core move:** Deduce the presence and identity of components in a mixture by comparing their retention positions on a chromatogram with those of known pure substances.
@@ -2076,12 +1733,7 @@ Can be extended to include calculations of Rf values.
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q41_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_8ffbc902. Conservation of Energy in Spring-Mass Systems**
+## **P_8ffbc902. Conservation of Energy in Spring-Mass Systems**
 
 **Core move:** Apply the principle of conservation of mechanical energy to determine kinematic variables or system properties in systems involving elastic potential energy, gravitational potential energy, and kinetic energy.
 
@@ -2106,11 +1758,6 @@ Ensure all forces are conservative or that non-conservative work is accounted fo
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_98345ef3. Predicting Electrolysis Products**
 
 **Core move:** Predict the products formed at the anode and cathode in electrolytic cells by comparing the ease of oxidation and reduction of species present.
@@ -2137,11 +1784,6 @@ Ensure clarity on whether electrodes are inert or reactive if relevant.
 - `NSAA_2018_Section1_Q39_NSAA_Sec`: The question asks to identify the overall process at the cathode in the electrolysis of an aqueous solution. This requires comparing the ease of reduction of the species present (Na+ and H2O/H+) to predict the product formed at the cathode, which directly aligns with the core move of 'Predicting Electrolysis Products'.
 - `NSAA_2018_Section1_Q42_NSAA_Sec`: The question requires predicting the products formed at the anode and cathode during the electrolysis of concentrated aqueous sodium chloride (H2, Cl2, and OH- ions), which directly determines the pH of the remaining solution and the identity of the gases collected. The subsequent tests on these gases depend entirely on the correct prediction of these electrolysis products, aligning perfectly with the schema's core move.
 
----
-```
-
-
-```markdown
 ## **C_98529288. Stoichiometry from Electrolysis Products**
 
 **Core move:** Apply stoichiometric principles to deduce the empirical formula of a compound from quantitative electrolysis product data.
@@ -2166,11 +1808,6 @@ Can be extended to include Faraday's laws if charge/current is involved, but thi
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_a0e94807. Explaining Physical Properties via Intermolecular Forces**
 
 **Core move:** Explain observed differences in physical properties (e.g., boiling point, solubility, viscosity) between molecular compounds by analyzing their molecular structure, polarity, and the types and strengths of intermolecular forces.
@@ -2196,11 +1833,6 @@ May require knowledge of VSEPR theory for molecular geometry and polarity.
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q46_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_a3b2cf10. Deducing Compound Properties from Periodic Table**
 
 **Core move:** Deduce the formula, bonding type, and acid-base character of simple compounds by applying periodic trends based on the given element's atomic number.
@@ -2224,12 +1856,7 @@ Ensure options contain plausible distractors related to errors in formula, bondi
 - `NSAA_2017_Section1_Q42_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q44_NSAA_Sec`: The question requires deducing various physical and chemical properties (boiling point, electrical conductivity, reactivity, melting point, bond structure) of both elements and simple compounds by applying knowledge of bonding types (metallic, ionic, covalent, hydrogen bonding) and periodic trends based on the elements' positions in the Periodic Table. This aligns directly with the core move of 'Deduce the formula, bonding type, and acid-base character of simple compounds by applying periodic trends based on the given element's atomic number', as well as the schema's title 'Deducing Compound Properties from Periodic Table'.
 
----
-```
-
-
-```markdown
-## **C_a9a3eea7. Calculating Terminal Velocity with Drag and Buoyancy**
+## **P_a9a3eea7. Calculating Terminal Velocity with Drag and Buoyancy**
 
 **Core move:** Apply Newton's first law (equilibrium of forces) to determine the terminal velocity of an object falling through a fluid, considering its weight, buoyant force, and a given drag force model.
 
@@ -2255,11 +1882,6 @@ Questions should require quantitative calculation and algebraic manipulation to 
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_b2a7e461. Deduce Reactivity Order from Chemical Properties**
 
 **Core move:** Infer the relative order of chemical reactivity for a set of substances based on their observed reactions and extraction methods.
@@ -2287,11 +1909,6 @@ Clearly specify the direction of the required order (e.g., most reactive to leas
 - `NSAA_2019_Section1_Q41_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q41_NSAA_Sec`: The question requires inferring the relative order of reactivity of four metals by analyzing a set of observed chemical reactions, which directly aligns with the core move of schema C_b2a7e461.
 
----
-```
-
-
-```markdown
 ## **C_bb0a9270. Adjusting Solution Concentration for Hydration**
 
 **Core move:** Recalculate the solution concentration based on the actual mass of the active component when a different form (e.g., hydrated instead of anhydrous) was mistakenly used.
@@ -2319,11 +1936,6 @@ Can extend to scenarios where the active component is not 1:1 in the hydrated co
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q47_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_bd5cd4eb. Calculate Gas Property Change from Applied Pressure**
 
 **Core move:** Apply the ideal gas law and force-area relationship to determine a gas property (e.g., density, volume) after a pressure change caused by an added force, assuming constant temperature.
@@ -2349,11 +1961,6 @@ Can incorporate other forces acting on the piston (e.g., friction, spring force)
 - `NSAA_2022_Section1_Q38_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q40_NSAA_Sec`: This question applies Boyle's Law (a special case of the ideal gas law for constant temperature) to determine the volume of an ideal gas. The pressure changes are caused by hydrostatic pressure due to varying depth, which is an application of the force-area relationship (P = F/A, where F is the weight of the water column over a given area, resulting in P = ρgh) added to atmospheric pressure.
 
----
-```
-
-
-```markdown
 ## **C_c28e3682. Maximize Molecular Mass from Isotopic Data**
 
 **Core move:** Calculate the maximum possible relative molecular mass of a compound by selecting the heaviest available isotope for each constituent element based on provided isotopic data.
@@ -2378,12 +1985,7 @@ Avoid ambiguity in identifying the heaviest/lightest isotope from the charts.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
-## **C_c592878a. Calculate Forces in Physical Systems**
+## **P_c592878a. Calculate Forces in Physical Systems**
 
 **Core move:** Apply Newton's laws of motion and principles of statics or dynamics to determine unknown forces.
 
@@ -2405,11 +2007,6 @@ Pay attention to significant figures and units.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q75_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_c68d86d5. Calculating Temperature from Reaction Energy Transfer**
 
 **Core move:** Calculate the final temperature of a substance by first determining the total energy released or absorbed from a chemical process and then using that energy with the substance's mass and specific heat capacity.
@@ -2435,11 +2032,6 @@ Can be extended to include phase changes if latent heat values are provided.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q54_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_c8df3bc3. Calculating Isotope Ratios after Radioactive Decay**
 
 **Core move:** Apply the concept of half-life to determine the remaining amount of a radioactive isotope and the amount of its stable decay product over a given time.
@@ -2464,11 +2056,6 @@ Choose half-lives and time periods that result in a whole number of half-lives f
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q36_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_c99fbfe6. Determining Subatomic Particle Counts in Nuclides and Ions**
 
 **Core move:** Calculate the absolute number of protons, neutrons, and electrons for any given atomic or ionic species using its atomic number, mass number, and charge.
@@ -2493,11 +2080,6 @@ This foundational skill is a prerequisite for understanding topics like isotopic
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q42_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_ca3ed7f6. Identifying Redox Species via Oxidation States**
 
 **Core move:** Determine if a substance is oxidized, reduced, or neither by calculating the oxidation states of relevant elements in reactants and products.
@@ -2523,11 +2105,6 @@ Ensure the problem requires the fundamental application of rules for assigning o
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_ca474f82. Determining Subatomic Particle Counts**
 
 **Core move:** Calculate the number of protons, neutrons, and electrons for an atom or ion using its mass number, atomic number, and charge.
@@ -2555,11 +2132,6 @@ Can include isotopes, isobars, and allotropes as distractors.
 - `NSAA_2019_Section1_Q42_NSAA_Sec`: The question requires calculating the number of protons, neutrons, and electrons for an ion using its atomic number (x), mass number (2x + 2), and charge (-2), which precisely matches the core move of determining subatomic particle counts.
 - `NSAA_2023_Section1_Q48_NSAA_Sec`: The question requires calculating the number of protons, neutrons, and electrons for an ion given its mass number, atomic number (expressed algebraically), and charge. This directly matches the core move of determining subatomic particle counts.
 
----
-```
-
-
-```markdown
 ## **C_cca6b2f6. Analyze and Compare Experimental Rate Data**
 
 **Core move:** Interpret and compare quantitative experimental data, typically presented in tables, to identify trends, evaluate rates, or draw conclusions about a process.
@@ -2586,11 +2158,6 @@ The 'process' can be biological, chemical, or physical.
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q67_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_cd763d5d. Inferring Element Properties from Periodic Position**
 
 **Core move:** Infer an element's characteristic physical and chemical properties based on its group and period in the Periodic Table.
@@ -2618,11 +2185,6 @@ Can involve true/false statements, multiple-choice options, or direct descriptiv
 - `NSAA_2023_Section1_Q47_NSAA_Sec`: The question first requires identifying element Q's position in the periodic table from its electron shell description. Then, it asks to deduce the properties and characteristics of elements immediately surrounding Q (above, below, left, right) by applying knowledge of periodic trends and the structure of the periodic table. This directly aligns with inferring element properties based on their group and period.
 - `NSAA_2023_Section1_Q46_NSAA_Sec`: The question requires inferring silicon's characteristic structure (giant covalent) and bonding type from its periodic position (directly below carbon) to explain its high melting point. This directly aligns with the schema's core move of inferring element properties from periodic position, which is a prerequisite for correctly identifying the type of bonds that need to be broken on melting.
 
----
-```
-
-
-```markdown
 ## **C_d26f3956. Calculate Initial Acceleration of Displaced Floating Object**
 
 **Core move:** Apply Archimedes' principle and Newton's second law to determine the initial acceleration of a floating object displaced from its equilibrium position.
@@ -2648,11 +2210,6 @@ Can be extended to calculate parameters for simple harmonic motion (e.g., period
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_d83414aa. Distinguishing Ionic Compounds Using Qualitative Tests**
 
 **Core move:** Select a single chemical test or physical property to uniquely identify and differentiate between a set of given ionic compounds.
@@ -2678,11 +2235,6 @@ The initial state (e.g., 'white solids') implies visual appearance is not a dist
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_d971743a. Quantifying Wave Propagation in Different Media**
 
 **Core move:** Apply the relationships between speed, wavelength, frequency, and number of oscillations to solve problems involving wave propagation through different materials.
@@ -2708,11 +2260,6 @@ Can be extended to scenarios with multiple layers of different materials or to o
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q35_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_dc623dcf. Assigning Oxidation States in Complex Structures**
 
 **Core move:** Calculate the individual oxidation state for each atom of a specified element within a complex ion or molecule, considering its specific bonding environment.
@@ -2736,11 +2283,6 @@ Questions should guide students to select from lists of possible oxidation state
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q48_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_ddcea784. Determining Stoichiometry via Redox Balancing**
 
 **Core move:** Determine stoichiometric coefficients of reactants and products by applying conservation of mass and charge principles in redox reactions.
@@ -2767,11 +2309,6 @@ The equation should have a unique set of smallest whole-number integer coefficie
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q48_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_debfd5cf. Calculating pH after Stoichiometric Acid-Base Reaction**
 
 **Core move:** Determine the final pH of a solution by performing stoichiometric calculations for an acid-base reaction, identifying the limiting reactant or exact neutralization, and then using the resulting concentrations (or neutrality) to calculate pH.
@@ -2798,11 +2335,6 @@ If the initial amount of one reactant is not given, assume a stoichiometric reac
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q90_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_e2e3b327. Deducing Salt Formula from Tests and Calculating Molar Mass**
 
 **Core move:** Identify the constituent cation and anion of a salt based on qualitative chemical tests, deduce its chemical formula, and then calculate its relative molar mass using given atomic masses.
@@ -2825,11 +2357,6 @@ The compound should be a common, simple ionic salt whose formula can be readily 
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q45_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_e34cd17b. Deduce Formula from Precipitation Stoichiometry**
 
 **Core move:** Apply stoichiometric principles to determine the empirical formula of a compound based on quantitative precipitation reaction data.
@@ -2853,11 +2380,6 @@ The problem may extend to identifying element X based on its atomic mass.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q47_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_e3e71bb9. Quantitative Stoichiometry of Electrolysis Products**
 
 **Core move:** Apply stoichiometric ratios derived from the balanced electrolysis equation to determine the mass or moles of one product given the mass or moles of another.
@@ -2882,11 +2404,6 @@ Questions can be extended to include gas volumes (using molar volume) or charge 
 - `NSAA_2019_Section1_Q46_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q57_NSAA_Sec`: This question requires calculating the mass of different elements produced per mole of electrons transferred using the stoichiometric ratios derived from their balanced half-equations and then comparing these calculated masses. This aligns with applying stoichiometric ratios to determine the mass of products relative to a common electron transfer.
 
----
-```
-
-
-```markdown
 ## **C_e4ea9c22. Balancing Chemical Equations**
 
 **Core move:** Systematically apply the principles of conservation of mass and charge to determine the stoichiometric coefficients in an unbalanced chemical equation.
@@ -2914,11 +2431,6 @@ Emphasize the step-by-step process of balancing each element.
 - `NSAA_2020_Section1_Q45_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q50_NSAA_Sec`: The question requires determining the stoichiometric coefficients in a given unbalanced chemical equation by applying the principles of conservation of atoms (mass) and charge. This directly matches the core move of systematically balancing chemical equations.
 
----
-```
-
-
-```markdown
 ## **C_f20b2e1e. Calculating Enthalpy Change from Bond Energies**
 
 **Core move:** Calculate the net energy change of a chemical reaction by summing the energies required to break reactant bonds and the energies released by forming product bonds.
@@ -2945,11 +2457,6 @@ Units for energy change should be clearly specified (e.g., kJ mol⁻¹).
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q55_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_fc361c48. Analyzing Physico-Chemical Influences on Biological Rates**
 
 **Core move:** Predict the impact of changes in physical or chemical environmental parameters on the rates or efficiencies of biological processes.
@@ -2972,11 +2479,6 @@ The 'chemical' aspect can stem from the nature of the substance involved (e.g., 
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q65_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **C_fcce3d6d. Calculate Empirical Formula from Mass Composition**
 
 **Core move:** Determine the simplest whole-number ratio of atoms in a compound by converting elemental masses to moles and finding their ratio.
@@ -3002,11 +2504,6 @@ Can be extended to finding molecular formulas if the compound's molar mass is al
 - `NSAA_2016_Section1_Q41_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section1_Q43_NSAA_Sec`: The question provides the total mass of a compound and the mass of one element within it, along with atomic masses. The core task is to determine the simplest whole-number ratio of atoms (empirical formula) by calculating the moles of each element and finding their ratio, which perfectly aligns with the 'Calculate Empirical Formula from Mass Composition' schema.
 
----
-```
-
-
-```markdown
 ## **C_fed9c0c1. Kinetic Energy Distribution in Recoil**
 
 **Core move:** Apply conservation of momentum and the definition of kinetic energy to distribute total decay energy among recoil products based on their masses.
@@ -3033,11 +2530,6 @@ The kinetic energy of a product is given by E * (mass_of_other_product) / (sum_o
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q35_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_0125439b. Percentage Change in Substance Flow**
 
 **Core move:** Determine the percentage change in the rate of a specific substance flowing through a system by first calculating its initial and final flow rates from given concentrations and volume flow rates.
@@ -3060,11 +2552,6 @@ Emphasize the understanding that the total amount of substance flowing per unit 
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q55_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_03af253d. Classifying Interspecies Ecological Relationships**
 
 **Core move:** Classify the type of ecological relationship between organisms (e.g., mutualism, parasitism, producer-consumer) based on their described interactions and the resulting effects on each organism.
@@ -3087,11 +2574,6 @@ Avoid ambiguity in the description of the interactions.
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q61_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_048feceb. Calculating Time in Electrolysis**
 
 **Core move:** Determine the duration of an electrochemical process by interconverting mass, moles, charge, and current using Faraday's laws of electrolysis and fundamental electrical relationships.
@@ -3117,11 +2599,6 @@ Ensure units for current (A), charge (C), and time (s) are consistent before fin
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q26_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_0686c68f. Solving Exponential Equations by Equating Exponents**
 
 **Core move:** Transform an exponential equation by expressing all terms with a common base, then equate the exponents to form an algebraic equation and solve for the unknown.
@@ -3146,11 +2623,6 @@ Questions can involve fractional or negative exponents, adding complexity to the
 - `NSAA_2019_Section1_Q9_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section1_Q81_NSAA_Sec`: The question requires solving an exponential equation by recognizing that it can be transformed into a quadratic equation through substitution of a common base raised to the power of the unknown variable (e.g., let y = 5^x, turning 2 * 5^(2x) - 5^x - 3 = 0 into 2y^2 - y - 3 = 0). This constitutes forming an algebraic equation and solving for the unknown, which aligns with the core move of transforming an exponential equation by expressing terms with a common base to form an algebraic equation, even if it doesn't always directly involve 'equating exponents' in the final step but rather solving a derived polynomial.
 
----
-```
-
-
-```markdown
 ## **M_0730f376. Hydrostatic Pressure in Layered Liquids**
 
 **Core move:** Calculate the height of each liquid layer using volume and cross-sectional area, determine their relative order based on density, and then apply the hydrostatic pressure formula P = ρgh to find the pressure at a specified depth.
@@ -3176,11 +2648,6 @@ The formula P = ρgh gives gauge pressure; atmospheric pressure needs to be adde
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q80_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_0901b105. Deducing Oxidation States from Redox Stoichiometry**
 
 **Core move:** Determine the change in oxidation state of an element in a redox reaction by quantitatively analyzing the stoichiometric ratio of reactants and the known oxidation state changes of other species.
@@ -3208,11 +2675,6 @@ Calculations should ideally lead to clear integer changes in oxidation states.
 - `NSAA_2020_Section2_Q26_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section2_Q34_NSAA_Sec`: The core of this problem involves using the stoichiometric data from the reaction of lutetium with oxygen to first deduce the oxidation state of lutetium. This oxidation state is then used to write the correct chemical formula for lutetium sulfate and subsequently perform mass-to-mass conversions for the hydrated salt, directly matching the 'Deducing Oxidation States from Redox Stoichiometry' core move.
 
----
-```
-
-
-```markdown
 ## **M_09226618. Classifying Biological Processes from Multi-Attribute Data**
 
 **Core move:** Deduce the identity of biological processes by synthesizing multiple descriptive attributes and applying relevant domain knowledge.
@@ -3238,11 +2700,6 @@ Ensure that the attributes provided are unambiguous and directly lead to one uni
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q78_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_093ce2ff. Applying Kinematic Equations for Constant Acceleration**
 
 **Core move:** Select and apply the appropriate kinematic equation (SUVAT) to solve for an unknown variable in a scenario involving constant acceleration.
@@ -3268,11 +2725,6 @@ Questions can vary by providing different combinations of three knowns to find a
 - `NSAA_2019_Section1_Q84_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q18_NSAA_Sec`: The problem describes objects moving at constant speeds, which is a specific case of constant acceleration where acceleration is zero. The solution requires applying the fundamental kinematic relationship 'distance = speed × time' (d=vt), which is the appropriate kinematic equation (derived from SUVAT equations when a=0) to solve for an unknown variable (Sam's covered distance) within this constant acceleration scenario. The core move of selecting and applying the appropriate kinematic equation is central to solving the problem.
 
----
-```
-
-
-```markdown
 ## **M_0a37d879. Integrating Spatially Varying Properties**
 
 **Core move:** Calculate a total physical quantity by integrating a differential element that is defined by a spatially varying property or density, over the relevant dimension.
@@ -3297,11 +2749,6 @@ Ensure the integration variable and limits correctly correspond to the physical 
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q0_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_0adb94e8. Solving Quadratic Roots for Algebraic Expressions**
 
 **Core move:** Apply the quadratic formula to find the roots of a quadratic equation, differentiate between the roots based on a given condition, and substitute them into a target algebraic expression to evaluate its value.
@@ -3326,11 +2773,6 @@ Always check the inequality condition for distinguishing between roots.
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q8_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_0aff7927. Solving Trigonometric Equations with Identities**
 
 **Core move:** Apply trigonometric identities and algebraic manipulation to solve equations involving trigonometric functions for specific variable values.
@@ -3357,11 +2799,6 @@ Solutions obtained from the algebraic equation must be checked for validity with
 - `NSAA_2017_Section1_Q75_NSAA_Sec`: The question requires solving two distinct trigonometric equations (sin(x) = 1/2 and cos(2x) = 1/2), determining common solutions ('k'), and then finding all solutions within a specified range, which directly aligns with the core move of applying trigonometric manipulation to solve equations involving trigonometric functions.
 - `NSAA_2019_Section1_Q77_NSAA_Sec`: The question requires using trigonometric identities (tan x = sin x / cos x, sin^2 x + cos^2 x = 1) and algebraic manipulation to transform the given equation into a solvable form (a quadratic in terms of cos x), then solving for cos x and subsequently finding the possible values of tan x. This directly matches the core move of applying trigonometric identities and algebraic manipulation to solve trigonometric equations.
 
----
-```
-
-
-```markdown
 ## **M_0cc81c22. Probability of Independent Events and Complements**
 
 **Core move:** Calculate the probability of multiple independent events occurring simultaneously or sequentially, often using the complement rule to simplify 'at least one' scenarios.
@@ -3387,11 +2824,6 @@ The 'success' and 'failure' probabilities for each individual trial should be cl
 - `NSAA_2020_Section1_Q16_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q6_NSAA_Sec`: The question asks for the probability of an individual possessing two characteristics simultaneously: being male and being unaffected. In genetics problems, the probability of being male (typically 1/2) is generally independent of the probability of inheriting an autosomal trait (unaffected status). The solution involves calculating the probability of being male and the probability of being unaffected (derived from the pedigree, which is a biology step), and then multiplying these two independent probabilities, which directly aligns with the core move of calculating the probability of multiple independent events occurring simultaneously.
 
----
-```
-
-
-```markdown
 ## **M_0eae8ac9. Stoichiometric Calculation for pH Adjustment**
 
 **Core move:** Apply concentration definitions, pH relationships, and reaction stoichiometry to calculate the amount of a substance needed to adjust a solution's pH to a target range.
@@ -3419,11 +2851,6 @@ Consider if the added substance significantly changes the total volume; for smal
 - `NSAA_2021_Section2_Q35_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section2_Q33_NSAA_Sec`: The question presents initial concentration and pH values for an acid, followed by a dilution step, all in preparation for disposal. This directly aligns with the core move of applying concentration definitions, pH relationships, and subsequent reaction stoichiometry to adjust the solution's pH to a target range (implied for safe disposal).
 
----
-```
-
-
-```markdown
 ## **M_10456965. Integrating Linear Kinematics with Rotational Motion**
 
 **Core move:** Determine a rotational parameter (e.g., angle, angular velocity) by first calculating the time taken from an independent linear motion described by constant acceleration kinematics.
@@ -3447,11 +2874,6 @@ Ensure all necessary parameters for both linear kinematics (h, g, u) and rotatio
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_106950e8. Problem Identification and Domain Mapping**
 
 **Core move:** Identify the core mathematical or physical domain of a problem statement to prepare for method selection, even if no explicit problem is given.
@@ -3474,11 +2896,6 @@ In this specific instance, the 'question' provided is actually a section header 
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q71_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_11082a0a. Understanding Exam Paper Conventions**
 
 **Core move:** Recognize and correctly interpret non-problem elements of an exam paper, such as instructions, structural markers, or placeholders, to effectively navigate the examination.
@@ -3502,11 +2919,6 @@ Can involve identifying the purpose or implication of specific pages or sections
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_130d60b7. Calculating Potential Difference using Resistivity**
 
 **Core move:** Apply the definition of resistance based on resistivity and dimensions, followed by Ohm's Law, to determine the potential difference across a conductor.
@@ -3530,11 +2942,6 @@ The conductor is typically assumed to have uniform cross-sectional area and resi
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q78_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_1318b323. Calculating Allele Counts from Population Data**
 
 **Core move:** Calculate the total number of dominant and recessive alleles within a population by first determining the absolute counts of each genotype from given phenotypic or genotypic proportions.
@@ -3558,11 +2965,6 @@ The total number of alleles for a given gene in a population will always be twic
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q44_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_132df403. Deducing Resultant Force from Kinematics**
 
 **Core move:** Apply Newton's Second Law (F=ma) to deduce the resultant force on an object based on its described kinematic state (e.g., constant velocity, at rest, or accelerating).
@@ -3592,11 +2994,6 @@ Can include scenarios where resultant force is non-zero due to acceleration for 
 - `NSAA_2022_Section2_Q30_NSAA_Sec`: The question requires applying Newton's Second Law (F=ma) to analyze the forces on a mass in an accelerating lift. This allows for the deduction of the effective force exerted by the spring or the change in force due to acceleration, directly matching the core move of determining resultant forces based on kinematic state.
 - `NSAA_2023_Section2_Q12_NSAA_Sec`: The question requires deducing the resultant force on the particle at a specific time. This involves first using the given kinetic energy function (E=kt) to derive the particle's velocity and then acceleration as a function of time. Subsequently, Newton's Second Law (F=ma) is applied to determine the resultant force. This sequence of steps directly aligns with the core move of applying F=ma based on the object's kinematic state (acceleration derived from time-dependent energy).
 
----
-```
-
-
-```markdown
 ## **M_132f5a8d. Solving Parameters via Intersecting Functions and Root Properties**
 
 **Core move:** Establish a combined algebraic equation from intersecting functions, identify its roots as characteristic points, and utilize properties of these roots (e.g., Vieta's formulas) along with given relationships to determine unknown function parameters.
@@ -3621,11 +3018,6 @@ The parameter to be found can be any coefficient of the quadratic or linear equa
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q11_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_13b28059. Identifying Insufficient Information**
 
 **Core move:** Determine if the provided problem statement contains all necessary information to derive a solution.
@@ -3651,11 +3043,6 @@ Questions generated for this schema would explicitly present an incomplete probl
 - `NSAA_2019_Section2_Q37_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q50_NSAA_Sec`: The problem asks for the maximum mass of substance X transferred into the aqueous layer at equilibrium. To calculate the equilibrium distribution of a solute between two immiscible solvents, the partition coefficient (distribution coefficient) for the solute between those solvents, or the solubility limits of the solute in each solvent, must be known. None of these critical pieces of information are provided in the problem statement, rendering it unsolvable without additional data.
 
----
-```
-
-
-```markdown
 ## **M_145e2e97. Analyzing Kinematic Extremes in Dynamic Systems**
 
 **Core move:** Employ conservation laws (energy, momentum) or dynamic equations (Newton's Laws) to determine extreme kinematic values (e.g., maximum speed, minimum displacement, zero velocity) at specific points within a system experiencing non-constant forces.
@@ -3681,11 +3068,6 @@ Solutions often involve setting up energy conservation equations or applying New
 - `NSAA_2017_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q6_NSAA_Sec`: The question asks to determine the 'maximum speed' of the lorry, which is an extreme kinematic value. The solution involves applying dynamic equations (P=Fv and Newton's Second Law for zero acceleration at maximum speed) to a system with a non-constant resistive force (proportional to speed squared), directly aligning with the core move of analyzing kinematic extremes in dynamic systems.
 
----
-```
-
-
-```markdown
 ## **M_14c2bff5. Calculating Overall Average Rate from Segment Data**
 
 **Core move:** Compute the overall average rate for a multi-segment journey or process by summing the total quantity (e.g., distance, production units) and dividing by the total duration (e.g., time), after deriving the duration for each segment using its specific rate and quantity.
@@ -3710,11 +3092,6 @@ This pattern is distinct from calculating an *unknown segment rate* when the *ov
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q11_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_167e520d. Relating Regular Polygon Angles and Sides**
 
 **Core move:** Employ the relationship between the number of sides and interior/exterior angles of regular polygons to solve for unknown properties or compare different polygons.
@@ -3738,11 +3115,6 @@ Ensure the number of sides calculated is an integer and at least 3.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_17867722. Identifying Reproductive Strategies in Organisms**
 
 **Core move:** Classify organisms by associating them with their primary cellular mechanisms of reproduction.
@@ -3767,11 +3139,6 @@ Can be extended to include genetic variation implications of different reproduct
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q27_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_18372be2. Applying Mendelian Ratios in Statistical Tests**
 
 **Core move:** Calculate expected phenotypic frequencies from a given genetic cross, then use these and observed frequencies to populate a statistical test formula.
@@ -3796,11 +3163,6 @@ Often involves a 'single gene with dominant and recessive alleles' scenario.
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q59_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_19d9b071. Identifying Null Problem Statements**
 
 **Core move:** Determine if a given problem text contains sufficient mathematical content to pose a solvable question, or if it is effectively empty or administrative in nature.
@@ -3825,11 +3187,6 @@ It's about problem validation rather than problem-solving.
 - `NSAA_2022_Section2_Q3_NSAA_Sec`: The provided text is an administrative content listing from an exam paper and does not contain an explicit problem statement or a solvable mathematical question. This matches the core move of determining if the problem text is sufficient to pose a solvable question or if it is administrative in nature.
 - `NSAA_2021_Section1_Q60_NSAA_Sec`: The provided text is clearly administrative instructions for an exam, not a mathematical problem. It lacks any mathematical content or an explicit question to be solved, directly matching the core move of identifying null or administrative problem statements.
 
----
-```
-
-
-```markdown
 ## **M_19f7cfc3. Interconverting Moles, Mass, Volume, and Density**
 
 **Core move:** Calculate an unknown quantity (moles, mass, volume, or density) by sequentially applying the relationships between them using molar mass and known values.
@@ -3861,11 +3218,6 @@ Carefully distinguish between solute and solvent quantities when dealing with so
 - `NSAA_2022_Section2_Q32_NSAA_Sec`: This question requires writing a balanced chemical equation, using volume ratios to infer mole ratios (due to the ideal gas assumption), calculating molar masses, and then converting moles of reactants to their respective masses to determine a mass ratio. This is a sequential application of relationships between moles, mass, and volume using molar mass and known values (stoichiometry, composition by volume).
 - `NSAA_2022_Section2_Q35_NSAA_Sec`: The problem requires calculating the mass of iron within sodium feredetate trihydrate using its molar mass and then relating this mass to a given volume of solution. The final step involves scaling this relationship to find the volume corresponding to a different target mass of iron, which aligns directly with calculating unknown quantities by applying relationships between mass, volume, and molar mass.
 
----
-```
-
-
-```markdown
 ## **M_1b77e338. Configuring Power Sources for a Load**
 
 **Core move:** Determine the optimal series and parallel arrangement of identical power sources, each with internal resistance, to deliver specific voltage and power to a given load while utilizing all available components.
@@ -3889,11 +3241,6 @@ The solution usually involves finding integer values for N and n.
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q11_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_1b7947b2. Analyzing Forces on Inclined Planes with Friction**
 
 **Core move:** Apply Newton's Laws and force resolution to determine unknown forces, friction, or acceleration for objects on rough inclined planes.
@@ -3920,11 +3267,6 @@ The gravitational field strength 'g' is typically left symbolic in the answer.
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_1bf60554. Analyzing Circuit Behavior with a Variable Component**
 
 **Core move:** Apply fundamental circuit laws (Ohm's Law, power equations) to calculate electrical quantities for a variable component across a specified range of values.
@@ -3948,11 +3290,6 @@ Often used to explore how a circuit parameter changes as a control variable (lik
 - `NSAA_2018_Section2_Q10_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q19_NSAA_Sec`: The question requires calculating the total electrical energy transferred to a component, which is an electrical quantity. The current in the component is variable (I = kt^2), and the calculation involves integrating the power (P=VI) over a time interval (0 to TF), aligning with the core move of applying fundamental circuit laws and power equations for a variable component across a specified range of values.
 
----
-```
-
-
-```markdown
 ## **M_1ce7a2f9. Translating Proportional Comparisons**
 
 **Core move:** Convert verbal descriptions of multiplicative relationships between quantities (e.g., "X times higher than Y", "Z percent less than A") into accurate algebraic equations.
@@ -3976,11 +3313,6 @@ Can be a foundational step for multi-part problems involving quantitative analys
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_1ef961ec. Deriving Tangent Equations for Circles**
 
 **Core move:** Apply geometric properties of circles and lines, along with algebraic manipulation, to determine the equation of a tangent at a given point on a circle.
@@ -4005,11 +3337,6 @@ Variations can include finding the point of tangency given the tangent's equatio
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_233028cd. Analyzing Biological Experimental Setups**
 
 **Core move:** Identify the aim, variables, controls, and expected outcomes of a biological experiment based on its description.
@@ -4035,11 +3362,6 @@ Often sets the stage for follow-up questions about data analysis, conclusions, o
 - `NSAA_2022_Section1_Q74_NSAA_Sec`: The question describes a biological investigation, detailing the independent variable (protease concentration), the dependent variable (rate of protein breakdown), and explicitly stating that 'all other variables were kept constant' (controls). This aligns perfectly with the core move of identifying the aim, variables, and controls of a biological experiment from its description.
 - `NSAA_2023_Section1_Q74_NSAA_Sec`: This question describes a biological experiment, including its setup, variables, controls, and results (presented in a graph). To answer 'Which of the following statements is/are correct?', the student must identify and analyze the aim, independent/dependent variables, control variables, and interpret the experimental outcomes from the provided graph, which directly matches the core move of analyzing biological experimental setups.
 
----
-```
-
-
-```markdown
 ## **M_236b636e. Multidisciplinary Analysis of Biological Transport Systems**
 
 **Core move:** Quantify various parameters of a biological transport system, including flow velocity and structural volume, by performing necessary unit conversions and applying geometric formulas, and interpret how environmental factors influence its function.
@@ -4066,11 +3388,6 @@ The biological component often requires recall of fundamental physiological proc
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q53_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_25887cc3. Deriving and Comparing Properties of Parallel Lines**
 
 **Core move:** Apply the properties of parallel lines (equal gradients) to establish the equation of a new line and determine specific characteristic points such as intercepts.
@@ -4094,11 +3411,6 @@ Ensure calculations remain manageable without a calculator for test settings.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q13_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2781e557. Stoichiometry of Redox Reactions with Half-Equations**
 
 **Core move:** Calculate the required or produced amounts (mass, volume, moles) of reactants or products in a redox reaction by combining and balancing electron transfers from provided half-equations.
@@ -4125,11 +3437,6 @@ Calculations typically involve multiple steps: initial mole calculation, balanci
 - `NSAA_2023_Section2_Q35_NSAA_Sec`: This question requires calculating the total volume of gaseous products from multiple redox reactions. This involves determining the stoichiometric ratios between reactants and products, which is derived from balancing the electron transfers in the redox half-reactions, and then applying these ratios to given masses to find the moles and ultimately the volume of gases, aligning perfectly with the core move of this schema.
 - `NSAA_2023_Section2_Q34_NSAA_Sec`: This question requires identifying the redox half-reactions occurring at the cathode and anode during different stages of electrolysis, calculating moles of substances (mass to moles, volume to moles), and using the stoichiometry of electron transfer (balancing electron transfers) to determine the amounts (volumes of gas) of products formed at each electrode.
 
----
-```
-
-
-```markdown
 ## **M_2859f9c5. Calculating Young's Modulus from Material Properties**
 
 **Core move:** Apply the definition of Young's Modulus, relating stress, strain, force, area, extension, and original length, to determine a material's elastic modulus.
@@ -4154,11 +3461,6 @@ Stress (Force/Area) should be in Pascals (N/m²), Strain (Extension/Original Len
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2b30f9b0. Calculating Total Probability of a Conditional Event**
 
 **Core move:** Apply the Law of Total Probability by summing the products of initial event probabilities and their respective conditional probabilities to determine the overall likelihood of a subsequent event.
@@ -4182,11 +3484,6 @@ Can be extended to problems requiring Bayes' Theorem by using this total probabi
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q15_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2dd5c01c. Chemical Composition and Oxidation State Analysis**
 
 **Core move:** Analyze chemical species to determine their empirical formulas from elemental composition and the oxidation states of constituent elements.
@@ -4213,11 +3510,6 @@ Can serve as a foundational step for further questions on redox reactions or org
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2e4e0d71. Simplifying Complex Algebraic Expressions**
 
 **Core move:** Apply algebraic rules and identities to transform and reduce complex expressions involving fractions, powers, and multiple variables into their simplest equivalent forms.
@@ -4244,11 +3536,6 @@ The complexity of the expressions can be varied by increasing the number of vari
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q0_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2e91cf27. Determining Geometric Series Parameters and Sum**
 
 **Core move:** Apply the formulas for terms and sum of a geometric series, using given conditions to solve for unknown parameters and derive the required sum.
@@ -4275,11 +3562,6 @@ The final answer often requires rationalization of denominators or simplificatio
 - `NSAA_2016_Section1_Q77_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q83_NSAA_Sec`: The question provides the first term and the sum to infinity of a geometric progression, with the common ratio given in terms of an unknown variable 'x'. The core task is to apply the formula for the sum to infinity of a geometric series to solve for the common ratio and subsequently for 'x', which directly aligns with the schema's core move of applying formulas to solve for unknown parameters.
 
----
-```
-
-
-```markdown
 ## **M_2ea64c88. Analyzing Chemical Equilibrium with Temperature Changes**
 
 **Core move:** Calculate the equilibrium constant at a given temperature and predict its shift based on the reaction's enthalpy change and Le Chatelier's principle when temperature changes.
@@ -4306,11 +3588,6 @@ Questions can vary the external factor (temperature, pressure, concentration, ca
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q29_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_2f9c8ef5. Equating Geometric Properties to Solve for Unknowns**
 
 **Core move:** Construct and solve an algebraic equation derived from comparing specific geometric properties of related figures.
@@ -4334,11 +3611,6 @@ Ensure the context allows for a valid solution (e.g., 'n' for number of sides mu
 - `NSAA_2017_Section1_Q11_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2018_Section1_Q83_NSAA_Sec`: The problem requires identifying geometric properties (radius from the circle's equation and the given tangent length) which, with the distance from the circle's center to point P, form a right-angled triangle. The Pythagorean theorem, an algebraic equation, is then constructed and solved using these geometric properties to find a key unknown distance (from the center to P). This process of using an algebraic equation derived from the relationships of geometric properties to find an unknown aligns with the core move of M_2f9c8ef5.
 
----
-```
-
-
-```markdown
 ## **M_304971f1. Analyzing Periodic Trends and Chemical Properties**
 
 **Core move:** Relate an element's position on the periodic table to its chemical properties and explain property variations using periodic trends and intermolecular forces.
@@ -4364,11 +3636,6 @@ Often requires knowledge of fundamental chemical principles such as electron con
 **Exemplar questions:**
 - `NSAA_2019_Section2_Q17_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_3312e959. Area of a Region Defined by Lines**
 
 **Core move:** Determine the vertices of a polygonal region by finding the intersection points of its bounding linear equations, and then compute its area.
@@ -4394,11 +3661,6 @@ Encourage sketching the graph as a primary step to verify the enclosed region an
 - `NSAA_2018_Section1_Q8_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section1_Q73_NSAA_Sec`: The question explicitly asks to find the area of a shape bounded by linear equations. The core move of schema M_3312e959 involves determining the vertices of the polygonal region formed by these lines and then calculating its area, which is precisely the required thinking pattern to solve this problem.
 
----
-```
-
-
-```markdown
 ## **M_335792d4. Analyzing Forces in Coupled Systems**
 
 **Core move:** Apply Newton's Second Law to individual components of a mechanically coupled system to derive and solve simultaneous equations for unknown forces or kinematics.
@@ -4425,11 +3687,6 @@ The magnitude of acceleration is the same for all connected objects in the syste
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q90_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_33ad8815. Transforming Algebraic Expressions to Standard Forms**
 
 **Core move:** Transform an algebraic expression into a specified standard form by using algebraic manipulation, and subsequently extract a particular constant or coefficient.
@@ -4456,11 +3713,6 @@ Can be adapted for expressions requiring factorization, expansion, or a combinat
 - `NSAA_2020_Section1_Q9_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section2_Q7_NSAA_Sec`: Part (iv) of the question directly requires transforming a previously derived algebraic expression (from part ii, not shown) into a specified standard form, and then extracting integer values for the coefficients a, b, and k. This perfectly matches the core move of schema M_33ad8815.
 
----
-```
-
-
-```markdown
 ## **M_34e83b94. Calculating Unknowns from Descriptive Statistics Relationships**
 
 **Core move:** Formulate and solve an algebraic equation by expressing the mean and median of a partially defined dataset in terms of an unknown variable, then applying a given relationship between these statistics.
@@ -4486,11 +3738,6 @@ Introduce scenarios where the exact ordering for the median calculation might ch
 - `NSAA_2022_Section1_Q8_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q4_NSAA_Sec`: The question requires formulating and solving a system of algebraic equations derived from the definitions of mean and median for a partially defined dataset. The values of the mean and median are given, which allows for the calculation of unknown variables ('x' and 'y') within the dataset, ultimately leading to the determination of the mode. This directly matches the core move of schema M_34e83b94.
 
----
-```
-
-
-```markdown
 ## **M_36f743f9. Calculating Combined Genetic and Gender Probabilities**
 
 **Core move:** Apply Mendelian inheritance principles and independent event probability rules to determine the likelihood of specific offspring characteristics, including sex.
@@ -4521,11 +3768,6 @@ Probabilities should result in simple fractions to avoid complex arithmetic and 
 - `NSAA_2021_Section2_Q41_NSAA_Sec`: The question requires applying Mendelian inheritance principles to determine the probability of a child inheriting each recessive condition from the given parental genotypes. Since the conditions are on different chromosomes, the independent event probability rule is then applied to calculate the likelihood of the child having both conditions.
 - `NSAA_2022_Section2_Q59_NSAA_Sec`: This question requires applying Mendelian inheritance principles to determine the probability of a specific genotype in an offspring, which aligns with the core move of calculating the likelihood of specific offspring characteristics using probability rules.
 
----
-```
-
-
-```markdown
 ## **M_37a04af7. Applying Domain-Specific Formulas to Solve for Unknowns**
 
 **Core move:** Apply a known formula or equation from a specific scientific or mathematical domain, substituting given values to calculate one or more unknown quantities, or to find values that satisfy a given condition.
@@ -4554,11 +3796,6 @@ Questions can involve multi-step calculations or require solving for multiple un
 - `NSAA_2017_Section2_Q11_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section2_Q5_NSAA_Sec`: The question requires the application of domain-specific formulas (Snell's Law, critical angle formula, and a given refractive index formula) from the field of optics to derive an expression for an unknown (θ1) and subsequently calculate its numerical value under specified conditions. This directly aligns with the core move of applying known formulas to solve for unknowns or satisfy conditions.
 
----
-```
-
-
-```markdown
 ## **M_38573e2f. Differentiating Atomic Species by Subatomic Particles**
 
 **Core move:** Classify atoms or ions based on their subatomic particle counts by applying definitions of element, isotope, and ion.
@@ -4583,11 +3820,6 @@ Can be extended to involve calculating mass number or atomic number.
 - `NSAA_2022_Section1_Q0_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q23_NSAA_Sec`: The question requires identifying the isotopes for each element in the molecule (C, H, O), applying the definition of an isotope to determine the number of neutrons for each specific isotope (e.g., Tritium, 3H; 12C; 16O), and then summing these subatomic particle counts across the entire molecule. This directly aligns with the core move of classifying atomic species by their subatomic particle counts using the definition of isotopes.
 
----
-```
-
-
-```markdown
 ## **M_3a25988d. Calculating Area/Perimeter of Regular Polygons**
 
 **Core move:** Apply established geometric formulas and properties for regular polygons to interconvert dimensions (e.g., side length, apothem, radius) and compute the area or perimeter.
@@ -4613,11 +3845,6 @@ Consider including scenarios where the polygon is inscribed or circumscribed wit
 - `NSAA_2017_Section1_Q18_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section1_Q7_NSAA_Sec`: This question requires applying the geometric properties and formulas specific to a regular polygon (equilateral triangle) to interconvert its given side length into the circumradius, and then using this radius to calculate the circumference (a type of perimeter) of the circumcircle. This directly aligns with the core move of schema M_3a25988d.
 
----
-```
-
-
-```markdown
 ## **M_3a692ce3. Distributing a Total into Categories**
 
 **Core move:** Allocate a total quantity into distinct, non-overlapping categories based on given criteria or proportions.
@@ -4644,11 +3871,6 @@ This pattern forms the basis for many data handling and statistical problems.
 - `NSAA_2017_Section1_Q10_NSAA_Sec`: The question requires breaking down a total number of students (100) into various distinct and non-overlapping categories (gender and subject), and then using given algebraic relationships between these categories to deduce an expression for a specific sub-total. This perfectly aligns with the core move of allocating a total quantity into distinct categories based on given criteria.
 - `NSAA_2019_Section1_Q12_NSAA_Sec`: The question provides a total sum for three numbers and their ratios. The core task is to combine these ratios to establish proportions and then allocate the total sum into the respective categories (p, q, and r) to find their individual values, which perfectly aligns with distributing a total into categories based on proportions.
 
----
-```
-
-
-```markdown
 ## **M_3c2d3d96. Calculating Distance, Speed, or Time with Geometric Paths**
 
 **Core move:** Apply the fundamental relationship (Distance = Speed × Time) to determine an unknown variable, often after calculating the total distance from given geometric properties of the path.
@@ -4672,11 +3894,6 @@ Unit consistency is crucial; prompt for conversions if necessary.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_3de6ec2f. Multi-stage Mechanics: Forces, Kinematics, and Momentum Conservation**
 
 **Core move:** Integrate calculations involving forces, constant acceleration kinematics, and the principle of conservation of momentum to solve problems involving sequential events.
@@ -4702,11 +3919,6 @@ Encourage consistent use of a sign convention for vector quantities like velocit
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q82_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_3ded199f. Calculating Component Values in a Circuit**
 
 **Core move:** Apply Ohm's Law and relevant circuit rules (series/parallel) to determine the current, potential difference, or resistance of a specific component within a circuit.
@@ -4735,11 +3947,6 @@ Calculations should primarily involve direct application of Ohm's Law (V=IR) and
 - `NSAA_2021_Section2_Q7_NSAA_Sec`: This question requires calculating the equivalent EMF and internal resistance of the battery pack using series and parallel rules, then applying Ohm's Law to find the total current in the circuit, and finally calculating the power dissipated in the external resistor using the derived current and its resistance. This perfectly matches the core move of applying circuit rules and Ohm's Law to determine values within a circuit.
 - `NSAA_2021_Section2_Q10_NSAA_Sec`: The question asks for the current at a specific point 'P' within a circuit, given an initial current of 10 mA. This requires applying fundamental circuit rules (such as Kirchhoff's Current Law for current division or series current rules) to determine a specific component's current, which is the core move of schema M_3ded199f. The options suggest a current division scenario where 10 mA splits into two branches, e.g., 3.0 mA and 7.0 mA.
 
----
-```
-
-
-```markdown
 ## **M_3ed5cf63. Applying Energy and Power Principles with Efficiency**
 
 **Core move:** Apply the definitions of power, energy, and efficiency, along with relevant physical formulas, to determine an unknown quantity in a system involving energy transformations.
@@ -4770,11 +3977,6 @@ Can involve fluid dynamics concepts like volume flow rate.
 - `NSAA_2020_Section2_Q7_NSAA_Sec`: The question requires calculating initial and final kinetic energy, determining the total change in kinetic energy, and then computing the average rate of loss of kinetic energy (average power) by dividing the energy change by the given time. This directly applies the definitions of kinetic energy and average power, and uses the impulse-momentum theorem, fitting the core move of applying energy and power principles with relevant physical formulas to determine an unknown quantity.
 - `NSAA_2022_Section2_Q10_NSAA_Sec`: The question requires calculating energy from a given power function over a time interval (involving integration), and then applying the concept of efficiency to determine the wasted energy. This directly aligns with the core move of applying definitions of power, energy, and efficiency to find an unknown quantity in an energy transformation context.
 
----
-```
-
-
-```markdown
 ## **M_3fce3961. Simplifying Rational Algebraic Expressions**
 
 **Core move:** Factor polynomials in numerators and denominators to simplify individual terms, and then combine rational expressions over a common denominator.
@@ -4800,11 +4002,6 @@ Constraints on variables (e.g., x>1) should be noted, but often don't affect the
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q2_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_41ab00ac. Determine Young's Modulus from Load and Deformation**
 
 **Core move:** Combine geometric analysis and force equilibrium to derive stress and strain, then compute Young's modulus.
@@ -4834,11 +4031,6 @@ Ensure all quantities are in consistent SI units.
 - `NSAA_2022_Section2_Q13_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section2_Q13_NSAA_Sec`: This question requires calculating the extension of the wire using geometric analysis (Pythagorean theorem) and determining the tension in the wire using force equilibrium (resolving forces vertically). These derived values for extension and force are then used to calculate stress and strain, ultimately leading to the Young's Modulus. This perfectly aligns with the core move of combining geometric analysis and force equilibrium to derive stress and strain, then computing Young's modulus.
 
----
-```
-
-
-```markdown
 ## **M_41db1444. Determining Extent of Gas Dissociation from Volume Change**
 
 **Core move:** Calculate the initial moles of reactant, set up an ICE table to express equilibrium total moles in terms of the extent of dissociation, and equate this to the total moles derived from the given equilibrium volume and molar volume.
@@ -4862,11 +4054,6 @@ Ensure all units are consistent throughout the calculation (e.g., volume in dm³
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_447b11ba. Applying Laws of Indices**
 
 **Core move:** Apply the fundamental laws of exponents to combine and simplify terms in an algebraic expression.
@@ -4896,11 +4083,6 @@ Can be structured as 'simplify' or 'which is equivalent to'.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_45fbb56f. Making a Variable the Subject in Rational Expressions**
 
 **Core move:** Rearrange an algebraic equation, typically involving rational expressions and potentially quadratic terms, to isolate a specific variable.
@@ -4927,11 +4109,6 @@ Ensure the question explicitly states which variable to make the subject.
 - `NSAA_2016_Section1_Q9_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section1_Q15_NSAA_Sec`: The question requires rearranging an algebraic equation that contains rational expressions to make 'y' the subject, which perfectly aligns with the core move of isolating a specific variable in rational expressions.
 
----
-```
-
-
-```markdown
 ## **M_49102f46. Analyzing Oxidation States and Redox Products**
 
 **Core move:** Apply rules for assigning oxidation states to elements in compounds and ions, and deduce products of common redox reactions given specific reagents and conditions.
@@ -4957,11 +4134,6 @@ Common oxidizing/reducing agents should be featured (e.g., H2O2, MnO4-, Cr2O72-,
 - `NSAA_2016_Section2_Q22_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q39_NSAA_Sec`: This question requires a multi-step analysis. First, the quantity of iodine produced must be determined using titration stoichiometry. This quantity, along with the initial amount of reactant, is then used to deduce the effective stoichiometric ratio of lanthanum to ion Q in the final product. Finally, applying the given oxidation states for iodine (+7) and oxygen (-2) in ion Q, combined with the deduced charge of ion Q from its combination with La³⁺, allows for the deduction of ion Q's chemical formula. This entire process aligns with applying rules for assigning oxidation states and deducing the formula of a redox product based on specific reaction conditions and quantitative data.
 
----
-```
-
-
-```markdown
 ## **M_49723874. Solving Simultaneous Equations for Combined Costs**
 
 **Core move:** Formulate a system of linear equations from given conditions, solve for the individual unit costs, and then compute a specified combined cost.
@@ -4986,11 +4158,6 @@ Vary the complexity by changing the number of items or the coefficients in the e
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_4b294c20. Calculate Cumulative Percentage Change**
 
 **Core move:** Compute the overall effect of a repeated percentage change applied sequentially over multiple periods.
@@ -5020,11 +4187,6 @@ Ensure the numerical values are manageable for mental arithmetic or typical calc
 - `NSAA_2020_Section1_Q13_NSAA_Sec`: The question requires calculating the net effect of two sequential percentage changes (a 25% reduction followed by a 25% increase) to determine the relationship between the original price and the customer's incorrectly calculated price. This directly matches the core move of computing the overall effect of repeated percentage changes applied sequentially.
 - `NSAA_2022_Section1_Q5_NSAA_Sec`: The question requires understanding and applying sequential percentage changes to work backwards from a final value to an initial value. This directly aligns with the core move of computing the overall effect of repeated percentage changes, as the overall multiplicative factor must first be determined or conceptualized to solve the problem, whether working forwards or backwards.
 
----
-```
-
-
-```markdown
 ## **M_4b4199dd. Applying Defined Physical/Chemical Formulas**
 
 **Core move:** Apply a given mathematical formula by correctly identifying, substituting, and manipulating variables and their units to calculate a specific outcome.
@@ -5048,11 +4210,6 @@ Questions can involve single calculations, comparisons between different scenari
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q19_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_4c72332d. Deducing Organic Structures from Reaction Outcomes**
 
 **Core move:** Deduce the structural formulas of organic molecules by interpreting the number and types of products formed from specific chemical reactions, applying knowledge of isomerism and reactivity patterns.
@@ -5084,11 +4241,6 @@ Careful attention to IUPAC nomenclature can help in identifying unique isomers.
 - `NSAA_2022_Section2_Q25_NSAA_Sec`: The question requires identifying all structural isomers of C5H12O (alcohols), predicting the oxidation product for each based on its structure and reactivity patterns (primary/secondary/tertiary alcohols), and then determining which of these products would give a specific reaction outcome (yellow precipitate from iodoform test). This directly aligns with the core move of deducing structural formulas (of the products) by interpreting reaction outcomes and applying knowledge of isomerism and reactivity.
 - `NSAA_2023_Section2_Q42_NSAA_Sec`: The question requires identifying the type of organic reaction (condensation), the specific organic product (a disaccharide like maltose) based on the reactants (implied monosaccharides), and then deducing a structural feature (number of hydroxyl groups) of the formed product. This directly aligns with the schema's core move of 'Deduce the structural formulas of organic molecules by interpreting the number and types of products formed from specific chemical reactions, applying knowledge of isomerism and reactivity patterns', as determining the disaccharide and its hydroxyl groups necessitates understanding its structural formula derived from the reaction.
 
----
-```
-
-
-```markdown
 ## **M_4d1ced66. Calculating Relative Atomic Mass from Isotopic Data**
 
 **Core move:** Calculate the average relative atomic mass of an element or determine the natural abundances of its isotopes by applying the weighted average formula that considers the mass and relative abundance of each isotope.
@@ -5113,11 +4265,6 @@ Be aware that some questions might use integer mass numbers as approximations fo
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q44_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_4d734405. Calculating Mendelian Probabilities Across Generations**
 
 **Core move:** Apply Mendelian inheritance principles and conditional probability to determine the likelihood of specific genotypes or phenotypes appearing in offspring across multiple generations.
@@ -5142,11 +4289,6 @@ Can include scenarios where an individual's genotype must be inferred probabilis
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q80_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_4daafb55. Characterizing and Ordering Spectrum Components**
 
 **Core move:** Recall and apply knowledge of the order and characteristic properties (e.g., frequency, wavelength, energy ranges) of components within a physical spectrum.
@@ -5173,11 +4315,6 @@ Can involve identifying common applications for different parts of the spectrum.
 - `NSAA_2019_Section1_Q8_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section2_Q13_NSAA_Sec`: The question asks to identify which part of the electromagnetic spectrum a calculated vibration frequency corresponds to. This directly requires recalling and applying knowledge of the characteristic properties and order of components within the electromagnetic spectrum.
 
----
-```
-
-
-```markdown
 ## **M_4db1cf44. Manipulating Rates and Ratios for Totals**
 
 **Core move:** Calculate an absolute quantity or a related ratio by correctly applying the definition of a rate or density (amount per unit of another amount).
@@ -5202,11 +4339,6 @@ Focus on the 'per unit' aspect and what it implies for the calculation.
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_517ff042. Interpreting Problem Statements**
 
 **Core move:** Extract all relevant numerical information, explicit questions, and implicit constraints from a given problem text.
@@ -5235,11 +4367,6 @@ Design questions where the 'real' question is embedded within context.
 - `NSAA_2017_Section2_Q30_NSAA_Sec`: The provided text does not contain a mathematical question. Applying the 'Interpreting Problem Statements' schema, one attempts to extract relevant numerical information, explicit questions, and implicit constraints, but finds none in this case. The core move of interpretation is performed, even if the result is an empty set of extracted information.
 - `NSAA_2019_Section2_Q32_NSAA_Sec`: The 'question' consists of the number '32' followed by blank lines. The core move of schema M_517ff042 is to 'Extract all relevant numerical information, explicit questions, and implicit constraints from a given problem text'. In this case, the number '32' is the only numerical information present in the 'problem text', and the process of identifying it (and the absence of an explicit question or constraints) directly aligns with interpreting the problem statement, however minimal it may be.
 
----
-```
-
-
-```markdown
 ## **M_51b2d9d0. Interpreting Exam Paper Structure**
 
 **Core move:** Extract information about the subjects, sections, and page allocations from an exam paper's content listing.
@@ -5285,11 +4412,6 @@ Can be extended to include different organisms or different starting chromosome 
 - `NSAA_2016_Section1_Q67_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q53_NSAA_Sec`: The question requires applying knowledge about the differential DNA content between X and Y sperm (gametes), which is a direct consequence of chromosome segregation during meiosis. This aligns with the core move of determining DNA strand content in gametes produced from a diploid cell.
 
----
-```
-
-
-```markdown
 ## **M_55b867c7. Multi-Step Unit Conversion and Algebraic Expression Construction**
 
 **Core move:** Construct a multi-variable algebraic expression by sequentially applying unit conversion factors and rates to transform an initial quantity into a target quantity with different units.
@@ -5316,11 +4438,6 @@ Distractor options should include common mistakes, such as inverted terms, missi
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q19_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_564a115a. Identifying Non-Content Exam Paper Elements**
 
 **Core move:** Distinguish administrative or structural pages from actual problem-solving questions within an exam paper.
@@ -5344,11 +4461,6 @@ The focus is on interpreting the structure and purpose of the document rather th
 - `NSAA_2016_Section2_Q24_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section2_Q3_NSAA_Sec`: The provided text is an exam paper's table of contents or structural overview, not a problem-solving question. This matches the core move of distinguishing administrative or structural pages from actual problem-solving content.
 
----
-```
-
-
-```markdown
 ## **M_5662fe5f. Applying Exponent Laws**
 
 **Core move:** Apply exponent laws (multiplication, division, power of a power, negative exponents) to simplify algebraic expressions containing powers of variables and constants.
@@ -5375,11 +4487,6 @@ Ensure that common misapplications of exponent rules lead to plausible incorrect
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_566b137b. Recognizing Missing Problem Content**
 
 **Core move:** Identify the absence of a clear problem statement, relevant numerical data, or an explicit question to be answered within the provided text.
@@ -5404,11 +4511,6 @@ Such 'questions' typically indicate an error in material generation or presentat
 - `NSAA_2017_Section1_Q3_NSAA_Sec`: The prompt asks to analyze a 'Maths question', but the provided text is a table of contents for an exam paper, not an actual question, problem statement, or numerical data. The core move of recognizing the absence of the problem content directly applies here.
 - `NSAA_2022_Section1_Q3_NSAA_Sec`: The provided text is labeled as 'QUESTION' but does not contain an explicit problem statement or a question to be answered, which directly matches the core move of identifying missing problem content.
 
----
-```
-
-
-```markdown
 ## **M_5a1dd45f. Identifying Biological Structures from Descriptions**
 
 **Core move:** Infer the identity of a biological entity or its observable features by integrating descriptive cues with domain-specific knowledge of structure and scale.
@@ -5435,11 +4537,6 @@ Answers often involve selecting from a list of plausible biological structures.
 - `NSAA_2016_Section1_Q62_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q62_NSAA_Sec`: The question requires identifying characteristics of a cell by integrating specific descriptive cues (cell wall, cell membrane, no mitochondria) with domain-specific knowledge of cell biology to infer a correct statement about its nature, which perfectly aligns with the core move of inferring identity or features from descriptions.
 
----
-```
-
-
-```markdown
 ## **M_5d190467. Solving Constant Acceleration Kinematics**
 
 **Core move:** Apply the relevant kinematic equations to calculate unknown motion parameters (displacement, velocity, acceleration, time) for objects undergoing constant acceleration.
@@ -5465,11 +4562,6 @@ Consider breaking complex motions into simpler phases if necessary (e.g., up to 
 - `NSAA_2018_Section1_Q74_NSAA_Sec`: The question requires applying a specific kinematic equation (v² = u² + 2as) to find the acceleration, given initial velocity, final velocity, and displacement, which directly aligns with the core move of applying relevant kinematic equations to calculate unknown motion parameters under constant acceleration.
 - `NSAA_2018_Section1_Q90_NSAA_Sec`: The problem requires calculating the total time of flight for the first object using kinematic equations under constant acceleration (gravity). This time is then used to determine the duration of fall for the second object, from which its release height can be calculated, again using kinematic equations for constant acceleration. This directly aligns with applying kinematic equations to find unknown motion parameters.
 
----
-```
-
-
-```markdown
 ## **M_5dff36d3. Ordering Elements by Periodic Property**
 
 **Core move:** Apply knowledge of periodic trends and their exceptions to order chemical elements based on a specified atomic or chemical property.
@@ -5495,11 +4587,6 @@ The task typically involves matching elements to their values or ordering them c
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q32_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6029763c. Applying Conservation of Momentum in Collisions**
 
 **Core move:** Apply the principle of conservation of linear momentum to a system of colliding objects to determine unknown velocities or impulses.
@@ -5524,11 +4611,6 @@ Can be extended to scenarios where objects combine or separate.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q76_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_612ed4aa. Analyzing Physical Variation Models**
 
 **Core move:** Interpret and apply a given mathematical function to model the variation of a physical quantity, either by calculating specific values or analyzing its functional behavior.
@@ -5554,11 +4636,6 @@ May involve calculus if questions about rates of change or turning points are as
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_622816e1. Simplifying Rational Algebraic Expressions**
 
 **Core move:** Combine or reduce rational expressions by finding a common denominator, performing operations, and factoring.
@@ -5585,11 +4662,6 @@ Consider mentioning restrictions on the variable (i.e., denominators cannot be z
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_622b9d44. Predicting Mass Spectrum Peaks from Isotopic Composition**
 
 **Core move:** Calculate all possible molecular masses of a compound by considering the isotopic variations of its constituent atoms, and determine the relative intensities of the corresponding molecular ion peaks based on the natural abundances of these isotopes.
@@ -5618,11 +4690,6 @@ The 'most intense peak(s)' requires a calculation of relative abundances for all
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_624e224a. Calculating Unknown Dimensions in General Triangles**
 
 **Core move:** Apply the Sine Rule or Cosine Rule to determine unknown side lengths or angles in non-right-angled triangles.
@@ -5647,11 +4714,6 @@ Consider scenarios where one rule (e.g., Sine Rule) might lead to an ambiguous c
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q61_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_628a6f0a. Integrating Energy Conservation and Kinematics**
 
 **Core move:** Apply the principle of conservation of mechanical energy or the work-energy theorem in conjunction with kinematic equations to determine unknown quantities in motion problems.
@@ -5675,11 +4737,6 @@ Questions can vary the unknown, asking for initial velocity, height, time, or ra
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6293bac3. Determining Specific Coefficients in Polynomial Expansions**
 
 **Core move:** Apply algebraic identities and the binomial theorem to efficiently identify and calculate the coefficient of a specified term in a polynomial expansion.
@@ -5706,11 +4763,6 @@ Be mindful of multiple factors and how they contribute to the desired power of x
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q85_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6338643e. Determine Shape Dimensions from Partial Vertices**
 
 **Core move:** Apply coordinate geometry and geometric principles to identify all valid configurations of a shape given partial vertex information, then calculate and compare their dimensions.
@@ -5735,11 +4787,6 @@ The calculations typically involve the distance formula, sometimes midpoint form
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_63470767. Quantifying and Comparing Biological Properties**
 
 **Core move:** Compute specific numerical values for biological components by applying given rates and proportions, and simultaneously evaluate qualitative comparisons between biological states using factual knowledge.
@@ -5765,11 +4812,6 @@ Ensure both aspects of the question are addressed for a complete answer.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q42_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_63a3ced2. Relating Dimensions of 3D Shapes via Properties**
 
 **Core move:** Formulate and solve an algebraic equation by applying established geometric formulas for surface area or volume of 3D objects, relating their dimensions according to given conditions.
@@ -5796,11 +4838,6 @@ Often involves expressing one variable in terms of another, leading to a ratio o
 - `NSAA_2023_Section1_Q13_NSAA_Sec`: The question requires using the properties of similar objects, specifically the relationship between their surface areas and volumes (Area ratio = k^2, Volume ratio = k^3), to establish an algebraic equation relating the volumes and then solving it. This directly aligns with 'Formulate and solve an algebraic equation by applying established geometric formulas for surface area or volume of 3D objects, relating their dimensions according to given conditions.'
 - `NSAA_2016_Section2_Q38_NSAA_Sec`: The question requires applying established geometric formulas for surface area and volume of a 3D object (a tube/cylinder) and then relating these properties (SA and V) by calculating their ratio. This directly aligns with the core move of applying formulas for 3D objects and relating their dimensions/properties.
 
----
-```
-
-
-```markdown
 ## **M_66cabcc8. Quantifying Reaction Products via Calorimetry and Stoichiometry**
 
 **Core move:** Determine the quantity (mass or volume) of a specific reaction product by first calculating the heat exchanged using calorimetric data, then relating this heat to the moles of reactant via the given enthalpy change, and finally applying reaction stoichiometry and appropriate conversion factors.
@@ -5827,11 +4864,6 @@ Questions can vary the unknown, asking for ΔH, initial mass of reactant, or fin
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q24_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_66dd1b9b. Inferring Quantity from Combinatorial Probability**
 
 **Core move:** Derive an unknown quantity within a set by forming and solving an equation based on a given probability calculated from combinations of selections without replacement.
@@ -5856,11 +4888,6 @@ Ensure the question clearly states 'at random' and implies 'without replacement'
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q15_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_67471921. Quantitative Chemical Calculation and Qualitative Classification**
 
 **Core move:** Apply specific chemical formulas or principles to calculate quantitative values and determine qualitative features of chemical species or reactions.
@@ -5886,11 +4913,6 @@ Parts of the question may build upon each other (e.g., calculation followed by i
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6959e5e9. Analyzing Surface Area to Volume Ratio Scaling**
 
 **Core move:** Explain how the surface area to volume ratio of 3D objects changes with their linear dimensions, applying scaling principles derived from geometric formulas.
@@ -5913,11 +4935,6 @@ Often involves interpreting or explaining a phenomenon based on this mathematica
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_69fc19a4. Calculating Enthalpy Changes Using Hess's Law**
 
 **Core move:** Manipulate given standard enthalpy changes of constituent reactions to determine the enthalpy change of a target reaction using Hess's Law.
@@ -5947,11 +4964,6 @@ Values should allow for clear calculation, possibly resulting in whole numbers o
 - `NSAA_2021_Section2_Q34_NSAA_Sec`: The problem requires calculating the enthalpy change for the sublimation of iodine by combining the given standard enthalpy of formation of hydrogen iodide (from solid iodine), and the enthalpy of reaction for hydrogen iodide formation (from gaseous iodine) which is derived from bond enthalpy values. This process involves manipulating these constituent enthalpy changes using Hess's Law to determine the target enthalpy change.
 - `NSAA_2022_Section2_Q28_NSAA_Sec`: The question requires calculating the enthalpy change of formation for calcium chloride by manipulating a series of given enthalpy changes for constituent reactions and then summing them, which is a direct application of Hess's Law as described in the core move of M_69fc19a4.
 
----
-```
-
-
-```markdown
 ## **M_6b0a0838. Analyzing Mendelian Ratios with Selection**
 
 **Core move:** Apply Mendelian inheritance principles, incorporating selection pressures (e.g., lethal alleles), to determine the altered genotype and phenotype ratios in a surviving population.
@@ -5977,11 +4989,6 @@ Be mindful of how gene location (autosomal vs. sex chromosome) impacts inheritan
 - `NSAA_2021_Section1_Q69_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section1_Q77_NSAA_Sec`: The question requires applying Mendelian inheritance principles (heterozygous cross) to evaluate possible genotype and phenotype ratios within a resulting 'young adult fly population'. This directly aligns with the schema's core move of analyzing Mendelian ratios in a surviving population, even if specific selection pressures are not explicitly detailed, the 'could be correct' phrasing implies considering real-world outcomes that might deviate from ideal ratios, often due to factors like selection.
 
----
-```
-
-
-```markdown
 ## **M_6ba9782e. Interpreting Structured Numerical Data**
 
 **Core move:** Systematically navigate a given grid or table of numbers to extract specific values or enumerate elements based on defined numerical or positional criteria.
@@ -6007,11 +5014,6 @@ Ensure the complexity is appropriate for a 'Maths' question, e.g., asking for si
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6c393b6b. Stoichiometric Analysis in Titrations**
 
 **Core move:** Determine unknown reactant properties or identities by interpreting quantitative titration data, and then apply stoichiometric principles to calculate quantities of products or other reactants in related reactions.
@@ -6038,11 +5040,6 @@ Answers often involve specific quantities of products, requiring precise calcula
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q50_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6d49e166. Comparing Biological Dimensions with Unit Conversion and Scaling**
 
 **Core move:** Convert biological dimensions across various units and scales, including magnification, to accurately compare and identify structures.
@@ -6067,11 +5064,6 @@ The biological context should be clear but not overly complex, allowing the focu
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q55_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6d4ca1f8. Deduce Organic Structure from Quantitative Reactions**
 
 **Core move:** Deduce the structure or molecular formula of an unknown organic compound by quantitatively analyzing its reactions and applying principles of stoichiometry, redox chemistry, and functional group behavior.
@@ -6098,11 +5090,6 @@ Often involves interpreting electron changes in redox reactions for organic comp
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q39_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6d926509. Balancing Moments for Equilibrium**
 
 **Core move:** Apply the principle of moments (sum of clockwise moments equals sum of anticlockwise moments) to determine unknown forces, masses, or positions required for rotational equilibrium.
@@ -6127,11 +5114,6 @@ Questions can be extended to include multiple forces or objects.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q9_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6e1820ed. Identifying Biological Structures from Diagrams**
 
 **Core move:** Accurately name specific anatomical or biological structures by visually recognizing them in a provided diagram.
@@ -6155,11 +5137,6 @@ Questions might present structures with numerical labels and ask to match them t
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q70_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_6e4fd9a6. Analyzing Circuit Duration from Cell Energy Capacity**
 
 **Core move:** Calculate the power dissipated in various circuit configurations and use the total energy capacity of the power sources to determine the operational duration.
@@ -6186,11 +5163,6 @@ The problem often involves comparing relative durations, so a base case (e.g., t
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q11_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_70189334. Identifying Missing Mathematical Problems**
 
 **Core move:** Determine if the provided text constitutes a complete and solvable mathematical problem suitable for analysis.
@@ -6214,11 +5186,6 @@ Requires clear criteria for what constitutes a 'valid' problem statement.
 - `NSAA_2017_Section1_Q5_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q80_NSAA_Sec`: The provided text is presented as a 'Maths question' but is in fact a set of administrative instructions for an exam paper, not a solvable mathematical problem. This directly aligns with the core move of determining if the provided text constitutes a complete and solvable mathematical problem suitable for analysis.
 
----
-```
-
-
-```markdown
 ## **M_7027d4f3. Pythagorean Theorem in Related Right Triangles**
 
 **Core move:** Apply the Pythagorean theorem to multiple interconnected right-angled triangles to establish and solve a system of algebraic equations for unknown side lengths.
@@ -6245,11 +5212,6 @@ The final answer can be a numerical value, or an expression involving radicals.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q2_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_710e5702. Calculating Particle Velocity in Slit Selectors**
 
 **Core move:** Apply kinematic and rotational motion principles to determine the linear velocity of particles filtered by a rotating slit system.
@@ -6273,11 +5235,6 @@ Ensure all units are consistent before performing calculations.
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_713af0f5. Calculate Composite Area from Basic Geometric Shapes**
 
 **Core move:** Decompose a complex geometric region into simpler, known shapes (e.g., squares, triangles, sectors, segments) and sum or subtract their individual areas to find the total area.
@@ -6302,11 +5259,6 @@ Solutions typically involve constants like π and algebraic terms based on given
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_717df325. Deducing Chemical Formulas from Reaction Stoichiometry**
 
 **Core move:** Determine the empirical or molecular formula of an unknown substance by quantitatively analyzing a chemical reaction's reactants and known products, applying mole conversions and the conservation of elements.
@@ -6331,11 +5283,6 @@ Can be a multi-step problem involving other stoichiometric calculations like bal
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q16_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_720e227f. Calculating Total Combinations from Independent Choices**
 
 **Core move:** Determine the total number of possible outcomes by multiplying the number of options for each independent choice or component.
@@ -6359,11 +5306,6 @@ Distinguish this from situations where selections are made 'without replacement'
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_72677c80. Applying Periodic Trends for Group Elements**
 
 **Core move:** Infer the relative property of a specific element within a periodic group by applying established periodic trends to its position.
@@ -6391,11 +5333,6 @@ Questions can ask to identify an element, predict a property, or explain the und
 - `NSAA_2022_Section2_Q21_NSAA_Sec`: The core of this question relies on inferring the elements based on their periodic properties (electron affinity and first ionisation energy) using established periodic trends across periods and down groups. Once the elements are identified, the subsequent steps of determining the product and its molar mass are straightforward calculations.
 - `NSAA_2023_Section2_Q31_NSAA_Sec`: The question requires using solubility data of Group 2 sulfates to infer the position of element X relative to Calcium, and then applying periodic trends to determine the relative thermal stability of XCO3. This directly aligns with the core move of inferring relative properties of group elements by applying established periodic trends.
 
----
-```
-
-
-```markdown
 ## **M_72682ff8. Identifying Insufficient Problem Information**
 
 **Core move:** Determine if a given mathematical problem contains all the necessary data and a clear query to be solvable.
@@ -6420,11 +5357,6 @@ When generating similar questions, ensure the missing information is critical an
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_75022e20. Calculating Time of Flight in TOF Mass Spectrometry**
 
 **Core move:** Apply the relationships between kinetic energy, mass, velocity, and distance to determine or compare time of flight for accelerated particles.
@@ -6448,11 +5380,6 @@ This leads to the crucial proportionality t ∝ sqrt(m) when the distance (d) an
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q31_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_752d0ebb. Comparing Gas Diffusion and Kinetic Properties**
 
 **Core move:** Apply Graham's Law of Diffusion and the Kinetic Theory of Gases to compare the relative speeds, diffusion times, and average kinetic energies of different gases under varying temperature and mass conditions.
@@ -6477,11 +5404,6 @@ Highlight that the relative order of diffusion rates (and thus detection times) 
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q31_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7623e2ea. Work Done in Elastic Deformation**
 
 **Core move:** Apply the relationships between stress, strain, Young's modulus, and geometric properties to calculate the work done (or elastic potential energy stored) during the elastic deformation of a material.
@@ -6507,11 +5429,6 @@ The work done can be calculated as 1/2 * Force * Extension, or 1/2 * Stress * St
 - `NSAA_2020_Section2_Q0_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section2_Q13_NSAA_Sec`: The question requires calculating the elastic potential energy stored in an elastic cord due to its extension. The extension is determined by geometric properties (the radius of the ring). This directly aligns with the core move of applying relationships (like the elastic potential energy formula E = 1/2 kx^2) and geometric properties to calculate energy stored during elastic deformation.
 
----
-```
-
-
-```markdown
 ## **M_76588e58. Inferring Right Triangle Properties for Area**
 
 **Core move:** Deduce implicit properties of a right-angled triangle from partial information to enable calculation of its area using the Pythagorean theorem and the standard area formula.
@@ -6535,11 +5452,6 @@ Ensure values for dimensions lead to solvable expressions for area.
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q2_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7771ad3d. Applying Biological Definitions to Scenarios**
 
 **Core move:** Evaluate given biological scenarios or situations to determine if they exemplify a specific biological concept or process.
@@ -6563,11 +5475,6 @@ The question should involve qualitative reasoning rather than quantitative calcu
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q61_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_78346fd1. Analyzing Ratios and Counts in Biological Samples**
 
 **Core move:** Calculate quantities like total component volume, average cell volume, or concentration within a biological sample using given cell counts, volume ratios, and unit conversions.
@@ -6593,11 +5500,6 @@ Focus should be on the quantitative aspects, rather than complex biological reca
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q42_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_786e1e97. Applying Biological Knowledge of Cells**
 
 **Core move:** Recall and apply factual knowledge about the structural and functional properties of different cell types within a healthy human organism to evaluate given statements.
@@ -6628,11 +5530,6 @@ The 'no mutations' clause simplifies the problem by removing genetic variability
 - `NSAA_2017_Section2_Q23_NSAA_Sec`: The question requires recalling and applying factual knowledge about different cell types to identify them from provided figures, which directly aligns with the core move of applying biological knowledge of cells.
 - `NSAA_2023_Section2_Q48_NSAA_Sec`: The question requires recalling and applying factual biological knowledge about the relative sizes (diameters) of different structures within the human respiratory system (trachea, bronchus, bronchiole, alveolus) to order them or match them to given diameters. This directly aligns with the core move of applying factual knowledge about structural properties within a healthy human organism.
 
----
-```
-
-
-```markdown
 ## **M_7968a109. Calculating Net Effect of Sequential Percentage Changes**
 
 **Core move:** Apply multiplicative factors to a quantity to determine its final value after a series of percentage increases or decreases.
@@ -6657,11 +5554,6 @@ Can compare outcomes of different sequences of percentage changes.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q7_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7a0da6ae. Analyzing Motion with Variable Acceleration**
 
 **Core move:** Describe the qualitative changes in acceleration, velocity, and displacement by considering the varying net forces acting on an object during its motion.
@@ -6686,11 +5578,6 @@ Ensure the description covers the initial, intermediate, and final states of acc
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7a67f0df. Analyzing Arithmetic Sequences from Nth Term Formula**
 
 **Core move:** Deduce properties of an arithmetic sequence, such as its common difference and the position of a specific value, directly from its given algebraic nth term formula.
@@ -6715,11 +5602,6 @@ Emphasize the distinction between the 'nth term formula' and the 'term-to-term r
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q2_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7ba6d005. Simplifying Algebraic Rational Expressions**
 
 **Core move:** Factorize quadratic expressions in numerators and denominators, then simplify algebraic fractions by cancelling common factors.
@@ -6744,11 +5626,6 @@ Check for restrictions on the variable (denominators cannot be zero).
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7c78e947. Solving for Unknowns in Selection Probabilities**
 
 **Core move:** Formulate a probability equation for successive selections without replacement, often involving combinations, and solve the resulting algebraic equation for an unknown quantity.
@@ -6775,11 +5652,6 @@ Questions can involve setting up the probability using either sequential conditi
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q15_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7cf3f483. Analyzing Data Trends in Investigations**
 
 **Core move:** Evaluate statements about an experimental investigation by identifying patterns, trends, and specific values within a given numerical dataset.
@@ -6804,11 +5676,6 @@ Can be extended to include questions about identifying outliers or inconsistenci
 - `NSAA_2022_Section1_Q70_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q90_NSAA_Sec`: The question provides numerical data related to a biological process ('blood output in dm3 from the left ventricle of the heart each minute') and asks to evaluate statements based on this data. This directly aligns with the core move of identifying patterns, trends, and specific values within a given numerical dataset from an experimental investigation.
 
----
-```
-
-
-```markdown
 ## **M_7dbc7974. Algebraic Probabilities in Overlapping Categories**
 
 **Core move:** Translate given categorical data into algebraic expressions for counts of overlapping and non-overlapping subsets, form a probability ratio, and solve the resulting equation for an unknown variable.
@@ -6834,11 +5701,6 @@ Can be extended to three categories for increased complexity, requiring careful 
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q14_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7e1830fc. Counting Solutions Graphically for Transcendental Equations**
 
 **Core move:** Determine the number of intersections of two functions' graphs by analyzing their properties and behavior within a specified interval.
@@ -6867,11 +5729,6 @@ Questions often involve sin x = kx, cos x = kx, tan x = kx, or x^n = sin x, etc.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7ee16792. Interpreting Qualitative Relationships**
 
 **Core move:** Identify and articulate the directional relationship (positive, negative, or no correlation) between two described variables based on a given qualitative statement.
@@ -6895,11 +5752,6 @@ Avoid introducing numbers or units unless the schema is specifically about quant
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_7ff16a1f. Deducing Compound Properties and Reactions**
 
 **Core move:** Deduce the chemical formula, bonding type, and electrolytic behavior of a compound based on its formation reaction and observed physical/chemical properties.
@@ -6927,11 +5779,6 @@ Electrolysis aspects should clearly indicate molten or aqueous states as it affe
 - `NSAA_2021_Section2_Q31_NSAA_Sec`: This question requires deducing the chemical formula of the anion (BF₄⁻) from quantitative elemental analysis (mass data), and then using this formula to determine its 'bonding type' (electron configuration for VSEPR) to infer a 'property' (the molecular shape). This directly aligns with the schema's core move of deducing chemical formula and properties based on observed data.
 - `NSAA_2021_Section2_Q38_NSAA_Sec`: This question requires deducing the structures of a series of organic compounds (P, Q, S, T, U) by interpreting a sequence of reactions, applying knowledge of functional group transformations, and utilizing observed chemical properties and tests (e.g., Tollens' reagent, sodium carbonate test, stereoisomerism). This directly aligns with the core move of deducing compound properties and reactions based on formation reactions and observed physical/chemical properties.
 
----
-```
-
-
-```markdown
 ## **M_81162d8d. Analyzing Data Point Addition on Descriptive Statistics**
 
 **Core move:** Determine the necessary or possible changes in mean, median, and range when a new data point is added to an existing dataset, based on its value relative to the original dataset's statistics.
@@ -6955,11 +5802,6 @@ It is often helpful to use small example datasets to test different scenarios an
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q17_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_81ea8a2d. Comprehensive Stoichiometry with Deductive Reasoning**
 
 **Core move:** Calculate an unknown quantity in a chemical reaction by first inferring the formula of a reactant and the balanced chemical equation from descriptive and quantitative information, then applying stoichiometric ratios and unit conversions.
@@ -6984,11 +5826,6 @@ Emphasize the step-by-step nature of the calculation, from formula deduction to 
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q26_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_82f92a71. Analyzing Biomolecule Composition and Sequence Isomers**
 
 **Core move:** Deduce the constituent monomers of a complex biomolecule using stoichiometric data and overall molecular mass, then determine the number of possible sequence isomers.
@@ -7014,11 +5851,6 @@ Options in multiple-choice questions can sometimes provide critical information 
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q49_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_83f49809. Stoichiometric Mass-to-Mass Conversions**
 
 **Core move:** Convert the mass of one chemical substance to the equivalent mass of another substance using molar masses and stoichiometric ratios derived from a balanced chemical equation.
@@ -7045,11 +5877,6 @@ Vary the complexity by introducing limiting reactants, percentage yield, or impu
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q14_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_89108f3b. Solving Basic Linear Inequalities**
 
 **Core move:** Algebraically manipulate a given linear inequality to isolate the variable and determine its range.
@@ -7076,11 +5903,6 @@ Question values should lead to clear and unambiguous solutions from the provided
 - `NSAA_2016_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q7_NSAA_Sec`: The question requires setting up an inequality (nth term of S > nth term of T) and then algebraically manipulating this linear inequality to solve for 'n', ultimately finding the smallest integer value that satisfies the condition. This directly matches the core move of solving basic linear inequalities.
 
----
-```
-
-
-```markdown
 ## **M_895cc926. Simplifying Rational Algebraic Expressions**
 
 **Core move:** Factor quadratic or other polynomial expressions in the numerator and denominator, convert division of fractions to multiplication by the reciprocal, and then cancel common factors to simplify the rational expression.
@@ -7106,11 +5928,6 @@ Vary the complexity by including polynomials of different degrees or those with 
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q7_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_89da9da1. Circuit Current After Component Change**
 
 **Core move:** Apply Ohm's Law and rules for combining series and parallel resistors to determine the total circuit current after a component alteration.
@@ -7137,11 +5954,6 @@ Problems often implicitly assume an ideal voltage source.
 - `NSAA_2016_Section2_Q15_NSAA_Sec`: The question requires calculating the total equivalent resistance of an infinite parallel combination of resistors (which involves summing an infinite geometric series of reciprocal resistances), and then applying Ohm's Law to find the total current through the cell. This directly aligns with the core move of applying Ohm's Law and rules for combining parallel resistors to determine the total circuit current after a specific component configuration.
 - `NSAA_2020_Section2_Q12_NSAA_Sec`: The problem requires applying Ohm's Law and series circuit rules to calculate initial circuit parameters, then inferring the new circuit current after a component (LDR) effectively 'alters' its resistance due to changing light intensity, which is then used to find the change in the LDR's resistance.
 
----
-```
-
-
-```markdown
 ## **M_8a8a55ac. Solving Systems of Linear Equations**
 
 **Core move:** Formulate and solve a system of linear equations, typically through substitution or elimination, to determine unknown variable values.
@@ -7165,11 +5977,6 @@ Questions can vary difficulty by increasing the number of equations/variables or
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8cbc919a. Analyzing Tangency Between Lines and Curves**
 
 **Core move:** Apply conditions for tangency (equal gradients and points, or zero discriminant of combined equation) to find unknown parameters.
@@ -7196,11 +6003,6 @@ For higher-degree curves, the equal gradients and equal points method is more ge
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q77_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8cc99940. Analyzing Physiological Changes During Exercise**
 
 **Core move:** Infer changes in molecular concentrations within the circulatory system based on the metabolic demands and byproducts of active tissues.
@@ -7227,11 +6029,6 @@ Consider both aerobic and anaerobic pathways, especially for intense activities.
 - `NSAA_2020_Section1_Q67_NSAA_Sec`: This question requires analyzing changes in molecular concentrations (glucose, oxygen, urea) as blood passes through various organs (kidney, small intestine, heart), based on their physiological functions (e.g., absorption, filtration, metabolism). This directly aligns with the core move of inferring changes in molecular concentrations within the circulatory system based on the metabolic demands and byproducts of active tissues/organs, even though the specific context is a meal rather than exercise.
 - `NSAA_2021_Section1_Q68_NSAA_Sec`: The question requires interpreting changes in aerobic and anaerobic respiration rates during exercise to infer subsequent physiological changes, such as alterations in molecular concentrations (e.g., lactate, CO2, O2) within the body, which directly aligns with the schema's core move.
 
----
-```
-
-
-```markdown
 ## **M_8cf528ca. Mapping DNA Cut Sites from Fragment Lengths**
 
 **Core move:** Deduce the relative positions of restriction enzyme cut sites on a circular DNA molecule by systematically analyzing fragment lengths from single and combined enzyme digests.
@@ -7257,11 +6054,6 @@ Emphasize the step-by-step process of comparing single and double digest results
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q32_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8d593ba1. Analyzing Genetic and Phenotypic Outcomes of Cell Division and Mutation**
 
 **Core move:** Deduce the genetic and phenotypic characteristics of daughter cells by applying principles of cell division and subsequent genetic alterations.
@@ -7291,11 +6083,6 @@ Ensure the question requires understanding the sequence of events and their cumu
 - `NSAA_2023_Section1_Q66_NSAA_Sec`: The question requires deducing the genetic outcome (e.g., altered chromosome number) of cell division due to a specific chemical intervention that prevents chromosome separation, which directly aligns with applying principles of cell division to determine characteristics of daughter cells.
 - `NSAA_2023_Section2_Q59_NSAA_Sec`: The question requires deducing the genetic outcome (genotype of tetraploid cells) by applying principles of cell division (mitosis, chromosome doubling) and identifying the stage of cell division affected by a chemical agent, which constitutes analyzing genetic and phenotypic outcomes of cell division and subsequent alterations.
 
----
-```
-
-
-```markdown
 ## **M_8dc34125. Identifying Biochemical Compounds via Qualitative Tests**
 
 **Core move:** Infer the presence or absence of specific biomolecules in a solution by interpreting the expected outcomes of standard qualitative biochemical tests after chemical/enzymatic reactions.
@@ -7321,11 +6108,6 @@ Ensure a clear logical flow from the initial state, through any reactions, to th
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q41_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8dd5c131. Predicting Organic Reaction Outcomes and Structures**
 
 **Core move:** Predict the structures of products, intermediates, or conjugate bases in organic reactions or acid-base equilibria by applying principles of electronic effects, reaction mechanisms, and resonance stabilization.
@@ -7351,11 +6133,6 @@ Ensure the complexity of the molecules and reactions is appropriate for the targ
 - `NSAA_2018_Section2_Q16_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section2_Q28_NSAA_Sec`: The question requires identifying the structural formula of an organic product formed from a given reactant in the haloform reaction. This involves applying knowledge of organic reaction mechanisms and reactivity patterns to predict how the reactant's structure is transformed into the specified product (triiodomethane) and the other co-product (a carboxylic acid upon acidification). This aligns directly with the core move of predicting product structures in organic reactions based on mechanistic understanding.
 
----
-```
-
-
-```markdown
 ## **M_8df750f2. Inferring Relative Strengths of Redox Agents**
 
 **Core move:** Infer the relative strengths of oxidizing and reducing agents and their conjugate pairs by interpreting the directionality of a spontaneous redox reaction.
@@ -7380,11 +6157,6 @@ Can be extended to problems involving standard electrode potentials (E° values)
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q29_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8e7863b0. Calculating Wave Properties from Relationships**
 
 **Core move:** Apply fundamental equations relating wave speed, wavelength, frequency, period, phase difference, and path difference to solve for unknown wave parameters.
@@ -7408,11 +6180,6 @@ Commonly used formulas include v = fλ, f = 1/T, v = λ/T, Δφ = (2π/λ)Δx, a
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8f3ec7eb. Analyzing Trends in Biological Data over Time**
 
 **Core move:** Compare and contrast given numerical data points across different categories or time points to identify trends and evaluate the validity of descriptive statements.
@@ -7439,11 +6206,6 @@ The task should primarily involve data interpretation and logical deduction, rat
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q58_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_8fa10f58. Predicting and Enumerating Organic Products with Isomerism**
 
 **Core move:** Systematically predict all possible organic products from a given set of reactants and reaction conditions, accounting for all specified types of isomerism.
@@ -7469,11 +6231,6 @@ Ensure the provided reagent can act in multiple capacities (e.g., as both a nucl
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q27_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_90318e28. Analyzing Proportions from Percentage Distribution**
 
 **Core move:** Calculate specific quantities, proportions, or differences based on percentage distributions of a whole, typically presented in tables or charts.
@@ -7497,11 +6254,6 @@ Can be combined with other mathematical operations like ratios or averages after
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q47_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_907e1d13. Identifying Sensory Detection of Waves**
 
 **Core move:** Identify which specific types of waves or physical phenomena are detected by human sensory organs based on scientific knowledge.
@@ -7527,11 +6279,6 @@ If a general category is initially stated (e.g., 'electromagnetic waves'), quest
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_9496e8a4. Calculating Probability of Sum from Random Selections**
 
 **Core move:** Determine the total number of ways to select items and the number of selections whose properties sum to a target value, then calculate the probability.
@@ -7558,11 +6305,6 @@ Ensure the question provides all necessary numerical data for the items (e.g., c
 - `NSAA_2021_Section1_Q12_NSAA_Sec`: Although the question is incomplete, the provided context sets up a scenario with discrete items (storage containers) having specific properties (capacity) and quantities (number available). This data structure is highly indicative of problems requiring the selection of items and calculation of probabilities based on the sum of their properties, which directly aligns with the core move of M_9496e8a4, 'Calculating Probability of Sum from Random Selections'.
 - `NSAA_2022_Section1_Q4_NSAA_Sec`: The question requires determining the total possible sums from two dice rolls and identifying how many of these sums meet a specific criterion (greater than 9), then calculating the probability based on these counts, which directly aligns with the core move of calculating the probability of a sum from random selections.
 
----
-```
-
-
-```markdown
 ## **M_95300376. Recalling Definitions and Explaining Physical Concepts**
 
 **Core move:** State fundamental laws, define physical quantities, and explain scientific concepts.
@@ -7586,11 +6328,6 @@ Such questions frequently serve as introductory parts to more complex calculatio
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q3_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_96ba91cd. Interpreting Exam Paper Instructions**
 
 **Core move:** Recognize and correctly interpret non-mathematical administrative instructions or structural elements presented within an examination paper.
@@ -7616,11 +6353,6 @@ Focus is on test-taking skills, attention to detail, and understanding exam logi
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q43_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_98d74330. Determining Function Range via Discriminant**
 
 **Core move:** Transform a given function into a quadratic equation in terms of the independent variable, then apply the discriminant condition for real roots to establish the function's range and identify its extreme values.
@@ -7643,11 +6375,6 @@ The method implicitly finds the minimum/maximum *y* value that allows for a real
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q16_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_99b1a948. Multi-Step Chemical Quantity Conversions**
 
 **Core move:** Execute a sequential series of calculations involving conversions between mass, moles, concentration, and volume using standard chemical definitions and stoichiometric principles.
@@ -7680,11 +6407,6 @@ Values provided should lead to a clear, logical sequence of steps and reasonable
 - `NSAA_2022_Section2_Q40_NSAA_Sec`: This question requires a multi-step calculation involving converting volume to mass (using density), concentration (ppm) to mass of solute, and then applying stoichiometry and molar masses to convert the required mass of fluoride ions into the mass of various fluoride compounds. This directly aligns with the core move of executing a sequential series of calculations involving conversions between mass, moles, concentration, and volume using standard chemical definitions and stoichiometric principles.
 - `NSAA_2023_Section2_Q27_NSAA_Sec`: The question requires a sequential series of calculations: determining initial and target moles from concentration and volume, applying stoichiometry for the precipitation reaction, calculating the molar mass of washing soda, and finally converting moles of washing soda to its mass. This directly aligns with the core move of converting between mass, moles, concentration, and volume using chemical definitions and stoichiometry.
 
----
-```
-
-
-```markdown
 ## **M_9c190f2f. Deducing Subgroup Means from Overall Average Changes**
 
 **Core move:** Calculate the total sum of a set of values using its mean and count, then derive the mean or sum of a subset added to or removed from the original set.
@@ -7711,11 +6433,6 @@ Ensure the numbers lead to reasonably simple arithmetic for exam conditions (e.g
 - `NSAA_2018_Section1_Q7_NSAA_Sec`: This question requires calculating the total sum of a set of numbers using its mean and count, and then expressing this total sum as the sum of its subgroups. This setup leads to an equation which is then solved for 'n', directly matching the core move of deducing relationships between overall and subgroup sums/means.
 - `NSAA_2020_Section1_Q11_NSAA_Sec`: The question provides statistics for 'group X' including 'number of students' and 'mean', and explicitly mentions 'two groups of students'. This strongly indicates that the full question will require calculating total sums for groups using their means and counts, likely to derive a combined mean or to work with changes between subsets, which perfectly matches the core move of this schema.
 
----
-```
-
-
-```markdown
 ## **M_9d0b506e. Deriving and Applying SHM Frequency in Spring Systems**
 
 **Core move:** Derive the oscillation frequency of a mass-spring system using Newton's second law, Hooke's law, and the SHM acceleration definition, then apply this derivation to calculate frequencies for different spring configurations.
@@ -7740,11 +6457,6 @@ Emphasize the understanding of the relationship between acceleration and displac
 **Exemplar questions:**
 - `NSAA_2019_Section2_Q11_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_9d48bcd1. Solving for Unknowns in Changing Proportional Relationships**
 
 **Core move:** Establish initial quantities based on a total and ratio, represent a uniform change algebraically, and use the subsequent ratio to form and solve an equation for the unknown change.
@@ -7767,11 +6479,6 @@ Questions should lead to a solvable linear equation.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q10_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_9e062dac. Formulating and Solving Simultaneous Equations**
 
 **Core move:** Formulate a system of linear or non-linear equations from given conditions or functional evaluations and solve it to determine unknown parameters.
@@ -7798,11 +6505,6 @@ Solutions may be unique, multiple, or non-existent depending on the system's nat
 - `NSAA_2018_Section1_Q87_NSAA_Sec`: The problem requires evaluating two definite integral conditions to formulate two distinct algebraic equations involving the unknown parameter 'm'. The core task is to derive these equations from the given conditions and then solve for 'm', which aligns directly with the core move of formulating and solving a system of equations to determine unknown parameters, even if the system is for a single variable and might be inconsistent as presented here.
 - `NSAA_2019_Section1_Q83_NSAA_Sec`: The problem requires identifying the definite integrals as unknown variables and formulating a system of two linear equations based on the given conditions. The core task is then to solve this system to determine the value of the requested integral, which acts as one of the unknown parameters.
 
----
-```
-
-
-```markdown
 ## **M_9eb5c094. Predicting Phenotypes from Gene Modifications**
 
 **Core move:** Infer the observable traits or survival outcomes of an organism based on its genetic makeup, including the presence, absence, or modification of specific genes and their functions under defined environmental conditions.
@@ -7831,11 +6533,6 @@ Can involve prokaryotic or eukaryotic systems, but often focuses on bacteria for
 - `NSAA_2020_Section2_Q56_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section2_Q54_NSAA_Sec`: This question requires inferring the physiological consequences (phenotype) and potential inheritance patterns of a genetic condition (LPL deficiency) caused by a specific gene mutation (Gly188Glu), based on information about its recessive and autosomal nature, which directly aligns with predicting phenotypes from gene modifications.
 
----
-```
-
-
-```markdown
 ## **M_9f3186e8. Calculating Series Coefficients from Integrated Expressions**
 
 **Core move:** Determine specific coefficients in a power series by first expanding an integrand, performing term-by-term integration, and then evaluating the definite integral with variable limits.
@@ -7860,11 +6557,6 @@ The desired coefficient refers to the power series of the resultant function, f(
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q85_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a01d483d. Calculating Thermal Equilibrium with Phase Change**
 
 **Core move:** Apply the principle of conservation of energy (heat transfer) to determine the equilibrium temperature of a mixture, accounting for specific heat capacities and latent heats of fusion or vaporization.
@@ -7890,11 +6582,6 @@ Emphasize that heat lost by one component equals heat gained by the other in an 
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q10_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a208747e. Simplifying Expressions with Indices**
 
 **Core move:** Apply laws of indices (e.g., product, quotient, power of a power) to combine terms with the same base and simplify algebraic or numerical expressions involving exponents.
@@ -7920,11 +6607,6 @@ Can be used to set up equations where the goal is to find an unknown exponent.
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q13_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a300484c. Interpreting Initial Physical Conditions**
 
 **Core move:** Identify and categorize all given physical parameters, constraints, and initial states of a system to prepare for subsequent analysis.
@@ -7947,11 +6629,6 @@ This schema focuses on information extraction and system definition rather than 
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q88_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a48895cd. Explaining Biological Interrelationships and Consequences**
 
 **Core move:** Articulate and link biological processes, mechanisms, and their consequences, demonstrating an understanding of cause-and-effect relationships within biological systems.
@@ -7977,11 +6654,6 @@ Marks are often awarded for demonstrating a logical flow of argument and accurat
 - `NSAA_2017_Section2_Q29_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section2_Q29_NSAA_Sec`: This question requires interpreting molecular evidence to draw conclusions about evolutionary relationships and the reclassification of organisms. This directly aligns with the schema's core move of 'Articulate and link biological processes, mechanisms, and their consequences, demonstrating an understanding of cause-and-effect relationships within biological systems', where the processes are evolution and phylogeny, and the consequences are changes in our understanding of animal relationships and classification.
 
----
-```
-
-
-```markdown
 ## **M_a4eca3c4. Multi-step Stoichiometric Yield Calculation**
 
 **Core move:** Calculate the final mass or quantity of a product from a series of sequential chemical reactions, accounting for specified yields, reactant fractions, and limiting reactants at each stage.
@@ -8008,11 +6680,6 @@ Can incorporate different types of organic reactions (e.g., oxidation, reduction
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q29_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a5791e29. Designing Multi-Step Organic Syntheses**
 
 **Core move:** Construct a detailed, step-by-step synthetic route to a specific organic product, clearly indicating starting materials, reagents, and all necessary intermediate structures.
@@ -8039,11 +6706,6 @@ Consider including isotopic labeling to test understanding of reaction mechanism
 **Exemplar questions:**
 - `NSAA_2017_Section2_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a6b48971. Solving Coordinate Geometry Problems with Geometric Constraints**
 
 **Core move:** Convert geometric properties (like shape type, area, orientation, quadrant location) into algebraic equations using coordinate formulas, then solve for unknown coordinates or parameters while ensuring consistency with all constraints.
@@ -8068,11 +6730,6 @@ For 'clockwise' or 'counter-clockwise' labelling, consider its implication on th
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q8_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a814b13d. Quantitative Analysis via Multi-step Titration**
 
 **Core move:** Calculate the initial amount of an unknown substance by using titration data to determine the quantity of a reagent in excess, then applying stoichiometry and accounting for dilution steps.
@@ -8100,11 +6757,6 @@ Consider including a 'distractor' like an inert ingredient to ensure students fo
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q35_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_a9085184. Identifying and Drawing Chemical Isomers**
 
 **Core move:** Systematically identify and depict all possible structural isomers for a given molecular formula, adhering to valency rules and functional group definitions.
@@ -8132,11 +6784,6 @@ Vary the complexity of the carbon chain and the presence of branches or rings.
 - `NSAA_2021_Section2_Q28_NSAA_Sec`: The question's core task is to identify and enumerate all relevant structural isomers for a given molecular formula (implied as C4H8) and functional group (alkene), then to determine which of these isomers exhibit a specific type of isomerism (E/Z). This directly matches the 'Core Move' of systematically identifying and depicting isomers.
 - `NSAA_2023_Section2_Q9_NSAA_Sec`: The core of this question explicitly asks for the 'total number of isomers that can be represented by the molecular formula of this hydrocarbon', which directly matches the core move of systematically identifying and depicting all possible structural isomers for a given molecular formula.
 
----
-```
-
-
-```markdown
 ## **M_a9661615. Predicting Molecular Geometry and Bond Angles**
 
 **Core move:** Apply the VSEPR (Valence Shell Electron Pair Repulsion) model to predict the electron domain geometry, molecular geometry, and approximate bond angles of molecules or ions.
@@ -8163,11 +6810,6 @@ Include examples with lone pairs to test understanding of angle compression and 
 - `NSAA_2021_Section2_Q22_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section2_Q23_NSAA_Sec`: This question requires two main steps: first, determining the molecular formula of compound X from the given reaction stoichiometry (which could align with M_eb51e883 or M_fd4ee276), and second, applying the VSEPR model to this compound to predict its molecular geometry and bond angles. The final part of the question explicitly states 'Using the VSEPR model, what is the smallest bond angle...'. This makes M_a9661615 the most direct and primary match for the core scientific model and objective explicitly asked for in the question.
 
----
-```
-
-
-```markdown
 ## **M_a9bfb5c4. Quantitative Analysis of Multicomponent Mixtures**
 
 **Core move:** Determine the amount of a specific component in a complex mixture by interpreting qualitative observations, applying mass balance, and performing sequential stoichiometric calculations based on products from selective reactions and separations.
@@ -8193,11 +6835,6 @@ Ensure all steps of the analytical process are logically connected to accurately
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_aa526843. Solving Fractional Linear Equations**
 
 **Core move:** Algebraically manipulate an equation containing fractional terms to combine them and isolate the variable.
@@ -8223,11 +6860,6 @@ Consider including both positive and negative coefficients for fractions.
 - `NSAA_2017_Section1_Q9_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q77_NSAA_Sec`: The question presents a fractional linear equation, and solving it requires algebraic manipulation to combine the fractional terms and isolate the variable, which directly matches the core move of schema M_aa526843.
 
----
-```
-
-
-```markdown
 ## **M_aa7ab5b8. Analyzing Projectile Motion**
 
 **Core move:** Apply kinematic equations independently to the horizontal and vertical components of motion, linking them through time and the initial total speed, to determine unknown displacements or velocities.
@@ -8253,11 +6885,6 @@ Encourage drawing free-body diagrams and sketching the trajectory.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ab052aa5. Solving for Function Parameters Using Given Points**
 
 **Core move:** Substitute given coordinate points into a function's equation to form a system of simultaneous equations, then solve for the unknown parameters defining the function.
@@ -8282,11 +6909,6 @@ Emphasize clear setup of the simultaneous equations before attempting to solve t
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ac8895a0. Analyzing Population Density and Growth**
 
 **Core move:** Calculate initial population density or mean, then utilize area and growth/decay rates to project total population changes over time.
@@ -8312,11 +6934,6 @@ Can be extended to include compound growth/decay or multiple phases of change.
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ad19373c. Interpreting Biological Mechanisms from Text**
 
 **Core move:** Analyze descriptive text to identify, compare, and differentiate between observed biological phenomena and their underlying mechanistic explanations.
@@ -8339,11 +6956,6 @@ The question should implicitly or explicitly require students to evaluate, compa
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q75_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ae71e3d6. Solving for Sequence Parameters from Term Conditions**
 
 **Core move:** Translate given conditions about specific terms of sequences into an algebraic equation, solve for an unknown parameter, and then use the refined sequence definition to calculate another specific term.
@@ -8367,11 +6979,6 @@ Can involve different types of sequences to mix concepts.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_aec9c7d9. Calculating Work Done by a Position-Dependent Force**
 
 **Core move:** Calculate the work done by integrating a force function that depends on position over a specified displacement range.
@@ -8396,11 +7003,6 @@ This pattern directly involves the definition of work as the integral of F.dx, c
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q15_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_aefb1bb2. Deducing Unknown Counts from Categorized Totals**
 
 **Core move:** Use given overall totals and partial counts within categories to logically deduce missing specific counts through addition and subtraction.
@@ -8424,11 +7026,6 @@ Can be extended to problems with more categories or conditions, increasing the c
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_af9b2fdd. Interpreting Structure of Scientific Data Tables**
 
 **Core move:** Infer the underlying organizational principles and relationships within a complex scientific data table by analyzing numerical sequences, categorical groupings, and positional information.
@@ -8452,11 +7049,6 @@ May involve identifying trends or anomalies based on the table's structure.
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_afe61d24. Deducing Chemical Structure from Stability Data**
 
 **Core move:** Relate the magnitude of a given thermodynamic stability value (e.g., enthalpy of hydrogenation) to the relative stability and specific structural features of chemical isomers.
@@ -8480,11 +7072,6 @@ It requires a comparative analysis of values rather than complex calculations, o
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b0db7d23. Solving Rational and Quadratic Inequalities**
 
 **Core move:** Algebraically manipulate a given rational inequality to transform it into a standard polynomial inequality, identify critical points, and determine the solution set by testing intervals.
@@ -8515,11 +7102,6 @@ Be mindful of strict vs. non-strict inequalities when forming the final solution
 - `NSAA_2019_Section1_Q2_NSAA_Sec`: The question presents a rational inequality that requires algebraic manipulation to combine terms, identify critical points (zeros of numerator and denominator), and test intervals to find the solution set, which perfectly aligns with the core move of solving rational and quadratic inequalities.
 - `NSAA_2019_Section1_Q89_NSAA_Sec`: This question requires solving a polynomial inequality (a cubic one), which involves identifying critical points (roots of the polynomial) and determining the solution set by testing intervals, precisely matching the core move of schema M_b0db7d23 for solving inequalities.
 
----
-```
-
-
-```markdown
 ## **M_b18f37e0. Balancing Redox Chemical Equations**
 
 **Core move:** Systematically construct a balanced chemical equation by identifying half-reactions, balancing atoms and charge, and combining them, considering the reaction environment.
@@ -8546,11 +7128,6 @@ Ensure all original reactants and products mentioned in the question are account
 - `NSAA_2018_Section2_Q21_NSAA_Sec`: The question explicitly requires writing a balanced chemical equation for a redox reaction, including balancing for both atoms and charge in an acidic solution, which directly matches the core move of systematically constructing a balanced chemical equation in a given environment.
 - `NSAA_2021_Section2_Q40_NSAA_Sec`: The question requires first deducing the chemical formula of an unknown reactant (Q) based on its properties and the oxidation state of one of its elements, then using this information to systematically balance a complex redox chemical equation, and finally extracting a specific stoichiometric coefficient. The core task of balancing the entire equation, which involves identifying oxidation state changes, balancing atoms, and adjusting coefficients, directly aligns with the 'Balancing Redox Chemical Equations' schema.
 
----
-```
-
-
-```markdown
 ## **M_b28adbcd. Calculating Unknown Rate in Multi-Segment Journeys**
 
 **Core move:** Determine an unknown rate for one segment of a multi-segment journey by leveraging the relationship between total distance, total time, and overall average rate, alongside known parameters of other segments.
@@ -8575,11 +7152,6 @@ Can be extended to problems with more than two segments or different 'quantities
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q12_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b2af9803. Evaluating Complex Fractional Expressions**
 
 **Core move:** Systematically apply the order of operations and rules for arithmetic with fractions to reduce a given expression to its simplest numerical or algebraic form.
@@ -8605,11 +7177,6 @@ Vary the complexity by using mixed numbers, improper fractions, or multiple leve
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q73_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b2cc14c8. Recognizing Non-Problematic Exam Content**
 
 **Core move:** Differentiate between actual problems requiring mathematical or scientific solution and administrative or structural text within an exam paper.
@@ -8633,11 +7200,6 @@ When generating questions, ensure the administrative text is clearly distinct fr
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b46d0f8e. Analyzing Breakup During Trajectory**
 
 **Core move:** Apply conservation of momentum to determine the velocities of fragments immediately after an in-flight breakup or internal collision, integrating these new velocities with kinematic principles for the subsequent motion of each fragment.
@@ -8663,11 +7225,6 @@ Horizontal momentum is typically conserved if air resistance is negligible, whil
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q19_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b5b682df. Calculating Competitive Binding in Equilibrium**
 
 **Core move:** Apply equilibrium constant expressions and relative affinity ratios to determine unknown concentrations or proportions of species in a competitive binding system.
@@ -8693,11 +7250,6 @@ Problems may involve simplifying assumptions about the system (e.g., only one bi
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q40_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b827ad50. Analyzing Ecological Impact of Pollutants**
 
 **Core move:** Predict the cascading biological and chemical effects within an ecosystem resulting from the introduction of a specific pollutant.
@@ -8723,11 +7275,6 @@ Avoid ambiguity in the nature of the pollutant or the resulting effects.
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q69_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_b8c55487. Solving Proportionality Problems**
 
 **Core move:** Derive an algebraic relationship from a proportionality statement, determine the constant of proportionality, and apply it to find unknown values.
@@ -8762,11 +7309,6 @@ Can include real-world contexts or units to add complexity.
 - `NSAA_2021_Section2_Q1_NSAA_Sec`: The question provides data describing a specific rate of carbon dioxide uptake per unit area per unit time. This implicitly establishes a proportional relationship. Any subsequent problem based on this information would require deriving a constant of proportionality (the uptake rate) and applying it to find unknown values, directly matching the core move of solving proportionality problems.
 - `NSAA_2022_Section2_Q20_NSAA_Sec`: The problem requires applying Ohm's Law (I=V/R), which defines a proportional relationship between current (I) and voltage (V), with resistance (R) serving as the constant of proportionality. Given the resistance (20 Ω) and an implicit or explicitly provided voltage (which would be inferred from a complete problem context, likely leading to one of the options), the core task is to apply this proportional relationship to find the unknown current, aligning with the core move of M_b8c55487.
 
----
-```
-
-
-```markdown
 ## **M_b985a0a7. Calculating Momentum from Time-Varying Force**
 
 **Core move:** Apply the impulse-momentum theorem by integrating the time-dependent net force to determine the change in an object's momentum.
@@ -8792,11 +7334,6 @@ This pattern can be extended to finding velocity by then dividing by mass, or po
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q14_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ba18fd00. Solving for Unknowns in Proportional Relationships**
 
 **Core move:** Establish an algebraic proportionality equation from a verbal description, determine the constant of proportionality using given values, and then apply this constant to calculate an unknown quantity.
@@ -8828,11 +7365,6 @@ Can involve scientific notation and require careful algebraic manipulation of po
 - `NSAA_2020_Section2_Q1_NSAA_Sec`: The problem requires establishing a proportional relationship between the extensions of the two springs based on Hooke's Law and the property of springs in series (equal force). Specifically, x_P * k_P = x_Q * k_Q leads to x_P = (k_Q/k_P) * x_Q, which is a direct proportionality. This relationship is then used with the total extension to solve for the unknown extension of spring P, directly matching the core move of solving for unknowns in proportional relationships.
 - `NSAA_2023_Section2_Q16_NSAA_Sec`: The question heavily relies on establishing and manipulating multiple proportional relationships (e.g., mass to radius, force to velocity, power to force and velocity, and eventually power to mass) to determine how a quantity changes when another is scaled. This aligns perfectly with the core move of solving for unknowns in proportional relationships.
 
----
-```
-
-
-```markdown
 ## **M_ba24d775. Identifying Exam Paper Administrative Pages**
 
 **Core move:** Recognize the purpose and function of non-question pages within an exam paper.
@@ -8862,11 +7394,6 @@ Focus on explicit textual cues like 'intentionally left blank' or 'for rough wor
 - `NSAA_2022_Section1_Q60_NSAA_Sec`: The provided text is clearly an administrative section of an exam paper, containing instructions to candidates. Recognizing its purpose and function as a non-question page directly aligns with the core move of identifying exam paper administrative pages.
 - `NSAA_2023_Section1_Q60_NSAA_Sec`: The provided text is clearly an 'INSTRUCTIONS TO CANDIDATES' section, which is a non-question, administrative page within an exam paper. Its purpose is to inform candidates about exam procedures, structure, and rules, directly matching the core move of recognizing the purpose and function of such pages.
 
----
-```
-
-
-```markdown
 ## **M_bb2e7b0f. Analyzing Size-Dependent Physiological Constraints and Adaptations**
 
 **Core move:** Explain how changes in organism size impact fundamental physiological processes, particularly substance exchange, and identify specific adaptations that address these constraints.
@@ -8895,11 +7422,6 @@ Questions may involve comparing organisms of different sizes or discussing evolu
 - `NSAA_2016_Section2_Q41_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section2_Q56_NSAA_Sec`: The question investigates how changes in the size of an agar cube (a model system) affect its efficiency to absorb and distribute a dye. This directly aligns with the schema's core move of explaining how changes in organism size impact fundamental physiological processes, specifically substance exchange.
 
----
-```
-
-
-```markdown
 ## **M_bb902164. Quantifying Biological Structures from Given Data**
 
 **Core move:** Derive specific biological parameters through calculation from provided numerical data and utilize these parameters to evaluate statements regarding biological structures.
@@ -8925,11 +7447,6 @@ Avoid ambiguity in biological terms crucial for calculation (e.g., 'nucleotides'
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q58_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_bdd9d9c6. Analyzing Spring Systems in Static Equilibrium**
 
 **Core move:** Apply Hooke's law, the formula for elastic potential energy, and conditions for static equilibrium to solve for unknown parameters in a spring-mass system.
@@ -8957,11 +7474,6 @@ Consider variations where the spring might already have an initial extension or 
 - `NSAA_2020_Section2_Q4_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q4_NSAA_Sec`: The question asks for the energy stored in a spring, which directly requires applying the formula for elastic potential energy (E = 0.5 * k * x^2). This is explicitly mentioned as part of the core move in schema M_bdd9d9c6, even if the values for 'k' and 'x' are implied to be provided in an accompanying diagram or text.
 
----
-```
-
-
-```markdown
 ## **M_bf8670d1. Quantitative Redox Stoichiometry in Acidic/Basic Solution**
 
 **Core move:** Apply balanced redox equations, including explicit H+/OH-/H2O, to perform stoichiometric calculations for reagent quantities in specified acidic or basic conditions.
@@ -8986,11 +7498,6 @@ Vary the complexity of the redox half-equations and the stoichiometric ratios.
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q37_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c074acc8. Quantifying Cellular Changes During Cleavage**
 
 **Core move:** Apply the principles of cell division without growth to determine the number and individual volume of daughter cells after multiple rounds of cleavage.
@@ -9015,11 +7522,6 @@ Focus on the conservation of the initial total volume and its distribution among
 - `NSAA_2021_Section2_Q52_NSAA_Sec`: This question requires calculating the final number of cells using the principles of binary fission (exponential growth) over a given time period. It then uses the individual cell volume to determine the total volume of cells. This process directly aligns with the core move of applying cell division principles to quantify cellular changes (number and total volume) after multiple rounds of division, even though it extends to a nutrient percentage calculation afterwards.
 - `NSAA_2021_Section2_Q54_NSAA_Sec`: The question requires calculating the total number of cells after multiple rounds of division and then determining the number of chromosomes per individual cell. This directly aligns with applying principles of cell division to quantify cellular changes, specifically determining the number and characteristics of daughter cells.
 
----
-```
-
-
-```markdown
 ## **M_c1739cfa. Determining Function Parameters from Extrema Properties**
 
 **Core move:** Utilize the conditions for local extrema (first derivative equals zero at specific points) to establish and solve a system of equations for unknown coefficients in a function's definition.
@@ -9043,11 +7545,6 @@ This pattern often involves polynomial functions but can apply to other differen
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q75_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c29e8e81. Calculating Point Coordinates via Vector Relationships**
 
 **Core move:** Apply vector addition, subtraction, and scalar multiplication to determine unknown point coordinates based on their relative positions and given vector ratios.
@@ -9072,11 +7569,6 @@ Vary the complexity by requiring multiple steps of vector calculation.
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q17_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c3ba4033. Solving for Variables in Exponential Relations**
 
 **Core move:** Isolate and determine an unknown variable within a given exponential or logarithmic functional relationship by applying substitution and algebraic manipulation, often involving conversion of units.
@@ -9104,11 +7596,6 @@ Calculators will typically be required for non-exact logarithmic values or large
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c4961b0e. Extracting Information from Structured Documents**
 
 **Core move:** Locate and retrieve specific data points by matching keywords within a structured document's index or table.
@@ -9135,11 +7622,6 @@ Ensure the question clearly states what information needs to be extracted.
 - `NSAA_2020_Section1_Q71_NSAA_Sec`: The question presents a table showing concentrations and specifies a location ('bacterial cell cytoplasm'). Even though the question is incomplete, the evident task is to locate and retrieve specific data points (concentration values) associated with different locations from the structured table provided, which directly matches the core move of schema M_c4961b0e.
 - `NSAA_2023_Section1_Q69_NSAA_Sec`: The question explicitly states that 'The table shows the relationship...' and provides headers, indicating that the primary task will involve locating and extracting specific data points from this structured document (the table) to understand the relationship between heart rate and blood output.
 
----
-```
-
-
-```markdown
 ## **M_c502b15a. Calculating Ratios from Equilibrium Constants**
 
 **Core move:** Manipulate the equilibrium constant expression to determine the ratio of product to reactant concentrations (or partial pressures) at equilibrium, given the equilibrium constant and other relevant equilibrium concentrations.
@@ -9162,11 +7644,6 @@ Stoichiometric coefficients from the balanced equation become exponents in the e
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q24_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c6780ea0. Analyzing Evolutionary Divergence**
 
 **Core move:** Assess and validate statements concerning the evolutionary pathways, adaptive radiations, and speciation events of organisms based on given biological data and established evolutionary principles.
@@ -9192,11 +7669,6 @@ Can include diagrams of species, environments, or simplified phylogenetic trees.
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q68_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c6bb1156. Chain Rule in Kinematics and Energy**
 
 **Core move:** Apply the chain rule of differentiation to determine the time rate of change of physical quantities (e.g., energy, momentum) that depend on other variables (e.g., position, velocity) which are themselves functions of time.
@@ -9223,11 +7695,6 @@ May require conceptual understanding of physics principles (e.g., conservation o
 - `NSAA_2019_Section2_Q10_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q9_NSAA_Sec`: This question requires calculating the rate of change of momentum. Momentum (p = mv) depends on velocity (v), and velocity (v = dx/dt) depends on position (x), which is given as a function of time (x = 4.0 t^3). The core move of applying differentiation to determine the time rate of change of a physical quantity (momentum) that depends on other variables (velocity) which are themselves functions of time, is a direct match.
 
----
-```
-
-
-```markdown
 ## **M_c74f01ab. Deducing Genotypes from Pedigrees**
 
 **Core move:** Infer the genotypes of individuals in a pedigree by applying Mendelian inheritance patterns and analyzing phenotypic expression across generations.
@@ -9252,11 +7719,6 @@ Questions can range from determining possible genotypes to necessary genotypes, 
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q80_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c75e8ef8. Interpreting Exam Paper Directives**
 
 **Core move:** Discern the purpose and implications of explicit instructions or structural declarations presented within an examination paper.
@@ -9280,11 +7742,6 @@ Complexity can range from simple declarations (like a blank page notice) to mult
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q34_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c7cb64a6. Solving for Equilibrium Amounts using Kc**
 
 **Core move:** Construct an ICE (Initial, Change, Equilibrium) table to express equilibrium concentrations in terms of initial conditions and reaction extent, substitute these into the equilibrium constant (Kc) expression, and solve the resulting algebraic equation.
@@ -9311,11 +7768,6 @@ Remember to check for multiple valid solutions if a quadratic equation yields mo
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q34_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c7dd820a. Constrained Geometric Optimization**
 
 **Core move:** Formulate an objective function for a geometric property of a shape under a specific constraint, and use calculus or algebraic methods to determine the dimensions that yield its maximum or minimum value.
@@ -9341,11 +7793,6 @@ Be mindful of the practical domain of the variables (e.g., dimensions must be po
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q89_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c82728ff. Quantifying Analytes via Gravimetric Analysis with Error Evaluation**
 
 **Core move:** Perform sequential stoichiometric calculations to determine the mass percentage of an analyte from precipitation data, and infer the impact of interfering substances on the determined value.
@@ -9368,11 +7815,6 @@ Ensure clear links between the quantitative calculation and the qualitative erro
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_c8eb441b. Calculating Unknown Bond Energy from Enthalpy Differences**
 
 **Core move:** Apply the definition of enthalpy change using bond energies for multiple reactions, and use the given relationship between their enthalpy changes to form and solve an algebraic equation for an unknown bond energy, often involving cancellation of common terms.
@@ -9398,11 +7840,6 @@ Guide students to carefully translate descriptive relationships between enthalpy
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q22_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ca0c8b3c. Solving Kinematic Problems with Constant Acceleration**
 
 **Core move:** Apply constant acceleration (SUVAT) equations to solve for unknown kinematic variables such as displacement, velocity, and time.
@@ -9430,11 +7867,6 @@ Remember that 'g' (gravitational field strength) serves as the acceleration 'a' 
 - `NSAA_2017_Section1_Q78_NSAA_Sec`: The question provides initial speed, constant deceleration, and distance, asking for the final speed. This directly requires the application of constant acceleration (SUVAT) equations to solve for an unknown kinematic variable, which is the core move of schema M_ca0c8b3c.
 - `NSAA_2022_Section2_Q7_NSAA_Sec`: This question requires calculating the displacement and velocity for two objects, one with constant velocity and one with constant acceleration, using kinematic (SUVAT) equations. It then involves solving for a specific time when their displacements are equal, which perfectly aligns with applying constant acceleration equations to solve for unknown kinematic variables like time and displacement.
 
----
-```
-
-
-```markdown
 ## **M_cbcfe73f. Solving Geometric Problems with Algebraic Expressions**
 
 **Core move:** Formulate an algebraic equation (often quadratic) by substituting given variable expressions for geometric dimensions into a relevant area or perimeter formula, then solve the equation and use its valid solutions to determine unknown lengths or values.
@@ -9459,11 +7891,6 @@ The given dimensions should be structured such that at least one, if not both, s
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q10_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_cc06fd65. Analyzing Biological Factors Affecting Plant Traits**
 
 **Core move:** Discuss and explain the impact of various environmental, physiological, and ecological factors on specific plant characteristics or processes, such as spread and photosynthetic rate.
@@ -9490,11 +7917,6 @@ Can involve both abiotic (non-living) and biotic (living) factors influencing th
 - `NSAA_2018_Section2_Q29_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2019_Section2_Q35_NSAA_Sec`: This question requires interpreting data (implied from a graph) about CO2 uptake in plants and explaining the biological reasons for observed patterns (plateau, differences between plants). This directly aligns with the core move of discussing and explaining the impact of environmental and physiological factors on plant processes like photosynthetic rate.
 
----
-```
-
-
-```markdown
 ## **M_cc09dd19. Geometric Reasoning with Bearings**
 
 **Core move:** Apply principles of geometry, including parallel lines and triangle properties, in conjunction with bearing definitions to determine unknown angles or bearings.
@@ -9522,11 +7944,6 @@ The solution typically involves a sequence of deductions of angles from the give
 - `NSAA_2017_Section1_Q12_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2018_Section1_Q13_NSAA_Sec`: The question requires using bearing definitions, properties of parallel lines (North lines), and triangle geometry (isosceles triangle, angles sum to 180 degrees) to determine an unknown bearing. This directly aligns with the core move of applying geometric principles in conjunction with bearing definitions.
 
----
-```
-
-
-```markdown
 ## **M_cdbe0132. Evaluating Biological Comparisons for Accuracy**
 
 **Core move:** Assess the accuracy of descriptive statements regarding biological structures, their classification, and functions based on established biological knowledge.
@@ -9551,11 +7968,6 @@ The complexity can vary by using structures with multiple functions or subtle di
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q64_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d011e6d4. Calculating Cumulative Probabilities of Sequential Events with Stopping Conditions**
 
 **Core move:** Compute the total probability of a defined outcome occurring across a sequence of trials, where trials stop based on a specific event, by summing individual path probabilities or using complementary events.
@@ -9580,11 +7992,6 @@ Ensure the stopping condition is clearly understood and correctly applied to det
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d54ff9c5. Manipulating Expressions with Exact Trigonometric Values and Surds**
 
 **Core move:** Simplify complex algebraic expressions by substituting exact trigonometric values, rationalizing denominators, and expanding powers of binomials containing surds.
@@ -9610,11 +8017,6 @@ This pattern assesses fundamental algebraic skills combined with basic trigonome
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q13_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d5762991. Determining Arithmetic Progression Parameters**
 
 **Core move:** Formulate and solve a system of linear equations derived from conditions on terms of an arithmetic progression to determine its defining parameters and specific terms.
@@ -9638,11 +8040,6 @@ The complexity can be varied by using more terms, more complex relationships, or
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q79_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d6419f29. Biological Rate and Combinatorial Calculations**
 
 **Core move:** Calculate unknown quantities by applying rates, performing unit conversions, and using combinatorial principles within biological contexts.
@@ -9668,11 +8065,6 @@ Ensure the biological context is correctly understood before applying mathematic
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q24_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d6fc6b1d. Applying Proportionality from Physical Laws**
 
 **Core move:** Infer a direct or inverse proportionality between physical quantities from a governing law, and use a given percentage change in one quantity to determine the new value of the proportionally related quantity.
@@ -9696,11 +8088,6 @@ The outcome often involves a simple multiplication or division by a percentage f
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q22_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_d9de3280. Calculating Cylindrical Volume in Context**
 
 **Core move:** Apply the formula for the volume of a cylinder (V = πr²h), ensuring correct unit conversions between different length units (e.g., cm to mm), to determine the capacity or quantity within a cylindrical structure described in an applied scenario.
@@ -9726,11 +8113,6 @@ May require knowledge of constants (e.g., π) or approximations.
 - `NSAA_2021_Section2_Q47_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section2_Q7_NSAA_Sec`: The question snippet provides a linear dimension (7 mm) and contextual information about 'water lost by the shoot' from an 'apparatus'. In typical biological experiments (e.g., using a potometer), water loss is quantified by measuring the change in volume of water in a measuring tube, which is often cylindrical. Calculating this volume requires applying the formula for the volume of a cylinder (V = πr²h) and ensuring correct unit conversions, which directly aligns with the core move of schema M_d9de3280. The given information serves as the necessary parameters for such a calculation.
 
----
-```
-
-
-```markdown
 ## **M_dd555495. Explaining the Application of Molecular Tools in Genetic Modification**
 
 **Core move:** Describe the specific function and step-by-step role of molecular tools, such as restriction enzymes or vectors, in the process of genetic engineering or modification.
@@ -9755,11 +8137,6 @@ Questions can vary in scope, from a single enzyme's role to the coordinated acti
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q33_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_de6412df. Solving Trigonometric Equations in an Interval**
 
 **Core move:** Algebraically factor and solve a trigonometric equation for general solutions, then identify specific solutions that lie within a given interval.
@@ -9783,11 +8160,6 @@ Solutions may need to be expressed in radians or degrees, consistent with the in
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q75_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_df3b6f0b. Explaining DNA Mutations and Disease Pathogenesis**
 
 **Core move:** Explain various types of DNA sequence alterations and detail how these changes disrupt biological functions, leading to specific diseases.
@@ -9814,11 +8186,6 @@ The explanation should ideally cover the impact on DNA sequence, mRNA, protein s
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_dffc16c1. Calculating Enthalpy Change from Calorimetry Data**
 
 **Core move:** Apply calorimetric data (mass, specific heat capacity, temperature change) to calculate the heat transferred, then use reaction stoichiometry to relate this heat to the moles of a specific reactant or product to determine the enthalpy change per mole.
@@ -9844,11 +8211,6 @@ Vary the type of reaction (neutralization, dissolution, combustion) and the give
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e066fa4f. Deducing Organic Structures from Chemical Information**
 
 **Core move:** Infer the specific structural formula of an organic molecule based on its observed chemical reactions or stated structure-property relationships.
@@ -9873,11 +8235,6 @@ Often requires knowledge of common functional groups and reaction types.
 - `NSAA_2016_Section2_Q27_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section2_Q37_NSAA_Sec`: The question requires inferring the specific structural formula of compound W by integrating multiple pieces of chemical information: the empirical formula of V, the mass percentage of nitrogen in compound X (a structure-property relationship), and the observed chemical reactions and lack of reactivity of compounds Y and Z (chemical reactions and structure-property relationships). This directly matches the core move of M_e066fa4f.
 
----
-```
-
-
-```markdown
 ## **M_e18cb30e. Calculating Work Done by Non-Conservative Forces**
 
 **Core move:** Apply the work-energy theorem or the principle of conservation of energy to account for work done by non-conservative forces during a change in mechanical energy.
@@ -9903,11 +8260,6 @@ Units must be consistent (SI units preferred).
 - `NSAA_2017_Section1_Q82_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2020_Section2_Q15_NSAA_Sec`: The question asks for the work done on the trolley, which requires calculating the change in kinetic energy using the Work-Energy Theorem. This aligns with the core move of applying the work-energy theorem to account for work done, even though specific non-conservative forces are not explicitly mentioned, the net work calculated changes the kinetic energy.
 
----
-```
-
-
-```markdown
 ## **M_e28f67a8. Area Between Functions by Integration**
 
 **Core move:** Calculate the definite integral of the difference between two functions over the interval defined by their intersection points to find the area of the enclosed region.
@@ -9934,11 +8286,6 @@ Consider symmetry to simplify calculations where applicable (e.g., if the region
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q73_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e30696a8. Calculating Penetrated Volume in 3D Shapes**
 
 **Core move:** Calculate the volume of a region penetrated from the exterior of a 3D geometric shape by subtracting the volume of the unpenetrated inner core from the total volume of the original shape, often requiring consideration of penetration depth from all surfaces.
@@ -9963,11 +8310,6 @@ Can be combined with conceptual scientific understanding (e.g., type of transpor
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q45_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e36d3949. Relating 2D Nets to 3D Volumes**
 
 **Core move:** Relate the dimensions of a 2D net or component shape to the geometric properties and formulas of the resulting 3D object to calculate its volume or surface area.
@@ -9994,11 +8336,6 @@ Ensure numerical values lead to calculable (even if irrational) answers.
 - `NSAA_2016_Section1_Q10_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2018_Section1_Q2_NSAA_Sec`: This question requires calculating the volume and surface area of a 3D object (cuboid) using its given dimensions. This directly aligns with the core move of relating component shapes' dimensions (the faces of the cuboid) to the geometric properties (volume and surface area) of the 3D object.
 
----
-```
-
-
-```markdown
 ## **M_e3b89d1b. Recognizing Incomplete Problem Statements**
 
 **Core move:** Identify when a problem statement lacks sufficient information, a clear question, or context to formulate a mathematical approach or solution.
@@ -10021,11 +8358,6 @@ The 'problem' here is the absence of a problem, requiring a judgment about the i
 **Exemplar questions:**
 - `NSAA_2018_Section2_Q26_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e3d65c6a. Relating Roots and Coefficients of Quadratic Equations**
 
 **Core move:** Apply Vieta's formulas to establish relationships between the roots and coefficients of a quadratic equation, and use these relationships to solve for unknown coefficients or properties of the roots.
@@ -10053,11 +8385,6 @@ Include conditions on coefficients or roots (e.g., 'p' is positive, roots are re
 - `NSAA_2020_Section1_Q17_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section1_Q14_NSAA_Sec`: The question directly asks for a property of the roots (their positive difference) of a quadratic equation, which requires the application of Vieta's formulas to relate the roots to the given coefficients (2, 4, and c).
 
----
-```
-
-
-```markdown
 ## **M_e43c9eed. Calculating Ratios After Independent Percentage Changes**
 
 **Core move:** Determine the new ratio between two quantities by applying individual percentage changes to each quantity and then forming the ratio of their modified values.
@@ -10081,11 +8408,6 @@ Ensure students correctly set up the final ratio (numerator/denominator) as spec
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q9_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e5a1a321. Resolving Forces into Components**
 
 **Core move:** Decompose a force vector into its perpendicular components using trigonometric functions to analyze its effects along different axes.
@@ -10112,11 +8434,6 @@ This pattern can be applied in 2D or 3D contexts, though 2D is more common at th
 - `NSAA_2016_Section1_Q76_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2016_Section1_Q88_NSAA_Sec`: The question presents two perpendicular forces and requires finding their resultant magnitude using vector addition (Pythagoras theorem). This is the inverse operation of decomposing a force into its perpendicular components, and both skills fall under the umbrella of analyzing forces along different axes using vector components.
 
----
-```
-
-
-```markdown
 ## **M_e5a53f2b. Relating Quantities Through Proportions and Ratios**
 
 **Core move:** Establish an algebraic relationship between two or more quantities based on given percentages, fractions, or proportional statements, then simplify this relationship to determine their lowest whole-number ratio.
@@ -10145,11 +8462,6 @@ Can be extended to involve more than two quantities, leading to extended ratios 
 - `NSAA_2020_Section1_Q14_NSAA_Sec`: The question requires establishing algebraic relationships between three quantities (red, blue, yellow paint) based on their given ratios, and then simplifying these relationships to solve for an unknown variable 'p' within one of the ratios. This aligns with the core move of establishing and simplifying algebraic relationships from proportional statements.
 - `NSAA_2020_Section1_Q63_NSAA_Sec`: The question requires using a given percentage (10% adenine) and biological proportional rules (A=T, G=C, and total bases = A+T+G+C) to determine the quantities of all base types. This involves establishing algebraic relationships based on percentages and proportions, and then simplifying these relationships to find the number of each component, which aligns well with the core move of relating quantities through proportions and ratios.
 
----
-```
-
-
-```markdown
 ## **M_e8c48f8e. Predicting Boiling Point Order from Structure**
 
 **Core move:** Apply knowledge of intermolecular forces, molecular size, and branching to predict and order the boiling points of organic compounds.
@@ -10175,11 +8487,6 @@ Can be extended to other physical properties that depend on intermolecular force
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q4_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_e9d864f6. Recalling Biological Facts and Functional Roles**
 
 **Core move:** Identify specific biological entities, their properties, and their functional significance within a given biological context.
@@ -10205,11 +8512,6 @@ Can cover various levels of biological organization, from molecular to cellular.
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q31_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_eb51e883. Determining Empirical/Molecular Formula from Mass Composition**
 
 **Core move:** Convert the given masses of constituent elements into moles using their respective atomic masses, then determine the simplest whole-number ratio of these moles to deduce the empirical formula.
@@ -10237,11 +8539,6 @@ If the molar mass of the compound is provided, compare the empirical formula mas
 - `NSAA_2020_Section2_Q23_NSAA_Sec`: The initial and most crucial step in solving this problem is to determine the chemical formula of compound X. This involves calculating the moles of each constituent element (potassium, hydrogen, oxygen, and implicitly carbon, which must be deduced from the total mass and the reaction hint), and then finding the simplest whole-number ratio to establish the empirical formula. This process directly aligns with the core move of schema M_eb51e883: 'Convert the given masses of constituent elements into moles using their respective atomic masses, then determine the simplest whole-number ratio of these moles to deduce the empirical formula.' The subsequent steps of identifying reactants and deducing Y rely entirely on the correct determination of X's formula.
 - `NSAA_2021_Section2_Q24_NSAA_Sec`: The question requires calculating the mass of water lost, converting the masses of both the anhydrous salt and the water into moles, and then determining the simplest whole-number ratio between them to find 'x', which is the stoichiometric coefficient in the hydrated formula. This directly aligns with the core move of determining an empirical formula from mass composition by converting masses to moles and finding their ratio.
 
----
-```
-
-
-```markdown
 ## **M_ec554dea. Analyzing Number Grid Patterns with Positional Relationships**
 
 **Core move:** Deduce the implicit rule for number arrangement within a grid or spiral, often involving square or triangular numbers, to determine a value at a specific relative position.
@@ -10265,11 +8562,6 @@ Questions often involve identifying square roots, powers, or layer-based increme
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q16_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ef3e0cd6. Sequential Geometric Transformations of Coordinates**
 
 **Core move:** Systematically apply a series of geometric transformation rules (rotation, reflection, translation, dilation) to specific coordinates, calculating the intermediate and final positions.
@@ -10296,11 +8588,6 @@ Rotation about a point other than the origin requires a translation, rotation, a
 - `NSAA_2020_Section1_Q19_NSAA_Sec`: The question requires applying a sequence of two geometric transformations (rotation followed by translation) to a line segment, specifically focusing on how these transformations affect the coordinates of its midpoint. This directly aligns with the core move of systematically applying a series of geometric transformation rules to calculate intermediate and final positions.
 - `NSAA_2022_Section1_Q19_NSAA_Sec`: The question requires applying two successive translation vectors (a type of geometric transformation) to an initial coordinate to find the final coordinate, directly matching the core move of systematically applying sequential geometric transformation rules.
 
----
-```
-
-
-```markdown
 ## **M_efaaaeaa. Interpreting Temperature-Rate Relationship in Kinetics**
 
 **Core move:** Assess and interpret the relationship between temperature and reaction rate by applying principles of chemical kinetics to evaluate given statements or predict trends.
@@ -10324,11 +8611,6 @@ Ensure statements provided for evaluation cover common scientific principles and
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q10_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_efe189a9. Separating Mixture Components by Properties**
 
 **Core move:** Utilize characteristic physical or chemical properties to predict and describe the separation of components in a mixture.
@@ -10354,11 +8636,6 @@ Vary the type of properties to be exploited (e.g., solubility, magnetism, boilin
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q10_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f0892922. Selecting Correct Item Combinations**
 
 **Core move:** Evaluate each potential item against specified criteria to form a definitive set, then identify the multiple-choice option that precisely matches this derived set.
@@ -10384,11 +8661,6 @@ Distractor options should include common selection errors, such as nearly correc
 - `NSAA_2020_Section2_Q6_NSAA_Sec`: The question explicitly asks 'Which of the following is/are correct...', indicating that the core task is to evaluate a set of potential items (statements, options) against specified criteria (the genetic assumptions provided) to identify the correct ones. This perfectly aligns with the core move of selecting correct item combinations.
 - `NSAA_2021_Section2_Q17_NSAA_Sec`: This question requires evaluating multiple independent biological criteria (the composition of antibodies, the expected outcome of a serological test for human blood, and the identity of a test species) against a set of options presented in rows. The core move involves assessing each component of a row for correctness based on biological knowledge and then identifying the row where all components are consistent with the implied investigation, which aligns with 'Selecting Correct Item Combinations'.
 
----
-```
-
-
-```markdown
 ## **M_f180baad. Interpreting Elemental Data from a Periodic Table**
 
 **Core move:** Extract and synthesize specific chemical information and patterns from the structured arrangement of elements in a periodic table.
@@ -10412,11 +8684,6 @@ This schema can often be combined with other schemas for further calculations or
 **Exemplar questions:**
 - `NSAA_2021_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f278af2b. Synchronizing Linear and Periodic Motion**
 
 **Core move:** Coordinate the timing of linear motion events with the periodic cycles of a rotating or oscillating system to satisfy given conditions.
@@ -10443,11 +8710,6 @@ Carefully consider initial conditions, such as 'initially at rest' or 'hole vert
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q7_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f320f11e. Quantitative Redox Stoichiometry with Specified Product State**
 
 **Core move:** Calculate the mass or volume of a reactant or product by balancing a redox reaction, using given oxidation states or product descriptions to identify species, and applying stoichiometric ratios with relevant conversion factors.
@@ -10473,11 +8735,6 @@ The use of molar volume at RTP (or STP) is a common element in such problems.
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q36_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f5c3f33f. Conditions for Polynomial Root Multiplicity**
 
 **Core move:** Employ the relationship between a polynomial and its derivative to establish conditions for specific root multiplicities or the number of distinct real roots.
@@ -10502,11 +8759,6 @@ The discriminant of the derivative P'(x) can indicate the existence of local ext
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q83_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f62b2484. Relating Diverse Experimental Measurements**
 
 **Core move:** Convert and interrelate different physical measurements from distinct experimental setups to quantify a shared underlying process or rate.
@@ -10531,11 +8783,6 @@ Vary the complexity by requiring multiple steps of conversion or calculation, po
 **Exemplar questions:**
 - `NSAA_2023_Section2_Q51_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f6b6f2b0. Determining Molecular Dipoles from Structure**
 
 **Core move:** Predict the presence of a permanent molecular dipole by analyzing molecular geometry and the polarity of individual bonds.
@@ -10562,11 +8809,6 @@ Questions can involve identifying polar/nonpolar molecules or ranking molecules 
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q33_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f6dce32b. Interpreting Structured Data Grids**
 
 **Core move:** Extract specific data points or identify positional relationships and local patterns within a structured grid or table.
@@ -10589,11 +8831,6 @@ The underlying 'rules' of the grid's structure might be explicit or implicitly u
 **Exemplar questions:**
 - `NSAA_2020_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_f8656e2b. Analyzing Perpendicular Lines**
 
 **Core move:** Determine the gradients of two straight lines from their equations and apply the condition for perpendicularity (m1 * m2 = -1) to solve for an unknown parameter.
@@ -10618,11 +8855,6 @@ The condition could also be for parallel lines (m1 = m2) or for a specific angle
 - `NSAA_2017_Section1_Q89_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2023_Section1_Q12_NSAA_Sec`: The question requires determining the gradients of two lines (one from two points, the other from its equation) and then applying the condition for perpendicularity (m1 * m2 = -1) to solve for the unknown parameter 'q'. This directly matches the core move of schema M_f8656e2b.
 
----
-```
-
-
-```markdown
 ## **M_fb83afb1. Calculating Forces and Power in Equilibrium**
 
 **Core move:** Apply the relationship between power, force, and velocity, alongside Newton's First Law (equilibrium of forces), and resolve forces into components to determine unknown forces or power in scenarios of constant velocity.
@@ -10650,11 +8882,6 @@ Trigonometric functions (sine for parallel component, cosine for perpendicular) 
 - `NSAA_2020_Section2_Q10_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section2_Q2_NSAA_Sec`: The question requires applying Newton's First Law (since the block is at rest, a scenario of constant zero velocity) and resolving the weight into components along and perpendicular to the inclined plane to compare the magnitudes of the forces (friction, normal force, and weight). This aligns with the core move of applying equilibrium conditions and resolving forces to determine unknown forces in constant velocity scenarios.
 
----
-```
-
-
-```markdown
 ## **M_fbd1e7ab. Applying Trigonometry to Bearings Problems**
 
 **Core move:** Translate navigational bearings into internal angles of a geometric shape, typically a triangle, and then apply trigonometric rules (Sine Rule or Cosine Rule) to determine unknown distances or angles.
@@ -10680,11 +8907,6 @@ Check if the problem simplifies to a right-angled triangle, as this often simpli
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q6_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_fbf02015. Analyzing Physiological Rates and Mechanisms**
 
 **Core move:** Calculate and compare rates of physiological processes using given dimensional and temporal data, and identify associated biological mechanisms.
@@ -10711,11 +8933,6 @@ The comparison should typically result in a distinct numerical ratio or order of
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q79_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_fcb67590. Identifying Biomolecular Subunits**
 
 **Core move:** Accurately identify the constituent molecular subunits or groups that combine to form a specific biological macromolecule or structure.
@@ -10742,11 +8959,6 @@ Ensure options clearly distinguish between monomers and polymers, or components 
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q1_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_fd4ee276. Inferring Compound Formula from Reaction Stoichiometry**
 
 **Core move:** Infer the elemental composition and consequently the molecular formula of an unknown compound by applying the principle of conservation of atoms in a given chemical reaction description, then calculate its relative molecular mass.
@@ -10775,11 +8987,6 @@ Provide access to relative atomic mass data (e.g., 'see periodic table').
 - `NSAA_2020_Section2_Q22_NSAA_Sec`: The question requires calculating the moles of bromine to determine the number of C=C double bonds in the unknown acid. This stoichiometric information is then used to infer the molecular formula of the acid by adjusting the hydrogen count based on the degree of unsaturation, directly matching the core move of inferring compound formula from reaction stoichiometry.
 - `NSAA_2023_Section2_Q30_NSAA_Sec`: The question requires a multi-step deduction of intermediate compound formulas based on reaction outcomes and properties. The final step, however, explicitly asks for the relative molar mass of compound Y, which is formed from a reaction between R and X. This involves inferring the molecular formula of Y by applying the principle of conservation of atoms from the known molecular formulas of R and X in the esterification reaction, and then calculating its relative molecular mass. This aligns perfectly with the core move of schema M_fd4ee276.
 
----
-```
-
-
-```markdown
 ## **M_fd91f769. Calculating Net Change from Multiple Discrete Events**
 
 **Core move:** Determine the overall change in a quantity by summing the individual changes resulting from a series of discrete events, each with a defined effect.
@@ -10807,11 +9014,6 @@ Questions can ask for the final state or the net difference.
 - `NSAA_2016_Section2_Q29_NSAA_Sec`: Calculating the standard enthalpy change of combustion typically involves summing the standard enthalpy changes of formation of products and reactants, or summing bond energies broken and formed, or applying Hess's Law by summing enthalpy changes of component reactions. This directly aligns with the schema's core move of determining an overall change by summing individual changes from discrete events, each with a defined effect.
 - `NSAA_2017_Section2_Q21_NSAA_Sec`: This question requires calculating an overall enthalpy change (a net change in a quantity) by combining the enthalpy changes of several discrete reactions (events), which involves summing them according to Hess's Law principles. This aligns directly with the core move of determining the overall change by summing individual changes.
 
----
-```
-
-
-```markdown
 ## **M_fe1a7cdc. Measuring and Quantifying Biodiversity**
 
 **Core move:** Explain and apply various quantitative and qualitative methods for assessing biodiversity, providing specific examples for each.
@@ -10835,11 +9037,6 @@ Can specify a particular habitat or group of organisms for the examples
 **Exemplar questions:**
 - `NSAA_2019_Section2_Q31_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_fe9ca981. Applying Wave-Particle Duality to Slit Experiments**
 
 **Core move:** Apply de Broglie's hypothesis to relate particle momentum to wavelength and use wave interference/diffraction principles to determine allowed particle velocities.
@@ -10866,11 +9063,6 @@ Questions may involve calculating specific speeds, or a range of speeds based on
 **Exemplar questions:**
 - `NSAA_2016_Section2_Q5_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ff318c2a. Integrating Variable Density to Find Total Mass**
 
 **Core move:** Apply integral calculus to sum infinitesimal mass contributions from a continuously varying density function over a defined volume to determine the total mass.
@@ -10897,11 +9089,6 @@ Ensure the integral is manageable for the target audience.
 **Exemplar questions:**
 - `NSAA_2022_Section2_Q0_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **M_ff6d0fef. Applying Linear Scaling to Similar Figures**
 
 **Core move:** Use a given or implied linear scale factor to determine unknown corresponding linear dimensions of similar geometric figures.
@@ -10925,11 +9112,6 @@ The scale factor might be presented as a fraction, decimal, ratio, or percentage
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q77_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_024e9e9d. Power Scaling in Series Circuits**
 
 **Core move:** Calculate the new total power in a series circuit when the number of active components changes, by relating total power to total resistance and constant supply voltage.
@@ -10952,11 +9134,6 @@ Questions often involve proportional reasoning.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_0f1ea62e. Calculating Velocity via Energy Conservation in Gravitational Fields**
 
 **Core move:** Exploit the conservation of mechanical energy principle (or kinematic equations) to determine an object's velocity given its change in height within a gravitational field, incorporating the relationship between weight, mass, and gravitational acceleration.
@@ -10982,11 +9159,6 @@ Options might be presented for v^2 rather than v, requiring careful interpretati
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q21_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_121b9ac8. Applying Momentum Conservation in Collision Problems**
 
 **Core move:** Apply the principle of conservation of momentum to determine an unknown mass or velocity in a closed system collision.
@@ -11012,11 +9184,6 @@ Problems often involve solving for one unknown quantity (e.g., the mass of one o
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q31_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_1462623d. Relating Wavelength and Frequency of EM Waves**
 
 **Core move:** Infer the change in one electromagnetic wave property (frequency or wavelength) given a change in the other, utilizing their inverse relationship.
@@ -11044,11 +9211,6 @@ The 'expansion of the universe' context is a common scenario for demonstrating r
 - `NSAA_2020_Section1_Q32_NSAA_Sec`: This question requires using the relationship c = fλ to convert a given frequency range into a wavelength range (or vice-versa) and then comparing it to known wavelength/frequency ranges for different types of electromagnetic waves (visible, infrared, ultraviolet). This directly matches the core move of inferring one electromagnetic wave property from another, utilizing their inverse relationship.
 - `NSAA_2021_Section1_Q33_NSAA_Sec`: The question requires calculating the wavelength of light from its frequency (or vice versa) using the constant speed of light (c=fλ) to verify a statement about its color, which directly aligns with the core move of relating wavelength and frequency of EM waves.
 
----
-```
-
-
-```markdown
 ## **P_1561ea33. Deducing Atomic Properties from Subatomic Particles**
 
 **Core move:** Determine the atomic number, mass number, and net charge of an atom or ion by analyzing its constituent protons, neutrons, and electrons.
@@ -11074,11 +9236,6 @@ Use small, manageable particle counts suitable for common elements (e.g., total 
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q33_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_17a253c9. Applying Newton's Second Law to Net Force**
 
 **Core move:** Apply Newton's Second Law by summing all forces acting on an object along the direction of motion to calculate an unknown quantity like mass, acceleration, or an individual force.
@@ -11106,11 +9263,6 @@ Ensure all units are consistent before performing calculations (e.g., N, kg, m/s
 - `NSAA_2021_Section1_Q36_NSAA_Sec`: The problem requires calculating the acceleration using kinematic equations first, and then applying Newton's Second Law by summing the gravitational force and the unknown air resistance force to find the average air resistance. This directly aligns with the core move of applying Newton's Second Law to calculate an individual force after determining acceleration.
 - `NSAA_2022_Section1_Q31_NSAA_Sec`: This problem requires calculating the average net force using the impulse-momentum theorem (an integrated form of Newton's Second Law, F_net = Δp/Δt) and then summing forces (contact force and gravitational force) to find the specific unknown contact force. This aligns with the core move of applying Newton's Second Law and summing forces to determine an individual force.
 
----
-```
-
-
-```markdown
 ## **P_1f0da6ee. Optimizing Conductive Heat Transfer Rate**
 
 **Core move:** Apply Fourier's Law of heat conduction to calculate the rate of thermal energy transfer and identify the conditions that minimize or maximize this rate.
@@ -11136,11 +9288,6 @@ Pay close attention to unit conversions before calculation.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_22bfd9bc. Interpreting Trends in Experimental Data**
 
 **Core move:** Identify and describe the qualitative relationship between an independent variable and a dependent variable from experimental data.
@@ -11165,11 +9312,6 @@ May require inferring what happens between data points or predicting beyond them
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_2db4e658. Wave Speed from Spatio-Temporal Peak Tracking**
 
 **Core move:** Calculate wave speed by determining the travel time of a single wave feature over a known distance, incorporating the wave's periodic nature to correctly interpret observational data across space and time.
@@ -11193,11 +9335,6 @@ This type of problem can often be solved by either directly finding Δt for a fi
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q36_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_31ebc6bd. Analyzing Forces in Constant Velocity**
 
 **Core move:** Calculate an unknown force by equating opposing forces acting on an object experiencing zero acceleration.
@@ -11223,11 +9360,6 @@ The calculation typically involves setting the sum of forces in perpendicular di
 - `NSAA_2017_Section1_Q33_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2021_Section1_Q32_NSAA_Sec`: The question explicitly states that the resultant vertical force on the wire is zero, implying zero acceleration. To solve it, one must calculate the downward gravitational force and then equate it to the upward magnetic force to find the unknown current, which perfectly matches the core move of calculating an unknown force by equating opposing forces acting on an object experiencing zero acceleration.
 
----
-```
-
-
-```markdown
 ## **P_32d02d07. Calculating Work and Power Against Gravity**
 
 **Core move:** Calculate the mechanical work done against gravity and the power exerted, using mass, height, and time.
@@ -11252,11 +9384,6 @@ Units should be varied (kg, g, m, cm, s, min, J, kJ, W, kW).
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_3336d531. Calculating Total Distance for Oscillating Particles**
 
 **Core move:** Calculate the total distance travelled by an oscillating particle over a given time, utilizing its amplitude and frequency.
@@ -11283,11 +9410,6 @@ Values should allow for straightforward calculation of total oscillations and di
 - `NSAA_2018_Section1_Q29_NSAA_Sec`: The question asks for the total distance travelled by an oscillating particle in a wave, given its amplitude and the wave's frequency over a specific time. This precisely matches the core move of schema P_3336d531, which is to calculate the total distance travelled by an oscillating particle over a given time, utilizing its amplitude and frequency.
 - `NSAA_2019_Section1_Q19_NSAA_Sec`: The question requires determining the amplitude of an oscillating particle by relating the given total distance travelled during one complete oscillation (5.6 cm) to 4 times the amplitude (4A). This is an inverse application of the core move, which focuses on calculating total distance using amplitude. Both require understanding the relationship that a particle travels 4A in one full oscillation.
 
----
-```
-
-
-```markdown
 ## **P_3416318a. Calculating Electrical Parameters in Electromechanical Systems with Efficiency**
 
 **Core move:** Calculate an electrical parameter (current, voltage, or power) or a mechanical parameter (force, height, time, or power) by applying the concept of efficiency to convert between mechanical work/power and electrical work/power.
@@ -11314,11 +9436,6 @@ Common formulas involved are: Work = Force x distance (W=Fd), Gravitational Pote
 - `NSAA_2017_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2018_Section1_Q25_NSAA_Sec`: The question requires calculating the kinetic energy (a mechanical parameter/work) of a car, starting from electrical parameters (voltage, current, time) of its motor, and explicitly using the efficiency of the overall system to convert between electrical input energy and mechanical output energy.
 
----
-```
-
-
-```markdown
 ## **P_3b31da9d. Analyzing Sound Echo Properties with Relative Motion**
 
 **Core move:** Predict changes in amplitude and frequency of a reflected sound wave (echo) by considering energy dissipation and the Doppler effect due to relative motion.
@@ -11344,11 +9461,6 @@ Amplitude reduction is a fundamental property of echoes due to absorption, scatt
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q22_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_42ff888f. Relating Momentum and Kinetic Energy**
 
 **Core move:** Combine the definitions of momentum and kinetic energy to solve for an unknown kinematic property (mass, velocity, momentum, or kinetic energy) of a single object.
@@ -11373,11 +9485,6 @@ Values should ideally lead to straightforward calculations or integer/simple dec
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_43f3e028. Determining Unknown Time in Segmented Motion**
 
 **Core move:** Calculate an unknown time or speed component within a multi-segment journey by applying the definition of average speed as total distance over total time, and expressing total distance as the sum of distances for each segment.
@@ -11402,11 +9509,6 @@ The problem structure often involves setting up an equation with the unknown var
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_4a4629d5. Aggregating Mass from Multiple Material Densities**
 
 **Core move:** Calculate the total mass of a composite system by determining the volume occupied by each component type and applying their respective densities.
@@ -11433,11 +9535,6 @@ Units for dimensions, density, and final mass should be consistent or require co
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q33_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_4a9e7a6d. Combining Gas Laws with Hydrostatic Pressure**
 
 **Core move:** Apply an appropriate ideal gas law to calculate a gas property, and then use the hydrostatic pressure formula to relate it to fluid depth or external pressure.
@@ -11464,11 +9561,6 @@ The unknown variable can be initial volume, final pressure, or the depth itself.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_4b1d7a8a. Quantifying Energy Transformation and Dissipation**
 
 **Core move:** Calculate energy transferred, converted, or lost within a system or component by applying the principle of energy conservation, definitions of work, and efficiency.
@@ -11503,11 +9595,6 @@ Ensure values used are appropriate for the specific stage of energy conversion b
 - `NSAA_2021_Section1_Q40_NSAA_Sec`: The question asks for the efficiency of a transformer, which is a direct quantification of how effectively electrical energy is transformed from input to output and how much is dissipated. This aligns perfectly with the schema's title 'Quantifying Energy Transformation and Dissipation' and its core move of calculating energy transferred, converted, or lost, as efficiency is the ratio of useful energy converted to total energy transferred.
 - `NSAA_2022_Section1_Q28_NSAA_Sec`: The question requires calculating the energy wasted (lost/dissipated) by an electric motor over a given time, using its input power and efficiency, which directly aligns with the core move of quantifying energy transferred and lost within a system using efficiency.
 
----
-```
-
-
-```markdown
 ## **P_4fdfe2c2. Wavelength from Relative Wave Encounter**
 
 **Core move:** Apply relative velocity principles to determine the effective speed at which an observer encounters wave crests, then use this relative speed and the observed period to calculate the wave's actual wavelength.
@@ -11530,11 +9617,6 @@ Consider scenarios where the observer moves with or against the wave direction.
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_65208a7f. Balancing Nuclear Decay Equations**
 
 **Core move:** Apply conservation laws for mass number and atomic number to identify emitted particles in radioactive decay chains.
@@ -11566,11 +9648,6 @@ Can be extended to predict daughter nuclei given parent and emissions, or parent
 - `NSAA_2020_Section1_Q26_NSAA_Sec`: The question requires determining the number of beta particles emitted in a radioactive decay series by applying the conservation laws for mass number and atomic number, which perfectly aligns with the core move of balancing nuclear decay equations.
 - `NSAA_2023_Section1_Q27_NSAA_Sec`: The question requires determining the properties of a daughter nuclide after a beta decay, which directly involves applying the conservation laws for mass number and atomic number to balance the nuclear decay equation.
 
----
-```
-
-
-```markdown
 ## **P_659cfb3f. Identifying Proportional Relationships for Physical Laws**
 
 **Core move:** State or identify the direct or inverse proportional relationships between physical quantities as defined by fundamental laws or equations.
@@ -11597,11 +9674,6 @@ Avoid providing options that are dimensionally incorrect, unless as a clear dist
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q24_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_7ea33353. Combining Dynamics and Kinematics**
 
 **Core move:** Integrate Newton's Second Law (F=ma) with kinematic equations to determine motion parameters (like displacement, final velocity, or time) for objects undergoing constant acceleration due to a net force.
@@ -11626,11 +9698,6 @@ Questions can vary by asking for any of the variables (F, m, u, v, a, s, t).
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q22_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_828c0407. Equating Two Radioactive Decay Processes**
 
 **Core move:** Solve for the time required for the quantities of two radioactive isotopes, each decaying with a distinct half-life and initial amount, to become equal.
@@ -11654,11 +9721,6 @@ Questions can vary the initial relationship (e.g., N_X = 2N_Y, or N_X + N_Y = co
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_836f71b8. Solving for Unknowns Using Paired Measurements**
 
 **Core move:** Exploit differences in a measured property across two scenarios to isolate and determine an unknown quantity that is common to both, often involving a system of equations.
@@ -11684,11 +9746,6 @@ Ensure unit consistency throughout the calculations.
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q30_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_8ab88df3. Explaining Convection Mechanisms**
 
 **Core move:** Describe the sequence of physical changes (e.g., heating, expansion, density alteration, buoyancy) that drive convection currents in fluids.
@@ -11713,11 +9770,6 @@ May require distinguishing between specific heat capacity and latent heat if pha
 **Exemplar questions:**
 - `NSAA_2017_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_8df37512. Applying Work-Energy Theorem with Non-Conservative Forces**
 
 **Core move:** Apply the Work-Energy Theorem, accounting for changes in gravitational potential energy, kinetic energy, and the work done by non-conservative forces like drag or friction.
@@ -11745,11 +9797,6 @@ Ensure units are consistent throughout the calculation.
 - `NSAA_2020_Section1_Q37_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2022_Section1_Q26_NSAA_Sec`: The question asks for the work done against resistive forces, which is directly addressed by applying the Work-Energy Theorem. The solution involves calculating the change in kinetic energy and the work done by the applied force, then using these values to find the work done by the non-conservative resistive forces (friction). This aligns perfectly with the core move of applying the Work-Energy Theorem and accounting for changes in kinetic energy and work done by non-conservative forces.
 
----
-```
-
-
-```markdown
 ## **P_91f4f2e6. Calculate Geometric Dimensions from Properties**
 
 **Core move:** Determine an unknown linear dimension of a polygon by applying its specific geometric properties and relevant theorems like the Pythagorean theorem.
@@ -11772,11 +9819,6 @@ Be mindful of truncated or incomplete questions (like the 'enlargement' part in 
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q17_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_92052111. Analyzing Mirror and Reflected Ray Rotations**
 
 **Core move:** Determine mirror rotation or reflected ray deviation by applying the law of reflection and the principle that a fixed incident ray's reflection rotates by twice the mirror's rotation angle.
@@ -11800,11 +9842,6 @@ For problems where the final reflected ray is fixed, and the incident ray on a m
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q29_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_935b7b5d. Relating Wave Speed and Wavelength Across Mediums**
 
 **Core move:** Utilize the constant frequency of a wave and the wave equation (v=fλ) to determine changes in its speed and wavelength as it transitions between two different mediums.
@@ -11830,11 +9867,6 @@ Can ask for any of the wave properties (initial speed, final speed, initial wave
 **Exemplar questions:**
 - `NSAA_2018_Section1_Q32_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_95d8eb0b. Analyzing Non-Ideal Transformer Efficiency**
 
 **Core move:** Calculate or infer an electrical output parameter (voltage, current, or power) of a transformer by applying turns ratio relationships and accounting for power losses using the concept of efficiency.
@@ -11858,11 +9890,6 @@ Ensure the distinction between voltage and current relationships based on turns 
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q23_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_99b4d196. Solving Sequence Properties via Simultaneous Equations**
 
 **Core move:** Formulate and solve a system of linear equations using the general term formula of an arithmetic or geometric sequence to determine unknown sequence parameters.
@@ -11885,11 +9912,6 @@ Can be extended to non-linear sequences (e.g., quadratic) for higher difficulty,
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q18_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_9c0e5b25. Calculating Radioactive Decay Products**
 
 **Core move:** Determine the remaining amount of a radioactive isotope and the quantity of its stable decay product after a given number of half-lives.
@@ -11918,11 +9940,6 @@ Questions may require calculating fractions, ratios, or absolute amounts.
 - `NSAA_2020_Section1_Q35_NSAA_Sec`: The question requires calculating the count rate from a radioactive isotope at different times, which is directly proportional to the 'remaining amount of a radioactive isotope' after a given number of half-lives. This involves applying the half-life concept to exponential decay. The additional step of isolating background radiation through simultaneous equations is an algebraic extension to this core physical concept.
 - `NSAA_2021_Section1_Q37_NSAA_Sec`: The question requires determining the number of atoms of stable decay products (R and S) formed from their parent nuclides (X and Y) after a specific time, given their half-lives. This directly matches the core move of calculating the quantity of stable decay products after a given number of half-lives.
 
----
-```
-
-
-```markdown
 ## **P_9d738079. Apply Fundamental Electrical Formulas**
 
 **Core move:** Calculate an unknown electrical quantity by sequentially applying fundamental definitions (e.g., current, charge, power) and Ohm's Law.
@@ -11948,11 +9965,6 @@ Can be extended to include power calculations (P=VI, P=I^2R, P=V^2/R).
 - `NSAA_2019_Section1_Q26_NSAA_Sec`: The problem requires calculating the power dissipated in the cables. This involves first using the fundamental transformer turns ratio to find the secondary current, and then applying the fundamental power dissipation formula (P = I^2R) to calculate the heat generated. This is a sequential application of fundamental electrical formulas.
 - `NSAA_2022_Section1_Q24_NSAA_Sec`: The question requires first calculating the individual resistance using the total power dissipated by two parallel resistors and the battery voltage, then using this resistance with a new voltage to find the current via Ohm's Law, and finally calculating the total charge using the definition of current (Q=It). This is a sequential application of fundamental electrical formulas and Ohm's Law to find an unknown electrical quantity.
 
----
-```
-
-
-```markdown
 ## **P_acb9793b. Isolate Reversible Electromagnetic Force from Differential Measurement**
 
 **Core move:** Determine the magnitude of an electromagnetic force by analyzing the difference in measured mechanical quantities (e.g., balance readings) when the electromagnetic interaction is reversed.
@@ -11976,11 +9988,6 @@ Ensure all variables are in consistent SI units.
 **Exemplar questions:**
 - `NSAA_2019_Section1_Q29_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_ad97dfb5. Scaling quantities with power law relationships**
 
 **Core move:** Calculate the resultant value of a dependent physical quantity by applying given scaling factors to its independent variables in a power law relationship.
@@ -12007,11 +10014,6 @@ Can involve multiple variables changing simultaneously, requiring careful applic
 - `NSAA_2016_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2017_Section1_Q28_NSAA_Sec`: The question requires calculating the ratio of densities (a dependent physical quantity) by applying the given ratio of radii (an independent variable) using a power law relationship (density is inversely proportional to the cube of the radius, ρ ∝ r⁻³). This directly matches the core move of schema P_ad97dfb5.
 
----
-```
-
-
-```markdown
 ## **P_ae6afb3b. Calorimetry and Thermal Energy Conservation**
 
 **Core move:** Apply the principle of conservation of thermal energy by equating the heat lost by hotter components to the heat gained by cooler components (Q_lost = Q_gained) using specific heat capacity and temperature changes.
@@ -12036,11 +10038,6 @@ Temperature change (ΔT) for a component should be calculated as (final temperat
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q35_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_b1db46d2. Relate Time Difference to Source Position**
 
 **Core move:** Calculate the displacement of a source from a central point based on the time difference of simultaneously emitted signals detected at symmetrical points, utilizing the signal speed.
@@ -12066,11 +10063,6 @@ The problem often involves inferring a 'distance difference' from a 'time differ
 - `NSAA_2017_Section1_Q24_NSAA_Sec`: Initial exemplar for new schema.
 - `NSAA_2018_Section1_Q36_NSAA_Sec`: This question requires relating the time difference in detecting a signal and the signal speed to infer the relative distances of detectors from the source. Specifically, the fact that X and Y detect simultaneously implies they are equidistant from the epicentre, and Z detecting later implies it is further away by a distance calculated from the time difference and wave speed (Δd = v × Δt). This directly aligns with the core move of relating time differences to source/detector positions using signal speed.
 
----
-```
-
-
-```markdown
 ## **P_b51132c8. Predicting Observed Light Properties with Relative Motion**
 
 **Core move:** Predict the observed frequency, wavelength, and speed of electromagnetic radiation by integrating the Doppler effect with the constancy of the speed of light in a vacuum.
@@ -12096,11 +10088,6 @@ Avoid ambiguity about which frame of reference the initial frequency/wavelength 
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_be6e7503. Multi-Phase Kinematic Optimization for Travel**
 
 **Core move:** Calculate total time or distance by segmenting motion into distinct phases of constant acceleration, constant velocity, and constant deceleration, applying kinematic equations to each segment and often optimizing for a specific parameter.
@@ -12126,11 +10113,6 @@ Consider edge cases, such as when the object cannot reach its maximum speed with
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q34_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_c51df105. Calculating Ratios of Geometric Volumes**
 
 **Core move:** Calculate the ratio of volumes of different geometric solids by first expressing each volume using standard formulas and given dimensional relationships, then simplifying the resulting algebraic expression.
@@ -12155,11 +10137,6 @@ Ensure the final expression for the ratio is fully simplified.
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_c6f35a7a. Analyze Proportional Relationships in Physical Laws**
 
 **Core move:** Exploit direct and inverse proportional relationships within a given physical law to predict changes in one variable based on changes in others.
@@ -12190,11 +10167,6 @@ When temperature changes occur at both ends, the key is to recalculate the tempe
 - `NSAA_2019_Section1_Q24_NSAA_Sec`: The question explicitly states that the spring obeys Hooke's law and supports a range of loads. Hooke's law describes a direct proportional relationship between force and extension. Evaluating statements about this system requires analyzing these proportional relationships to predict changes in extension based on changes in load, which directly matches the core move of schema P_c6f35a7a.
 - `NSAA_2020_Section1_Q30_NSAA_Sec`: The question requires establishing the stoichiometric ratio between the volumes of acid and base from a balanced chemical equation, given they are of the same concentration. This is a direct proportional relationship between the volumes and their stoichiometric coefficients. The task is to analyze this relationship, which aligns with the core move of exploiting direct proportional relationships within a scientific law (stoichiometry in this case) to understand the given quantities.
 
----
-```
-
-
-```markdown
 ## **P_c7c6e68d. Average Force from Momentum Change**
 
 **Core move:** Apply the impulse-momentum theorem to determine the average force exerted during an interaction, using the change in momentum over a given time interval.
@@ -12219,11 +10191,6 @@ Can be solved by first calculating acceleration (a = Δv/Δt) and then using F=m
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q25_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_d4f05622. Determine Magnetic Force on Current Wire**
 
 **Core move:** Calculate the magnetic force acting on a current-carrying wire by integrating current, wire length, and magnetic field strength, often requiring prior calculation of current from charge and time.
@@ -12247,11 +10214,6 @@ The problem typically focuses on the magnitude of the force, but the direction c
 **Exemplar questions:**
 - `NSAA_2022_Section1_Q21_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_d96051e3. Interconnecting Mechanical Properties for Solids**
 
 **Core move:** Determine an unknown mechanical property of a solid by chaining together the definitions of pressure, force, mass, and density, carefully managing units and relationships.
@@ -12276,11 +10238,6 @@ Often involves calculating a property of the object itself (like density or mass
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q28_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_db0a126f. Combining Statistical Measures of Datasets**
 
 **Core move:** Calculate the combined mean and determine the possible range of a merged dataset from its constituent groups' statistical properties.
@@ -12305,11 +10262,6 @@ Pay close attention to the interpretation of symbols for inequalities or exact v
 **Exemplar questions:**
 - `NSAA_2020_Section1_Q21_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_dbae2352. Analyze Isotope Properties and Neutron Counts**
 
 **Core move:** Derive unknown atomic, mass, or neutron numbers for isotopes using definitions and given relationships between their properties.
@@ -12334,11 +10286,6 @@ The calculated values for atomic number, mass number, and neutron number must al
 **Exemplar questions:**
 - `NSAA_2021_Section1_Q26_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_e5000b48. Multi-stage Conditional Probability with Transfers**
 
 **Core move:** Calculate the overall probability of an event by combining probabilities of intermediate outcomes in a sequential process involving transfers between distinct sets.
@@ -12362,11 +10309,6 @@ Questions may ask for an unknown initial quantity, requiring algebraic manipulat
 **Exemplar questions:**
 - `NSAA_2023_Section1_Q20_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_ec2e8bdd. Variable Resistor Circuit Analysis**
 
 **Core move:** Calculate the range of a specific circuit parameter (current, voltage, or power) by evaluating its value at the minimum and maximum resistance settings of a variable component in a series or parallel circuit.
@@ -12390,11 +10332,6 @@ The question should prompt for a range of a quantity, or its maximum/minimum pos
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q24_NSAA_Sec`: Initial exemplar for new schema.
 
----
-```
-
-
-```markdown
 ## **P_f4c1e46f. Thevenin Equivalent for Fixed Load Power**
 
 **Core move:** Apply Thévenin's theorem to simplify a complex source circuit and then calculate the power dissipated in a specified fixed load resistor.
@@ -12417,7 +10354,3 @@ The final power calculation for the fixed load R_L should use P = I_L^2 * R_L or
 
 **Exemplar questions:**
 - `NSAA_2016_Section1_Q15_NSAA_Sec`: Initial exemplar for new schema.
-
----
-```
-

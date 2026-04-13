@@ -40,10 +40,10 @@ The recommended execution order is:
 **Key Responsibilities**:
 - Receives a schema from `Schemas.md` describing a type of reasoning
 - Designs the underlying reasoning idea that tests one dominant thinking move
-- Outputs a YAML format describing the idea (not numbers or equations)
+- Outputs JSON describing the idea (not numbers or equations)
 - Focuses on reasoning moves and misconceptions, not formulas
 
-**Output Format**: YAML with fields:
+**Output Format**: JSON with fields:
 - `schema_id`: The schema identifier used
 - `idea_summary`: Core reasoning description
 - `function_or_object_type`: Type(s) of mathematical objects
@@ -63,7 +63,7 @@ The recommended execution order is:
 **Role**: Converts the Designer's idea into a complete, exam-ready multiple-choice question
 
 **Key Responsibilities**:
-- Receives the Designer's YAML idea plan
+- Receives the Designer's JSON idea plan
 - Chooses clean, deliberate numbers that simplify naturally
 - Writes a concise ESAT/ENGAA-style question stem (2-6 lines)
 - Solves the problem cleanly and correctly
@@ -72,7 +72,7 @@ The recommended execution order is:
   - Each incorrect option corresponds to a real reasoning mistake
 - Provides a short, exact solution
 
-**Output Format**: YAML with fields:
+**Output Format**: JSON with fields:
 - `question`: Contains `stem`, `options` (A-H), `correct_option`
 - `solution`: Contains `reasoning` and `key_insight`
 - `distractor_map`: Maps each option to its reasoning path
@@ -93,7 +93,7 @@ The recommended execution order is:
 - Evaluates if question is unambiguous, calculator-free, and ESAT-appropriate
 - Assesses if distractors are legitimate reasoning mistakes
 
-**Output Format**: YAML with fields:
+**Output Format**: JSON with fields:
 - `verdict`: PASS or FAIL
 - `confidence`: high/medium (if PASS)
 - `failure_type`: Type of failure if FAIL (mathematical_error, ambiguity, etc.)
@@ -121,7 +121,7 @@ The recommended execution order is:
 - Fixes every issue listed in verifier's or style judge's regen_instructions
 - Maintains ESAT/ENGAA style requirements
 
-**Output Format**: Standard Implementer YAML format
+**Output Format**: Standard Implementer JSON format
 
 **Constraints**:
 - Keeps same schema and target difficulty
@@ -142,7 +142,7 @@ The recommended execution order is:
 - PASS only if: no category < 7, and average score ≥ 8
 - Otherwise FAIL
 
-**Output Format**: YAML with fields:
+**Output Format**: JSON with fields:
 - `verdict`: PASS or FAIL
 - `scores`: Individual scores for each category
 - `failure_type`: Type of style failure if FAIL
@@ -253,7 +253,7 @@ All agents assume the candidate:
 
 **Configuration** (via environment variables or `RunConfig`):
 - `MAX_IMPLEMENTER_RETRIES`: Max retries for Implementer (default: 2)
-- `MAX_DESIGNER_RETRIES`: Max retries for Designer on YAML errors (default: 2)
+- `MAX_DESIGNER_RETRIES`: Max retries for Designer on invalid JSON (default: 2)
 - `SEED`: Random seed for reproducibility
 - `W_EASY`, `W_MED`, `W_HARD`: Difficulty weights (default: 0.3, 0.5, 0.2)
 - `SCHEMA_PREFIXES`: Comma-separated prefixes to allow (default: `"M"` — Math only)
@@ -272,15 +272,15 @@ All agents assume the candidate:
 - Each schema identified by header pattern: `## M1. Title` or `## P1. Title`
 - Filters by allowed prefixes (M for math, P for physics)
 
-**YAML Processing**:
-- Automatically strips code fences (```yaml ... ```) from LLM outputs
-- Validates YAML structure and required fields
+**JSON processing**:
+- Strips optional markdown fences (e.g. ```json ... ```) from LLM outputs
+- Parses with `json.loads` (and tolerant extraction when needed)
 - Stores raw text output in `_raw_text` field for debugging
 
 ### Retry Logic
 
 **Designer Retries**:
-- If Designer outputs invalid YAML or missing required fields, retries up to `max_designer_retries` times
+- If Designer outputs invalid JSON or missing required fields, retries up to `max_designer_retries` times
 - If all retries fail, question is rejected at Designer stage
 
 **Implementer Retries**:
@@ -308,8 +308,8 @@ All agents assume the candidate:
 2. **Difficulty Selection**: Randomly selects difficulty (Easy/Medium/Hard) with optional weighting
 3. **Designer Stage**: 
    - Calls Designer with schema block and difficulty
-   - Validates YAML output
-   - Retries on YAML errors
+   - Validates JSON output
+   - Retries on parse errors
 4. **Implementer Loop** (up to max_retries + 1 attempts):
    - **Attempt 0**: Initial implementation
    - **Attempt N>0**: Regeneration with failure reports
@@ -336,14 +336,14 @@ All agents assume the candidate:
 ## Usage Workflow
 
 1. **Schema Selection**: System randomly selects a schema (M1-M7 or P1-P7) and difficulty level
-2. **Designer**: Receives schema block and difficulty, outputs idea plan (YAML)
-   - Retries on YAML parsing errors (up to max_designer_retries)
-3. **Implementer**: Receives idea plan, outputs complete question (YAML)
+2. **Designer**: Receives schema block and difficulty, outputs idea plan (JSON)
+   - Retries on JSON parsing errors (up to max_designer_retries)
+3. **Implementer**: Receives idea plan, outputs complete question (JSON)
    - Initial attempt or regeneration attempt
-4. **Verifier**: Receives question, outputs PASS/FAIL verdict (YAML)
+4. **Verifier**: Receives question, outputs PASS/FAIL verdict (JSON)
    - If FAIL + fixable: Loop back to Implementer with retry instructions
    - If FAIL + structural: Reject and save to rejected.jsonl
-5. **Style Judge**: Receives question (and verifier report), outputs PASS/FAIL (YAML)
+5. **Style Judge**: Receives question (and verifier report), outputs PASS/FAIL (JSON)
    - If FAIL + fixable: Loop back to Implementer with retry instructions
    - If FAIL + structural: Reject and save to rejected.jsonl
 6. **Success**: If both Verifier and Style Judge PASS, save to accepted.jsonl

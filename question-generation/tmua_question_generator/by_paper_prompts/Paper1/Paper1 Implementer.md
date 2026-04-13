@@ -260,7 +260,7 @@ Return your response **only** as raw JSON (one object).
 5. **Special characters in strings**: Colons, `#`, etc. are fine *inside* JSON strings; only `"`, `\`, and raw line breaks need escaping.
    - ✅ `"E": "False log law: $\\\\log_3(...)$"`
    - ✅ `"A": "Section #1: Find the value"`
-6. **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
+6. **Inequalities in prose**: Use normal symbols `<`, `>`, `<=`, `>=` inside JSON string values.
 
 Required structure (pseudo-layout — your answer must be **one valid JSON object** with quoted keys; the block below is not valid JSON as written):
 
@@ -349,7 +349,7 @@ graph_intent:
 
 ## **Final self-check (before responding)**
 
-Before outputting YAML, verify:
+Before outputting JSON, verify:
 
 * **KaTeX formatting (CRITICAL - most common rejection reason):**
   - ✅ All options are strings wrapped in `$...$` (e.g., `A: "$-4$"` not `A: -4`)
@@ -643,7 +643,7 @@ Return your response **only** as raw JSON (one object).
 5. **Special characters in strings**: Colons, `#`, etc. are fine *inside* JSON strings; only `"`, `\`, and raw line breaks need escaping.
    - ✅ `"E": "False log law: $\\\\log_3(...)$"`
    - ✅ `"A": "Section #1: Find the value"`
-6. **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
+6. **Inequalities in prose**: Use normal symbols `<`, `>`, `<=`, `>=` inside JSON string values.
 
 Required structure (pseudo-layout — your answer must be **one valid JSON object** with quoted keys; the block below is not valid JSON as written):
 
@@ -732,7 +732,7 @@ graph_intent:
 
 ## **Final self-check (before responding)**
 
-Before outputting YAML, verify:
+Before outputting JSON, verify:
 
 * **KaTeX formatting (CRITICAL - most common rejection reason):**
   - ✅ All options are strings wrapped in `$...$` (e.g., `A: "$-4$"` not `A: -4`)

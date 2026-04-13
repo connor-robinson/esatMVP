@@ -23,10 +23,10 @@ Use one (or at most two) remix operators:
 
 2) Change the lens
    Repackage the same structure through another Math 2 topic:
-   - repeated root ↔ tangency / stationary-point condition
+   - repeated root ↔ tangency / stationary-point condition (**simple** derivative only — no long calculus chain)
    - algebraic equation ↔ graph intersection
    - sequence condition ↔ logarithmic or exponential reformulation
-   - area/integral condition ↔ symmetry or root structure
+   - area/integral condition ↔ symmetry or root structure (**avoid** making this a heavy integral-computation item; real ESAT Math 2 is **not** dominated by long integration)
 
 3) Encode indirectly
    Hide the key condition inside another standard statement:
@@ -44,7 +44,7 @@ Use one (or at most two) remix operators:
 What FAR must NOT do
 
 • No Further Maths.
-• No advanced calculus methods.
+• No advanced calculus methods; **no** calculus-heavy FAR items (long $\frac{\mathrm{d}}{\mathrm{d}x}$ chains, integration by parts / partial fractions as the core task).
 • No messy expansions.
 • No numerical approximation.
 • No graph-reading dependence.
@@ -53,9 +53,9 @@ What FAR must NOT do
 Calibration rule
 
 FAR should feel new, but once the invariant is seen,
-the solution must collapse quickly to a standard ESAT Mathematics 2 move
+the solution must collapse quickly to a standard **L6 / ESAT Mathematics 2** move
 such as substitution, exact trig reasoning, log/exponential laws, sequence formulae,
-stationary-point logic, or basic differentiation/integration.
+or **short** stationary-point / **light** calculus (**polynomial derivatives only**; no $\sin/\ln/e^x$ as the object of differentiation) — **not** lengthy differentiation-and-integration grind.
 
 Creativity guidance
 

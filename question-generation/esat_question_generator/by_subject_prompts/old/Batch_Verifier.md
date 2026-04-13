@@ -21,7 +21,7 @@ You will receive:
 
 ## Output Format (JSON)
 
-```yaml
+```json
 verdict: PASS | FAIL
 checks:
   mathematical_correctness: true | false

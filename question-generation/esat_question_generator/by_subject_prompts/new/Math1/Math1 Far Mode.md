@@ -22,10 +22,12 @@ Use one (or at most two) remix operators:
    - which statement about the number of solutions must be true?
 
 2) Change the lens
-   Repackage algebra as calculus or geometry:
-   - double root ↔ stationary point on axis
-   - two intersections ↔ derivative sign behaviour
+   Repackage algebra as **light** calculus or geometry (stay **L6 core**, not calculus-heavy):
+   - double root ↔ stationary point for a **simple** polynomial (short derivative only)
+   - two intersections ↔ monotonicity / sign behaviour — **do not** turn this into a long differentiation exercise
    - inequality ↔ sign analysis
+
+   **Do not** use FAR to smuggle in heavy differentiation/integration; real ESAT Math 1 has **limited** calculus. If the remix would need product/quotient rules, integration by parts, lengthy antiderivatives, or **differentiation of $\sin/\ln/e^x$**, **choose another remix**. Light calculus = **polynomial** derivatives only.
 
 3) Encode indirectly
    Hide the condition inside another statement:

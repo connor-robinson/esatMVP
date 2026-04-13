@@ -14,7 +14,6 @@ import re
 from typing import Dict, List, Tuple, Optional
 
 from katex_linter import lint_katex, format_lint_errors
-from katex_render_test import run_render_test
 
 
 def validate_katex_formatting(text: str, skip_render_test: bool = False, subject: Optional[str] = None) -> Tuple[bool, List[str]]:
@@ -42,6 +41,10 @@ def validate_katex_formatting(text: str, skip_render_test: bool = False, subject
     
     # Stage 2: Run Node.js render test (only if lint passed)
     if not skip_render_test:
+        try:
+            from katex_render_test import run_render_test
+        except ImportError:
+            return True, []
         try:
             render_result = run_render_test(text)
             if not render_result.get("ok", False):

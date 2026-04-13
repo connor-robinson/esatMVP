@@ -10,19 +10,52 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 
 
+def _default_curriculum_path() -> Path:
+    """First existing file wins (JSON under curriculum/, then new-pack copy, then legacy name)."""
+    base_dir = Path(__file__).parent.resolve()
+    candidates = (
+        base_dir / "curriculum" / "ESAT_CURRICULUM.json",
+        base_dir / "by_subject_prompts" / "new" / "ESAT_curriculum.md",
+        base_dir / "by_subject_prompts" / "ESAT curriculum.md",
+    )
+    for p in candidates:
+        if p.is_file():
+            return p
+    return candidates[0]
+
+
+def coerce_classifier_topic_code(schema_id: str, code: str) -> str:
+    """
+    Map bare classifier / labeler digits to curriculum raw codes before normalize_topic_code.
+
+    Physics tag output sometimes returns '1'–'7' instead of 'P1'–'P7'; biology may return '1'–'11'.
+    """
+    if not code or not schema_id:
+        return code
+    c0 = schema_id[0].upper()
+    t = str(code).strip()
+    if c0 == "P" and len(t) == 1 and t in "1234567":
+        return f"P{t}"
+    if c0 == "B" and t.isdigit():
+        n = int(t)
+        if 1 <= n <= 11:
+            return f"B{n}"
+    return t
+
+
 class CurriculumParser:
     def __init__(self, curriculum_file_path: Optional[str] = None):
         """
         Initialize the curriculum parser.
-        
+
         Args:
-            curriculum_file_path: Path to ESAT_CURRICULUM.json. If None, uses default location.
+            curriculum_file_path: Path to curriculum JSON (``.json`` or JSON-in-``.md``).
+                If None, uses ``curriculum/ESAT_CURRICULUM.json`` or
+                ``by_subject_prompts/new/ESAT_curriculum.md`` when present.
         """
         if curriculum_file_path is None:
-            # Default to by_subject_prompts/ESAT curriculum.md relative to this file
-            base_dir = Path(__file__).parent
-            curriculum_file_path = base_dir / "by_subject_prompts" / "ESAT curriculum.md"
-        
+            curriculum_file_path = _default_curriculum_path()
+
         self.curriculum_file_path = Path(curriculum_file_path)
         self.curriculum_data = self._load_curriculum()
         self.papers_by_id = {paper["paper_id"]: paper for paper in self.curriculum_data["papers"]}

@@ -246,7 +246,7 @@ If any global rule here conflicts with the template block, follow the template b
 - **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
   - ❌ `E: False log law: $\log_3(...)$` (invalid unless the option value is a proper JSON string)
   - ✅ `E: "False log law: $\log_3(...)$"` (correctly quoted)
-- **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
+- **Inequalities in prose**: Use normal symbols `<`, `>`, `<=`, `>=` inside JSON string values.
 - No markdown code fences in the final output
 - Escape LaTeX backslashes appropriately in JSON strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
 - If you use double quotes for option strings, ensure escaping is correct
@@ -613,7 +613,7 @@ If any global rule here conflicts with the template block, follow the template b
 - **QUOTE strings containing special characters**: If any text value contains `:`, `#`, `|`, `@`, `&`, `*`, `!`, `%`, or `?`, wrap it in double quotes. Examples:
   - ❌ `E: False log law: $\log_3(...)$` (invalid unless the option value is a proper JSON string)
   - ✅ `E: "False log law: $\log_3(...)$"` (correctly quoted)
-- **Use inequality wrappers**: For `<`, `>`, `<=`, `>=` in text (not math), use wrappers: `{<}`, `{>}`, `{<=}`, `{>=}`. These will be converted automatically.
+- **Inequalities in prose**: Use normal symbols `<`, `>`, `<=`, `>=` inside JSON string values.
 - No markdown code fences in the final output
 - Escape LaTeX backslashes appropriately in JSON strings (e.g. `\\frac`, `\\sqrt`, `\\sin`)
 - If you use double quotes for option strings, ensure escaping is correct

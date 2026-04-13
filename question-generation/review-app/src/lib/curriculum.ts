@@ -5,6 +5,34 @@
 
 import type { ReviewQuestion } from '@/types/review';
 
+/**
+ * TMUA rows use `subjects` for the paper: "Paper 1" / "Paper 2" (see db_sync).
+ * Treat common casing/spacing variants as TMUA so filters and UI stay consistent.
+ */
+export function isTmuaSubjectValue(subjects: string | null | undefined): boolean {
+  if (subjects == null) return false;
+  const raw = String(subjects).trim();
+  if (!raw) return false;
+  const compact = raw.toLowerCase().replace(/\s+/g, "");
+  if (compact === "paper1" || compact === "paper2") return true;
+  const spaced = raw.toLowerCase().replace(/\s+/g, " ").trim();
+  if (spaced === "paper 1" || spaced === "paper 2") return true;
+  if (spaced === "tmua paper 1" || spaced === "tmua paper 2") return true;
+  return false;
+}
+
+/** PostgREST `.or(...)` when filtering review list/stats to TMUA (canonical + common `subjects` variants). */
+export const REVIEW_FILTER_TMUA_POSTGREST_OR =
+  "test_type.eq.TMUA," +
+  'subjects.eq."Paper 1",' +
+  'subjects.eq."Paper 2",' +
+  "subjects.eq.Paper1," +
+  "subjects.eq.Paper2," +
+  'subjects.eq."paper 1",' +
+  'subjects.eq."paper 2",' +
+  'subjects.eq."PAPER 1",' +
+  'subjects.eq."PAPER 2"';
+
 // ESAT Curriculum Data (from ESAT_CURRICULUM.json)
 const ESAT_CURRICULUM = {
   papers: [
@@ -133,10 +161,12 @@ const TMUA_CURRICULUM: Record<string, string> = {
  * Determine if a question is ESAT based on test_type, paper field, schema_id, or primary_tag
  */
 export function isESATQuestion(question: ReviewQuestion): boolean {
+  if (isTmuaSubjectValue(question.subjects)) return false;
+  if (question.test_type === 'TMUA') return false;
+
   // First check test_type (most reliable)
   if (question.test_type === 'ESAT') return true;
-  if (question.test_type === 'TMUA') return false;
-  
+
   // If test_type is NULL, check other indicators
   const subjects = question.subjects;
   if (subjects === 'Math 1' || subjects === 'Math 2' || subjects === 'Physics' || 
@@ -171,11 +201,9 @@ export function isESATQuestion(question: ReviewQuestion): boolean {
  * Determine if a question is TMUA based on subjects field or primary_tag
  */
 export function isTMUAQuestion(question: ReviewQuestion): boolean {
-  const subjects = question.subjects;
-  if (subjects === 'Paper 1' || subjects === 'Paper 2') {
-    return true;
-  }
-  
+  if (isTmuaSubjectValue(question.subjects)) return true;
+  if (question.test_type === 'TMUA') return true;
+
   // Fallback: check primary_tag format (no prefix, raw codes)
   // TMUA tags don't have prefixes like ESAT - they're raw codes
   if (question.primary_tag) {
@@ -202,8 +230,8 @@ export function isTMUAQuestion(question: ReviewQuestion): boolean {
  * Get paper type (ESAT or TMUA) from a question
  */
 export function getPaperType(question: ReviewQuestion): 'ESAT' | 'TMUA' | null {
-  if (isESATQuestion(question)) return 'ESAT';
   if (isTMUAQuestion(question)) return 'TMUA';
+  if (isESATQuestion(question)) return 'ESAT';
   return null;
 }
 

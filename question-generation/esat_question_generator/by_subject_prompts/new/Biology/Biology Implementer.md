@@ -180,9 +180,28 @@ You must not:
 
 ------------------------------------------------------------
 
+Simultaneous equations (readability)
+
+If the stem gives **two or more equations** or formal relations that should be read as a **system**, put **each on its own line**. In the JSON `stem` string, separate them with `\n`. Do not run both on one continuous line when they should read as separate rows.
+
+------------------------------------------------------------
+
+Solution reasoning (`solution.reasoning`)
+
+Show **how** the correct option follows from the stem (pathway, mechanism logic, genetic reasoning, interpretation of the data) — not only “the answer is …”.
+
+- **Forbidden**: answer-only statements with no chain of reasoning.
+- **Required**: enough steps that a reader sees *why* that option is correct.
+
+Keep `key_insight` short; put the working in `reasoning`.
+
+------------------------------------------------------------
+
 Output Format
 
 Return raw JSON only.
+
+**Pipeline contract:** top-level **`question`** / **`solution`** / **`distractor_map`**; stem in **`question.stem`** (not **`question_text`**). **`distractor_map`**: non-empty entry per option. **Display `$$`:** delimiter-only lines; TeX between; blank lines (`\n\n`) around display blocks. **JSON:** valid escapes only.
 
 JSON syntax (critical — invalid JSON aborts the pipeline):
 - Output exactly **one JSON object**. No text before `{` or after `}`.
@@ -212,4 +231,4 @@ Required top-level keys: `metadata`, `question`, `solution`, `distractor_map`. I
 }
 ```
 
-Follow all formatting rules strictly.
+**KaTeX / text:** wrap any mathematical or symbolic content (expressions, inequalities, simple formulae) in `$...$` in stem, options, reasoning, key_insight, any step fields, and distractor_map. For `$$...$$` blocks, use delimiter-only lines and `\n\n` before/after each block. Do not use Markdown backticks for math.

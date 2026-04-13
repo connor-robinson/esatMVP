@@ -27,13 +27,13 @@ If KaTeX validation errors are included, you MUST fix them:
 - **Unmatched `$` signs**: Ensure every opening `$` has a matching closing `$`
 - **Wrong delimiters**: Replace `\[`, `\(`, `\]`, `\)` with `$$` or `$`
 - **Display math spacing**: Ensure `$$` blocks have blank lines before and after
-- **Unescaped backslashes**: In YAML, escape all LaTeX backslashes (`\frac` → `\\frac`)
+- **Unescaped backslashes**: In JSON strings, escape all LaTeX backslashes (`\frac` → `\\frac`)
 - **For Chemistry/Biology**: Ensure `\ce` commands are properly escaped (`\\ce{...}`)
 
 ### KaTeX Rules (Quick Reference):
 - Use ONLY `$...$` for inline and `$$...$$` for display math
 - Display math must have blank lines before and after
-- In YAML, escape all backslashes: `\\frac`, `\\sqrt`, `\\ce`, etc.
+- In JSON strings, escape all backslashes: `\\frac`, `\\sqrt`, `\\ce`, etc.
 - For Chemistry/Biology: Use `\\ce{formula}` for chemical formulas
 - Never use `\[`, `\(`, `\]`, `\)` delimiters
 

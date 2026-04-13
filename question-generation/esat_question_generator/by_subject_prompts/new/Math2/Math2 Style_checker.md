@@ -30,7 +30,7 @@ INPUTS YOU WILL RECEIVE
 - question.stem
 - options A–F (or A–H)
 - correct_option
-- solution.reasoning
+- solution.reasoning (concise but must show **how** the answer is reached — not answer-only)
 - solution.key_insight
 - distractor_map
 
@@ -50,6 +50,10 @@ Use references ONLY to calibrate difficulty and structural feel.
 Do NOT copy wording or structure.
 
 ------------------------------------------------------------
+
+L6 calculus balance (authenticity)
+
+Real ESAT Mathematics 2 uses **some** calculus but is **not** mostly long differentiation/integration. Prefer items where difficulty is structural (graphs, logs, parameters, trig, sequences, binomial) rather than “evaluate this heavy integral.” **FAIL** as `too_hard` (or note in `notes`) if the item feels like Further Maths or university calculus practice rather than **L6 core** ESAT balance. **Pipeline cap:** if differentiation is central, it must be **polynomial-only** (powers of $x$ / $(ax+b)^n$); **FAIL** `too_hard` if the stem/solution hinges on differentiating $\sin/\ln/e^x$-type expressions.
 
 What “ESAT Math 2 feel” means
 

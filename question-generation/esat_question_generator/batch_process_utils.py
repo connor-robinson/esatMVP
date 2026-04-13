@@ -6,6 +6,7 @@ Helper functions for batch question processing pipeline.
 """
 
 import json
+import re
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Tuple

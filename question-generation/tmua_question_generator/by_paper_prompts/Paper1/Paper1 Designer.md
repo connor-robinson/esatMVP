@@ -119,9 +119,9 @@ Return **one JSON object only**. No markdown fences, no commentary before `{` or
 
 JSON rules (invalid JSON aborts the pipeline):
 - Every string uses double quotes; escape `"` and `\` inside strings.
-- Use `\n` inside strings for line breaks (no YAML-style block scalars).
+- Use `\n` inside strings for line breaks (no multiline string literals outside normal JSON strings).
 - Colons, percent signs, currency symbols, and normal Unicode are fine inside strings.
-- For inequalities in prose fields, keep wrapped tokens `{<}`, `{>}`, `{<=}`, `{>=}` inside the string.
+- Inequalities in prose may use normal `<`, `>`, `<=`, `>=` inside strings (JSON does not treat them as syntax inside quoted values).
 
 Required keys (all must be present):
 - `schema_id` (string)

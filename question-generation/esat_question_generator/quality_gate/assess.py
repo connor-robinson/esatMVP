@@ -1,0 +1,150 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
+
+from project import _gemini_console
+
+from .defaults import quality_gate_model_try_order
+from .schemas import QualityGateResult, parse_quality_gate_json
+
+_DIR = Path(__file__).resolve().parent
+
+
+def load_rubric_markdown() -> str:
+    p = _DIR / "prompt.md"
+    return p.read_text(encoding="utf-8")
+
+
+def _strip_json_fences(text: str) -> str:
+    s = text.strip()
+    if s.startswith("```"):
+        lines = s.splitlines()
+        if lines and lines[0].strip().startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        s = "\n".join(lines).strip()
+    return s
+
+
+def extract_json_object(text: str) -> Dict[str, Any]:
+    s = _strip_json_fences(text)
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        pass
+    # Fallback: first {...} block
+    start = s.find("{")
+    end = s.rfind("}")
+    if start >= 0 and end > start:
+        return json.loads(s[start : end + 1])
+    raise ValueError("no JSON object found in model output")
+
+
+def _subject_for_payload(row: Dict[str, Any]) -> Any:
+    """Single string for the rubric (from ``subjects`` column: str or list)."""
+    raw = row.get("subjects")
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        s = raw.strip()
+        return s or None
+    if isinstance(raw, list):
+        parts = [str(x).strip() for x in raw if x is not None and str(x).strip()]
+        return ", ".join(parts) if parts else None
+    s = str(raw).strip()
+    return s or None
+
+
+def build_question_payload(row: Dict[str, Any]) -> Dict[str, Any]:
+    """Fields sent to the quality-gate judge only (no schema snapshot or curriculum ids)."""
+
+    def _trim(s: Any, n: int) -> Any:
+        if not isinstance(s, str):
+            return s
+        return s if len(s) <= n else s[:n] + "\n…[truncated]"
+
+    return {
+        "subject": _subject_for_payload(row),
+        "difficulty": row.get("difficulty"),
+        "question_stem": _trim(row.get("question_stem"), 16000),
+        "options": row.get("options"),
+        "correct_option": row.get("correct_option"),
+        "solution_reasoning": _trim(row.get("solution_reasoning"), 12000),
+        "distractor_map": row.get("distractor_map"),
+    }
+
+
+def build_assessment_system_user_prompts(row: Dict[str, Any]) -> Tuple[str, str]:
+    """Shared by sync Vertex calls and Gemini Developer batch inline requests."""
+    rubric = load_rubric_markdown()
+    system_prompt = (
+        "You are an expert ESAT item reviewer. Follow the rubric exactly. "
+        "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps or too much clock time** for one MCQ as serious defects—score pacing accordingly and say so in `exam_timing_notes` when relevant.\n\n"
+        + rubric
+        + "\n\nAlways respond with a single JSON object only."
+    )
+    payload = build_question_payload(row)
+    user_prompt = (
+        "Grade this question. Input JSON:\n"
+        + json.dumps(payload, ensure_ascii=False, indent=2)
+    )
+    return system_prompt, user_prompt
+
+
+def _vertex_model_not_found(exc: BaseException) -> bool:
+    s = str(exc)
+    if "404" in s and "NOT_FOUND" in s:
+        return True
+    if "Publisher Model" in s and "not found" in s.lower():
+        return True
+    return False
+
+
+def assess_question(
+    llm: Any,
+    row: Dict[str, Any],
+    *,
+    model: str,
+    temperature: float = 0.25,
+    vertex_not_found_fallbacks: bool = True,
+) -> Tuple[QualityGateResult, str, str]:
+    """
+    Returns (parsed result, raw model text, model id actually used for the API call).
+
+    ``llm`` is typically ``ClaudePurgeClient`` or ``LLMClient`` (both implement ``generate``).
+
+    If ``vertex_not_found_fallbacks`` is true and the configured Gemini id returns Vertex
+    ``404 NOT_FOUND``, retries ``quality_gate_model_try_order`` with Gemini fallbacks.
+    """
+    system_prompt, user_prompt = build_assessment_system_user_prompts(row)
+    primary = (model or "").strip()
+    last_exc: Optional[BaseException] = None
+    for m in quality_gate_model_try_order(primary, vertex_not_found_fallbacks=vertex_not_found_fallbacks):
+        try:
+            raw = llm.generate(
+                m,
+                system_prompt,
+                user_prompt,
+                temperature=temperature,
+                trace_label="quality_gate",
+            )
+            if m != primary:
+                _gemini_console(
+                    f"Quality gate: primary model {primary!r} was not available; used {m!r} for this question."
+                )
+            data = extract_json_object(raw)
+            return parse_quality_gate_json(data), raw, m
+        except Exception as e:
+            if not _vertex_model_not_found(e):
+                raise
+            last_exc = e
+            _gemini_console(
+                f"Quality gate: model {m!r} not found for this project/region; trying next…",
+                error_excerpt=str(e),
+            )
+    if last_exc is not None:
+        raise last_exc
+    raise RuntimeError("quality_gate_model_try_order returned no models")

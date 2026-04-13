@@ -4,6 +4,7 @@
 
 import { type ClassValue, clsx } from "clsx";
 import type { ReviewQuestion } from "@/types/review";
+import { isTmuaSubjectValue } from "@/lib/curriculum";
 
 /**
  * Merge class names with Tailwind CSS
@@ -77,10 +78,27 @@ function tmuaTopicFallbackFromIdeaPlan(
   };
 }
 
-function rowLooksTmua(data: { test_type?: string | null; schema_id?: string }): boolean {
+function rowLooksTmua(data: {
+  test_type?: string | null;
+  schema_id?: string;
+  subjects?: string | null;
+}): boolean {
   if (data.test_type === "TMUA") return true;
+  if (isTmuaSubjectValue(data.subjects)) return true;
   const sid = data.schema_id || "";
   return sid.startsWith("M_") || sid.startsWith("R_");
+}
+
+/** Single-letter A–H for `correct_option`; avoids `|| 'A'` turning valid lowercase into wrong defaults. */
+export function normalizeCorrectOptionLetter(raw: unknown): string {
+  if (raw == null) return "A";
+  const s = String(raw).trim();
+  if (!s) return "A";
+  const u = s.toUpperCase();
+  if (/^[A-H]$/.test(u)) return u;
+  const c = u.charAt(0);
+  if (/^[A-H]$/.test(c)) return c;
+  return "A";
 }
 
 /**
@@ -143,8 +161,13 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     schema_id: data.schema_id || '',
     difficulty: data.difficulty || 'Medium',
     question_stem: data.question_stem || '',
+    question_stem_before_auto_diagram:
+      typeof data.question_stem_before_auto_diagram === "string" &&
+      data.question_stem_before_auto_diagram.trim()
+        ? data.question_stem_before_auto_diagram
+        : null,
     options: options,
-    correct_option: data.correct_option || 'A',
+    correct_option: normalizeCorrectOptionLetter(data.correct_option),
     solution_reasoning: data.solution_reasoning || null,
     solution_key_insight: data.solution_key_insight || null,
     distractor_map: distractor_map,
@@ -156,6 +179,77 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     status: data.status || 'pending', // Updated default status
     created_at: data.created_at || new Date().toISOString(),
     updated_at: data.updated_at || new Date().toISOString(),
+    media_upload_code: data.media_upload_code ?? null,
+    screen_video_storage_path: data.screen_video_storage_path ?? null,
+    schema_block_snapshot:
+      typeof data.schema_block_snapshot === "string" && data.schema_block_snapshot.trim()
+        ? data.schema_block_snapshot.trim()
+        : null,
+    idea_plan: parseJsonObject(data.idea_plan) as Record<string, unknown> | null,
+    verifier_report: parseJsonObject(data.verifier_report) as Record<string, unknown> | null,
+    style_report: parseJsonObject(data.style_report) as Record<string, unknown> | null,
+    models_used: parseJsonObject(data.models_used) as Record<string, unknown> | null,
+    token_usage: parseJsonObject(data.token_usage) as Record<string, unknown> | null,
+    generation_attempts:
+      typeof data.generation_attempts === "number" && Number.isFinite(data.generation_attempts)
+        ? data.generation_attempts
+        : null,
+    run_id: typeof data.run_id === "string" && data.run_id.trim() ? data.run_id.trim() : null,
+    schema_reclass_review_tier:
+      data.schema_reclass_review_tier === "urgent" ||
+      data.schema_reclass_review_tier === "secondary" ||
+      data.schema_reclass_review_tier === "review_needed"
+        ? data.schema_reclass_review_tier
+        : null,
+    schema_reclass_old_id:
+      typeof data.schema_reclass_old_id === "string" && data.schema_reclass_old_id.trim()
+        ? data.schema_reclass_old_id.trim()
+        : null,
+    schema_reclass_new_id:
+      typeof data.schema_reclass_new_id === "string" && data.schema_reclass_new_id.trim()
+        ? data.schema_reclass_new_id.trim()
+        : null,
+    quality_gate_assessed_at:
+      typeof data.quality_gate_assessed_at === "string" && data.quality_gate_assessed_at.trim()
+        ? data.quality_gate_assessed_at.trim()
+        : null,
+    quality_gate_verdict:
+      data.quality_gate_verdict === "Pass" ||
+      data.quality_gate_verdict === "Minor" ||
+      data.quality_gate_verdict === "Major"
+        ? data.quality_gate_verdict
+        : null,
+    quality_gate_action:
+      data.quality_gate_action === "approve" ||
+      data.quality_gate_action === "human_review" ||
+      data.quality_gate_action === "regenerate" ||
+      data.quality_gate_action === "delete"
+        ? data.quality_gate_action
+        : null,
+    quality_gate_reason:
+      typeof data.quality_gate_reason === "string" && data.quality_gate_reason.trim()
+        ? data.quality_gate_reason.trim()
+        : null,
+    quality_gate_job_id:
+      typeof data.quality_gate_job_id === "string" && data.quality_gate_job_id.trim()
+        ? data.quality_gate_job_id.trim()
+        : null,
+    quality_gate_model:
+      typeof data.quality_gate_model === "string" && data.quality_gate_model.trim()
+        ? data.quality_gate_model.trim()
+        : null,
+    quality_gate_calibration_tier:
+      data.quality_gate_calibration_tier === "gold" ? "gold" : null,
+    quality_gate_calibration_notes:
+      typeof data.quality_gate_calibration_notes === "string" &&
+      data.quality_gate_calibration_notes.trim()
+        ? data.quality_gate_calibration_notes.trim()
+        : null,
+    quality_gate_graph_candidate: data.quality_gate_graph_candidate === true,
+    quality_gate_graph_notes:
+      typeof data.quality_gate_graph_notes === "string" && data.quality_gate_graph_notes.trim()
+        ? data.quality_gate_graph_notes.trim()
+        : null,
   };
 }
 
@@ -190,6 +284,13 @@ export function validateReviewQuestion(question: any): question is ReviewQuestio
 export function stripHtml(html: string): string {
   if (!html) return "";
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/** GET `/api/review/questions` with a unique `_cb` so responses are never served from cache. */
+export function reviewQuestionsGetUrl(search: Record<string, string>): string {
+  const p = new URLSearchParams(search);
+  p.set("_cb", String(Date.now()));
+  return `/api/review/questions?${p.toString()}`;
 }
 
 

@@ -31,8 +31,8 @@ tmua_question_generator/
 
 Notes:
 - This script is interface-free. It writes JSONL logs/output files under runs/<timestamp>/.
-- Requires a Gemini API key in .env.local file: GEMINI_API_KEY
-- Uses Google GenAI Python SDK: `google-genai` (recommended) or falls back to REST stub.
+- Uses Vertex AI via Application Default Credentials; set GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION.
+- Uses Google GenAI Python SDK: `google-genai`.
 - Loads environment variables from .env.local using python-dotenv
 - Math questions get classified into Math 1 or Math 2 papers by the classifier
 """
@@ -175,7 +175,7 @@ def sha1_short(s: str) -> str:
 
 def strip_code_fences(text: str) -> str:
     """
-    Removes surrounding ```json / ```yaml / ``` ... ``` fences if present.
+    Removes surrounding fenced code blocks (e.g. ```json ... ```) if present.
     """
     t = text.strip()
     if t.startswith("```"):
@@ -662,6 +662,29 @@ def parse_schemas_from_markdown(md: str, allow_prefixes: Tuple[str, ...]=("M","P
 
 def _llm_debug_logging_enabled() -> bool:
     return os.environ.get("GEMINI_DEBUG_LLM", "").strip().lower() in ("1", "true", "yes")
+
+
+def _vertex_env_config() -> Tuple[str, str]:
+    """Return ``(project, location)`` for Vertex AI."""
+    project = (os.environ.get("GOOGLE_CLOUD_PROJECT") or "").strip()
+    location = (os.environ.get("GOOGLE_CLOUD_LOCATION") or "").strip()
+    return project, location
+
+
+def _ensure_vertex_env_config() -> Tuple[str, str]:
+    project, location = _vertex_env_config()
+    missing: List[str] = []
+    if not project:
+        missing.append("GOOGLE_CLOUD_PROJECT")
+    if not location:
+        missing.append("GOOGLE_CLOUD_LOCATION")
+    if missing:
+        raise SystemExit(
+            "Missing Vertex AI configuration: "
+            + ", ".join(missing)
+            + ". Set in .env.local and run `gcloud auth application-default login`."
+        )
+    return project, location
 
 
 class LLMClient:
@@ -2014,7 +2037,8 @@ def extract_severity(obj: Dict[str, Any]) -> str:
     return str(s).strip()
 
 def is_fixable(severity: str) -> bool:
-    return severity == "fixable_with_regeneration"
+    s = (severity or "").strip().lower()
+    return s in ("fixable_with_regeneration", "format_only_fixable")
 
 def is_structural(severity: str) -> bool:
     return severity == "structural_flaw"
@@ -2509,27 +2533,28 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 callbacks["on_stage_complete"]("Designer", idea_plan)
             break
         except ValueError as e:
-            # Check if this is a YAML parsing error
             error_str = str(e)
-            is_yaml_error = ("JSON parsing error" in error_str or "YAML" in error_str or "yaml" in error_str.lower())
+            is_parse_error = (
+                "JSON parsing error" in error_str
+                or "parsing" in error_str.lower()
+            )
             
             designer_err = error_str
             if callbacks and "on_stage_error" in callbacks:
                 callbacks["on_stage_error"]("Designer", error_str)
             
-            # Log with detailed YAML error info
             log_entry = {
                 "stage": "designer",
                 "schema_id": schema_id,
                 "difficulty": difficulty,
                 "attempt": d_try + 1,
                 "error": designer_err,
-                "is_yaml_error": is_yaml_error,
+                "is_parse_error": is_parse_error,
             }
             dump_jsonl(paths["logs"], log_entry)
             
             # Print helpful error message
-            if is_yaml_error:
+            if is_parse_error:
                 print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1}: Invalid JSON detected")
                 print(f"   Error: {error_str[:200]}...")
                 if d_try < cfg.max_designer_retries:
@@ -2541,7 +2566,6 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 if d_try < cfg.max_designer_retries:
                     print(f"   → Retrying...")
         except Exception as e:
-            # Other exceptions (not YAML-related)
             designer_err = str(e)
             if callbacks and "on_stage_error" in callbacks:
                 callbacks["on_stage_error"]("Designer", str(e))
@@ -2551,7 +2575,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": d_try + 1,
                 "error": designer_err,
-                "is_yaml_error": False,
+                "is_parse_error": False,
             })
             print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1} failed: {str(e)[:200]}...")
             if d_try < cfg.max_designer_retries:
@@ -2953,10 +2977,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 print(f"⚠ Backup error (non-fatal): {e}")
             
             # Sync to database (silently - no console output)
-            # Only questions that pass verifier + style judge will be saved
+            # Only questions that pass verifier + style judge will be saved.
+            # Status pending until a human approves in the review app.
             try:
                 from db_sync import sync_question_from_pipeline
-                db_id = sync_question_from_pipeline(item, base_dir, status="approved")
+                db_id = sync_question_from_pipeline(item, base_dir, status="pending")
                 if db_id:
                     item["_db_id"] = db_id
             except ImportError:
@@ -2974,12 +2999,14 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             return {"run_dir": run_dir, "status": "accepted", "item_id": item["id"], "item": item}
 
         except ValueError as e:
-            # Check if this is a YAML parsing error
             error_msg = str(e)
-            is_yaml_error = ("JSON parsing error" in error_msg or "YAML" in error_msg or "yaml" in error_msg.lower() or "parsing" in error_msg.lower())
-            
+            is_parse_error = (
+                "JSON parsing error" in error_msg
+                or "parsing" in error_msg.lower()
+            )
+
             # Print error to console for debugging
-            if is_yaml_error:
+            if is_parse_error:
                 print(f"\n⚠ Implementer attempt {attempt + 1}/{cfg.max_implementer_retries + 1}: Invalid JSON detected")
                 print(f"   Error: {error_msg[:300]}...")
                 if attempt < cfg.max_implementer_retries:
@@ -2999,7 +3026,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": attempt + 1,
                 "error": error_msg,
-                "is_yaml_error": is_yaml_error,
+                "is_parse_error": is_parse_error,
             })
             # Treat exceptions as fixable and try again if possible
             if attempt < cfg.max_implementer_retries:
@@ -3008,8 +3035,8 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             error_msg = str(e)
             # Print error to console for debugging
             print(f"\n⚠ Error at attempt {attempt + 1}: {error_msg[:300]}")
-            if "JSON" in error_msg or "YAML" in error_msg or "invalid" in error_msg.lower():
-                print("  → This looks like a JSON/YAML parsing or validation issue")
+            if "JSON" in error_msg or "invalid" in error_msg.lower():
+                print("  → This looks like a JSON parsing or validation issue")
             if "question" in error_msg.lower() or "solution" in error_msg.lower():
                 print("  → Missing required fields in Implementer output")
             
@@ -3019,7 +3046,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": attempt + 1,
                 "error": error_msg,
-                "is_yaml_error": False,
+                "is_parse_error": False,
             })
             # Treat exceptions as fixable and try again if possible
             if attempt < cfg.max_implementer_retries:
@@ -3326,8 +3353,8 @@ class PipelineGUI:
         self.details_text.delete(1.0, tk.END)
         self.details_text.config(state=tk.DISABLED)
     
-    def format_yaml(self, data: Any) -> str:
-        """Format pipeline output for display (JSON; name kept for UI compatibility)."""
+    def format_json(self, data: Any) -> str:
+        """Format pipeline output for display (JSON)."""
         try:
             return prompt_json_dumps(data)
         except Exception:
@@ -3472,7 +3499,7 @@ class PipelineGUI:
                 self.update_stage_status(row, "success")
                 self.update_stage_info(row, "Complete")
                 self.append_stage_output(row, f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Completed successfully\n")
-                self.append_stage_output(row, "Output:\n" + self.format_yaml(data))
+                self.append_stage_output(row, "Output:\n" + self.format_json(data))
             except KeyError:
                 self._console(f"KEYERROR complete: stage={stage!r} row={row!r}")
         self.root.after(0, update)

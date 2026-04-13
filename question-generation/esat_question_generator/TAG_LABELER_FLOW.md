@@ -109,27 +109,30 @@ def get_available_topics_for_schema(self, schema_id: str) -> List[Dict]:
 
 ### Step 5: Prompt Construction (`classifier_call`)
 
-The filtered topic list is formatted as YAML and passed to the AI:
+The filtered topic list is formatted as JSON and passed to the AI:
 
 ```python
+import json
+
 available_topics = curriculum_parser.get_available_topics_for_schema(schema_id)
 
-topics_text = yaml.safe_dump({
+topics_payload = {
     "available_topics": [
         {
-            "code": topic["code"],      # Prefixed code (e.g., "M1-M1", "P-P1")
-            "title": topic["title"],    # Human-readable title
-            "paper": topic["paper_name"]  # Paper name (e.g., "Mathematics 1", "Physics")
+            "code": topic["code"],
+            "title": topic["title"],
+            "paper": topic["paper_name"],
         }
         for topic in available_topics
     ]
-}, sort_keys=False)
+}
+topics_text = json.dumps(topics_payload, ensure_ascii=False, indent=2)
 
 user = f"""Available curriculum topics:
 {topics_text}
 
-Question package (YAML):
-{yaml.safe_dump(question_obj, sort_keys=False)}
+Question package (JSON):
+{json.dumps(question_obj, ensure_ascii=False, indent=2, default=str)}
 
 Analyze the question and assign appropriate curriculum tags."""
 ```
@@ -165,10 +168,12 @@ The AI then:
 5. AI chooses based on question content (e.g., `M2-MM7` if it involves calculus)
 
 **Output:**
-```yaml
-primary_tag: M2-MM7
-secondary_tags: [M2-MM1]
-paper: Math 2
+```json
+{
+  "primary_tag": "M2-MM7",
+  "secondary_tags": [{ "code": "M2-MM1", "confidence": 0.8 }],
+  "paper": "Math 2"
+}
 ```
 
 ### Example 2: Physics Schema (P3)
@@ -183,9 +188,11 @@ paper: Math 2
 4. AI chooses based on question content (e.g., `P-P3` for mechanics)
 
 **Output:**
-```yaml
-primary_tag: P-P3
-secondary_tags: [P-P1]
+```json
+{
+  "primary_tag": "P-P3",
+  "secondary_tags": [{ "code": "P-P1", "confidence": 0.75 }]
+}
 ```
 
 ### Example 3: Biology Schema (B10)
@@ -200,9 +207,11 @@ secondary_tags: [P-P1]
 4. AI chooses based on question content (e.g., `biology-B10` for ecosystems)
 
 **Output:**
-```yaml
-primary_tag: biology-B10
-secondary_tags: []
+```json
+{
+  "primary_tag": "biology-B10",
+  "secondary_tags": []
+}
 ```
 
 ### Example 4: Chemistry Schema (C4)
@@ -217,9 +226,11 @@ secondary_tags: []
 4. AI chooses based on question content (e.g., `chemistry-C4` for quantitative chemistry)
 
 **Output:**
-```yaml
-primary_tag: chemistry-C4
-secondary_tags: [chemistry-C3]
+```json
+{
+  "primary_tag": "chemistry-C4",
+  "secondary_tags": [{ "code": "chemistry-C3", "confidence": 0.7 }]
+}
 ```
 
 ---

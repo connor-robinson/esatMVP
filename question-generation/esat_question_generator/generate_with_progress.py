@@ -80,27 +80,10 @@ def main():
     if not os.path.exists(env_path):
         safe_load_dotenv(os.path.join(base_dir, ".env.local"))
 
-    # Validate API key before starting
-    # Check multiple sources for the API key
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    
-    # Check for API key (minimal output)
-    if not api_key:
-        # Also check if it's in the loaded .env file
-        if os.path.exists(env_path):
-            try:
-                with open(env_path, 'r', encoding='utf-8') as f:
-                    for line in f:
-                        if line.strip().startswith('GEMINI_API_KEY=') and not line.strip().startswith('#'):
-                            api_key = line.split('=', 1)[1].strip().strip('"').strip("'")
-                            # Also set it in os.environ for this process
-                            os.environ['GEMINI_API_KEY'] = api_key
-                            break
-            except Exception:
-                pass
-    
-    if not api_key:
-        error_msg = "ERROR: GEMINI_API_KEY environment variable is missing or empty!"
+    cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+    cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
+    if not cloud_project or not cloud_location:
+        error_msg = "ERROR: GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION are required for Vertex!"
         print(f"\n{'='*70}", file=sys.stderr)
         print(error_msg, file=sys.stderr)
         print(f"Current working directory: {os.getcwd()}", file=sys.stderr)
@@ -108,9 +91,9 @@ def main():
         print(f"Project root: {project_root}", file=sys.stderr)
         print(f"Looking for .env.local at: {env_path}", file=sys.stderr)
         print(f".env.local exists: {os.path.exists(env_path)}", file=sys.stderr)
-        print(f"Environment variables with 'GEMINI' in name:", file=sys.stderr)
+        print(f"Environment variables with 'GOOGLE_CLOUD' in name:", file=sys.stderr)
         for key in os.environ.keys():
-            if 'GEMINI' in key.upper():
+            if 'GOOGLE_CLOUD' in key.upper():
                 print(f"  - {key}: {'*' * min(len(os.environ[key]), 10)}", file=sys.stderr)
         print(f"{'='*70}\n", file=sys.stderr)
         print(f"ERROR: {error_msg}", file=sys.stderr)
@@ -124,10 +107,10 @@ def main():
         })
         sys.exit(1)
     
-    # Test API key before starting generation (silent - only show errors)
+    # Test Vertex auth before starting generation (silent - only show errors)
     try:
         from project import LLMClient
-        test_client = LLMClient(api_key=api_key)
+        test_client = LLMClient(api_key="")
         test_response = test_client.client.models.generate_content(
             model="gemini-2.5-flash",
             contents="Say 'test' if you can read this.",
@@ -135,8 +118,8 @@ def main():
         )
     except Exception as test_error:
         error_str = str(test_error)
-        if "403" in error_str or "PERMISSION_DENIED" in error_str or "leaked" in error_str.lower():
-            error_msg = f"API key is invalid or revoked: {error_str[:200]}"
+        if "403" in error_str or "PERMISSION_DENIED" in error_str:
+            error_msg = f"Vertex auth/permissions failed: {error_str[:200]}"
             print(f"ERROR: {error_msg}", file=sys.stderr)
             write_status({
                 "status": "error",

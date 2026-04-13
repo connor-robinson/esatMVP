@@ -121,7 +121,7 @@ If unsure, **FAIL**.
 
 ---
 
-## **Output format (MANDATORY YAML)**
+## **Output format (MANDATORY JSON)**
 
 ### If PASS
 

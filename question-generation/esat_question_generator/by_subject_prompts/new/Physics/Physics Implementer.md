@@ -143,16 +143,36 @@ The key_insight must:
 
 ------------------------------------------------------------
 
+Solution reasoning (`solution.reasoning`)
+
+Show **how** the correct option follows from physics (principles applied, formula use, cancellations, limiting cases) — not only a final numeric result or “so the answer is B”.
+
+- **Forbidden**: stating the final value or letter without the short chain of reasoning that produces it.
+- **Required**: enough intermediate steps that a reader sees *why* that option is correct.
+
+Keep `key_insight` short; put the working in `reasoning`.
+
+------------------------------------------------------------
+
+Simultaneous equations (readability)
+
+If the stem gives **two or more equations** that form a **system** (e.g. two relations the candidate must use together), put **each equation on its own line**. In the JSON `stem` string, separate them with `\n` after the first equation (or its `$$...$$` block). Do not run both equations on one long line when they should read as separate rows.
+
+------------------------------------------------------------
+
 Output Format
 
 Return raw JSON only.
 
+**Pipeline contract:** top-level **`question`** (with **`question.stem`**), **`solution`**, **`distractor_map`** — not top-level **`question_text`**. **`distractor_map`** must list **every** option key with a non-empty explanation. **Display `$$`:** delimiter lines must contain only `$$`; math between them on its own lines; blank lines (`\n\n`) before/after each display block. **JSON:** valid escapes only (`\\` for LaTeX).
+
 JSON syntax (critical): one valid JSON object only. Use double-quoted strings; escape `"` and `\`. Colons, `%`, units, and other ordinary symbols are fine **inside** strings; LaTeX needs double backslashes in strings (`\\frac`).
 
 Follow all KaTeX and formatting rules strictly:
-- All options containing any math or symbols must be wrapped in $...$ if mathematical.
-- All math in solution must use $...$ or $$...$$.
-- All LaTeX backslashes must be double-escaped.
+- **Options:** wrap each **math/symbol** fragment in `$...$`; if an option mixes prose and symbols, wrap **only** the math parts (purely symbolic answers may be one `$...$`).
+- **Inline math everywhere:** stem, options, reasoning, key_insight, any step or worked-text fields, and **distractor_map** — use `$...$` for all mathematics and physics symbols (no bare `\frac`, no equations left in plain text). Do **not** use Markdown backticks for math.
+- Display `$$...$$` as in the pipeline contract (isolated `$$` lines; `\n\n` around blocks). No `\(…\)` / `\[…\]`.
+- All LaTeX backslashes must be double-escaped in JSON strings.
 - Distractor map is mandatory and must explain specific conceptual errors.
 
 ------------------------------------------------------------
@@ -166,4 +186,5 @@ Before responding, verify:
 - Exactly one correct option.
 - All distractors are meaningful.
 - Fully no-calculator.
+- **KaTeX:** display blocks spaced with `\n\n`; inline math and distractor_map use `$...$`; no backticks for math.
 - Not derivative of any specific past question.

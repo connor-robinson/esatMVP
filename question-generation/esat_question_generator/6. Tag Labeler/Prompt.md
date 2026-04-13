@@ -159,63 +159,67 @@ Analyze the question content and assign:
 
 ## **Output format (MANDATORY)**
 
-Return your response **only** in the following YAML format:
+Return your response **only** as **one JSON object** (raw JSON, no markdown fences).
 
-```yaml
-primary_tag: <topic_code>
-primary_confidence: <0.0-1.0>
-secondary_tags:
-  - code: <topic_code>
-    confidence: <0.0-1.0>
-  - code: <topic_code>
-    confidence: <0.0-1.0>
-reasoning: >
-  Brief explanation of why these tags were chosen, especially the choice between Math 1 and Math 2 for M schemas.
+Shape:
+
+```json
+{
+  "primary_tag": "<topic_code>",
+  "primary_confidence": 0.95,
+  "secondary_tags": [
+    { "code": "<topic_code>", "confidence": 0.75 }
+  ],
+  "reasoning": "Brief explanation of why these tags were chosen, especially Math 1 vs Math 2 for M schemas."
+}
 ```
 
 **Example for M schema:**
-```yaml
-primary_tag: M2-MM7
-primary_confidence: 0.95
-secondary_tags:
-  - code: M2-MM4
-    confidence: 0.75
-reasoning: >
-  This question requires differentiation and integration techniques (M2-MM7), which are clearly Math 2 content.
-  The exponential/logarithmic manipulation (M2-MM4) is also relevant as a secondary concept.
+```json
+{
+  "primary_tag": "M2-MM7",
+  "primary_confidence": 0.95,
+  "secondary_tags": [
+    { "code": "M2-MM4", "confidence": 0.75 }
+  ],
+  "reasoning": "This question requires differentiation and integration techniques (M2-MM7), which are clearly Math 2 content. The exponential/logarithmic manipulation (M2-MM4) is also relevant as a secondary concept."
+}
 ```
 
 **Example for P schema:**
-```yaml
-primary_tag: P-P3
-primary_confidence: 0.90
-secondary_tags:
-  - code: P-P1
-    confidence: 0.60
-reasoning: >
-  The question primarily tests mechanics concepts (P-P3), with some electrical principles (P-P1) as context.
+```json
+{
+  "primary_tag": "P-P3",
+  "primary_confidence": 0.90,
+  "secondary_tags": [
+    { "code": "P-P1", "confidence": 0.60 }
+  ],
+  "reasoning": "The question primarily tests mechanics concepts (P-P3), with some electrical principles (P-P1) as context."
+}
 ```
 
 **Example for B schema:**
-```yaml
-primary_tag: biology-B4
-primary_confidence: 0.95
-secondary_tags:
-  - code: biology-B7
-    confidence: 0.70
-reasoning: >
-  The question focuses on inheritance patterns (biology-B4), with variation concepts (biology-B7) as a secondary aspect.
+```json
+{
+  "primary_tag": "biology-B4",
+  "primary_confidence": 0.95,
+  "secondary_tags": [
+    { "code": "biology-B7", "confidence": 0.70 }
+  ],
+  "reasoning": "The question focuses on inheritance patterns (biology-B4), with variation concepts (biology-B7) as a secondary aspect."
+}
 ```
 
 **Example for C schema:**
-```yaml
-primary_tag: chemistry-C4
-primary_confidence: 0.92
-secondary_tags:
-  - code: chemistry-C3
-    confidence: 0.65
-reasoning: >
-  The question primarily tests quantitative chemistry calculations (chemistry-C4), with chemical equations (chemistry-C3) as supporting knowledge.
+```json
+{
+  "primary_tag": "chemistry-C4",
+  "primary_confidence": 0.92,
+  "secondary_tags": [
+    { "code": "chemistry-C3", "confidence": 0.65 }
+  ],
+  "reasoning": "The question primarily tests quantitative chemistry calculations (chemistry-C4), with chemical equations (chemistry-C3) as supporting knowledge."
+}
 ```
 
 ---

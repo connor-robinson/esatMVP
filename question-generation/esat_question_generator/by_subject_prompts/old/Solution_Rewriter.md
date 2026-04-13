@@ -36,15 +36,21 @@ Do NOT change the mathematics, method, logic, values, or correct option.
 }
 ```
 
+## WORKED SOLUTION DEPTH (NON-NEGOTIABLE)
+
+- `solution_reasoning_katex` must show **how** the answer is reached: main equations, rearrangements, or conceptual steps — not **only** a final numeric result or the correct letter.
+- If `solution_reasoning_raw` is empty, too short, or answer-only (e.g. just “$k=120$” or “Therefore B”), **expand** it with the missing reasoning while keeping all mathematics correct and unchanged.
+- You may stay concise in *prose*, but you must not skip the chain that justifies the result.
+
 ## HUMAN STYLE RULES (CRITICAL)
 
 - Write as a confident mathematician, not a tutor or step-by-step algorithm.
 - Prefer judgement before calculation ("We notice…", "This suggests…").
-- Omit steps a strong student would do mentally unless they are error-prone.
+- Omit *only* steps a strong student would do mentally **and** that are not needed to see why the answer follows — never omit the core justification chain.
 - Use one clean approach; do NOT label "Method 1 / Method 2".
 - Avoid rigid sequencing ("First… Next…").
 - Vary sentence length; short observations followed by concise working.
-- Be brief. No filler.
+- Be concise, not telegraphic: no filler, but do not collapse to answer-only.
 
 ## HUMANNESS ENFORCERS
 

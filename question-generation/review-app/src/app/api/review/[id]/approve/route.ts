@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { getReviewSupabase } from '@/lib/supabaseService';
 import type { ReviewQuestion } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +13,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   try {
-    const supabase = createServerClient();
+    const supabase = getReviewSupabase();
     const resolvedParams = await Promise.resolve(params);
     const { id } = resolvedParams;
 

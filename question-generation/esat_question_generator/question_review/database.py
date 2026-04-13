@@ -447,8 +447,13 @@ class Database:
             return {"approved_count": 0, "error": "Database not enabled"}
         
         try:
-            # Get all pending_review questions
-            response = self.client.table("ai_generated_questions").select("*").eq("status", "pending_review").execute()
+            # Awaiting review: ``pending`` (restructured DB) or legacy ``pending_review``
+            response = (
+                self.client.table("ai_generated_questions")
+                .select("*")
+                .in_("status", ["pending", "pending_review"])
+                .execute()
+            )
             
             if not response.data:
                 return {"approved_count": 0, "message": "No pending questions found"}

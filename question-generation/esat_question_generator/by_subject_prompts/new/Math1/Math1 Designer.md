@@ -32,6 +32,7 @@ Avoid:
 - hidden-trick dependence
 - advanced or off-spec maths
 - overly artificial contexts
+- **calculus-heavy** ideas: ESAT Math 1 has **limited** differentiation/integration on the real exam — do **not** design ideas whose natural solution is long product/quotient/implicit differentiation, integration by parts, heavy substitution integrals, or volumes of revolution. **Differentiation cap (pipeline):** if the idea uses derivatives/gradients/tangents/stationary points, the function to differentiate must be **polynomial in $x$** (powers of $x$ / $(ax+b)^n$ only). **Do not** design items that require differentiating $\sin$, $\cos$, $\ln$, $e^x$, or similar. Stay at **L6 core** (standard A-level Mathematics, not Further Maths); prefer algebra, graphs, trig, sequences, and short stationary-point logic on **polynomials** only when it collapses quickly.
 
 ## Task
 

@@ -387,8 +387,13 @@ class VisualGeneratorUI:
         if not os.path.exists(env_path):
             safe_load_dotenv(os.path.join(self.base_dir, ".env.local"))
 
-        if not os.environ.get("GEMINI_API_KEY", "").strip():
-            messagebox.showerror("API key", f"Set GEMINI_API_KEY in:\n{env_path}")
+        cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+        cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
+        if not cloud_project or not cloud_location:
+            messagebox.showerror(
+                "Vertex config",
+                f"Set GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION in:\n{env_path}",
+            )
             return
 
         try:

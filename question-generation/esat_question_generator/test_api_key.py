@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Test GEMINI_API_KEY
+Test Vertex AI local auth.
 
-Simple script to test if the API key is valid.
+Simple script to test whether local ADC + Vertex env works.
 """
 
 import os
@@ -24,22 +24,23 @@ if env_path.exists():
 else:
     print(f"Warning: .env.local not found at {env_path}")
 
-# Get API key
-api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+# Get Vertex config
+cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
 
-if not api_key:
-    print("ERROR: GEMINI_API_KEY not found in environment variables")
+if not cloud_project or not cloud_location:
+    print("ERROR: GOOGLE_CLOUD_PROJECT / GOOGLE_CLOUD_LOCATION not found in environment variables")
     print(f"Checked .env.local at: {env_path}")
     sys.exit(1)
 
-print(f"Found API key: {api_key[:10]}...{api_key[-4:] if len(api_key) > 14 else '***'}")
-print("Testing API key...")
+print(f"Found Vertex config: project={cloud_project}, location={cloud_location}")
+print("Testing Vertex auth...")
 
 try:
     from project import LLMClient
     
     # Create client
-    client = LLMClient(api_key=api_key)
+    client = LLMClient(api_key="")
     
     # Make a simple test call
     print("Making test API call...")
@@ -52,28 +53,25 @@ try:
     # Check response
     if test_response and hasattr(test_response, 'text'):
         response_text = test_response.text
-        print(f"✓ API key is VALID!")
+        print("✓ Vertex auth is VALID!")
         print(f"Response: {response_text[:100]}")
         sys.exit(0)
     else:
-        print("✗ API key test failed - no response text")
+        print("✗ Vertex auth test failed - no response text")
         sys.exit(1)
         
 except Exception as e:
     error_str = str(e)
-    print(f"✗ API key test FAILED")
+    print("✗ Vertex auth test FAILED")
     print(f"Error: {error_str}")
     
     if "403" in error_str or "PERMISSION_DENIED" in error_str:
         print("\nThis usually means:")
-        print("  - API key is invalid or revoked")
-        print("  - API key doesn't have permission for Gemini API")
+        print("  - ADC identity lacks Vertex IAM permissions")
+        print("  - Wrong project/location or Vertex API disabled")
     elif "401" in error_str or "UNAUTHENTICATED" in error_str:
         print("\nThis usually means:")
-        print("  - API key is missing or malformed")
-    elif "leaked" in error_str.lower():
-        print("\nThis usually means:")
-        print("  - API key has been leaked and revoked")
+        print("  - ADC credential missing; run: gcloud auth application-default login")
     else:
         print("\nUnknown error - check the error message above")
     

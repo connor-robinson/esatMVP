@@ -4,7 +4,10 @@
 Simple Question Generator UI
 
 A clean, hands-off Tkinter interface for batch question generation.
-Works systematically through schemas (M→P→C→B), saves immediately to Supabase and local backup.
+Works systematically through loaded schemas, saves immediately to Supabase and local backup.
+
+By default this UI loads **Physics, Chemistry, and Biology** only (prefixes P, C, B).
+Override with env ``ESAT_SIMPLE_UI_SCHEMA_PREFIXES`` (comma-separated, e.g. ``M,P,C,B``) to include Mathematics or a custom subset.
 """
 
 import os
@@ -12,14 +15,18 @@ import sys
 import re
 import json
 import time
+import queue
 import threading
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 from pathlib import Path
 from datetime import datetime, timedelta
+from types import SimpleNamespace
 from typing import Dict, List, Optional, Tuple, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import OrderedDict
+
+from pipeline_log import console_banner, get_pipeline_log_path, init_pipeline_log, plog
 
 # Import curriculum parser for tag labeling
 try:
@@ -27,7 +34,14 @@ try:
     CURRICULUM_PARSER_AVAILABLE = True
 except ImportError:
     CURRICULUM_PARSER_AVAILABLE = False
-    print("Warning: curriculum_parser not available. Tag labeling will be disabled.")
+    plog(
+        "ui",
+        "curriculum_parser_import_failed",
+        level="warning",
+        detail={"hint": "Tag labeling disabled."},
+        echo=True,
+        spacer=True,
+    )
 
 # Configure UTF-8 encoding for Windows console
 if sys.platform == "win32":
@@ -45,6 +59,8 @@ from project import (
     safe_load_dotenv, choose_difficulty, get_default_models_config,
     load_schemas_esat_markdown, GeminiQuotaExhaustedError,
     append_gemini_api_event,
+    load_prompts,
+    describe_style_only_regen_policy,
 )
 
 try:
@@ -60,7 +76,162 @@ try:
     SUPABASE_AVAILABLE = True
 except ImportError:
     SUPABASE_AVAILABLE = False
-    print("Warning: Supabase not available")
+    plog(
+        "ui",
+        "supabase_import_failed",
+        level="warning",
+        detail={"hint": "pip install supabase — DB sync disabled until then."},
+        echo=True,
+        spacer=True,
+    )
+
+
+def _fetch_ai_generated_questions_coverage_rows(supabase):
+    """
+    Load rows for per-schema counts and Math 1/2 totals.
+    Uses ``subjects`` only; the ``paper`` column was removed from ``ai_generated_questions``.
+
+    Paginates in 1000-row chunks. PostgREST/Supabase default max rows per request is
+    typically 1000 — a single unbounded ``select`` under-counts coverage and makes the
+    queue think schemas are short, causing extra generations per schema.
+    """
+    table = supabase.table("ai_generated_questions")
+    page_size = 1000
+    last_err: Optional[Exception] = None
+    for cols in (
+        "schema_id, subjects",
+        "schema_id",
+    ):
+        try:
+            all_rows: List[Dict[str, Any]] = []
+            start = 0
+            while True:
+                end = start + page_size - 1
+                batch = table.select(cols).range(start, end).execute()
+                chunk = batch.data or []
+                all_rows.extend(chunk)
+                if len(chunk) < page_size:
+                    break
+                start += page_size
+            return SimpleNamespace(data=all_rows)
+        except Exception as e:
+            last_err = e
+            continue
+    if last_err:
+        raise last_err
+    raise RuntimeError("Could not query ai_generated_questions for coverage.")
+
+
+def _load_schema_prefix_approvals(path: Path) -> Optional[List[Dict[str, Any]]]:
+    """Load ``schema_prefix_full_approved.json`` if present; return approvals list or None."""
+    if not path.is_file():
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        approvals = data.get("approvals")
+        if isinstance(approvals, list):
+            return approvals
+    except Exception:
+        pass
+    return None
+
+
+def format_esat_schema_inventory_report(
+    *,
+    schemas_path: Path,
+    ordered_schema_ids: List[str],
+    coverage: Dict[str, int],
+    approvals_path: Path,
+) -> str:
+    """
+    Human-readable snapshot: MD schema list vs DB coverage, optional reclass stats from approvals file.
+    """
+    lines: List[str] = []
+    n = len(ordered_schema_ids)
+    cov = coverage or {}
+    with_q = sum(1 for sid in ordered_schema_ids if cov.get(sid, 0) > 0)
+    total_attached = sum(cov.get(sid, 0) for sid in ordered_schema_ids)
+    lines.append(f"Schemas file: {schemas_path.name}  |  loaded: {n}  |  with DB rows: {with_q}  |  total questions (listed ids): {total_attached}")
+    lines.append("Quota: 3 questions per schema; target rises to 5 when more than 3 are already attached (DB + this session).")
+
+    approvals = _load_schema_prefix_approvals(approvals_path)
+    if not approvals:
+        lines.append(
+            f"Reclass data: (no {approvals_path.name} — place it next to the generator to show renames vs DB stale ids.)"
+        )
+        return "\n".join(lines)
+
+    new_ids = {str(a.get("new_schema_id") or "") for a in approvals if a.get("new_schema_id")}
+    new_ids.discard("")
+    old_ids = {str(a.get("schema_id") or "") for a in approvals if a.get("schema_id")}
+    old_ids.discard("")
+
+    renamed = [
+        (str(a["schema_id"]), str(a["new_schema_id"]))
+        for a in approvals
+        if a.get("schema_id")
+        and a.get("new_schema_id")
+        and str(a["schema_id"]) != str(a["new_schema_id"])
+    ]
+    stale_on_old = sum(cov.get(o, 0) for o, _ in renamed)
+    on_new_side = sum(cov.get(n, 0) for _, n in renamed)
+
+    md_set = set(ordered_schema_ids)
+    extra_in_md = md_set - new_ids
+    missing_from_md = new_ids - md_set
+
+    lines.append(
+        f"Approvals: {approvals_path.name}  |  distinct new_schema_id: {len(new_ids)}  |  distinct schema_id (pre-rename): {len(old_ids)}"
+    )
+    lines.append(
+        f"Prefix/id renames (old→new): {len(renamed)}  |  DB questions on OLD ids (may need migration): {stale_on_old}  |  on NEW ids: {on_new_side}"
+    )
+    if extra_in_md:
+        lines.append(
+            f"Schemas in MD but not in approval new_schema_id set: {len(extra_in_md)} (new since export or filter mismatch)."
+        )
+    if missing_from_md:
+        nmiss = len(missing_from_md)
+        hint = (
+            " — often normal when SCHEMA_PREFIXES limits subjects vs full approvals file."
+            if nmiss > 10
+            else ""
+        )
+        lines.append(
+            f"Approval new_schema_id not in current MD: {nmiss}{hint}"
+        )
+    show = renamed[:18]
+    if show:
+        lines.append("Renamed (sample):" + "".join(f"\n  {o} → {n}" for o, n in show))
+        if len(renamed) > len(show):
+            lines.append(f"  … +{len(renamed) - len(show)} more")
+
+    return "\n".join(lines)
+
+
+def _math_paper_bucket_from_db_row(row: Dict[str, Any]) -> Optional[str]:
+    """
+    For ESAT mathematics (M* but not TMUA ``M_`` schema ids), classify Math 1 / Math 2 / unlabeled.
+    Uses ``subjects`` first, then legacy ``paper`` if present on old rows.
+    """
+    schema_id = row.get("schema_id")
+    if not schema_id or str(schema_id)[0].upper() != "M":
+        return None
+    if str(schema_id).startswith("M_"):
+        return None
+    sub = (row.get("subjects") or "").strip()
+    sl = sub.casefold()
+    if sub == "Math 2" or sl == "math 2":
+        return "Math 2"
+    if sub == "Math 1" or sl == "math 1":
+        return "Math 1"
+    p = row.get("paper")
+    if p == "Math 2":
+        return "Math 2"
+    if p == "Math 1":
+        return "Math 1"
+    return "unlabeled"
 
 
 class SchemaQueue:
@@ -102,16 +273,23 @@ class SchemaQueue:
         self.ordered_schema_ids = self._order_schemas(list(schemas.keys()))
         
     def _order_schemas(self, schema_ids: List[str]) -> List[str]:
-        """Order schemas by prefix and number."""
-        def sort_key(sid):
-            match = re.match(r'^([A-Z]+)(\d+)', sid)
-            if match:
-                prefix, num = match.groups()
-                # Order: M, P, C, B, then by number
-                prefix_order = {'M': 0, 'P': 1, 'C': 2, 'B': 3}
-                return (prefix_order.get(prefix, 99), int(num))
-            return (99, 0)
-        
+        """Order schemas: legacy M7 / P12 ids first, then hash ids ``M_…``, ``P_…``, etc."""
+        prefix_order = {"M": 0, "P": 1, "C": 2, "B": 3}
+
+        def sort_key(sid: str):
+            if not sid:
+                return (99, 99, "", sid)
+            # Legacy numbered ids only: M7, P12 (not M_abc)
+            m = re.match(r"^([MPCB])(\d+)$", sid, re.I)
+            if m:
+                p, num_s = m.group(1).upper(), m.group(2)
+                return (0, prefix_order.get(p, 9), int(num_s), "")
+            m2 = re.match(r"^([MPCB])_(.+)$", sid, re.I)
+            if m2:
+                p, suf = m2.group(1).upper(), m2.group(2).lower()
+                return (1, prefix_order.get(p, 9), suf, sid)
+            return (99, 99, sid.lower(), sid)
+
         ordered = sorted(schema_ids, key=sort_key)
 
         # If start/stop offsets are provided, filter schemas accordingly.
@@ -152,17 +330,10 @@ class SchemaQueue:
     
     def get_required_count(self, schema_id: str) -> int:
         """
-        Target questions per schema.
-
-        Mathematics (M*): 3 by default; 5 when the schema lists more than 3 exemplar IDs.
-        Physics / Chemistry / Biology: 4 + number of exemplar IDs (unchanged).
+        Target questions per schema: 3 by default; 5 when more than 3 questions are
+        already attached (DB + this session), for all ESAT prefixes (M/P/C/B).
         """
-        schema_data = self.schemas.get(schema_id, {})
-        exemplar_ids = schema_data.get("exemplar_ids", [])
-        prefix = str(schema_id)[0].upper() if schema_id else ""
-        if prefix == "M":
-            return 5 if len(exemplar_ids) > 3 else 3
-        return 4 + len(exemplar_ids)
+        return 5 if self.get_current_count(schema_id) > 3 else 3
     
     def get_current_count(self, schema_id: str) -> int:
         """
@@ -186,12 +357,8 @@ class SchemaQueue:
             return  # Can't refresh without Supabase
         
         try:
-            # schema_id + paper: one pass for coverage and Math 1/2 bank totals
-            try:
-                response = self.supabase.table("ai_generated_questions").select("schema_id, paper").execute()
-            except Exception:
-                response = self.supabase.table("ai_generated_questions").select("schema_id").execute()
-            
+            response = _fetch_ai_generated_questions_coverage_rows(self.supabase)
+
             new_coverage: Dict[str, int] = {}
             mpaper = {"Math 1": 0, "Math 2": 0, "unlabeled": 0}
             if response.data:
@@ -199,14 +366,9 @@ class SchemaQueue:
                     schema_id = row.get("schema_id")
                     if schema_id:  # Skip rows with missing schema_id
                         new_coverage[schema_id] = new_coverage.get(schema_id, 0) + 1
-                    if schema_id and str(schema_id)[0].upper() == "M":
-                        p = row.get("paper")
-                        if p == "Math 2":
-                            mpaper["Math 2"] += 1
-                        elif p == "Math 1":
-                            mpaper["Math 1"] += 1
-                        else:
-                            mpaper["unlabeled"] += 1
+                    bucket = _math_paper_bucket_from_db_row(row)
+                    if bucket is not None:
+                        mpaper[bucket] += 1
             self.math_paper_db_counts = mpaper
             
             # Preserve existing coverage for schemas we know about but may not have questions yet
@@ -220,16 +382,46 @@ class SchemaQueue:
             # Note: session-generated counts (self.generated) are tracked separately
             # and added in get_current_count(), so we can safely replace coverage here
             self.coverage = new_coverage
-            print(f"🔄 Refreshed coverage from database: {len([s for s in new_coverage.values() if s > 0])} schemas with questions, {len(new_coverage)} total schemas tracked")
+            plog(
+                "ui",
+                "coverage_refreshed",
+                detail={
+                    "schemas_with_questions": len([s for s in new_coverage.values() if s > 0]),
+                    "tracked": len(new_coverage),
+                },
+                echo=False,
+            )
         except Exception as e:
             # Don't spam errors for network issues - these are expected occasionally
             error_str = str(e)
-            if "Server disconnected" in error_str or "RemoteProtocolError" in error_str:
-                # Network issue - keep existing coverage, will retry on next refresh
-                pass
+            transient = (
+                "Server disconnected" in error_str
+                or "RemoteProtocolError" in error_str
+                or "getaddrinfo failed" in error_str
+                or "11001" in error_str
+                or "ConnectError" in type(e).__name__
+                or "Connection reset" in error_str
+                or "timed out" in error_str.lower()
+                or "timeout" in error_str.lower()
+            )
+            if transient:
+                plog(
+                    "ui",
+                    "coverage_refresh_network",
+                    level="warning",
+                    detail={"error": error_str[:500]},
+                    echo=False,
+                )
             else:
-                print(f"⚠ Warning: Failed to refresh coverage from database: {e}")
+                plog(
+                    "ui",
+                    "coverage_refresh_failed",
+                    level="warning",
+                    detail={"error": str(e)},
+                    echo=False,
+                )
                 import traceback
+
                 traceback.print_exc()
     
     def get_next_incomplete(self, schema_start_index: Optional[int] = None, schema_end_index: Optional[int] = None) -> Optional[str]:
@@ -267,7 +459,19 @@ class SchemaQueue:
                         range_info = f"[range {schema_start_index}-{schema_end_index-1 if schema_end_index else len(self.ordered_schema_ids)-1}]"
                     else:
                         range_info = ""
-                    print(f"🎯 {range_info} Selected {schema_id}: {current}/{required} (DB: {db_count}, session: {session_count}→{session_count+1}, needs {required - current} more)")
+                    plog(
+                        "ui",
+                        "queue_selected",
+                        detail={
+                            "range_info": range_info.strip(),
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                            "session_reserved": session_count + 1,
+                        },
+                        echo=False,
+                    )
                     return schema_id
                 elif db_count < required:
                     # Safety check: Even if current count says complete, verify DB has enough
@@ -277,7 +481,19 @@ class SchemaQueue:
                         range_info = f"[range {schema_start_index}-{schema_end_index-1 if schema_end_index else len(self.ordered_schema_ids)-1}]"
                     else:
                         range_info = ""
-                    print(f"⚠ {range_info} {schema_id} appears complete ({current}/{required}) but DB only has {db_count} - continuing to generate")
+                    plog(
+                        "ui",
+                        "queue_db_mismatch",
+                        level="warning",
+                        detail={
+                            "range_info": range_info.strip(),
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                        },
+                        echo=False,
+                    )
                     return schema_id
                 else:
                     # Skip complete schemas (only log first few to avoid spam)
@@ -315,15 +531,33 @@ class SchemaQueue:
                 required = self.get_required_count(schema_id)
                 if current < required:
                     self.generated[schema_id] = session_count + 1
-                    print(
-                        f"🎯 [{prefix_u}] Selected {schema_id}: {current}/{required} "
-                        f"(DB:{db_count}, session:{session_count}→{session_count + 1})"
+                    plog(
+                        "ui",
+                        "claim_prefix_selected",
+                        detail={
+                            "prefix": prefix_u,
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                        },
+                        echo=False,
                     )
                     return schema_id
                 if db_count < required:
                     self.generated[schema_id] = session_count + 1
-                    print(
-                        f"⚠ [{prefix_u}] {schema_id} session {current}/{required} but DB {db_count} — continuing"
+                    plog(
+                        "ui",
+                        "claim_prefix_db_mismatch",
+                        level="warning",
+                        detail={
+                            "prefix": prefix_u,
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                        },
+                        echo=False,
                     )
                     return schema_id
 
@@ -335,8 +569,16 @@ class SchemaQueue:
             self.generated[best] = sc + 1
             cur = self.get_current_count(best)
             req = self.get_required_count(best)
-            print(
-                f"🔁 [{prefix_u}] Overflow {best}: {cur}/{req} (session per-schema target exceeded; night quota)"
+            plog(
+                "ui",
+                "claim_prefix_overflow",
+                detail={
+                    "prefix": prefix_u,
+                    "schema_id": best,
+                    "current": cur,
+                    "required": req,
+                },
+                echo=False,
             )
             return best
 
@@ -351,15 +593,31 @@ class SchemaQueue:
                 required = self.get_required_count(schema_id)
                 if current < required:
                     self.generated[schema_id] = session_count + 1
-                    print(
-                        f"🎯 Selected {schema_id}: {current}/{required} "
-                        f"(DB:{db_count}, session:{session_count}→{session_count + 1})"
+                    plog(
+                        "ui",
+                        "claim_global_selected",
+                        detail={
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                        },
+                        echo=False,
                     )
                     return schema_id
                 if db_count < required:
                     self.generated[schema_id] = session_count + 1
-                    print(
-                        f"⚠ {schema_id} session {current}/{required} but DB {db_count} — continuing"
+                    plog(
+                        "ui",
+                        "claim_global_db_mismatch",
+                        level="warning",
+                        detail={
+                            "schema_id": schema_id,
+                            "current": current,
+                            "required": required,
+                            "db_count": db_count,
+                        },
+                        echo=False,
                     )
                     return schema_id
             return None
@@ -423,7 +681,8 @@ class GenerationController:
     
     def __init__(self, base_dir: str, queue: SchemaQueue, schemas: Dict[str, dict],
                  cfg: RunConfig, models: ModelsConfig, ui_callback, ui_instance=None,
-                 max_workers: int = 2):
+                 max_workers: int = 3,
+                 active_schema_prefixes: Optional[Tuple[str, ...]] = None):
         self.base_dir = base_dir
         self.queue = queue
         self.schemas = schemas
@@ -432,6 +691,16 @@ class GenerationController:
         self.ui_callback = ui_callback
         self.ui_instance = ui_instance  # Reference to UI for loading difficulty weights
         self.max_workers = max_workers
+        self._backup_lock = threading.Lock()
+        _valid = frozenset({"M", "P", "C", "B"})
+        if active_schema_prefixes:
+            self._active_prefixes = frozenset(
+                str(p).strip().upper() for p in active_schema_prefixes if str(p).strip().upper() in _valid
+            )
+        else:
+            self._active_prefixes = frozenset({"M", "P", "C", "B"})
+        if not self._active_prefixes:
+            self._active_prefixes = frozenset({"M", "P", "C", "B"})
         
         self.stopped = False
         self.thread = None
@@ -475,12 +744,28 @@ class GenerationController:
                 json_path = Path(base_dir) / "curriculum" / "ESAT_CURRICULUM.json"
                 if json_path.is_file():
                     self.curriculum_parser = CurriculumParser(str(json_path))
-                    print("✓ Curriculum parser loaded for tag labeling (Math 1/2, P, C, B)")
+                    plog(
+                        "ui",
+                        "curriculum_parser_ok",
+                        detail={"path": str(json_path)},
+                        echo=False,
+                    )
                 else:
-                    print(f"⚠ {json_path} not found — tag labeling disabled for this session.")
+                    plog(
+                        "ui",
+                        "curriculum_parser_missing_file",
+                        level="warning",
+                        detail={"path": str(json_path)},
+                        echo=False,
+                    )
             except Exception as e:
-                print(f"⚠ Warning: Failed to load curriculum parser: {e}")
-                print("  Tag labeling will be disabled.")
+                plog(
+                    "ui",
+                    "curriculum_parser_error",
+                    level="warning",
+                    detail={"error": str(e)},
+                    echo=False,
+                )
         
     def start(self):
         """Start generation in background thread."""
@@ -521,13 +806,33 @@ class GenerationController:
         if self._cap_disabled:
             return False
         with self.lock:
-            return (
-                self._session_math1 >= self._target_m1
-                and self._session_math2 >= self._target_m2
-                and self._session_physics >= self._target_p
-                and self._session_chemistry >= self._target_c
-                and self._session_biology >= self._target_b
-            )
+            checks: List[bool] = []
+            if "M" in self._active_prefixes:
+                checks.append(
+                    self._session_math1 >= self._target_m1
+                    and self._session_math2 >= self._target_m2
+                )
+            if "P" in self._active_prefixes:
+                checks.append(self._session_physics >= self._target_p)
+            if "C" in self._active_prefixes:
+                checks.append(self._session_chemistry >= self._target_c)
+            if "B" in self._active_prefixes:
+                checks.append(self._session_biology >= self._target_b)
+            return bool(checks) and all(checks)
+
+    def _session_targets_met_status_text(self) -> str:
+        labels: List[str] = []
+        if "M" in self._active_prefixes:
+            labels.append("Math1/Math2")
+        if "P" in self._active_prefixes:
+            labels.append("Physics")
+        if "C" in self._active_prefixes:
+            labels.append("Chemistry")
+        if "B" in self._active_prefixes:
+            labels.append("Biology")
+        if not labels:
+            labels.append("session caps")
+        return "Session targets met (" + ", ".join(labels) + ")."
 
     def _math_session_remaining(self) -> Tuple[int, int]:
         with self.lock:
@@ -550,6 +855,8 @@ class GenerationController:
             return False
         if not all(self.queue.is_complete(sid) for sid in schemas):
             return False
+        if prefix_u not in self._active_prefixes:
+            return False
         with self.lock:
             if prefix_u == "M":
                 return self._session_math1 < self._target_m1 or self._session_math2 < self._target_m2
@@ -562,17 +869,27 @@ class GenerationController:
         return False
 
     def _pick_prefix_for_session(self) -> Optional[str]:
-        """Choose M / P / C / B with largest remaining session deficit (deterministic ties: M,P,C,B)."""
+        """Choose among active prefixes with largest remaining session deficit (ties: M, P, C, B)."""
         if self._cap_disabled:
             return None
-        order = ("M", "P", "C", "B")
+        order = tuple(p for p in ("M", "P", "C", "B") if p in self._active_prefixes)
+        if not order:
+            return None
         r1, r2 = self._math_session_remaining()
         with self.lock:
             rp = max(0, self._target_p - self._session_physics)
             rc = max(0, self._target_c - self._session_chemistry)
             rb = max(0, self._target_b - self._session_biology)
         rm = r1 + r2
-        deficits = {"M": rm, "P": rp, "C": rc, "B": rb}
+        deficits: Dict[str, int] = {}
+        if "M" in self._active_prefixes:
+            deficits["M"] = rm
+        if "P" in self._active_prefixes:
+            deficits["P"] = rp
+        if "C" in self._active_prefixes:
+            deficits["C"] = rc
+        if "B" in self._active_prefixes:
+            deficits["B"] = rb
         best_p = None
         best_d = -1
         for p in order:
@@ -600,7 +917,9 @@ class GenerationController:
         if not primary:
             return None
 
-        try_order = [primary] + [p for p in ("M", "P", "C", "B") if p != primary]
+        try_order = [primary] + [
+            p for p in ("M", "P", "C", "B") if p != primary and p in self._active_prefixes
+        ]
 
         for prefix in try_order:
             r1, r2 = self._math_session_remaining()
@@ -651,7 +970,7 @@ class GenerationController:
                 new_weights = self.cfg.difficulty_weights
             self.cfg.difficulty_weights = new_weights
         except Exception as e:
-            print(f"⚠ Warning: Failed to update difficulty weights: {e}")
+            plog("ui", "difficulty_weights_refresh_failed", detail={"error": str(e)}, echo=False)
     
     def _choose_difficulty_for_schema(self, schema_id: str) -> str:
         """Sample difficulty from ``cfg.difficulty_weights`` — same mix for M / P / C / B."""
@@ -687,11 +1006,10 @@ class GenerationController:
                     router_env = os.environ.get("ESAT_MATH_ROUTER", "1").strip().lower()
                     use_router = router_env not in ("0", "false", "no", "off")
                     if use_router and MATH_PAPER_ROUTER_AVAILABLE:
-                        api_key = os.environ.get("GEMINI_API_KEY", "").strip()
                         block = self.schemas.get(schema_id, {}).get("block", "")
-                        if api_key and block:
+                        if block:
                             try:
-                                router_out = call_math_paper_router(api_key, self.base_dir, schema_id, block)
+                                router_out = call_math_paper_router("", self.base_dir, schema_id, block)
                                 with self.lock:
                                     m1, m2 = self._session_math1, self._session_math2
                                 run_math_paper = merge_router_with_quota(router_out, m1, m2)
@@ -702,7 +1020,12 @@ class GenerationController:
                             except GeminiQuotaExhaustedError:
                                 raise
                             except Exception as router_err:
-                                print(f"⚠ Math paper router error: {router_err}")
+                                plog(
+                                    "ui",
+                                    "math_router_error",
+                                    detail={"schema_id": schema_id, "error": str(router_err)},
+                                    echo=False,
+                                )
             
             result = run_once(
                 base_dir=self.base_dir,
@@ -724,10 +1047,18 @@ class GenerationController:
                     db_save_error = None
                     try:
                         if SUPABASE_AVAILABLE:
-                            db_id = sync_question_from_pipeline(item, self.base_dir, status="pending_review")
+                            db_id = sync_question_from_pipeline(item, self.base_dir, status="pending")
                             if db_id:
                                 db_save_successful = True
-                                print(f"[STATS] DB save confirmed successful, db_id: {db_id[:8] if db_id else 'None'}...")
+                                plog(
+                                    "ui",
+                                    "db_save_ok",
+                                    detail={
+                                        "schema_id": schema_id,
+                                        "db_id_prefix": (db_id or "")[:8],
+                                    },
+                                    echo=False,
+                                )
                             else:
                                 # Question was not saved - check [DB_SYNC] logs above for detailed error
                                 # Note: db_id can be None even if save succeeded (e.g., duplicate key)
@@ -743,7 +1074,12 @@ class GenerationController:
                                         if check_response.data and len(check_response.data) > 0:
                                             # Question exists in DB - treat as success even if db_id was None
                                             db_save_successful = True
-                                            print(f"[STATS] DB save succeeded (question exists in DB despite None return)")
+                                            plog(
+                                                "ui",
+                                                "db_save_ok_duplicate_path",
+                                                detail={"generation_id": generation_id},
+                                                echo=False,
+                                            )
                                         else:
                                             db_save_error = "Database save failed (check [DB_SYNC] logs above for details)"
                                     except Exception:
@@ -753,25 +1089,38 @@ class GenerationController:
                                     db_save_error = "Database save failed (check [DB_SYNC] logs above for details)"
                     except Exception as e:
                         db_save_error = str(e)
-                        print(f"⚠ Warning: Failed to save to Supabase: {e}")
+                        plog(
+                            "ui",
+                            "db_save_exception",
+                            level="error",
+                            detail={"schema_id": schema_id, "error": str(e)},
+                            echo=True,
+                            spacer=True,
+                        )
                         import traceback
+
                         traceback.print_exc()
                     
                     # Local backup (always backup, even if DB save failed)
                     try:
                         self._save_to_backup(item)
                     except Exception as e:
-                        print(f"Warning: Failed to save to backup: {e}")
+                        plog("ui", "backup_failed", detail={"error": str(e)}, echo=False)
                     
                     if db_save_successful:
                         pfx = str(schema_id)[0].upper() if schema_id else ""
                         tags = item.get("tags") or {}
                         if pfx == "M":
-                            mp = result.get("math_paper") or tags.get("paper")
+                            mp = (
+                                result.get("math_paper")
+                                or tags.get("subjects")
+                                or tags.get("paper")
+                            )
+                            mp_n = (mp or "").strip().casefold()
                             with self.lock:
-                                if mp == "Math 2":
+                                if mp_n == "math 2":
                                     self._session_math2 += 1
-                                elif mp == "Math 1":
+                                elif mp_n == "math 1":
                                     self._session_math1 += 1
                         elif pfx == "P":
                             with self.lock:
@@ -785,7 +1134,17 @@ class GenerationController:
                         # Success is now tracked in DB - no need to increment counter
                         # Just refresh stats from DB
                         generation_id = item.get("id")
-                        print(f"✅ SUCCESS: saved {generation_id} to database")
+                        plog(
+                            "ui",
+                            "generation_saved",
+                            detail={
+                                "schema_id": schema_id,
+                                "generation_id": generation_id,
+                                "difficulty": difficulty,
+                            },
+                            echo=True,
+                            spacer=True,
+                        )
                         
                         # Update last_generated_id immediately (don't wait for DB refresh)
                         with self.lock:
@@ -824,7 +1183,20 @@ class GenerationController:
                         with self.lock:
                             self.failures += 1
                             failure_rate = (self.failures / self.attempts * 100) if self.attempts > 0 else 0
-                            print(f"❌ FAILURE: DB save failed for {schema_id} - {db_save_error} (Failures: {self.failures}/{self.attempts}, {failure_rate:.1f}%)")
+                            plog(
+                                "ui",
+                                "db_save_failed",
+                                level="error",
+                                detail={
+                                    "schema_id": schema_id,
+                                    "reason": db_save_error,
+                                    "failures": self.failures,
+                                    "attempts": self.attempts,
+                                    "failure_rate_pct": round(failure_rate, 1),
+                                },
+                                echo=True,
+                                spacer=True,
+                            )
                         self.ui_callback("failure", {
                             "schema_id": schema_id,
                             "reason": db_save_error or "DB save failed"
@@ -836,7 +1208,14 @@ class GenerationController:
                             self.queue.generated[schema_id] -= 1
                     with self.lock:
                         self.failures += 1
-                        print(f"❌ FAILURE: Accepted but no item for {schema_id} (Failures: {self.failures}/{self.attempts})")
+                        plog(
+                            "ui",
+                            "accepted_missing_item",
+                            level="error",
+                            detail={"schema_id": schema_id, "failures": self.failures, "attempts": self.attempts},
+                            echo=True,
+                            spacer=True,
+                        )
                     self.ui_callback("failure", {
                         "schema_id": schema_id,
                         "reason": "Accepted but no item"
@@ -850,7 +1229,25 @@ class GenerationController:
                     self.failures += 1
                     failure_reason = result.get("status", "unknown")
                     failure_rate = (self.failures / self.attempts * 100) if self.attempts > 0 else 0
-                    print(f"❌ FAILURE: Generation failed for {schema_id} - status: {failure_reason} (Failures: {self.failures}/{self.attempts}, {failure_rate:.1f}%)")
+                    rej_detail: Dict[str, Any] = {
+                        "schema_id": schema_id,
+                        "status": failure_reason,
+                        "run_dir": result.get("run_dir"),
+                        "failures": self.failures,
+                        "attempts": self.attempts,
+                        "failure_rate_pct": round(failure_rate, 1),
+                    }
+                    if result.get("rejection"):
+                        rej_detail["rejection"] = result["rejection"]
+                    plog(
+                        "ui",
+                        "generation_rejected",
+                        level="warning",
+                        detail=rej_detail,
+                        echo=True,
+                        echo_detail=True,
+                        spacer=True,
+                    )
                 self.ui_callback("failure", {
                     "schema_id": schema_id,
                     "reason": failure_reason
@@ -861,7 +1258,14 @@ class GenerationController:
                 if self.queue.generated.get(schema_id, 0) > 0:
                     self.queue.generated[schema_id] -= 1
             self.stop()
-            print(f"⛔ Gemini quota exhausted on all keys — stopping generation.\n{e}")
+            plog(
+                "ui",
+                "quota_exhausted",
+                level="error",
+                detail={"message": str(e)},
+                echo=True,
+                spacer=True,
+            )
             self.ui_callback("quota_exhausted", {"message": str(e)})
         except Exception as e:
             # Exception during generation
@@ -871,7 +1275,20 @@ class GenerationController:
             with self.lock:
                 self.failures += 1
                 failure_rate = (self.failures / self.attempts * 100) if self.attempts > 0 else 0
-                print(f"❌ EXCEPTION in worker task for {schema_id}: {e} (Failures: {self.failures}/{self.attempts}, {failure_rate:.1f}%)")
+                plog(
+                    "ui",
+                    "worker_exception",
+                    level="error",
+                    detail={
+                        "schema_id": schema_id,
+                        "error": str(e),
+                        "failures": self.failures,
+                        "attempts": self.attempts,
+                        "failure_rate_pct": round(failure_rate, 1),
+                    },
+                    echo=True,
+                    spacer=True,
+                )
             import traceback
             traceback.print_exc()
             self.ui_callback("error", {"message": str(e)})
@@ -907,6 +1324,16 @@ class GenerationController:
                             schema_id, forced_mp = job
                             self._update_difficulty_weights()
                             difficulty = self._choose_difficulty_for_schema(schema_id)
+                            plog(
+                                "ui",
+                                "difficulty_sampled",
+                                detail={
+                                    "schema_id": schema_id,
+                                    "difficulty": difficulty,
+                                    "weights": dict(self.cfg.difficulty_weights or {}),
+                                },
+                                echo=False,
+                            )
                             self.ui_callback(
                                 "status",
                                 {
@@ -927,7 +1354,7 @@ class GenerationController:
                                 self.ui_callback(
                                     "status",
                                     {
-                                        "text": "Session targets met (Math1/Math2/P/C/B).",
+                                        "text": self._session_targets_met_status_text(),
                                         "color": "green",
                                     },
                                 )
@@ -958,7 +1385,14 @@ class GenerationController:
                         active_futures.pop(f, None)
 
         except Exception as e:
-            print(f"Fatal error in generation loop: {e}")
+            plog(
+                "ui",
+                "generation_loop_fatal",
+                level="error",
+                detail={"error": str(e)},
+                echo=True,
+                spacer=True,
+            )
             import traceback
             traceback.print_exc()
             self.ui_callback("error", {"message": f"Fatal: {str(e)}"})
@@ -966,13 +1400,15 @@ class GenerationController:
             self.stopped = True
     
     def _save_to_backup(self, item: dict):
-        """Save question to local backup file."""
+        """Save question to local backup file (serialized across concurrent workers)."""
         backup_dir = Path(self.base_dir) / "backups" / datetime.now().strftime("%Y-%m-%d")
         backup_dir.mkdir(parents=True, exist_ok=True)
         
         backup_file = backup_dir / "questions.jsonl"
-        with open(backup_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+        line = json.dumps(item, ensure_ascii=False) + "\n"
+        with self._backup_lock:
+            with open(backup_file, "a", encoding="utf-8") as f:
+                f.write(line)
     
     def _refresh_stats_from_db(self):
         """Refresh success count and last generated ID from database."""
@@ -999,7 +1435,7 @@ class GenerationController:
                 # Network issue - will retry on next refresh
                 pass
             else:
-                print(f"⚠ Warning: Failed to refresh last generated ID from database: {e}")
+                plog("ui", "refresh_last_id_failed", detail={"error": str(e)}, echo=False)
     
     def _get_stats(self) -> dict:
         """Get current statistics - reads successes from DB, attempts/failures from memory."""
@@ -1055,7 +1491,7 @@ class GenerationController:
                     # Network issue - will retry on next refresh, use cached values
                     pass
                 else:
-                    print(f"⚠ Warning: Failed to get success count from database: {e}")
+                    plog("ui", "success_count_query_failed", detail={"error": str(e)}, echo=False)
         
         elapsed = time.time() - self.start_time if self.start_time else 0
         success_rate = (successes / attempts * 100) if attempts > 0 else 0
@@ -1129,11 +1565,14 @@ class SimpleGeneratorUI:
     ):
         self.base_dir = base_dir
         self.base_dir_path = Path(base_dir)
+        # Worker threads must not call tkinter directly; they enqueue and the main loop drains.
+        self._ui_queue: "queue.Queue[Tuple[str, Any]]" = queue.Queue()
         
-        # Load environment
+        # Load environment (match ``main()``: repo root first, then this package)
         project_root = Path(base_dir).parent.parent
-        env_path = project_root / ".env.local"
-        safe_load_dotenv(str(env_path))
+        for env_path in (project_root / ".env.local", Path(base_dir) / ".env.local"):
+            if env_path.is_file():
+                safe_load_dotenv(str(env_path))
         
         # Initialize Supabase client
         self.supabase = None
@@ -1144,21 +1583,43 @@ class SimpleGeneratorUI:
                 if supabase_url and supabase_key:
                     self.supabase = create_client(supabase_url, supabase_key)
             except Exception as e:
-                print(f"Failed to initialize Supabase: {e}")
+                plog("ui", "supabase_init_failed", level="warning", detail={"error": str(e)}, echo=False)
         
-        # Get schema prefixes: use parameter first, then env var, then default
+        # Schema prefixes: normalize to M/P/B/C only (same as ``main()`` / ``parse_schemas``).
+        _valid_prefixes = frozenset({"M", "P", "B", "C"})
         if schema_prefixes:
-            self.schema_prefixes = schema_prefixes
+            raw_parts = [str(p) for p in schema_prefixes]
         else:
-            schema_prefixes_env = os.environ.get("SCHEMA_PREFIXES", "M,P,C,B")
-            self.schema_prefixes = tuple(p.strip() for p in schema_prefixes_env.split(",") if p.strip())
-            if not self.schema_prefixes:
-                self.schema_prefixes = ("M", "P", "C", "B")
-        
-        print(f"📋 Generating questions for subjects: {', '.join(self.schema_prefixes)}")
-        
+            raw_parts = os.environ.get("SCHEMA_PREFIXES", "P,C,B").split(",")
+        self.schema_prefixes = tuple(
+            p.strip().upper()
+            for p in raw_parts
+            if p.strip() and p.strip().upper() in _valid_prefixes
+        )
+        if not self.schema_prefixes:
+            self.schema_prefixes = ("P", "C", "B")
+
+        # Fail fast: all subjects use by_subject_prompts/new/ only (no old/ fallback).
+        load_prompts(base_dir)
+        _session_log = get_pipeline_log_path() or init_pipeline_log(base_dir)
+        console_banner(
+            [
+                "ESAT Simple Generator",
+                f"Session log (JSONL): {_session_log}",
+                f"Subjects: {', '.join(self.schema_prefixes)}",
+                "Tip: open the log file for full detail; console stays short.",
+            ]
+        )
+
         schemas_path, schemas_md = load_schemas_esat_markdown(base_dir)
-        print(f"📖 Using ESAT schemas from: {schemas_path}")
+        self.schemas_source_path = Path(schemas_path)
+        plog("ui", "schemas_loaded", detail={"path": schemas_path}, echo=False)
+        plog(
+            "ui",
+            "doc_hint",
+            detail={"implementer_json": "IMPLEMENTER_JSON_ERRORS.md"},
+            echo=False,
+        )
         self.schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=self.schema_prefixes)
         
         # Get coverage from database
@@ -1180,33 +1641,54 @@ class SimpleGeneratorUI:
             except Exception:
                 pass
         
-        # Debug: Print first 20 schemas to verify order
-        print("\nSchema generation order (first 20):")
-        for i, sid in enumerate(self.queue.ordered_schema_ids[:20], 1):
-            print(f"  {i}. {sid}")
-        print(f"  ... ({len(self.queue.ordered_schema_ids)} total schemas)\n")
+        plog(
+            "ui",
+            "schema_queue_order",
+            detail={
+                "first_20": self.queue.ordered_schema_ids[:20],
+                "total": len(self.queue.ordered_schema_ids),
+            },
+            echo=False,
+        )
+        plog(
+            "ui",
+            "math_router",
+            detail={
+                "router_available": MATH_PAPER_ROUTER_AVAILABLE,
+                "math_in_run": any(p.upper() == "M" for p in self.schema_prefixes),
+            },
+            echo=False,
+        )
 
-        if any(p.upper() == "M" for p in self.schema_prefixes):
-            if MATH_PAPER_ROUTER_AVAILABLE:
-                print(
-                    "📐 Math 1/2: Flash router enabled before each M* run (ESAT_MATH_ROUTER=0 to disable). "
-                    "Quota target: MATH2_TARGET_SHARE (default 0.5)."
-                )
-            else:
-                print("⚠ Math paper router import failed — all M* runs use Math 1 unless cfg.math_paper is set.")
-        
         # Initialize config with default difficulty weights
         # Can be changed mid-run by editing difficulty_weights.txt file
         difficulty_weights = self._load_difficulty_weights()
         xe = difficulty_weights.get("Extreme", 0.0)
-        print(
-            f"📊 Difficulty mix (all subjects): Easy={difficulty_weights['Easy']:.1%}, "
-            f"Medium={difficulty_weights['Medium']:.1%}, Hard={difficulty_weights['Hard']:.1%}, "
-            f"Extreme={xe:.1%}"
+        plog(
+            "ui",
+            "difficulty_weights",
+            detail={
+                "Easy": difficulty_weights["Easy"],
+                "Medium": difficulty_weights["Medium"],
+                "Hard": difficulty_weights["Hard"],
+                "Extreme": xe,
+            },
+            echo=False,
         )
-        print(f"💡 Tip: Edit 'difficulty_weights.txt' (or env W_EASY, W_MED, W_HARD, W_EXTREME — all are sampling weights).")
         
-        max_workers = int(os.environ.get("MAX_WORKERS", "1"))
+        try:
+            max_workers = max(1, min(16, int(os.environ.get("MAX_WORKERS", "3"))))
+        except ValueError:
+            max_workers = 3
+        # Match in-flight Gemini calls to worker count unless the user set a custom cap.
+        if not (os.environ.get("GEMINI_MAX_CONCURRENT") or "").strip():
+            # Fewer simultaneous in-flight Vertex calls than threadpool size reduces 429 bursts (RPM/TPM).
+            default_cap = max(1, min(max_workers, 2))
+            os.environ["GEMINI_MAX_CONCURRENT"] = str(default_cap)
+        # Space out starts across workers; tune with API_MIN_DELAY / GEMINI_MAX_CONCURRENT.
+        if max_workers > 1 and not (os.environ.get("API_MIN_DELAY") or "").strip():
+            os.environ["API_MIN_DELAY"] = "3.5"
+
         self.cfg = RunConfig(
             max_implementer_retries=int(os.environ.get("MAX_IMPLEMENTER_RETRIES", "2")),
             max_designer_retries=int(os.environ.get("MAX_DESIGNER_RETRIES", "2")),
@@ -1223,7 +1705,9 @@ class SimpleGeneratorUI:
         # Override implementer if MODEL_IMPLEMENTER is not set, otherwise use default with models/ prefix
         if not os.environ.get("MODEL_IMPLEMENTER"):
             self.models.implementer = "models/gemini-3.1-pro-preview"
-        
+
+        self._style_regen_policy_text = describe_style_only_regen_policy(self.models)
+
         # Initialize controller (pass UI instance for difficulty weight updates)
         self.controller = GenerationController(
             self.base_dir,
@@ -1233,36 +1717,35 @@ class SimpleGeneratorUI:
             self.models,
             self._ui_callback,
             ui_instance=self,  # Pass UI instance for difficulty weight loading
-            max_workers=max_workers
+            max_workers=max_workers,
+            active_schema_prefixes=self.schema_prefixes,
         )
         _elog = (os.environ.get("GEMINI_API_EVENT_LOG") or "").strip() or str(
             self.base_dir_path / "gemini_api_events.jsonl"
         )
-        print(f"📝 API / rate-limit JSONL log: {_elog}")
         ctl = self.controller
-        if not ctl._cap_disabled:
-            _sum = ctl._target_m1 + ctl._target_m2 + ctl._target_p + ctl._target_c + ctl._target_b
-            print(
-                f"🌙 Session stop after this many successful DB saves: Math1 {ctl._target_m1} | "
-                f"Math2 {ctl._target_m2} | P {ctl._target_p} | C {ctl._target_c} | B {ctl._target_b} "
-                f"(sum {_sum}; override with ESAT_SESSION_* or ESAT_DISABLE_SESSION_CAP=1)."
-            )
-        else:
-            print("🌙 Session caps disabled (ESAT_DISABLE_SESSION_CAP) — run until schemas are complete.")
-        if os.environ.get("ALTERNATIVE_GEMINI_API_KEY", "").strip():
-            print(
-                "🔑 ALTERNATIVE_GEMINI_API_KEY is set — on rate limits the client will switch keys, "
-                "then stop only if both keys are exhausted."
-            )
-        print(
-            "⏱️ Pacing defaults: MAX_WORKERS="
-            f"{max_workers}, GEMINI_MAX_CONCURRENT="
-            f"{os.environ.get('GEMINI_MAX_CONCURRENT', '1')}, API_MIN_DELAY="
-            f"{os.environ.get('API_MIN_DELAY', '5.0')}s (override via env)."
-        )
-        print(
-            "📊 Gemini limits are per project (RPM, TPM, RPD). RPD resets midnight Pacific. "
-            "No separate monthly free-tier cap in API docs; paid accounts use billing budgets."
+        plog(
+            "ui",
+            "runtime_config",
+            detail={
+                "gemini_api_event_log": _elog,
+                "max_workers": max_workers,
+                "GEMINI_MAX_CONCURRENT": os.environ.get("GEMINI_MAX_CONCURRENT", str(max_workers)),
+                "API_MIN_DELAY": os.environ.get("API_MIN_DELAY", "2.0" if max_workers > 1 else "5.0"),
+                "session_caps": {
+                    "disabled": ctl._cap_disabled,
+                    "targets": {
+                        "m1": ctl._target_m1,
+                        "m2": ctl._target_m2,
+                        "p": ctl._target_p,
+                        "c": ctl._target_c,
+                        "b": ctl._target_b,
+                    },
+                },
+                "vertex_project": bool(os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()),
+                "vertex_location": bool(os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()),
+            },
+            echo=False,
         )
         
         # Create UI
@@ -1310,8 +1793,12 @@ class SimpleGeneratorUI:
                             weights = {k: v/total for k, v in weights.items()}
                             return weights
             except Exception as e:
-                print(f"⚠ Warning: Failed to load difficulty_weights.txt: {e}")
-                print(f"   Using defaults: {default_weights}")
+                plog(
+                    "ui",
+                    "difficulty_weights_file_error",
+                    detail={"error": str(e), "defaults": default_weights},
+                    echo=False,
+                )
         
         # Create default file if it doesn't exist
         try:
@@ -1338,26 +1825,33 @@ class SimpleGeneratorUI:
                     response = self.supabase.rpc("get_schema_coverage").execute()
                     if response.data:
                         coverage = {row["schema_id"]: row["total"] for row in response.data}
-                        print(f"✓ Loaded schema coverage from Supabase (RPC): {len(coverage)} schemas")
+                        plog(
+                            "ui",
+                            "coverage_rpc",
+                            detail={"schema_count": len(coverage)},
+                            echo=False,
+                        )
                         return coverage
                 except Exception:
                     pass  # RPC might not exist, try direct query
                 
-                # Fallback: Direct query — include paper only if that column exists on the remote table
-                try:
-                    response = self.supabase.table("ai_generated_questions").select("schema_id, paper").execute()
-                except Exception:
-                    response = self.supabase.table("ai_generated_questions").select("schema_id").execute()
+                # Fallback: direct query (prefer subjects for Math 1/2; same helper as refresh_coverage_from_db)
+                response = _fetch_ai_generated_questions_coverage_rows(self.supabase)
                 if response.data:
                     coverage: Dict[str, int] = {}
                     for row in response.data:
                         schema_id = row.get("schema_id")
                         if schema_id:
                             coverage[schema_id] = coverage.get(schema_id, 0) + 1
-                    print(f"✓ Loaded schema coverage from Supabase (direct query): {len(coverage)} schemas")
+                    plog(
+                        "ui",
+                        "coverage_direct",
+                        detail={"schema_count": len(coverage)},
+                        echo=False,
+                    )
                     return coverage
             except Exception as e:
-                print(f"Warning: Failed to get schema coverage from Supabase: {e}")
+                plog("ui", "coverage_supabase_error", detail={"error": str(e)}, echo=False)
         
         # PRIORITY 2: Fallback to JSON file (if Supabase unavailable)
         coverage_file = Path(self.base_dir) / "by_subject_prompts" / "schema_coverage.json"
@@ -1368,12 +1862,17 @@ class SimpleGeneratorUI:
                     data = json.load(f)
                 # Extract totals from {schema_id: {total: N, by_paper: {}}} format
                 coverage = {schema_id: info.get("total", 0) for schema_id, info in data.items()}
-                print(f"⚠ Loaded schema coverage from JSON file (may be outdated): {len(coverage)} schemas")
+                plog(
+                    "ui",
+                    "coverage_json_file",
+                    detail={"path": str(coverage_file), "schema_count": len(coverage)},
+                    echo=False,
+                )
                 return coverage
             except Exception as e:
-                print(f"Warning: Failed to load {coverage_file.name}: {e}")
-        
-        print("⚠ No schema coverage found - starting from zero")
+                plog("ui", "coverage_json_error", detail={"file": coverage_file.name, "error": str(e)}, echo=False)
+
+        plog("ui", "coverage_empty", echo=False)
         return {}
     
     def _create_ui(self):
@@ -1428,22 +1927,74 @@ class SimpleGeneratorUI:
             foreground="gray"
         )
         self.stage_label.pack(anchor=tk.W)
-        
-        # Schema progress (scrolled list)
-        progress_frame = ttk.LabelFrame(self.root, text="Schema Progress", padding="10")
-        progress_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
+
+        self.style_regen_label = ttk.Label(
+            status_frame,
+            text=getattr(self, "_style_regen_policy_text", ""),
+            font=("Arial", 9),
+            foreground="gray",
+            wraplength=780,
+            justify=tk.LEFT,
+        )
+        self.style_regen_label.pack(anchor=tk.W, pady=(2, 0))
+
+        # Scrollable column: schema list + overall stats (avoids clipping on typical window heights)
+        scroll_outer = ttk.Frame(self.root)
+        scroll_outer.pack(fill=tk.BOTH, expand=True)
+
+        self._main_scroll_canvas = tk.Canvas(scroll_outer, highlightthickness=0)
+        main_vscroll = ttk.Scrollbar(
+            scroll_outer, orient=tk.VERTICAL, command=self._main_scroll_canvas.yview
+        )
+        self._main_scroll_canvas.configure(yscrollcommand=main_vscroll.set)
+        main_vscroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self._main_scroll_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        content_inner = ttk.Frame(self._main_scroll_canvas)
+        _main_scroll_win = self._main_scroll_canvas.create_window(
+            (0, 0), window=content_inner, anchor=tk.NW
+        )
+
+        def _sync_main_scroll_region(_event=None):
+            self._main_scroll_canvas.configure(scrollregion=self._main_scroll_canvas.bbox("all"))
+
+        def _sync_main_canvas_width(event):
+            self._main_scroll_canvas.itemconfig(_main_scroll_win, width=max(1, event.width))
+
+        content_inner.bind("<Configure>", _sync_main_scroll_region)
+        self._main_scroll_canvas.bind("<Configure>", _sync_main_canvas_width)
+
+        inventory_frame = ttk.LabelFrame(
+            content_inner, text="ESAT schemas & reclassification (data)", padding="10"
+        )
+        inventory_frame.pack(fill=tk.X, expand=False, padx=10, pady=(10, 5))
+
+        self.inventory_text = scrolledtext.ScrolledText(
+            inventory_frame,
+            height=10,
+            font=("Consolas", 9),
+            state=tk.DISABLED,
+            wrap=tk.WORD,
+        )
+        self.inventory_text.pack(fill=tk.BOTH, expand=True)
+
+        # Schema progress (inner ScrolledText for long schema lines; outer canvas for the rest)
+        progress_frame = ttk.LabelFrame(
+            content_inner, text="Per-schema progress (all loaded IDs)", padding="10"
+        )
+        progress_frame.pack(fill=tk.X, expand=False, padx=10, pady=(10, 5))
+
         self.progress_text = scrolledtext.ScrolledText(
             progress_frame,
-            height=15,
+            height=14,
             font=("Consolas", 9),
-            state=tk.DISABLED
+            state=tk.DISABLED,
         )
         self.progress_text.pack(fill=tk.BOTH, expand=True)
-        
+
         # Overall stats
-        stats_frame = ttk.LabelFrame(self.root, text="Overall Progress", padding="10")
-        stats_frame.pack(fill=tk.X, padx=10, pady=10)
+        stats_frame = ttk.LabelFrame(content_inner, text="Overall Progress", padding="10")
+        stats_frame.pack(fill=tk.X, expand=False, padx=10, pady=(5, 10))
         
         self.overall_label = ttk.Label(
             stats_frame,
@@ -1484,7 +2035,7 @@ class SimpleGeneratorUI:
 
         self.math_db_label = ttk.Label(
             stats_frame,
-            text="Math in DB: Math1 0 | Math2 0 | unlabeled 0",
+            text="Math in DB (M*, subjects): Math1 0 | Math2 0 | unlabeled 0",
             font=("Arial", 9),
         )
         self.math_db_label.pack(anchor=tk.W)
@@ -1524,6 +2075,14 @@ class SimpleGeneratorUI:
         )
         self.math_paper_session_label.pack(anchor=tk.W)
 
+        self._show_math_ui = "M" in self.schema_prefixes
+        if not self._show_math_ui:
+            self.router_status_label.pack_forget()
+            self.mathematics_label.pack_forget()
+            self.math_db_label.pack_forget()
+            self.math_remaining_label.pack_forget()
+            self.math_paper_session_label.pack_forget()
+
         self.session_quota_label = ttk.Label(
             stats_frame,
             text="Tonight quota (saved): —",
@@ -1559,7 +2118,48 @@ class SimpleGeneratorUI:
             font=("Arial", 9)
         )
         self.elapsed_label.pack(anchor=tk.W)
-        
+
+        def _main_scroll_content_taller_than_viewport():
+            try:
+                ch = self._main_scroll_canvas.winfo_height()
+                bbox = self._main_scroll_canvas.bbox("all")
+                return bool(bbox and (bbox[3] - bbox[1]) > ch + 1)
+            except tk.TclError:
+                return False
+
+        def _wheel_over_inner_scroll_text(widget):
+            w = widget
+            while w is not None:
+                if w in (self.progress_text, self.inventory_text):
+                    return True
+                w = getattr(w, "master", None)
+            return False
+
+        def _on_main_mousewheel(event):
+            if _wheel_over_inner_scroll_text(event.widget):
+                return
+            if not _main_scroll_content_taller_than_viewport():
+                return
+            if getattr(event, "delta", 0):
+                self._main_scroll_canvas.yview_scroll(
+                    int(-1 * (event.delta / 120)), "units"
+                )
+
+        def _on_main_mousewheel_linux_up(_event):
+            if not _main_scroll_content_taller_than_viewport():
+                return
+            self._main_scroll_canvas.yview_scroll(-1, "units")
+
+        def _on_main_mousewheel_linux_down(_event):
+            if not _main_scroll_content_taller_than_viewport():
+                return
+            self._main_scroll_canvas.yview_scroll(1, "units")
+
+        self.root.bind_all("<MouseWheel>", _on_main_mousewheel)
+        self.root.bind_all("<Button-4>", _on_main_mousewheel_linux_up)
+        self.root.bind_all("<Button-5>", _on_main_mousewheel_linux_down)
+        self.root.after_idle(_sync_main_scroll_region)
+
         # Initial update
         self._update_progress_display()
         
@@ -1567,6 +2167,19 @@ class SimpleGeneratorUI:
         if hasattr(self, 'controller') and self.controller:
             stats = self.controller._get_stats()
             self._update_stats_display(stats)
+
+    def _update_inventory_display(self) -> None:
+        """Refresh the schema inventory / reclass summary (uses current DB coverage)."""
+        text = format_esat_schema_inventory_report(
+            schemas_path=self.schemas_source_path,
+            ordered_schema_ids=self.queue.ordered_schema_ids,
+            coverage=dict(self.queue.coverage),
+            approvals_path=self.base_dir_path / "schema_prefix_full_approved.json",
+        )
+        self.inventory_text.config(state=tk.NORMAL)
+        self.inventory_text.delete(1.0, tk.END)
+        self.inventory_text.insert(tk.END, text)
+        self.inventory_text.config(state=tk.DISABLED)
     
     def _on_start(self):
         """Handle start button click."""
@@ -1582,35 +2195,55 @@ class SimpleGeneratorUI:
         self.start_button.config(state=tk.NORMAL)
         self.status_label.config(text="Stopped", foreground="red")
     
-    def _ui_callback(self, event_type: str, data: dict):
-        """Callback from controller to update UI."""
-        if event_type == "status":
-            self.root.after(0, lambda: self.status_label.config(
+    def _ui_callback(self, event_type: str, data: Any):
+        """Enqueue UI work; must be safe from worker threads (no tkinter calls here)."""
+        self._ui_queue.put((event_type, data))
+
+    def _apply_ui_event(self, event_type: str, data: Any) -> None:
+        """Apply one UI update on the Tk main thread."""
+        if event_type == "status" and isinstance(data, dict):
+            self.status_label.config(
                 text=data.get("text", ""),
-                foreground=data.get("color", "black")
-            ))
+                foreground=data.get("color", "black"),
+            )
         elif event_type == "stage":
-            self.root.after(0, lambda: self.stage_label.config(text=data))
+            self.stage_label.config(text=str(data))
         elif event_type == "success":
-            self.root.after(0, self._update_progress_display)
+            self._update_progress_display()
         elif event_type == "failure":
-            self.root.after(0, self._update_progress_display)
-        elif event_type == "stats":
-            self.root.after(0, lambda: self._update_stats_display(data))
-        elif event_type == "error":
-            self.root.after(0, lambda: messagebox.showerror("Error", data.get("message")))
-        elif event_type == "quota_exhausted":
-            def _halt_quota():
-                if self.controller:
-                    self.controller.stop()
-                self.stop_button.config(state=tk.DISABLED)
-                self.start_button.config(state=tk.NORMAL)
-                self.status_label.config(text="Stopped (API quota)", foreground="red")
-                messagebox.showwarning(
-                    "Gemini quota exhausted",
-                    data.get("message", "All configured API keys hit rate limits."),
-                )
-            self.root.after(0, _halt_quota)
+            self._update_progress_display()
+        elif event_type == "stats" and isinstance(data, dict):
+            self._update_stats_display(data)
+        elif event_type == "error" and isinstance(data, dict):
+            messagebox.showerror("Error", data.get("message"))
+        elif event_type == "quota_exhausted" and isinstance(data, dict):
+            if self.controller:
+                self.controller.stop()
+            self.stop_button.config(state=tk.DISABLED)
+            self.start_button.config(state=tk.NORMAL)
+            self.status_label.config(text="Stopped (API quota)", foreground="red")
+            messagebox.showwarning(
+                "Gemini quota exhausted",
+                data.get("message", "All configured API keys hit rate limits."),
+            )
+
+    def _poll_ui_queue(self) -> None:
+        """Drain cross-thread UI events; reschedule on the main thread."""
+        try:
+            while True:
+                try:
+                    event_type, data = self._ui_queue.get_nowait()
+                except queue.Empty:
+                    break
+                self._apply_ui_event(event_type, data)
+        except tk.TclError:
+            return
+        try:
+            if not self.root.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        self.root.after(50, self._poll_ui_queue)
     
     def _update_progress_display(self):
         """Update the schema progress display."""
@@ -1622,6 +2255,8 @@ class SimpleGeneratorUI:
         if self.controller:
             stats = self.controller._get_stats()
             self._update_stats_display(stats)
+
+        self._update_inventory_display()
         
         self.progress_text.config(state=tk.NORMAL)
         self.progress_text.delete(1.0, tk.END)
@@ -1670,11 +2305,12 @@ class SimpleGeneratorUI:
         
         # Update subject-specific progress
         subject_progress = self.queue.get_subject_progress()
-        if 'Mathematics' in subject_progress:
-            m = subject_progress['Mathematics']
-            self.mathematics_label.config(text=f"Mathematics (M*): {m['current']}/{m['required']}")
-        else:
-            self.mathematics_label.config(text="Mathematics (M*): 0/0")
+        if getattr(self, "_show_math_ui", True):
+            if 'Mathematics' in subject_progress:
+                m = subject_progress['Mathematics']
+                self.mathematics_label.config(text=f"Mathematics (M*): {m['current']}/{m['required']}")
+            else:
+                self.mathematics_label.config(text="Mathematics (M*): 0/0")
         if 'Physics' in subject_progress:
             p = subject_progress['Physics']
             self.physics_label.config(text=f"Physics: {p['current']}/{p['required']}")
@@ -1735,41 +2371,48 @@ class SimpleGeneratorUI:
                 f"(from difficulty_weights.txt)"
             )
         )
-        if stats.get("math_router_enabled"):
-            self.router_status_label.config(
-                text="Math 1/2 router: ON (Flash → quota MATH2_TARGET_SHARE)",
-                foreground="dark green",
+        if getattr(self, "_show_math_ui", True):
+            if stats.get("math_router_enabled"):
+                self.router_status_label.config(
+                    text="Math 1/2 router: ON (Flash → quota MATH2_TARGET_SHARE)",
+                    foreground="dark green",
+                )
+            else:
+                self.router_status_label.config(
+                    text="Math 1/2 router: OFF (all M* → Math 1 unless cfg.math_paper set)",
+                    foreground="gray",
+                )
+
+            db1 = stats.get("math_db_m1", 0)
+            db2 = stats.get("math_db_m2", 0)
+            dbu = stats.get("math_db_unlabeled", 0)
+            self.math_db_label.config(
+                text=(
+                    f"Math in DB (M* rows, subjects column): "
+                    f"Math1 {db1} | Math2 {db2} | unlabeled {dbu}"
+                )
             )
-        else:
-            self.router_status_label.config(
-                text="Math 1/2 router: OFF (all M* → Math 1 unless cfg.math_paper set)",
-                foreground="gray",
+            mrem = stats.get("math_m_remaining", 0)
+            est1 = stats.get("math_est_m1_remaining", 0)
+            est2 = stats.get("math_est_m2_remaining", 0)
+            tgt = stats.get("math2_target_share", 0.5)
+            self.math_remaining_label.config(
+                text=(
+                    f"Math remaining (M* slots): {mrem} total "
+                    f"(~{est1} Math1 / ~{est2} Math2 est. at {tgt:.0%} Math2 target)"
+                )
             )
 
-        db1 = stats.get("math_db_m1", 0)
-        db2 = stats.get("math_db_m2", 0)
-        dbu = stats.get("math_db_unlabeled", 0)
-        self.math_db_label.config(
-            text=f"Math in DB (M* rows): Math1 {db1} | Math2 {db2} | unlabeled {dbu}"
-        )
-        mrem = stats.get("math_m_remaining", 0)
-        est1 = stats.get("math_est_m1_remaining", 0)
-        est2 = stats.get("math_est_m2_remaining", 0)
-        tgt = stats.get("math2_target_share", 0.5)
-        self.math_remaining_label.config(
-            text=(
-                f"Math remaining (M* slots): {mrem} total "
-                f"(~{est1} Math1 / ~{est2} Math2 est. at {tgt:.0%} Math2 target)"
+            m1 = stats.get("session_math1", 0)
+            m2 = stats.get("session_math2", 0)
+            tot = m1 + m2
+            pct = (100.0 * m2 / tot) if tot else 0.0
+            self.math_paper_session_label.config(
+                text=f"This session saved (M*): Math1 {m1} | Math2 {m2} ({pct:.0f}% Math2)"
             )
-        )
 
         m1 = stats.get("session_math1", 0)
         m2 = stats.get("session_math2", 0)
-        tot = m1 + m2
-        pct = (100.0 * m2 / tot) if tot else 0.0
-        self.math_paper_session_label.config(
-            text=f"This session saved (M*): Math1 {m1} | Math2 {m2} ({pct:.0f}% Math2)"
-        )
 
         if stats.get("session_cap_disabled"):
             self.session_quota_label.config(
@@ -1784,12 +2427,19 @@ class SimpleGeneratorUI:
             tp = stats.get("target_p", 0)
             tc = stats.get("target_c", 0)
             tb = stats.get("target_b", 0)
-            self.session_quota_label.config(
-                text=(
-                    f"Tonight quota (saved): M1 {m1}/{t1} | M2 {m2}/{t2} | "
-                    f"P {sp}/{tp} | C {sc}/{tc} | B {sb}/{tb}"
-                ),
-            )
+            if getattr(self, "_show_math_ui", True):
+                self.session_quota_label.config(
+                    text=(
+                        f"Tonight quota (saved): M1 {m1}/{t1} | M2 {m2}/{t2} | "
+                        f"P {sp}/{tp} | C {sc}/{tc} | B {sb}/{tb}"
+                    ),
+                )
+            else:
+                self.session_quota_label.config(
+                    text=(
+                        f"Tonight quota (saved): P {sp}/{tp} | C {sc}/{tc} | B {sb}/{tb}"
+                    ),
+                )
 
         logp = stats.get("gemini_api_event_log") or ""
         if logp:
@@ -1798,43 +2448,71 @@ class SimpleGeneratorUI:
     
     def run(self):
         """Run the UI."""
+        self.root.after(50, self._poll_ui_queue)
         self.root.mainloop()
+
+
+def _generator_base_dir() -> Path:
+    """Directory that contains ``by_subject_prompts``, ``schemas``, ``runs``, etc."""
+    if getattr(sys, "frozen", False):
+        # PyInstaller / cx_Freeze: resources live next to the executable, not in _MEI*.
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
 
 
 def main():
     """Main entry point."""
-    base_dir = Path(__file__).parent
+    base_dir = _generator_base_dir()
 
     project_root = base_dir.parent.parent
-    env_path = project_root / ".env.local"
-    safe_load_dotenv(str(env_path))
+    for env_path in (project_root / ".env.local", base_dir / ".env.local"):
+        if env_path.is_file():
+            safe_load_dotenv(str(env_path))
 
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        print("ERROR: GEMINI_API_KEY not found in environment")
-        print(f"Please add it to {env_path}")
+    cloud_project = os.environ.get("GOOGLE_CLOUD_PROJECT", "").strip()
+    cloud_location = os.environ.get("GOOGLE_CLOUD_LOCATION", "").strip()
+    if not cloud_project or not cloud_location:
+        print("\nERROR: Vertex config not set.\n")
+        print("Need GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION.")
+        print(f"Add them to: {project_root / '.env.local'} or {base_dir / '.env.local'}\n")
         sys.exit(1)
 
+    init_pipeline_log(str(base_dir))
     if not SUPABASE_AVAILABLE:
-        print("Warning: Supabase not available. Install with: pip install supabase")
-        print("Continuing without Supabase — DB sync will be unavailable.")
+        plog(
+            "ui",
+            "main_no_supabase",
+            level="warning",
+            detail={"hint": "Continuing without DB sync."},
+            echo=True,
+            spacer=True,
+        )
 
-    raw = (os.environ.get("SCHEMA_PREFIXES") or "").strip()
+    # Default: Physics, Chemistry, Biology. Override with ESAT_SIMPLE_UI_SCHEMA_PREFIXES (e.g. M,P,C,B).
+    raw = (os.environ.get("ESAT_SIMPLE_UI_SCHEMA_PREFIXES") or "").strip()
     if raw:
         parts = [p.strip().upper() for p in raw.split(",") if p.strip()]
         selected_prefixes = tuple(p for p in parts if p in ("M", "P", "B", "C"))
         if not selected_prefixes:
-            selected_prefixes = ("M", "P", "C", "B")
+            selected_prefixes = ("P", "C", "B")
     else:
-        selected_prefixes = ("M", "P", "C", "B")
+        selected_prefixes = ("P", "C", "B")
 
     os.environ["SCHEMA_PREFIXES"] = ",".join(selected_prefixes)
-    print(f"📋 Subjects (no prompt): {', '.join(selected_prefixes)} — set SCHEMA_PREFIXES to override.")
+    plog(
+        "ui",
+        "main_schema_prefixes",
+        detail={"SCHEMA_PREFIXES": selected_prefixes},
+        echo=False,
+    )
 
     app = SimpleGeneratorUI(str(base_dir), schema_prefixes=selected_prefixes)
     app.run()
 
 
 if __name__ == "__main__":
+    import multiprocessing
+
+    multiprocessing.freeze_support()
     main()
 

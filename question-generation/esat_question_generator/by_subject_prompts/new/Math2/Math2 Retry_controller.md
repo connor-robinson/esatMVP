@@ -78,6 +78,7 @@ D) off_syllabus
 - Regenerate using only ESAT Math 2-appropriate moves:
   - Replace any outside-scope technique with an on-syllabus route
   - Keep the same invariant category, but with standard Math 2 methods only
+  - If differentiation was the issue: **polynomial in $x$** only for anything being differentiated; do not pivot to $\sin/\ln/e^x$ derivatives
 
 E) Style_checker FAIL (too_easy / too_hard / too_wordy / too_puzzle_like)
 - Keep correctness intact, adjust ONLY style calibration:

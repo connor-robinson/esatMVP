@@ -59,7 +59,7 @@
 - **Verifier** - Simple validation tasks
 - **Style Checker** - Pattern matching, style validation
 - **Classifier** - Tag assignment (straightforward task)
-- **Format Fixer** - Simple YAML/format corrections
+- **Format Fixer** - Simple JSON/KaTeX format corrections
 - **High-volume stages** - When you need many calls
 
 ## Is the Difference Noticeable?

@@ -9,18 +9,19 @@ with Retry Controller (max retries on fixable failures).
 Directory layout expected (relative to this script):
 esat_question_generator/
 ├── by_subject_prompts/
-│   ├── new/Math1/          # Math 1 pipeline (Designer, Implementer, Verifier, Style, Tag_Labeler, …)
-│   └── old/                # Shared prompts + Physics / Chemistry / Biology subject folders
-│       ├── Verifier.md, Style_checker.md, Retry_controller.md, KaTeX_Fixer.md, …
-│       ├── Physics/, Chemistry/, Biology/
-│       └── Style_checker_physics.md, …
+│   ├── new/Math1/, new/Math2/   # Math pipelines (JSON + variation injection)
+│   ├── new/Physics/, new/Chemistry/, new/Biology/  # P/C/B JSON pipeline packs
+│   └── old/                # Optional reference copies (not loaded — pipeline uses ``new/`` only)
 ├── schemas/Schemas_ESAT.md   # sole schema source for this pipeline
-└── _archive/ (optional_prompt_structure, legacy Maths prompts, one-off scripts — not used by the pipeline)
 
 Notes:
 - This script is interface-free. It writes JSONL logs/output files under runs/<timestamp>/.
-- Requires a Gemini API key in .env.local file: GEMINI_API_KEY
-- Uses Google GenAI Python SDK: `google-genai` (recommended) or falls back to REST stub.
+- Uses Vertex AI auth via Application Default Credentials (ADC).
+- Requires GOOGLE_CLOUD_PROJECT + GOOGLE_CLOUD_LOCATION in .env.local (or environment).
+  If ``GOOGLE_CLOUD_LOCATION`` is ``global``, the GenAI client uses ``us-central1`` by default
+  (publisher Gemini models often 404 on ``global``); override with ``VERTEX_GENAI_LOCATION`` or
+  set ``GOOGLE_CLOUD_LOCATION`` to a regional endpoint (e.g. ``us-central1``).
+- Uses Google GenAI Python SDK: `google-genai`.
 - Loads environment variables from .env.local using python-dotenv
 - Math questions get classified into Math 1 or Math 2 papers by the classifier
 """
@@ -34,6 +35,7 @@ import json
 import time
 import random
 import hashlib
+import uuid
 import datetime
 import threading
 import sqlite3
@@ -41,6 +43,9 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Tuple, Callable
 from dotenv import load_dotenv
+
+from pipeline_log import init_pipeline_log, plog
+from correct_option_reconcile import apply_reconcile_to_question_package
 
 # Append-only JSONL for rate limits / key rotation (review after long runs)
 _api_event_log_lock = threading.Lock()
@@ -87,12 +92,6 @@ except ImportError:
     _TKINTER_AVAILABLE = False
     messagebox = None  # type: ignore
 
-# ---------- Optional dependencies ----------
-try:
-    import yaml  # PyYAML (optional: legacy / non-LLM helpers only)
-except ImportError:
-    yaml = None  # type: ignore
-
 # Google GenAI SDK (Gemini)
 _GENAI_AVAILABLE = True
 try:
@@ -105,11 +104,13 @@ except Exception:
 
 @dataclass
 class ModelsConfig:
-    designer: str = "gemini-3.1-pro-preview"
-    implementer: str = "gemini-3.1-pro-preview"
+    designer: str = "gemini-2.5-pro"
+    implementer: str = "gemini-2.5-pro"
     verifier: str = "gemini-2.5-flash"
     style_judge: str = "gemini-2.5-flash"
     classifier: str = "gemini-2.5-flash"  # NEW: For curriculum tag classification
+    # Used when regenerating after Style FAIL but Verifier PASS (see ``_style_only_regen_model``).
+    implementer_regen: str = ""
 
 
 def get_default_models_config() -> ModelsConfig:
@@ -120,11 +121,12 @@ def get_default_models_config() -> ModelsConfig:
     """
     import os
     return ModelsConfig(
-        designer=os.environ.get("MODEL_DESIGNER", "gemini-3.1-pro-preview"),
-        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-3.1-pro-preview"),
+        designer=os.environ.get("MODEL_DESIGNER", "gemini-2.5-pro"),
+        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-2.5-pro"),
         verifier=os.environ.get("MODEL_VERIFIER", "gemini-2.5-flash"),
         style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
         classifier=os.environ.get("MODEL_CLASSIFIER", "gemini-2.5-flash"),
+        implementer_regen=(os.environ.get("MODEL_IMPLEMENTER_REGEN") or "").strip(),
     )
 
 
@@ -192,14 +194,18 @@ def ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 def now_stamp() -> str:
-    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    """
+    Unique per run directory. Wall-clock second + random suffix so concurrent
+    workers never share the same ``runs/<id>/`` folder.
+    """
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:10]
 
 def sha1_short(s: str) -> str:
     return hashlib.sha1(s.encode("utf-8")).hexdigest()[:10]
 
 def strip_code_fences(text: str) -> str:
     """
-    Removes surrounding ```json / ```yaml / ``` ... ``` fences if present.
+    Removes surrounding fenced code blocks (e.g. ```json ... ```) if present.
     """
     t = text.strip()
     if t.startswith("```"):
@@ -274,34 +280,6 @@ def safe_json_load(text: str) -> Any:
     return result
 
 
-def safe_yaml_load(text: str) -> Any:
-    """Legacy YAML load (e.g. old scripts). Pipeline LLM I/O uses ``safe_json_load``."""
-    if yaml is None:
-        raise RuntimeError("PyYAML not installed. Use JSON pipeline or: pip install pyyaml")
-    cleaned = strip_code_fences(text)
-    try:
-        result = yaml.safe_load(cleaned)
-        if result is None:
-            raise ValueError("YAML parsed to None (empty or invalid YAML).")
-        return result
-    except yaml.YAMLError as e:
-        error_msg = str(e)
-        line_info = ""
-        if hasattr(e, "problem_mark") and e.problem_mark:
-            lines = cleaned.split("\n")
-            line_num = e.problem_mark.line
-            col_num = e.problem_mark.column if hasattr(e.problem_mark, "column") else None
-            if 0 <= line_num < len(lines):
-                line_info = f"\nProblem at line {line_num + 1}"
-                if col_num is not None:
-                    line_info += f", column {col_num + 1}"
-                line_info += f": {lines[line_num]}"
-        preview = cleaned[:500] if len(cleaned) <= 500 else cleaned[:500] + "\n... (truncated)"
-        raise ValueError(
-            f"YAML parsing error: {error_msg}{line_info}\n\nYAML preview (first 500 chars):\n{preview}"
-        ) from e
-
-
 def _resolve_format_fixer_system_prompt(
     prompts: Prompts, schema_id: str, math_paper: Optional[str]
 ) -> Optional[str]:
@@ -318,11 +296,6 @@ def _resolve_format_fixer_system_prompt(
         ff = (pack.get("format_fixer") or "").strip()
         if ff:
             format_fixer_prompt = ff
-    if not format_fixer_prompt:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        old_format_fixer_path = os.path.join(base_dir, "by_subject_prompts", "old", "KaTeX_Fixer.md")
-        if os.path.exists(old_format_fixer_path):
-            format_fixer_prompt = read_text(old_format_fixer_path)
     return format_fixer_prompt
 
 
@@ -334,16 +307,14 @@ def repair_implementer_json_raw(
     math_paper: Optional[str],
     broken_text: str,
     parse_error: str,
+    repair_model: Optional[str] = None,
 ) -> Optional[str]:
     """
     When the Implementer returns almost-valid JSON but invalid (trailing commas, truncated, extra prose),
     one low-temperature pass using Format Fixer rules to return parseable JSON.
-    Disabled when ESAT_IMPLEMENTER_JSON_REPAIR is 0/false/off (legacy name ESAT_IMPLEMENTER_YAML_REPAIR also respected).
+    Disabled when ESAT_IMPLEMENTER_JSON_REPAIR is 0/false/off.
     """
-    flag = (
-        os.environ.get("ESAT_IMPLEMENTER_JSON_REPAIR")
-        or os.environ.get("ESAT_IMPLEMENTER_YAML_REPAIR", "1")
-    ).strip().lower()
+    flag = (os.environ.get("ESAT_IMPLEMENTER_JSON_REPAIR") or "1").strip().lower()
     if flag in ("0", "false", "no", "off"):
         return None
     system_prompt = _resolve_format_fixer_system_prompt(prompts, schema_id, math_paper)
@@ -353,7 +324,7 @@ def repair_implementer_json_raw(
             "Escape double quotes and backslashes inside strings per JSON rules. "
             "Preserve keys, numbers, and mathematical meaning. Output a single JSON object only."
         )
-    max_chars = int(os.environ.get("IMPLEMENTER_JSON_REPAIR_MAX_CHARS", os.environ.get("IMPLEMENTER_YAML_REPAIR_MAX_CHARS", "20000")))
+    max_chars = int(os.environ.get("IMPLEMENTER_JSON_REPAIR_MAX_CHARS", "20000"))
     bt = broken_text if len(broken_text) <= max_chars else broken_text[:max_chars] + "\n/* ... truncated */\n"
     pe = parse_error if len(parse_error) <= 4000 else parse_error[:4000] + "\n..."
 
@@ -370,11 +341,13 @@ Broken text:
 Task:
 - Output exactly ONE valid JSON object with the same structure (metadata, question, solution, distractor_map, key_insight as applicable) and the same mathematical content.
 - Fix ONLY JSON syntax (quotes, commas, brackets). LaTeX inside strings: use \\\\ for each TeX backslash.
+- JSON string escapes are strict: only \\\", \\\\, \\/, \\b, \\f, \\n, \\r, \\t, or \\uXXXX after \\. Never emit invalid escapes like \\c or a lone \\ before a letter.
 - Do not change which option is correct or numeric values.
 - Return raw JSON only (no ``` fences, no commentary before or after the object).
 """
+    model_id = (repair_model or "").strip() or models.implementer
     return llm.generate(
-        model=models.implementer,
+        model=model_id,
         system_prompt=system_prompt,
         user_prompt=user,
         temperature=0.15,
@@ -382,16 +355,339 @@ Task:
     )
 
 
+def _coerce_options_to_dict(options: Any) -> Optional[Dict[str, Any]]:
+    """
+    Normalise ``options`` to a dict mapping A/B/C/... to text.
+
+    Implementers sometimes return a list of objects or strings instead of a dict.
+    Applies to **all subjects** (same ``implementer_call`` path).
+    """
+    if isinstance(options, dict):
+        return options
+    if not isinstance(options, list):
+        return None
+    out: Dict[str, Any] = {}
+    for item in options:
+        if isinstance(item, dict):
+            k = (
+                item.get("label")
+                or item.get("key")
+                or item.get("option")
+                or item.get("letter")
+                or item.get("id")
+            )
+            t = (
+                item.get("text")
+                or item.get("value")
+                or item.get("body")
+                or item.get("content")
+            )
+            if k is not None and t is not None:
+                ks = str(k).strip()
+                kk = ks.upper() if len(ks) == 1 else ks
+                out[kk] = t
+        elif isinstance(item, str):
+            m = re.match(r"^\s*([A-Ha-h])\s*[\).:\-]\s*(.+)$", item.strip())
+            if m:
+                out[m.group(1).upper()] = m.group(2).strip()
+    return out if out else None
+
+
+def _normalize_question_inner_aliases(q: Dict[str, Any]) -> None:
+    """In-place: list ``options`` → dict; ``correct_answer`` → ``correct_option``."""
+    if isinstance(q.get("options"), list):
+        conv = _coerce_options_to_dict(q.get("options"))
+        if conv:
+            q["options"] = conv
+    if "correct_option" not in q or q.get("correct_option") in (None, ""):
+        ca = q.pop("correct_answer", None)
+        if ca is not None and str(ca).strip():
+            q["correct_option"] = ca
+
+
+def _apply_correct_option_index(q: Dict[str, Any], idx: Any) -> None:
+    """Set ``correct_option`` from 0-based index when the model emits ``correct_option_index``."""
+    if idx is None:
+        return
+    if q.get("correct_option") not in (None, "") and str(q.get("correct_option", "")).strip():
+        return
+    opts = q.get("options")
+    letters: List[str] = []
+    if isinstance(opts, dict):
+        letters = [str(k) for k in opts.keys()]
+    elif isinstance(opts, list):
+        letters = [chr(ord("A") + i) for i in range(len(opts))]
+    else:
+        return
+    try:
+        i = int(idx)
+    except (TypeError, ValueError):
+        return
+    if i < 0 or i >= len(letters):
+        return
+    pick = letters[i]
+    q["correct_option"] = str(pick).strip().upper()[:1] if len(str(pick).strip()) == 1 else str(pick).strip()
+
+
+def _apply_correct_option_index_from_obj(obj: Dict[str, Any]) -> None:
+    top_idx = obj.pop("correct_option_index", None)
+    q = obj.get("question")
+    if not isinstance(q, dict):
+        return
+    inner_idx = q.pop("correct_option_index", None)
+    _apply_correct_option_index(q, inner_idx if inner_idx is not None else top_idx)
+
+
+def _fill_distractor_map_gaps(obj: Dict[str, Any]) -> None:
+    """
+    Ensure every option key has a non-empty distractor_map entry.
+    Uses neutral template text when the model left entries blank (better than failing the pipeline).
+    """
+    q = obj.get("question")
+    if not isinstance(q, dict):
+        return
+    opts = q.get("options")
+    if isinstance(opts, dict):
+        keys = list(opts.keys())
+    elif isinstance(opts, list):
+        keys = [chr(ord("A") + i) for i in range(len(opts))]
+    else:
+        return
+    if not keys:
+        return
+    dm = obj.get("distractor_map")
+    if not isinstance(dm, dict):
+        dm = {}
+        obj["distractor_map"] = dm
+    cor = str(q.get("correct_option", "") or "").strip().upper()[:1]
+    for k in keys:
+        ks = str(k)
+        letter = ks.strip().upper()[:1] if len(ks.strip()) >= 1 else ks
+        cur = dm.get(k)
+        if cur is not None and str(cur).strip():
+            continue
+        if letter == cor:
+            dm[k] = "This is the correct answer given the worked reasoning in the solution."
+        else:
+            dm[k] = (
+                "Plausible mistake: misapplies a relation from the stem or slips at one algebraic step "
+                "(see solution for the correct chain)."
+            )
+
+
+def normalize_display_math_in_question_package(pkg: Dict[str, Any]) -> None:
+    """In-place KaTeX display-math layout repair on question / solution / distractor strings."""
+    try:
+        from katex_linter import deep_apply_display_math_fix, fix_display_math_newlines
+    except ImportError:
+        return
+    if not isinstance(pkg, dict):
+        return
+    q = pkg.get("question")
+    if isinstance(q, dict):
+        for fld in ("stem", "stimulus", "data_block", "graph_intent"):
+            v = q.get(fld)
+            if isinstance(v, str) and v and "$$" in v:
+                q[fld] = fix_display_math_newlines(v)
+        opts = q.get("options")
+        if isinstance(opts, dict):
+            for ok, ov in list(opts.items()):
+                if isinstance(ov, str) and ov and "$$" in ov:
+                    opts[ok] = fix_display_math_newlines(ov)
+    sol = pkg.get("solution")
+    if isinstance(sol, dict):
+        deep_apply_display_math_fix(sol)
+    dm = pkg.get("distractor_map")
+    if isinstance(dm, dict):
+        for dk, dv in list(dm.items()):
+            if isinstance(dv, str) and dv and "$$" in dv:
+                dm[dk] = fix_display_math_newlines(dv)
+
+
+def synthesize_reasoning_from_solution_steps(solution: Dict[str, Any]) -> str:
+    """
+    Some models put the worked solution in ``solution_steps`` / ``steps`` (per-step
+    fields like ``calculation``, ``step_body``, etc.) but omit ``reasoning``. The DB
+    and review UI only persist ``solution_reasoning`` / ``solution_key_insight``, so we
+    fold steps into a single reasoning string when ``reasoning`` is empty.
+    """
+    if not isinstance(solution, dict):
+        return ""
+    steps = solution.get("solution_steps")
+    if steps is None:
+        steps = solution.get("steps")
+    parts: List[str] = []
+    if isinstance(steps, list) and steps:
+        for i, step in enumerate(steps, start=1):
+            if isinstance(step, str):
+                s = step.strip()
+                if s:
+                    parts.append(s)
+                continue
+            if not isinstance(step, dict):
+                continue
+            n = step.get("step")
+            if n is None:
+                n = step.get("step_number")
+            if n is None:
+                n = step.get("n")
+            if n is None:
+                n = i
+            bits: List[str] = []
+            for k in (
+                "step_title",
+                "title",
+                "heading",
+                "step_body",
+                "body",
+                "explanation",
+                "text",
+                "description",
+                "reasoning",
+                "calculation",
+                "math",
+                "work",
+            ):
+                v = step.get(k)
+                if v is not None and str(v).strip():
+                    bits.append(str(v).strip())
+            if bits:
+                parts.append(f"Step {n}:\n\n" + "\n\n".join(bits))
+    out = "\n\n".join(parts)
+    if not out.strip():
+        inner = solution.get("solution")
+        if isinstance(inner, dict):
+            sub = synthesize_reasoning_from_solution_steps(inner)
+            if sub.strip():
+                out = sub
+    fa = solution.get("final_answer")
+    fa_s = str(fa).strip() if fa is not None else ""
+    if fa_s:
+        if out.strip():
+            return f"{out.strip()}\n\n{fa_s}"
+        return fa_s
+    return out.strip()
+
+
 def normalize_implementer_output(obj: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Normalise Implementer JSON/YAML-shaped dict into the expected structure.
+    Normalise Implementer JSON-shaped dict into the expected structure.
+
+    Some models emit a *flat* object (stem, options, correct_option at top level) instead
+    of ``question: { stem, options, correct_option }`` — wrap that shape before validation.
 
     Some models nest `solution` under `question.solution` instead of top-level.
     This function promotes it to the top-level `solution` key so downstream
     agents (Verifier, Style Judge) see the expected schema.
     
     Also handles distractor_map which may be nested under question or at top level.
+
+    **Subjects:** Every schema (M/P/C/B) uses the same ``implementer_call`` / regen path, so
+    all coercions here apply universally. See ``IMPLEMENTER_JSON_ERRORS.md`` for a catalog
+    of common failure modes and mitigations.
     """
+    if not isinstance(obj, dict):
+        return obj
+
+    # ``question`` as a plain string + top-level ``options`` / ``answer`` (common LLM slip)
+    if isinstance(obj.get("question"), str):
+        stem_s = (obj.get("question") or "").strip()
+        raw_opts = obj.get("options")
+        opts_dict = raw_opts if isinstance(raw_opts, dict) else _coerce_options_to_dict(raw_opts)
+        q_block: Dict[str, Any] = {"stem": stem_s, "options": opts_dict or {}}
+        for key in ("answer", "correct_option", "key"):
+            if obj.get(key) is not None and str(obj.get(key)).strip():
+                q_block["correct_option"] = str(obj[key]).strip().upper()[:1]
+                break
+        obj["question"] = q_block
+
+    # ``stem`` as an object (e.g. { "question_text": "..." }) with top-level ``options``
+    if "question" not in obj and isinstance(obj.get("stem"), dict):
+        sd = obj.get("stem") or {}
+        stem_text = sd.get("question_text") or sd.get("text") or sd.get("stem") or sd.get("body")
+        if stem_text:
+            raw_opts = obj.get("options")
+            opts_dict = raw_opts if isinstance(raw_opts, dict) else _coerce_options_to_dict(raw_opts)
+            q_block2: Dict[str, Any] = {"stem": str(stem_text).strip(), "options": opts_dict or {}}
+            co = obj.get("key") or obj.get("answer") or obj.get("correct_option") or sd.get("correct_option")
+            if co is not None and str(co).strip():
+                q_block2["correct_option"] = str(co).strip().upper()[:1]
+            for k in ("stimulus", "data_block", "graph_intent"):
+                if k in sd:
+                    q_block2[k] = sd[k]
+            obj["question"] = q_block2
+            obj.pop("stem", None)
+
+    # Flat implementer shape (common LLM slip): stem + options at top level (dict or list)
+    if "question" not in obj and isinstance(obj.get("stem"), str):
+        raw_opts = obj.get("options")
+        opts_dict = raw_opts if isinstance(raw_opts, dict) else _coerce_options_to_dict(raw_opts)
+        if opts_dict is not None:
+            stem = obj.pop("stem", "")
+            obj.pop("options", None)
+            q_block = {"stem": stem, "options": opts_dict}
+            co = obj.pop("correct_option", None)
+            ca = obj.pop("correct_answer", None)
+            if co is not None:
+                q_block["correct_option"] = co
+            elif ca is not None:
+                q_block["correct_option"] = ca
+            for k in ("stimulus", "data_block", "graph_intent"):
+                if k in obj:
+                    q_block[k] = obj.pop(k)
+            obj["question"] = q_block
+
+    # Top-level ``question_text`` (common Gemini slip) + ``options``
+    if "question" not in obj and isinstance(obj.get("question_text"), str):
+        stem_s = obj.pop("question_text", "").strip()
+        raw_opts = obj.get("options")
+        opts_dict = raw_opts if isinstance(raw_opts, dict) else _coerce_options_to_dict(raw_opts)
+        if stem_s and opts_dict is not None:
+            q_block_qt: Dict[str, Any] = {"stem": stem_s, "options": opts_dict}
+            co = obj.pop("correct_option", None)
+            ca = obj.pop("correct_answer", None)
+            if co is not None and str(co).strip():
+                q_block_qt["correct_option"] = str(co).strip().upper()[:1]
+            elif ca is not None and str(ca).strip():
+                q_block_qt["correct_option"] = str(ca).strip().upper()[:1]
+            obj["question"] = q_block_qt
+            obj.pop("options", None)
+
+    # Existing question object: fix list options / correct_answer alias
+    q0 = obj.get("question")
+    if isinstance(q0, dict):
+        _normalize_question_inner_aliases(q0)
+
+    # Top-level key_insight alongside top-level solution dict
+    if "key_insight" in obj:
+        ki = obj.get("key_insight")
+        sol = obj.get("solution")
+        if isinstance(sol, dict):
+            if not (sol.get("key_insight") or "").strip() and ki is not None:
+                sol["key_insight"] = ki
+            obj.pop("key_insight", None)
+        elif sol is None:
+            reasoning = obj.pop("reasoning", "") or ""
+            obj.pop("key_insight", None)
+            obj["solution"] = {"key_insight": ki if ki is not None else "", "reasoning": reasoning}
+
+    # Promote question_id into metadata for downstream consistency
+    if "question_id" in obj:
+        qid = obj.pop("question_id")
+        md = obj.get("metadata")
+        if not isinstance(md, dict):
+            obj["metadata"] = {}
+            md = obj["metadata"]
+        if qid is not None and "question_id" not in md:
+            md["question_id"] = qid
+
+    # Non-dict solution at top level -> wrap
+    if "solution" in obj and not isinstance(obj.get("solution"), dict):
+        obj["solution"] = {
+            "reasoning": str(obj.pop("solution", "") or ""),
+            "key_insight": str(obj.pop("key_insight", "") or ""),
+        }
+
     q = obj.get("question")
     if isinstance(q, dict):
         # If solution is nested under question, promote it
@@ -405,7 +701,24 @@ def normalize_implementer_output(obj: Dict[str, Any]) -> Dict[str, Any]:
     # Ensure distractor_map exists (even if empty) - it's required by the prompt
     if "distractor_map" not in obj:
         obj["distractor_map"] = {}
-    
+
+    sol_out = obj.get("solution")
+    if isinstance(sol_out, dict) and not str(sol_out.get("reasoning") or "").strip():
+        folded = synthesize_reasoning_from_solution_steps(sol_out)
+        if folded:
+            sol_out["reasoning"] = folded
+
+    _apply_correct_option_index_from_obj(obj)
+    _fill_distractor_map_gaps(obj)
+    if apply_reconcile_to_question_package(obj):
+        plog(
+            "pipeline",
+            "correct_option_reconciled",
+            detail={"stage": "normalize_implementer_output"},
+            echo=False,
+        )
+    normalize_display_math_in_question_package(obj)
+
     return obj
 
 def dump_jsonl(path: str, obj: Dict[str, Any]) -> None:
@@ -470,59 +783,8 @@ _TMUA_PIPELINE_SUBJECTS = frozenset({"physics", "chemistry", "biology"})
 def _subject_uses_new_tmua_pipeline(prompts: "Prompts", subject: str) -> bool:
     if subject not in _TMUA_PIPELINE_SUBJECTS:
         return False
-    tl = getattr(prompts, f"tag_labeler_{subject}", None)
-    return bool(tl and str(tl).strip())
-
-
-def filter_prompt_by_subject(prompt_text: str, subject: str) -> str:
-    """
-    Extract only the relevant subject-specific section from universal prompts.
-    
-    For Verifier and Style_checker, these prompts have sections like:
-    ### If `subject: mathematics`
-    ...
-    ### If `subject: physics`
-    ...
-    
-    This function:
-    1. Parses the markdown to find subject-specific sections
-    2. Extracts ONLY the relevant subject section
-    3. Returns the filtered prompt with subject-specific instructions inline
-    """
-    lines = prompt_text.split('\n')
-    filtered_lines = []
-    in_subject_section = False
-    current_subject = None
-    capture = True  # Always capture lines not in if blocks
-    
-    for line in lines:
-        # Check if this is a subject-specific header
-        if line.strip().startswith('### If `subject:'):
-            # Extract subject name from header
-            match = re.search(r'subject:\s*(\w+)', line)
-            if match:
-                current_subject = match.group(1).strip()
-                if current_subject == subject:
-                    # This is our subject section - capture following lines
-                    in_subject_section = True
-                    capture = True
-                else:
-                    # This is a different subject section - skip
-                    in_subject_section = True
-                    capture = False
-                continue  # Don't include the header itself
-            
-        # Check if we're exiting a subject section (next ### header or ## header)
-        elif line.strip().startswith('##') and in_subject_section:
-            in_subject_section = False
-            current_subject = None
-            capture = True
-            
-        # Add line if we're capturing
-        if capture:
-            filtered_lines.append(line)
-    
-    return '\n'.join(filtered_lines)
+    pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
+    return bool((pack.get("classifier") or "").strip())
 
 
 def get_subject_prompts(
@@ -614,8 +876,118 @@ class GeminiQuotaExhaustedError(RuntimeError):
     """Raised when every configured API key hits quota / rate limits for the same request."""
 
 
+def _gemini_console(msg: str, *, error_excerpt: str = "") -> None:
+    """Print rate-limit / key-switch context to stdout (always on; plog warnings often skip the console)."""
+    try:
+        line = f"[Gemini API] {msg}"
+        if error_excerpt:
+            ex = error_excerpt.strip().replace("\n", " ")
+            if len(ex) > 600:
+                ex = ex[:600] + "…"
+            line += f" | {ex}"
+        print(line, flush=True)
+    except OSError:
+        pass
+
+
 def _llm_debug_logging_enabled() -> bool:
     return os.environ.get("GEMINI_DEBUG_LLM", "").strip().lower() in ("1", "true", "yes")
+
+
+def _vertex_env_config() -> Tuple[str, str]:
+    """Return ``(project, location)`` required for Vertex AI mode."""
+    project = (os.environ.get("GOOGLE_CLOUD_PROJECT") or "").strip()
+    location = (os.environ.get("GOOGLE_CLOUD_LOCATION") or "").strip()
+    return project, location
+
+
+def _ensure_vertex_env_config() -> Tuple[str, str]:
+    """Validate required Vertex AI environment variables."""
+    project, location = _vertex_env_config()
+    missing: List[str] = []
+    if not project:
+        missing.append("GOOGLE_CLOUD_PROJECT")
+    if not location:
+        missing.append("GOOGLE_CLOUD_LOCATION")
+    if missing:
+        raise SystemExit(
+            "Missing Vertex AI configuration: "
+            + ", ".join(missing)
+            + ". Set these env vars and ensure ADC is authenticated (`gcloud auth application-default login`)."
+        )
+    return project, location
+
+
+_vertex_genai_global_remap_logged = False
+
+
+def _vertex_genai_client_location(location: str) -> str:
+    """Map ``GOOGLE_CLOUD_LOCATION`` to a region the google-genai Vertex client accepts for Gemini.
+
+    Requests to ``locations/global/.../publishers/google/models/gemini-*`` often return
+    ``404 NOT_FOUND`` even when the same model id works under ``us-central1`` (or another
+    regional endpoint). Remap ``global`` unless the operator opts out.
+
+    Set ``VERTEX_GENAI_NO_GLOBAL_REMAP=1`` to pass ``global`` through unchanged.
+    Set ``VERTEX_GENAI_LOCATION`` to choose the remap target (default ``us-central1``).
+    """
+    loc = (location or "").strip()
+    if loc.lower() != "global":
+        return loc
+    if os.environ.get("VERTEX_GENAI_NO_GLOBAL_REMAP", "").strip().lower() in ("1", "true", "yes"):
+        return loc
+    fallback = (os.environ.get("VERTEX_GENAI_LOCATION") or "us-central1").strip()
+    return fallback or "us-central1"
+
+
+_RETRY_AFTER_SECONDS_RE = re.compile(
+    r"Please retry in\s+([0-9]+(?:\.[0-9]+)?)\s*(?:s(?:ec(?:onds?)?)?)\b",
+    re.IGNORECASE,
+)
+_RETRY_AFTER_MS_RE = re.compile(
+    r"Please retry in\s+([0-9]+(?:\.[0-9]+)?)\s*ms\b",
+    re.IGNORECASE,
+)
+
+
+def _parse_retry_after_seconds_from_error(error_str: str) -> Optional[float]:
+    """Parse ``Please retry in …`` from Google quota / 429 bodies (Vertex or AI Studio)."""
+    if not error_str:
+        return None
+    m = _RETRY_AFTER_MS_RE.search(error_str)
+    if m:
+        try:
+            return max(0.0, float(m.group(1)) / 1000.0)
+        except ValueError:
+            pass
+    m = _RETRY_AFTER_SECONDS_RE.search(error_str)
+    if m:
+        try:
+            return max(0.0, float(m.group(1)))
+        except ValueError:
+            pass
+    return None
+
+
+def _compute_rate_limit_backoff_seconds(
+    *,
+    attempt: int,
+    rate_limit_delay: float,
+    error_str: str,
+) -> float:
+    """
+    Combine exponential backoff with server-provided retry hints and light jitter.
+    """
+    parsed = _parse_retry_after_seconds_from_error(error_str)
+    rl = max(0.5, float(rate_limit_delay))
+    exp = rl * (1.55 ** attempt) + float(2 ** min(attempt, 4))
+    wait_time = max(exp, float(2 ** min(attempt, 3)))
+    if parsed is not None:
+        wait_time = max(wait_time, parsed + random.uniform(0.15, 0.85))
+    else:
+        wait_time += random.uniform(0, min(2.5, wait_time * 0.12))
+    cap = float(os.environ.get("API_RATE_LIMIT_BACKOFF_CAP", "180"))
+    return min(max(wait_time, 0.5), cap)
 
 
 class LLMClient:
@@ -624,6 +996,8 @@ class LLMClient:
     _api_sem_init_lock = threading.Lock()
     _global_pacing_lock = threading.Lock()
     _global_last_call_time: float = 0.0
+    # After any worker sees 429, others wait too (reduces stampedes on TPM/RPM windows).
+    _global_cooldown_until: float = 0.0
     # Index into key chain to try first on each generate() after primary exhausts quota (stick to alt until it fails).
     _session_preferred_first: int = 0
     _session_pref_lock = threading.Lock()
@@ -638,7 +1012,7 @@ class LLMClient:
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str = "",
         min_delay: float = 0.0,
         rate_limit_delay: float = 5.0,
         prompt_trace_callback: Optional[Callable[[str, str, str, str, float], None]] = None,
@@ -648,18 +1022,15 @@ class LLMClient:
         Lightweight wrapper around the Gemini client with optional rate limiting.
 
         Args:
-            api_key: Primary Gemini API key
+            api_key: Deprecated; ignored in Vertex mode.
             min_delay: Minimum delay (in seconds) between consecutive calls
             rate_limit_delay: Extra delay (in seconds) to wait after a rate-limit style error
             prompt_trace_callback: Optional ``(trace_label, model, system_prompt, user_prompt, temperature)`` fired before each API attempt (GUI / debugging).
-            alternative_api_key: Second key to try after primary exhausts rate-limit retries; defaults to ``ALTERNATIVE_GEMINI_API_KEY`` env if set.
+            alternative_api_key: Deprecated; ignored in Vertex mode.
         """
-        primary = (api_key or "").strip()
-        alt_raw = (alternative_api_key or os.environ.get("ALTERNATIVE_GEMINI_API_KEY", "").strip() or "")
-        alt = alt_raw if alt_raw and alt_raw != primary else ""
-        self._key_chain: List[str] = [primary] + ([alt] if alt else [])
+        self._key_chain: List[str] = ["vertex"]
         self._active_key_index = 0
-        self.api_key = self._key_chain[0]
+        self.api_key = ""
         self.client = None
         self.last_usage = None  # Store last API call's token usage
         self.total_usage = {"prompt_tokens": 0, "candidates_tokens": 0, "total_tokens": 0}  # Accumulate total usage
@@ -669,9 +1040,27 @@ class LLMClient:
         self._rebuild_client()
 
     def _rebuild_client(self) -> None:
-        self.api_key = self._key_chain[self._active_key_index]
         if _GENAI_AVAILABLE:
-            self.client = genai.Client(api_key=self.api_key)
+            global _vertex_genai_global_remap_logged
+            project, location = _ensure_vertex_env_config()
+            api_location = _vertex_genai_client_location(location)
+            if (
+                (location or "").strip().lower() == "global"
+                and api_location != (location or "").strip()
+                and not _vertex_genai_global_remap_logged
+            ):
+                _gemini_console(
+                    "Vertex GenAI: GOOGLE_CLOUD_LOCATION is `global` — using "
+                    f"{api_location!r} for the API client (Gemini publisher models often return NOT_FOUND on global). "
+                    "Set GOOGLE_CLOUD_LOCATION to a region (e.g. us-central1), or VERTEX_GENAI_LOCATION / "
+                    "VERTEX_GENAI_NO_GLOBAL_REMAP=1."
+                )
+                _vertex_genai_global_remap_logged = True
+            self.client = genai.Client(
+                vertexai=True,
+                project=project,
+                location=api_location,
+            )
         else:
             self.client = None
 
@@ -691,17 +1080,20 @@ class LLMClient:
         system_prompt: str,
         user_prompt: str,
         temperature: float = 0.6,
-        max_retries: int = 3,
+        max_retries: int = 5,
         trace_label: Optional[str] = None,
     ) -> str:
         """
         Returns model output as text.
         Retries on transient errors (503, network issues) with exponential backoff.
-        On repeated rate-limit errors, switches to ``ALTERNATIVE_GEMINI_API_KEY`` if configured.
-        There is no automatic model downgrade (e.g. 3.1 Pro Preview → 2.5 Pro); keys only.
-        After the primary key exhausts quota, later calls prefer the alternative first until it too fails.
-        If every key still hits rate limits, raises ``GeminiQuotaExhaustedError`` (stop the app).
+        On repeated quota / rate-limit errors, raises ``GeminiQuotaExhaustedError``.
         """
+        env_mr = (os.environ.get("GEMINI_VERTEX_MAX_RETRIES") or "").strip()
+        if env_mr:
+            try:
+                max_retries = max(1, min(12, int(env_mr)))
+            except ValueError:
+                pass
         if not self.client:
             raise RuntimeError(
                 "Google GenAI SDK not available. Install with `pip install google-genai` "
@@ -721,21 +1113,46 @@ class LLMClient:
                 sem = self._get_api_semaphore()
                 sem.acquire()
                 try:
-                    if self.min_delay > 0:
-                        while True:
-                            with LLMClient._global_pacing_lock:
-                                elapsed = time.time() - LLMClient._global_last_call_time
-                                wait = self.min_delay - elapsed
-                            if wait <= 0:
-                                break
-                            if _dbg:
-                                print(f"[DEBUG] Respecting min_delay={self.min_delay}s, sleeping for {wait:.2f}s")
-                            time.sleep(wait)
+                    # Min spacing between successful calls + cooperative 429 cooldown (all threads).
+                    while True:
+                        now = time.time()
+                        with LLMClient._global_pacing_lock:
+                            last = LLMClient._global_last_call_time
+                            cool = LLMClient._global_cooldown_until
+                        earliest = max(
+                            last + (self.min_delay if self.min_delay > 0 else 0.0),
+                            cool,
+                        )
+                        wait = earliest - now
+                        if wait <= 0:
+                            break
+                        if _dbg:
+                            plog(
+                                "llm",
+                                "min_delay_wait",
+                                level="debug",
+                                detail={
+                                    "wait_s": round(wait, 2),
+                                    "min_delay": self.min_delay,
+                                    "cooldown_until": round(cool, 2) if cool > now else None,
+                                },
+                                echo=False,
+                            )
+                        time.sleep(wait if wait < 5.0 else 5.0)
 
                     if _dbg:
-                        api_key_preview = f"{self.api_key[:8]}...{self.api_key[-4:]}" if len(self.api_key) > 12 else "***"
-                        print(f"[DEBUG] LLMClient.generate - Model: {model}, key={key_label}, attempt {attempt + 1}/{max_retries}")
-                        print(f"[DEBUG] API Key preview: {api_key_preview}, Length: {len(self.api_key)}")
+                        plog(
+                            "llm",
+                            "generate_attempt",
+                            level="debug",
+                            detail={
+                                "model": model,
+                                "auth": "vertex_adc",
+                                "attempt": attempt + 1,
+                                "max_retries": max_retries,
+                            },
+                            echo=False,
+                        )
 
                     if self.prompt_trace_callback is not None:
                         try:
@@ -759,7 +1176,7 @@ class LLMClient:
                         LLMClient._global_last_call_time = time.time()
 
                     if _dbg:
-                        print(f"[DEBUG] ✓ API call successful for model {model}")
+                        plog("llm", "api_ok", level="debug", detail={"model": model}, echo=False)
                     usage_info = {}
                     if hasattr(resp, "usage_metadata"):
                         usage_info = {
@@ -788,14 +1205,24 @@ class LLMClient:
                     error_str = str(e)
 
                     if _dbg:
-                        print(f"[DEBUG] ✗ API call failed for model {model}, attempt {attempt + 1}/{max_retries}")
-                        print(f"[DEBUG] Error type: {type(e).__name__}")
-                        print(f"[DEBUG] Error message: {error_str[:300]}")
+                        plog(
+                            "llm",
+                            "api_fail",
+                            level="debug",
+                            detail={
+                                "model": model,
+                                "attempt": attempt + 1,
+                                "error_type": type(e).__name__,
+                                "error": error_str[:500],
+                            },
+                            echo=False,
+                        )
 
                     if "403" in error_str or "PERMISSION_DENIED" in error_str:
-                        if _dbg:
-                            api_key_preview = f"{self.api_key[:8]}...{self.api_key[-4:]}" if len(self.api_key) > 12 else "***"
-                            print(f"[DEBUG] ⚠ API Key Error: {api_key_preview}")
+                        _gemini_console(
+                            "Permission denied (403). Check Vertex IAM role and active ADC credentials.",
+                            error_excerpt=error_str,
+                        )
                         raise
 
                     is_transient = (
@@ -817,12 +1244,38 @@ class LLMClient:
                     )
 
                     if (is_transient or is_rate_limit) and attempt < max_retries - 1:
-                        wait_time = 2**attempt
                         if is_rate_limit:
-                            wait_time = max(wait_time, self.rate_limit_delay)
-                            print(
-                                f"[WARN] Rate limit on {key_label} API key — waiting {wait_time:.1f}s "
-                                f"(retry {attempt + 1}/{max_retries})"
+                            wait_time = _compute_rate_limit_backoff_seconds(
+                                attempt=attempt,
+                                rate_limit_delay=self.rate_limit_delay,
+                                error_str=error_str,
+                            )
+                            with LLMClient._global_pacing_lock:
+                                LLMClient._global_cooldown_until = max(
+                                    LLMClient._global_cooldown_until,
+                                    time.time() + wait_time,
+                                )
+                            plog(
+                                "llm",
+                                "rate_limit_backoff",
+                                level="warning",
+                                detail={
+                                    "key": key_label,
+                                    "wait_s": round(wait_time, 2),
+                                    "parsed_retry_hint_s": _parse_retry_after_seconds_from_error(
+                                        error_str
+                                    ),
+                                    "attempt": attempt + 1,
+                                    "model": model,
+                                    "trace": trace_label or "",
+                                },
+                                echo=False,
+                            )
+                            _gemini_console(
+                                f"Rate limit / quota — key={key_label}, attempt {attempt + 1}/{max_retries}, "
+                                f"waiting {round(wait_time, 1)}s then retry "
+                                f"(trace={trace_label or '—'})",
+                                error_excerpt=error_str,
                             )
                             append_gemini_api_event(
                                 {
@@ -833,11 +1286,23 @@ class LLMClient:
                                     "attempt": attempt + 1,
                                     "max_retries": max_retries,
                                     "wait_s": round(wait_time, 2),
+                                    "parsed_retry_hint_s": _parse_retry_after_seconds_from_error(
+                                        error_str
+                                    ),
                                     "error_excerpt": error_str[:600],
                                 }
                             )
-                        elif _dbg:
-                            print(f"[DEBUG] Transient error, retrying in {wait_time} seconds...")
+                        else:
+                            wait_time = float(2**attempt)
+                            wait_time += random.uniform(0, min(1.0, wait_time * 0.08))
+                            if _dbg:
+                                plog(
+                                    "llm",
+                                    "transient_retry",
+                                    level="debug",
+                                    detail={"wait_s": wait_time},
+                                    echo=False,
+                                )
                         time.sleep(wait_time)
                         continue
 
@@ -846,9 +1311,22 @@ class LLMClient:
                         next_label = "primary" if next_key_idx == 0 else "alternative"
                         with LLMClient._session_pref_lock:
                             LLMClient._session_preferred_first = next_key_idx
-                        print(
-                            f"[INFO] {key_label.capitalize()} key still rate-limited after {max_retries} tries — "
-                            f"switching to {next_label} GEMINI API key (same model; no downgrade to 2.5)."
+                        plog(
+                            "llm",
+                            "switching_api_key",
+                            detail={
+                                "from": key_label,
+                                "to": next_label,
+                                "model": model,
+                                "trace": trace_label or "",
+                            },
+                            echo=True,
+                            spacer=True,
+                        )
+                        _gemini_console(
+                            f"Switching API key after rate limits on {key_label} → using {next_label} next "
+                            f"(model={model}, trace={trace_label or '—'})",
+                            error_excerpt=error_str,
                         )
                         append_gemini_api_event(
                             {
@@ -864,6 +1342,11 @@ class LLMClient:
                         break
 
                     if is_rate_limit:
+                        _gemini_console(
+                            f"All configured API keys hit quota/rate limits ({len(self._key_chain)} key(s)); stopping. "
+                            f"(model={model}, trace={trace_label or '—'})",
+                            error_excerpt=error_str,
+                        )
                         append_gemini_api_event(
                             {
                                 "event": "quota_exhausted_all_keys",
@@ -874,53 +1357,89 @@ class LLMClient:
                             }
                         )
                         raise GeminiQuotaExhaustedError(
-                            "Gemini quota or rate limit exhausted on all configured API keys. "
+                            "Gemini quota or rate limit exhausted on Vertex AI. "
                             "Designer and Implementer stay on Gemini 3.1 Pro Preview (no automatic switch to 2.5 Pro). "
-                            "If the alternative key did not help or is missing, generation stops here. "
-                            "Limits are per Google Cloud project (RPM, TPM, RPD); RPD resets midnight Pacific. "
-                            "See https://aistudio.google.com/rate-limit"
+                            "Limits are per Google Cloud project (RPM, TPM, RPD). "
+                            "Check Vertex AI quota in Google Cloud Console."
                         ) from last_error
                     raise
                 finally:
                     sem.release()
 
-        raise RuntimeError(f"Failed after trying all API keys. Last error: {last_error}")
+        raise RuntimeError(f"Failed after Vertex retries. Last error: {last_error}")
 
 
 # ---------- Prompt loaders ----------
 
-def _read_tmua_subject_pack_if_complete(
-    prompt_dir: str, folder_name: str
-) -> Optional[Dict[str, Optional[str]]]:
+_STRICT_NEW_PACK_FILES = (
+    ("designer", "{stem} Designer.md"),
+    ("implementer", "{stem} Implementer.md"),
+    ("tag_labeler", "{stem} Tag_Labeler.md"),
+    ("retry", "{stem} Retry_controller.md"),
+    ("verifier", "{stem} Verifier.md"),
+    ("style", "{stem} Style_checker.md"),
+    ("format_fixer", "{stem} Format Fixer.md"),
+)
+
+
+def _load_strict_new_pack(prompt_dir: str, folder: str, stem: str) -> Dict[str, str]:
     """
-    Load Designer / Implementer / Tag_Labeler from ``by_subject_prompts/new/<folder_name>/``.
-    Optional: Sibling Mode, Far Mode, Format Fixer, Retry_controller, Verifier, Style_checker.
-    Returns None if required files are missing.
+    Load a complete subject pack from ``by_subject_prompts/new/<folder>/``.
+    No fallbacks — missing files raise ``FileNotFoundError``.
     """
-    base = os.path.join(prompt_dir, "new", folder_name)
-    stem = folder_name
-    des = os.path.join(base, f"{stem} Designer.md")
-    imp = os.path.join(base, f"{stem} Implementer.md")
-    tag = os.path.join(base, f"{stem} Tag_Labeler.md")
-    if not os.path.isdir(base) or not all(os.path.isfile(p) for p in (des, imp, tag)):
-        return None
-    out: Dict[str, Optional[str]] = {
-        "designer": read_text(des),
-        "implementer": read_text(imp),
-        "tag_labeler": read_text(tag),
-    }
-    optional_files = [
-        ("sibling", f"{stem} Sibling Mode.md"),
-        ("far", f"{stem} Far Mode.md"),
-        ("format_fixer", f"{stem} Format Fixer.md"),
-        ("retry", f"{stem} Retry_controller.md"),
-        ("verifier", f"{stem} Verifier.md"),
-        ("style", f"{stem} Style_checker.md"),
-    ]
-    for key, fn in optional_files:
+    base = os.path.join(prompt_dir, "new", folder)
+    if not os.path.isdir(base):
+        raise FileNotFoundError(
+            f"Required prompt directory missing:\n  {base}\n"
+            "The pipeline loads only by_subject_prompts/new/ (legacy old/ is not used)."
+        )
+    out: Dict[str, str] = {}
+    missing: List[str] = []
+    for key, pat in _STRICT_NEW_PACK_FILES:
+        fn = pat.format(stem=stem)
         p = os.path.join(base, fn)
-        out[key] = read_text(p) if os.path.isfile(p) else None
+        if not os.path.isfile(p):
+            missing.append(p)
+        else:
+            out[key] = read_text(p)
+    if missing:
+        raise FileNotFoundError(
+            f"Incomplete pack under {base}. Missing required files:\n  "
+            + "\n  ".join(missing)
+        )
+    for key, pat in (("sibling", "{stem} Sibling Mode.md"), ("far", "{stem} Far Mode.md")):
+        fn = pat.format(stem=stem)
+        p = os.path.join(base, fn)
+        out[key] = read_text(p) if os.path.isfile(p) else ""
     return out
+
+
+def _subject_new_pack_row(strict: Dict[str, str]) -> Dict[str, str]:
+    """Shape stored on ``Prompts.subject_new_packs`` (classifier = Tag_Labeler body).
+
+    Keys used by the pipeline: ``designer``, ``implementer``, ``classifier``, ``format_fixer``,
+    ``verifier``, ``style``, ``retry``, optional ``sibling`` / ``far`` (Sibling Mode / Far Mode).
+    """
+    sib = strict.get("sibling", "") or ""
+    far = strict.get("far", "") or ""
+    sty = strict["style"]
+    ret = strict["retry"]
+    return {
+        "designer": strict["designer"],
+        "implementer": strict["implementer"],
+        "classifier": strict["tag_labeler"],
+        "format_fixer": strict.get("format_fixer", "") or "",
+        "sibling": sib,
+        "far": far,
+        "verifier": strict["verifier"],
+        "style": sty,
+        "retry": ret,
+        # Aliases (same strings) for call sites that used older key names
+        "sibling_mode": sib,
+        "far_mode": far,
+        "style_checker": sty,
+        "retry_controller": ret,
+    }
 
 
 @dataclass
@@ -930,182 +1449,72 @@ class Prompts:
     implementer: Dict[str, str]
     classifier: Dict[str, str]
     
-    # Universal prompts (single string, contains all subject sections)
+    # Retired universal prompts (always empty; each subject uses new/<Subject>/ stages only).
     retry_controller: str
-    verifier: str  # Contains if statements for all subjects
-    style_checker: str  # Contains if statements for all subjects
+    verifier: str
+    style_checker: str
 
 
 def load_prompts(base_dir: str) -> Prompts:
-    """Load prompts from ``new/`` when a full pack exists, otherwise from ``old/<Subject>/``.
+    """Load **only** ``by_subject_prompts/new/`` packs. No ``old/`` fallback — missing files raise.
 
-    - Math: ``new/Math1/`` (required for mathematics); optional ``new/Math2/`` for Math 2.
-    - P/C/B: ``new/<Subject>/`` when Designer + Implementer + Tag_Labeler exist; optional
-      sibling/far, format fixer, retry, verifier, style in that folder (JSON pipeline, same
-      shape as Math 1). Loaded packs are stored on ``Prompts.subject_new_packs``.
-    - Universal verifier / style / retry come from ``old/`` when a stage has no override.
+    Required: complete Math1, Math2, Physics, Chemistry, Biology folders (Designer, Implementer,
+    Tag_Labeler, Retry_controller, Verifier, Style_checker, Format Fixer). Sibling/Far mode files
+    are optional within each folder.
     """
+    init_pipeline_log(base_dir)
     prompt_dir = os.path.join(base_dir, "by_subject_prompts")
-    new_math1_path = os.path.join(prompt_dir, "new", "Math1")
-    use_new_math1 = os.path.isdir(new_math1_path)
 
-    subjects = {
-        "mathematics": "Maths",
-        "physics": "Physics",
-        "biology": "Biology",
-        "chemistry": "Chemistry",
+    m1 = _load_strict_new_pack(prompt_dir, "Math1", "Math1")
+    m2 = _load_strict_new_pack(prompt_dir, "Math2", "Math2")
+
+    designers: Dict[str, str] = {
+        "mathematics": m1["designer"],
+    }
+    implementers: Dict[str, str] = {
+        "mathematics": m1["implementer"],
+    }
+    tag_labeler_math1 = m1["tag_labeler"]
+    classifiers: Dict[str, str] = {
+        "mathematics": tag_labeler_math1,
     }
 
-    skip_old_subject_paths = set()
-    if use_new_math1:
-        skip_old_subject_paths.add("mathematics")
+    sibling_mode_prompt = m1["sibling"] or None
+    far_mode_prompt = m1["far"] or None
+    format_fixer_math1 = m1["format_fixer"]
+    retry_math1 = m1["retry"]
+    verifier_math1 = m1["verifier"]
+    style_math1 = m1["style"]
 
-    designers: Dict[str, str] = {}
-    implementers: Dict[str, str] = {}
-    classifiers: Dict[str, str] = {}
-
-    sibling_mode_prompt = None
-    far_mode_prompt = None
-    format_fixer_math1 = None
-    retry_math1 = None
-    verifier_math1 = None
-    style_math1 = None
-    tag_labeler_math1 = None
-
-    if use_new_math1:
-        math1_designer_path = os.path.join(new_math1_path, "Math1 Designer.md")
-        math1_implementer_path = os.path.join(new_math1_path, "Math1 Implementer.md")
-        math1_tag_labeler_path = os.path.join(new_math1_path, "Math1 Tag_Labeler.md")
-
-        required_math1 = (math1_designer_path, math1_implementer_path, math1_tag_labeler_path)
-        missing = [p for p in required_math1 if not os.path.isfile(p)]
-        if missing:
-            raise FileNotFoundError(
-                "Math 1 pipeline requires these files under by_subject_prompts/new/Math1/: "
-                + ", ".join(os.path.basename(p) for p in missing)
-            )
-
-        designers["mathematics"] = read_text(math1_designer_path)
-        implementers["mathematics"] = read_text(math1_implementer_path)
-        tag_labeler_math1 = read_text(math1_tag_labeler_path)
-        classifiers["mathematics"] = tag_labeler_math1
-
-        sibling_path = os.path.join(new_math1_path, "Math1 Sibling Mode.md")
-        far_path = os.path.join(new_math1_path, "Math1 Far Mode.md")
-        if os.path.isfile(sibling_path):
-            sibling_mode_prompt = read_text(sibling_path)
-        if os.path.isfile(far_path):
-            far_mode_prompt = read_text(far_path)
-
-        ff_path = os.path.join(new_math1_path, "Math1 Format Fixer.md")
-        if os.path.isfile(ff_path):
-            format_fixer_math1 = read_text(ff_path)
-        r_path = os.path.join(new_math1_path, "Math1 Retry_controller.md")
-        if os.path.isfile(r_path):
-            retry_math1 = read_text(r_path)
-        v_path = os.path.join(new_math1_path, "Math1 Verifier.md")
-        if os.path.isfile(v_path):
-            verifier_math1 = read_text(v_path)
-        s_path = os.path.join(new_math1_path, "Math1 Style_checker.md")
-        if os.path.isfile(s_path):
-            style_math1 = read_text(s_path)
-
-    new_math2_path = os.path.join(prompt_dir, "new", "Math2")
-    designer_math2 = implementer_math2 = tag_labeler_math2 = None
-    sibling_mode_math2 = far_mode_math2 = None
-    format_fixer_math2 = retry_math2 = verifier_math2 = style_math2 = None
-    if os.path.isdir(new_math2_path):
-        p_des = os.path.join(new_math2_path, "Math2 Designer.md")
-        p_imp = os.path.join(new_math2_path, "Math2 Implementer.md")
-        p_tag = os.path.join(new_math2_path, "Math2 Tag_Labeler.md")
-        if all(os.path.isfile(p) for p in (p_des, p_imp, p_tag)):
-            designer_math2 = read_text(p_des)
-            implementer_math2 = read_text(p_imp)
-            tag_labeler_math2 = read_text(p_tag)
-            sp = os.path.join(new_math2_path, "Math2 Sibling Mode.md")
-            fp = os.path.join(new_math2_path, "Math2 Far Mode.md")
-            if os.path.isfile(sp):
-                sibling_mode_math2 = read_text(sp)
-            if os.path.isfile(fp):
-                far_mode_math2 = read_text(fp)
-            ff = os.path.join(new_math2_path, "Math2 Format Fixer.md")
-            if os.path.isfile(ff):
-                format_fixer_math2 = read_text(ff)
-            rp = os.path.join(new_math2_path, "Math2 Retry_controller.md")
-            if os.path.isfile(rp):
-                retry_math2 = read_text(rp)
-            vp = os.path.join(new_math2_path, "Math2 Verifier.md")
-            if os.path.isfile(vp):
-                verifier_math2 = read_text(vp)
-            stp = os.path.join(new_math2_path, "Math2 Style_checker.md")
-            if os.path.isfile(stp):
-                style_math2 = read_text(stp)
+    designer_math2 = m2["designer"]
+    implementer_math2 = m2["implementer"]
+    tag_labeler_math2 = m2["tag_labeler"]
+    sibling_mode_math2 = m2["sibling"] or None
+    far_mode_math2 = m2["far"] or None
+    format_fixer_math2 = m2["format_fixer"]
+    retry_math2 = m2["retry"]
+    verifier_math2 = m2["verifier"]
+    style_math2 = m2["style"]
 
     subject_new_packs: Dict[str, Dict[str, str]] = {}
-    for subj_key, disp_folder, prefix in (
+    for subj_key, disp_folder, stem in (
         ("physics", "Physics", "Physics"),
         ("chemistry", "Chemistry", "Chemistry"),
         ("biology", "Biology", "Biology"),
     ):
-        pack = _load_subject_new_pack(prompt_dir, disp_folder, prefix)
-        if not pack:
-            continue
-        subject_new_packs[subj_key] = pack
-        designers[subj_key] = pack["designer"]
-        implementers[subj_key] = pack["implementer"]
-        classifiers[subj_key] = pack["classifier"]
-
-    old_prompt_dir = os.path.join(prompt_dir, "old")
-    if not os.path.isdir(old_prompt_dir):
-        old_prompt_dir = prompt_dir
-
-    for subject_key, folder_name in subjects.items():
-        if subject_key == "mathematics" and use_new_math1:
-            continue
-        if subject_key in subject_new_packs:
-            continue
-
-        subject_path = os.path.join(old_prompt_dir, folder_name)
-        if not os.path.isdir(subject_path):
-            continue
-
-        designer_files = [f for f in os.listdir(subject_path) if "Designer" in f and f.endswith(".md")]
-        if designer_files:
-            designers[subject_key] = read_text(os.path.join(subject_path, designer_files[0]))
-
-        impl_files = [f for f in os.listdir(subject_path) if "Implementer" in f and f.endswith(".md")]
-        if impl_files:
-            implementers[subject_key] = read_text(os.path.join(subject_path, impl_files[0]))
-
-        class_files = [f for f in os.listdir(subject_path) if "Classifier" in f and f.endswith(".md")]
-        if class_files:
-            classifiers[subject_key] = read_text(os.path.join(subject_path, class_files[0]))
-
-    def _read_first(*candidates: str) -> str:
-        for p in candidates:
-            if os.path.isfile(p):
-                return read_text(p)
-        return ""
-
-    retry_univ = _read_first(
-        os.path.join(old_prompt_dir, "Retry_controller.md"),
-        os.path.join(prompt_dir, "Retry_controller.md"),
-    )
-    verifier_univ = _read_first(
-        os.path.join(old_prompt_dir, "Verifier.md"),
-        os.path.join(prompt_dir, "Verifier.md"),
-    )
-    style_univ = _read_first(
-        os.path.join(old_prompt_dir, "Style_checker.md"),
-        os.path.join(prompt_dir, "Style_checker.md"),
-    )
+        strict = _load_strict_new_pack(prompt_dir, disp_folder, stem)
+        row = _subject_new_pack_row(strict)
+        subject_new_packs[subj_key] = row
+        designers[subj_key] = row["designer"]
+        implementers[subj_key] = row["implementer"]
+        classifiers[subj_key] = row["classifier"]
 
     Prompts.sibling_mode = sibling_mode_prompt
     Prompts.far_mode = far_mode_prompt
     Prompts.format_fixer_math1 = format_fixer_math1
-    Prompts.retry_controller_math1 = retry_math1 or ""
-    Prompts.verifier_math1 = verifier_math1 or ""
-    Prompts.style_checker_math1 = style_math1 or ""
+    Prompts.retry_controller_math1 = retry_math1
+    Prompts.verifier_math1 = verifier_math1
+    Prompts.style_checker_math1 = style_math1
     Prompts.tag_labeler_math1 = tag_labeler_math1
     Prompts.designer_math2 = designer_math2
     Prompts.implementer_math2 = implementer_math2
@@ -1113,41 +1522,28 @@ def load_prompts(base_dir: str) -> Prompts:
     Prompts.sibling_mode_math2 = sibling_mode_math2
     Prompts.far_mode_math2 = far_mode_math2
     Prompts.format_fixer_math2 = format_fixer_math2
-    Prompts.retry_controller_math2 = retry_math2 or ""
-    Prompts.verifier_math2 = verifier_math2 or ""
-    Prompts.style_checker_math2 = style_math2 or ""
+    Prompts.retry_controller_math2 = retry_math2
+    Prompts.verifier_math2 = verifier_math2
+    Prompts.style_checker_math2 = style_math2
     Prompts.subject_new_packs = subject_new_packs
 
-    if subject_new_packs:
-        print(
-            "[load_prompts] New JSON pipeline packs: "
-            + ", ".join(sorted(subject_new_packs.keys()))
-            + " → by_subject_prompts/new/<Subject>/"
-        )
-
-    if use_new_math1:
-        print(
-            "[load_prompts] Mathematics → by_subject_prompts/new/Math1/ (Math 1). "
-            "Shared verifier/style/retry → old/ when not overridden by a subject pack."
-        )
-        if designer_math2:
-            print(
-                "[load_prompts] Mathematics 2 pack loaded from by_subject_prompts/new/Math2/ "
-                "(use cfg.math_paper='Math 2' or run_once(..., math_paper='Math 2'))."
-            )
-    else:
-        print(
-            "[load_prompts] WARNING: by_subject_prompts/new/Math1/ missing — "
-            "math generation needs the Math 1 prompt pack."
-        )
+    plog(
+        "prompts",
+        "strict_new_packs_loaded",
+        detail={
+            "pcb_subjects": sorted(subject_new_packs.keys()),
+            "note": "Math1+Math2+P/C/B new/ only; see pipeline_session.jsonl",
+        },
+        echo=False,
+    )
 
     return Prompts(
         designer=designers,
         implementer=implementers,
         classifier=classifiers,
-        retry_controller=retry_univ,
-        verifier=verifier_univ,
-        style_checker=style_univ,
+        retry_controller="",
+        verifier="",
+        style_checker="",
     )
 
 
@@ -1208,8 +1604,14 @@ def choose_difficulty(cfg: RunConfig) -> str:
         return random.choice(["Easy", "Medium", "Hard", "Extreme"])
     return random.choices(diffs, weights=weights, k=1)[0]
 
-def apply_mode_injection(llm: LLMClient, prompts: Prompts, models: ModelsConfig, 
-                         idea_plan: Dict[str, Any], mode: str) -> Dict[str, Any]:
+def apply_mode_injection(
+    llm: LLMClient,
+    prompts: Prompts,
+    models: ModelsConfig,
+    idea_plan: Dict[str, Any],
+    mode: str,
+    schema_id: str = "",
+) -> Dict[str, Any]:
     """
     Apply mode injection (Sibling/Far) to a designer idea_plan.
     
@@ -1219,6 +1621,7 @@ def apply_mode_injection(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
         models: Models config
         idea_plan: Original idea_plan from designer
         mode: "sibling" or "far"
+        schema_id: Selects P/C/B sibling/far prompts from ``subject_new_packs`` when applicable.
     
     Returns:
         Modified idea_plan with mode injection applied
@@ -1226,12 +1629,20 @@ def apply_mode_injection(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
     if mode not in ["sibling", "far"]:
         return idea_plan  # No injection needed
     
-    # Get appropriate mode prompt
+    # Get appropriate mode prompt (subject new-pack first, then Math 1 global blobs)
     mode_prompt = None
-    if mode == "sibling" and hasattr(prompts, 'sibling_mode') and prompts.sibling_mode:
-        mode_prompt = prompts.sibling_mode
-    elif mode == "far" and hasattr(prompts, 'far_mode') and prompts.far_mode:
-        mode_prompt = prompts.far_mode
+    subj = get_subject_from_schema(schema_id) if schema_id else ""
+    pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subj) if subj else None
+    if pack:
+        if mode == "sibling":
+            mode_prompt = (pack.get("sibling") or pack.get("sibling_mode") or "").strip() or None
+        elif mode == "far":
+            mode_prompt = (pack.get("far") or pack.get("far_mode") or "").strip() or None
+    if not mode_prompt:
+        if mode == "sibling" and hasattr(prompts, "sibling_mode") and prompts.sibling_mode:
+            mode_prompt = prompts.sibling_mode
+        elif mode == "far" and hasattr(prompts, "far_mode") and prompts.far_mode:
+            mode_prompt = prompts.far_mode
     
     if not mode_prompt:
         # Mode injection not available, return original
@@ -1249,7 +1660,7 @@ Return the modified idea_plan as a single JSON object with variation_mode set to
         model=models.designer,
         system_prompt=mode_prompt,
         user_prompt=user,
-        temperature=0.7,
+        temperature=_designer_temperature_for_variation_mode(mode),
         trace_label="Designer (mode injection)",
     )
     
@@ -1358,14 +1769,28 @@ def _inject_variation_policy_from_blobs(
     return designer_body + header + blob + "\n", True
 
 
+def _inject_subject_variation_policy(
+    designer_body: str,
+    prompts: Prompts,
+    mode: str,
+    subject: str,
+    math_paper: Optional[str],
+) -> Tuple[str, bool]:
+    """Inject SIBLING/FAR for Mathematics (Math 1/2) or a loaded P/C/B ``subject_new_packs`` designer."""
+    if subject == "mathematics":
+        sib, far = _variation_blobs_for_math_paper(prompts, math_paper or "Math 1")
+    else:
+        pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
+        sib = (pack.get("sibling") or pack.get("sibling_mode") or "").strip()
+        far = (pack.get("far") or pack.get("far_mode") or "").strip()
+    return _inject_variation_policy_from_blobs(designer_body, sib, far, mode)
+
+
 def _inject_math_variation_policy(
     designer_body: str, prompts: Prompts, mode: str, math_paper: str
 ) -> Tuple[str, bool]:
-    """
-    Inject SIBLING/FAR policy into Math1/Math2 Designer (``<INSERT_VARIATION_POLICY>``).
-    """
-    sib, far = _variation_blobs_for_math_paper(prompts, math_paper)
-    return _inject_variation_policy_from_blobs(designer_body, sib, far, mode)
+    """Inject SIBLING/FAR policy into Math1/Math2 Designer (``<INSERT_VARIATION_POLICY>``)."""
+    return _inject_subject_variation_policy(designer_body, prompts, mode, "mathematics", math_paper)
 
 
 def _inject_math1_variation_policy(designer_body: str, prompts: Prompts, mode: str) -> Tuple[str, bool]:
@@ -1452,6 +1877,30 @@ def _math1_designer_user_prompt(
     return "\n".join(lines)
 
 
+def _designer_temperature_for_variation_mode(variation_mode: str) -> float:
+    """
+    Sampling temperature for the Designer (and sibling/far mode-injection pass).
+    Far mode uses a higher default so idea_plans explore more diverse structures.
+    Override with ESAT_DESIGNER_TEMPERATURE_FAR / ESAT_DESIGNER_TEMPERATURE (floats in [0, 2]).
+    """
+    vm = (variation_mode or "").strip().lower()
+    if vm == "far":
+        raw = (os.environ.get("ESAT_DESIGNER_TEMPERATURE_FAR") or "").strip()
+        if raw:
+            try:
+                return max(0.0, min(2.0, float(raw)))
+            except ValueError:
+                pass
+        return 0.9
+    raw = (os.environ.get("ESAT_DESIGNER_TEMPERATURE") or "").strip()
+    if raw:
+        try:
+            return max(0.0, min(2.0, float(raw)))
+        except ValueError:
+            pass
+    return 0.7
+
+
 def designer_call(
     llm: LLMClient,
     prompts: Prompts,
@@ -1475,8 +1924,8 @@ def designer_call(
         schema_id: Schema ID
         difficulty: Target difficulty
         exemplar_ids: List of exemplar question IDs (1-2 NSAA references)
-        variation_mode: For non-math: usually ``base``. For ESAT Math 1: ``sibling`` or ``far``; any other value
-            (including ``base``) picks randomly between sibling and far using ``variation_weights.txt`` — there is no base-only Math 1 path.
+        variation_mode: For **mathematics** and **Physics / Chemistry / Biology**: ``sibling`` or ``far``, or any
+            other value (including ``base``) picks randomly between sibling and far using ``variation_weights.txt``.
         base_dir: Generator root (folder containing ``variation_weights.txt``); defaults to this package directory.
     
     Returns:
@@ -1485,21 +1934,30 @@ def designer_call(
     subject = get_subject_from_schema(schema_id)
     mp = math_paper if subject == "mathematics" else None
     subject_prompts = get_subject_prompts(prompts, schema_id, mp)
+    pcb_tmua = _subject_uses_new_tmua_pipeline(prompts, subject)
 
     if subject == "mathematics":
+        variation_mode = _resolve_math1_variation_mode(variation_mode, base_dir)
+    elif pcb_tmua:
         variation_mode = _resolve_math1_variation_mode(variation_mode, base_dir)
     elif variation_mode not in ("base", "sibling", "far"):
         variation_mode = "base"
 
     system_prompt = subject_prompts["designer"]
-    math1_injected = False
+    variation_contract_injected = False
     if subject == "mathematics":
-        system_prompt, math1_injected = _inject_math_variation_policy(
+        system_prompt, variation_contract_injected = _inject_math_variation_policy(
             subject_prompts["designer"], prompts, variation_mode, mp or "Math 1"
+        )
+    elif pcb_tmua:
+        system_prompt, variation_contract_injected = _inject_subject_variation_policy(
+            subject_prompts["designer"], prompts, variation_mode, subject, None
         )
 
     if subject == "mathematics":
         # TMUA-style inputs: variation_seed + schema block + reference Q/S (see Math1 Designer.md)
+        user = _math1_designer_user_prompt(schema_block, difficulty, exemplar_ids, variation_mode)
+    elif pcb_tmua:
         user = _math1_designer_user_prompt(schema_block, difficulty, exemplar_ids, variation_mode)
     else:
         exemplar_section = ""
@@ -1541,7 +1999,7 @@ Define ONE dominant reasoning move."""
         model=models.designer,
         system_prompt=system_prompt,
         user_prompt=user,
-        temperature=0.7,
+        temperature=_designer_temperature_for_variation_mode(variation_mode),
         trace_label="Designer",
     )
     obj = safe_json_load(txt)
@@ -1551,11 +2009,11 @@ Define ONE dominant reasoning move."""
     # Set variation_mode
     obj["variation_mode"] = variation_mode
     
-    # Math 1: mode contract is in the designer system prompt when injection succeeded — no second LLM pass.
-    # Non-math or missing mode files: keep legacy follow-up injection for sibling/far if configured.
+    # Math 1 / new P-C-B TMUA packs: mode contract is in the designer system prompt when injection succeeded.
+    # Legacy non-math: keep follow-up injection for sibling/far if configured.
     if variation_mode in ["sibling", "far"]:
-        if not (subject == "mathematics" and math1_injected):
-            obj = apply_mode_injection(llm, prompts, models, obj, variation_mode)
+        if not variation_contract_injected:
+            obj = apply_mode_injection(llm, prompts, models, obj, variation_mode, schema_id)
     
     # Normalize schema_id
     out_schema = str(obj.get("schema_id", "")).strip()
@@ -1567,7 +2025,7 @@ Define ONE dominant reasoning move."""
 
 def format_fixer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
                        question_obj: Dict[str, Any], katex_errors: Optional[List[Dict[str, Any]]] = None,
-                       yaml_errors: Optional[str] = None, schema_id: str = "M1",
+                       parse_errors: Optional[str] = None, schema_id: str = "M1",
                        math_paper: Optional[str] = None) -> Dict[str, Any]:
     """
     Format Fixer: Fix JSON + KaTeX formatting only, no math changes.
@@ -1578,7 +2036,7 @@ def format_fixer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
         models: Models config
         question_obj: Question package with formatting errors
         katex_errors: Optional list of KaTeX errors
-        yaml_errors: Optional parse error text (JSON or legacy)
+        parse_errors: Optional JSON parse / repair error text
         schema_id: Schema ID for subject-specific handling
     
     Returns:
@@ -1599,10 +2057,12 @@ def format_fixer_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
             for err in errors:
                 error_report += f"  - {err}\n"
     
-    if yaml_errors:
-        error_report += f"\nJSON / parse errors:\n{yaml_errors}\n"
+    if parse_errors:
+        error_report += f"\nJSON / parse errors:\n{parse_errors}\n"
     
     user = f"""The following is the full question package as JSON. Fix ONLY JSON validity (string escapes, commas, brackets) and KaTeX rules inside string values. Do NOT change mathematical meaning.
+
+Display math: any line with `$$` must contain only `$$`; TeX goes on lines between opening and closing `$$`; use blank lines (double newlines in strings) before/after each display block.
 
 implemented_question_json:
 {prompt_json_dumps(question_obj)}
@@ -1613,9 +2073,9 @@ implemented_question_json:
 {error_report}
 
 """
-    if yaml_errors:
+    if parse_errors:
         user += f"""parse_errors:
-{yaml_errors}
+{parse_errors}
 
 """
     
@@ -1680,6 +2140,10 @@ def implementer_call(
     Returns:
         Complete question package with metadata, question, solution, distractor_map
     """
+    if not isinstance(idea_plan, dict):
+        raise ValueError(
+            f"Implementer requires idea_plan to be a dict, got {type(idea_plan).__name__}."
+        )
     # Get subject from idea_plan's schema_id
     schema_id = idea_plan.get("schema_id", "M1")
     subject = get_subject_from_schema(schema_id)
@@ -1722,8 +2186,11 @@ Return raw JSON only: one JSON object, no markdown fences."""
         obj = safe_json_load(txt)
     except Exception as e:
         err_s = str(e)
-        print(
-            "[INFO] Implementer JSON parse failed — trying one repair pass."
+        plog(
+            "implementer",
+            "json_parse_failed_try_repair",
+            detail={"schema_id": schema_id, "error_excerpt": err_s[:400]},
+            echo=False,
         )
         repaired = repair_implementer_json_raw(
             llm, prompts, models, schema_id, mp, txt, err_s
@@ -1754,13 +2221,26 @@ Return raw JSON only: one JSON object, no markdown fences."""
     if "solution" not in obj:
         raise ValueError(f"Implementer output missing 'solution' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
+    q_block = obj.get("question")
+    if not isinstance(q_block, dict):
+        raise ValueError(
+            f"Implementer 'question' must be a JSON object (stem, options, …), not {type(q_block).__name__}. "
+            f"Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}..."
+        )
+    
     # Validate distractor_map exists (it's required by the prompt)
     if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
         raise ValueError(f"Implementer output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
     # NEW: Validate distractor_map has content (not empty)
     distractor_map = obj.get("distractor_map", {})
-    num_options = len(obj.get("question", {}).get("options", {}))
+    raw_opts = q_block.get("options")
+    if isinstance(raw_opts, dict):
+        num_options = len(raw_opts)
+    elif isinstance(raw_opts, list):
+        num_options = len(raw_opts)
+    else:
+        num_options = 0
     
     if len(distractor_map) == 0:
         raise ValueError(
@@ -1771,11 +2251,17 @@ Return raw JSON only: one JSON object, no markdown fences."""
         )
     
     if len(distractor_map) < 3:
+        if isinstance(raw_opts, dict):
+            opt_keys_dbg = list(raw_opts.keys())
+        elif isinstance(raw_opts, list):
+            opt_keys_dbg = [str(i) for i in range(len(raw_opts))]
+        else:
+            opt_keys_dbg = []
         raise ValueError(
             f"Implementer output has insufficient distractor_map entries.\n"
             f"Got {len(distractor_map)} entries, need at least 3 (for options A, B, C, D minimum).\n"
             f"Distractor map: {distractor_map}\n"
-            f"Available option keys: {list(obj.get('question', {}).get('options', {}).keys())}\n\n"
+            f"Available option keys: {opt_keys_dbg}\n\n"
             f"Raw output:\n{txt[:500]}..."
         )
     
@@ -1799,21 +2285,28 @@ def verifier_call(llm: LLMClient, prompts: Prompts, models: ModelsConfig, questi
         Verifier report with verdict (PASS/FAIL) and details
     """
     subject = get_subject_from_schema(schema_id)
+    pcb_pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
     
-    # Use Math 1 / Math 2 verifier when available
+    # Use Math 1 / Math 2 verifier when available; P/C/B use new-pack verifier when present
     verifier_prompt = None
     if subject == "mathematics":
         if math_paper == "Math 2" and getattr(prompts, "verifier_math2", None):
             verifier_prompt = prompts.verifier_math2
         elif getattr(prompts, "verifier_math1", None):
             verifier_prompt = prompts.verifier_math1
-    if not verifier_prompt:
-        # Filter verifier prompt to include only relevant subject instructions
-        verifier_prompt = filter_prompt_by_subject(prompts.verifier, subject)
+    elif (pcb_pack.get("verifier") or "").strip():
+        verifier_prompt = pcb_pack["verifier"]
+    if not (verifier_prompt or "").strip():
+        raise ValueError(
+            f"No Verifier prompt loaded for subject={subject!r}, schema_id={schema_id!r}. "
+            "Expected Math1/Math2 verifier class attributes or subject_new_packs['verifier']."
+        )
     
-    # Build user prompt with designer_plan if available (new Math1 pipeline)
-    if designer_plan and subject == "mathematics":
-        # New Math1 pipeline: pass designer_plan and implemented_question separately
+    # New JSON pipeline: designer_plan + implemented_question + optional references (Math 1/2, Physics, Chemistry, Biology)
+    use_split_verifier_user = designer_plan and (
+        subject == "mathematics" or _subject_uses_new_tmua_pipeline(prompts, subject)
+    )
+    if use_split_verifier_user:
         references_section = ""
         if exemplar_ids:
             sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
@@ -1881,44 +2374,41 @@ def style_call(
         Style checker report with verdict and style score
     """
     subject = get_subject_from_schema(schema_id)
+    pcb_pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
     
-    # Use Math 1 / Math 2 style checker when available
+    # Use Math 1 / Math 2 style checker when available; P/C/B use new-pack style when present
     style_checker_prompt = None
     if subject == "mathematics":
         if math_paper == "Math 2" and getattr(prompts, "style_checker_math2", None):
             style_checker_prompt = prompts.style_checker_math2
         elif getattr(prompts, "style_checker_math1", None):
             style_checker_prompt = prompts.style_checker_math1
-    if not style_checker_prompt:
-        # Load subject-specific style checker file
-        prompt_dir = os.path.join(os.path.dirname(__file__), "by_subject_prompts")
-        style_checker_file_map = {
-            "physics": "Style_checker_physics.md",
-            "chemistry": "Style_checker_chemistry.md",
-            "biology": "Style_checker_biology.md",
-            "mathematics": "Style_checker.md",
-        }
+    elif (pcb_pack.get("style") or pcb_pack.get("style_checker") or "").strip():
+        style_checker_prompt = (pcb_pack.get("style") or pcb_pack.get("style_checker") or "").strip()
 
-        style_checker_filename = style_checker_file_map.get(subject, "Style_checker.md")
-        old_style_path = os.path.join(prompt_dir, "old", style_checker_filename)
-        root_style_path = os.path.join(prompt_dir, style_checker_filename)
-        if os.path.exists(old_style_path):
-            style_checker_prompt = read_text(old_style_path)
-        elif os.path.exists(root_style_path):
-            style_checker_prompt = read_text(root_style_path)
-    
     if not style_checker_prompt:
-        raise ValueError(f"Style checker prompt not found for subject: {subject}")
+        raise ValueError(
+            f"No Style_checker prompt for subject={subject!r}. "
+            "Expected Math1/Math2 style class attributes or subject_new_packs['style'] (new/ pack)."
+        )
     
     # Build user prompt
-    if designer_plan and subject == "mathematics":
-        # New Math1 pipeline: pass designer_plan, implemented_question, and references separately
+    use_split_style_user = designer_plan and (
+        subject == "mathematics" or _subject_uses_new_tmua_pipeline(prompts, subject)
+    )
+    if use_split_style_user:
+        ref_title = {
+            "mathematics": "NSAA SECTION 1 MATHEMATICS REFERENCES",
+            "physics": "NSAA SECTION 1 PHYSICS REFERENCES",
+            "chemistry": "NSAA SECTION 1 CHEMISTRY REFERENCES",
+            "biology": "NSAA SECTION 1 BIOLOGY REFERENCES",
+        }.get(subject, "NSAA/ENGAA/ESAT REFERENCES")
         references_section = ""
         if exemplar_ids:
             sample_ids = random.sample(exemplar_ids, min(len(exemplar_ids), 2))
             texts = fetch_exemplar_texts(sample_ids)
             if texts:
-                references_section = "\n\n# NSAA SECTION 1 MATHEMATICS REFERENCES\n"
+                references_section = f"\n\n# {ref_title}\n"
                 for i, text in enumerate(texts):
                     references_section += f"Reference {i+1}:\n\"\"\"\n{text}\n\"\"\"\n\n"
         
@@ -2095,6 +2585,74 @@ def _map_math2_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
     obj["secondary_tags"] = out
 
 
+def _map_physics_tag_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
+    """Tag Labeler uses '1'–'7'; curriculum uses P1–P7."""
+
+    def conv(x: str) -> str:
+        x = str(x).strip()
+        if len(x) == 1 and x in "1234567":
+            return f"P{x}"
+        return x
+
+    if "primary_tag" in obj and obj["primary_tag"] is not None:
+        obj["primary_tag"] = conv(str(obj["primary_tag"]))
+    sec = obj.get("secondary_tags")
+    if not isinstance(sec, list):
+        return
+    out = []
+    for t in sec:
+        if isinstance(t, dict):
+            d = dict(t)
+            c = d.get("code")
+            if c is not None:
+                d["code"] = conv(str(c))
+            out.append(d)
+        else:
+            out.append(conv(str(t)))
+    obj["secondary_tags"] = out
+
+
+def _map_biology_tag_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
+    """Tag Labeler uses '1'–'11' (or B1–B11); curriculum uses B1–B11."""
+
+    def conv(x: str) -> str:
+        x = str(x).strip()
+        if x.isdigit():
+            n = int(x)
+            if 1 <= n <= 11:
+                return f"B{n}"
+            return x
+        m = re.fullmatch(r"B(1[01]|[1-9])", x, re.IGNORECASE)
+        if m:
+            return m.group(0).upper()
+        return x
+
+    if "primary_tag" in obj and obj["primary_tag"] is not None:
+        obj["primary_tag"] = conv(str(obj["primary_tag"]))
+    sec = obj.get("secondary_tags")
+    if not isinstance(sec, list):
+        return
+    out = []
+    for t in sec:
+        if isinstance(t, dict):
+            d = dict(t)
+            c = d.get("code")
+            if c is not None:
+                d["code"] = conv(str(c))
+            out.append(d)
+        else:
+            out.append(conv(str(t)))
+    obj["secondary_tags"] = out
+
+
+_CHEM_TAG_RE = re.compile(r"^C(1[0-6]|[1-9])$", re.IGNORECASE)
+
+
+def _chemistry_tag_labeler_code_ok(s: str) -> bool:
+    t = str(s).strip()
+    return bool(_CHEM_TAG_RE.fullmatch(t))
+
+
 def tag_labeler_call(
     llm: LLMClient,
     prompts: Prompts,
@@ -2164,7 +2722,114 @@ Return raw JSON only (one object)."""
         obj["_raw_text"] = txt
         return obj
 
+    if _subject_uses_new_tmua_pipeline(prompts, subject):
+        pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
+        sys_p = (pack.get("classifier") or "").strip()
+        if sys_p:
+            trace_names = {
+                "physics": "Tag Labeler (Physics)",
+                "chemistry": "Tag Labeler (Chemistry)",
+                "biology": "Tag Labeler (Biology)",
+            }
+            user = f"""implemented_question (JSON):
+{prompt_json_dumps(question_obj)}
+
+Return raw JSON only (one object) per your system instructions."""
+            model = getattr(models, "classifier", None) or models.style_judge
+            txt = llm.generate(
+                model=model,
+                system_prompt=sys_p,
+                user_prompt=user,
+                temperature=0.3,
+                trace_label=trace_names.get(subject, "Tag Labeler"),
+            )
+            obj = safe_json_load(txt)
+            if not isinstance(obj, dict) or "primary_tag" not in obj:
+                raise ValueError(f"Tag Labeler output invalid JSON/object. Raw output:\n{txt}")
+            primary_tag = str(obj.get("primary_tag", ""))
+            if subject == "physics":
+                if primary_tag and not _math_tag_labeler_numeric_ok(primary_tag):
+                    raise ValueError(
+                        f"Tag Labeler assigned invalid Physics primary_tag: {primary_tag}. Must be 1-7."
+                    )
+                _map_physics_tag_labeler_codes_to_curriculum(obj)
+            elif subject == "biology":
+                pt = str(primary_tag).strip()
+                if pt:
+                    ok_bio = pt.isdigit() and 1 <= int(pt) <= 11
+                    if not ok_bio:
+                        ok_bio = bool(re.fullmatch(r"B(1[01]|[1-9])", pt, re.IGNORECASE))
+                    if not ok_bio:
+                        raise ValueError(
+                            f"Tag Labeler assigned invalid Biology primary_tag: {primary_tag}. "
+                            "Must be 1–11 or B1–B11."
+                        )
+                _map_biology_tag_labeler_codes_to_curriculum(obj)
+            elif subject == "chemistry":
+                if primary_tag and not _chemistry_tag_labeler_code_ok(primary_tag):
+                    raise ValueError(
+                        f"Tag Labeler assigned invalid Chemistry primary_tag: {primary_tag}. "
+                        "Expected C1–C16."
+                    )
+                if primary_tag:
+                    obj["primary_tag"] = str(primary_tag).strip().upper()
+            obj["_raw_text"] = txt
+            return obj
+
     return classifier_call(llm, prompts, models, question_obj, schema_id, curriculum_parser)
+
+
+def _style_only_regen_model(
+    models: ModelsConfig,
+    verifier_report: Optional[Dict[str, Any]],
+    style_report: Optional[Dict[str, Any]],
+) -> str:
+    """
+    Pick model for implementer regeneration.
+
+    When Verifier verdict is PASS and a style_report is present, the failure is style-only;
+    use ``MODEL_IMPLEMENTER_REGEN`` if set, otherwise the Style Judge model (typically Flash).
+
+    Set ``ESAT_STYLE_REGEN_USE_PRO=1`` to always use ``MODEL_IMPLEMENTER`` for regen.
+    """
+    force_pro = os.environ.get("ESAT_STYLE_REGEN_USE_PRO", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+    if force_pro:
+        return models.implementer
+    if not isinstance(verifier_report, dict):
+        return models.implementer
+    verdict = str(verifier_report.get("verdict", "")).strip().upper()
+    if verdict != "PASS" or style_report is None:
+        return models.implementer
+    explicit = (getattr(models, "implementer_regen", None) or "").strip()
+    if explicit:
+        return explicit
+    sj = (models.style_judge or "").strip()
+    return sj or models.implementer
+
+
+def describe_style_only_regen_policy(models: ModelsConfig) -> str:
+    """One-line summary for UIs (env: MODEL_IMPLEMENTER_REGEN, ESAT_STYLE_REGEN_USE_PRO)."""
+    force = os.environ.get("ESAT_STYLE_REGEN_USE_PRO", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+    if force:
+        return (
+            f"Retry regen model: always {models.implementer} (ESAT_STYLE_REGEN_USE_PRO)."
+        )
+    explicit = (getattr(models, "implementer_regen", None) or "").strip()
+    if explicit:
+        return f"Retry regen: {explicit} when Verifier PASS + Style fixable (MODEL_IMPLEMENTER_REGEN); else {models.implementer}."
+    sj = (models.style_judge or "").strip() or models.implementer
+    return (
+        f"Retry regen: {sj} when Verifier PASS + Style fixable; "
+        f"{models.implementer} when Verifier failed or no style report."
+    )
 
 
 def implementer_regen_call(
@@ -2172,8 +2837,8 @@ def implementer_regen_call(
     prompts: Prompts,
     models: ModelsConfig,
     idea_plan: Dict[str, Any],
-    previous_attempt: Dict[str, Any],
-    verifier_report: Dict[str, Any],
+    previous_attempt: Optional[Dict[str, Any]],
+    verifier_report: Optional[Dict[str, Any]],
     style_report: Optional[Dict[str, Any]] = None,
     difficulty: str = "Hard",
     math_paper: Optional[str] = None,
@@ -2181,13 +2846,18 @@ def implementer_regen_call(
 ) -> Dict[str, Any]:
     """
     Call Retry Controller to regenerate question implementation.
-    
-    Uses Math 1 / Math 2 Retry_controller when available, otherwise universal retry_controller.
+
+    Uses each subject's Retry_controller.md from ``by_subject_prompts/new/`` (Math1/Math2/P/C/B).
     """
+    if not isinstance(idea_plan, dict):
+        raise ValueError(
+            f"Implementer regen requires idea_plan to be a dict, got {type(idea_plan).__name__}."
+        )
     # Get subject from idea_plan's schema_id
     schema_id = idea_plan.get("schema_id", "M1")
     subject = get_subject_from_schema(schema_id)
     mp = math_paper if subject == "mathematics" else None
+    pcb_pack = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
 
     retry_prompt = None
     if subject == "mathematics":
@@ -2195,25 +2865,36 @@ def implementer_regen_call(
             retry_prompt = prompts.retry_controller_math2
         elif getattr(prompts, "retry_controller_math1", None):
             retry_prompt = prompts.retry_controller_math1
+    elif (pcb_pack.get("retry") or pcb_pack.get("retry_controller") or "").strip():
+        retry_prompt = (pcb_pack.get("retry") or pcb_pack.get("retry_controller") or "").strip()
+    if not (retry_prompt or "").strip():
+        retry_prompt = (prompts.retry_controller or "").strip()
     if not retry_prompt:
-        retry_prompt = prompts.retry_controller
+        raise ValueError(
+            f"No Retry_controller prompt for subject={subject!r}, schema_id={schema_id!r}."
+        )
 
     regen_header = ""
+    root = generator_base_dir or os.path.dirname(os.path.abspath(__file__))
     if subject == "mathematics":
-        root = generator_base_dir or os.path.dirname(os.path.abspath(__file__))
         sub = "Math2" if mp == "Math 2" else "Math1"
         fname = "Math2 regen header.md" if mp == "Math 2" else "Math1 regen header.md"
         regen_header_path = os.path.join(root, "by_subject_prompts", "new", sub, fname)
         if os.path.exists(regen_header_path):
             regen_header = read_text(regen_header_path)
-            fail_json = prompt_json_dumps(verifier_report)
-            if style_report:
-                fail_json = (
-                    prompt_json_dumps({"verifier_report": verifier_report, "style_report": style_report})
-                )
-            regen_header = (
-                regen_header.replace("<FAIL_JSON>", fail_json).replace("<FAIL_YAML>", fail_json)
-            )
+    elif _subject_uses_new_tmua_pipeline(prompts, subject):
+        folder = {"physics": "Physics", "chemistry": "Chemistry", "biology": "Biology"}[subject]
+        fname = f"{folder} regen header.md"
+        regen_header_path = os.path.join(root, "by_subject_prompts", "new", folder, fname)
+        if os.path.exists(regen_header_path):
+            regen_header = read_text(regen_header_path)
+    if regen_header:
+        fail_json = prompt_json_dumps(verifier_report)
+        if style_report:
+            fail_json = prompt_json_dumps({"verifier_report": verifier_report, "style_report": style_report})
+        regen_header = (
+            regen_header.replace("<FAIL_JSON>", fail_json).replace("<FAIL_YAML>", fail_json)
+        )
 
     subject_prompts = get_subject_prompts(prompts, schema_id, mp)
 
@@ -2231,8 +2912,10 @@ def implementer_regen_call(
     if style_report:
         user += "\n\nstyle_report (JSON):\n" + prompt_json_dumps(style_report)
 
+    regen_model = _style_only_regen_model(models, verifier_report, style_report)
+
     txt = llm.generate(
-        model=models.implementer,
+        model=regen_model,
         system_prompt=subject_prompts["implementer"],
         user_prompt=user,
         temperature=0.6,
@@ -2242,9 +2925,21 @@ def implementer_regen_call(
         obj = safe_json_load(txt)
     except Exception as e:
         err_s = str(e)
-        print("[INFO] Implementer regen JSON parse failed — trying one repair pass.")
+        plog(
+            "implementer_regen",
+            "json_parse_failed_try_repair",
+            detail={"schema_id": schema_id, "error_excerpt": err_s[:400]},
+            echo=False,
+        )
         repaired = repair_implementer_json_raw(
-            llm, prompts, models, schema_id, mp, txt, err_s
+            llm,
+            prompts,
+            models,
+            schema_id,
+            mp,
+            txt,
+            err_s,
+            repair_model=regen_model,
         )
         if repaired:
             try:
@@ -2272,13 +2967,26 @@ def implementer_regen_call(
     if "solution" not in obj:
         raise ValueError(f"Implementer regen output missing 'solution' field. Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
+    q_block_r = obj.get("question")
+    if not isinstance(q_block_r, dict):
+        raise ValueError(
+            f"Implementer regen 'question' must be a JSON object (stem, options, …), not {type(q_block_r).__name__}. "
+            f"Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}..."
+        )
+    
     # Validate distractor_map exists (it's required by the prompt)
     if "distractor_map" not in obj or not isinstance(obj.get("distractor_map"), dict):
         raise ValueError(f"Implementer regen output missing 'distractor_map' field (required). Available keys: {list(obj.keys())}\n\nRaw output:\n{txt[:500]}...")
     
     # NEW: Validate distractor_map has content (not empty)
     distractor_map = obj.get("distractor_map", {})
-    num_options = len(obj.get("question", {}).get("options", {}))
+    raw_opts_r = q_block_r.get("options")
+    if isinstance(raw_opts_r, dict):
+        num_options = len(raw_opts_r)
+    elif isinstance(raw_opts_r, list):
+        num_options = len(raw_opts_r)
+    else:
+        num_options = 0
     
     if len(distractor_map) == 0:
         raise ValueError(
@@ -2302,17 +3010,65 @@ def implementer_regen_call(
 
 # ---------- Controller ----------
 
-def extract_verdict(obj: Dict[str, Any]) -> str:
+def extract_verdict(obj: Optional[Dict[str, Any]]) -> str:
+    if not isinstance(obj, dict):
+        return ""
     return str(obj.get("verdict", "")).strip().upper()
 
-def extract_severity(obj: Dict[str, Any]) -> str:
+def extract_severity(obj: Optional[Dict[str, Any]]) -> str:
+    if not isinstance(obj, dict):
+        return ""
     return str(obj.get("severity", "")).strip()
 
 def is_fixable(severity: str) -> bool:
-    return severity == "fixable_with_regeneration"
+    """
+    Verifier / style prompts use ``format_only_fixable`` for KaTeX and similar surface issues.
+    The pipeline must retry (implementer regen or downstream repair), not reject immediately.
+    """
+    s = (severity or "").strip().lower()
+    return s in ("fixable_with_regeneration", "format_only_fixable")
 
 def is_structural(severity: str) -> bool:
     return severity == "structural_flaw"
+
+
+def _rejection_verifier_detail(verifier_report: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Compact verifier outcome for console / UI (full report stays in rejected.jsonl)."""
+    if not isinstance(verifier_report, dict):
+        return {
+            "gate": "verifier",
+            "verdict": "",
+            "severity": "",
+            "failure_type": None,
+            "reasons": [],
+        }
+    return {
+        "gate": "verifier",
+        "verdict": extract_verdict(verifier_report),
+        "severity": extract_severity(verifier_report),
+        "failure_type": verifier_report.get("failure_type"),
+        "reasons": verifier_report.get("reasons"),
+    }
+
+
+def _rejection_style_detail(style_report: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(style_report, dict):
+        return {
+            "gate": "style_checker",
+            "verdict": "",
+            "severity": "",
+            "regen_instructions": [],
+        }
+    return {
+        "gate": "style_checker",
+        "verdict": extract_verdict(style_report),
+        "severity": extract_severity(style_report),
+        "regen_instructions": style_report.get("regen_instructions"),
+    }
+
+
+def _rejection_katex_detail(katex_errors: Any) -> Dict[str, Any]:
+    return {"gate": "katex_validation", "katex_errors": katex_errors}
 
 
 # ---------- KaTeX Validation and Fixing ----------
@@ -2430,13 +3186,11 @@ def fix_katex_issues(llm: LLMClient, prompts: Prompts, models: ModelsConfig,
             katex_fixer_prompt = prompts.format_fixer_math2
         elif getattr(prompts, "format_fixer_math1", None):
             katex_fixer_prompt = prompts.format_fixer_math1
-    if not katex_fixer_prompt:
-        prompt_dir = os.path.join(base_dir, "by_subject_prompts")
-        old_katex = os.path.join(prompt_dir, "old", "KaTeX_Fixer.md")
-        if os.path.isfile(old_katex):
-            katex_fixer_prompt = read_text(old_katex)
-        elif os.path.isfile(os.path.join(prompt_dir, "KaTeX_Fixer.md")):
-            katex_fixer_prompt = read_text(os.path.join(prompt_dir, "KaTeX_Fixer.md"))
+    elif subject in _TMUA_PIPELINE_SUBJECTS:
+        pp = (getattr(prompts, "subject_new_packs", None) or {}).get(subject) or {}
+        ff = (pp.get("format_fixer") or "").strip()
+        if ff:
+            katex_fixer_prompt = ff
     if not katex_fixer_prompt:
         return question_obj
     
@@ -2497,7 +3251,14 @@ def normalize_options(question_obj: Dict[str, Any]) -> Dict[str, Any]:
     """
     Ensures options dict only contains non-empty A-H keys.
     """
-    q = question_obj.get("question", {})
+    raw_q = question_obj.get("question", {})
+    if isinstance(raw_q, str):
+        question_obj["question"] = {"stem": raw_q.strip(), "options": {}}
+        return question_obj
+    if not isinstance(raw_q, dict):
+        question_obj["question"] = {}
+        raw_q = question_obj["question"]
+    q = raw_q
     opts = q.get("options", {}) if isinstance(q, dict) else {}
     if not isinstance(opts, dict):
         return question_obj
@@ -2512,7 +3273,7 @@ def normalize_options(question_obj: Dict[str, Any]) -> Dict[str, Any]:
 
 def build_bank_item(idea_plan: Dict[str, Any], question_obj: Dict[str, Any], verifier_obj: Dict[str, Any], style_obj: Dict[str, Any],
                     schema_id: str, difficulty: str, models: ModelsConfig, attempts: int, token_usage: Optional[Dict[str, int]] = None,
-                    tags: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+                    tags: Optional[Dict[str, Any]] = None, schema_block_snapshot: Optional[str] = None) -> Dict[str, Any]:
     question_obj = normalize_options(question_obj)
     stem = question_obj.get("question", {}).get("stem", "")
     fingerprint = sha1_short(f"{schema_id}|{difficulty}|{stem}")
@@ -2537,6 +3298,8 @@ def build_bank_item(idea_plan: Dict[str, Any], question_obj: Dict[str, Any], ver
         item["token_usage"] = token_usage
     if tags:
         item["tags"] = tags
+    if schema_block_snapshot and str(schema_block_snapshot).strip():
+        item["schema_block_snapshot"] = str(schema_block_snapshot).strip()
     return item
 
 
@@ -2592,19 +3355,33 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     if cfg.seed is not None:
         random.seed(cfg.seed)
 
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        raise SystemExit("Missing GEMINI_API_KEY environment variable.")
+    _ensure_vertex_env_config()
 
+    init_pipeline_log(base_dir)
     prompts = load_prompts(base_dir)
 
     schemas_path, schemas_md = load_schemas_esat_markdown(base_dir)
-    print(f"[run_once] Using schema file: {schemas_path}")
+    plog(
+        "run_once",
+        "schemas_loaded",
+        detail={"path": schemas_path, "forced_schema_id": forced_schema_id},
+        echo=False,
+    )
 
     schemas = parse_schemas_from_markdown(schemas_md, allow_prefixes=cfg.allow_schema_prefixes)
     if schemas and forced_schema_id:
         sample_sids = [forced_schema_id] if forced_schema_id in schemas else list(schemas.keys())[:3]
-        print(f"[run_once] Loaded {len(schemas)} schemas. Forced schema_id '{forced_schema_id}' {'found' if forced_schema_id in schemas else 'NOT FOUND'} in schemas. Sample IDs: {sample_sids}")
+        plog(
+            "run_once",
+            "schema_resolve",
+            detail={
+                "count": len(schemas),
+                "forced": forced_schema_id,
+                "forced_ok": forced_schema_id in schemas,
+                "sample_ids": sample_sids,
+            },
+            echo=False,
+        )
 
     # Load curriculum parser if tag labeling is enabled and not already provided
     if curriculum_parser is None and cfg.enable_tag_labeling:
@@ -2615,16 +3392,22 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 curriculum_file = os.path.join(base_dir, "curriculum", "ESAT_CURRICULUM.json")
             curriculum_parser = CurriculumParser(curriculum_file)
         except (ImportError, Exception) as e:
-            print(f"⚠ Warning: Could not load curriculum parser: {e}")
-            print("   Tag labeling will be disabled for this run.")
+            plog(
+                "run_once",
+                "curriculum_parser_disabled",
+                level="warning",
+                detail={"error": str(e)},
+                echo=True,
+                spacer=True,
+            )
             curriculum_parser = None
 
-    # Configure rate limiting from environment variables (conservative defaults for free tier / overnight runs).
+    # Configure rate limiting from environment (conservative defaults; 429 backoff also uses server retry hints).
     default_min_delay = float(os.environ.get("API_MIN_DELAY", "5.0"))
-    default_rate_limit_delay = float(os.environ.get("API_RATE_LIMIT_DELAY", "30.0"))
+    default_rate_limit_delay = float(os.environ.get("API_RATE_LIMIT_DELAY", "35.0"))
     trace_fn = callbacks.get("on_llm_prompt") if callbacks else None
     llm = LLMClient(
-        api_key=api_key,
+        api_key="",
         min_delay=default_min_delay,
         rate_limit_delay=default_rate_limit_delay,
         prompt_trace_callback=trace_fn,
@@ -2659,16 +3442,16 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
     exemplar_ids = schemas[schema_id].get("exemplar_ids", [])
     difficulty = choose_difficulty(cfg)
     eff_paper = effective_math_paper_for_schema(schema_id, cfg, math_paper)
-
-    if eff_paper == "Math 2" and not (
-        getattr(prompts, "designer_math2", None)
-        and getattr(prompts, "implementer_math2", None)
-        and getattr(prompts, "tag_labeler_math2", None)
-    ):
-        print(
-            "[run_once] Math 2 prompt pack missing or incomplete — falling back to Math 1 pipeline."
-        )
-        eff_paper = "Math 1"
+    plog(
+        "run_once",
+        "difficulty_chosen",
+        detail={
+            "schema_id": schema_id,
+            "difficulty": difficulty,
+            "weights": dict(cfg.difficulty_weights or {}),
+        },
+        echo=False,
+    )
 
     if callbacks and "on_schema_selected" in callbacks:
         callbacks["on_schema_selected"](schema_id, difficulty)
@@ -2710,10 +3493,8 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             # Check if this is a JSON parsing error
             error_str = str(e)
             is_parse_error = (
-                "JSON" in error_str
-                or "json" in error_str.lower()
-                or "YAML" in error_str
-                or "yaml" in error_str.lower()
+                "JSON parsing error" in error_str
+                or "parsing" in error_str.lower()
             )
 
             designer_err = error_str
@@ -2726,22 +3507,23 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": d_try + 1,
                 "error": designer_err,
-                "is_json_parse_error": is_parse_error,
-                "is_yaml_error": is_parse_error,
+                "is_parse_error": is_parse_error,
             }
             dump_jsonl(paths["logs"], log_entry)
 
-            if is_parse_error:
-                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1}: Invalid JSON detected")
-                print(f"   Error: {error_str[:200]}...")
-                if d_try < cfg.max_designer_retries:
-                    print(f"   → Retrying with new AI generation...")
-                else:
-                    print(f"   → Max retries reached. Giving up.")
-            else:
-                print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1} failed: {error_str[:200]}...")
-                if d_try < cfg.max_designer_retries:
-                    print(f"   → Retrying...")
+            plog(
+                "run_once",
+                "designer_attempt_failed",
+                level="warning",
+                detail={
+                    "attempt": d_try + 1,
+                    "max": cfg.max_designer_retries + 1,
+                    "parse_error": is_parse_error,
+                    "error": error_str[:800],
+                    "will_retry": d_try < cfg.max_designer_retries,
+                },
+                echo=False,
+            )
         except Exception as e:
             # Other exceptions
             designer_err = str(e)
@@ -2753,12 +3535,19 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 "difficulty": difficulty,
                 "attempt": d_try + 1,
                 "error": designer_err,
-                "is_json_parse_error": False,
-                "is_yaml_error": False,
+                "is_parse_error": False,
             })
-            print(f"\n⚠ Designer attempt {d_try + 1}/{cfg.max_designer_retries + 1} failed: {str(e)[:200]}...")
-            if d_try < cfg.max_designer_retries:
-                print(f"   → Retrying...")
+            plog(
+                "run_once",
+                "designer_attempt_exception",
+                level="warning",
+                detail={
+                    "attempt": d_try + 1,
+                    "error": str(e)[:800],
+                    "will_retry": d_try < cfg.max_designer_retries,
+                },
+                echo=False,
+            )
     if idea_plan is None:
         stats["rejected"] += 1
         stats["by_schema"][schema_id]["rejected"] += 1
@@ -2780,7 +3569,19 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             pass  # Non-fatal
         with open(paths["stats"], "w", encoding="utf-8") as f:
             json.dump(stats, f, ensure_ascii=False, indent=2)
-        return {"run_dir": run_dir, "status": "designer_failed"}
+        plog(
+            "run_once",
+            "designer_failed",
+            level="error",
+            detail={"schema_id": schema_id, "run_dir": run_dir, "error": designer_err or ""},
+            echo=True,
+            spacer=True,
+        )
+        return {
+            "run_dir": run_dir,
+            "status": "designer_failed",
+            "rejection": {"gate": "designer", "error": designer_err or ""},
+        }
 
     # Implementer + Retry controller
     previous_attempt = None
@@ -2881,7 +3682,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     stats["by_schema"][schema_id]["rejected"] += 1
                     with open(paths["stats"], "w", encoding="utf-8") as f:
                         json.dump(stats, f, ensure_ascii=False, indent=2)
-                    return {"run_dir": run_dir, "status": "rejected_structural_verifier"}
+                    return {
+                        "run_dir": run_dir,
+                        "status": "rejected_structural_verifier",
+                        "rejection": _rejection_verifier_detail(verifier_report),
+                    }
 
                 # fixable -> retry if attempts remain
                 if attempt < cfg.max_implementer_retries and is_fixable(severity):
@@ -2910,7 +3715,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 stats["by_schema"][schema_id]["rejected"] += 1
                 with open(paths["stats"], "w", encoding="utf-8") as f:
                     json.dump(stats, f, ensure_ascii=False, indent=2)
-                return {"run_dir": run_dir, "status": "rejected_verifier"}
+                return {
+                    "run_dir": run_dir,
+                    "status": "rejected_verifier",
+                    "rejection": _rejection_verifier_detail(verifier_report),
+                }
 
             # Style Judge
             if callbacks and "on_stage_start" in callbacks:
@@ -2972,7 +3781,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     stats["by_schema"][schema_id]["rejected"] += 1
                     with open(paths["stats"], "w", encoding="utf-8") as f:
                         json.dump(stats, f, ensure_ascii=False, indent=2)
-                    return {"run_dir": run_dir, "status": "rejected_structural_style"}
+                    return {
+                        "run_dir": run_dir,
+                        "status": "rejected_structural_style",
+                        "rejection": _rejection_style_detail(style_report),
+                    }
 
                 if attempt < cfg.max_implementer_retries and is_fixable(severity):
                     continue
@@ -3000,7 +3813,11 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 stats["by_schema"][schema_id]["rejected"] += 1
                 with open(paths["stats"], "w", encoding="utf-8") as f:
                     json.dump(stats, f, ensure_ascii=False, indent=2)
-                return {"run_dir": run_dir, "status": "rejected_style"}
+                return {
+                    "run_dir": run_dir,
+                    "status": "rejected_style",
+                    "rejection": _rejection_style_detail(style_report),
+                }
 
             # PASS both gates -> KaTeX Validation (with retry logic)
             katex_validation_passed = False
@@ -3027,10 +3844,9 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                         
                         try:
                             # Use format_fixer_call for format-only fixes (new Math1 pipeline)
-                            # Check if errors are format-only (katex_yaml_formatting)
+                            # Check if errors are format-only (KaTeX / JSON surface)
                             is_format_only = all(
                                 "katex" in str(err).lower()
-                                or "yaml" in str(err).lower()
                                 or "json" in str(err).lower()
                                 or "format" in str(err).lower()
                                 for error_info in katex_errors
@@ -3113,11 +3929,19 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                         stats["by_schema"][schema_id]["rejected"] += 1
                         with open(paths["stats"], "w", encoding="utf-8") as f:
                             json.dump(stats, f, ensure_ascii=False, indent=2)
-                        return {"run_dir": run_dir, "status": "rejected_katex_validation"}
+                        return {
+                            "run_dir": run_dir,
+                            "status": "rejected_katex_validation",
+                            "rejection": _rejection_katex_detail(katex_errors),
+                        }
             
             if not katex_validation_passed:
                 # Should not reach here, but safety check
-                return {"run_dir": run_dir, "status": "rejected_katex_validation"}
+                return {
+                    "run_dir": run_dir,
+                    "status": "rejected_katex_validation",
+                    "rejection": {"gate": "katex_validation", "katex_errors": []},
+                }
             
             # PASS KaTeX gate -> build bank item; tag then persist so accepted.jsonl matches DB/backup
             token_usage = llm.total_usage.copy() if llm.total_usage else None
@@ -3132,6 +3956,7 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 attempts=attempt + 1,
                 token_usage=token_usage,
                 tags=None,
+                schema_block_snapshot=schema_block,
             )
             item["_run_id"] = run_id
 
@@ -3150,9 +3975,16 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                         math_paper=eff_paper,
                     )
                     
+                    if not isinstance(tag_result, dict):
+                        raise ValueError(
+                            f"Tag labeler returned {type(tag_result).__name__}, expected dict."
+                        )
+                    
                     # Process tag_result into tags format
                     primary_tag = tag_result.get("primary_tag", "")
                     secondary_tags_list = tag_result.get("secondary_tags", [])
+                    if not isinstance(secondary_tags_list, list):
+                        secondary_tags_list = []
                     secondary_tags = []
                     
                     # Normalize to prefixed format if needed
@@ -3209,7 +4041,13 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 except Exception as e:
                     # Classifier failures should not block question generation
                     error_msg = str(e)
-                    print(f"⚠ Classifier failed (non-fatal): {error_msg[:200]}...")
+                    plog(
+                        "run_once",
+                        "classifier_failed_nonfatal",
+                        level="warning",
+                        detail={"schema_id": schema_id, "error": error_msg[:800]},
+                        echo=False,
+                    )
                     dump_jsonl(paths["logs"], {
                         "stage": "classifier_station",
                         "schema_id": schema_id,
@@ -3235,22 +4073,31 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
             # Backup question (all questions, accepted and rejected)
             try:
                 from backup_manager import backup_question_from_pipeline
-                backup_path = backup_question_from_pipeline(item, base_dir, status="pending_review")
+                backup_path = backup_question_from_pipeline(item, base_dir, status="pending")
                 if backup_path:
-                    try:
-                        print(f"✓ Backed up question to: {backup_path}")
-                    except UnicodeEncodeError:
-                        print(f"[OK] Backed up question to: {backup_path}")
+                    plog(
+                        "run_once",
+                        "backup_ok",
+                        detail={"path": backup_path, "generation_id": item.get("id")},
+                        echo=False,
+                    )
             except ImportError:
-                print("⚠ Backup manager not available, skipping backup")
+                plog("run_once", "backup_skipped", detail={"reason": "backup_manager_unavailable"}, echo=False)
             except Exception as e:
-                print(f"⚠ Backup error (non-fatal): {e}")
+                plog(
+                    "run_once",
+                    "backup_error",
+                    level="warning",
+                    detail={"error": str(e)},
+                    echo=False,
+                )
             
             # Sync to database (silently - no console output)
-            # Only questions that pass verifier + style judge will be saved
+            # Only questions that pass verifier + style judge will be saved.
+            # Status pending until a human approves in the review app (same as simple_generator_ui).
             try:
                 from db_sync import sync_question_from_pipeline
-                db_id = sync_question_from_pipeline(item, base_dir, status="approved")
+                db_id = sync_question_from_pipeline(item, base_dir, status="pending")
                 if db_id:
                     item["_db_id"] = db_id
             except ImportError:
@@ -3266,7 +4113,13 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                     callbacks["on_success"](item)
                 except Exception as cb_err:
                     # Presentation-only; must not retry the whole implementer loop after DB backup/sync
-                    print(f"\n⚠ on_success callback failed (question still saved): {cb_err}")
+                    plog(
+                        "run_once",
+                        "on_success_callback_failed",
+                        level="warning",
+                        detail={"error": str(cb_err)},
+                        echo=False,
+                    )
                     dump_jsonl(paths["logs"], {
                         "stage": "on_success_callback",
                         "schema_id": schema_id,
@@ -3284,60 +4137,58 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
         except ValueError as e:
             error_msg = str(e)
             is_parse_error = (
-                "JSON" in error_msg
-                or "json" in error_msg.lower()
-                or "YAML" in error_msg
-                or "yaml" in error_msg.lower()
+                "JSON parsing error" in error_msg
                 or "parsing" in error_msg.lower()
             )
 
-            if is_parse_error:
-                print(f"\n⚠ Implementer attempt {attempt + 1}/{cfg.max_implementer_retries + 1}: Invalid JSON detected")
-                print(f"   Error: {error_msg[:300]}...")
-                if attempt < cfg.max_implementer_retries:
-                    print(f"   → Retrying with new AI generation...")
-                else:
-                    print(f"   → Max retries reached. Giving up.")
-            else:
-                print(f"\n⚠ Error at attempt {attempt + 1}: {error_msg[:300]}")
-                if "question" in error_msg.lower() or "solution" in error_msg.lower():
-                    print("  → Missing required fields in Implementer output")
-                if attempt < cfg.max_implementer_retries:
-                    print(f"  → Retrying... ({attempt + 1}/{cfg.max_implementer_retries})")
-            
+            plog(
+                "run_once",
+                "implementer_value_error",
+                level="warning",
+                detail={
+                    "attempt": attempt + 1,
+                    "parse_error": is_parse_error,
+                    "error": error_msg[:1200],
+                    "will_retry": attempt < cfg.max_implementer_retries,
+                },
+                echo=False,
+            )
+
             dump_jsonl(paths["logs"], {
                 "stage": "pipeline_exception",
                 "schema_id": schema_id,
                 "difficulty": difficulty,
                 "attempt": attempt + 1,
                 "error": error_msg,
-                "is_json_parse_error": is_parse_error,
-                "is_yaml_error": is_parse_error,
+                "is_parse_error": is_parse_error,
             })
             # Treat exceptions as fixable and try again if possible
             if attempt < cfg.max_implementer_retries:
                 continue
         except Exception as e:
             error_msg = str(e)
-            # Print error to console for debugging
-            print(f"\n⚠ Error at attempt {attempt + 1}: {error_msg[:300]}")
-            if "JSON" in error_msg or "YAML" in error_msg or "invalid" in error_msg.lower():
-                print("  → This looks like a JSON/YAML parsing or validation issue")
-            if "question" in error_msg.lower() or "solution" in error_msg.lower():
-                print("  → Missing required fields in Implementer output")
-            
+            plog(
+                "run_once",
+                "pipeline_exception",
+                level="warning",
+                detail={
+                    "attempt": attempt + 1,
+                    "error": error_msg[:1200],
+                    "will_retry": attempt < cfg.max_implementer_retries,
+                },
+                echo=False,
+            )
+
             dump_jsonl(paths["logs"], {
                 "stage": "pipeline_exception",
                 "schema_id": schema_id,
                 "difficulty": difficulty,
                 "attempt": attempt + 1,
                 "error": error_msg,
-                "is_json_parse_error": False,
-                "is_yaml_error": False,
+                "is_parse_error": False,
             })
             # Treat exceptions as fixable and try again if possible
             if attempt < cfg.max_implementer_retries:
-                print(f"  → Retrying... ({attempt + 1}/{cfg.max_implementer_retries})")
                 continue
             stats["rejected"] += 1
             stats["by_schema"][schema_id]["rejected"] += 1
@@ -3360,7 +4211,19 @@ def run_once(base_dir: str, cfg: RunConfig, models: ModelsConfig,
                 pass
             with open(paths["stats"], "w", encoding="utf-8") as f:
                 json.dump(stats, f, ensure_ascii=False, indent=2)
-            return {"run_dir": run_dir, "status": "rejected_exception"}
+            plog(
+                "run_once",
+                "rejected_exception",
+                level="error",
+                detail={"schema_id": schema_id, "run_dir": run_dir, "error": str(e)[:800]},
+                echo=True,
+                spacer=True,
+            )
+            return {
+                "run_dir": run_dir,
+                "status": "rejected_exception",
+                "rejection": {"gate": "pipeline_exception", "error": str(e)},
+            }
 
     # Should never reach here
     return {"run_dir": run_dir, "status": "unknown"}
@@ -3371,30 +4234,38 @@ def run_many(n: int, base_dir: str, cfg: RunConfig, models: ModelsConfig) -> Non
     Runs n independent items (each creates its own run directory).
     """
     for i in range(n):
-        print(f"\n{'='*60}")
-        print(f"Generating question {i+1}/{n}...")
-        print(f"{'='*60}")
+        plog("run_many", "batch_item_start", detail={"i": i + 1, "n": n}, echo=False)
+        print("", flush=True)
+        print(f"--- Batch {i + 1}/{n} ---", flush=True)
         try:
             res = run_once(base_dir=base_dir, cfg=cfg, models=models)
             status = res.get("status", "unknown")
             if status == "accepted":
-                try:
-                    print(f"✓ [{i+1}/{n}] SUCCESS - Question ID: {res.get('item_id', 'N/A')}")
-                except UnicodeEncodeError:
-                    print(f"[OK] [{i+1}/{n}] SUCCESS - Question ID: {res.get('item_id', 'N/A')}")
+                plog(
+                    "run_many",
+                    "batch_item_ok",
+                    detail={"i": i + 1, "n": n, "item_id": res.get("item_id")},
+                    echo=True,
+                )
             else:
-                try:
-                    print(f"✗ [{i+1}/{n}] FAILED - Status: {status}")
-                except UnicodeEncodeError:
-                    print(f"[FAIL] [{i+1}/{n}] FAILED - Status: {status}")
-                if "run_dir" in res:
-                    print(f"  Check logs: {res['run_dir']}")
+                plog(
+                    "run_many",
+                    "batch_item_failed",
+                    level="warning",
+                    detail={"i": i + 1, "n": n, "status": status, "run_dir": res.get("run_dir")},
+                    echo=True,
+                )
         except Exception as e:
-            try:
-                print(f"✗ [{i+1}/{n}] EXCEPTION: {str(e)[:200]}")
-            except UnicodeEncodeError:
-                print(f"[ERROR] [{i+1}/{n}] EXCEPTION: {str(e)[:200]}")
+            plog(
+                "run_many",
+                "batch_item_exception",
+                level="error",
+                detail={"i": i + 1, "n": n, "error": str(e)[:800]},
+                echo=True,
+                spacer=True,
+            )
             import traceback
+
             traceback.print_exc()
 
 
@@ -3448,13 +4319,14 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Check and display key environment variables
-    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    cloud_project, cloud_location = _vertex_env_config()
     n_items = os.environ.get("N_ITEMS", "1")
     max_retries = os.environ.get("MAX_IMPLEMENTER_RETRIES", "2")
     schema_prefixes = os.environ.get("SCHEMA_PREFIXES", "M")
     
     print(f"Configuration loaded from .env.local:")
-    print(f"  GEMINI_API_KEY: {'***' + gemini_key[-4:] if len(gemini_key) > 4 else 'NOT SET'}")
+    print(f"  GOOGLE_CLOUD_PROJECT: {cloud_project or 'NOT SET'}")
+    print(f"  GOOGLE_CLOUD_LOCATION: {cloud_location or 'NOT SET'}")
     print(f"  N_ITEMS: {n_items}")
     print(f"  MAX_IMPLEMENTER_RETRIES: {max_retries}")
     print(f"  SCHEMA_PREFIXES: {schema_prefixes}")
@@ -3672,7 +4544,7 @@ class PipelineGUI:
         """Map internal LLM trace labels onto PIPELINE_STAGES rows."""
         if label.startswith("Designer"):
             return "Designer"
-        if label in ("Implementer", "Implementer (retry)", "Retry controller"):
+        if label.startswith("Implementer") or label in ("Implementer (retry)", "Retry controller"):
             return "Implementer"
         if label == "Format Fixer":
             return "Format Fixer"
@@ -3682,7 +4554,7 @@ class PipelineGUI:
             return "Style Judge"
         if label == "KaTeX Fixer":
             return "KaTeX Validator"
-        if label in ("Classifier", "Tag Labeler"):
+        if label == "Classifier" or label.startswith("Tag Labeler"):
             return "Classifier Station"
         return "Designer"
 
@@ -3827,8 +4699,8 @@ class PipelineGUI:
         self.details_text.delete(1.0, tk.END)
         self.details_text.config(state=tk.DISABLED)
     
-    def format_yaml(self, data: Any) -> str:
-        """Format pipeline output for display (JSON; name kept for UI compatibility)."""
+    def format_json(self, data: Any) -> str:
+        """Format pipeline output for display (JSON)."""
         try:
             return prompt_json_dumps(data)
         except Exception:
@@ -3976,7 +4848,7 @@ class PipelineGUI:
                 self.update_stage_status(row, "success")
                 self.update_stage_info(row, "Complete")
                 self.append_stage_output(row, f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Completed successfully\n")
-                self.append_stage_output(row, "Output:\n" + self.format_yaml(data))
+                self.append_stage_output(row, "Output:\n" + self.format_json(data))
             except KeyError:
                 self._console(f"KEYERROR complete: {stage!r}")
         self.root.after(0, update)
@@ -4104,9 +4976,10 @@ def run_gui():
     else:
         safe_load_dotenv(".env.local")
 
-    key_ok = bool(os.environ.get("GEMINI_API_KEY", "").strip())
+    project, location = _vertex_env_config()
+    key_ok = bool(project and location)
     print(
-        f"[ESAT Pipeline GUI] GEMINI_API_KEY: {'set' if key_ok else 'MISSING — set in project root .env.local'}",
+        f"[ESAT Pipeline GUI] Vertex config: {'set' if key_ok else 'MISSING — set GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION in .env.local'}",
         flush=True,
     )
 

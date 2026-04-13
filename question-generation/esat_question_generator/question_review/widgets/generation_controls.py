@@ -217,7 +217,7 @@ class GenerationControlsWidget(ttk.LabelFrame):
             env["PYTHONUNBUFFERED"] = "1"  # Ensure output is not buffered
             # N_ITEMS not needed - calculated from schema coverage
             
-            # Get GEMINI_API_KEY from .env.local if available
+            # Load Vertex env from .env.local if available
             env_path = project_root / ".env.local"
             debug_info.append(f"Looking for .env.local at: {env_path}")
             debug_info.append(f".env.local exists: {env_path.exists()}")
@@ -226,11 +226,13 @@ class GenerationControlsWidget(ttk.LabelFrame):
                 try:
                     from dotenv import load_dotenv
                     load_dotenv(env_path)
-                    if "GEMINI_API_KEY" in os.environ:
-                        env["GEMINI_API_KEY"] = os.environ["GEMINI_API_KEY"]
-                        debug_info.append("GEMINI_API_KEY loaded from .env.local")
+                    for key in ("GOOGLE_CLOUD_PROJECT", "GOOGLE_CLOUD_LOCATION"):
+                        if key in os.environ:
+                            env[key] = os.environ[key]
+                    if env.get("GOOGLE_CLOUD_PROJECT") and env.get("GOOGLE_CLOUD_LOCATION"):
+                        debug_info.append("Vertex env loaded from .env.local")
                     else:
-                        debug_info.append("WARNING: GEMINI_API_KEY not in .env.local")
+                        debug_info.append("WARNING: GOOGLE_CLOUD_PROJECT / GOOGLE_CLOUD_LOCATION missing")
                 except ImportError:
                     debug_info.append("WARNING: python-dotenv not available")
                 except Exception as e:

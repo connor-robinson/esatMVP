@@ -100,7 +100,7 @@ If you are unsure at any point, **fail the question**.
 - Every `$` must be matched (no unmatched delimiters)
 - Display math (`$$...$$`) must have blank lines before and after
 - In JSON string values, all LaTeX backslashes must be escaped (`\\frac` not `\frac`)
-- For Chemistry/Biology: Chemical formulas should use `\ce{...}` syntax (escaped as `\\ce{...}` in YAML)
+- For Chemistry/Biology: Chemical formulas should use `\ce{...}` syntax (escaped as `\\ce{...}` in JSON strings)
 - **CRITICAL: ALL options containing math MUST be wrapped in `$...$` delimiters**
   - Check that options like `A: "\\frac{3}{2}"` are written as `A: "$\\frac{3}{2}$"`
   - Even simple fractions or expressions in options must have `$...$` delimiters
@@ -110,7 +110,7 @@ If you are unsure at any point, **fail the question**.
 - Unmatched `$` signs
 - Wrong delimiters (`\[`, `\(`, etc.)
 - Missing blank lines around display math
-- Unescaped backslashes in YAML
+- Unescaped backslashes in JSON strings
 - Incorrect `\ce` command formatting (for Chemistry/Biology)
 - **Math expressions in options without `$...$` delimiters** (e.g., `A: "\\frac{3}{2}"` instead of `A: "$\\frac{3}{2}$"`)
 

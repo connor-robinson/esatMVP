@@ -1,0 +1,35 @@
+{
+  "job_id": "20260411-180952-6fc204b3",
+  "running": true,
+  "last_update": "2026-04-11T18:16:22.092284+00:00",
+  "stats": {
+    "processed": 13,
+    "errors": 0,
+    "auto_approved": 10,
+    "pending_operator": 3,
+    "skipped_deleted": 0,
+    "calibration_gold": 2,
+    "graph_candidates": 1,
+    "batch_api_jobs": 0,
+    "diagrams_inserted": 0,
+    "diagram_errors": 1
+  },
+  "last_error": "",
+  "log_tail": [
+    "Job 20260411-180952-6fc204b3 started (dry_run=False, record_only=False, batch_api=False, auto_svg=True, llm=vertex, model=gemini-2.5-flash)",
+    "[ok] 0a4404d5-7ec1-414b-9ca2-823ac2eb2a60 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0ab2585f-4433-4516-aaae-f0aad8b47a20 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0b7e9177-3867-4a34-a2a9-16cdf4ae2ef4 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0bff32b4-fabd-412f-b9ae-8b50e8895495 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0d00bbab-1b93-498a-86ee-088364bbd600 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0d2a7eae-7af8-4f05-9c96-d2ea60bafd95 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0d50ffe0-c780-4449-9e41-a34f5626d0b1 verdict=Pass eff=approve auto_approve=True gold='gold' graph=False",
+    "[ok] 0d598d26-4a76-4160-8fac-e4378b81789c verdict=Pass eff=approve auto_approve=True gold='gold' graph=False",
+    "[ok] 0d5a076d-9ea9-4ea8-9572-f9c1192a232e verdict=Major eff=regenerate auto_approve=False gold=None graph=False",
+    "[ok] 0d5cae33-df52-4f64-aed1-693f7bc323b5 verdict=Pass eff=approve auto_approve=True gold=None graph=False",
+    "[ok] 0d5efdd7-1f68-429d-a6c7-a75de6fbd5cc verdict=Pass eff=human_review auto_approve=False gold=None graph=True",
+    "[svg error] 0d5efdd7-1f68-429d-a6c7-a75de6fbd5cc: Gemini quota or rate limit exhausted on Vertex AI. Designer and Implementer stay on Gemini 3.1 Pro Preview (no automatic switch to 2.5 Pro). Limits are per Google Cloud project (RPM, TPM, RPD). Check Vertex AI quota in Google Cloud Console.",
+    "[ok] 0d760716-5ac8-4518-b3fc-30fd87e7de70 verdict=Minor eff=human_review auto_approve=False gold=None graph=False",
+    "[ok] 0d793ed4-c0c0-4c44-899b-defaf6325581 verdict=Pass eff=approve auto_approve=True gold=None graph=False"
+  ]
+}
