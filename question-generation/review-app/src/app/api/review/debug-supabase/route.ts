@@ -73,6 +73,36 @@ export async function GET(request: NextRequest) {
           stem && normalizedStem ? stem === normalizedStem : null,
         normalize_threw: normalizeError,
       };
+
+      // Compare against the query shape used by /api/review/questions legacy path:
+      // select('*', { count: 'exact' }).eq('id', id).range(0, 0)
+      try {
+        const { data: rangedRows, error: rangedErr, count } = await supabase
+          .from("ai_generated_questions")
+          .select("*", { count: "exact" })
+          .eq("id", probeId)
+          .range(0, 0);
+        const ranged = Array.isArray(rangedRows) && rangedRows.length > 0 ? rangedRows[0] : null;
+        const rangedStem =
+          ranged && typeof (ranged as { question_stem?: unknown }).question_stem === "string"
+            ? ((ranged as { question_stem?: string }).question_stem as string)
+            : "";
+        body.probe_questions_route_shape = {
+          error: rangedErr?.message ?? null,
+          count: count ?? null,
+          row_found: !!ranged,
+          updated_at: ranged ? (ranged as { updated_at?: string }).updated_at ?? null : null,
+          question_stem_length: rangedStem.length,
+          question_stem_has_figure: rangedStem.includes("<figure"),
+          question_stem_sha256: rangedStem ? sha256Utf8(rangedStem) : null,
+          same_as_maybeSingle_raw:
+            stem && rangedStem ? stem === rangedStem : stem.length === rangedStem.length,
+        };
+      } catch (e: unknown) {
+        body.probe_questions_route_shape = {
+          error: e instanceof Error ? e.message : String(e),
+        };
+      }
     } catch (e: unknown) {
       body.probe = {
         id: probeId,
