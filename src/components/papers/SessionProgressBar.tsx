@@ -19,12 +19,19 @@ import {
   useSupabaseSession,
 } from '@/components/auth/SupabaseSessionProvider';
 import { UserIcon, LogInIcon } from '@/components/icons';
-import { X, AlertCircle } from 'lucide-react';
+import { X, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const PAST_PAPERS_COLOR = '#5B8D94';
 
-export function SessionProgressBar() {
+interface SessionProgressBarProps {
+  /** When true, render as a slim bar below the main navbar (hybrid layout) */
+  embedded?: boolean;
+}
+
+export function SessionProgressBar({
+  embedded = false,
+}: SessionProgressBarProps) {
   const router = useRouter();
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
@@ -48,7 +55,57 @@ export function SessionProgressBar() {
     allSectionsQuestions,
     questions,
     isMarkingInfo,
+    paperFullscreenShowMainNavbar,
+    setPaperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
+
+  // Keep hooks before any conditional return to avoid hook-order crashes
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [isQuitting, setIsQuitting] = useState(false);
+  const [docFullscreen, setDocFullscreen] = useState(false);
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    if (!showQuitModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isQuitting) {
+        setShowQuitModal(false);
+        setIsQuitting(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showQuitModal, isQuitting]);
+
+  useEffect(() => {
+    if (!embedded) return;
+    const sync = () => {
+      const d = document as Document & {
+        fullscreenElement?: Element | null;
+        webkitFullscreenElement?: Element | null;
+      };
+      const fs = !!(d.fullscreenElement ?? d.webkitFullscreenElement);
+      setDocFullscreen(fs);
+      setPaperFullscreenShowMainNavbar(!fs);
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener(
+      'webkitfullscreenchange',
+      sync as EventListener,
+    );
+    sync();
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        sync as EventListener,
+      );
+    };
+  }, [embedded, setPaperFullscreenShowMainNavbar]);
 
   if (!sessionId) return null;
 
@@ -250,8 +307,6 @@ export function SessionProgressBar() {
   };
 
   const progressSegments = getProgressSegments();
-  const [showQuitModal, setShowQuitModal] = useState(false);
-  const [isQuitting, setIsQuitting] = useState(false);
 
   const handleQuit = async () => {
     setShowQuitModal(true);
@@ -301,22 +356,27 @@ export function SessionProgressBar() {
     setIsQuitting(false);
   };
 
-  // Handle Escape key to close modal
-  useEffect(() => {
-    if (!showQuitModal) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isQuitting) {
-        setShowQuitModal(false);
-        setIsQuitting(false);
+  const toggleBrowserFullscreen = async () => {
+    const root = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+    const doc = document as Document & {
+      webkitExitFullscreen?: () => Promise<void> | void;
+      webkitFullscreenElement?: Element | null;
+    };
+    try {
+      if (document.fullscreenElement ?? doc.webkitFullscreenElement) {
+        if (document.exitFullscreen) await document.exitFullscreen();
+        else await doc.webkitExitFullscreen?.();
+      } else if (root.requestFullscreen) {
+        await root.requestFullscreen();
+      } else {
+        await root.webkitRequestFullscreen?.();
       }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [showQuitModal, isQuitting]);
+    } catch {
+      /* user gesture or unsupported */
+    }
+  };
 
   const loginHref =
     typeof window !== 'undefined' &&
@@ -326,18 +386,38 @@ export function SessionProgressBar() {
       ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
       : `/login?redirectTo=${encodeURIComponent('/past-papers/library')}`;
 
+  const immersiveNoMainNav =
+    embedded &&
+    docFullscreen &&
+    !paperFullscreenShowMainNavbar;
+  const outerClass = embedded
+    ? immersiveNoMainNav
+      ? 'sticky top-0 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+      : 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+    : 'sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md';
+  const rowHeight = embedded ? 'h-12' : 'h-16';
+
   return (
-    <nav className='sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md'>
+    <nav className={outerClass}>
       <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
-        <div className='flex h-16 items-center justify-between'>
-          {/* Logo */}
-          <div className='flex items-center'>
-            <Link href='/' className='interaction-scale'>
-              <span className='text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white'>
-                No-Calc
+        <div className={cn('flex items-center justify-between', rowHeight)}>
+          {/* Logo — hidden when embedded (main Navbar already shows it) */}
+          {!embedded && (
+            <div className='flex items-center'>
+              <Link href='/' className='interaction-scale'>
+                <span className='text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white'>
+                  No-Calc
+                </span>
+              </Link>
+            </div>
+          )}
+          {embedded && (
+            <div className='flex-shrink-0 pr-3'>
+              <span className='text-[10px] font-mono uppercase tracking-wider text-white/50'>
+                Paper
               </span>
-            </Link>
-          </div>
+            </div>
+          )}
 
           {/* Progress Bar Section */}
           <div className='flex-1 mx-8 relative'>
@@ -480,11 +560,32 @@ export function SessionProgressBar() {
                   }}
                   className='px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap hover:bg-white/5 transition-colors cursor-pointer'
                 >
-                  {isMarkingInfo ? 'Paper completed' : 'Paper in progress'} - {paperDisplayName}
+                  {isMarkingInfo ? 'Paper completed' : 'Paper in progress'} -{' '}
+                  {paperDisplayName}
                 </button>
               </div>
             </div>
           </div>
+
+          {embedded && (
+            <button
+              type='button'
+              onClick={() => {
+                void toggleBrowserFullscreen();
+              }}
+              className='ml-1 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/10 text-white/60 hover:text-white/90'
+              title={docFullscreen ? 'Exit full screen' : 'Full screen'}
+              aria-label={
+                docFullscreen ? 'Exit full screen' : 'Enter full screen'
+              }
+            >
+              {docFullscreen ? (
+                <Minimize2 className='h-5 w-5' strokeWidth={2.2} />
+              ) : (
+                <Maximize2 className='h-5 w-5' strokeWidth={2.2} />
+              )}
+            </button>
+          )}
 
           {/* Quit button (X) - positioned between progress bar and user icon */}
           <button
@@ -515,50 +616,52 @@ export function SessionProgressBar() {
             </svg>
           </button>
 
-          {/* User icon / Login */}
-          <div className='flex items-center'>
-            {session?.user ? (
-              <Link
-                href='/profile'
-                className={cn(
-                  'relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale',
-                  'hover:bg-white/5',
-                )}
-              >
-                <UserIcon
-                  size='md'
-                  className='text-white/70 hover:text-white/90'
-                />
-                <div className='absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center'>
-                  <svg
-                    viewBox='0 0 12 12'
-                    fill='none'
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='w-2.5 h-2.5'
-                  >
-                    <path
-                      d='M2.5 6L5 8.5L9.5 3.5'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      className='text-neutral-900'
-                    />
-                  </svg>
-                </div>
-              </Link>
-            ) : (
-              <Link
-                href={loginHref}
-                className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale'
-              >
-                <LogInIcon
-                  size='md'
-                  className='text-white/70 hover:text-white/90'
-                />
-              </Link>
-            )}
-          </div>
+          {/* User icon / Login (hide on embedded secondary bar) */}
+          {!embedded && (
+            <div className='flex items-center'>
+              {session?.user ? (
+                <Link
+                  href='/profile'
+                  className={cn(
+                    'relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale',
+                    'hover:bg-white/5',
+                  )}
+                >
+                  <UserIcon
+                    size='md'
+                    className='text-white/70 hover:text-white/90'
+                  />
+                  <div className='absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center'>
+                    <svg
+                      viewBox='0 0 12 12'
+                      fill='none'
+                      xmlns='http://www.w3.org/2000/svg'
+                      className='w-2.5 h-2.5'
+                    >
+                      <path
+                        d='M2.5 6L5 8.5L9.5 3.5'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        className='text-neutral-900'
+                      />
+                    </svg>
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  href={loginHref}
+                  className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-white/5 interaction-scale'
+                >
+                  <LogInIcon
+                    size='md'
+                    className='text-white/70 hover:text-white/90'
+                  />
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

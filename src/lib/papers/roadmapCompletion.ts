@@ -24,6 +24,8 @@ import { getPaper } from '@/lib/supabase/questions';
 import { generatePartIdFromRoadmapPart } from './partIdUtils';
 import { isPartIdCompleted, getCompletedPartIds } from './completionCache';
 
+export { getCompletedPartIds } from './completionCache';
+
 /**
  * Check if a specific roadmap part is completed by a user
  * Uses part ID tracking for efficient completion detection
@@ -134,33 +136,15 @@ export async function getStageCompletion(
 }
 
 /**
- * Get completion status for all parts in a stage using pre-loaded sessions
- * This is the FAST version - use this when loading multiple stages
- * Uses part-level checking for accurate completion detection
- * 
- * @param userId - User ID to check completion for
- * @param sessionsByPaperName - Pre-loaded sessions grouped by paper_name
- * @param stage - Roadmap stage to check
- * @returns Map of partKey -> isCompleted
+ * Get completion status for all parts in a stage using cached part IDs.
+ * Pass `completedPartIds` from a single getCompletedPartIds() when loading many stages.
  */
 export async function getStageCompletionFromSessions(
   userId: string,
-  sessionsByPaperName: Map<string, any[]>,
-  stage: RoadmapStage
+  stage: RoadmapStage,
+  completedPartIds?: Set<string>,
 ): Promise<Map<string, boolean>> {
-  const paperTypeName = examNameToPaperType(stage.examName);
-  
-  // Get relevant sessions (check both PaperType and ExamName for compatibility)
-  const relevantSessions: any[] = [];
-  if (sessionsByPaperName.has(paperTypeName)) {
-    relevantSessions.push(...sessionsByPaperName.get(paperTypeName)!);
-  }
-  if (paperTypeName !== stage.examName && sessionsByPaperName.has(stage.examName)) {
-    relevantSessions.push(...sessionsByPaperName.get(stage.examName)!);
-  }
-
-  // Get completed part IDs from cache (which will fetch from DB if needed)
-  const completedPartIds = await getCompletedPartIds(userId);
+  const ids = completedPartIds ?? (await getCompletedPartIds(userId));
   
   // Generate part IDs and check completion
   const completionMap = new Map<string, boolean>();
@@ -168,7 +152,7 @@ export async function getStageCompletionFromSessions(
   for (const part of stage.parts) {
     const partId = generatePartIdFromRoadmapPart(stage.examName, stage.year, part);
     const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-    const isCompleted = completedPartIds.has(partId);
+    const isCompleted = ids.has(partId);
     
     completionMap.set(partKey, isCompleted);
   }

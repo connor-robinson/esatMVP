@@ -163,6 +163,13 @@ export function QuestionCard({
   const handleRate = async (value: number) => {
     if (!isAuthenticated || ratingSubmitting) return;
     setRatingSubmitting(true);
+    setHoverStar(null);
+    const prev = rating;
+    setRating((r) =>
+      r
+        ? { ...r, userRating: value }
+        : { average: value, count: 1, userRating: value },
+    );
     try {
       const res = await fetch(`/api/question-bank/questions/${questionId}/rating`, {
         method: "POST",
@@ -172,7 +179,11 @@ export function QuestionCard({
       if (res.ok) {
         const data: QuestionRatingResponse = await res.json();
         setRating(data);
+      } else {
+        setRating(prev);
       }
+    } catch {
+      setRating(prev);
     } finally {
       setRatingSubmitting(false);
     }
@@ -480,7 +491,12 @@ export function QuestionCard({
             <span className="text-xs text-text-muted">—</span>
           ) : (
             <>
-              <div className="flex items-center gap-0.5" role="group" aria-label="Difficulty rating">
+              <div
+                className="flex items-center gap-0.5"
+                role="group"
+                aria-label="Difficulty rating"
+                onMouseLeave={() => setHoverStar(null)}
+              >
                 {[1, 2, 3, 4, 5].map((value) => {
                   const active = hoverStar !== null ? value <= hoverStar : (rating?.userRating ?? rating?.average ?? 0) >= value;
                   const canRate = isAuthenticated && !ratingSubmitting;
@@ -490,17 +506,19 @@ export function QuestionCard({
                       type="button"
                       disabled={!canRate}
                       onMouseEnter={() => setHoverStar(value)}
-                      onMouseLeave={() => setHoverStar(null)}
                       onClick={() => canRate && handleRate(value)}
                       className={cn(
-                        "p-0.5 rounded transition-colors",
-                        canRate && "hover:scale-110 cursor-pointer",
+                        "p-0.5 rounded-md outline-none transition-transform duration-200 ease-out will-change-transform",
+                        canRate && "cursor-pointer hover:scale-[1.12] active:scale-95 focus-visible:ring-2 focus-visible:ring-amber-400/40",
                         !canRate && "cursor-default"
                       )}
                       title={isAuthenticated ? `Rate ${value} star${value === 1 ? "" : "s"}` : "Sign in to rate"}
                     >
                       <Star
-                        className={cn("w-4 h-4", active ? "fill-amber-400 text-amber-400" : "text-white/30")}
+                        className={cn(
+                          "w-4 h-4 transition-colors duration-150 ease-out",
+                          active ? "fill-amber-400 text-amber-400" : "text-white/30",
+                        )}
                         strokeWidth={1.5}
                       />
                     </button>

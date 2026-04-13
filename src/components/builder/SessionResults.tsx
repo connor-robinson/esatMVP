@@ -11,7 +11,11 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { BuilderSession, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
-import { calculateSessionScore, fetchTopicRankings } from "@/lib/analytics";
+import {
+  calculateSessionScore,
+  fetchTopicRankings,
+  SESSION_FALLBACK_TOPIC_ID,
+} from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { 
   ArrowLeft, 
@@ -67,13 +71,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     attempts.forEach((attempt) => {
       const question = questionMap.get(attempt.questionId);
-      const topicId = question?.topicId;
-      
-      if (!topicId) {
-        console.error(`[SessionResults] ERROR: Missing topicId for attempt with questionId: ${attempt.questionId}`);
-        return; // Skip attempts without valid topicId
-      }
-      
+      const topicId =
+        question?.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
+
       if (!topicStats[topicId]) {
         topicStats[topicId] = { correct: 0, total: 0, times: [] };
       }
@@ -244,7 +244,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     }, 1000); // 1 second delay to ensure database is updated
 
     return () => clearTimeout(timeoutId);
-  }, [authSession?.user?.id, result.topicBreakdown, session.id, supabase, rankingView]);
+  }, [authSession?.user?.id, result.topicBreakdown, session.id, supabase]);
 
   const formatTime = (ms: number) => {
     return `${(ms / 1000).toFixed(2)}s`;
@@ -693,6 +693,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 {result.score}
               </div>
               <div className="text-xs text-white/40 font-mono">Out of 1000 points</div>
+              {result.topicBreakdown.length > 1 && (
+                <div className="text-[10px] text-white/35 font-mono mt-2 leading-snug">
+                  Combined score across {result.topicBreakdown.length} topics; each topic below has its own leaderboard score.
+                </div>
+              )}
             </div>
           </motion.div>
 
@@ -822,10 +827,13 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className="space-y-8">
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicInfo = getTopic(topic.topicId);
-                  if (!topicInfo) {
+                  if (!topicInfo && topic.topicId !== SESSION_FALLBACK_TOPIC_ID) {
                     console.warn(`[SessionResults] Topic not found for topicId: ${topic.topicId}`);
                   }
-                  const topicName = topicInfo?.name || topic.topicId;
+                  const topicName =
+                    topic.topicId === SESSION_FALLBACK_TOPIC_ID
+                      ? "General"
+                      : topicInfo?.name || topic.topicId;
                   const isGlobalView = rankingView === "global";
 
                   return (

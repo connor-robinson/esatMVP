@@ -3,28 +3,33 @@
  * Browse papers and build a practice session from selected sections.
  */
 
-"use client";
+'use client';
 
-import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Container } from "@/components/layout/Container";
-import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { getAvailablePapers } from "@/lib/supabase/questions";
-import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import { getQuestions } from "@/lib/supabase/questions";
-import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
-import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
-import { PaperLibraryFilters } from "@/components/papers/library/PaperLibraryFilters";
-import { PaperLibraryGrid } from "@/components/papers/library/PaperLibraryGrid";
-import { PaperSessionSummary } from "@/components/papers/library/PaperSessionSummary";
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Container } from '@/components/layout/Container';
+import { usePaperSessionStore } from '@/store/paperSessionStore';
+import { getAvailablePapers } from '@/lib/supabase/questions';
+import { examNameToPaperType } from '@/lib/papers/paperConfig';
+import { getQuestions } from '@/lib/supabase/questions';
+import {
+  mapPartToSection,
+  deriveTmuaSectionFromQuestion,
+} from '@/lib/papers/sectionMapping';
+import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
+import { PaperLibraryFilters } from '@/components/papers/library/PaperLibraryFilters';
+import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
+import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
+import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
+import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
 
 interface SelectedPaper {
   paper: Paper;
   selectedSections: Map<string, Set<PaperSection>>; // Map<mainSectionName, Set<subject>>
 }
 
-const TMUA_SECTIONS = ["Paper 1", "Paper 2"] as const;
-type TmuaSection = typeof TMUA_SECTIONS[number];
+const TMUA_SECTIONS = ['Paper 1', 'Paper 2'] as const;
+type TmuaSection = (typeof TMUA_SECTIONS)[number];
 
 export default function PapersLibraryPage() {
   const router = useRouter();
@@ -36,16 +41,16 @@ export default function PapersLibraryPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Library filters
-  const [searchQuery, setSearchQuery] = useState("");
-  const [examFilter, setExamFilter] = useState<string | "ALL">("ALL");
-  const [yearFilter, setYearFilter] = useState<number | "ALL">("ALL");
-  const [typeFilter, setTypeFilter] = useState<string | "ALL">("ALL");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [examFilter, setExamFilter] = useState<string | 'ALL'>('ALL');
+  const [yearFilter, setYearFilter] = useState<number | 'ALL'>('ALL');
+  const [typeFilter, setTypeFilter] = useState<string | 'ALL'>('ALL');
 
   // Selected papers with sections
   const [selectedPapers, setSelectedPapers] = useState<SelectedPaper[]>([]);
   const selectedPaperIds = useMemo(
     () => new Set(selectedPapers.map((sp) => sp.paper.id)),
-    [selectedPapers]
+    [selectedPapers],
   );
 
   // Map of selected sections by paper ID for grid component
@@ -70,6 +75,9 @@ export default function PapersLibraryPage() {
 
   // Session starting state
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const [replaceModalOpen, setReplaceModalOpen] = useState(false);
+  const [replaceConfirming, setReplaceConfirming] = useState(false);
+  const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
 
   // Load available papers on mount
   useEffect(() => {
@@ -80,7 +88,7 @@ export default function PapersLibraryPage() {
         const availablePapers = await getAvailablePapers();
         setPapers(availablePapers);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load papers");
+        setError(err instanceof Error ? err.message : 'Failed to load papers');
       } finally {
         setLoading(false);
       }
@@ -93,7 +101,9 @@ export default function PapersLibraryPage() {
   const handleAddPaper = (paper: Paper) => {
     if (selectedPaperIds.has(paper.id)) {
       // Already selected, remove it
-      setSelectedPapers((prev) => prev.filter((sp) => sp.paper.id !== paper.id));
+      setSelectedPapers((prev) =>
+        prev.filter((sp) => sp.paper.id !== paper.id),
+      );
     } else {
       // Add new paper with empty sections
       setSelectedPapers((prev) => [
@@ -111,12 +121,12 @@ export default function PapersLibraryPage() {
       // For full paper, we need to determine which main sections these belong to
       // This is a simplified version - in practice, we'd need to load the paper data
       const allSections = new Map<string, Set<PaperSection>>();
-      allSections.set("Section 1", new Set(sections));
+      allSections.set('Section 1', new Set(sections));
       handleUpdateSections(paper.id, allSections);
     } else {
       // Add paper with all sections selected
       const allSections = new Map<string, Set<PaperSection>>();
-      allSections.set("Section 1", new Set(sections));
+      allSections.set('Section 1', new Set(sections));
       setSelectedPapers((prev) => [
         ...prev,
         { paper, selectedSections: allSections },
@@ -125,26 +135,28 @@ export default function PapersLibraryPage() {
   };
 
   // Add a specific section (Section 1, Section 2, etc.)
-  const handleAddSection = (paper: Paper, sectionName: string, subjectParts: PaperSection[]) => {
+  const handleAddSection = (
+    paper: Paper,
+    sectionName: string,
+    subjectParts: PaperSection[],
+  ) => {
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
-    
-    // Get the first subject from this section as default
-    const firstSubject = subjectParts.length > 0 ? subjectParts[0] : null;
-    
+
     if (existingPaper) {
-      // Paper already selected, add the first subject from this section
-      if (firstSubject) {
+      // Paper already selected, add all subjects from this section
+      if (subjectParts.length > 0) {
         const newSections = new Map(existingPaper.selectedSections);
-        const sectionSubjects = newSections.get(sectionName) || new Set<PaperSection>();
-        sectionSubjects.add(firstSubject);
+        const sectionSubjects =
+          newSections.get(sectionName) || new Set<PaperSection>();
+        subjectParts.forEach((subject) => sectionSubjects.add(subject));
         newSections.set(sectionName, sectionSubjects);
         handleUpdateSections(paper.id, newSections);
       }
     } else {
-      // Add paper with first subject from this section
+      // Add paper with all subjects from this section
       const newSections = new Map<string, Set<PaperSection>>();
-      if (firstSubject) {
-        newSections.set(sectionName, new Set([firstSubject]));
+      if (subjectParts.length > 0) {
+        newSections.set(sectionName, new Set(subjectParts));
       }
       setSelectedPapers((prev) => [
         ...prev,
@@ -152,22 +164,26 @@ export default function PapersLibraryPage() {
       ]);
     }
   };
-  
-  const handleToggleSection = (paperId: number, section: PaperSection, mainSectionName?: string) => {
+
+  const handleToggleSection = (
+    paperId: number,
+    section: PaperSection,
+    mainSectionName?: string,
+  ) => {
     const selectedPaper = selectedPapers.find((sp) => sp.paper.id === paperId);
-    
+
     // If paper is not in selection, add it first
     if (!selectedPaper) {
       const paper = papers.find((p) => p.id === paperId);
       if (!paper) return;
-      
+
       // Add paper with the selected section
       const newSections = new Map<string, Set<PaperSection>>();
       if (mainSectionName) {
         newSections.set(mainSectionName, new Set([section]));
       } else {
         // Fallback: use "Section 1" if no main section name provided
-        newSections.set("Section 1", new Set([section]));
+        newSections.set('Section 1', new Set([section]));
       }
       setSelectedPapers((prev) => [
         ...prev,
@@ -177,10 +193,11 @@ export default function PapersLibraryPage() {
     }
 
     // Use the provided main section name, or default to "Section 1"
-    const sectionName = mainSectionName || "Section 1";
+    const sectionName = mainSectionName || 'Section 1';
     const newSections = new Map(selectedPaper.selectedSections);
-    const sectionSubjects = newSections.get(sectionName) || new Set<PaperSection>();
-    
+    const sectionSubjects =
+      newSections.get(sectionName) || new Set<PaperSection>();
+
     if (sectionSubjects.has(section)) {
       sectionSubjects.delete(section);
       // If no subjects left in this section, remove the section entry
@@ -188,7 +205,9 @@ export default function PapersLibraryPage() {
         newSections.delete(sectionName);
         // If no sections left at all, remove the paper
         if (newSections.size === 0) {
-          setSelectedPapers((prev) => prev.filter((sp) => sp.paper.id !== paperId));
+          setSelectedPapers((prev) =>
+            prev.filter((sp) => sp.paper.id !== paperId),
+          );
           return;
         }
       } else {
@@ -203,7 +222,10 @@ export default function PapersLibraryPage() {
   };
 
   // Keep track of available sections per paper when session summary discovers them
-  const registerAvailableSections = (paperId: number, sections: PaperSection[]) => {
+  const registerAvailableSections = (
+    paperId: number,
+    sections: PaperSection[],
+  ) => {
     setAvailableSectionsByPaper((prev) => {
       if (prev.has(paperId)) return prev;
       const next = new Map(prev);
@@ -215,9 +237,9 @@ export default function PapersLibraryPage() {
   // Derive filtered papers for grid
   const filteredPapers = useMemo(() => {
     return papers.filter((paper) => {
-      if (examFilter !== "ALL" && paper.examName !== examFilter) return false;
-      if (yearFilter !== "ALL" && paper.examYear !== yearFilter) return false;
-      if (typeFilter !== "ALL" && paper.examType !== typeFilter) return false;
+      if (examFilter !== 'ALL' && paper.examName !== examFilter) return false;
+      if (yearFilter !== 'ALL' && paper.examYear !== yearFilter) return false;
+      if (typeFilter !== 'ALL' && paper.examType !== typeFilter) return false;
 
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
@@ -230,7 +252,6 @@ export default function PapersLibraryPage() {
     });
   }, [papers, examFilter, yearFilter, typeFilter, searchQuery]);
 
-
   // Remove paper from selection
   const handleRemovePaper = (paperId: number) => {
     setSelectedPapers((prev) => prev.filter((sp) => sp.paper.id !== paperId));
@@ -239,38 +260,43 @@ export default function PapersLibraryPage() {
   // Update sections for a paper
   const handleUpdateSections = (
     paperId: number,
-    sections: Map<string, Set<PaperSection>>
+    sections: Map<string, Set<PaperSection>>,
   ) => {
     setSelectedPapers((prev) =>
       prev.map((sp) =>
-        sp.paper.id === paperId ? { ...sp, selectedSections: sections } : sp
-      )
+        sp.paper.id === paperId ? { ...sp, selectedSections: sections } : sp,
+      ),
     );
   };
 
   // Reorder paper in selection
-  const handleReorderPaper = (paperId: number, direction: "up" | "down") => {
+  const handleReorderPaper = (paperId: number, direction: 'up' | 'down') => {
     setSelectedPapers((prev) => {
       const index = prev.findIndex((sp) => sp.paper.id === paperId);
       if (index === -1) return prev;
 
       const newPapers = [...prev];
-      if (direction === "up" && index > 0) {
-        [newPapers[index - 1], newPapers[index]] = [newPapers[index], newPapers[index - 1]];
-      } else if (direction === "down" && index < newPapers.length - 1) {
-        [newPapers[index], newPapers[index + 1]] = [newPapers[index + 1], newPapers[index]];
+      if (direction === 'up' && index > 0) {
+        [newPapers[index - 1], newPapers[index]] = [
+          newPapers[index],
+          newPapers[index - 1],
+        ];
+      } else if (direction === 'down' && index < newPapers.length - 1) {
+        [newPapers[index], newPapers[index + 1]] = [
+          newPapers[index + 1],
+          newPapers[index],
+        ];
       }
       return newPapers;
     });
   };
 
-  // Start session
+  // Start session (optionally after replace confirmation)
   const handleStartSession = async () => {
     if (isStartingSession) return;
 
     // Validate: at least one paper with at least one section
     const validPapers = selectedPapers.filter((sp) => {
-      // Check if there are any selected subjects across all main sections
       let hasSelectedSubjects = false;
       sp.selectedSections.forEach((subjects) => {
         if (subjects.size > 0) hasSelectedSubjects = true;
@@ -279,96 +305,142 @@ export default function PapersLibraryPage() {
     });
 
     if (validPapers.length === 0) {
-      alert("Please select at least one paper with at least one section.");
+      alert('Please select at least one paper with at least one section.');
       return;
     }
 
-    // For now, start with the first valid paper
-    // TODO: Support multi-paper sessions in the future
     const firstPaper = validPapers[0];
     const paper = firstPaper.paper;
-    // Flatten all selected subjects from all main sections
     const selectedSections: PaperSection[] = [];
     firstPaper.selectedSections.forEach((subjects) => {
       subjects.forEach((subject) => selectedSections.push(subject));
     });
 
+    const runStart = async () => {
+      try {
+        setIsStartingSession(true);
+        setError(null);
+
+        const allQuestions = await getQuestions(paper.id);
+
+        let filteredQuestions: Question[] = [];
+        const paperType =
+          examNameToPaperType(paper.examName as ExamName) || 'NSAA';
+
+        if (paperType === 'TMUA') {
+          const totalQuestions = allQuestions.length;
+          filteredQuestions = allQuestions.filter((q, index) => {
+            const section = deriveTmuaSectionFromQuestion(
+              q,
+              index,
+              totalQuestions,
+            );
+            return selectedSections.includes(section);
+          });
+        } else {
+          filteredQuestions = allQuestions.filter((q) => {
+            const questionSection = mapPartToSection(
+              { partLetter: q.partLetter, partName: q.partName },
+              paperType,
+            );
+            return selectedSections.includes(questionSection);
+          });
+        }
+
+        if (filteredQuestions.length === 0) {
+          throw new Error('No questions found for selected sections.');
+        }
+
+        const questionNumbers = filteredQuestions
+          .map((q) => q.questionNumber)
+          .sort((a, b) => a - b);
+        const questionStart = questionNumbers[0];
+        const questionEnd = questionNumbers[questionNumbers.length - 1];
+
+        let timeLimitMinutes: number;
+        if (paperType === 'TMUA') {
+          timeLimitMinutes = selectedSections.length * 75;
+        } else {
+          timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
+        }
+
+        const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
+        const paperTypeName =
+          examNameToPaperType(paper.examName as ExamName) || 'NSAA';
+
+        // Must await: startSession sets sessionId/paperId after async in-progress cleanup;
+        // loadQuestions reads store state and breaks navigation if it runs too early.
+        await startSession({
+          paperId: paper.id,
+          paperName: paperTypeName,
+          paperVariant: variantString,
+          sessionName: `${paper.examName} ${paper.examYear} - ${new Date().toLocaleString()}`,
+          timeLimitMinutes,
+          questionRange: {
+            start: questionStart,
+            end: questionEnd,
+          },
+          selectedSections:
+            selectedSections.length > 0 ? selectedSections : undefined,
+        });
+
+        await loadQuestions(paper.id);
+
+        const storeAfter = usePaperSessionStore.getState();
+        if (storeAfter.questionsError) {
+          setError(
+            `Could not load "${paper.examName} ${paper.examYear}" (paper #${paper.id}): ${storeAfter.questionsError}`,
+          );
+          return;
+        }
+        if (!storeAfter.questions || storeAfter.questions.length === 0) {
+          setError(
+            `No questions loaded for "${paper.examName} ${paper.examYear}" (#${paper.id}). Try different sections or contact support.`,
+          );
+          return;
+        }
+
+        router.push('/past-papers/solve');
+      } catch (err) {
+        console.error('[library] Error starting session:', err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to start session. Try another paper or contact support.',
+        );
+      } finally {
+        setIsStartingSession(false);
+      }
+    };
+
+    if (await shouldConfirmReplacePaperSession()) {
+      pendingStartRef.current = runStart;
+      setReplaceModalOpen(true);
+      return;
+    }
+
+    await runStart();
+  };
+
+  const handleCancelReplaceSession = () => {
+    pendingStartRef.current = null;
+    setReplaceModalOpen(false);
+    setReplaceConfirming(false);
+  };
+
+  const handleConfirmReplaceSession = async () => {
+    const fn = pendingStartRef.current;
+    pendingStartRef.current = null;
+    if (!fn) {
+      setReplaceModalOpen(false);
+      return;
+    }
+    setReplaceConfirming(true);
     try {
-      setIsStartingSession(true);
-      setError(null);
-
-      // Get questions for this paper
-      const allQuestions = await getQuestions(paper.id);
-
-      // Filter questions by selected sections
-      let filteredQuestions: Question[] = [];
-      const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
-
-      if (paperType === "TMUA") {
-        const totalQuestions = allQuestions.length;
-        filteredQuestions = allQuestions.filter((q, index) => {
-          const section = deriveTmuaSectionFromQuestion(
-            q,
-            index,
-            totalQuestions
-          );
-          return selectedSections.includes(section);
-        });
-      } else {
-        filteredQuestions = allQuestions.filter((q) => {
-          const questionSection = mapPartToSection(
-            { partLetter: q.partLetter, partName: q.partName },
-            paperType
-          );
-          return selectedSections.includes(questionSection);
-        });
-      }
-
-      if (filteredQuestions.length === 0) {
-        throw new Error("No questions found for selected sections.");
-      }
-
-      // Calculate question range
-      const questionNumbers = filteredQuestions
-        .map((q) => q.questionNumber)
-        .sort((a, b) => a - b);
-      const questionStart = questionNumbers[0];
-      const questionEnd = questionNumbers[questionNumbers.length - 1];
-
-      // Calculate time limit (1.5 min per question, or 75 min per section for TMUA)
-      let timeLimitMinutes: number;
-      if (paperType === "TMUA") {
-        timeLimitMinutes = selectedSections.length * 75;
-      } else {
-        timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.5);
-      }
-
-      // Create variant string
-      const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
-      const paperTypeName = examNameToPaperType(paper.examName as ExamName) || "NSAA";
-
-      // Start session
-      startSession({
-        paperId: paper.id,
-        paperName: paperTypeName,
-        paperVariant: variantString,
-        sessionName: `${paper.examName} ${paper.examYear} - ${new Date().toLocaleString()}`,
-        timeLimitMinutes,
-        questionRange: {
-          start: questionStart,
-          end: questionEnd,
-        },
-        selectedSections: selectedSections.length > 0 ? selectedSections : undefined,
-      });
-
-      // Load questions and navigate
-      await loadQuestions(paper.id);
-      router.push("/past-papers/solve");
-    } catch (err) {
-      console.error("[library] Error starting session:", err);
-      setError(err instanceof Error ? err.message : "Failed to start session");
+      await fn();
     } finally {
-      setIsStartingSession(false);
+      setReplaceConfirming(false);
+      setReplaceModalOpen(false);
     }
   };
 
@@ -379,7 +451,9 @@ export default function PapersLibraryPage() {
   if (loading) {
     return (
       <Container>
-        <div className="py-12 text-center text-text-subtle">Loading papers...</div>
+        <div className='py-12 text-center text-text-subtle'>
+          Loading papers...
+        </div>
       </Container>
     );
   }
@@ -387,7 +461,7 @@ export default function PapersLibraryPage() {
   if (error && papers.length === 0) {
     return (
       <Container>
-        <div className="py-12 text-center text-error">{error}</div>
+        <div className='py-12 text-center text-error'>{error}</div>
       </Container>
     );
   }
@@ -395,7 +469,7 @@ export default function PapersLibraryPage() {
   return (
     <Container>
       {/* Filters - Full width at top */}
-      <div className="mb-6 pt-6">
+      <div className='mb-6 pt-6'>
         <PaperLibraryFilters
           papers={papers}
           searchQuery={searchQuery}
@@ -410,7 +484,7 @@ export default function PapersLibraryPage() {
       </div>
 
       {/* Two-column layout: library • session summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(450px,550px)] gap-6 py-4">
+      <div className='grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(450px,550px)] gap-6 py-4'>
         {/* Left: Paper library */}
         <div>
           <PaperLibraryGrid
@@ -434,10 +508,7 @@ export default function PapersLibraryPage() {
               const existing = availableSectionsByPaper.get(paperId);
               if (!existing || existing.length === 0) {
                 const candidate = Array.from(
-                  new Set([
-                    ...(existing || []),
-                    section,
-                  ])
+                  new Set([...(existing || []), section]),
                 ) as PaperSection[];
                 registerAvailableSections(paperId, candidate);
               }
@@ -454,11 +525,17 @@ export default function PapersLibraryPage() {
 
       {/* Error message */}
       {error && (
-        <div className="mt-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div className='mt-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm'>
           {error}
         </div>
       )}
+
+      <ReplaceActivePaperModal
+        open={replaceModalOpen}
+        onCancel={handleCancelReplaceSession}
+        onConfirm={handleConfirmReplaceSession}
+        isConfirming={replaceConfirming}
+      />
     </Container>
   );
 }
-

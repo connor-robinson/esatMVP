@@ -33,6 +33,7 @@ import {
   Filter,
   Lightbulb,
   Check,
+  Users,
 } from 'lucide-react';
 import type {
   QuestionBankQuestion,
@@ -131,13 +132,18 @@ export default function QuestionBankPage() {
     Record<string, QuestionBankCommunityStats>
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
-  const communityStatsFetchedRef = useRef<Set<string>>(new Set());
+  const [showCommunityStatsModal, setShowCommunityStatsModal] = useState(false);
+  const communityStatsRef = useRef<Record<string, QuestionBankCommunityStats>>(
+    {},
+  );
+  communityStatsRef.current = communityStatsByQuestionId;
 
   const [progressStats, setProgressStats] = useState<{
     attempted: number;
     total: number;
   } | null>(null);
   const [drillWrongCount, setDrillWrongCount] = useState<number | null>(null);
+  const progressBootDeferredRef = useRef(false);
 
   // Load session data from sessionStorage if in session mode
   useEffect(() => {
@@ -179,23 +185,33 @@ export default function QuestionBankPage() {
     }
   }, [isSessionMode, updateCurrentQuestion]);
 
-  // Fetch drill wrong count for banner (when authenticated and not in session mode)
+  // Fetch drill wrong count after idle so first question load isn’t contested
   useEffect(() => {
     if (!session?.user || sessionMode) {
       setDrillWrongCount(null);
       return;
     }
     let cancelled = false;
-    fetch('/api/question-bank/drill-questions', { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : { count: 0 }))
-      .then((data) => {
-        if (!cancelled) setDrillWrongCount(data.count ?? 0);
-      })
-      .catch(() => {
-        if (!cancelled) setDrillWrongCount(0);
-      });
+    const run = () => {
+      if (cancelled) return;
+      fetch('/api/question-bank/drill-questions', { credentials: 'include' })
+        .then((res) => (res.ok ? res.json() : { count: 0 }))
+        .then((data) => {
+          if (!cancelled) setDrillWrongCount(data.count ?? 0);
+        })
+        .catch(() => {
+          if (!cancelled) setDrillWrongCount(0);
+        });
+    };
+    const ric =
+      typeof requestIdleCallback !== 'undefined'
+        ? requestIdleCallback(run, { timeout: 2500 })
+        : null;
+    const t = ric == null ? setTimeout(run, 1200) : null;
     return () => {
       cancelled = true;
+      if (ric != null) cancelIdleCallback(ric);
+      if (t != null) clearTimeout(t);
     };
   }, [session?.user, sessionMode]);
 
@@ -275,10 +291,10 @@ export default function QuestionBankPage() {
       }
     };
 
-    // Debounce 300ms to avoid rapid refetches when user answers multiple questions quickly
-    const timeoutId = setTimeout(fetchProgressStats, 300);
-    // Delayed refetch so we pick up the attempt that may still be saving (POST is async)
-    const delayedId = setTimeout(fetchProgressStats, 1800);
+    const baseDelay = progressBootDeferredRef.current ? 300 : 900;
+    progressBootDeferredRef.current = true;
+    const timeoutId = setTimeout(fetchProgressStats, baseDelay);
+    const delayedId = setTimeout(fetchProgressStats, baseDelay + 1500);
     return () => {
       clearTimeout(timeoutId);
       clearTimeout(delayedId);
@@ -296,12 +312,28 @@ export default function QuestionBankPage() {
 
   const { updateQuestion, updateQuestionField } = useQuestionEditor();
 
-  // Fetch curriculum data for tag lookups
+  // Fetch curriculum after idle (non-blocking for first paint)
   useEffect(() => {
-    fetch('/api/question-bank/curriculum')
-      .then((res) => res.json())
-      .then((data) => setCurriculum(data))
-      .catch((err) => console.error('Error fetching curriculum:', err));
+    let cancelled = false;
+    const load = () => {
+      if (cancelled) return;
+      fetch('/api/question-bank/curriculum')
+        .then((res) => res.json())
+        .then((data) => {
+          if (!cancelled) setCurriculum(data);
+        })
+        .catch((err) => console.error('Error fetching curriculum:', err));
+    };
+    const ric =
+      typeof requestIdleCallback !== 'undefined'
+        ? requestIdleCallback(load, { timeout: 3000 })
+        : null;
+    const t = ric == null ? setTimeout(load, 1500) : null;
+    return () => {
+      cancelled = true;
+      if (ric != null) cancelIdleCallback(ric);
+      if (t != null) clearTimeout(t);
+    };
   }, []);
 
   // Reset answer revealed state when question changes
@@ -312,11 +344,12 @@ export default function QuestionBankPage() {
     setIncorrectAnswers(new Set());
   }, [currentQuestion?.id]);
 
-  // Fetch community stats when current question changes (once per question id)
   useEffect(() => {
-    const qId = currentQuestion?.id;
-    if (!qId || communityStatsFetchedRef.current.has(qId)) return;
-    communityStatsFetchedRef.current.add(qId);
+    setShowCommunityStatsModal(false);
+  }, [currentQuestion?.id]);
+
+  const loadCommunityStatsForOpen = (qId: string) => {
+    if (communityStatsRef.current[qId]) return;
     setCommunityStatsLoading(true);
     fetch(`/api/question-bank/questions/${qId}/community-stats`)
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Failed to load'))))
@@ -325,7 +358,7 @@ export default function QuestionBankPage() {
       })
       .catch(() => {})
       .finally(() => setCommunityStatsLoading(false));
-  }, [currentQuestion?.id]);
+  };
 
   // Timer effect - countdown for sessions, count-up for regular practice
   useEffect(() => {
@@ -1008,101 +1041,151 @@ export default function QuestionBankPage() {
                   isAuthenticated={!!session?.user}
                 />
 
-                {/* Community Stats */}
-                {(() => {
-                  const stats = currentQuestion
-                    ? communityStatsByQuestionId[currentQuestion.id]
-                    : null;
-                  if (!currentQuestion) return null;
-                  if (communityStatsLoading && stats == null) {
-                    return (
-                      <div className="py-3">
-                        <div className="text-xs text-white/50">
-                          Loading community stats...
-                        </div>
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!(isAnswered && isCorrect)) return;
+                      if (!currentQuestion?.id) return;
+                      setShowCommunityStatsModal(true);
+                      loadCommunityStatsForOpen(currentQuestion.id);
+                    }}
+                    disabled={!(isAnswered && isCorrect)}
+                    className={cn(
+                      "inline-flex items-center gap-2 px-4 py-2 rounded-organic-md text-sm font-mono border transition-all",
+                      isAnswered && isCorrect
+                        ? "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 border-white/10"
+                        : "bg-white/[0.02] text-white/30 border-white/5 cursor-not-allowed"
+                    )}
+                  >
+                    <Users className="w-4 h-4" />
+                    Community stats
+                  </button>
+                </div>
+
+                {showCommunityStatsModal && currentQuestion && (
+                  <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                    onClick={() => setShowCommunityStatsModal(false)}
+                  >
+                    <div
+                      className="bg-white/[0.08] rounded-organic-lg p-6 max-w-lg w-full border border-white/10 max-h-[85vh] overflow-y-auto"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-white/90">
+                          Community stats
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => setShowCommunityStatsModal(false)}
+                          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center"
+                          aria-label="Close"
+                        >
+                          <X className="w-4 h-4 text-white/60" />
+                        </button>
                       </div>
-                    );
-                  }
-                  if (!stats) return null;
-                  return (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="text-xs font-medium text-white/60 uppercase tracking-wider">
-                          Community Stats
-                        </div>
-                        <div className="text-xs text-white/50">
-                          {stats.attempts} attempts
-                        </div>
-                      </div>
-                      {!stats.hasSufficientData ? (
-                        <div className="text-xs text-white/50 py-2">
-                          Not enough data yet
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between py-2">
-                            <div className="text-xs text-white/50">
-                              Average time
+                      {(() => {
+                        const stats =
+                          communityStatsByQuestionId[currentQuestion.id];
+                        if (communityStatsLoading && !stats) {
+                          return (
+                            <p className="text-sm text-white/50">
+                              Loading…
+                            </p>
+                          );
+                        }
+                        if (!stats) {
+                          return (
+                            <p className="text-sm text-white/50">
+                              Could not load stats.
+                            </p>
+                          );
+                        }
+                        return (
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-white/50">Attempts</span>
+                              <span className="text-white/80 font-mono">
+                                {stats.attempts}
+                              </span>
                             </div>
-                            <div className="text-sm text-white/80 font-medium">
-                              {formatTime(
-                                Math.round(stats.avgTimeSeconds) * 1000,
-                              )}
-                            </div>
+                            {!stats.hasSufficientData ? (
+                              <p className="text-sm text-white/50 py-2">
+                                Not enough data yet
+                              </p>
+                            ) : (
+                              <>
+                                <div className="flex items-center justify-between py-2 border-t border-white/10">
+                                  <span className="text-xs text-white/50">
+                                    Average time
+                                  </span>
+                                  <span className="text-sm text-white/80 font-medium font-mono">
+                                    {formatTime(
+                                      Math.round(stats.avgTimeSeconds) * 1000,
+                                    )}
+                                  </span>
+                                </div>
+                                <div className="space-y-2 pt-2">
+                                  <div className="text-xs text-white/50 mb-2">
+                                    Answer distribution
+                                  </div>
+                                  <div className="space-y-1.5">
+                                    {Object.keys(currentQuestion.options)
+                                      .sort()
+                                      .map((letter) => {
+                                        const percentage =
+                                          stats.optionPercentages[letter] ?? 0;
+                                        const isCorrectOption =
+                                          letter ===
+                                          (
+                                            currentQuestion.correct_option || ''
+                                          ).toUpperCase();
+                                        const isUserChoice =
+                                          isAnswered &&
+                                          letter ===
+                                            (
+                                              selectedAnswer || ''
+                                            ).toUpperCase();
+                                        return (
+                                          <div
+                                            key={letter}
+                                            className="flex items-center gap-3"
+                                          >
+                                            <div className="w-5 text-xs text-white/60 font-medium">
+                                              {letter}
+                                            </div>
+                                            <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                              <div
+                                                className="h-full rounded-full transition-all duration-300"
+                                                style={{
+                                                  width: `${Math.max(percentage, 0.5)}%`,
+                                                  backgroundColor: isCorrectOption
+                                                    ? '#6c9e69'
+                                                    : isUserChoice
+                                                      ? '#b89f5a'
+                                                      : '#5a6370',
+                                                }}
+                                              />
+                                            </div>
+                                            <div className="w-10 text-xs text-white/50 text-right">
+                                              {percentage > 0
+                                                ? `${percentage.toFixed(0)}%`
+                                                : '—'}
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                  </div>
+                                </div>
+                              </>
+                            )}
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-xs text-white/50 mb-2">
-                              Answer distribution
-                            </div>
-                            <div className="space-y-1.5">
-                              {Object.keys(currentQuestion.options)
-                                .sort()
-                                .map((letter) => {
-                                  const percentage =
-                                    stats.optionPercentages[letter] ?? 0;
-                                  const isCorrectOption =
-                                    letter ===
-                                    (currentQuestion.correct_option || '').toUpperCase();
-                                  const isUserChoice =
-                                    isAnswered &&
-                                    letter ===
-                                      (selectedAnswer || '').toUpperCase();
-                                  return (
-                                    <div
-                                      key={letter}
-                                      className="flex items-center gap-3"
-                                    >
-                                      <div className="w-5 text-xs text-white/60 font-medium">
-                                        {letter}
-                                      </div>
-                                      <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                        <div
-                                          className="h-full rounded-full transition-all duration-300"
-                                          style={{
-                                            width: `${Math.max(percentage, 0.5)}%`,
-                                            backgroundColor: isCorrectOption
-                                              ? '#6c9e69'
-                                              : isUserChoice
-                                                ? '#b89f5a'
-                                                : '#5a6370',
-                                          }}
-                                        />
-                                      </div>
-                                      <div className="w-10 text-xs text-white/50 text-right">
-                                        {percentage > 0
-                                          ? `${percentage.toFixed(0)}%`
-                                          : '—'}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                            </div>
-                          </div>
-                        </>
-                      )}
+                        );
+                      })()}
                     </div>
-                  );
-                })()}
+                  </div>
+                )}
 
                 {/* Detailed Explanation Modal */}
                 {currentQuestion && (

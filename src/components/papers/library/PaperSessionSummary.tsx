@@ -597,7 +597,7 @@ export function PaperSessionSummary({
         if (paperType === "TMUA") {
           totalTimeMinutes += selectedSectionsArray.length * 75;
         } else {
-          totalTimeMinutes += Math.ceil(filteredQuestions.length * 1.5);
+          totalTimeMinutes += Math.ceil(filteredQuestions.length * 1.48);
         }
       }
     });

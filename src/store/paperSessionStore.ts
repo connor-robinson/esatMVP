@@ -158,6 +158,10 @@ interface PaperSessionState {
   saveSessionToIndexedDB: () => Promise<void>;
   loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
+
+  /** When false during browser fullscreen + paper session, main Navbar is hidden (immersive). */
+  paperFullscreenShowMainNavbar: boolean;
+  setPaperFullscreenShowMainNavbar: (show: boolean) => void;
 }
 
 const initialAnswer = (): Answer => ({
@@ -218,6 +222,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       justQuitSessionId: null,
       justQuitTimestamp: null,
       isMarkingInfo: false,
+
+      paperFullscreenShowMainNavbar: true,
       
       notes: '',
       sessionPersistPromise: null,
@@ -242,24 +248,19 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           return;
         }
         
-        // Before starting a new session, end any existing in-progress sessions for this paper
-        // This prevents accumulation of orphaned sessions
+        // Before starting a new session, end ALL existing in-progress sessions for this user.
+        // Product rule: only one active past-paper session may exist at a time.
         try {
           const response = await fetch(`/api/past-papers/sessions?in_progress=true`);
           if (response.ok) {
             const data = await response.json();
             const inProgressSessions = (data.sessions || []) as any[];
-            
-            // Find sessions for the same paper variant
-            const samePaperSessions = inProgressSessions.filter(
-              s => s.paper_variant === config.paperVariant && s.paper_name === config.paperName
-            );
-            
-            // End all matching sessions
-            if (samePaperSessions.length > 0) {
+
+            // End all active sessions except the one we are about to create
+            if (inProgressSessions.length > 0) {
               const now = Date.now();
               await Promise.all(
-                samePaperSessions.map(session =>
+                inProgressSessions.map(session =>
                   fetch('/api/past-papers/sessions', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
@@ -272,7 +273,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                   })
                 )
               );
-              console.log(`[startSession] Ended ${samePaperSessions.length} existing in-progress session(s) for ${config.paperVariant}`);
+              console.log(
+                `[startSession] Ended ${inProgressSessions.length} existing in-progress session(s) before starting new one`,
+              );
             }
           }
         } catch (error) {
@@ -358,6 +361,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sectionStartTimes: [],
           sectionStarts: {},
           isMarkingInfo: false,
+          paperFullscreenShowMainNavbar: true,
         });
 
         const payload = {
@@ -456,9 +460,66 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               // IMPORTANT: getQuestions() only returns REAL exam questions from past papers
               // It queries the 'questions' table, NOT 'ai_generated_questions'
               // No fake or simulated questions are used here
-              const { getQuestions } = await import('@/lib/supabase/questions');
-              const allQuestions = await getQuestions(paperId);
-              
+              const { getQuestions, getPapersByExamAndYear } = await import('@/lib/supabase/questions');
+              let allQuestions = await getQuestions(paperId);
+
+              // For exams split into multiple paper records by section/paper (ENGAA/NSAA/TMUA),
+              // merge sibling paper questions from the same year + exam type so selected section
+              // filters operate on the full intended structure.
+              if (allQuestions.length > 0) {
+                const firstQuestion = allQuestions[0];
+                const examName = String(firstQuestion.examName || '').toUpperCase();
+                const shouldMergeSiblingPapers =
+                  examName === 'ENGAA' || examName === 'NSAA' || examName === 'TMUA';
+
+                if (shouldMergeSiblingPapers) {
+                  try {
+                    const siblingPapers = (await getPapersByExamAndYear(
+                      firstQuestion.examName as any,
+                      firstQuestion.examYear,
+                    )).filter(
+                      (paper) =>
+                        paper.id !== paperId &&
+                        String(paper.examType || '').toLowerCase() ===
+                          String(firstQuestion.examType || '').toLowerCase(),
+                    );
+
+                    if (siblingPapers.length > 0) {
+                      const siblingQuestionBatches = await Promise.all(
+                        siblingPapers.map(async (paper) => {
+                          try {
+                            return await getQuestions(paper.id);
+                          } catch (error) {
+                            console.warn(
+                              `[loadQuestions] Failed to load sibling paper questions for paper ${paper.id}`,
+                              error,
+                            );
+                            return [];
+                          }
+                        }),
+                      );
+
+                      const mergedById = new Map<number, Question>();
+                      [...allQuestions, ...siblingQuestionBatches.flat()].forEach((question) => {
+                        mergedById.set(question.id, question);
+                      });
+                      allQuestions = Array.from(mergedById.values());
+                    }
+                  } catch (error) {
+                    console.warn('[loadQuestions] Failed to merge sibling papers', error);
+                  }
+                }
+              }
+
+              if (!allQuestions || allQuestions.length === 0) {
+                set({
+                  questionsError: `No questions in the database for paper id ${paperId}. Contact support if this paper should be available.`,
+                  questionsLoading: false,
+                  questions: [],
+                });
+                return;
+              }
+
               // Verify exam_type - warn if Specimen when we expect Official
               if (allQuestions.length > 0) {
                 const examType = allQuestions[0].examType?.toLowerCase();
@@ -586,22 +647,18 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 });
               }
               
-              // Then filter by selected sections using systematic mapping
+              // Then filter by selected sections (must use filteredQuestions — not allQuestions — so SECTION rows etc. stay excluded)
               if (state.selectedSections.length > 0) {
-                // Normalize selected sections to strings for comparison
                 const normalizedSelectedSections = state.selectedSections.map(s => String(s).trim());
-                
-                filteredQuestions = allQuestions.filter(q => {
+
+                filteredQuestions = filteredQuestions.filter((q) => {
                   const section = sectionByQuestionId.get(q.id);
                   if (!section) {
                     console.warn(`[loadQuestions] Question ${q.questionNumber} has no section mapping`);
                     return false;
                   }
-                  
                   const normalizedSection = String(section).trim();
-                  const isIncluded = normalizedSelectedSections.includes(normalizedSection);
-                  
-                  return isIncluded;
+                  return normalizedSelectedSections.includes(normalizedSection);
                 });
                 
                 // Debug: Verify both sections are present in filtered results
@@ -1126,6 +1183,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           sessionPersistPromise: null,
           pendingPersistQueue: [],
           isMarkingInfo: false,
+          paperFullscreenShowMainNavbar: true,
         });
         
         // Clear quit flag after a delay (5 seconds) to allow for any delayed restoration attempts
@@ -1664,8 +1722,8 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         
         const timeLimits = state.allSectionsQuestions.map((sectionQuestions) => {
           const questionCount = sectionQuestions.length;
-          // 1.5 minutes per question (or 75 min fixed for TMUA)
-          return state.paperName === 'TMUA' ? 75 : Math.ceil(questionCount * 1.5);
+          // ~1.48 minutes per question for non-TMUA; 75 min per TMUA paper section (Paper 1 / Paper 2)
+          return state.paperName === 'TMUA' ? 75 : Math.ceil(questionCount * 1.48);
         });
         
         set({ sectionTimeLimits: timeLimits });
@@ -1926,6 +1984,10 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             });
           }
         }
+      },
+
+      setPaperFullscreenShowMainNavbar: (show: boolean) => {
+        set({ paperFullscreenShowMainNavbar: show });
       },
       
       setIsMarkingInfo: (isMarkingInfo: boolean) => {

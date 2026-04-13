@@ -5,7 +5,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressInsert, TopicProgressRow, DrillSessionInsert } from "@/lib/supabase/types";
 import type { QuestionAttempt } from "@/types/core";
-import { calculateSessionScore } from "../analytics";
+import { calculateSessionScore, SESSION_FALLBACK_TOPIC_ID } from "../analytics";
 
 interface SessionData {
   sessionId: string;
@@ -34,8 +34,8 @@ function calculateTopicStats(
   const topicMap = new Map<string, TopicSessionStats>();
 
   attempts.forEach((attempt, index) => {
-    const topicId = questionTopics[index]?.topicId;
-    if (!topicId) return;
+    const topicId =
+      questionTopics[index]?.topicId || SESSION_FALLBACK_TOPIC_ID;
 
     const existing = topicMap.get(topicId) || {
       topicId,
