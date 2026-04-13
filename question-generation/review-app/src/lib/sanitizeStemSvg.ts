@@ -2,6 +2,27 @@
 
 import DOMPurify from "dompurify";
 
+/**
+ * Reviewer UI is dark; many generated SVGs use very dark strokes/fills (e.g. #111),
+ * making diagrams effectively invisible. Keep DB content unchanged and only normalize
+ * preview colors at render time.
+ */
+function normalizeSvgVisibilityColors(svg: string): string {
+  if (!svg) return svg;
+  // Common dark hardcoded colors emitted by generators.
+  let out = svg
+    .replace(/(["'\s=:])(#[0]{3,8}|#[1]{3,8})(?=["'\s;>])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(black)(?=["'\s;>])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(rgb\(\s*0\s*,\s*0\s*,\s*0\s*\))(?=["'\s;>])/gi, "$1#e5e7eb")
+    .replace(/(["'\s=:])(rgb\(\s*1[0-9]\s*,\s*1[0-9]\s*,\s*1[0-9]\s*\))(?=["'\s;>])/gi, "$1#e5e7eb");
+
+  // If an svg has no explicit fill/stroke declarations, make line-art visible by default.
+  if (!/\bstroke\s*=/.test(out) && !/\bfill\s*=/.test(out) && out.includes("<svg")) {
+    out = out.replace(/<svg\b/i, '<svg style="color:#e5e7eb"');
+  }
+  return out;
+}
+
 const STEM_TABLE_SANITIZE: Parameters<typeof DOMPurify.sanitize>[1] = {
   ALLOWED_TAGS: [
     "table",
@@ -177,7 +198,8 @@ export function sanitizeStemQgDiagramFigure(html: string): string {
   if (typeof window === "undefined") {
     return "";
   }
-  return DOMPurify.sanitize(html, STEM_QG_FIGURE_BLOCK);
+  const safe = DOMPurify.sanitize(html, STEM_QG_FIGURE_BLOCK);
+  return normalizeSvgVisibilityColors(safe);
 }
 
 /**
@@ -188,8 +210,9 @@ export function sanitizeStemSvg(svgMarkup: string): string {
     return "";
   }
   const out = DOMPurify.sanitize(svgMarkup, STEM_SVG_SANITIZE);
+  const visible = normalizeSvgVisibilityColors(out);
   const inLen = svgMarkup.trim().length;
-  const outLen = out.trim().length;
+  const outLen = visible.trim().length;
   if (inLen > 0 && outLen === 0) {
     console.warn("[stem-preview] DOMPurify removed entire <svg> fragment (allowlist too strict or invalid markup).", {
       inLen,
@@ -200,10 +223,10 @@ export function sanitizeStemSvg(svgMarkup: string): string {
       inLen,
       outLen,
       previewIn: svgMarkup.slice(0, 160),
-      previewOut: out.slice(0, 160),
+      previewOut: visible.slice(0, 160),
     });
   }
-  return out;
+  return visible;
 }
 
 /**
