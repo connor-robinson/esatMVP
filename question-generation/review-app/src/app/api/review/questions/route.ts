@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReviewSupabase } from '@/lib/supabaseService';
-import { REVIEW_FILTER_TMUA_POSTGREST_OR } from '@/lib/curriculum';
+import {
+  expandReviewSubjectFilterValues,
+  REVIEW_FILTER_ESAT_POSTGREST_OR,
+  REVIEW_FILTER_TMUA_POSTGREST_OR,
+} from '@/lib/curriculum';
 import { normalizeReviewQuestion } from '@/lib/utils';
 import type { ReviewQuestion, PaperType } from '@/types/review';
 
@@ -190,11 +194,11 @@ export async function GET(request: NextRequest) {
       if (paperType === 'TMUA') {
         query = query.or(REVIEW_FILTER_TMUA_POSTGREST_OR);
       } else if (paperType === 'ESAT') {
-        query = query.or('test_type.eq.ESAT,test_type.is.null');
+        query = query.or(REVIEW_FILTER_ESAT_POSTGREST_OR);
       }
 
       if (subjects.length > 0) {
-        query = query.in('subjects', subjects);
+        query = query.in('subjects', expandReviewSubjectFilterValues(subjects));
       }
 
       if (diffFiltered.length > 0) {

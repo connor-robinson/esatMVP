@@ -158,6 +158,33 @@ export function QuestionPanel({
     return getTopicsForPaper(paperType, question.subjects);
   }, [paperType, question.subjects]);
 
+  const ideaStimulusType = useMemo(() => {
+    const plan = question.idea_plan;
+    if (!plan || typeof plan !== "object") return null;
+    const raw = (plan as Record<string, unknown>).stimulus_type;
+    if (typeof raw !== "string") return null;
+    const t = raw.trim().toLowerCase();
+    return t.length ? t : null;
+  }, [question.idea_plan]);
+
+  const stemHasTable = useMemo(() => {
+    const stem = String(question.question_stem || "");
+    if (!stem.trim()) return false;
+    if (/<table\b/i.test(stem)) return true;
+    const lines = stem.split("\n");
+    for (let i = 0; i + 1 < lines.length; i += 1) {
+      const row = lines[i];
+      const sep = lines[i + 1];
+      if (!row.includes("|") || !sep.includes("|")) continue;
+      const sepCells = sep.trim().replace(/^\|/, "").replace(/\|$/, "").split("|");
+      const looksLikeSep = sepCells.every((cell) => /^:?-{3,}:?$/.test(cell.trim()));
+      if (looksLikeSep) return true;
+    }
+    return false;
+  }, [question.question_stem]);
+
+  const showMissingTableWarning = ideaStimulusType === "table" && !stemHasTable;
+
   const getSubjectColor = (subjects: string | null): string => {
     if (!subjects) return 'bg-white/10 text-white/70';
     const subjectsLower = subjects.toLowerCase().trim();
@@ -568,6 +595,15 @@ export function QuestionPanel({
       <div className="p-6 space-y-6">
         {/* Question Stem */}
         <div className="space-y-2">
+          {showMissingTableWarning ? (
+            <div className="rounded-lg border border-amber-400/40 bg-amber-950/30 px-3 py-2">
+              <p className="text-xs font-mono text-amber-100/90 leading-relaxed">
+                Planner metadata says <code>stimulus_type: table</code>, but this stem has no
+                table markup. If this item needs a data table, add it directly in the question
+                stem (markdown table or HTML table).
+              </p>
+            </div>
+          ) : null}
           {hasStemBeforeAutoDiagram && (
               <div className="rounded-xl border border-sky-500/35 bg-sky-950/25 px-4 py-3 space-y-3">
                 <p className="text-xs font-mono text-sky-200/95 leading-relaxed">

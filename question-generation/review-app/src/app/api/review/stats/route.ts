@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReviewSupabase } from '@/lib/supabaseService';
-import { REVIEW_FILTER_TMUA_POSTGREST_OR } from '@/lib/curriculum';
+import {
+  expandReviewSubjectFilterValues,
+  REVIEW_FILTER_ESAT_POSTGREST_OR,
+  REVIEW_FILTER_TMUA_POSTGREST_OR,
+} from '@/lib/curriculum';
 import type { ReviewStats, PaperType } from '@/types/review';
 
 export const dynamic = 'force-dynamic';
-
-/**
- * Helper function to check if a question matches subject filters
- * Now uses the subjects column directly
- */
-function matchesSubject(row: any, subjects: string[]): boolean {
-  if (subjects.length === 0) return true;
-  return subjects.includes(row.subjects);
-}
 
 /**
  * Helper function to count questions using the new hierarchy
@@ -48,12 +43,12 @@ async function countQuestions(
   if (paperType === 'TMUA') {
     fetchQuery = fetchQuery.or(REVIEW_FILTER_TMUA_POSTGREST_OR);
   } else if (paperType === 'ESAT') {
-    fetchQuery = fetchQuery.or('test_type.eq.ESAT,test_type.is.null');
+    fetchQuery = fetchQuery.or(REVIEW_FILTER_ESAT_POSTGREST_OR);
   }
   
   // Apply subjects filter
   if (subjects.length > 0) {
-    fetchQuery = fetchQuery.in('subjects', subjects);
+    fetchQuery = fetchQuery.in('subjects', expandReviewSubjectFilterValues(subjects));
   }
   
   const { count, error: fetchError } = await fetchQuery;

@@ -24,6 +24,8 @@ export function isTmuaSubjectValue(subjects: string | null | undefined): boolean
 /** PostgREST `.or(...)` when filtering review list/stats to TMUA (canonical + common `subjects` variants). */
 export const REVIEW_FILTER_TMUA_POSTGREST_OR =
   "test_type.eq.TMUA," +
+  "test_type.eq.tmua," +
+  'test_type.ilike."TMUA",' +
   'subjects.eq."Paper 1",' +
   'subjects.eq."Paper 2",' +
   "subjects.eq.Paper1," +
@@ -31,7 +33,54 @@ export const REVIEW_FILTER_TMUA_POSTGREST_OR =
   'subjects.eq."paper 1",' +
   'subjects.eq."paper 2",' +
   'subjects.eq."PAPER 1",' +
-  'subjects.eq."PAPER 2"';
+  'subjects.eq."PAPER 2",' +
+  'subjects.eq."TMUA Paper 1",' +
+  'subjects.eq."TMUA Paper 2",' +
+  'subjects.eq."tmua paper 1",' +
+  'subjects.eq."tmua paper 2"';
+
+/** ESAT filter for list/stats endpoints with tolerant test_type matching. */
+export const REVIEW_FILTER_ESAT_POSTGREST_OR =
+  'test_type.eq.ESAT,test_type.eq.esat,test_type.ilike."ESAT",test_type.is.null';
+
+/**
+ * Expand UI subject filters into common DB variants (casing/spacing) so old rows are not excluded.
+ */
+export function expandReviewSubjectFilterValues(subjects: string[]): string[] {
+  const expanded = new Set<string>();
+  for (const raw of subjects) {
+    const value = raw.trim();
+    if (!value) continue;
+    expanded.add(value);
+
+    const lower = value.toLowerCase();
+    const upper = value.toUpperCase();
+    expanded.add(lower);
+    expanded.add(upper);
+
+    const compact = value.replace(/\s+/g, "");
+    const compactLower = compact.toLowerCase();
+    const compactUpper = compact.toUpperCase();
+    expanded.add(compact);
+    expanded.add(compactLower);
+    expanded.add(compactUpper);
+
+    if (lower === "paper 1" || lower === "paper 2") {
+      const suffix = lower.endsWith("1") ? "1" : "2";
+      expanded.add(`TMUA Paper ${suffix}`);
+      expanded.add(`tmua paper ${suffix}`);
+      expanded.add(`TMUA Paper${suffix}`);
+      expanded.add(`tmua paper${suffix}`);
+      expanded.add(`Paper ${suffix}`);
+      expanded.add(`paper ${suffix}`);
+      expanded.add(`PAPER ${suffix}`);
+      expanded.add(`Paper${suffix}`);
+      expanded.add(`paper${suffix}`);
+      expanded.add(`PAPER${suffix}`);
+    }
+  }
+  return [...expanded];
+}
 
 // ESAT Curriculum Data (from ESAT_CURRICULUM.json)
 const ESAT_CURRICULUM = {
