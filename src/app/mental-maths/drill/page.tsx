@@ -138,6 +138,7 @@ export default function BuilderPage() {
             <SessionSelectionBar
               density="compact"
               compactVariant="figma"
+              showQuestionInput={false}
               questionCount={builder.questionCount}
               onQuestionCountChange={(n) => builder.setQuestionCount(n)}
               questionCountMin={1}

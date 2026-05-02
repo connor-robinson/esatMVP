@@ -89,6 +89,103 @@ export function getExamAccentTextClass(examName: string): string {
 }
 
 /**
+ * Solid header bar for mark-session part groups (high contrast for `text-background`).
+ */
+export function getMarkSessionPartHeaderClass(sectionName: string): string {
+  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
+  const ref = resolved ?? PAPER_COLORS.mathematics;
+  if (ref === PAPER_COLORS.physics) return "bg-physics text-background";
+  if (ref === PAPER_COLORS.chemistry) return "bg-chemistry text-background";
+  if (ref === PAPER_COLORS.biology) return "bg-biology text-background";
+  if (ref === PAPER_COLORS.advanced) return "bg-advanced text-background";
+  return "bg-maths text-background";
+}
+
+/** Progress / bar fill tint for section-accuracy rows. */
+export function getSectionBarTrackClass(sectionName: string): string {
+  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
+  const ref = resolved ?? PAPER_COLORS.mathematics;
+  if (ref === PAPER_COLORS.physics) return "bg-physics/80";
+  if (ref === PAPER_COLORS.chemistry) return "bg-chemistry/80";
+  if (ref === PAPER_COLORS.biology) return "bg-biology/80";
+  if (ref === PAPER_COLORS.advanced) return "bg-advanced/80";
+  return "bg-maths/80";
+}
+
+/**
+ * Softer section pill for question rows (border + tinted fill).
+ */
+export function getSectionSubjectPillClass(sectionName: string): string {
+  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
+  const ref = resolved ?? PAPER_COLORS.mathematics;
+  if (ref === PAPER_COLORS.physics) {
+    return "bg-physics/20 text-physics border border-physics/30";
+  }
+  if (ref === PAPER_COLORS.chemistry) {
+    return "bg-chemistry/20 text-chemistry border border-chemistry/30";
+  }
+  if (ref === PAPER_COLORS.biology) {
+    return "bg-biology/20 text-biology border border-biology/30";
+  }
+  if (ref === PAPER_COLORS.advanced) {
+    return "bg-advanced/20 text-advanced border border-advanced/30";
+  }
+  return "bg-maths/20 text-maths border border-maths/25";
+}
+
+/** Accent text class for highlighting a section name (e.g. Part labels in intros). */
+export function getSectionAccentTextClass(sectionName: string): string {
+  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
+  const ref = resolved ?? PAPER_COLORS.mathematics;
+  if (ref === PAPER_COLORS.physics) return "text-physics";
+  if (ref === PAPER_COLORS.chemistry) return "text-chemistry";
+  if (ref === PAPER_COLORS.biology) return "text-biology";
+  if (ref === PAPER_COLORS.advanced) return "text-advanced";
+  return "text-maths";
+}
+
+/** Theme CSS variables for inline SVG / dynamic styles (avoid hex in components). */
+export const cssVar = {
+  border: "var(--color-border)",
+  borderSubtle: "var(--color-border-subtle)",
+  textMuted: "var(--color-text-muted)",
+  textSubtle: "var(--color-text-subtle)",
+  text: "var(--color-text)",
+  background: "var(--color-background)",
+  surfaceElevated: "var(--color-surface-elevated)",
+  surfaceMid: "var(--color-surface-mid)",
+  primary: "var(--color-primary)",
+  error: "var(--color-error)",
+  warning: "var(--color-warning)",
+  success: "var(--color-success)",
+  maths: "var(--color-maths)",
+} as const;
+
+/** Badge / tile accents for roadmap headers (surface + border + text). */
+export function getExamAccentBadgeClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") {
+    return "border border-advanced/25 bg-advanced/15 text-advanced";
+  }
+  if (key === "NSAA") {
+    return "border border-biology/25 bg-biology/15 text-biology";
+  }
+  if (key === "TMUA") {
+    return "border border-physics/25 bg-physics/15 text-physics";
+  }
+  if (key === "ESAT") {
+    return "border border-maths/20 bg-maths/15 text-maths";
+  }
+  if (key === "PAT") {
+    return "border border-chemistry/25 bg-chemistry/15 text-chemistry";
+  }
+  if (key === "MAT") {
+    return "border border-maths/20 bg-maths/15 text-maths";
+  }
+  return "border border-accent/25 bg-accent/15 text-accent";
+}
+
+/**
  * Helper function to desaturate a color (convert to rgba with reduced opacity)
  */
 export function desaturateColor(color: string, opacity: number = 0.6): string {

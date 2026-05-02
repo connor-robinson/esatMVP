@@ -27,8 +27,14 @@ import { prefetchImages } from '@/lib/papers/prefetch';
 import { useSessionActivity } from '@/hooks/useSessionActivity';
 import { usePaperSessionHydrated } from '@/hooks/usePaperSessionHydrated';
 import type { Letter, PaperType } from '@/types/papers';
+import { cn } from '@/lib/utils';
 
 const LETTERS: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+const solvePrimaryNavBtn =
+  'flex items-center gap-2 rounded-organic-md bg-primary px-6 py-3 font-medium text-background transition-all duration-fast ease-signature hover:bg-primary-hover hover:shadow-glow active:scale-95 disabled:pointer-events-none disabled:opacity-30';
+const solveSecondaryNavBtn =
+  'flex items-center gap-2 rounded-organic-md border border-border bg-surface-mid px-6 py-3 font-medium text-text transition-all duration-fast ease-signature hover:bg-surface-neutral active:scale-95 disabled:pointer-events-none disabled:opacity-30';
 
 export default function PapersSolvePage() {
   const router = useRouter();
@@ -398,15 +404,14 @@ export default function PapersSolvePage() {
   useEffect(() => {
     // Set transition for smooth color change
     document.body.style.transition = 'background-color 300ms ease-in-out';
-    const backgroundColor = isDarkMode ? 'var(--color-background)' : '#ffffff';
-    document.body.style.backgroundColor = backgroundColor;
+    document.body.style.backgroundColor = 'var(--color-background)';
 
     // Cleanup on unmount
     return () => {
       document.body.style.backgroundColor = '';
       document.body.style.transition = '';
     };
-  }, [isDarkMode]);
+  }, []);
 
   // Preserve scroll position when navigating between questions
   const scrollPositionRef = useRef(window.scrollY);
@@ -1150,45 +1155,24 @@ export default function PapersSolvePage() {
           <div className='space-y-4 w-full'>
             {/* First Row: A-H Buttons */}
             <div className='flex items-center justify-between gap-2 w-full'>
-              {LETTERS.map((letter) => (
-                <button
-                  key={letter}
-                  onClick={() => handleChoiceSelect(letter)}
-                  className={`
-                    h-[50px] rounded-organic-md font-medium text-base
-                    flex items-center justify-center flex-1
-                    transition-all duration-300 ease-out
-                    ${
-                      currentAnswer?.choice === letter
-                        ? 'bg-neutral-500 text-white border-2 border-neutral-400'
-                        : 'bg-neutral-700 text-neutral-100 hover:bg-neutral-600 border-2 border-transparent'
-                    }
-                  `}
-                  style={{
-                    boxShadow:
-                      currentAnswer?.choice === letter
-                        ? 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.15)'
-                        : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (currentAnswer?.choice !== letter) {
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (currentAnswer?.choice === letter) {
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.15)';
-                    } else {
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                    }
-                  }}
-                >
-                  {letter}
-                </button>
-              ))}
+              {LETTERS.map((letter) => {
+                const selected = currentAnswer?.choice === letter;
+                return (
+                  <button
+                    key={letter}
+                    type="button"
+                    onClick={() => handleChoiceSelect(letter)}
+                    className={cn(
+                      'flex h-[50px] flex-1 items-center justify-center rounded-organic-md border-2 text-base font-medium transition-all duration-300 ease-out',
+                      selected
+                        ? 'border-primary bg-surface-mid text-text shadow-glow'
+                        : 'border-transparent bg-surface-mid text-text hover:bg-surface-neutral',
+                    )}
+                  >
+                    {letter}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Second Row: Navigation Buttons */}
@@ -1197,27 +1181,9 @@ export default function PapersSolvePage() {
               <div className='flex items-center gap-2'>
                 {/* Submit Section Button */}
                 <button
+                  type="button"
                   onClick={handleSubmitSection}
-                  className='
-                    flex items-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                    rounded-organic-md active:scale-95
-                  '
-                  style={{
-                    backgroundColor: '#3d6064',
-                    color: '#ffffff',
-                    boxShadow:
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#345155';
-                    e.currentTarget.style.boxShadow =
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#3d6064';
-                    e.currentTarget.style.boxShadow =
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                  }}
+                  className={solvePrimaryNavBtn}
                   title='Submit section'
                 >
                   <svg
@@ -1241,35 +1207,10 @@ export default function PapersSolvePage() {
               <div className='flex items-center gap-2'>
                 {/* Previous Button */}
                 <button
+                  type="button"
                   onClick={() => handleNavigation(-1)}
                   disabled={sectionQuestionIndex === 0}
-                  className='
-                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                    rounded-organic-md active:scale-95
-                    disabled:opacity-30 disabled:cursor-not-allowed
-                  '
-                  style={{
-                    backgroundColor: '#3d6064',
-                    color: '#ffffff',
-                    boxShadow:
-                      sectionQuestionIndex === 0
-                        ? 'none'
-                        : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (sectionQuestionIndex !== 0) {
-                      e.currentTarget.style.backgroundColor = '#345155';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (sectionQuestionIndex !== 0) {
-                      e.currentTarget.style.backgroundColor = '#3d6064';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                    }
-                  }}
+                  className={solveSecondaryNavBtn}
                   title='Previous question'
                 >
                   <svg
@@ -1290,27 +1231,9 @@ export default function PapersSolvePage() {
 
                 {/* Navigator Button */}
                 <button
+                  type="button"
                   onClick={() => setShowNavigator(true)}
-                  className='
-                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                    rounded-organic-md active:scale-95
-                  '
-                  style={{
-                    backgroundColor: '#3d6064',
-                    color: '#ffffff',
-                    boxShadow:
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#345155';
-                    e.currentTarget.style.boxShadow =
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#3d6064';
-                    e.currentTarget.style.boxShadow =
-                      'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                  }}
+                  className={solvePrimaryNavBtn}
                   title='Open navigator'
                 >
                   <svg
@@ -1331,6 +1254,7 @@ export default function PapersSolvePage() {
 
                 {/* Next Button */}
                 <button
+                  type="button"
                   onClick={() => handleNavigation(1)}
                   disabled={
                     allSectionsQuestions.length > 0
@@ -1338,47 +1262,7 @@ export default function PapersSolvePage() {
                         currentSectionQuestions.length - 1
                       : sectionQuestionIndex >= actualQuestionCount - 1
                   }
-                  className='
-                    flex items-center justify-center gap-2 px-6 py-3 font-medium transition-all duration-fast ease-signature
-                    rounded-organic-md active:scale-95
-                    disabled:opacity-30 disabled:cursor-not-allowed
-                  '
-                  style={{
-                    backgroundColor: '#3d6064',
-                    color: '#ffffff',
-                    boxShadow: (
-                      allSectionsQuestions.length > 0
-                        ? sectionQuestionIndex >=
-                          currentSectionQuestions.length - 1
-                        : sectionQuestionIndex >= actualQuestionCount - 1
-                    )
-                      ? 'none'
-                      : 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                  }}
-                  onMouseEnter={(e) => {
-                    const isDisabled =
-                      allSectionsQuestions.length > 0
-                        ? sectionQuestionIndex >=
-                          currentSectionQuestions.length - 1
-                        : sectionQuestionIndex >= actualQuestionCount - 1;
-                    if (!isDisabled) {
-                      e.currentTarget.style.backgroundColor = '#345155';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    const isDisabled =
-                      allSectionsQuestions.length > 0
-                        ? sectionQuestionIndex >=
-                          currentSectionQuestions.length - 1
-                        : sectionQuestionIndex >= actualQuestionCount - 1;
-                    if (!isDisabled) {
-                      e.currentTarget.style.backgroundColor = '#3d6064';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                    }
-                  }}
+                  className={solvePrimaryNavBtn}
                   title='Next question'
                 >
                   <span>Next</span>
@@ -1405,12 +1289,9 @@ export default function PapersSolvePage() {
         <div className='fixed bottom-6 left-6 z-50'>
           <div className='relative' data-notes-popover>
             <button
+              type="button"
               onClick={() => setShowNotesPopover(!showNotesPopover)}
-              className='
-                flex items-center justify-center w-12 h-12 rounded-full font-medium transition-all duration-200
-                backdrop-blur-md bg-[#0f1114] text-neutral-300 shadow-lg
-                hover:bg-[#151921] hover:text-blue-300 hover:scale-105
-              '
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-surface-elevated text-text-muted shadow-bar-floating backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-primary/40 hover:text-accent"
               title='Add notes for this question'
             >
               <svg
@@ -1428,13 +1309,13 @@ export default function PapersSolvePage() {
               </svg>
               {/* Indicator dot if notes exist */}
               {currentAnswer?.other && (
-                <div className='absolute -top-1 -right-1 w-3 h-3 bg-blue-400 rounded-full border border-black/50' />
+                <div className='absolute -top-1 -right-1 h-3 w-3 rounded-full border border-border bg-primary' />
               )}
             </button>
 
             {/* Notes Popover */}
             {showNotesPopover && (
-              <div className='absolute bottom-16 left-0 w-[600px] p-4 rounded-lg backdrop-blur-md shadow-2xl bg-black/80'>
+              <div className='absolute bottom-16 left-0 w-[600px] rounded-organic-lg border border-border bg-surface-elevated/95 p-4 shadow-bar-floating backdrop-blur-md'>
                 <div className='space-y-3'>
                   <div className='flex items-center justify-between'>
                     <label className='text-base font-medium text-white'>
@@ -1465,18 +1346,17 @@ export default function PapersSolvePage() {
                       onChange={(e) => handleOtherChange(e.target.value)}
                       placeholder='Working or notes you would like to review after the session'
                       className='
-                        bg-black/50 text-white placeholder-neutral-500
-                        focus:ring-0 focus:outline-none focus:ring-offset-0
-                        flex-1 h-11 border-0
+                        h-11 flex-1 border-0 bg-surface-mid text-text placeholder:text-text-disabled
+                        focus:outline-none focus:ring-0 focus:ring-offset-0
                       '
                       autoFocus
                     />
                     <button
                       onClick={() => setShowNotesPopover(false)}
                       className='
-                        flex items-center justify-center h-11 w-11 rounded-lg font-medium transition-all duration-200
-                        bg-[#0f1114] text-white
-                        hover:bg-white hover:text-black
+                        flex h-11 w-11 items-center justify-center rounded-organic-md font-medium transition-all duration-200
+                        border border-border bg-surface-elevated text-text
+                        hover:bg-primary hover:text-background
                         active:scale-95 active:transform
                       '
                       title='Done'
@@ -1511,22 +1391,14 @@ export default function PapersSolvePage() {
             onClick={() => setShowConfirmModal(false)}
           >
             <div
-              className='w-full md:max-w-lg md:rounded-organic-lg rounded-t-3xl border-2 shadow-2xl'
-              style={{
-                backgroundColor: '#0e0f13',
-                borderColor: 'rgba(255,255,255,0.12)',
-              }}
+              className='w-full rounded-t-3xl border-2 border-border bg-surface-elevated shadow-bar-floating md:max-w-lg md:rounded-organic-lg'
               onClick={(e) => e.stopPropagation()}
             >
               <div className='p-5 md:p-6 space-y-4'>
                 <div className='flex items-center gap-3'>
-                  <div
-                    className='w-8 h-8 rounded-full flex items-center justify-center'
-                    style={{ backgroundColor: '#506141' }}
-                  >
+                  <div className='flex h-8 w-8 items-center justify-center rounded-full bg-primary text-background'>
                     <svg
-                      className='w-4 h-4'
-                      style={{ color: '#ffffff' }}
+                      className='h-4 w-4'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -1539,57 +1411,29 @@ export default function PapersSolvePage() {
                       />
                     </svg>
                   </div>
-                  <h3 className='text-lg font-semibold text-neutral-100'>
+                  <h3 className='text-lg font-semibold text-text'>
                     Submit session?
                   </h3>
                 </div>
-                <p className='text-sm text-neutral-400'>
+                <p className='text-sm text-text-muted'>
                   You can still review and edit your answers on the marking page
                   after submitting.
                 </p>
                 <div className='flex justify-end gap-2 pt-2'>
                   <button
+                    type="button"
                     onClick={() => setShowConfirmModal(false)}
-                    className='px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature
-                             active:scale-95'
-                    style={{
-                      backgroundColor: 'transparent',
-                      color: '#e5e7eb',
-                      boxShadow: 'none',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        'rgba(255, 255, 255, 0.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
+                    className='rounded-organic-md px-4 py-2 text-sm font-medium text-text-muted transition-all duration-fast ease-signature hover:bg-surface-subtle hover:text-text active:scale-95'
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       setShowConfirmModal(false);
                       handleSubmit();
                     }}
-                    className='px-4 py-2 rounded-organic-md text-sm font-semibold transition-all duration-fast ease-signature
-                           active:scale-95'
-                    style={{
-                      backgroundColor: '#3d6064',
-                      color: '#ffffff',
-                      boxShadow:
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#345155';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#3d6064';
-                      e.currentTarget.style.boxShadow =
-                        'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                    }}
+                    className='rounded-organic-md bg-primary px-4 py-2 text-sm font-semibold text-background transition-all duration-fast ease-signature hover:bg-primary-hover hover:shadow-glow active:scale-95'
                     autoFocus
                   >
                     Submit & Mark

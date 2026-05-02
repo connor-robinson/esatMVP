@@ -34,6 +34,8 @@ export interface SessionSelectionBarProps {
    * `figma` — mental maths drill screen: one row, “N Questions selected”, underlined Clear all, pill CTA (matches Figma).
    */
   compactVariant?: "icons" | "figma";
+  /** For figma compact bar, hides the numeric input and shows plain count text. */
+  showQuestionInput?: boolean;
   className?: string;
 }
 
@@ -53,6 +55,7 @@ export function SessionSelectionBar({
   clearDisabled = false,
   density = "full",
   compactVariant = "figma",
+  showQuestionInput = true,
   className,
 }: SessionSelectionBarProps) {
   const clearVisuallyMuted = clearDimmedWhenReady && canStartSession;
@@ -109,24 +112,28 @@ export function SessionSelectionBar({
         >
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 sm:flex-nowrap">
             <p className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-text">
-              <span className="inline-flex items-center gap-1 tabular-nums">
-                <input
-                  type="number"
-                  value={questionCount}
-                  onChange={(e) =>
-                    onQuestionCountChange(Number(e.target.value) || questionCountMin)
-                  }
-                  min={questionCountMin}
-                  max={questionCountMax}
-                  className={cn(
-                    "w-11 rounded-md border border-border-subtle bg-surface-elevated px-1.5 py-0.5 text-center text-sm font-semibold text-text outline-none",
-                    "focus-visible:ring-2 focus-visible:ring-primary/40 [appearance:textfield]",
-                    "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-                  )}
-                  aria-label="Number of questions"
-                />
-                <span>Questions Selected</span>
-              </span>
+              {showQuestionInput ? (
+                <span className="inline-flex items-center gap-1 tabular-nums">
+                  <input
+                    type="number"
+                    value={questionCount}
+                    onChange={(e) =>
+                      onQuestionCountChange(Number(e.target.value) || questionCountMin)
+                    }
+                    min={questionCountMin}
+                    max={questionCountMax}
+                    className={cn(
+                      "w-11 rounded-md border border-border-subtle bg-surface-elevated px-1.5 py-0.5 text-center text-sm font-semibold text-text outline-none",
+                      "focus-visible:ring-2 focus-visible:ring-primary/40 [appearance:textfield]",
+                      "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                    )}
+                    aria-label="Number of questions"
+                  />
+                  <span>Questions Selected</span>
+                </span>
+              ) : (
+                <span className="tabular-nums">{questionCount} Questions Selected</span>
+              )}
             </p>
             <button
               type="button"

@@ -1,27 +1,32 @@
 /**
- * Grouped performance charts with header
+ * Performance trends — session-based lines for Mental Maths drill analytics
  */
 
 "use client";
 
-import { PerformanceDataPoint } from "@/types/analytics";
+import { PerformanceDataPoint, SessionSummary } from "@/types/analytics";
 import { AccuracyChart } from "./AccuracyChart";
 import { SpeedChart } from "./SpeedChart";
+import { SessionTrendsChart } from "./SessionTrendsChart";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const sectionShell =
-  "relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8";
+  "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
 
 interface PerformanceChartsSectionProps {
-  performanceData: PerformanceDataPoint[];
+  /** Daily aggregate chart data (fallback when session mode unavailable) */
+  performanceData?: PerformanceDataPoint[];
+  /** When provided, shows session-indexed percentile / score trends */
+  sessions?: SessionSummary[];
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
 export function PerformanceChartsSection({
   performanceData,
+  sessions,
   isCollapsed = false,
   onToggleCollapse,
 }: PerformanceChartsSectionProps) {
@@ -37,7 +42,9 @@ export function PerformanceChartsSection({
             Performance Trends
           </h2>
           <p className="mt-1 text-left text-sm text-text-muted">
-            Accuracy and speed over time
+            {sessions?.length
+              ? "Percentile and score trajectory across sessions"
+              : "Accuracy and speed over time"}
           </p>
         </div>
         <ChevronDown
@@ -58,11 +65,14 @@ export function PerformanceChartsSection({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AccuracyChart data={performanceData} />
-              <SpeedChart data={performanceData} />
-            </div>
+            {sessions?.length ? (
+              <SessionTrendsChart sessions={sessions} />
+            ) : (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <AccuracyChart data={performanceData ?? []} />
+                <SpeedChart data={performanceData ?? []} />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

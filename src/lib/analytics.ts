@@ -907,7 +907,9 @@ export function generateSessionDetail(
       const mistakesMap = new Map<string, { question: string; userAnswer: number; correctAnswer: number; count: number }>();
       
       wrongAttempts.forEach((attempt) => {
-        const questionData = session._questionsMap!.get(attempt.question_id);
+        const qid = attempt.question_id;
+        if (!qid) return;
+        const questionData = session._questionsMap!.get(qid);
         if (questionData) {
           const key = questionData.prompt; // Use prompt as key to group same questions
           const existing = mistakesMap.get(key);

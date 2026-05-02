@@ -4,8 +4,7 @@
 
 "use client";
 
-import { useEffect, useMemo, useState, Suspense, lazy } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useMemo, useState, Suspense, lazy } from "react";
 import { Container } from "@/components/layout/Container";
 import type {
   TimeRange,
@@ -13,7 +12,7 @@ import type {
   PerformanceDataPoint,
   SessionSummary,
 } from "@/types/analytics";
-import { calculateSessionScore, calculateTrend, generateInsights, getTopicExtremes, fetchCommonMistakesForTopics } from "@/lib/analytics";
+import { calculateSessionScore, calculateTrend, getTopicExtremes } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
@@ -22,6 +21,8 @@ import { TOPICS } from "@/config/topics";
 const PersonalView = lazy(() =>
   import("@/components/analytics/PersonalView").then((mod) => ({ default: mod.PersonalView })),
 );
+
+const ANALYTICS_HISTORY_LIMIT = 100;
 
 /**
  * Calculate current and longest streak from user_daily_metrics
@@ -325,69 +326,6 @@ async function fetchTodayYesterdayMetrics(
   };
 }
 
-async function fetchPreviousPeriodStats(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  days: number,
-): Promise<UserStats | null> {
-  // Get date ranges using UTC to avoid timezone issues
-  const today = new Date();
-  const currentPeriodStart = new Date(Date.UTC(
-    today.getUTCFullYear(),
-    today.getUTCMonth(),
-    today.getUTCDate() - days
-  ));
-  
-  const previousPeriodStart = new Date(Date.UTC(
-    currentPeriodStart.getUTCFullYear(),
-    currentPeriodStart.getUTCMonth(),
-    currentPeriodStart.getUTCDate() - days
-  ));
-  const previousPeriodEnd = new Date(Date.UTC(
-    currentPeriodStart.getUTCFullYear(),
-    currentPeriodStart.getUTCMonth(),
-    currentPeriodStart.getUTCDate() - 1
-  ));
-
-  // Format dates as YYYY-MM-DD strings (UTC)
-  const startDateStr = previousPeriodStart.toISOString().split("T")[0];
-  const endDateStr = previousPeriodEnd.toISOString().split("T")[0];
-
-  const { data, error } = await supabase
-    .from("user_daily_metrics")
-    .select("total_questions, correct_answers, total_time_ms, sessions_count")
-    .eq("user_id", userId)
-    .gte("metric_date", startDateStr)
-    .lte("metric_date", endDateStr);
-
-  if (error || !data || data.length === 0) {
-    return null;
-  }
-
-  const aggregated = data.reduce(
-    (acc, row: any) => ({
-      totalQuestions: acc.totalQuestions + row.total_questions,
-      correctAnswers: acc.correctAnswers + row.correct_answers,
-      totalTime: acc.totalTime + row.total_time_ms,
-      sessionCount: acc.sessionCount + row.sessions_count,
-    }),
-    { totalQuestions: 0, correctAnswers: 0, totalTime: 0, sessionCount: 0 }
-  );
-
-  return {
-    userId,
-    totalQuestions: aggregated.totalQuestions,
-    correctAnswers: aggregated.correctAnswers,
-    totalTime: aggregated.totalTime,
-    sessionCount: aggregated.sessionCount,
-    currentStreak: 0,
-    longestStreak: 0,
-    lastPracticeDate: null,
-    topicStats: {},
-    createdAt: new Date(),
-  };
-}
-
 async function fetchRecentSessions(
   supabase: SupabaseClient<Database>,
   userId: string,
@@ -608,23 +546,6 @@ async function fetchRecentSessions(
       // Use calculateSessionScore for individual sessions, not calculateLeaderboardScore
       score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
     }
-    
-    // Debug logging
-    if (index === 0) {
-      console.log("[fetchRecentSessions] DEBUG: Latest session stats", {
-        sessionId: session.id,
-        hasSavedData: !!savedData,
-        attemptsCount: attempts.length,
-        questionsCount: questions.length,
-        correctAnswers,
-        totalQuestions,
-        accuracy,
-        totalTime,
-        avgSpeed,
-        score,
-      });
-    }
-
     // Get unique topics
     const topicIds = [...new Set(questions.map((q: any) => q.topic_id).filter(Boolean))];
     const topicNames = topicIds.map(topicId => {
@@ -635,7 +556,7 @@ async function fetchRecentSessions(
     // Get questions map for this session
     const sessionQuestionsMap = questionsMap.get(session.id) || new Map();
 
-    return {
+    const summary: SessionSummary = {
       id: session.id,
       timestamp: new Date(session.ended_at!),
       topicIds,
@@ -647,10 +568,10 @@ async function fetchRecentSessions(
       correctAnswers,
       totalTime,
       isLatest: index === 0,
-      // Store attempts and questions map for progress data and common mistakes generation
       _attempts: attempts,
       _questionsMap: sessionQuestionsMap,
-    } as SessionSummary & { _attempts?: any[]; _questionsMap?: Map<string, { prompt: string; answer: string }> };
+    };
+    return summary;
   });
 }
 
@@ -661,40 +582,66 @@ export default function AnalyticsPage() {
 
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [previousStats, setPreviousStats] = useState<UserStats | null>(null);
   const [performanceData, setPerformanceData] = useState<PerformanceDataPoint[]>([]);
   const [todayYesterdayData, setTodayYesterdayData] = useState<{ today: PerformanceDataPoint | null; yesterday: PerformanceDataPoint | null }>({ today: null, yesterday: null });
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
-  const [commonMistakesMap, setCommonMistakesMap] = useState<Map<string, any[]>>(new Map());
 
-  // Load user stats and initial data
+  const reloadCoreAnalytics = useCallback(async () => {
+    const uid = session?.user?.id;
+    if (!uid) return;
+    const [stats, sessionData] = await Promise.all([
+      fetchTopicProgress(supabase, uid),
+      fetchRecentSessions(supabase, uid, ANALYTICS_HISTORY_LIMIT),
+    ]);
+    setUserStats(stats);
+    setSessions(sessionData);
+  }, [session?.user?.id, supabase]);
+
   useEffect(() => {
     if (!session?.user) {
       setUserStats(null);
-      setPreviousStats(null);
       setPerformanceData([]);
       setSessions([]);
       return;
     }
 
-    Promise.all([
-      fetchTopicProgress(supabase, session.user.id),
-      fetchPreviousPeriodStats(supabase, session.user.id, 30),
-      fetchRecentSessions(supabase, session.user.id, 20)
-    ]).then(([stats, prevStats, sessionData]) => {
-      setUserStats(stats);
-      setPreviousStats(prevStats);
-      setSessions(sessionData);
-      
-      // Fetch common mistakes for all topics
-      if (stats) {
-        const topicIds = Object.keys(stats.topicStats);
-        fetchCommonMistakesForTopics(supabase, session.user.id, topicIds).then((mistakesMap) => {
-          setCommonMistakesMap(mistakesMap);
-        });
+    void reloadCoreAnalytics();
+  }, [session?.user, reloadCoreAnalytics]);
+
+  const handleDeleteSession = useCallback(
+    async (sessionId: string) => {
+      const uid = session?.user?.id;
+      if (!uid) return;
+      const { error } = await supabase
+        .from("builder_sessions")
+        .delete()
+        .eq("id", sessionId)
+        .eq("user_id", uid);
+      if (error) {
+        console.error("[analytics] delete session:", error);
+        alert(error.message || "Could not delete session.");
+        throw error;
       }
-    });
-  }, [session?.user, supabase]);
+      await reloadCoreAnalytics();
+    },
+    [session?.user?.id, supabase, reloadCoreAnalytics],
+  );
+
+  const handleClearAllSessions = useCallback(async () => {
+    const uid = session?.user?.id;
+    if (!uid) return;
+    const { error } = await supabase
+      .from("builder_sessions")
+      .delete()
+      .eq("user_id", uid)
+      .not("ended_at", "is", null);
+    if (error) {
+      console.error("[analytics] clear sessions:", error);
+      alert(error.message || "Could not clear history.");
+      throw error;
+    }
+    await reloadCoreAnalytics();
+  }, [session?.user?.id, supabase, reloadCoreAnalytics]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -708,7 +655,6 @@ export default function AnalyticsPage() {
     });
   }, [session?.user, supabase, timeRange]);
 
-  const insights = useMemo(() => (userStats ? generateInsights(userStats) : []), [userStats]);
   const topicExtremes = useMemo(() => (userStats ? getTopicExtremes(userStats) : { strongest: [], weakest: [] }), [userStats]);
   const strongest = topicExtremes.strongest;
   const weakest = topicExtremes.weakest;
@@ -816,14 +762,20 @@ export default function AnalyticsPage() {
 
   return (
     <Container size="lg" className="space-y-8 py-10 sm:py-12">
+      <header className="border-b border-border-subtle pb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+          Mental Maths Analytics
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-text-muted sm:text-base">
+          Review session history and trends across your drill practice.
+        </p>
+      </header>
+
       <Suspense fallback={<div className="h-96 animate-pulse rounded-organic-xl bg-surface-elevated" />}>
         {userStats ? (
           <PersonalView
-            timeRange={timeRange}
-            onTimeRangeChange={setTimeRange}
             userStats={userStats}
             performanceData={performanceData}
-            insights={insights}
             strongest={strongest}
             weakest={weakest}
             accuracy={userStats.totalQuestions ? (userStats.correctAnswers / userStats.totalQuestions) * 100 : 0}
@@ -832,7 +784,8 @@ export default function AnalyticsPage() {
             speedTrend={speedTrend}
             questionsTrend={questionsTrend}
             sessions={sessions}
-            commonMistakesMap={commonMistakesMap}
+            onDeleteSession={handleDeleteSession}
+            onClearAllSessions={handleClearAllSessions}
           />
         ) : (
           <div className="flex h-96 items-center justify-center rounded-organic-xl border border-dashed border-border-subtle bg-surface-subtle">

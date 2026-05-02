@@ -18,7 +18,13 @@ import { MistakeSelect } from "@/components/papers/MistakeSelect";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
 import { MathContent } from "@/components/shared/MathContent";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { PAPER_COLORS, getSectionColor } from "@/config/colors";
+import {
+  cssVar,
+  getMarkSessionPartHeaderClass,
+  getSectionBarTrackClass,
+  getSectionSubjectPillClass,
+} from "@/config/colors";
+import { cn } from "@/lib/utils";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import { MISTAKE_OPTIONS } from "@/types/papers";
 import { getConversionTable, getConversionRows, scaleScore, findFallbackConversionTable } from "@/lib/supabase/questions";
@@ -283,7 +289,8 @@ export default function PapersMarkPage() {
   }, [sessionId, totalQuestions]);
   
   // Shared bubble utility (analytics-style)
-  const bubbleClass = "rounded-xl bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] p-4";
+  const bubbleClass =
+    "rounded-organic-lg border border-border-subtle bg-surface-elevated p-4 shadow-bar-floating";
   
   const pinnedInsights = useMemo(() => {
     return answers
@@ -325,7 +332,7 @@ export default function PapersMarkPage() {
       // Navigate to analytics page with session ID to highlight
       const sessionIdToHighlight = state.sessionId;
       if (sessionIdToHighlight) {
-        router.push(`/papers/analytics?highlight=${sessionIdToHighlight}`);
+        router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
       } else {
         router.push("/past-papers/analytics");
       }
@@ -387,7 +394,7 @@ export default function PapersMarkPage() {
     const groups: Array<{
       partLetter: string;
       sectionName: string;
-      color: string;
+      headerClass: string;
       indexes: number[];
     }> = [];
     const map: Record<string, number> = {};
@@ -449,9 +456,9 @@ export default function PapersMarkPage() {
       
       if (map[pl] === undefined) {
         const section = mapPartToSection({ partLetter: pl, partName }, paperName as any);
-        const color = getSectionColor(section);
+        const headerClass = getMarkSessionPartHeaderClass(section);
         map[pl] = groups.length;
-        groups.push({ partLetter: pl, sectionName: section, color, indexes: [i] });
+        groups.push({ partLetter: pl, sectionName: section, headerClass, indexes: [i] });
       } else {
         groups[map[pl]].indexes.push(i);
       }
@@ -1260,10 +1267,14 @@ export default function PapersMarkPage() {
     }
     return null;
   }, [selectedIndex]);
-  
-  // Redirect if no active session (after all hooks)
+
+  useEffect(() => {
+    if (!sessionId) {
+      router.replace("/past-papers/library");
+    }
+  }, [sessionId, router]);
+
   if (!sessionId) {
-    router.push("/past-papers/library");
     return null;
   }
 
@@ -1281,14 +1292,16 @@ export default function PapersMarkPage() {
             style={{ ['--left-col' as any]: `${LEFT_COLUMN_WIDTH_PX}px` }}
           >
             {/* Left column: list (narrow, scrolls) */}
-            <div className="pt-3 pl-0 pr-1 border-b lg:border-b-0 lg:border-r border-white/10 h-full overflow-y-auto" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
+            <div className="h-full overflow-y-auto border-b border-border-subtle pt-3 pl-0 pr-1 lg:border-b-0 lg:border-r" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
               <div className="space-y-1">
                 {/* Overview entry */}
                 <button
-                  className={`relative w-full text-left pr-3 pl-0 py-2 rounded-md overflow-hidden transition ${
-                    selectedIndex === -1 ? "bg-[#1a1f27]" : "bg-[#0f1114] hover:bg-[#121418]"
-                  }`}
-                  style={selectedIndex === -1 ? { boxShadow: 'inset 4px 0 0 0 rgba(255,255,255,0.22)' } : undefined}
+                  className={cn(
+                    "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
+                    selectedIndex === -1
+                      ? "bg-surface-mid shadow-[inset_4px_0_0_0_var(--color-border)]"
+                      : "bg-surface-elevated hover:bg-surface-mid",
+                  )}
                   onClick={() => setSelectedIndex(-1)}
                 >
           <div className="flex items-center justify-between">
@@ -1313,7 +1326,12 @@ export default function PapersMarkPage() {
                     <div key={gi} className="rounded-md">
                       <details className="group" open>
                         <summary className="list-none cursor-pointer">
-                          <div className="w-full pr-3 pl-0 py-2 rounded-md group-open:rounded-t-md group-open:rounded-b-none text-white" style={{ backgroundColor: group.color }}>
+                          <div
+                            className={cn(
+                              "w-full rounded-md py-2 pl-0 pr-3 text-background group-open:rounded-b-none group-open:rounded-t-md",
+                              group.headerClass,
+                            )}
+                          >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
@@ -1328,7 +1346,7 @@ export default function PapersMarkPage() {
           </div>
           </div>
                         </summary>
-                        <div className="mt-1 space-y-1 px-0.5 pb-1 bg-[#0f1114] rounded-md group-open:rounded-b-md group-open:rounded-t-none transition-all duration-200">
+                        <div className="mt-1 space-y-1 rounded-md bg-surface-elevated px-0.5 pb-1 transition-all duration-200 group-open:rounded-b-md group-open:rounded-t-none">
                         {group.indexes.map((index) => {
                           const qNumber = questionNumbers[index];
               const answer = answers[index];
@@ -1340,18 +1358,23 @@ export default function PapersMarkPage() {
                           const partNameFull = (q?.partName || "").trim();
                           const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                           const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
-                          const indicatorColor = guessed
-                            ? '#b89f5a'
-                            : (correct === true
-                                ? "#6c9e69"
-                                : (correct === false ? PAPER_COLORS.chemistry : PAPER_COLORS.mathematics));
+                          const leftAccent = guessed
+                            ? "border-l-warning"
+                            : correct === true
+                              ? "border-l-primary"
+                              : correct === false
+                                ? "border-l-error"
+                                : "border-l-text-muted";
               return (
                             <button
                               key={qNumber}
-                              className={`relative w-full text-left pr-3 pl-0 py-2 rounded-md overflow-hidden transition ${
-                                selectedIndex === index ? "bg-[#161a1f]" : "bg-[#0f1114] hover:bg-[#121418]"
-                              }`}
-                              style={selectedIndex === index ? { boxShadow: `inset 4px 0 0 0 ${indicatorColor}` } : undefined}
+                              type="button"
+                              className={cn(
+                                "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
+                                selectedIndex === index
+                                  ? cn("border-l-4 bg-surface-mid", leftAccent)
+                                  : "bg-surface-elevated hover:bg-surface-mid",
+                              )}
                               onClick={() => setSelectedIndex(index)}
                             >
                   <div className="flex items-center justify-between">
@@ -1361,25 +1384,29 @@ export default function PapersMarkPage() {
                                 {/* Fixed-width question label so Part pill aligns vertically across rows */}
                                 <span className="text-sm text-neutral-200 inline-block text-left" style={{ width: QUESTION_LABEL_WIDTH_PX }}>Q{qNumber}</span>
                                   {/* Part pill with section color (showing Part X) */}
-                                  <div className="text-[11px] px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: getSectionColor(sectionName) }}>
+                                  <div
+                                    className={cn(
+                                      "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                      getSectionSubjectPillClass(sectionName),
+                                    )}
+                                  >
                                     {partLetter ? `Part ${partLetter}` : '—'}
                     </div>
-                                  {/* Guess pill if guessed */}
                                   {guessed && (
-                                    <div className="px-2 py-0.5 rounded-full text-white text-[11px]" style={{ backgroundColor: '#b89f5a' }}>
+                                    <div className="rounded-full border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
                                       Guess
                                     </div>
                                   )}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className="text-[11px] text-neutral-500">{formatTime(timeSpent)}</div>
+                                  <div className="text-[11px] text-text-muted">{formatTime(timeSpent)}</div>
                                   {correct === true && (
-                                    <div className="px-1.5 py-0.5 rounded-full text-white flex items-center justify-center" style={{ backgroundColor: "#6c9e69" }}>
+                                    <div className="flex items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-background">
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                     </div>
                                   )}
                                   {correct === false && (
-                                    <div className="px-1.5 py-0.5 rounded-full text-white flex items-center justify-center" style={{ backgroundColor: PAPER_COLORS.chemistry }}>
+                                    <div className="flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-text">
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                     </div>
                                   )}
@@ -1419,8 +1446,10 @@ export default function PapersMarkPage() {
                           {sectionPills.map((s) => (
                             <span
                               key={s}
-                              className="text-xs px-3 py-1.5 rounded-full font-medium"
-                              style={{ backgroundColor: getSectionColor(s), color: '#ffffff' }}
+                              className={cn(
+                                "rounded-full px-3 py-1.5 text-xs font-medium",
+                                getSectionSubjectPillClass(s),
+                              )}
                             >
                               {s}
                             </span>
@@ -1611,9 +1640,9 @@ export default function PapersMarkPage() {
                             const correctPct = Math.min(100, Math.round((timeSplits.correctTime / total) * 100));
                             const wrongPct = Math.max(0, 100 - correctPct);
                             return (
-                              <div className="flex w-full h-full">
-                                <div style={{ width: `${correctPct}%`, backgroundColor: "#6c9e69" }} />
-                                <div style={{ width: `${wrongPct}%`, backgroundColor: PAPER_COLORS.chemistry }} />
+                              <div className="flex h-full w-full">
+                                <div className="h-full bg-primary/90" style={{ width: `${correctPct}%` }} />
+                                <div className="h-full bg-error/85" style={{ width: `${wrongPct}%` }} />
                               </div>
                             );
                           })()}
@@ -1704,20 +1733,32 @@ export default function PapersMarkPage() {
                           const matchForPill = qsForPill.find(q => (q.partLetter || '').trim() === section);
                           const sectionNameForColor = mapPartToSection({ partLetter: (matchForPill?.partLetter || section).toString(), partName: matchForPill?.partName || '' }, (usePaperSessionStore.getState().questions?.[0]?.examName as any));
                           return (
-                            <div key={section} className="p-3 rounded-md bg-neutral-900">
-                              <div className="flex items-start justify-between mb-2">
+                            <div key={section} className="rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3">
+                              <div className="mb-2 flex items-start justify-between">
                                 <div>
-                                  <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="flex flex-wrap items-center gap-2">
                                     {sectionNameForColor && (
-                                      <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
+                                      <span
+                                        className={cn(
+                                          "rounded-organic-sm px-2.5 py-1 text-xs font-medium",
+                                          getSectionSubjectPillClass(sectionNameForColor),
+                                        )}
+                                      >
                                         {sectionNameForColor}
                                       </span>
                                     )}
                                     <div className="text-sm font-medium text-neutral-200">{section}</div>
                                   </div>
                                   {hasConversion && (
-                                    <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                                      <span className={`text-xs px-2 py-0.5 rounded-md ${ (data as any).__convRowsFound ? 'bg-[rgba(80,97,65,0.25)] text-neutral-200' : 'bg-[rgba(239,68,68,0.2)] text-neutral-300' }`}>
+                                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                                      <span
+                                        className={cn(
+                                          "rounded-organic-sm px-2 py-0.5 text-xs",
+                                          (data as any).__convRowsFound
+                                            ? "bg-primary/20 text-primary"
+                                            : "bg-error/15 text-error",
+                                        )}
+                                      >
                                         {(data as any).__convRowsFound ? 'Mapped' : 'Not mapped'}
                                       </span>
                                       {(data as any).__convPartName && (
@@ -1732,9 +1773,12 @@ export default function PapersMarkPage() {
                                   <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="flex-1 h-2 bg-neutral-700 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full" style={{ width: `${accuracy}%`, backgroundColor: getSectionColor(sectionNameForColor) }} />
+                              <div className="mb-2 flex items-center gap-2">
+                                <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-neutral">
+                                  <div
+                                    className={cn("h-full rounded-full", getSectionBarTrackClass(sectionNameForColor))}
+                                    style={{ width: `${accuracy}%` }}
+                                  />
                                 </div>
                                 <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
                               </div>
@@ -1766,8 +1810,8 @@ export default function PapersMarkPage() {
                               onChange={(e) => setShowIndividualNSAASubjects(e.target.checked)}
                               className="sr-only"
                             />
-                            <div className={`block w-11 h-6 rounded-full transition-colors ${showIndividualNSAASubjects ? 'bg-[#6c9e69]' : 'bg-neutral-700'}`}>
-                              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${showIndividualNSAASubjects ? 'translate-x-5' : ''}`}></div>
+                            <div className={cn('block h-6 w-11 rounded-full transition-colors', showIndividualNSAASubjects ? 'bg-primary' : 'bg-surface-neutral')}>
+                              <div className={cn('absolute left-1 top-1 h-4 w-4 rounded-full bg-background transition-transform', showIndividualNSAASubjects ? 'translate-x-5' : '')} />
                             </div>
                           </div>
                         </label>
@@ -1780,7 +1824,7 @@ export default function PapersMarkPage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-white px-2 py-0.5 rounded-full bg-[#6c9e69]">
+                              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-sm font-medium text-primary">
                                 Average (All Subjects)
                               </span>
                             </div>
@@ -1819,11 +1863,11 @@ export default function PapersMarkPage() {
                         const examYear = qs?.[0]?.examYear as number | undefined;
                         const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
                         return (
-                          <div key={section} className={`p-3 rounded-md bg-neutral-900 ${isLastSingle || isSingleGraph ? 'md:col-span-2 md:mx-auto' : ''} ${isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : ''}`}>
+                          <div key={section} className={cn('rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3', isLastSingle || isSingleGraph ? 'md:col-span-2 md:mx-auto' : '', isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : '')}>
                             <div className="flex items-start justify-between">
                               <div>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-xs px-2.5 py-1 rounded-md text-white font-medium" style={{ backgroundColor: getSectionColor(sectionNameForColor) }}>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className={cn('rounded-organic-sm px-2.5 py-1 text-xs font-medium', getSectionSubjectPillClass(sectionNameForColor))}>
                                     {section}
                                   </span>
                                 </div>
@@ -1842,7 +1886,7 @@ export default function PapersMarkPage() {
                                       <circle cx="12" cy="8" r="1" />
                                     </svg>
                                   </button>
-                                  <div className="absolute right-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
+                                  <div className="absolute right-0 z-10 hidden w-64 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
                                     {sp?.table && percentileTables[sp.table] 
                                       ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
                                       : `We use ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} conversion tables to convert your raw score to a scaled score.`}
@@ -1912,33 +1956,39 @@ export default function PapersMarkPage() {
                                   const yTicks = [0, 25, 50, 75, 100];
                                   return (
                                     <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" className="block">
-                                      {/* Axes */}
-                                      <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#2a2d34" />
-                                      <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#2a2d34" />
-                                      {/* Shaded area for people behind you */}
+                                      <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
+                                      <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
                                       {Number.isFinite(score) && Number.isFinite(pct) && (
-                                        <polygon points={shadedPoints.join(' ')} fill="rgba(80,97,65,0.15)" stroke="none" />
+                                        <polygon
+                                          points={shadedPoints.join(' ')}
+                                          fill="color-mix(in srgb, var(--color-primary) 18%, transparent)"
+                                          stroke="none"
+                                        />
                                       )}
-                                      {/* Ticks */}
                                       {xTicks.map((t, i) => (
                                         <g key={`xt-${i}`}>
-                                          <line x1={toX(t)} y1={h - pad} x2={toX(t)} y2={h - pad + 4} stroke="#2a2d34" />
-                                          <text x={toX(t)} y={h - pad + 12} fill="#7a7f87" fontSize="9" textAnchor="middle">{t}</text>
+                                          <line x1={toX(t)} y1={h - pad} x2={toX(t)} y2={h - pad + 4} stroke={cssVar.borderSubtle} />
+                                          <text x={toX(t)} y={h - pad + 12} fill={cssVar.textMuted} fontSize="9" textAnchor="middle">{t}</text>
                                         </g>
                                       ))}
                                       {yTicks.map((t, i) => (
                                         <g key={`yt-${i}`}>
-                                          <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke="#2a2d34" />
-                                          <text x={pad - 6} y={toY(t) + 3} fill="#7a7f87" fontSize="9" textAnchor="end">{t}</text>
+                                          <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke={cssVar.borderSubtle} />
+                                          <text x={pad - 6} y={toY(t) + 3} fill={cssVar.textMuted} fontSize="9" textAnchor="end">{t}</text>
                                         </g>
                                       ))}
-                                      {/* Curve and marker */}
-                                      <polyline points={points} fill="none" stroke="#7a7f87" strokeWidth="2" />
-                                      <line x1={userX} y1={pad} x2={userX} y2={h-pad} stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" />
-                                      <circle cx={userX} cy={userY} r="3" fill="#ffffff" />
-                                      {/* Axis labels */}
-                                      <text x={w/2} y={h - 4} fill="#9ca3af" fontSize="10" textAnchor="middle">{examName || 'Score'}</text>
-                                      <text x={8} y={pad - 8} fill="#9ca3af" fontSize="10">Cumulative %</text>
+                                      <polyline points={points} fill="none" stroke={cssVar.textSubtle} strokeWidth="2" />
+                                      <line
+                                        x1={userX}
+                                        y1={pad}
+                                        x2={userX}
+                                        y2={h-pad}
+                                        stroke="color-mix(in srgb, var(--color-text) 22%, transparent)"
+                                        strokeDasharray="4 4"
+                                      />
+                                      <circle cx={userX} cy={userY} r="3" fill={cssVar.text} />
+                                      <text x={w/2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle">{examName || 'Score'}</text>
+                                      <text x={8} y={pad - 8} fill={cssVar.textMuted} fontSize="10">Cumulative %</text>
                                     </svg>
                                   );
                                 })()}
@@ -1988,18 +2038,18 @@ export default function PapersMarkPage() {
                       return (
                     <div>
                           <div className="text-xs text-neutral-400 mb-2">Guess time split: correct vs wrong</div>
-                          <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
+                          <div className="h-6 w-full overflow-hidden rounded-full border border-border-subtle bg-surface-mid">
                             <div className="flex w-full h-full">
                               <div
-                                className="h-full flex items-center justify-center text-[11px] font-medium"
-                                style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
+                                className="flex h-full items-center justify-center bg-primary/85 text-[11px] font-medium text-background"
+                                style={{ width: `${correctPct}%` }}
                                 title={`Correct guesses • ${correctPct}% of guess time`}
                               >
                                 {correctPct >= 12 ? `${correctPct}%` : ''}
                           </div>
                               <div
-                                className="h-full flex items-center justify-center text-[11px] font-medium"
-                                style={{ width: `${wrongPct}%`, backgroundColor: `${PAPER_COLORS.chemistry}cc` }}
+                                className="flex h-full items-center justify-center bg-error/80 text-[11px] font-medium text-text"
+                                style={{ width: `${wrongPct}%` }}
                                 title={`Wrong guesses • ${wrongPct}% of guess time`}
                               >
                                 {wrongPct >= 12 ? `${wrongPct}%` : ''}
@@ -2008,11 +2058,11 @@ export default function PapersMarkPage() {
                           </div>
                           <div className="mt-1 flex items-center justify-between text-[11px] text-neutral-400">
                             <div className="flex items-center gap-2">
-                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: "#6c9e69" }} />
+                              <span className="inline-block h-2 w-2 rounded-full bg-primary" />
                               <span>Correct • {correctCount} qns • avg {formatTime(Math.round(guessExtended.avgTimeCorrectGuess))}</span>
                           </div>
                             <div className="flex items-center gap-2">
-                              <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: PAPER_COLORS.chemistry }} />
+                              <span className="inline-block h-2 w-2 rounded-full bg-error" />
                               <span>Wrong • {wrongCount} qns • avg {formatTime(Math.round(guessExtended.avgTimeWrongGuess))}</span>
                         </div>
                       </div>
@@ -2038,9 +2088,9 @@ export default function PapersMarkPage() {
                         const toY = (v:number) => pad + (plotH - v * plotH);
                         const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
                         const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
-                        const guessColor = '#b89f5a'; // desaturated yellow
-                        const correctBorder = "#6c9e69";
-                        const wrongBorder = PAPER_COLORS.chemistry;
+                        const guessColor = cssVar.warning;
+                        const correctBorder = cssVar.primary;
+                        const wrongBorder = cssVar.error;
                         // Precompute band step so blocks never exceed inner width; avoids right-edge clamping overlap
                         const len = Math.max(1, questionNumbers.length);
                         const innerW = w - 2*pad;
@@ -2051,7 +2101,7 @@ export default function PapersMarkPage() {
                         return (
                           <div className="overflow-x-auto flex justify-center">
                             <svg width={w} height={h} className="block">
-                              <path d={area} fill={`${guessColor}33`} />
+                              <path d={area} fill="color-mix(in srgb, var(--color-warning) 22%, transparent)" />
                               <path d={path} stroke={guessColor} strokeWidth={2} fill="none" />
                               {/* Guess timeline blocks */}
                       {questionNumbers.map((qn, idx) => {
@@ -2060,8 +2110,8 @@ export default function PapersMarkPage() {
                                 const rectX = bandStart + blockInset;
                                 const guessed = guessedFlags[idx] === true;
                                 const corr = derivedCorrectFlags[idx];
-                                const fill = guessed ? guessColor : '#1a1f27';
-                                const border = corr === true ? correctBorder : (corr === false ? wrongBorder : 'rgba(255,255,255,0.12)');
+                                const fill = guessed ? guessColor : cssVar.surfaceMid;
+                                const border = corr === true ? correctBorder : (corr === false ? wrongBorder : cssVar.border);
                         return (
                                   <g key={qn}>
                                     <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
@@ -2084,27 +2134,27 @@ export default function PapersMarkPage() {
                       <div className="text-base font-semibold text-neutral-100">Accuracy Patterns</div>
                       
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Correct</div>
-                          <div className="text-2xl font-bold" style={{ color: "#6c9e69" }}>
+                        <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-3 text-center">
+                          <div className="mb-1 text-xs text-text-muted">Correct</div>
+                          <div className="text-2xl font-bold text-primary">
                             {accuracyPatterns.correct}
                           </div>
                           <div className="text-xs text-neutral-500 mt-1">
                             {Math.round((accuracyPatterns.correct / totalQuestions) * 100)}%
                           </div>
                         </div>
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Incorrect</div>
-                          <div className="text-2xl font-bold" style={{ color: PAPER_COLORS.chemistry }}>
+                        <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-3 text-center">
+                          <div className="mb-1 text-xs text-text-muted">Incorrect</div>
+                          <div className="text-2xl font-bold text-error">
                             {accuracyPatterns.incorrect}
                           </div>
                           <div className="text-xs text-neutral-500 mt-1">
                             {Math.round((accuracyPatterns.incorrect / totalQuestions) * 100)}%
                           </div>
                         </div>
-                        <div className="p-3 rounded-md bg-neutral-900 text-center">
-                          <div className="text-xs text-neutral-400 mb-1">Guessed</div>
-                          <div className="text-2xl font-bold" style={{ color: '#b89f5a' }}>
+                        <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-3 text-center">
+                          <div className="mb-1 text-xs text-text-muted">Guessed</div>
+                          <div className="text-2xl font-bold text-warning">
                             {accuracyPatterns.guessed}
                       </div>
                           <div className="text-xs text-neutral-500 mt-1">
@@ -2114,9 +2164,9 @@ export default function PapersMarkPage() {
                       </div>
 
                       {/* Guessing Performance (sentence style) */}
-                      <div className="p-4 rounded-md bg-neutral-900 text-center">
-                        <div className="text-sm text-neutral-300">Your guessing accuracy was:</div>
-                        <div className="text-2xl font-bold leading-tight" style={{ color: 'rgba(200, 200, 200, 0.9)' }}>
+                      <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-4 text-center">
+                        <div className="text-sm text-text-muted">Your guessing accuracy was:</div>
+                        <div className="text-2xl font-bold leading-tight text-text">
                           {Math.round(guessStats.accuracy)}%
                     </div>
                         <div className="text-xs text-neutral-400 mt-1">
@@ -2129,15 +2179,15 @@ export default function PapersMarkPage() {
                       <div>
                         <div className="text-xs text-neutral-400 mb-2">Streaks</div>
                         <div className="grid grid-cols-2 gap-2">
-                          <div className="p-2 rounded bg-neutral-900 text-center">
-                            <div className="text-xs text-neutral-400">Longest Correct</div>
-                            <div className="text-lg font-semibold" style={{ color: "#6c9e69" }}>
+                          <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-2 text-center">
+                            <div className="text-xs text-text-muted">Longest Correct</div>
+                            <div className="text-lg font-semibold text-primary">
                               {streaks.longestCorrect}
                             </div>
                           </div>
-                          <div className="p-2 rounded bg-neutral-900 text-center">
-                            <div className="text-xs text-neutral-400">Longest Incorrect</div>
-                            <div className="text-lg font-semibold" style={{ color: PAPER_COLORS.chemistry }}>
+                          <div className="rounded-organic-md border border-border-subtle bg-surface-mid/60 p-2 text-center">
+                            <div className="text-xs text-text-muted">Longest Incorrect</div>
+                            <div className="text-lg font-semibold text-error">
                               {streaks.longestIncorrect}
                             </div>
                           </div>
@@ -2210,8 +2260,13 @@ export default function PapersMarkPage() {
                               return d;
                             }
 
-                            const accStroke = performanceTrend.trend === 'improving' ? "#6c9e69" : performanceTrend.trend === 'declining' ? PAPER_COLORS.chemistry : 'rgba(255,255,255,0.5)';
-                            const speedStroke = PAPER_COLORS.mathematics ?? 'rgba(120,180,255,0.9)';
+                            const accStroke =
+                              performanceTrend.trend === 'improving'
+                                ? cssVar.primary
+                                : performanceTrend.trend === 'declining'
+                                  ? cssVar.error
+                                  : cssVar.textMuted;
+                            const speedStroke = cssVar.maths;
 
                             const accPath = buildSmoothPath(accValues);
                             const speedPath = buildSmoothPath(speedValues);
@@ -2224,15 +2279,15 @@ export default function PapersMarkPage() {
 
                             return (
                               <div className="space-y-2">
-                                <div className="rounded-md bg-neutral-900 p-2 flex justify-center">
-                                  <svg width={w} height={h} className="h-16 w-[320px] block">
+                                <div className="flex justify-center rounded-organic-md border border-border-subtle bg-surface-mid/50 p-2">
+                                  <svg width={w} height={h} className="block h-16 w-[320px]">
                                     <path d={speedPath} stroke={speedStroke} strokeWidth={2} fill="none" />
                                     <path d={accPath} stroke={accStroke} strokeWidth={2} fill="none" />
                                   </svg>
                           </div>
-                                <div className="flex items-center justify-center gap-4 text-[11px] text-neutral-400">
-                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: speedStroke }} />Speed</div>
-                                  <div className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: accStroke }} />Accuracy</div>
+                                <div className="flex items-center justify-center gap-4 text-[11px] text-text-muted">
+                                  <div className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-maths" />Speed</div>
+                                  <div className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: accStroke }} />Accuracy</div>
                           </div>
                                 <div className="text-[11px] text-neutral-400 text-center">{msg}</div>
                           </div>
@@ -2253,7 +2308,7 @@ export default function PapersMarkPage() {
                           <div className="text-xs text-neutral-400 mb-2">Top Mistakes</div>
                   <div className="space-y-2">
                             {topMistakes.map(([tag, count], idx) => (
-                              <div key={tag} className="flex items-center justify-between p-2 rounded bg-[#0f1114]">
+                              <div key={tag} className="flex items-center justify-between p-2 rounded bg-surface-elevated">
                                 <span className="text-xs text-neutral-300">{idx + 1}. {tag}</span>
                                 <span className="text-xs font-semibold text-neutral-400">{count}</span>
                               </div>
@@ -2269,7 +2324,7 @@ export default function PapersMarkPage() {
                             {Object.entries(mistakesBySection).map(([section, mistakes]) => {
                               const total = Object.values(mistakes).reduce((a, b) => a + b, 0);
                               return (
-                                <div key={section} className="p-2 rounded bg-[#0f1114]">
+                                <div key={section} className="p-2 rounded bg-surface-elevated">
                                   <div className="text-xs text-neutral-300 mb-1">{section}</div>
                                   <div className="text-xs text-neutral-400">{total} total mistakes</div>
                                 </div>
@@ -2316,37 +2371,42 @@ export default function PapersMarkPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                    }`}
-                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true ? { backgroundColor: "#6c9e69" } : { backgroundColor: "#1f1f1f" }}
+                    type="button"
+                    className={cn(
+                      "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
+                        ? "bg-primary text-background"
+                        : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
+                    )}
                     onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                     Correct
                     </button>
                     <button
-                      className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? "text-white" : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                      }`}
-                    style={(derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false ? { backgroundColor: PAPER_COLORS.chemistry } : { backgroundColor: "#1f1f1f" }}
+                      type="button"
+                      className={cn(
+                      "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
+                        ? "bg-error text-text"
+                        : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
+                      )}
                     onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
                     >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     Wrong
                     </button>
                     <button
-                      className={`px-2 py-1 text-xs rounded-md ring-1 transition flex items-center gap-1 ${
+                      type="button"
+                      className={cn(
+                        "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
                         guessedFlags[selectedIndex]
-                          ? "text-white"
-                          : "text-neutral-300 ring-white/10 hover:bg-neutral-700"
-                      }`}
-                      style={guessedFlags[selectedIndex]
-                        ? { backgroundColor: '#b89f5a' }
-                        : { backgroundColor: '#1f1f1f' }}
+                          ? "bg-warning text-background"
+                          : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
+                      )}
                       onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={guessedFlags[selectedIndex] ? 'white' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={guessedFlags[selectedIndex] ? "text-background" : "text-text-muted"}>
                         <circle cx="12" cy="12" r="8.5" />
                         <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
                         <path d="M12 16.9h.01" />
@@ -2357,32 +2417,35 @@ export default function PapersMarkPage() {
                   </div>
 
               {/* Answers summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+              <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
                 <div
-                  className="p-3 rounded-md border border-white/10"
-                  style={{
-                    backgroundColor: guessedFlags[selectedIndex]
-                      ? '#b89f5a'
-                      : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
-                          ? "#6c9e69"
-                          : ((derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
-                              ? PAPER_COLORS.chemistry
-                              : '#2b2f36'))
-                  }}
+                  className={cn(
+                    "rounded-organic-md border border-border-subtle p-3",
+                    guessedFlags[selectedIndex] && "bg-warning/85 text-background",
+                    !guessedFlags[selectedIndex] &&
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true &&
+                      "bg-primary/90 text-background",
+                    !guessedFlags[selectedIndex] &&
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false &&
+                      "bg-error/90 text-text",
+                    !guessedFlags[selectedIndex] &&
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== true &&
+                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== false &&
+                      "bg-surface-mid text-text",
+                  )}
                 >
-                  <div className="text-xs text-white/90">Your answer</div>
-                  <div className="text-white text-sm mt-1">{answers[selectedIndex]?.choice ?? "—"}</div>
+                  <div className="text-xs opacity-90">Your answer</div>
+                  <div className="mt-1 text-sm font-medium">{answers[selectedIndex]?.choice ?? "—"}</div>
                 </div>
-                <div
-                  className="p-3 rounded-md"
-                  style={{ backgroundColor: "#6c9e69" }}
-                >
-                  <div className="text-xs text-white/90">Correct answer</div>
-                  <div className="text-white text-sm mt-1">{(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}</div>
+                <div className="rounded-organic-md border border-border-subtle bg-primary/90 p-3 text-background">
+                  <div className="text-xs opacity-90">Correct answer</div>
+                  <div className="mt-1 text-sm font-medium">
+                    {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}
+                  </div>
                 </div>
-                <div className="p-3 rounded-md" style={{ backgroundColor: '#2b2f36' }}>
-                  <div className="text-xs text-neutral-200">Time taken</div>
-                  <div className="text-neutral-50 text-sm mt-1">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
+                <div className="rounded-organic-md border border-border-subtle bg-surface-mid p-3 text-text">
+                  <div className="text-xs text-text-muted">Time taken</div>
+                  <div className="mt-1 text-sm font-medium">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
                 </div>
               </div>
 
@@ -2441,15 +2504,11 @@ export default function PapersMarkPage() {
                                   <div className="w-5 text-xs text-neutral-300 font-medium">{letter}</div>
                                   <div className="flex-1 h-1.5 bg-neutral-800/50 rounded-full overflow-hidden">
                                     <div
-                                      className="h-full rounded-full transition-all duration-300"
-                                      style={{
-                                        width: `${Math.max(percentage, 0.5)}%`,
-                                        backgroundColor: isCorrect
-                                          ? "#6c9e69"
-                                          : isUserChoice
-                                          ? "#b89f5a"
-                                          : "#5a6370",
-                                      }}
+                                      className={cn(
+                                        "h-full rounded-full transition-all duration-300",
+                                        isCorrect ? "bg-primary" : isUserChoice ? "bg-warning" : "bg-text-muted",
+                                      )}
+                                      style={{ width: `${Math.max(percentage, 0.5)}%` }}
                                     />
                                   </div>
                                   <div className="w-10 text-xs text-neutral-400 text-right">
@@ -2475,13 +2534,10 @@ export default function PapersMarkPage() {
                 return (
                   <div className={`grid gap-4 transition-all duration-300 grid-cols-1`}>
                     {/* Question image */}
-                    <div className={`relative rounded-lg transition-all duration-300 w-full`} style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff' }}>
-                      {/* Scrollable container for image content */}
+                    <div className="relative w-full rounded-organic-lg transition-all duration-300" style={{ height: '60vh', backgroundColor: cssVar.background }}>
                       <div 
-                        className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
-                        style={{
-                          backgroundColor: isDarkMode ? '#000000' : '#ffffff'
-                        }}
+                        className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
+                        style={{ backgroundColor: cssVar.background }}
                       >
                         <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
                           <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
@@ -2499,7 +2555,7 @@ export default function PapersMarkPage() {
                                   position: 'relative',
                                   display: 'inline-block',
                                   lineHeight: 0,
-                                  backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                                  backgroundColor: isDarkMode ? cssVar.text : 'transparent'
                                 }}
                               >
                                 <img
@@ -2578,13 +2634,10 @@ export default function PapersMarkPage() {
                       if (isTMUA) {
                         // TMUA: Answer image below question with solution label
                         return (
-                          <div className="relative rounded-lg transition-all duration-300 w-full border-2" style={{ height: '60vh', backgroundColor: isDarkMode ? '#000000' : '#ffffff', borderColor: 'rgba(108, 158, 105, 0.25)' }}>
-                            {/* Scrollable container for image content */}
+                          <div className="relative w-full rounded-organic-lg border-2 border-primary/30 transition-all duration-300" style={{ height: '60vh', backgroundColor: cssVar.background }}>
                             <div 
-                              className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out rounded-lg"
-                              style={{
-                                backgroundColor: isDarkMode ? '#000000' : '#ffffff'
-                              }}
+                              className="absolute inset-0 overflow-y-auto overflow-x-hidden rounded-organic-lg scrollbar-hide transition-colors duration-300 ease-in-out"
+                              style={{ backgroundColor: cssVar.background }}
                             >
                               <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
                                 <div className="relative flex w-full justify-center" style={{ isolation: 'isolate' }}>
@@ -2602,7 +2655,7 @@ export default function PapersMarkPage() {
                                         position: 'relative',
                                         display: 'inline-block',
                                         lineHeight: 0,
-                                        backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                                        backgroundColor: isDarkMode ? cssVar.text : 'transparent'
                                       }}
                                     >
                                       <img
@@ -2685,7 +2738,7 @@ export default function PapersMarkPage() {
                           <div className="flex items-center justify-between mb-3">
                             <div className="text-sm font-semibold text-neutral-200">Suggested Answer</div>
                             {currentQuestionTitle && (
-                              <div className="ml-3 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#1f1f1f', color: '#d1d5db' }}>
+                              <div className="ml-3 rounded-full bg-surface-mid px-2 py-0.5 text-xs font-medium text-text-muted">
                                 {currentQuestionTitle}
                               </div>
                             )}
@@ -2743,18 +2796,18 @@ export default function PapersMarkPage() {
 
               {/* Tip Section - Full Width Below Question/Answer */}
               {currentTip && (
-                <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: 'rgba(108, 158, 105, 0.12)' }}>
+                <div className="mt-4 rounded-organic-lg border border-primary/25 bg-primary/10 p-4">
                   <div className="space-y-3">
                     {/* Tip Header */}
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5" style={{ color: "#6c9e69" }} fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
-                      <div className="text-base font-bold" style={{ color: "#6c9e69" }}>Tip</div>
+                      <div className="text-base font-bold text-primary">Tip</div>
                   </div>
                     {/* Tip Content */}
                     <div className="text-sm text-neutral-200 leading-relaxed">
-                      <MathContent content={currentTip} className="text-neutral-200 text-sm" />
+                      <MathContent content={currentTip} className="text-sm text-text" />
                     </div>
                   </div>
                 </div>
@@ -2766,7 +2819,7 @@ export default function PapersMarkPage() {
                   <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowNotesBox(!showNotesBox)}
-                      className="px-2.5 py-1.5 text-xs rounded-md transition bg-[#0f1114] text-neutral-300 hover:bg-[#121418] flex items-center gap-1.5"
+                      className="px-2.5 py-1.5 text-xs rounded-md transition bg-surface-elevated text-neutral-300 hover:bg-surface-mid flex items-center gap-1.5"
                       aria-expanded={showNotesBox}
                       title={showNotesBox ? "Hide note" : "Add a personal note"}
                     >
@@ -2784,13 +2837,13 @@ export default function PapersMarkPage() {
                           <circle cx="12" cy="8" r="1" />
                         </svg>
                   </button>
-                      <div className="absolute left-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
+                      <div className="absolute left-0 z-10 hidden group-hover:block bg-surface-elevated text-[11px] text-neutral-300 p-2 rounded-md border border-border w-64 shadow-lg">
                         This note will appear with this question if you add it to Drill. You can review your notes in the Papers archive. Everything you type is autosaved.
                       </div>
                       </div>
                     </div>
                     {(noteStatus === 'typing' || noteStatus === 'saved') && (
-                    <div className={`px-2 py-0.5 rounded-md text-[11px] ${noteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
+                    <div className={cn('rounded-md px-2 py-0.5 text-[11px]', noteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
                         {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
                       </div>
                     )}
@@ -2887,7 +2940,7 @@ export default function PapersMarkPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="text-lg font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
-              <div className={`px-2 py-0.5 rounded-md text-[11px] ${noteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
+              <div className={cn('rounded-md px-2 py-0.5 text-[11px]', noteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
                 {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
               </div>
             </div>
@@ -2902,7 +2955,7 @@ export default function PapersMarkPage() {
                 const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
                 const opts = Array.from(new Set([...preset, ...custom]));
                 return (
-                  <div key={qn} className="flex items-center justify-between bg-[#0f1114] hover:bg-[#121418] rounded-md px-3 py-2">
+                  <div key={qn} className="flex items-center justify-between bg-surface-elevated hover:bg-surface-mid rounded-md px-3 py-2">
                     <button className="text-sm font-medium text-neutral-200" onClick={() => setSelectedIndex(index)}>Q{qn}</button>
                     <div className="flex items-center gap-2">
                       <MistakeSelect
@@ -2941,14 +2994,14 @@ export default function PapersMarkPage() {
                       <circle cx="12" cy="8" r="1" />
                     </svg>
                   </button>
-                  <div className="absolute left-0 z-10 hidden group-hover:block bg-[#0f1114] text-[11px] text-neutral-300 p-2 rounded-md border border-white/10 w-64 shadow-lg">
+                  <div className="absolute left-0 z-10 hidden group-hover:block bg-surface-elevated text-[11px] text-neutral-300 p-2 rounded-md border border-border w-64 shadow-lg">
                     These notes are private. They are autosaved and available in the Papers archive.
                   </div>
               </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-[11px] text-neutral-400">Private to you</div>
-                <div className={`px-2 py-0.5 rounded-md text-[11px] ${sessionNoteStatus === 'saved' ? 'bg-[rgba(80,97,65,0.2)] text-[#a6d48a]' : 'bg-transparent text-neutral-400'}`}>
+                <div className={cn('rounded-md px-2 py-0.5 text-[11px]', sessionNoteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
                   {sessionNoteStatus === 'typing' ? 'Saving…' : 'Saved'}
                 </div>
               </div>
@@ -2976,15 +3029,14 @@ export default function PapersMarkPage() {
         <div className="flex justify-end gap-3">
           <Button
             variant="secondary"
-            className="px-4 py-2 text-sm rounded-md ring-1 ring-white/10 bg-[#0f1114] text-neutral-300 hover:bg-[#121418]"
-            onClick={() => router.push("/papers/library")}
+            className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted hover:bg-surface-mid hover:text-text"
+            onClick={() => router.push("/past-papers/library")}
           >
             New Session
           </Button>
           <Button
             variant="primary"
-            className="px-4 py-2 text-sm rounded-md text-white shadow-glow"
-            style={{ backgroundColor: "#6c9e69", borderColor: 'rgba(255,255,255,0.15)' }}
+            className="rounded-organic-md px-4 py-2 text-sm shadow-glow"
             onClick={handleSaveAndContinue}
             disabled={isSubmitting}
           >

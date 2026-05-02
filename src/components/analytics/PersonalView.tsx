@@ -1,5 +1,5 @@
 /**
- * Personal analytics view - personal stats, insights, and progress
+ * Mental Maths personal analytics — session history → overview → trends → mistakes
  */
 
 "use client";
@@ -7,23 +7,18 @@
 import { useState } from "react";
 import { StatsHero } from "./StatsHero";
 import { PerformanceChartsSection } from "./PerformanceChartsSection";
-import { PastSessionsSection } from "./PastSessionsSection";
-import { TopicsOverviewSection } from "./TopicsOverviewSection";
+import { SessionsHistorySection } from "./SessionsHistorySection";
+import { MistakeAnalysisSection } from "./MistakeAnalysisSection";
 import {
-  TimeRange,
   UserStats,
   PerformanceDataPoint,
   TrendData,
   SessionSummary,
-  WrongQuestionPattern,
 } from "@/types/analytics";
 
 interface PersonalViewProps {
-  timeRange: TimeRange;
-  onTimeRangeChange: (range: TimeRange) => void;
   userStats: UserStats;
   performanceData: PerformanceDataPoint[];
-  insights: any[];
   strongest: any;
   weakest: any;
   accuracy: number;
@@ -32,15 +27,13 @@ interface PersonalViewProps {
   speedTrend: TrendData;
   questionsTrend: TrendData;
   sessions: SessionSummary[];
-  commonMistakesMap?: Map<string, WrongQuestionPattern[]>;
+  onDeleteSession: (sessionId: string) => Promise<void>;
+  onClearAllSessions: () => Promise<void>;
 }
 
 export function PersonalView({
-  timeRange,
-  onTimeRangeChange,
   userStats,
   performanceData,
-  insights,
   strongest,
   weakest,
   accuracy,
@@ -49,9 +42,12 @@ export function PersonalView({
   speedTrend,
   questionsTrend,
   sessions,
-  commonMistakesMap,
+  onDeleteSession,
+  onClearAllSessions,
 }: PersonalViewProps) {
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set(),
+  );
 
   const toggleSection = (sectionId: string) => {
     setCollapsedSections((prev) => {
@@ -66,7 +62,6 @@ export function PersonalView({
   };
 
   const handleTopicClick = (topicId: string, _topicName: string) => {
-    // Scroll to topic in Topic Performance section
     setTimeout(() => {
       const element = document.getElementById(`topic-${topicId}`);
       if (element) {
@@ -77,7 +72,17 @@ export function PersonalView({
 
   return (
     <div className="space-y-6 sm:space-y-8">
+      <SessionsHistorySection
+        sessions={sessions}
+        isCollapsed={collapsedSections.has("sessions")}
+        onToggleCollapse={() => toggleSection("sessions")}
+        onDeleteSession={onDeleteSession}
+        onClearAllSessions={onClearAllSessions}
+      />
+
       <StatsHero
+        variant="drill"
+        sessions={sessions}
         totalQuestions={userStats.totalQuestions}
         accuracy={accuracy}
         avgSpeed={avgSpeed}
@@ -93,25 +98,17 @@ export function PersonalView({
         onToggleCollapse={() => toggleSection("overview")}
       />
 
-      <TopicsOverviewSection
-        userStats={userStats}
-        strongest={strongest}
-        weakest={weakest}
-        isCollapsed={collapsedSections.has("topics")}
-        onToggleCollapse={() => toggleSection("topics")}
-        commonMistakesMap={commonMistakesMap}
-      />
-
       <PerformanceChartsSection
+        sessions={sessions}
         performanceData={performanceData}
         isCollapsed={collapsedSections.has("performance")}
         onToggleCollapse={() => toggleSection("performance")}
       />
 
-      <PastSessionsSection
+      <MistakeAnalysisSection
         sessions={sessions}
-        isCollapsed={collapsedSections.has("sessions")}
-        onToggleCollapse={() => toggleSection("sessions")}
+        isCollapsed={collapsedSections.has("mistakes")}
+        onToggleCollapse={() => toggleSection("mistakes")}
       />
     </div>
   );

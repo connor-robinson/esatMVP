@@ -6,7 +6,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { getPaperTypeColor, PAPER_COLORS } from "@/config/colors";
+import { getExamAccentTextClass } from "@/config/colors";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
 
 interface TimelineMarker {
@@ -161,8 +161,6 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
     });
   }
 
-  const examColor = (examName: string) => getPaperTypeColor(examName);
-
   // Use actual positions if available - these are now center positions from RoadmapList
   const defaultHeight = 100; // Approximate height for fallback
   const getNodePosition = (index: number): number => {
@@ -198,7 +196,7 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
   const connectorEndPos = getConnectorEndPosition();
 
-  // Generate smooth curved path using sine wave pattern
+  /* Generate smooth curved path using sine wave pattern */
   const generateCurvedPath = (startY: number = 0, endY?: number): string => {
     if (allNodePositions.length === 0) return "";
 
@@ -289,9 +287,6 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
   const remainingPath = generateCurvedPath(currentNodeY, connectorEndPos);
 
   // White for completed sections, grey for remaining
-  const completedColor = "rgba(255, 255, 255, 0.9)";
-  const remainingColor = "rgba(255, 255, 255, 0.2)";
-
   return (
     <div className="relative w-full h-full min-h-screen">
       {/* Main timeline branch - curved sine wave line - centered container */}
@@ -339,12 +334,11 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
           {/* Completed section - Clean White Line */}
           {completedPath && (
-            <>
-              {/* Main path - Animates in */}
+            <g className="text-text opacity-90">
               <motion.path
                 d={completedPath}
                 fill="none"
-                stroke={completedColor}
+                stroke="currentColor"
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -352,25 +346,23 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
                 animate={{ pathLength: 1 }}
                 transition={{ duration: 2.5, ease: "easeInOut" }}
               />
-            </>
+            </g>
           )}
 
-          {/* Remaining section - Clean Grey Line */}
           {remainingPath && (
-            <>
-              {/* Main path */}
+            <g className="text-text-muted opacity-[0.5]">
               <motion.path
                 d={remainingPath}
                 fill="none"
-                stroke={remainingColor}
+                stroke="currentColor"
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ duration: 2.5, ease: "easeInOut", delay: 2.5 }} // Starts after completed section
+                transition={{ duration: 2.5, ease: "easeInOut", delay: 2.5 }}
               />
-            </>
+            </g>
           )}
         </svg>
 
@@ -382,34 +374,30 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
           // Determine if this node is completed (before current index)
           const isCompleted = index < effectiveCurrentIndex;
-          const nodeColor = isCompleted ? completedColor : remainingColor;
-
           return (
             <div
               key={`node-${index}`}
-              className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
+              className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
               style={{
                 left: `${nodeX}px`,
-                top: `${centerPosition}px`
+                top: `${centerPosition}px`,
               }}
             >
-              {/* Clean node dot - white if completed, grey if not */}
               <motion.div
-                className="rounded-full"
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full border-2",
+                  isCompleted
+                    ? "border-text bg-text"
+                    : "border-text-muted bg-surface-elevated",
+                )}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{
-                  delay: index * 0.1 + (isCompleted ? 0 : 2.0), // Slower cascading delay
+                  delay: index * 0.1 + (isCompleted ? 0 : 2.0),
                   duration: 0.5,
                   type: "spring",
                   stiffness: 260,
-                  damping: 20
-                }}
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  backgroundColor: nodeColor,
-                  border: `2px solid ${nodeColor}`,
+                  damping: 20,
                 }}
               />
             </div>
@@ -419,8 +407,8 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
         {/* Timeline markers and text - in the same centered container */}
         {markers.map((marker, idx) => {
           const position = getMarkerPosition(marker.stageIndex);
-          const color = examColor(marker.examName);
           const markerX = getNodeXPosition(position);
+          const markerPast = marker.stageIndex < effectiveCurrentIndex;
 
           return (
             <div
@@ -428,59 +416,52 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
               className="absolute"
               style={{ top: `${position}px`, left: 0, width: "200px" }}
             >
-              {/* Clean marker dot - positioned on the line */}
               <div
-                className="absolute -translate-x-1/2 -translate-y-1/2 z-10 transition-transform duration-500 hover:scale-125"
+                className="absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 hover:scale-125"
                 style={{
                   left: `${markerX}px`,
                 }}
               >
                 <motion.div
-                  className="relative rounded-full"
+                  className={cn(
+                    "relative h-2 w-2 rounded-full",
+                    markerPast ? "bg-text" : "bg-text-muted",
+                  )}
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5 + idx * 0.2, duration: 0.4, type: "spring" }} // Appear after line starts
-                  style={{
-                    width: "8px",
-                    height: "8px",
-                    backgroundColor: marker.stageIndex < effectiveCurrentIndex ? "rgba(255, 255, 255, 0.9)" : "rgba(255, 255, 255, 0.4)",
+                  transition={{
+                    delay: 0.5 + idx * 0.2,
+                    duration: 0.4,
+                    type: "spring",
                   }}
                 />
               </div>
 
-              {/* Guidance text - Clean Marginal Note Style */}
               <motion.div
-                className={cn(
-                  "absolute left-1/2 mt-4 p-3", // Removed -translate-x-1/2 from class as we animate it
-                  "flex flex-col gap-1.5",
-                  "transition-all duration-300 hover:translate-y-[-2px]"
-                )}
-                initial={{ opacity: 0, y: 10, x: "-50%" }} // Add x: -50% here
-                animate={{ opacity: 1, y: 0, x: "-50%" }} // And here to maintain centering
-                transition={{ delay: 0.7 + idx * 0.2, duration: 0.5 }} // Text fades in after dot
-                style={{
-                  width: "220px",
-                }}
+                className="absolute left-1/2 mt-4 flex w-[220px] flex-col gap-1.5 p-3 transition-all duration-fast ease-signature hover:-translate-y-0.5"
+                initial={{ opacity: 0, y: 10, x: "-50%" }}
+                animate={{ opacity: 1, y: 0, x: "-50%" }}
+                transition={{ delay: 0.7 + idx * 0.2, duration: 0.5 }}
               >
-                {/* Exam Label */}
                 <span
-                  className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-80"
-                  style={{ color: color }}
+                  className={cn(
+                    "text-[10px] font-bold uppercase tracking-[0.2em]",
+                    getExamAccentTextClass(marker.examName),
+                  )}
                 >
                   {marker.examName}
                 </span>
 
-                {/* Main Text */}
-                <p
-                  className="text-sm font-medium text-white/60 leading-relaxed font-sans"
-                >
+                <p className="text-sm font-medium leading-relaxed text-text-muted">
                   {marker.text}
                 </p>
 
-                {/* Subtle decorative line */}
-                <div
-                  className="h-[1px] w-8 mt-1 opacity-30"
-                  style={{ backgroundColor: color }}
+                <span
+                  className={cn(
+                    "mt-1 block h-0 w-8 border-t border-current opacity-40",
+                    getExamAccentTextClass(marker.examName),
+                  )}
+                  aria-hidden
                 />
               </motion.div>
             </div>

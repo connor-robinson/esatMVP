@@ -3,27 +3,45 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Crown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface UpgradeCTAProps {
   feature?: string;
   className?: string;
 }
 
-export function UpgradeCTA({ feature, className = "" }: UpgradeCTAProps) {
+export function UpgradeCTA({ feature, className }: UpgradeCTAProps) {
   return (
     <div
-      className={`rounded-lg border border-border bg-surface p-6 text-center ${className}`}
+      className={cn(
+        "rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8",
+        className,
+      )}
     >
-      <Crown className="w-10 h-10 text-primary mx-auto mb-3 opacity-80" />
-      <h3 className="font-semibold text-text mb-1">Upgrade for full access</h3>
-      <p className="text-sm text-text-muted mb-4 max-w-sm mx-auto">
-        {feature
-          ? `Unlock ${feature} and everything else with a paid plan.`
-          : "Get full access to past papers, mental maths, question bank, solutions, and more."}
-      </p>
-      <Link href="/pricing">
-        <Button variant="primary">View plans</Button>
-      </Link>
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <h3 className="text-lg font-semibold tracking-tight text-text">
+            Upgrade for full access
+          </h3>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-text-muted sm:mx-0 sm:mr-auto">
+            {feature
+              ? `Unlock ${feature} and everything else with a paid plan.`
+              : "Unlock the full roadmap and everything else with a paid plan."}
+          </p>
+          <div className="mt-5 flex justify-center sm:justify-start">
+            <Link href="/pricing">
+              <Button variant="wide" size="md" className="rounded-organic-lg">
+                View plans
+              </Button>
+            </Link>
+          </div>
+        </div>
+        <div className="flex justify-center sm:justify-end">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary">
+            <Crown className="h-8 w-8" strokeWidth={1.75} aria-hidden />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

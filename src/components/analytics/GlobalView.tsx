@@ -96,7 +96,7 @@ export function GlobalView({
       transition={{ duration: 0.2 }}
       className="space-y-6"
     >
-      <div className="relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated ring-1 ring-white/[0.06]">
+      <div className="relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated">
         <div className="border-b border-border px-6 py-6 sm:px-8 sm:py-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
@@ -230,7 +230,7 @@ export function GlobalView({
                   className={cn(
                     "grid grid-cols-12 gap-4 rounded-organic-md px-4 py-3 transition-colors duration-fast ease-signature",
                     isCurrentUser
-                      ? "border border-border bg-surface-mid ring-1 ring-border-subtle"
+                      ? "border border-border bg-surface-mid"
                       : "bg-surface-subtle hover:bg-surface-mid/90",
                   )}
                 >
@@ -323,7 +323,7 @@ export function GlobalView({
                 <div className="flex justify-center py-2">
                   <span className="text-2xl font-bold text-warning/35">...</span>
                 </div>
-                <div className="grid grid-cols-12 gap-4 rounded-organic-md border border-border bg-surface-mid px-4 py-3 ring-1 ring-border-subtle">
+                <div className="grid grid-cols-12 gap-4 rounded-organic-md border border-border bg-surface-mid px-4 py-3">
                   <div className="col-span-1 flex items-center justify-center">
                     <span className="font-mono text-lg font-bold tabular-nums text-warning">
                       {currentUserEntry.rank}

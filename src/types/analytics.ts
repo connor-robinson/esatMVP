@@ -113,6 +113,15 @@ export interface SessionSummary {
   correctAnswers: number;
   totalTime: number; // milliseconds
   isLatest?: boolean; // Mark the most recent session
+  /** Populated by mental-maths analytics fetch for detail / mistake breakdown */
+  _attempts?: Array<{
+    is_correct?: boolean | null;
+    question_id?: string | null;
+    time_spent_ms?: number | null;
+    user_answer?: string | null;
+    order_index?: number | null;
+  }>;
+  _questionsMap?: Map<string, { prompt: string; answer: string }>;
 }
 
 export interface SessionDetail extends SessionSummary {

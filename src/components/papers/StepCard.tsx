@@ -24,18 +24,17 @@ export function StepCard({ number, title, completed, disabled = false, children 
       <div className="space-y-4">
         {/* Step Header */}
         <div className="flex items-center gap-3">
-          <div className={cn(
-            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold",
-            completed 
-              ? "text-white" 
-              : "bg-white/10 text-neutral-400"
-          )}
-          style={completed ? { backgroundColor: "#506141" } : undefined}>
-            {completed ? <Check className="w-4 h-4" strokeWidth={3} /> : number}
+          <div
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold",
+              completed ? "bg-primary text-background" : "bg-surface-subtle text-text-muted"
+            )}
+          >
+            {completed ? <Check className="h-4 w-4" strokeWidth={3} /> : number}
           </div>
-          <h3 className="text-lg font-semibold text-neutral-100">{title}</h3>
+          <h3 className="text-lg font-semibold text-text">{title}</h3>
           {completed && (
-            <div className="ml-auto text-xs font-medium" style={{ color: "#506141" }}>Completed</div>
+            <div className="ml-auto text-xs font-medium text-primary">Completed</div>
           )}
         </div>
         

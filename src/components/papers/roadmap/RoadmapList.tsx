@@ -229,8 +229,19 @@ export function RoadmapList({
     cardRefs.current = cardRefs.current.slice(0, nodes.length);
   }, [nodes.length]);
 
+  // Open the current unlocked stage by default (Figma: first row expanded)
+  useEffect(() => {
+    if (nodes.length === 0) return;
+    const current = nodes.find((n) => n.isCurrent && n.isUnlocked);
+    if (!current) return;
+    setExpandedStageId((prev) => (prev == null ? current.stage.id : prev));
+  }, [nodes.length]);
+
   return (
-    <div ref={containerRef} className="w-full space-y-4 relative overflow-visible">
+    <div
+      ref={containerRef}
+      className="relative w-full space-y-5 overflow-visible sm:space-y-6"
+    >
       {nodes.map((node, index) => {
         const stageCompletionData =
           completionData.get(node.stage.id)?.parts || new Map();
@@ -252,7 +263,6 @@ export function RoadmapList({
               }
             }}
             className="relative"
-            style={{ padding: node.isCurrent ? "0 1%" : "0" }}
           >
             <StageListCard
               stage={node.stage}

@@ -7,7 +7,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { useSubscription } from '@/hooks/useSubscription';
 import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
@@ -642,9 +641,13 @@ export default function PapersRoadmapPage() {
 
   if (loading) {
     return (
-      <Container className='py-6'>
-        <PageHeader title='Practice Roadmap' />
-        <div className='py-12 text-center text-white/50'>Loading...</div>
+      <Container size="lg" className="bg-background py-10">
+        <div className="py-4">
+          <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
+            Practice Roadmap
+          </h1>
+        </div>
+        <div className="py-16 text-center text-sm text-text-muted">Loading…</div>
       </Container>
     );
   }
@@ -681,15 +684,13 @@ export default function PapersRoadmapPage() {
   });
 
   return (
-    <Container className='py-6'>
-      {/* Custom Title Section with proper padding */}
-      <div className='pt-4 pb-6'>
-        <h1 className='text-2xl font-semibold uppercase tracking-[0.12em] text-text'>
+    <Container size="lg" className="bg-background pb-16 pt-8 sm:pb-20 sm:pt-10">
+      <div className="pb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
           Practice Roadmap
         </h1>
       </div>
 
-      {/* Analytics Section - At the top */}
       <RoadmapAnalytics
         stages={visibleStages}
         completionData={completionData}
@@ -697,10 +698,9 @@ export default function PapersRoadmapPage() {
       />
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
-      <div className='pt-4 pb-8'>
-        <div className='flex gap-8 lg:gap-12'>
-          {/* Left: Timeline (15-20% width, hidden on mobile) */}
-          <div className='w-[18%] flex-shrink-0 hidden lg:block'>
+      <div className="pb-10 pt-2">
+        <div className="flex gap-8 lg:gap-12">
+          <div className="hidden w-[18%] shrink-0 lg:block">
             <div className='sticky top-8'>
               <RoadmapTimeline
                 stages={visibleStages}
@@ -710,8 +710,7 @@ export default function PapersRoadmapPage() {
             </div>
           </div>
 
-          {/* Right: Roadmap List (80-85% width, full width on mobile) */}
-          <div className='flex-1 min-w-0 lg:w-[82%]'>
+          <div className="min-w-0 flex-1 lg:w-[82%]">
             <RoadmapList
               nodes={timelineNodes}
               completionData={completionData}
@@ -720,8 +719,8 @@ export default function PapersRoadmapPage() {
               timelineNodePositions={nodePositions}
             />
             {!hasFullAccess && (
-              <div className='mt-8'>
-                <UpgradeCTA feature='the full roadmap' />
+              <div className="mt-10">
+                <UpgradeCTA feature="the full roadmap" />
               </div>
             )}
           </div>

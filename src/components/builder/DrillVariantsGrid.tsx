@@ -31,7 +31,7 @@ export function DrillVariantsGrid({
 
   if (!topic || !topic.variants || topic.variants.length === 0) {
     return (
-      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-mid shadow-lg ring-1 ring-white/[0.06]'>
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid'>
         <div className='flex-1 overflow-y-auto p-8'>
           <div className='py-12 text-center text-text-subtle'>
             <p className='text-sm'>
@@ -46,9 +46,9 @@ export function DrillVariantsGrid({
   }
 
   return (
-    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-mid shadow-lg ring-1 ring-white/[0.06]'>
-      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-8'>
-      <div className='mb-8 flex items-end justify-between'>
+    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
+      <div className='mb-6 flex items-end justify-between'>
         <div>
           <h2 className='mb-2 text-2xl font-bold text-text'>
             {topic.name} Drills
@@ -59,7 +59,7 @@ export function DrillVariantsGrid({
         </div>
       </div>
 
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4'>
         {topic.variants.map((variant) => {
           const variantId = `${topic.id}-${variant.id}`;
           const isSelected = selectedTopicIds.includes(variantId);
@@ -71,14 +71,14 @@ export function DrillVariantsGrid({
               className={cn(
                 'relative group rounded-organic-lg border transition-all',
                 isSelected
-                  ? 'border-primary/55 bg-surface-elevated shadow-md ring-1 ring-primary/35'
-                  : 'border-border-subtle/60 bg-surface-elevated hover:border-border hover:shadow-sm',
+                  ? 'border-primary/55 bg-surface-elevated shadow-sm ring-1 ring-primary/25'
+                  : 'border-border-subtle bg-surface-elevated hover:border-border hover:bg-surface-neutral',
               )}
             >
               {isSelected && (
                 <div className='absolute inset-0 bg-primary/5 rounded-organic-lg z-0 pointer-events-none' />
               )}
-              <div className='relative z-10 p-6 flex flex-col h-full'>
+              <div className='relative z-10 flex h-full flex-col p-4'>
                 <div className='flex justify-between items-start mb-4'>
                   <span
                     className={cn(
@@ -94,10 +94,10 @@ export function DrillVariantsGrid({
                     <Star className='text-text-muted/45 w-5 h-5 shrink-0' strokeWidth={1.5} />
                   )}
                 </div>
-                <h4 className='text-lg font-bold text-text mb-1'>
+                <h4 className='mb-1 text-base font-bold text-text'>
                   {variant.name}
                 </h4>
-                <p className='text-sm text-text-muted mb-6 flex-1'>
+                <p className='mb-4 flex-1 text-sm text-text-muted'>
                   {variant.description || `${topic.name}: ${variant.name}`}
                 </p>
                 <div className='flex items-center justify-between mt-auto'>
@@ -115,7 +115,7 @@ export function DrillVariantsGrid({
                     <button
                       type='button'
                       onClick={() => onRemoveVariant(variantId)}
-                      className='rounded-organic-md border border-border-subtle bg-surface-mid px-4 py-2 text-xs font-bold text-text-muted transition-colors hover:bg-surface-neutral hover:text-text'
+                      className='rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-1.5 text-xs font-bold text-text-muted transition-colors hover:bg-surface-neutral hover:text-text'
                     >
                       Remove
                     </button>
@@ -125,7 +125,7 @@ export function DrillVariantsGrid({
                       onClick={() =>
                         onAddVariant(variantId, topic.id, variant.id)
                       }
-                      className='flex items-center gap-1 rounded-organic-md bg-primary px-4 py-2 text-xs font-bold text-background shadow-md shadow-primary/25 transition-colors hover:bg-primary-hover hover:text-background'
+                      className='flex items-center gap-1 rounded-organic-md bg-primary px-3 py-1.5 text-xs font-bold text-background shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover hover:text-background'
                     >
                       <Plus className='w-3 h-3' />
                       Add

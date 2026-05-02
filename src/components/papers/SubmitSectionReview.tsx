@@ -50,16 +50,15 @@ export function SubmitSectionReview({
     return "Incomplete";
   };
 
-  const getStatusColor = (status: QuestionStatus): string => {
+  const statusBadgeClass = (status: QuestionStatus) => {
     switch (status) {
       case "Complete":
-        return "text-white";
+        return "bg-primary/15 text-primary";
       case "Incomplete":
-        return "text-red-400";
       case "Unseen":
-        return "text-red-400";
+        return "bg-error/10 text-error";
       default:
-        return "text-neutral-400";
+        return "text-text-muted";
     }
   };
 
@@ -67,49 +66,47 @@ export function SubmitSectionReview({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-t-organic-lg shadow-2xl bg-neutral-900"
+        className="w-full max-w-2xl rounded-t-organic-lg border border-border bg-surface-elevated shadow-bar-floating md:rounded-organic-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 rounded-t-organic-lg" style={{ backgroundColor: '#3d6064' }}>
+        <div className="flex items-center justify-between rounded-t-organic-lg bg-primary px-4 py-4 text-background md:rounded-t-organic-lg">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="text-lg font-semibold text-white uppercase tracking-wider">
+            <h3 className="text-lg font-semibold uppercase tracking-wider">
               Review Section {currentSectionIndex + 1} Of {totalSections}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-neutral-300 transition-colors"
+            className="rounded-organic-md p-1 transition-colors hover:bg-background/15"
+            type="button"
+            aria-label="Close"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Table */}
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
+        <div className="max-h-[60vh] overflow-y-auto p-4">
           <table className="w-full">
             <thead>
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-neutral-300 uppercase tracking-wider">
-                  <div className="flex items-center gap-2">
-                    Question #
-                  </div>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-text-muted">
+                  Question #
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-neutral-300 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase tracking-wider text-text-muted">
                   Status
                 </th>
-                <th className="text-center py-3 px-4 text-sm font-semibold text-neutral-300 uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-sm font-semibold uppercase tracking-wider text-text-muted">
                   Flagged for Review
                 </th>
               </tr>
@@ -126,22 +123,18 @@ export function SubmitSectionReview({
                       onNavigateToQuestion(index);
                       onClose();
                     }}
-                    className={cn(
-                      "cursor-pointer transition-colors hover:bg-white/5"
-                    )}
+                    className="cursor-pointer transition-colors hover:bg-surface-subtle"
                   >
-                    <td className="py-3 px-4 text-sm text-neutral-200">
-                      Question {questionNumber}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={cn("text-sm font-medium rounded-md px-2 py-1 inline-block", getStatusColor(status), status === "Complete" && "bg-interview/30")}>
+                    <td className="px-4 py-3 text-sm text-text">Question {questionNumber}</td>
+                    <td className="px-4 py-3">
+                      <span className={cn("inline-block rounded-organic-sm px-2 py-1 text-sm font-medium", statusBadgeClass(status))}>
                         {status}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center justify-center">
                         {isFlagged && (
-                          <svg className="w-7 h-7" fill="#5B8D94" stroke="#5B8D94" viewBox="0 0 24 24" strokeWidth={2}>
+                          <svg className="h-7 w-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 21V3h12l-4 6 4 6H5z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v18" />
                           </svg>
@@ -155,43 +148,18 @@ export function SubmitSectionReview({
           </table>
         </div>
 
-        {/* Footer Actions */}
-        <div className="flex justify-end gap-2 p-4">
+        <div className="flex justify-end gap-2 border-t border-border-subtle p-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature
-                     active:scale-95"
-            style={{
-              backgroundColor: 'transparent',
-              color: '#e5e7eb',
-              boxShadow: 'none'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            type="button"
+            className="rounded-organic-md px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-subtle hover:text-text"
           >
             Cancel
           </button>
           <button
             onClick={onSubmit}
-            className="px-6 py-2 rounded-organic-md text-sm font-semibold transition-all duration-fast ease-signature
-                     active:scale-95"
-            style={{
-              backgroundColor: '#3d6064',
-              color: '#ffffff',
-              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#345155';
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#3d6064';
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-            }}
+            type="button"
+            className="rounded-organic-md bg-primary px-6 py-2 text-sm font-semibold text-background transition-colors hover:bg-primary-hover hover:shadow-glow"
           >
             {isLastSection ? "Submit & Mark" : "Submit & Next Section"}
           </button>
@@ -200,7 +168,3 @@ export function SubmitSectionReview({
     </div>
   );
 }
-
-
-
-

@@ -22,8 +22,6 @@ import { UserIcon, LogInIcon } from '@/components/icons';
 import { X, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const PAST_PAPERS_COLOR = '#5B8D94';
-
 interface SessionProgressBarProps {
   /** When true, render as a slim bar below the main navbar (hybrid layout) */
   embedded?: boolean;
@@ -422,26 +420,19 @@ export function SessionProgressBar({
           {/* Progress Bar Section */}
           <div className='flex-1 mx-8 relative'>
             {/* Progress bar with nodes - completely restructured for perfect alignment */}
-            <div className='w-full relative' style={{ height: '24px' }}>
+                <div className='relative h-6 w-full'>
               {/* Shared center line - both progress bar and nodes align to this */}
-              <div
-                className='absolute left-0 right-0'
-                style={{ top: '12px', height: '0px' }}
-              >
+                <div className='absolute inset-x-0 top-3 h-0'>
                 {/* Progress bar track - positioned relative to center line */}
                 <div
-                  className='absolute left-0 right-0 bg-white/10 rounded-full overflow-hidden'
-                  style={{
-                    top: '-2.5px', // Half of 5px height to center on the line
-                    height: '5px',
-                  }}
+                  className='absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-border-subtle'
                 />
 
                 {/* Progress segments - only between filled nodes */}
                 {progressSegments.map((segment, index) => (
                   <div
                     key={`segment-${index}`}
-                    className='absolute bg-[#5B8D94] transition-all duration-500 ease-out rounded-full'
+                    className='absolute bg-primary transition-all duration-500 ease-out rounded-full'
                     style={{
                       left: `${segment.start}%`,
                       width: `${segment.end - segment.start}%`,
@@ -473,15 +464,15 @@ export function SessionProgressBar({
                         className={cn(
                           'w-3 h-3 rounded-full border-2 transition-all',
                           isCompleted
-                            ? 'bg-[#5B8D94] border-[#5B8D94]'
+                            ? 'border-primary bg-primary'
                             : isCurrent && !isOnInstructionPage
-                              ? 'bg-[#5B8D94] border-[#5B8D94]'
-                              : 'bg-transparent border-white/30',
+                              ? 'border-primary bg-primary'
+                              : 'border-border bg-transparent',
                         )}
                       />
                       {/* Section label - positioned below node, doesn't affect centering */}
                       {index < 3 && (
-                        <span className='text-[10px] text-white/40 mt-1 uppercase tracking-tighter'>
+                        <span className='text-[10px] text-text-muted mt-1 uppercase tracking-tighter'>
                           {index === 0 ? 'A' : index === 1 ? 'B' : 'C'}
                         </span>
                       )}
@@ -526,13 +517,13 @@ export function SessionProgressBar({
                         }
                         return false;
                       })()
-                        ? 'bg-[#5B8D94] border-[#5B8D94]'
-                        : 'bg-transparent border-white/30',
+                        ? 'border-primary bg-primary'
+                        : 'border-border bg-transparent',
                     )}
                   />
-                  <span className='text-[10px] text-white/40 mt-1 uppercase tracking-tighter'>
-                    MARK
-                  </span>
+                <span className='text-[10px] text-text-muted mt-1 uppercase tracking-tighter'>
+                  MARK
+                </span>
                 </div>
               </div>
 
@@ -674,7 +665,7 @@ export function SessionProgressBar({
             onClick={handleCancelQuit}
           >
             <div
-              className='relative w-full max-w-md mx-4 bg-[#1a1f27] border border-red-500/30 rounded-lg shadow-2xl overflow-hidden flex flex-col'
+              className='relative mx-4 flex w-full max-w-md flex-col overflow-hidden rounded-organic-lg border border-error/30 bg-surface-elevated shadow-bar-floating'
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

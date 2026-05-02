@@ -121,17 +121,17 @@ duration-normal     → 300ms
 
 ### Subject Categories sidebar
 - Width: `w-24 xl:w-28`  
-- Panel: `rounded-organic-xl border border-border bg-surface-elevated ring-1 ring-white/[0.06]`  
+- Panel: `rounded-organic-xl border border-border bg-surface-elevated ring-1 ring-text/[0.06]`  
 - Icon tile: `h-14 w-14 rounded-2xl`; selected = category color class, idle = `bg-surface-elevated`  
 
 ### Topic Folders (middle column)
-- Panel: `rounded-organic-xl border border-border bg-surface-mid ring-1 ring-white/[0.06]`  
+- Panel: `rounded-organic-xl border border-border bg-surface-mid ring-1 ring-text/[0.06]`  
 - Selected row: left accent `w-1 bg-secondary/80`, ring `ring-secondary/35`  
 - Locked rows: `opacity-80`, lock icon, no click handler  
 - Upgrade card (bottom): crown icon, `bg-surface-elevated`, `bg-primary` CTA  
 
 ### Drill Variants Grid (right column)
-- Panel: `rounded-organic-xl border border-border bg-surface-mid ring-1 ring-white/[0.06]`  
+- Panel: `rounded-organic-xl border border-border bg-surface-mid ring-1 ring-text/[0.06]`  
 - Card selected: `border-primary/55 ring-primary/35 bg-primary/5`  
 - Add button: `bg-primary text-background rounded-organic-md`  
 - Remove button: `border border-border-subtle bg-surface-mid text-text-muted rounded-organic-md`  
@@ -180,7 +180,7 @@ duration-normal     → 300ms
 | Use `rounded-organic-xl` for panel containers | Mix `rounded-2xl` and `rounded-organic-xl` |
 | Use `border-border` for panel edges | Use `border-border-subtle/40` — too faint |
 | Use `bg-surface-mid` for row cards inside modals | Use `bg-surface-elevated` for rows (too light) |
-| Always use `ring-1 ring-white/[0.06]` on panels | Skip the ring — corners won't read on dark bg |
+| Always use `ring-1 ring-text/[0.06]` on panels (tracks `--color-text` in light/dark) | Skip the ring — corners won't read on dark bg |
 | Use `text-background` on Easy pill | Use `text-text` on lime — too low contrast |
 | Use `text-text` on Medium/Hard/Extra pills | Use `text-background` on dark fills |
 | Source difficulty colors from `difficultyTokens` in `theme.ts` | Define pill colors inline in components |

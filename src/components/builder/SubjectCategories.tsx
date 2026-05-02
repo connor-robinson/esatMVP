@@ -65,9 +65,9 @@ export function SubjectCategories({
   onSelectCategory,
 }: SubjectCategoriesProps) {
   return (
-    <aside className='hidden lg:flex h-full min-h-0 w-24 shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-elevated shadow-lg ring-1 ring-white/[0.06] xl:w-28'>
-      <div className='flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-2 py-6'>
-        <div className='space-y-8'>
+    <aside className='hidden h-full min-h-0 w-20 shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated lg:flex xl:w-24'>
+      <div className='flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-2 py-4'>
+        <div className='space-y-5'>
           {(Object.keys(categoryConfig) as HighLevelCategory[]).map(
             (category) => {
               const config = categoryConfig[category];
@@ -79,23 +79,23 @@ export function SubjectCategories({
                   key={category}
                   onClick={() => onSelectCategory(category)}
                   className={cn(
-                    'flex flex-col items-center gap-2 w-full px-2 transition-all',
+                    'flex w-full flex-col items-center gap-1.5 px-1.5 transition-all',
                     !isSelected && 'opacity-60 hover:opacity-100',
                   )}
                 >
                   <div
                     className={cn(
-                      'flex h-14 w-14 items-center justify-center rounded-2xl transition-all',
+                      'flex h-12 w-12 items-center justify-center rounded-organic-lg border border-border-subtle transition-all xl:h-14 xl:w-14',
                       isSelected
-                        ? categorySelectedClasses[category]
-                        : 'bg-surface-elevated text-text-muted hover:bg-surface-neutral hover:text-text',
+                        ? cn(categorySelectedClasses[category], 'border-transparent')
+                        : 'bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text',
                     )}
                   >
-                    <Icon className='w-7 h-7' />
+                    <Icon className='h-5 w-5 xl:h-6 xl:w-6' />
                   </div>
                   <span
                     className={cn(
-                      'text-[11px] font-semibold uppercase tracking-[0.14em]',
+                      'text-center text-[10px] font-medium leading-tight tracking-[0.06em]',
                       isSelected ? 'text-text' : 'text-text-muted',
                     )}
                   >

@@ -8,8 +8,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { getSectionColor } from "@/config/colors";
+import { getSectionSubjectPillClass } from "@/config/colors";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 export default function ResumePage() {
   const router = useRouter();
@@ -118,94 +119,51 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="flex min-h-screen items-center justify-center bg-background p-8">
       <div className="w-full max-w-2xl space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <h1 className="text-2xl font-mono font-semibold text-white/90">
-            Session Paused
-          </h1>
-          <p className="text-sm font-mono text-white/60">
-            {paperDisplayName}
-          </p>
+        <div className="space-y-3 text-center">
+          <h1 className="font-mono text-2xl font-semibold text-text">Session Paused</h1>
+          <p className="font-mono text-sm text-text-muted">{paperDisplayName}</p>
         </div>
 
-        {/* Session Info Card */}
-        <div className="bg-white/[0.02] border border-white/10 rounded-organic-lg p-6 space-y-4">
-          {/* Current Question */}
-          <div className="flex items-center justify-between py-2 border-b border-white/5">
-            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Current Question</span>
-            <span className="text-base font-mono font-semibold text-white/90">
-              Question {currentQuestionNumber}
-            </span>
+        <div className="space-y-4 rounded-organic-lg border border-border bg-surface-mid/40 p-6">
+          <div className="flex items-center justify-between border-b border-border-subtle py-2">
+            <span className="font-mono text-sm uppercase tracking-wide text-text-muted">Current Question</span>
+            <span className="font-mono text-base font-semibold text-text">Question {currentQuestionNumber}</span>
           </div>
 
-          {/* Section */}
           {selectedSections.length > 0 && (
-            <div className="flex items-center justify-between py-2 border-b border-white/5">
-              <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Section</span>
-              <span 
-                className="text-base font-mono font-semibold px-3 py-1.5 rounded-organic-md"
-                style={{ 
-                  backgroundColor: getSectionColor(currentSection),
-                  color: '#ffffff'
-                }}
+            <div className="flex items-center justify-between border-b border-border-subtle py-2">
+              <span className="font-mono text-sm uppercase tracking-wide text-text-muted">Section</span>
+              <span
+                className={cn(
+                  "rounded-organic-md px-3 py-1.5 font-mono text-base font-semibold",
+                  getSectionSubjectPillClass(String(currentSection)),
+                )}
               >
                 {currentSection}
               </span>
             </div>
           )}
 
-          {/* Last Active */}
-          <div className="flex items-center justify-between py-2 border-b border-white/5">
-            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Last Active</span>
-            <span className="text-base font-mono font-semibold text-white/90">
-              {formatLastActive()}
-            </span>
+          <div className="flex items-center justify-between border-b border-border-subtle py-2">
+            <span className="font-mono text-sm uppercase tracking-wide text-text-muted">Last Active</span>
+            <span className="font-mono text-base font-semibold text-text">{formatLastActive()}</span>
           </div>
 
-          {/* Time Remaining */}
           <div className="flex items-center justify-between py-2">
-            <span className="text-sm font-mono text-white/60 uppercase tracking-wide">Time Remaining</span>
-            <span className="text-base font-mono font-semibold text-white/90 tabular-nums">
-              {formatTimeRemaining()}
-            </span>
+            <span className="font-mono text-sm uppercase tracking-wide text-text-muted">Time Remaining</span>
+            <span className="font-mono text-base font-semibold tabular-nums text-text">{formatTimeRemaining()}</span>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handleResume}
-            className={cn(
-              "flex-1 sm:flex-none px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature",
-              "flex items-center justify-center gap-2 font-mono text-sm font-medium",
-              "bg-[#85BC82]/30 hover:bg-[#85BC82]/40 text-[#85BC82] cursor-pointer",
-              "border border-[#85BC82]/30"
-            )}
-            style={{
-              boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-            }}
-          >
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button type="button" variant="primary" className="flex-1 font-mono sm:flex-none" onClick={handleResume}>
             Resume Session
-          </button>
-          <button
-            onClick={handleQuit}
-            className={cn(
-              "flex-1 sm:flex-none px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature",
-              "flex items-center justify-center gap-2 font-mono text-sm font-medium",
-              "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 cursor-pointer",
-              "border border-white/10"
-            )}
-          >
+          </Button>
+          <Button type="button" variant="secondary" className="flex-1 font-mono sm:flex-none" onClick={handleQuit}>
             Quit Session
-          </button>
+          </Button>
         </div>
       </div>
     </div>

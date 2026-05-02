@@ -149,7 +149,7 @@ export function TopicsOverviewSection({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8">
+    <div className="relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-text/[0.06] sm:p-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="min-w-0 shrink-0 text-left">
           <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-2xl">

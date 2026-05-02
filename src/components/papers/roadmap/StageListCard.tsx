@@ -1,413 +1,433 @@
 /**
- * StageListCard - Individual stage card for roadmap list view
- * Redesigned to match question bank style with inline expansion
+ * StageListCard — roadmap row + expansion (DESIGN.md tokens)
  */
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ChevronDown, ChevronRight, CheckCircle2, ArrowRight, Check } from "lucide-react";
+import {
+  Lock,
+  ChevronDown,
+  CheckCircle2,
+  ArrowRight,
+  Check,
+  ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getPaperTypeColor } from "@/config/colors";
+import {
+  getExamAccentBadgeClass,
+  getExamAccentTextClass,
+} from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 
 interface StageListCardProps {
-    stage: RoadmapStage;
-    index: number;
-    completedCount: number;
-    totalCount: number;
-    isUnlocked: boolean;
-    isCurrent?: boolean;
-    isCompleted?: boolean;
-    isExpanded: boolean;
-    onToggleExpand: () => void;
-    completionData: Map<string, boolean>; // partKey -> isCompleted
-    onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
-    timelineNodeY?: number; // Y position of corresponding timeline node
+  stage: RoadmapStage;
+  index: number;
+  completedCount: number;
+  totalCount: number;
+  isUnlocked: boolean;
+  isCurrent?: boolean;
+  isCompleted?: boolean;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  completionData: Map<string, boolean>;
+  onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
+  timelineNodeY?: number;
 }
 
 export function StageListCard({
-    stage,
-    index,
-    completedCount,
-    totalCount,
-    isUnlocked,
-    isCurrent = false,
-    isCompleted = false,
-    isExpanded,
-    onToggleExpand,
-    completionData,
-    onStartSession,
-    timelineNodeY,
+  stage,
+  index,
+  completedCount,
+  totalCount,
+  isUnlocked,
+  isCurrent = false,
+  isCompleted = false,
+  isExpanded,
+  onToggleExpand,
+  completionData,
+  onStartSession,
+  timelineNodeY,
 }: StageListCardProps) {
-    const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
-    const examColor = getPaperTypeColor(stage.examName);
+  const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
 
-    // Helper function to generate part key (includes questionRange if present for uniqueness)
-    const getPartKey = (part: RoadmapPart): string => {
-        const baseKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
-        if (part.questionRange) {
-            return `${baseKey}-${part.questionRange.start}-${part.questionRange.end}`;
-        }
-        return baseKey;
-    };
+  const getPartKey = (part: RoadmapPart): string => {
+    const baseKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
+    if (part.questionRange) {
+      return `${baseKey}-${part.questionRange.start}-${part.questionRange.end}`;
+    }
+    return baseKey;
+  };
 
-    // Initialize selected parts to only incomplete parts when stage changes
-    // This ensures users don't accidentally re-attempt completed sections
-    useMemo(() => {
-        if (stage) {
-            // Filter to only include parts that are NOT completed
-            const incompletePartKeys = new Set(
-                stage.parts
-                    .filter((part) => {
-                        const partKey = getPartKey(part);
-                        const isCompleted = completionData.get(partKey) || false;
-                        return !isCompleted; // Only include incomplete parts
-                    })
-                    .map((part) => getPartKey(part))
-            );
-            setSelectedParts(incompletePartKeys);
-        }
-    }, [stage, completionData]);
-
-    const handleCardClick = () => {
-        if (!isUnlocked) return;
-        onToggleExpand();
-    };
-
-    const handlePartToggle = (partKey: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        const newSelected = new Set(selectedParts);
-        if (newSelected.has(partKey)) {
-            newSelected.delete(partKey);
-        } else {
-            newSelected.add(partKey);
-        }
-        setSelectedParts(newSelected);
-    };
-
-    const handleStartSession = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (isUnlocked && selectedParts.size > 0) {
-            const selectedPartsList = stage.parts.filter((part) => {
-                const partKey = getPartKey(part);
-                return selectedParts.has(partKey);
-            });
-            onStartSession(stage, selectedPartsList);
-        }
-    };
-
-    const handleSelectAll = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        // Get all incomplete parts
-        const incompleteParts = stage.parts.filter((part) => {
-            const partKey = getPartKey(part);
-            const isCompleted = completionData.get(partKey) || false;
-            return !isCompleted;
-        });
-        
-        if (selectedParts.size === incompleteParts.length && incompleteParts.length > 0) {
-            // Deselect all if all incomplete parts are selected
-            setSelectedParts(new Set());
-        } else {
-            // Select all incomplete parts
-            const allIncompletePartKeys = new Set(
-                incompleteParts.map((part) => getPartKey(part))
-            );
-            setSelectedParts(allIncompletePartKeys);
-        }
-    };
-
-    return (
-        <div className="relative overflow-visible">
-            {/* Connector line from card to timeline node */}
-            {timelineNodeY !== undefined && (
-                <div
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full pointer-events-none z-0 hidden lg:block"
-                    style={{
-                        width: "calc(18% + 2rem)", // Width of left column + gap
-                        height: "1px",
-                        background: "linear-gradient(to left, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))",
-                        boxShadow: "0 0 2px rgba(255, 255, 255, 0.1)",
-                    }}
-                />
-            )}
-
-            {/* Card - borderless glassy design */}
-            <motion.div
-                className={cn(
-                    "relative flex flex-col rounded-organic-lg overflow-visible transform-gpu backdrop-blur-md",
-                    isUnlocked ? "cursor-pointer" : "opacity-60 cursor-not-allowed"
-                )}
-                style={{ 
-                    width: "100%", 
-                    maxWidth: "100%", 
-                    border: "none", 
-                    outline: "none",
-                    transform: isCurrent ? "scale(1.02)" : "scale(1)",
-                    transformOrigin: "center"
-                }}
-                animate={{
-                    backgroundColor: isUnlocked
-                        ? isCurrent
-                            ? "rgba(255, 255, 255, 0.08)"
-                            : "rgba(255, 255, 255, 0.06)"
-                        : "rgba(255, 255, 255, 0.03)",
-                    boxShadow: isUnlocked
-                        ? "0 4px 12px rgba(0, 0, 0, 0.2)"
-                        : "none"
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                onClick={handleCardClick}
-            >
-                {/* Main Header Content */}
-                <div className="flex items-center gap-4 p-5 w-full max-w-full overflow-visible">
-                    {/* Left: Numbered rounded square */}
-                    <div
-                        className={cn(
-                            "relative z-10 flex-shrink-0 w-12 h-12 rounded-organic-md flex items-center justify-center font-mono font-bold text-lg transition-colors",
-                            isUnlocked ? (isCompleted || isCurrent ? "" : "bg-white/10 text-white/90") : "bg-white/5 text-white/30"
-                        )}
-                        style={{
-                            backgroundColor: isUnlocked
-                                ? (isCompleted ? examColor + "25" : isCurrent ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.05)")
-                                : examColor + "10",
-                            color: isUnlocked ? (isCurrent ? "#ffffff" : examColor) : undefined
-                        }}
-                    >
-                        {isUnlocked ? index + 1 : (
-                            <Lock
-                                className="w-5 h-5 transition-colors duration-500"
-                                style={{ color: examColor, opacity: 0.4 }}
-                            />
-                        )}
-                    </div>
-
-                    {/* Center: Stage info */}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-4 flex-wrap">
-                            <div className="flex items-center gap-3 flex-shrink-0">
-                                <span className={cn("font-mono font-semibold text-xl tracking-wide", isUnlocked ? "text-white/90" : "text-white/40")}>
-                                    {stage.examName}
-                                </span>
-                                {stage.id === 'specimen-papers' ? (
-                                    <span className={cn("font-mono font-semibold text-xl tracking-wide", isUnlocked ? "text-white/70" : "text-white/30")}>
-                                        Specimen
-                                    </span>
-                                ) : (
-                                    <span className={cn("font-mono font-semibold text-xl tracking-wide", isUnlocked ? "text-white/70" : "text-white/30")}>
-                                        {stage.year}
-                                    </span>
-                                )}
-                                {(() => {
-                                    const hasSpecimen = stage.parts.some(part => part.examType === 'Specimen');
-                                    const hasOfficial = stage.parts.some(part => part.examType === 'Official');
-                                    const allSpecimen = stage.parts.length > 0 && stage.parts.every(part => part.examType === 'Specimen');
-                                    const allOfficial = stage.parts.length > 0 && stage.parts.every(part => part.examType === 'Official');
-                                    
-                                    // Only show badge if all parts are of the same type (no mixed stages)
-                                    if (allSpecimen) {
-                                        return (
-                                            <span className="px-2.5 py-1 rounded-md text-xs font-medium uppercase tracking-wide bg-white/5 text-white/40 whitespace-nowrap">
-                                                Specimen
-                                            </span>
-                                        );
-                                    } else if (allOfficial) {
-                                        return (
-                                            <span className="px-2.5 py-1 rounded-md text-xs font-medium uppercase tracking-wide bg-white/5 text-white/40 whitespace-nowrap">
-                                                Official
-                                            </span>
-                                        );
-                                    }
-                                    return null;
-                                })()}
-                            </div>
-
-                            {totalCount > 0 && (
-                                <div className={cn("text-[0.85rem] font-mono whitespace-nowrap flex-shrink-0", isUnlocked ? "text-white/40" : "text-white/30")}>
-                                    {completedCount}/{totalCount} parts completed
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Right: Chevron */}
-                    <div className="flex-shrink-0 flex items-center">
-                        {!isUnlocked ? (
-                            <Lock className="w-5 h-5 text-white/20" />
-                        ) : (
-                            <motion.div
-                                animate={{ rotate: isExpanded ? 90 : 0 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <ChevronRight className="w-5 h-5 text-white/60" />
-                            </motion.div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Expanded Content */}
-                <AnimatePresence>
-                    {isExpanded && isUnlocked && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-visible w-full"
-                        >
-                            <div className="px-5 pb-5 pt-0 w-full max-w-full">
-                                <div
-                                    className="space-y-2.5 rounded-organic-lg p-3 w-full max-w-full overflow-visible"
-                                >
-                                    <div className="flex items-center justify-between mb-1">
-                                        <span className="text-xs font-medium text-white/30">Select parts to practice</span>
-                                        <button
-                                            onClick={handleSelectAll}
-                                            className="text-xs text-white/40 hover:text-white/50 transition-colors"
-                                        >
-                                            {(() => {
-                                                const incompleteCount = stage.parts.filter((part) => {
-                                                    const partKey = getPartKey(part);
-                                                    return !(completionData.get(partKey) || false);
-                                                }).length;
-                                                return selectedParts.size === incompleteCount && incompleteCount > 0
-                                                    ? "Deselect All"
-                                                    : "Select All Incomplete";
-                                            })()}
-                                        </button>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        {(() => {
-                                            // Group parts by paperName (Section 1, Section 2, Paper 1, Paper 2)
-                                            const partsBySection = new Map<string, RoadmapPart[]>();
-                                            stage.parts.forEach(part => {
-                                                const sectionKey = part.paperName;
-                                                if (!partsBySection.has(sectionKey)) {
-                                                    partsBySection.set(sectionKey, []);
-                                                }
-                                                partsBySection.get(sectionKey)!.push(part);
-                                            });
-
-                                            // Get all unique sections in order (Section 1, Section 2, Paper 1, Paper 2)
-                                            const sections = Array.from(partsBySection.keys()).sort((a, b) => {
-                                                // Sort: Section 1, Section 2, Paper 1, Paper 2
-                                                const order = ['Section 1', 'Section 2', 'Paper 1', 'Paper 2'];
-                                                const aIndex = order.indexOf(a);
-                                                const bIndex = order.indexOf(b);
-                                                if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-                                                if (aIndex !== -1) return -1;
-                                                if (bIndex !== -1) return 1;
-                                                return a.localeCompare(b);
-                                            });
-
-                                            return sections.map((sectionName) => {
-                                                const sectionParts = partsBySection.get(sectionName) || [];
-                                                
-                                                return (
-                                                    <div key={sectionName} className="space-y-2">
-                                                        {/* Section Header */}
-                                                        <div className="flex items-center gap-2 px-2 py-1.5">
-                                                            <ChevronRight className="w-4 h-4 text-white/40" />
-                                                            <span className="text-xs font-semibold text-white/50 uppercase tracking-wide">
-                                                                {sectionName}
-                                                            </span>
-                                                        </div>
-                                                        
-                                                        {/* Parts in this section */}
-                                                        {sectionParts.length > 0 ? (
-                                                            <div className="pl-4 space-y-2">
-                                                                {sectionParts.map((part) => {
-                                                                    const partKey = getPartKey(part);
-                                                                    const isPartCompleted = completionData.get(partKey) || false;
-                                                                    const isSelected = selectedParts.has(partKey);
-
-                                                                    // Build display label
-                                                                    let displayLabel = '';
-                                                                    if (stage.examName === 'TMUA') {
-                                                                        displayLabel = part.paperName;
-                                                                    } else {
-                                                                        // For parts with questionRange, show range info
-                                                                        if (part.questionRange) {
-                                                                            displayLabel = `${part.partLetter}: ${part.partName} (Q${part.questionRange.start}-${part.questionRange.end})`;
-                                                                        } else {
-                                                                            displayLabel = `${part.partLetter}: ${part.partName}`;
-                                                                        }
-                                                                    }
-
-                                                                    return (
-                                                                        <div
-                                                                            key={partKey}
-                                                                            className="flex items-center gap-3 p-3 rounded-md text-sm cursor-pointer hover:bg-white/[0.03] transition-colors bg-white/[0.02]"
-                                                                            style={{ border: "none", outline: "none" }}
-                                                                            onClick={(e) => handlePartToggle(partKey, e)}
-                                                                        >
-                                                                            <div
-                                                                                className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
-                                                                                style={{ 
-                                                                                    border: "none", 
-                                                                                    outline: "none", 
-                                                                                    backgroundColor: isSelected ? examColor : "rgba(255, 255, 255, 0.05)"
-                                                                                }}
-                                                                            >
-                                                                                {isSelected && (
-                                                                                    <Check className="w-3.5 h-3.5 text-white stroke-[2.5]" />
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="flex-1 min-w-0">
-                                                                                <div className="font-medium text-white/70">{displayLabel}</div>
-                                                                                <div className="text-xs text-white/35">{part.examType}</div>
-                                                                            </div>
-                                                                            {isPartCompleted && (
-                                                                                <div className="flex-shrink-0 flex items-center gap-1.5">
-                                                                                    <CheckCircle2 
-                                                                                        className="w-5 h-5" 
-                                                                                        style={{ color: examColor }} 
-                                                                                        strokeWidth={2.5}
-                                                                                    />
-                                                                                    <span className="text-xs font-medium" style={{ color: examColor + "CC" }}>
-                                                                                        Done
-                                                                                    </span>
-                                                                                </div>
-                                                                            )}
-                                                                        </div>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        ) : (
-                                                            // Empty section message
-                                                            <div className="pl-4 py-2 text-xs text-white/30 italic">
-                                                                No Parts from {sectionName.toLowerCase()} applicable
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                );
-                                            });
-                                        })()}
-                                    </div>
-
-                                     <button
-                                         onClick={handleStartSession}
-                                         disabled={selectedParts.size === 0}
-                                         className={cn(
-                                             "w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-lg font-semibold text-sm transition-all shadow-md shadow-black/20",
-                                             selectedParts.size === 0
-                                                 ? "bg-white/5 text-white/30 cursor-not-allowed"
-                                                 : "bg-white/[0.02] text-white/70 hover:bg-white/[0.03] hover:text-white/80"
-                                         )}
-                                         style={{ border: "none", outline: "none" }}
-                                     >
-                                         <span>Start Practice Session</span>
-                                         <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
-                                     </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </motion.div>
-        </div>
+  useEffect(() => {
+    const incompletePartKeys = new Set(
+      stage.parts
+        .filter((part) => !completionData.get(getPartKey(part)))
+        .map((part) => getPartKey(part)),
     );
+    setSelectedParts(incompletePartKeys);
+  }, [stage, completionData]);
+
+  const handleCardClick = () => {
+    if (!isUnlocked) return;
+    onToggleExpand();
+  };
+
+  const handlePartToggle = (partKey: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const next = new Set(selectedParts);
+    if (next.has(partKey)) next.delete(partKey);
+    else next.add(partKey);
+    setSelectedParts(next);
+  };
+
+  const handleStartSession = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isUnlocked && selectedParts.size > 0) {
+      const selectedPartsList = stage.parts.filter((part) =>
+        selectedParts.has(getPartKey(part)),
+      );
+      onStartSession(stage, selectedPartsList);
+    }
+  };
+
+  const handleSelectAll = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const incompleteParts = stage.parts.filter(
+      (part) => !completionData.get(getPartKey(part)),
+    );
+
+    if (
+      selectedParts.size === incompleteParts.length &&
+      incompleteParts.length > 0
+    ) {
+      setSelectedParts(new Set());
+    } else {
+      setSelectedParts(
+        new Set(incompleteParts.map((part) => getPartKey(part))),
+      );
+    }
+  };
+
+  return (
+    <div className="relative overflow-visible">
+      {timelineNodeY !== undefined && (
+        <div
+          className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
+          style={{
+            width: "calc(18% + 2rem)",
+            height: "1px",
+            background:
+              "linear-gradient(to left, var(--color-border-subtle), transparent)",
+          }}
+        />
+      )}
+
+      <motion.div
+        layout
+        className={cn(
+          "relative flex flex-col overflow-hidden rounded-organic-xl border bg-surface-elevated ring-1 ring-white/[0.06] transition-colors duration-fast ease-signature",
+          isUnlocked
+            ? cn(
+                "cursor-pointer border-border",
+                isCurrent && "border-primary/30 ring-primary/20",
+              )
+            : "cursor-not-allowed border-border-subtle opacity-75",
+        )}
+        onClick={handleCardClick}
+      >
+        <div className="flex items-center gap-4 p-5 sm:p-6">
+          <div
+            className={cn(
+              "relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md font-mono text-lg font-bold transition-colors tabular-nums",
+              isUnlocked
+                ? cn(
+                    isCompleted || isCurrent
+                      ? getExamAccentBadgeClass(stage.examName)
+                      : "border border-border-subtle bg-surface-mid text-text",
+                  )
+                : "border border-border-subtle bg-surface-mid text-text-disabled",
+            )}
+          >
+            {isUnlocked ? (
+              index + 1
+            ) : (
+              <Lock
+                className="h-5 w-5 text-text-disabled"
+                strokeWidth={2}
+                aria-hidden
+              />
+            )}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2 gap-y-1 sm:gap-4">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span
+                  className={cn(
+                    "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                    isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
+                  )}
+                >
+                  {stage.examName}
+                </span>
+                {stage.id === "specimen-papers" ? (
+                  <span
+                    className={cn(
+                      "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                      isUnlocked ? "text-text-muted" : "text-text-disabled",
+                    )}
+                  >
+                    Specimen
+                  </span>
+                ) : (
+                  <span
+                    className={cn(
+                      "font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl",
+                      isUnlocked ? "text-text-muted" : "text-text-disabled",
+                    )}
+                  >
+                    {stage.year}
+                  </span>
+                )}
+                {(() => {
+                  const allSpecimen =
+                    stage.parts.length > 0 &&
+                    stage.parts.every((p) => p.examType === "Specimen");
+                  const allOfficial =
+                    stage.parts.length > 0 &&
+                    stage.parts.every((p) => p.examType === "Official");
+                  if (allSpecimen) {
+                    return (
+                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        Specimen
+                      </span>
+                    );
+                  }
+                  if (allOfficial) {
+                    return (
+                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        Official
+                      </span>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+
+              {totalCount > 0 ? (
+                <div
+                  className={cn(
+                    "flex-shrink-0 whitespace-nowrap font-mono text-[0.85rem]",
+                    isUnlocked ? "text-text-muted" : "text-text-disabled",
+                  )}
+                >
+                  {completedCount}/{totalCount} parts completed
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 items-center">
+            {!isUnlocked ? (
+              <Lock className="h-5 w-5 text-text-disabled" aria-hidden />
+            ) : (
+              <motion.div
+                animate={{ rotate: isExpanded ? 180 : 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <ChevronDown
+                  className="h-5 w-5 text-text-muted"
+                  aria-hidden
+                />
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        <AnimatePresence initial={false}>
+          {isExpanded && isUnlocked && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: "easeInOut" }}
+              className="overflow-hidden border-t border-border-subtle"
+            >
+              <div className="p-5 pt-4 sm:p-6 sm:pt-5">
+                <div className="space-y-3 rounded-organic-lg border border-border-subtle bg-surface-mid p-4 ring-1 ring-white/[0.04]">
+                  <div className="mb-1 flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-text-muted">
+                      Select parts to practice
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleSelectAll}
+                      className="text-xs font-medium text-text-subtle underline-offset-2 transition-colors hover:text-text hover:underline"
+                    >
+                      {(() => {
+                        const incompleteCount = stage.parts.filter(
+                          (part) =>
+                            !(completionData.get(getPartKey(part)) || false),
+                        ).length;
+                        return selectedParts.size === incompleteCount &&
+                          incompleteCount > 0
+                          ? "Deselect All"
+                          : "Select All Incomplete";
+                      })()}
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {(() => {
+                      const partsBySection = new Map<string, RoadmapPart[]>();
+                      stage.parts.forEach((part) => {
+                        const sectionKey = part.paperName;
+                        if (!partsBySection.has(sectionKey)) {
+                          partsBySection.set(sectionKey, []);
+                        }
+                        partsBySection.get(sectionKey)!.push(part);
+                      });
+
+                      const order = [
+                        "Section 1",
+                        "Section 2",
+                        "Paper 1",
+                        "Paper 2",
+                      ];
+                      const sections = Array.from(partsBySection.keys()).sort(
+                        (a, b) => {
+                          const aIndex = order.indexOf(a);
+                          const bIndex = order.indexOf(b);
+                          if (aIndex !== -1 && bIndex !== -1)
+                            return aIndex - bIndex;
+                          if (aIndex !== -1) return -1;
+                          if (bIndex !== -1) return 1;
+                          return a.localeCompare(b);
+                        },
+                      );
+
+                      return sections.map((sectionName) => {
+                        const sectionParts =
+                          partsBySection.get(sectionName) || [];
+                        return (
+                          <div key={sectionName} className="space-y-2">
+                            <div className="flex items-center gap-2 px-1 py-1">
+                              <ChevronRight
+                                className="h-4 w-4 text-text-muted"
+                                aria-hidden
+                              />
+                              <span className="text-xs font-semibold uppercase tracking-wide text-text-subtle">
+                                {sectionName}
+                              </span>
+                            </div>
+
+                            {sectionParts.length > 0 ? (
+                              <div className="space-y-2 pl-1 sm:pl-3">
+                                {sectionParts.map((part) => {
+                                  const partKey = getPartKey(part);
+                                  const isPartCompleted =
+                                    completionData.get(partKey) || false;
+                                  const isSelected = selectedParts.has(partKey);
+
+                                  let displayLabel = "";
+                                  if (stage.examName === "TMUA") {
+                                    displayLabel = part.paperName;
+                                  } else if (part.questionRange) {
+                                    displayLabel = `${part.partLetter}: ${part.partName} (Q${part.questionRange.start}-${part.questionRange.end})`;
+                                  } else {
+                                    displayLabel = `${part.partLetter}: ${part.partName}`;
+                                  }
+
+                                  return (
+                                    <div
+                                      key={partKey}
+                                      role="button"
+                                      tabIndex={0}
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                          e.preventDefault();
+                                          handlePartToggle(partKey, {
+                                            stopPropagation: () =>
+                                              e.stopPropagation(),
+                                          } as React.MouseEvent);
+                                        }
+                                      }}
+                                      className="flex cursor-pointer items-center gap-3 rounded-organic-md border border-transparent bg-surface-elevated p-3 text-sm transition-colors duration-fast ease-signature hover:border-border-subtle hover:bg-surface"
+                                      onClick={(e) => handlePartToggle(partKey, e)}
+                                    >
+                                      <div
+                                        className={cn(
+                                          "flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors duration-fast ease-signature",
+                                          isSelected
+                                            ? "border-accent/35 bg-accent text-background"
+                                            : "border-border-subtle bg-surface-mid",
+                                        )}
+                                      >
+                                        {isSelected ? (
+                                          <Check
+                                            className="h-3.5 w-3.5 stroke-[3]"
+                                            aria-hidden
+                                          />
+                                        ) : null}
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <div className="font-medium text-text">
+                                          {displayLabel}
+                                        </div>
+                                        <div className="mt-0.5 text-xs text-text-muted">
+                                          {part.examType}
+                                        </div>
+                                      </div>
+                                      {isPartCompleted ? (
+                                        <div className="flex shrink-0 items-center gap-1.5 text-primary">
+                                          <CheckCircle2
+                                            className="h-5 w-5 shrink-0"
+                                            strokeWidth={2.25}
+                                            aria-hidden
+                                          />
+                                          <span className="text-xs font-medium">
+                                            Done
+                                          </span>
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <div className="pl-4 text-xs italic text-text-muted">
+                                No parts from {sectionName.toLowerCase()}{" "}
+                                applicable
+                              </div>
+                            )}
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleStartSession}
+                    disabled={selectedParts.size === 0}
+                    className={cn(
+                      "flex w-full items-center justify-center gap-3 rounded-organic-lg border px-6 py-3.5 text-sm font-semibold transition-all duration-fast ease-signature",
+                      selectedParts.size === 0
+                        ? "cursor-not-allowed border-border-subtle bg-surface-mid text-text-disabled"
+                        : "border-border-subtle bg-surface-mid text-text hover:border-border hover:bg-surface-neutral",
+                    )}
+                  >
+                    <span>Start Practice Session</span>
+                    <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
 }

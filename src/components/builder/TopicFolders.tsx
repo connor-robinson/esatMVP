@@ -91,8 +91,8 @@ export function TopicFolders({
   };
 
   return (
-    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-mid shadow-lg ring-1 ring-white/[0.06] md:w-80 lg:w-72 xl:w-80'>
-      <div className='flex shrink-0 items-center justify-between border-b border-border-subtle/30 px-6 pb-4 pt-6'>
+    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid md:w-80 lg:w-72 xl:w-80'>
+      <div className='flex shrink-0 items-center justify-between border-b border-border-subtle px-6 pb-4 pt-5'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory
             ? categoryLabels[selectedCategory] || 'Operations'
@@ -124,10 +124,10 @@ export function TopicFolders({
                   type='button'
                   onClick={() => onSelectTopic(topic.id)}
                   className={cn(
-                    'w-full text-left p-4 rounded-xl transition-all relative overflow-hidden group',
+                    'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
                     isSelected
-                      ? 'bg-surface-elevated shadow-md ring-1 ring-secondary/35'
-                      : 'bg-surface-elevated hover:bg-surface-neutral hover:shadow-sm',
+                      ? 'border border-secondary/35 bg-surface-elevated shadow-sm'
+                      : 'border border-border-subtle bg-surface-elevated hover:border-border hover:bg-surface-neutral',
                   )}
                 >
                   {isSelected && (
@@ -141,9 +141,9 @@ export function TopicFolders({
                       </p>
                     </div>
                     {isSelected ? (
-                      <FolderOpen className='text-primary/80 text-xl flex-shrink-0 ml-2' />
+                      <FolderOpen className='ml-2 h-5 w-5 flex-shrink-0 text-secondary' />
                     ) : (
-                      <Folder className='text-text-muted/60 text-xl flex-shrink-0 ml-2 group-hover:text-primary/60 transition-colors' />
+                      <Folder className='ml-2 h-5 w-5 flex-shrink-0 text-text-muted/60 transition-colors group-hover:text-text-muted' />
                     )}
                   </div>
                   <div className='flex items-center gap-3 mt-4'>

@@ -1,15 +1,15 @@
 /**
- * RoadmapAnalytics - Analytics section at the bottom of roadmap
- * Shows progress, time estimates, and next steps
+ * Roadmap analytics — DESIGN.md surfaces, typography tokens
  */
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Info, ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
-import { getPaperTypeColor } from "@/config/colors";
+import { cn } from "@/lib/utils";
+import { getExamAccentBadgeClass, getExamAccentTextClass } from "@/config/colors";
 
 interface RoadmapAnalyticsProps {
   stages: RoadmapStage[];
@@ -19,6 +19,9 @@ interface RoadmapAnalyticsProps {
   >;
   currentStageIndex: number | null;
 }
+
+const SUMMARY_CARD =
+  "rounded-organic-xl border border-border-subtle bg-surface-elevated p-5 ring-1 ring-white/[0.06]";
 
 export function RoadmapAnalytics({
   stages,
@@ -41,41 +44,34 @@ export function RoadmapAnalytics({
       totalParts += stageTotal;
       completedParts += stageCompleted;
 
-      // Estimate questions per part (varies by exam type)
       stage.parts.forEach((part) => {
         let questionsPerPart = 0;
         let minutesPerPart = 0;
 
         if (stage.examName === "TMUA") {
-          // TMUA Paper 1 typically has ~20 questions, 75 minutes
           questionsPerPart = 20;
           minutesPerPart = 75;
         } else if (stage.examName === "ENGAA") {
-          // ENGAA Section 1 Part B has filtered questions, Section 2 Part A has ~20 questions
           if (part.paperName === "Section 1" && part.partLetter === "Part B") {
             questionsPerPart = part.questionFilter?.length || 0;
           } else if (part.paperName === "Section 2") {
-            questionsPerPart = 20; // Section 2 typically has 20 questions
+            questionsPerPart = 20;
           } else {
-            questionsPerPart = 20; // Default for other parts
-          }
-          minutesPerPart = questionsPerPart * 1.5; // 1.5 min per question
-        } else {
-          // NSAA: Section 1 has 40 questions total, Section 2 has 20 questions
-          if (part.paperName === "Section 1") {
-            // Section 1 is split into parts, estimate ~13-14 questions per part
-            questionsPerPart = 14;
-          } else {
-            // Section 2 has 20 questions total
             questionsPerPart = 20;
           }
-          minutesPerPart = questionsPerPart * 1.5; // 1.5 min per question
+          minutesPerPart = questionsPerPart * 1.5;
+        } else {
+          if (part.paperName === "Section 1") {
+            questionsPerPart = 14;
+          } else {
+            questionsPerPart = 20;
+          }
+          minutesPerPart = questionsPerPart * 1.5;
         }
 
         totalQuestions += questionsPerPart;
         totalMinutes += minutesPerPart;
 
-        // Check if this part is completed
         const partKey = `${part.paperName}-${part.partLetter}-${part.examType}`;
         const isPartCompleted = stageData?.parts.get(partKey) || false;
 
@@ -88,175 +84,161 @@ export function RoadmapAnalytics({
 
     const progressPercentage =
       totalParts > 0 ? Math.round((completedParts / totalParts) * 100) : 0;
-    const remainingMinutes = totalMinutes - completedMinutes;
-    const remainingQuestions = totalQuestions - completedQuestions;
 
     return {
       totalParts,
       completedParts,
       totalQuestions,
       completedQuestions,
-      remainingQuestions,
       totalMinutes,
       completedMinutes,
-      remainingMinutes,
       progressPercentage,
     };
   }, [stages, completionData]);
 
-  const currentStage =
-    currentStageIndex !== null ? stages[currentStageIndex] : null;
-  const nextStage = currentStageIndex !== null ? stages[currentStageIndex] : stages[0];
+  const nextStage =
+    currentStageIndex !== null ? stages[currentStageIndex] : stages[0];
 
   const handleScrollToStage = () => {
     if (nextStage && currentStageIndex !== null) {
-      // Find the stage card element by data attribute
-      const stageElement = document.querySelector(`[data-stage-id="${nextStage.id}"]`) as HTMLElement;
+      const stageElement = document.querySelector(
+        `[data-stage-id="${nextStage.id}"]`,
+      ) as HTMLElement | null;
       if (stageElement) {
-        stageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Add expansion animation after scroll completes
+        stageElement.scrollIntoView({ behavior: "smooth", block: "center" });
         setTimeout(() => {
-          stageElement.setAttribute('data-expand-animation', 'true');
-          // Trigger a brief animation class
-          stageElement.style.transition = 'transform 0.3s ease-out';
-          stageElement.style.transform = 'scale(1.03)';
-          
+          stageElement.style.transition = "transform 0.3s ease-out";
+          stageElement.style.transform = "scale(1.02)";
           setTimeout(() => {
-            stageElement.style.transform = 'scale(1)';
-            setTimeout(() => {
-              stageElement.removeAttribute('data-expand-animation');
-            }, 300);
+            stageElement.style.transform = "scale(1)";
           }, 200);
-        }, 500); // Wait for scroll to complete
+        }, 400);
       }
     }
   };
 
-  const examColor = nextStage ? getPaperTypeColor(nextStage.examName) : undefined;
-  
-  // Determine badge type (Official/Specimen)
-  const hasSpecimen = nextStage ? nextStage.parts.some(part => part.examType === 'Specimen') : false;
-  const hasOfficial = nextStage ? nextStage.parts.some(part => part.examType === 'Official') : false;
-  const allSpecimen = nextStage && nextStage.parts.length > 0 && nextStage.parts.every(part => part.examType === 'Specimen');
-  const allOfficial = nextStage && nextStage.parts.length > 0 && nextStage.parts.every(part => part.examType === 'Official');
+  const allSpecimen =
+    nextStage &&
+    nextStage.parts.length > 0 &&
+    nextStage.parts.every((p) => p.examType === "Specimen");
+  const allOfficial =
+    nextStage &&
+    nextStage.parts.length > 0 &&
+    nextStage.parts.every((p) => p.examType === "Official");
 
   return (
-    <div className="mb-4">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* Progress */}
-        <div className="rounded-organic-lg p-4 bg-white/[0.03]">
-          <div className="text-xs font-medium text-white/40 uppercase tracking-wide mb-2">
+    <div className="mb-8">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-5">
+        <div className={cn(SUMMARY_CARD, "md:col-span-4 lg:col-span-3")}>
+          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-text-subtle">
             Progress
           </div>
-          <div className="text-2xl font-bold text-white/90 mb-1">
+          <div className="mb-1 text-2xl font-bold tabular-nums text-text">
             {stats.progressPercentage}%
           </div>
-          <div className="text-xs text-white/50">
+          <div className="text-xs text-text-muted">
             {stats.completedParts} of {stats.totalParts} parts
           </div>
         </div>
 
-        {/* Completed */}
-        <div className="rounded-organic-lg p-4 bg-white/[0.03]">
-          <div className="flex items-start justify-between mb-2">
-            <div className="text-xs font-medium text-white/40 uppercase tracking-wide">
+        <div className={cn(SUMMARY_CARD, "md:col-span-4 lg:col-span-3")}>
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <div className="text-xs font-medium uppercase tracking-wide text-text-subtle">
               Completed
             </div>
-            <div className="relative group">
-              <Info className="w-3.5 h-3.5 text-white/25 cursor-help" />
-              <div className="absolute right-0 top-full mt-2 w-64 p-3 bg-[#1a1d21] border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                <p className="text-xs text-white/70 leading-relaxed">
-                  This shows expected time to complete the questions themselves. Actual practice time is much longer as marking and reviewing your work is the most important part of learning.
+            <div className="group relative">
+              <Info
+                className="h-3.5 w-3.5 shrink-0 cursor-help text-text-disabled"
+                aria-hidden
+              />
+              <div className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-64 scale-95 rounded-organic-lg border border-border bg-surface-elevated p-3 text-left opacity-0 shadow-modal-card ring-1 ring-white/[0.06] transition-all duration-fast ease-signature group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100">
+                <p className="text-xs leading-relaxed text-text-muted">
+                  Expected time for the questions only. Real practice is longer
+                  because marking and review matter most.
                 </p>
               </div>
             </div>
           </div>
-          <div className="flex items-baseline gap-1.5 mb-1 flex-wrap">
-            <span className="text-2xl font-bold text-white/90">{Math.round(stats.completedMinutes)}</span>
-            <span className="text-lg font-light text-white/20">/</span>
-            <span className="text-sm font-medium text-white/50">{Math.round(stats.totalMinutes)}</span>
-            <span className="text-xs font-medium text-white/40 uppercase tracking-wide ml-1">
+          <div className="mb-1 flex flex-wrap items-baseline gap-1.5">
+            <span className="text-2xl font-bold tabular-nums text-text">
+              {Math.round(stats.completedMinutes)}
+            </span>
+            <span className="text-lg font-light text-text-disabled">/</span>
+            <span className="text-sm font-medium tabular-nums text-text-muted">
+              {Math.round(stats.totalMinutes)}
+            </span>
+            <span className="text-xs font-medium uppercase tracking-wide text-text-subtle">
               minutes practiced
             </span>
           </div>
-          <div className="text-xs text-white/50 mt-1">
+          <div className="text-xs text-text-muted">
             {stats.completedQuestions} / {stats.totalQuestions} questions
           </div>
         </div>
 
-        {/* What to do next */}
         {nextStage && (
-          <div className="md:col-span-2 rounded-organic-lg p-5 bg-white/[0.03]">
-            <div className="text-xs font-medium text-white/40 uppercase tracking-wide mb-3">
+          <div className={cn(SUMMARY_CARD, "md:col-span-12 lg:col-span-6")}>
+            <div className="mb-3 text-xs font-medium uppercase tracking-wide text-text-subtle">
               What to do next
             </div>
-            <motion.div 
-              className="relative flex flex-col rounded-organic-lg overflow-hidden overflow-x-hidden transform-gpu backdrop-blur-md cursor-pointer"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.06)",
-              }}
+            <motion.button
+              type="button"
+              className="relative w-full overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-mid text-left ring-1 ring-white/[0.04] transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-neutral"
               onClick={handleScrollToStage}
-              whileHover={{
-                backgroundColor: "rgba(255, 255, 255, 0.08)",
-                scale: 1.01,
-              }}
+              whileHover={{ scale: 1.005 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
-              <div className="flex items-center gap-4 p-5 w-full max-w-full overflow-x-hidden">
-                {/* Left: Numbered rounded square */}
+              <div className="flex items-center gap-4 p-4 sm:p-5">
                 <div
-                  className="flex-shrink-0 w-12 h-12 rounded-organic-md flex items-center justify-center font-mono font-bold text-lg bg-white/10 text-white/90"
-                  style={{
-                    backgroundColor: examColor ? examColor + "25" : "rgba(255, 255, 255, 0.1)",
-                    color: examColor || "#ffffff",
-                  }}
+                  className={cn(
+                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md font-mono text-lg font-bold tabular-nums text-text",
+                    getExamAccentBadgeClass(nextStage.examName),
+                  )}
                 >
                   {currentStageIndex !== null ? currentStageIndex + 1 : 1}
                 </div>
 
-                {/* Center: Stage info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="font-mono font-semibold text-xl tracking-wide text-white/90">
-                        {nextStage.examName}
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span
+                      className={cn(
+                        "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                        getExamAccentTextClass(nextStage.examName),
+                      )}
+                    >
+                      {nextStage.examName}
+                    </span>
+                    {nextStage.id === "specimen-papers" ? (
+                      <span className="font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
+                        Specimen
                       </span>
-                      {nextStage.id === 'specimen-papers' ? (
-                        <span className="font-mono font-semibold text-xl tracking-wide text-white/70">
-                          Specimen
-                        </span>
-                      ) : (
-                        <span className="font-mono font-semibold text-xl tracking-wide text-white/70">
-                          {nextStage.year}
-                        </span>
-                      )}
-                      {/* Show badge if all parts are of the same type */}
-                      {allSpecimen && (
-                        <span className="px-2.5 py-1 rounded-md text-xs font-medium uppercase tracking-wide bg-white/5 text-white/40 whitespace-nowrap">
-                          Specimen
-                        </span>
-                      )}
-                      {allOfficial && (
-                        <span className="px-2.5 py-1 rounded-md text-xs font-medium uppercase tracking-wide bg-white/5 text-white/40 whitespace-nowrap">
-                          Official
-                        </span>
-                      )}
-                    </div>
+                    ) : (
+                      <span className="font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
+                        {nextStage.year}
+                      </span>
+                    )}
+                    {allSpecimen && (
+                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        Specimen
+                      </span>
+                    )}
+                    {allOfficial && (
+                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                        Official
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {/* Right: Scroll icon */}
-                <div className="flex-shrink-0 flex items-center">
-                  <ArrowDown className="w-5 h-5 text-white/40" />
-                </div>
+                <ArrowDown
+                  className="h-5 w-5 shrink-0 text-text-muted"
+                  aria-hidden
+                />
               </div>
-            </motion.div>
+            </motion.button>
           </div>
         )}
       </div>
     </div>
   );
 }
-

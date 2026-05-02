@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { Button, PricingTable, type PricingTier } from "@/components/ui";
+import { PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import {
@@ -42,18 +42,18 @@ export default function PricingPage() {
 
   const weeksUntilExam = getWeeksUntilExam();
   const weeks = typeof weeksInput === "number" ? weeksInput : weeksUntilExam;
-  const { plan: bestPlan, reason } = getBestValuePlan(weeks);
+  const { reason } = getBestValuePlan(weeks);
   const seasonPrice = getSeasonPassPrice();
+
+  const perWeekSeason = seasonPrice / weeks;
 
   const tiers: PricingTier[] = [
     {
       id: "free",
       name: "Free",
       price: "£0",
-      caption: "Starter access",
       features: FEATURES.free,
       ctaLabel: tier === "free" ? "Current plan" : "Downgrade via profile",
-      highlighted: false,
     },
     {
       id: "weekly",
@@ -67,7 +67,6 @@ export default function PricingPage() {
           : tier === "weekly"
             ? "Current plan"
             : "Subscribe",
-      highlighted: bestPlan === "weekly",
     },
     {
       id: "monthly",
@@ -81,21 +80,21 @@ export default function PricingPage() {
           : tier === "monthly"
             ? "Current plan"
             : "Subscribe",
-      highlighted: bestPlan === "monthly",
     },
     {
       id: "season_pass",
       name: "Exam Season Pass",
       price: `£${seasonPrice}`,
-      caption: `one-time · ~£${(seasonPrice / weeks).toFixed(1)}/week`,
+      caption: `~ £${perWeekSeason.toFixed(1)}/week`,
+      priceNote: "One-time — access until 1 Oct 2026",
       features: FEATURES.paid,
+      featured: true,
       ctaLabel:
         loading === "season_pass"
           ? "Loading…"
           : tier === "season_pass"
             ? "Current plan"
             : "Get access",
-      highlighted: bestPlan === "season_pass",
     },
   ];
 
@@ -129,15 +128,17 @@ export default function PricingPage() {
   };
 
   return (
-    <Container size="xl" className="py-10">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-text mb-2">Choose your plan</h1>
-        <p className="text-text-muted max-w-xl mx-auto">
-          Prepare for ESAT / TMUA. Full access to past papers, mental maths, and
-          question bank.
+    <Container size="xl" className="bg-background pb-16 pt-10 sm:pb-24 sm:pt-14">
+      <div className="mb-12 text-center">
+        <h1 className="mb-3 text-3xl font-bold tracking-tight text-text sm:text-4xl md:text-[2.5rem] md:leading-tight">
+          Choose your plan
+        </h1>
+        <p className="mx-auto max-w-xl text-base text-text-muted sm:text-lg">
+          Transparent pricing to help you make the best decision possible.
         </p>
-        <div className="mt-6 flex items-center justify-center gap-4">
-          <label className="text-sm text-text-muted">
+
+        <div className="mx-auto mt-8 flex max-w-md flex-wrap items-center justify-center gap-3 rounded-organic-xl border border-border-subtle bg-surface-elevated px-4 py-3 ring-1 ring-white/[0.04]">
+          <label className="text-sm text-text-subtle">
             I&apos;m preparing for
           </label>
           <input
@@ -150,14 +151,14 @@ export default function PricingPage() {
               const v = e.target.value;
               setWeeksInput(v === "" ? "" : Math.max(1, parseInt(v, 10) || 1));
             }}
-            className="w-24 px-3 py-2 rounded-lg bg-surface border border-border text-text"
+            className="w-24 rounded-organic-md border border-border-subtle bg-surface-mid px-3 py-2 text-center text-sm text-text tabular-nums outline-none transition-colors focus-visible:border-primary/35 focus-visible:ring-2 focus-visible:ring-primary/25"
           />
-          <span className="text-sm text-text-muted">weeks</span>
+          <span className="text-sm text-text-muted">weeks until exam</span>
         </div>
         {weeks >= 17 && (
-          <p className="mt-4 text-primary font-medium flex items-center justify-center gap-2">
-            <Zap className="w-4 h-4" />
-            {reason}
+          <p className="mt-6 flex items-center justify-center gap-2 text-sm font-medium text-primary">
+            <Zap className="h-4 w-4 shrink-0" aria-hidden />
+            <span>{reason}</span>
           </p>
         )}
       </div>
@@ -165,28 +166,42 @@ export default function PricingPage() {
       <PricingTable
         tiers={tiers}
         onSelect={(id) => {
-          if (id === "free") return;
+          if (id === "free") {
+            if (tier !== "free") router.push("/profile");
+            return;
+          }
           if (id === "weekly" || id === "monthly" || id === "season_pass") {
             handleCheckout(id);
           }
         }}
       />
 
-      <div className="mt-12 text-center">
+      <div className="mt-14 text-center">
         {!session?.user ? (
-          <p className="text-text-muted text-sm">
-            <Link href="/login" className="text-primary hover:underline">
-              Sign in
+          <p className="text-sm text-text-muted">
+            <Link
+              href="/login?redirect=/pricing"
+              className="font-medium text-primary underline-offset-4 hover:text-primary-hover hover:underline"
+            >
+              Sign in to subscribe.
             </Link>{" "}
-            to subscribe. Already have access?{" "}
-            <Link href="/profile" className="text-primary hover:underline inline-flex items-center gap-1">
-              Manage subscription <ArrowRight className="w-4 h-4" />
+            Already have access?{" "}
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:text-primary-hover hover:underline"
+            >
+              Manage subscription
+              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
             </Link>
           </p>
         ) : (
-          <p className="text-text-muted text-sm">
-            <Link href="/profile" className="text-primary hover:underline inline-flex items-center gap-1">
-              Manage subscription <ArrowRight className="w-4 h-4" />
+          <p className="text-sm text-text-muted">
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:text-primary-hover hover:underline"
+            >
+              Manage subscription
+              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
             </Link>
           </p>
         )}
