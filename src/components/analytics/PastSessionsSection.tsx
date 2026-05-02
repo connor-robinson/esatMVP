@@ -8,7 +8,7 @@ import { useState, useMemo } from "react";
 import { SessionSummary, SessionDetail } from "@/types/analytics";
 import { SessionCard } from "./SessionCard";
 import { generateSessionDetail } from "@/lib/analytics";
-import { SortAsc, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -61,43 +61,45 @@ export function PastSessionsSection({
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
-      {/* Section Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="flex-1">
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/90">
-            {sortBy === "recent" ? "Recent Sessions" : "Top Sessions"}
+    <div className="relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8">
+      <div className="mb-6 flex items-center gap-4">
+        <div className="min-w-0 flex-1">
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-2xl">
+            Recent Sessions
           </h2>
-          <p className="text-sm text-white/60 mt-1">
-            Last {topSessions.length} completed sessions
+          <p className="mt-1 text-sm text-text-muted">
+            {sortBy === "recent"
+              ? `Last ${topSessions.length} completed sessions, newest first`
+              : `Top ${topSessions.length} sessions by score`}
           </p>
         </div>
-        <div className="relative">
+        <div className="relative shrink-0">
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as "recent" | "performance")}
-            className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none transition-all duration-200"
+            className="appearance-none cursor-pointer rounded-organic-md border border-border bg-surface-mid px-4 py-2.5 pr-10 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
             style={{
               colorScheme: "dark",
             }}
           >
-            <option value="recent" className="bg-neutral-800 text-white">
-              Sort by Recent
+            <option value="recent" className="bg-surface-elevated text-text">
+              Most Recent First
             </option>
-            <option value="performance" className="bg-neutral-800 text-white">
-              Sort by Performance
+            <option value="performance" className="bg-surface-elevated text-text">
+              Highest Score First
             </option>
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
         </div>
         <button
+          type="button"
           onClick={onToggleCollapse}
-          className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group"
+          className="group shrink-0 rounded-organic-md p-2 transition-colors hover:bg-surface-subtle"
         >
-          <ChevronDown 
+          <ChevronDown
             className={cn(
-              "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-              isCollapsed && "rotate-180"
+              "h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text",
+              isCollapsed && "rotate-180",
             )}
           />
         </button>
@@ -114,7 +116,7 @@ export function PastSessionsSection({
             className="overflow-hidden"
           >
             {/* Column Headers */}
-            <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-mono">
+            <div className="mb-2 grid grid-cols-12 gap-4 border-b border-border-subtle px-5 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-text-muted">
               <div className="col-span-1 text-center">Rank</div>
               <div className="col-span-2 text-center">Score</div>
               <div className="col-span-2 text-center">Accuracy</div>
@@ -141,8 +143,8 @@ export function PastSessionsSection({
 
       {/* Latest Session (if not in top 3) */}
       {showLatestSeparately && latestSession && (
-        <div className="pt-4 border-t-2 border-white/10">
-          <div className="mb-3 text-sm text-white/50">Your Latest Session</div>
+        <div className="border-t border-border-subtle pt-4">
+          <div className="mb-3 text-sm text-text-muted">Your latest session</div>
           <SessionCard
             session={getSessionForDisplay(latestSession)}
             rank={

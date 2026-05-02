@@ -1,27 +1,8 @@
-/**
- * Question Bank Page - Redirect to Bank
- * Redirects to /questions/bank for backward compatibility
- */
-
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { Container } from "@/components/layout/Container";
+import { QuestionBankHomeScreen } from "@/components/questionBank/QuestionBankHomeScreen";
 
-export default function QuestionBankRedirectPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/questions/questionbank');
-  }, [router]);
-
-  return (
-    <Container>
-      <div className="flex items-center justify-center py-20">
-        <LoadingSpinner size="lg" />
-      </div>
-    </Container>
-  );
+/** Question Bank overview: progress, subject tiles, mixed practice */
+export default function QuestionsHomePage() {
+  return <QuestionBankHomeScreen />;
 }

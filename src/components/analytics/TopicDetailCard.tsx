@@ -36,7 +36,7 @@ export function TopicDetailCard({
   const getPerformanceColor = () => {
     if (isTopTopic === true) return "bg-success/10";
     if (isTopTopic === false) return "bg-error/10";
-    return "bg-white/5";
+    return "bg-surface-subtle";
   };
 
   // Get ordinal suffix helper
@@ -58,7 +58,7 @@ export function TopicDetailCard({
       if (!topic.rank) {
         return {
           text: "",
-          color: "text-white/60"
+          color: "text-text-muted"
         };
       }
       // Use topic.rank as a fallback for percentile calculation
@@ -72,7 +72,7 @@ export function TopicDetailCard({
       }
       return {
         text: `${percentile}th percentile`,
-        color: "text-white/60"
+        color: "text-text-muted"
       };
     }
 
@@ -92,7 +92,7 @@ export function TopicDetailCard({
       const percentile = Math.max(0, Math.min(100, Math.round(((totalUsers - globalRank) / totalUsers) * 100)));
       return {
         text: `${percentile}th percentile`,
-        color: "text-white/60"
+        color: "text-text-muted"
       };
     }
   };
@@ -100,17 +100,15 @@ export function TopicDetailCard({
   const globalRankDisplay = getGlobalRankDisplay();
 
   // Get rank color - no color coding for rank numbers, just white/70
-  const getRankColor = () => {
-    return "text-white/70";
-  };
+  const getRankColor = () => "text-text-muted";
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        "w-full text-left p-5 rounded-organic-md transition-all hover:bg-white/5",
+        "w-full rounded-organic-md p-5 text-left transition-colors hover:bg-surface-subtle/80",
         getPerformanceColor(),
-        isExpanded && "bg-white/10"
+        isExpanded && "ring-1 ring-border-subtle",
       )}
     >
       {/* Collapsed View - Grid Layout */}
@@ -124,7 +122,7 @@ export function TopicDetailCard({
 
         {/* Topic Name */}
         <div className="col-span-2">
-          <h3 className="text-sm font-medium text-white/90 leading-tight font-mono truncate">
+          <h3 className="truncate font-mono text-sm font-medium leading-tight text-text">
             {topic.topicName}
           </h3>
         </div>
@@ -132,50 +130,46 @@ export function TopicDetailCard({
         {/* Percentile */}
         <div className="col-span-1 flex items-center justify-center">
           {topic.percentile !== undefined ? (
-            <span className="text-base text-white/80 font-mono">
+            <span className="font-mono text-base text-text">
               <span className="font-bold">{topic.percentile}</span>
-              <span className="text-white/60">{getOrdinalSuffix(topic.percentile)}</span>
+              <span className="text-text-muted">{getOrdinalSuffix(topic.percentile)}</span>
             </span>
           ) : (
-            <span className="text-base text-white/80 font-mono">-</span>
+            <span className="font-mono text-base text-text">-</span>
           )}
         </div>
 
         {/* Accuracy */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
-            {topic.accuracy.toFixed(1)}%
-          </span>
+          <span className="font-mono text-base text-text">{topic.accuracy.toFixed(1)}%</span>
         </div>
 
         {/* Speed */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
+          <span className="font-mono text-base text-text">
             {topic.avgSpeed > 0 ? (topic.avgSpeed / 1000).toFixed(1) : "0.0"}s/q
           </span>
         </div>
 
         {/* Sessions */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
-            {topic.sessionCount}
-          </span>
+          <span className="font-mono text-base text-text">{topic.sessionCount}</span>
         </div>
 
         {/* Correct/Total */}
         <div className="col-span-1 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
+          <span className="font-mono text-base text-text">
             {Math.round(topic.questionsAnswered * (topic.accuracy / 100))}/{topic.questionsAnswered}
           </span>
         </div>
 
         {/* Expand Icon */}
         <div className="col-span-1 flex items-center justify-end">
-          <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md border border-border-subtle bg-surface-mid transition-colors hover:bg-surface-neutral">
             <Plus
               className={cn(
-                "h-5 w-5 text-white/60 transition-transform duration-300",
-                isExpanded && "rotate-45"
+                "h-5 w-5 text-text-muted transition-transform duration-300",
+                isExpanded && "rotate-45",
               )}
             />
           </div>
@@ -192,7 +186,7 @@ export function TopicDetailCard({
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="mt-4 space-y-4 pt-4 border-t border-white/10">
+            <div className="mt-4 space-y-4 border-t border-border-subtle pt-4">
               {/* Historical Performance Chart */}
               {historyData.length > 0 && (
                 <TopicHistoryChart topicId={topic.topicId} sessions={historyData} />

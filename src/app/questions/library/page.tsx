@@ -220,24 +220,24 @@ export default function QuestionsLibraryPage() {
 
   if (loading) {
     return (
-      <Container>
-        <div className="py-12 text-center text-white/50">Loading questions...</div>
+      <Container size="lg">
+        <div className="py-16 text-center text-sm text-text-muted">Loading questions…</div>
       </Container>
     );
   }
 
   if (error && questions.length === 0) {
     return (
-      <Container>
-        <div className="py-12 text-center text-red-400">{error}</div>
+      <Container size="lg">
+        <div className="py-16 text-center text-sm text-error">{error}</div>
       </Container>
     );
   }
 
   return (
-    <Container className="py-6">
-      {/* Filters - Full width at top */}
-      <div className="mb-6">
+    <Container size="lg" className="py-6 sm:py-8">
+      {/* Filters */}
+      <div className="mb-4">
         <QuestionLibraryFilters
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -252,14 +252,10 @@ export default function QuestionsLibraryPage() {
         />
       </div>
 
-      {/* Two-column layout: library • session summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(450px,550px)] gap-6 py-4">
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
         {/* Left: Question library */}
         <div>
-          <p className="text-xs text-white/40 font-mono mb-3">
-            Showing {questions.length} question{questions.length !== 1 ? "s" : ""}{" "}
-            (sorted by test type, subject, difficulty)
-          </p>
           <QuestionLibraryGrid
             questions={questions}
             selectedQuestionIds={selectedQuestionIds}
@@ -280,9 +276,9 @@ export default function QuestionsLibraryPage() {
         </div>
       </div>
 
-      {/* Error message */}
+      {/* Error banner */}
       {error && (
-        <div className="mt-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div role="alert" className="mt-4 rounded-xl border border-error/30 bg-error/10 p-4 text-sm text-error">
           {error}
         </div>
       )}

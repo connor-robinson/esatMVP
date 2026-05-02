@@ -74,6 +74,10 @@ export const colorTokens = {
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   error: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
   warning: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
+  /**
+   * Easy-difficulty pill (Figma mental-maths drills) — brighter chartreuse than `--color-primary` CTAs (#a9b167).
+   */
+  difficultyEasy: { dark: "#D9E88E", light: "#CAD890" },
 } as const satisfies Record<string, ModeToken>;
 
 export const surfaceOpacityTokens = {
@@ -186,7 +190,50 @@ export const shadowTokens = {
   dropElevated: "0 8px 0 rgba(28, 27, 31, 0.9)",
   /** Demo drop shadow (`248:3523`): y=3 */
   dropSubtle: "0 3px 0 rgba(28, 27, 31, 0.9)",
+  /** Modal / card overlay shadow */
+  modalCard: "0 20px 60px rgba(0,0,0,0.55)",
 } as const;
+
+/**
+ * Difficulty pill tokens — used in DrillVariantsGrid, DrillsSelectedModal.
+ * Easy uses `bg-difficulty-easy` (see `--color-difficulty-easy`); others use status tokens.
+ */
+export const difficultyTokens = {
+  easy: {
+    label: "Easy",
+    bg: "bg-difficulty-easy",
+    text: "text-background", // dark ink on chartreuse (uses --color-background)
+    shadow: "shadow-sm",
+  },
+  medium: {
+    label: "Medium",
+    bg: "bg-warning",
+    text: "text-text",      // light label on amber
+    shadow: "shadow-sm",
+  },
+  hard: {
+    label: "Hard",
+    bg: "bg-error",
+    text: "text-text",      // light label on red
+    shadow: "shadow-sm",
+  },
+  extra: {
+    label: "Extra",
+    bg: "bg-accent",
+    text: "text-text",      // light label on teal
+    shadow: "shadow-sm",
+  },
+} as const;
+
+export type DifficultyKey = keyof typeof difficultyTokens;
+
+/** Map numeric difficulty (1-5) → token key used in difficultyTokens. */
+export function getDifficultyKey(difficulty: number): DifficultyKey {
+  if (difficulty <= 2) return "easy";
+  if (difficulty <= 3) return "medium";
+  if (difficulty <= 4) return "hard";
+  return "extra";
+}
 
 export const themeTokens = {
   colors: colorTokens,
@@ -195,6 +242,7 @@ export const themeTokens = {
   radius: radiusTokens,
   motion: motionTokens,
   shadows: shadowTokens,
+  difficulty: difficultyTokens,
 } as const;
 
 export function getThemeTokenColor(
@@ -237,6 +285,7 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-success": colorTokens.success[mode],
     "--color-error": colorTokens.error[mode],
     "--color-warning": colorTokens.warning[mode],
+    "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
     "--surface-02": surfaceOpacityTokens["02"][mode],
     "--surface-05": surfaceOpacityTokens["05"][mode],
     "--surface-10": surfaceOpacityTokens["10"][mode],

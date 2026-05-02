@@ -11,13 +11,15 @@ import {
   useSupabaseClient,
   useSupabaseSession,
 } from '@/components/auth/SupabaseSessionProvider';
-import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { UserIcon, LogInIcon } from '@/components/icons';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Sun, Moon } from 'lucide-react';
+import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
+
+/** Unified lucide sizing so logout / login glyphs match sun + gear optically */
+const NAV_ICON_PX = 22;
+const NAV_ICON_STROKE = 2;
 
 const skillsNavItems = [
   { href: '/mental-maths/drill', label: 'Drill' },
@@ -33,7 +35,8 @@ const papersNavItems = [
 ];
 
 const questionsNavItems = [
-  { href: '/questions/questionbank', label: 'Bank' },
+  { href: '/questions', label: 'Home' },
+  { href: '/questions/questionbank', label: 'Practice' },
   { href: '/questions/library', label: 'Library' },
   { href: '/questions/questionbank/drill', label: 'Drill' },
 ];
@@ -119,6 +122,7 @@ export function Navbar() {
       '/past-papers/library',
       '/past-papers/drill',
       '/past-papers/analytics',
+      '/questions',
       '/questions/questionbank',
       '/questions/library',
       '/questions/questionbank/drill',
@@ -149,6 +153,12 @@ export function Navbar() {
     setTimeout(() => setActivePress(null), 120);
   }, []);
 
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  }, [supabase, router]);
+
   const loginHref = useMemo(() => {
     // Default to /papers/library if on home page or login page
     const redirectTo =
@@ -157,6 +167,20 @@ export function Navbar() {
         : '/past-papers/library';
     return `/login?redirectTo=${encodeURIComponent(redirectTo)}`;
   }, [pathname]);
+
+  const settingsHref = '/settings';
+
+  const loginHrefWithSettingsRedirect = useMemo(
+    () =>
+      `/login?redirectTo=${encodeURIComponent(settingsHref)}`,
+    [],
+  );
+
+  const isSettingsActive =
+    pathname === '/settings' || pathname.startsWith('/profile');
+
+  const navIconSlotClass =
+    'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
 
   return (
     <>
@@ -176,46 +200,56 @@ export function Navbar() {
       <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
         <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
           <div className='flex h-[65px] items-center justify-between'>
-            <div className='flex items-center space-x-8'>
-              <Link href='/' className='interaction-scale'>
-                <span className='text-sm font-semibold uppercase tracking-[0.14em] text-text transition-colors duration-fast ease-signature hover:text-text-muted'>
+            <div className='flex min-w-0 flex-1 items-center gap-6 lg:gap-8'>
+              <Link href='/' className='interaction-scale shrink-0'>
+                <span className='text-sm font-bold uppercase tracking-[0.14em] text-text transition-colors duration-fast ease-signature hover:text-text-muted'>
                   No-Calc
                 </span>
               </Link>
 
               {!hasActiveSession && (
-                <div className='flex items-center space-x-3 rounded-organic-lg bg-surface-subtle/60 px-3 py-1.5 ring-1 ring-border-subtle/50'>
+                <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1'>
                   <Link
                     href='/mental-maths/drill'
                     className={cn(
-                      'text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature',
+                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
                       currentSection === 'skills'
-                        ? 'rounded-md bg-text px-2.5 py-1 text-background'
-                        : 'text-text-muted hover:text-text',
+                        ? 'font-bold text-text'
+                        : 'font-semibold text-text-muted hover:text-text',
                     )}
                   >
                     Mental Maths
                   </Link>
-                  <span className='text-sm text-text-subtle'>/</span>
+                  <span
+                    className='text-sm text-text-subtle select-none'
+                    aria-hidden
+                  >
+                    /
+                  </span>
                   <Link
                     href='/past-papers/library'
                     className={cn(
-                      'text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature',
+                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
                       currentSection === 'papers'
-                        ? 'text-maths'
-                        : 'text-text-muted hover:text-text',
+                        ? 'font-bold text-text'
+                        : 'font-semibold text-text-muted hover:text-text',
                     )}
                   >
                     Past Papers
                   </Link>
-                  <span className='text-sm text-text-subtle'>/</span>
+                  <span
+                    className='text-sm text-text-subtle select-none'
+                    aria-hidden
+                  >
+                    /
+                  </span>
                   <Link
-                    href='/questions/questionbank'
+                    href='/questions'
                     className={cn(
-                      'text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature',
+                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
                       pathname.startsWith('/questions')
-                        ? 'text-secondary'
-                        : 'text-text-muted hover:text-text',
+                        ? 'font-bold text-text'
+                        : 'font-semibold text-secondary hover:text-secondary/90',
                     )}
                   >
                     Question Bank
@@ -224,9 +258,9 @@ export function Navbar() {
               )}
             </div>
 
-            <div className='flex items-center space-x-3'>
+            <div className='flex min-w-0 shrink-0 items-center gap-2 sm:gap-3'>
               {!hasActiveSession && currentSection !== 'home' && (
-                <div className='flex items-center space-x-2'>
+                <div className='flex min-w-0 items-center gap-1 sm:gap-2'>
                   {currentNavItems.map((item) => {
                     const isActive = pathname === item.href;
                     const isPressed = activePress === item.href;
@@ -249,7 +283,7 @@ export function Navbar() {
                               : currentSection === 'papers'
                                 ? 'bg-maths/10 text-maths'
                                 : 'bg-secondary/10 text-secondary'
-                            : 'text-text-muted hover:text-text hover:bg-surface-subtle',
+                            : 'text-text hover:bg-surface-subtle hover:text-text',
                           isPressed &&
                             !isActive &&
                             'bg-surface-elevated scale-[0.97]',
@@ -266,81 +300,108 @@ export function Navbar() {
               )}
 
               {!hasActiveSession && (
-                <div className='flex items-center gap-2'>
+                <>
                   <Link
                     href='/pricing'
-                    className='text-sm font-medium text-text-muted hover:text-primary transition-colors px-2 uppercase tracking-[0.08em]'
+                    className='shrink-0 px-2 text-sm font-medium uppercase tracking-[0.08em] text-text-muted transition-colors hover:text-primary'
                   >
                     Pricing
                   </Link>
-                  <button
-                    onClick={toggleTheme}
-                    className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale'
-                    aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
-                  >
-                    {isDark ? (
-                      <Sun className='w-5 h-5 text-text-muted hover:text-text' />
-                    ) : (
-                      <Moon className='w-5 h-5 text-text-muted hover:text-text' />
-                    )}
-                  </button>
 
-                  {session?.user ? (
-                    <Link
-                      href='/profile'
-                      className={cn(
-                        'relative p-2 rounded-lg transition-all duration-fast ease-signature interaction-scale',
-                        pathname === '/profile'
-                          ? 'bg-primary/10'
-                          : 'hover:bg-surface-subtle',
+                  <div
+                    className='flex shrink-0 items-center gap-1 border-l border-border-subtle pl-3 sm:pl-4'
+                    aria-label='Account and preferences'
+                  >
+                    <button
+                      type='button'
+                      onClick={toggleTheme}
+                      className={navIconSlotClass}
+                      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                    >
+                      {isDark ? (
+                        <Sun
+                          className='text-text'
+                          aria-hidden
+                          size={NAV_ICON_PX}
+                          strokeWidth={NAV_ICON_STROKE}
+                        />
+                      ) : (
+                        <Moon
+                          className='text-text'
+                          aria-hidden
+                          size={NAV_ICON_PX}
+                          strokeWidth={NAV_ICON_STROKE}
+                        />
                       )}
-                    >
-                      <UserIcon
-                        size='md'
-                        className={cn(
-                          pathname === '/profile'
-                            ? 'text-primary'
-                            : 'text-text-muted hover:text-text',
-                        )}
-                      />
-                      <div className='absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-primary rounded-full flex items-center justify-center'>
-                        <svg
-                          viewBox='0 0 12 12'
-                          fill='none'
-                          xmlns='http://www.w3.org/2000/svg'
-                          className='w-2.5 h-2.5 text-text'
+                    </button>
+
+                    {session?.user ? (
+                      <>
+                        <button
+                          type='button'
+                          onClick={() => void handleSignOut()}
+                          className={navIconSlotClass}
+                          aria-label='Sign out'
                         >
-                          <path
-                            d='M2.5 6L5 8.5L9.5 3.5'
-                            stroke='currentColor'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
+                          <LogOut
+                            className='text-text'
+                            aria-hidden
+                            size={NAV_ICON_PX}
+                            strokeWidth={NAV_ICON_STROKE}
                           />
-                        </svg>
-                      </div>
-                    </Link>
-                  ) : (
-                    <Link
-                      href={loginHref}
-                      className='p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale'
-                    >
-                      <LogInIcon
-                        size='md'
-                        className='text-text-muted hover:text-text'
-                      />
-                    </Link>
-                  )}
-                </div>
+                        </button>
+                        <Link
+                          href={settingsHref}
+                          className={cn(
+                            navIconSlotClass,
+                            isSettingsActive && 'bg-secondary/15',
+                          )}
+                          aria-label='Settings'
+                        >
+                          <Settings
+                            aria-hidden
+                            className={cn(
+                              isSettingsActive ? 'text-secondary' : 'text-text',
+                            )}
+                            size={NAV_ICON_PX}
+                            strokeWidth={NAV_ICON_STROKE}
+                          />
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href={loginHref}
+                          className={navIconSlotClass}
+                          aria-label='Sign in'
+                        >
+                          <LogIn
+                            aria-hidden
+                            className='text-text'
+                            size={NAV_ICON_PX}
+                            strokeWidth={NAV_ICON_STROKE}
+                          />
+                        </Link>
+                        <Link
+                          href={loginHrefWithSettingsRedirect}
+                          className={cn(navIconSlotClass)}
+                          aria-label='Settings'
+                        >
+                          <Settings
+                            aria-hidden
+                            className='text-text'
+                            size={NAV_ICON_PX}
+                            strokeWidth={NAV_ICON_STROKE}
+                          />
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
         </div>
-        {/* Product accent rail — matches mental-maths / Question Bank secondary (magenta) spec */}
-        <div
-          className='h-0.5 w-full bg-secondary/75'
-          aria-hidden
-        />
       </nav>
       )}
       {hasActiveSession && <SessionProgressBar embedded />}

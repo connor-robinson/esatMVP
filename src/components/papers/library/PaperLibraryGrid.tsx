@@ -1,16 +1,11 @@
-/**
- * PaperLibraryGrid - Row-based layout grouped by exam
- */
-
 "use client";
 
 import { useMemo, useState } from "react";
-import { Card } from "@/components/ui/Card";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
-import { getPaperTypeColor } from "@/config/colors";
+import { getExamAccentTextClass } from "@/config/colors";
 import { cn } from "@/lib/utils";
 
 interface PaperLibraryGridProps {
@@ -32,159 +27,129 @@ export function PaperLibraryGrid({
   onAddPaper,
   onAddSection,
 }: PaperLibraryGridProps) {
-  // Track collapsed exams - all expanded by default
   const [collapsedExams, setCollapsedExams] = useState<Set<string>>(new Set());
 
-  const toggleExam = (examName: string) => {
+  const toggleExam = (examName: string) =>
     setCollapsedExams((prev) => {
       const next = new Set(prev);
-      if (next.has(examName)) {
-        next.delete(examName);
-      } else {
-        next.add(examName);
-      }
+      next.has(examName) ? next.delete(examName) : next.add(examName);
       return next;
     });
-  };
 
   const isExamExpanded = (examName: string) => !collapsedExams.has(examName);
-  // Group papers by exam name, deduplicating by exam+year+type (keeping separate cards for Official vs Specimen)
-  const papersByExam = useMemo(() => {
-    const grouped: Record<string, Paper[]> = {};
 
-    // Create a map to track unique exam+year+type combinations
-    // This ensures we only show one paper per exam+year+type combination
+  const papersByExam = useMemo(() => {
     const seenCombinations = new Map<string, Paper>();
 
     papers.forEach((paper) => {
-      // Create a unique key: exam+year+type
-      const key = `${paper.examName}-${paper.examYear}-${paper.examType || ""}`;
-
-      // Only keep the first paper we encounter for each exam+year+type combination
-      // Prefer papers with a more standard paper_name if available
+      const key = `${paper.examName}-${paper.examYear}-${paper.examType ?? ""}`;
       if (!seenCombinations.has(key)) {
         seenCombinations.set(key, paper);
       } else {
         const existing = seenCombinations.get(key)!;
-        // If we have a duplicate, prefer the one with a more standard paper_name
-        // (e.g., prefer "Paper" over "Section 1" or "Section 2" in paper_name)
-        const currentName = (paper.paperName || "").toLowerCase();
-        const existingName = (existing.paperName || "").toLowerCase();
-        
-        // Prefer papers with simpler names (like "Paper" or empty) over section-specific names
-        if (currentName === "paper" && existingName !== "paper") {
-          seenCombinations.set(key, paper);
-        } else if (currentName === "" && existingName !== "" && existingName !== "paper") {
-          seenCombinations.set(key, paper);
-        }
-        // Otherwise keep the existing one
+        const curr = (paper.paperName ?? "").toLowerCase();
+        const prev = (existing.paperName ?? "").toLowerCase();
+        if (curr === "paper" && prev !== "paper") seenCombinations.set(key, paper);
+        else if (curr === "" && prev !== "" && prev !== "paper") seenCombinations.set(key, paper);
       }
     });
 
-    // Group the deduplicated papers by exam name
+    const grouped: Record<string, Paper[]> = {};
     seenCombinations.forEach((paper) => {
-      if (!grouped[paper.examName]) {
-        grouped[paper.examName] = [];
-      }
+      if (!grouped[paper.examName]) grouped[paper.examName] = [];
       grouped[paper.examName].push(paper);
     });
 
-    // Sort papers within each exam by year (descending), then by exam type
     Object.keys(grouped).forEach((examName) => {
       grouped[examName].sort((a, b) => {
-        if (b.examYear !== a.examYear) {
-          return b.examYear - a.examYear;
-        }
-        // If same year, sort by exam type (Official before Specimen)
-        const typeA = (a.examType || "").toLowerCase();
-        const typeB = (b.examType || "").toLowerCase();
+        if (b.examYear !== a.examYear) return b.examYear - a.examYear;
+        const typeA = (a.examType ?? "").toLowerCase();
+        const typeB = (b.examType ?? "").toLowerCase();
         if (typeA === "official" && typeB !== "official") return -1;
         if (typeB === "official" && typeA !== "official") return 1;
         return typeA.localeCompare(typeB);
       });
     });
 
-    // Sort exam names alphabetically
     const sortedExams = Object.keys(grouped).sort();
-
     return { grouped, sortedExams };
   }, [papers]);
 
   return (
-    <Card variant="flat" className="p-5 h-full bg-surface">
-      <div className="flex items-center justify-between mb-5">
+    <div className="flex h-full flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-5">
+      {/* Header */}
+      <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">
-            Paper Library
-          </h2>
-          <p className="text-sm font-mono text-text-subtle mt-1">
+          <h2 className="text-base font-semibold text-text">Paper Library</h2>
+          <p className="mt-0.5 text-sm text-text-muted">
             Browse past papers and add them to your practice session.
           </p>
         </div>
-        <div className="text-xs text-text-subtle">
+        <span className="shrink-0 pt-0.5 text-xs text-text-muted">
           {papers.length} result{papers.length === 1 ? "" : "s"}
-        </div>
+        </span>
       </div>
 
       {papers.length === 0 ? (
-        <div className="h-[220px] flex items-center justify-center text-sm text-text-disabled">
-          No papers found with the current filters.
+        <div className="flex min-h-[220px] flex-1 items-center justify-center rounded-xl border border-border-subtle bg-surface-mid text-sm text-text-muted">
+          No papers match the current filters.
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {papersByExam.sortedExams.map((examName) => {
             const examPapers = papersByExam.grouped[examName];
-            if (!examPapers || examPapers.length === 0) return null;
+            if (!examPapers?.length) return null;
 
-            const examColor = getPaperTypeColor(examName);
-
+            const accentClass = getExamAccentTextClass(examName);
             const isExpanded = isExamExpanded(examName);
 
             return (
               <div
                 key={examName}
-                className="rounded-xl overflow-hidden transition-all duration-300 bg-surface-mid"
+                className="overflow-hidden rounded-xl border border-border-subtle bg-surface-mid"
               >
-                {/* Color-coded header */}
+                {/* Exam group header */}
                 <button
+                  type="button"
                   onClick={() => toggleExam(examName)}
-                  className="w-full px-6 py-7 flex items-center justify-between bg-surface-mid hover:bg-surface-elevated transition-colors group"
+                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-neutral"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <ChevronDown
                       className={cn(
-                        "w-4 h-4 transition-transform duration-300",
-                        isExpanded ? "rotate-0" : "-rotate-90"
+                        "h-4 w-4 shrink-0 transition-transform duration-200",
+                        accentClass,
+                        !isExpanded && "-rotate-90"
                       )}
-                      style={{ color: examColor }}
-                      strokeWidth={3}
+                      strokeWidth={2.5}
+                      aria-hidden
                     />
-                    <h3 className="text-base font-mono font-bold uppercase tracking-wider" style={{ color: examColor }}>
+                    <span className={cn("text-sm font-semibold uppercase tracking-wide", accentClass)}>
                       {examName} Papers
-                    </h3>
+                    </span>
                   </div>
-                  <div className="text-xs text-text-subtle font-mono tracking-tight group-hover:text-text-muted transition-colors">
-                    {examPapers.length} papers available
-                  </div>
+                  <span className="text-xs text-text-muted">
+                    {examPapers.length} paper{examPapers.length === 1 ? "" : "s"} available
+                  </span>
                 </button>
 
-                {/* Papers for this exam */}
+                {/* Papers inside this exam */}
                 <AnimatePresence initial={false}>
                   {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="p-4 space-y-2">
+                      <div className="space-y-1.5 border-t border-border-subtle p-3">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}
                             paper={paper}
                             isSelected={selectedPaperIds.has(paper.id)}
-                            selectedSections={selectedSectionsByPaper.get(paper.id) || new Set()}
+                            selectedSections={selectedSectionsByPaper.get(paper.id) ?? new Set()}
                             onToggleSection={onToggleSection}
                             onAddFullPaper={onAddFullPaper}
                             onAddPaper={onAddPaper}
@@ -201,6 +166,6 @@ export function PaperLibraryGrid({
           })}
         </div>
       )}
-    </Card>
+    </div>
   );
 }

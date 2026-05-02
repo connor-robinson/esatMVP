@@ -5,8 +5,17 @@
 "use client";
 
 import { useState, useMemo, useEffect, memo, useRef } from "react";
-import { X, Play, Clock, ChevronDown, Check, Edit3, FileText, Plus, ArrowRight, BookOpen } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import {
+  X,
+  Clock,
+  ChevronDown,
+  Check,
+  Edit3,
+  FileText,
+  Plus,
+  ArrowRight,
+  BookOpen,
+} from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor, getSectionColor } from "@/config/colors";
@@ -14,6 +23,8 @@ import { getQuestions } from "@/lib/supabase/questions";
 import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
+
+const panelClass = "rounded-2xl border border-border-subtle bg-surface px-5 py-5";
 
 interface SelectedPaper {
   paper: Paper;
@@ -608,34 +619,32 @@ export function PaperSessionSummary({
   const totalItems = selectedPapers.length;
 
   return (
-    <Card variant="flat" className="p-5 h-full space-y-4 bg-surface">
+    <div className={cn(panelClass, "flex min-h-0 flex-col gap-5")}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-text-muted">
-            Practice Session
-          </h2>
-          <p className="text-sm font-mono text-text-subtle mt-1">
-            Select subjects for each section.
-          </p>
+          <h2 className="text-base font-semibold text-text">Practice Session</h2>
+          <p className="mt-0.5 text-sm text-text-muted">Select subjects for each section.</p>
         </div>
-        <span className="text-sm text-text-subtle font-medium">
+        <span className="shrink-0 pt-0.5 text-xs text-text-muted">
           {totalItems} {totalItems === 1 ? "paper" : "papers"}
         </span>
       </div>
 
       {/* Selected papers */}
-      <div className="min-h-[300px] rounded-lg p-4 bg-surface-mid space-y-3 overflow-y-auto">
+      <div
+        className="min-h-[300px] space-y-2 overflow-y-auto rounded-xl bg-surface-elevated p-3"
+        // eslint-disable-next-line react/forbid-dom-props
+        style={{ outline: "none" }}
+      >
         {selectedPapers.length === 0 ? (
-          <div className="h-full min-h-[300px] flex flex-col items-center justify-center gap-4 py-12">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-surface-elevated mb-2">
-              <BookOpen className="w-8 h-8 text-text-muted" strokeWidth={1.5} />
+          <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 py-12">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-subtle bg-surface">
+              <BookOpen className="h-7 w-7 text-text-muted" strokeWidth={1.5} />
             </div>
-            <div className="text-center space-y-1.5">
-              <div className="text-base font-mono font-semibold text-text-muted">
-                No papers selected yet
-              </div>
-              <div className="text-sm font-mono text-text-subtle max-w-xs">
+            <div className="space-y-1 text-center">
+              <div className="text-sm font-medium text-text">No papers selected yet</div>
+              <div className="max-w-xs text-xs text-text-muted">
                 Browse the library to add papers to your practice session
               </div>
             </div>
@@ -658,7 +667,7 @@ export function PaperSessionSummary({
 
       {/* Session Name & Stats */}
       {totalItems > 0 && (
-        <div className="rounded-lg p-4 bg-surface-mid space-y-4">
+        <div className="space-y-4 rounded-xl border border-border-subtle bg-surface-mid p-4">
           {/* Session Name */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
@@ -714,39 +723,22 @@ export function PaperSessionSummary({
         </div>
       )}
 
-      {/* Start session */}
+      {/* Start session CTA */}
       <button
         type="button"
         onClick={onStartSession}
         disabled={!canStart}
         className={cn(
-          "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
-          !canStart
-            ? "bg-surface-elevated text-text-disabled cursor-not-allowed"
-            : "bg-primary/40 hover:bg-primary/50 text-text cursor-pointer border border-primary/50"
-        )}
-        style={
+          "flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-colors duration-fast focus-visible:outline-none disabled:cursor-not-allowed",
           canStart
-            ? {
-                boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-              }
-            : undefined
-        }
-        onMouseEnter={(e) => {
-          if (canStart) {
-            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (canStart) {
-            e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-          }
-        }}
+            ? "bg-surface-neutral text-text hover:bg-surface-mid"
+            : "bg-surface-elevated text-text-muted opacity-50"
+        )}
       >
-        <span>Start Practice Session</span>
-        <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+        Start Practice Session
+        <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
       </button>
-    </Card>
+    </div>
   );
 }
 

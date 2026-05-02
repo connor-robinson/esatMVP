@@ -76,6 +76,18 @@ export function getPaperTypeColor(paperType: string): string {
   return PAPER_TYPE_COLORS[paperType as keyof typeof PAPER_TYPE_COLORS] || PAPER_COLORS.mathematics;
 }
 
+/** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
+export function getExamAccentTextClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "text-advanced";
+  if (key === "NSAA") return "text-biology";
+  if (key === "TMUA") return "text-physics";
+  if (key === "ESAT") return "text-maths";
+  if (key === "PAT") return "text-chemistry";
+  if (key === "MAT") return "text-maths";
+  return "text-maths";
+}
+
 /**
  * Helper function to desaturate a color (convert to rgba with reduced opacity)
  */

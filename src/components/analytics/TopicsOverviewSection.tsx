@@ -149,15 +149,14 @@ export function TopicsOverviewSection({
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
-      {/* Section Header with Search and Sort */}
-      <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-        <div className="text-left flex-shrink-0">
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/90">
-            Topic Performance & Overview
+    <div className="relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-0 shrink-0 text-left">
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-2xl">
+            Topic Performance
           </h2>
-          <p className="text-sm text-white/60 mt-1">
-            Analyze your performance across all topics
+          <p className="mt-1 text-sm text-text-muted">
+            Rankings and practice volume by topic
           </p>
         </div>
         
@@ -165,13 +164,13 @@ export function TopicsOverviewSection({
         <div className="flex gap-3 items-center flex-1 min-w-0 justify-end">
           {/* Search Input */}
           <div className="relative flex-1 sm:max-w-[280px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <input
-              type="text"
-              placeholder="Search topics..."
+              type="search"
+              placeholder="Search topics…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-organic-md text-sm text-white/90 placeholder:text-white/40 focus:outline-none border-0 transition-all duration-200 font-sans"
+              className="w-full rounded-organic-md border border-border bg-surface-mid py-2.5 pl-10 pr-4 font-sans text-sm text-text caret-primary placeholder:text-text-disabled transition-colors focus:border-primary/35 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -183,33 +182,34 @@ export function TopicsOverviewSection({
                 const newSort = e.target.value as "strength" | "weakness" | "questions";
                 setSortBy(newSort);
               }}
-              className="appearance-none cursor-pointer bg-white/5 hover:bg-white/10 rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-white/80 focus:outline-none border-0 transition-all duration-200 font-sans"
+              className="w-full cursor-pointer appearance-none rounded-organic-md border border-border bg-surface-mid px-4 py-2.5 pr-10 font-sans text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
               style={{
                 colorScheme: "dark",
               }}
             >
-              <option value="strength" className="bg-neutral-800 text-white">
+              <option value="strength" className="bg-surface-elevated text-text">
                 Strongest First
               </option>
-              <option value="weakness" className="bg-neutral-800 text-white">
+              <option value="weakness" className="bg-surface-elevated text-text">
                 Weakest First
               </option>
-              <option value="questions" className="bg-neutral-800 text-white">
+              <option value="questions" className="bg-surface-elevated text-text">
                 Most Practiced
               </option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
           </div>
 
           {/* Collapse Button */}
           <button
+            type="button"
             onClick={onToggleCollapse}
-            className="p-2 rounded-organic-md hover:bg-white/5 transition-colors group flex-shrink-0"
+            className="group flex shrink-0 rounded-organic-md p-2 transition-colors hover:bg-surface-subtle"
           >
-            <ChevronDown 
+            <ChevronDown
               className={cn(
-                "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-                isCollapsed && "rotate-180"
+                "h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text",
+                isCollapsed && "rotate-180",
               )}
             />
           </button>
@@ -230,24 +230,26 @@ export function TopicsOverviewSection({
             <div className="space-y-4">
 
               {/* Column Headers */}
-              <div className="grid grid-cols-12 gap-4 px-5 py-2 mb-2 text-xs font-semibold text-white/40 border-b border-white/10 font-mono">
+              <div className="mb-2 grid grid-cols-12 gap-4 border-b border-border-subtle px-5 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-text-muted">
                 <div className="col-span-1 text-center">Rank</div>
                 <div className="col-span-2 text-left">Topic</div>
                 <div className="col-span-1 text-center">
                   <div className="flex items-center justify-center gap-1">
                     <span>Percentile</span>
                     <div className="relative group">
-                      <Info className="h-3.5 w-3.5 text-white/30 hover:text-white/50 transition-colors cursor-help" />
-                      <div className="absolute right-0 top-full mt-2 z-20 hidden group-hover:block bg-[#0f1114] text-[11px] text-white/80 p-3 rounded-md border border-white/10 w-72 shadow-lg">
-                        <div className="font-semibold mb-2 text-white/90">How Ranking Works</div>
-                        <div className="space-y-1.5 text-white/70">
+                      <Info className="h-3.5 w-3.5 cursor-help text-text-subtle transition-colors hover:text-text-muted" />
+                      <div className="absolute right-0 top-full z-20 mt-2 hidden w-72 rounded-organic-md border border-border bg-surface-elevated p-3 text-[11px] text-text shadow-lg group-hover:block">
+                        <div className="mb-2 font-semibold text-text">How ranking works</div>
+                        <div className="space-y-1.5 text-text-muted">
                           <p>Topics are ranked using a composite score that combines:</p>
                           <ul className="list-disc list-inside space-y-0.5 ml-1">
                             <li><strong>Accuracy (50%):</strong> Your percentage of correct answers</li>
                             <li><strong>Practice Volume (30%):</strong> Number of questions practiced (with diminishing returns to prevent grinding)</li>
                             <li><strong>Speed (20%):</strong> Average time per question (faster is better)</li>
                           </ul>
-                          <p className="mt-2 text-white/60">Minimum 10 questions required for a meaningful score. Percentile shows where you rank among your topics.</p>
+                          <p className="mt-2 text-text-subtle">
+                            Minimum 10 questions required for a meaningful score. Percentile shows where you rank among your topics.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -262,8 +264,8 @@ export function TopicsOverviewSection({
 
               {/* All Topics List */}
               {"isEmpty" in visibleTopicsData ? (
-                <div className="text-center py-12 text-white/40">
-                  <Search className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <div className="py-12 text-center text-text-muted">
+                  <Search className="mx-auto mb-3 h-12 w-12 opacity-40" />
                   <p>No topics found matching &quot;{searchQuery}&quot;</p>
                 </div>
               ) : (
@@ -290,17 +292,16 @@ export function TopicsOverviewSection({
 
                       {/* More Data Needed Message */}
                       {visibleTopicsData.needsMoreData && (
-                        <div className="text-center py-4 text-white/40 text-sm">
-                          More data needed
-                        </div>
+                        <div className="py-4 text-center text-sm text-text-muted">More data needed</div>
                       )}
 
                       {/* Show All Button (Centered ...) */}
                       {visibleTopicsData.totalTopics > (visibleTopicsData.topTopics?.length || 0) + (visibleTopicsData.bottomTopics?.length || 0) && (
                         <div className="flex justify-center pt-2 pb-2">
                           <button
+                            type="button"
                             onClick={() => setShowAllTopics(true)}
-                            className="text-4xl text-white/40 hover:text-white/60 transition-colors font-light leading-none"
+                            className="text-4xl font-light leading-none text-text-disabled transition-colors hover:text-text-muted"
                           >
                             ...
                           </button>
@@ -349,8 +350,9 @@ export function TopicsOverviewSection({
                       {/* Hide All Button */}
                       <div className="flex justify-center pt-2">
                         <button
+                          type="button"
                           onClick={() => setShowAllTopics(false)}
-                          className="text-sm text-white/60 hover:text-white/80 transition-colors"
+                          className="text-sm text-text-muted transition-colors hover:text-text"
                         >
                           Show Less
                         </button>

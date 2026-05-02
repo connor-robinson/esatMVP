@@ -8,6 +8,7 @@ import type {
   QuestionBankQuestion,
   QuestionBankFilters,
   QuestionAttempt,
+  SubjectFilter,
 } from '@/types/questionBank';
 import type { TMUAGraphSpec } from '@/components/shared/TMUAGraph';
 
@@ -143,6 +144,42 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
     const initializeFilters = async () => {
       try {
+        // Launch preset from question bank home (?mixed=1 | ?testType=&subject=)
+        if (typeof window !== 'undefined' && window.location.pathname === '/questions/questionbank') {
+          const params = new URLSearchParams(window.location.search);
+          const mixed = params.get('mixed') === '1';
+          const tt = params.get('testType');
+          const rawSub = params.get('subject');
+          if (mixed || tt || rawSub) {
+            const preset: QuestionBankFilters = {
+              testType: mixed ? 'All' : tt === 'ESAT' || tt === 'TMUA' ? tt : 'All',
+              subject: mixed
+                ? 'All'
+                : rawSub
+                  ? rawSub.includes(',')
+                    ? (rawSub.split(',').map((s) => s.trim()) as SubjectFilter[])
+                    : (rawSub.trim() as SubjectFilter)
+                  : 'All',
+              difficulty: 'All',
+              searchTag: '',
+              attemptedStatus: 'Mix',
+              attemptResult: [],
+            };
+            setFilters(preset);
+            localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(preset));
+            localStorage.setItem(FILTERS_MANUAL_CHANGE_KEY, 'true');
+            try {
+              localStorage.removeItem(STORAGE_KEY);
+            } catch {
+              /* ignore */
+            }
+            window.history.replaceState({}, '', '/questions/questionbank');
+            filtersInitialized.current = true;
+            setFiltersReady(true);
+            return;
+          }
+        }
+
         // Check if filters were manually changed
         const manuallyChanged =
           localStorage.getItem(FILTERS_MANUAL_CHANGE_KEY) === 'true';

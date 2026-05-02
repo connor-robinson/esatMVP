@@ -9,6 +9,12 @@ import { TrendData } from "@/types/analytics";
 import { TrendIndicator } from "./TrendIndicator";
 import { cn } from "@/lib/utils";
 
+const sectionShell =
+  "relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8";
+
+const statTile =
+  "relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4";
+
 interface StatsHeroProps {
   totalQuestions: number;
   accuracy: number;
@@ -34,87 +40,82 @@ export function StatsHero({
   questionsTrend,
   accuracyTrend,
   speedTrend,
-  strongest,
-  weakest,
-  onTopicClick,
-  isCollapsed = false,
+  strongest: _strongest,
+  weakest: _weakest,
+  onTopicClick: _onTopicClick,
   onToggleCollapse,
+  isCollapsed = false,
 }: StatsHeroProps) {
-  const streakDiff = currentStreak - longestStreak;
-  const streakDiffAbs = Math.abs(streakDiff);
-  
-  // Determine color based on how close to best
-  const getStreakColor = () => {
-    if (streakDiff === 0) return "text-white/95"; // At best
-    if (streakDiff > 0) return "text-white/95"; // Better than best
-    if (streakDiffAbs <= 3) return "text-white/95"; // Within 3 of best
-    return "text-white/95"; // Far from best
-  };
-
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
-      {/* Section Header */}
+    <div className={sectionShell}>
       <button
+        type="button"
         onClick={onToggleCollapse}
-        className="w-full flex items-center justify-between mb-4 group"
+        className="group mb-4 flex w-full items-center justify-between text-left"
       >
         <div>
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text transition-colors sm:text-2xl">
             Quick Overview
           </h2>
-          <p className="text-sm text-white/60 mt-1 text-left">Your performance at a glance</p>
+          <p className="mt-1 text-left text-sm text-text-muted">
+            Your performance at a glance
+          </p>
         </div>
-        <ChevronDown 
+        <ChevronDown
           className={cn(
-            "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-            isCollapsed && "rotate-180"
+            "h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text",
+            isCollapsed && "rotate-180",
           )}
         />
       </button>
 
-      {/* Collapsible Content */}
       {!isCollapsed && (
         <div className="overflow-hidden">
-          {/* Stats Pills Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Total Questions */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Total Questions</div>
-                <div className="text-2xl font-bold text-white/95 leading-none">{totalQuestions}</div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className={statTile}>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                  Total questions
+                </div>
+                <div className="text-2xl font-bold leading-none text-text">{totalQuestions}</div>
                 <TrendIndicator trend={questionsTrend} size="sm" />
               </div>
             </div>
 
-            {/* Accuracy */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Accuracy</div>
-                <div className="text-2xl font-bold text-white/90 leading-none">{accuracy.toFixed(1)}%</div>
+            <div className={statTile}>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                  Accuracy
+                </div>
+                <div className="text-2xl font-bold leading-none text-text">
+                  {accuracy.toFixed(1)}%
+                </div>
                 <TrendIndicator trend={accuracyTrend} size="sm" />
               </div>
             </div>
 
-            {/* Average Speed */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-1">Avg Speed</div>
-                <div className="text-2xl font-bold text-white/90 leading-none">{(avgSpeed / 1000).toFixed(1)}s</div>
+            <div className={statTile}>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                  Avg speed
+                </div>
+                <div className="text-2xl font-bold leading-none text-text">
+                  {(avgSpeed / 1000).toFixed(1)}s
+                </div>
                 <TrendIndicator trend={speedTrend} size="sm" />
               </div>
             </div>
 
-            {/* Current Streak */}
-            <div className="relative rounded-organic-md overflow-hidden bg-white/5 p-4">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1">Current Streak</div>
+            <div className={statTile}>
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-subtle">
+                  Current streak
+                </div>
                 <div className="flex items-center gap-2">
-                  <div className="text-2xl font-bold leading-none text-white/95">{currentStreak}</div>
-                  <Flame className="h-5 w-5 text-white/90" />
+                  <div className="text-2xl font-bold leading-none text-text">{currentStreak}</div>
+                  <Flame className="h-5 w-5 text-warning" aria-hidden />
                 </div>
-                <div className="text-xs text-white/40 mt-1">
-                  Best: {longestStreak} days
-                </div>
+                <div className="mt-1 text-xs text-text-muted">Best: {longestStreak} days</div>
               </div>
             </div>
           </div>

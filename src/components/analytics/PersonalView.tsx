@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { StatsHero } from "./StatsHero";
 import { PerformanceChartsSection } from "./PerformanceChartsSection";
 import { PastSessionsSection } from "./PastSessionsSection";
@@ -51,7 +51,6 @@ export function PersonalView({
   sessions,
   commonMistakesMap,
 }: PersonalViewProps) {
-  const [scrollToTopicId, setScrollToTopicId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
 
   const toggleSection = (sectionId: string) => {
@@ -66,9 +65,8 @@ export function PersonalView({
     });
   };
 
-  const handleTopicClick = (topicId: string, topicName: string) => {
-    setScrollToTopicId(topicId);
-    // Scroll to topic in the overview section
+  const handleTopicClick = (topicId: string, _topicName: string) => {
+    // Scroll to topic in Topic Performance section
     setTimeout(() => {
       const element = document.getElementById(`topic-${topicId}`);
       if (element) {
@@ -78,8 +76,7 @@ export function PersonalView({
   };
 
   return (
-    <div className="space-y-8">
-      {/* 1. Stats Hero */}
+    <div className="space-y-6 sm:space-y-8">
       <StatsHero
         totalQuestions={userStats.totalQuestions}
         accuracy={accuracy}
@@ -96,21 +93,6 @@ export function PersonalView({
         onToggleCollapse={() => toggleSection("overview")}
       />
 
-      {/* 2. Performance Charts */}
-      <PerformanceChartsSection 
-        performanceData={performanceData}
-        isCollapsed={collapsedSections.has("performance")}
-        onToggleCollapse={() => toggleSection("performance")}
-      />
-
-      {/* 3. Past Sessions */}
-      <PastSessionsSection 
-        sessions={sessions}
-        isCollapsed={collapsedSections.has("sessions")}
-        onToggleCollapse={() => toggleSection("sessions")}
-      />
-
-      {/* 4. Topic Performance & Overview (merged topic performance + topic breakdown) */}
       <TopicsOverviewSection
         userStats={userStats}
         strongest={strongest}
@@ -118,6 +100,18 @@ export function PersonalView({
         isCollapsed={collapsedSections.has("topics")}
         onToggleCollapse={() => toggleSection("topics")}
         commonMistakesMap={commonMistakesMap}
+      />
+
+      <PerformanceChartsSection
+        performanceData={performanceData}
+        isCollapsed={collapsedSections.has("performance")}
+        onToggleCollapse={() => toggleSection("performance")}
+      />
+
+      <PastSessionsSection
+        sessions={sessions}
+        isCollapsed={collapsedSections.has("sessions")}
+        onToggleCollapse={() => toggleSection("sessions")}
       />
     </div>
   );

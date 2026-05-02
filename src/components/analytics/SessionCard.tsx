@@ -48,22 +48,20 @@ function SessionCardComponent({
 
   // Get rank color (gold, silver, bronze) - only when sortMode is "performance"
   const getRankColor = () => {
-    if (sortMode !== "performance") return "text-white/70";
-    if (rank === 1) return "text-yellow-400"; // Gold
-    if (rank === 2) return "text-gray-300"; // Silver
-    if (rank === 3) return "text-amber-600"; // Bronze
-    return "text-white/70";
+    if (sortMode !== "performance") return "text-text-muted";
+    if (rank === 1) return "text-warning";
+    if (rank === 2) return "text-text-subtle";
+    if (rank === 3) return "text-warning/80";
+    return "text-text-muted";
   };
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        "w-full text-left px-5 py-4 rounded-organic-md transition-all",
-        isLatest
-          ? "bg-white/10"
-          : "bg-white/5 hover:bg-white/10",
-        isExpanded && "bg-white/10"
+        "w-full rounded-organic-md px-5 py-4 text-left transition-colors",
+        isLatest ? "border border-border bg-surface-mid" : "bg-surface-subtle hover:bg-surface-mid/90",
+        isExpanded && "border border-border-subtle bg-surface-mid",
       )}
     >
       <div className="grid grid-cols-12 gap-4 items-center">
@@ -77,46 +75,44 @@ function SessionCardComponent({
         {/* Score */}
         <div className="col-span-2 flex items-center justify-end">
           <div className="flex items-baseline gap-3 text-right whitespace-nowrap">
-            <span className="text-xl font-bold text-white/90 tabular-nums font-mono">
+            <span className="font-mono text-xl font-bold tabular-nums text-warning">
               {session.score || 0}
             </span>
-            <span className="text-sm text-white/40 font-mono">/ 1000</span>
+            <span className="font-mono text-sm text-text-muted">/ 1000</span>
           </div>
         </div>
 
         {/* Accuracy */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
+          <span className="font-mono text-base text-text">
             {isNaN(session.accuracy) ? "0.0" : session.accuracy.toFixed(1)}%
           </span>
         </div>
 
         {/* Speed */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
-            {speedInSeconds}s/q
-          </span>
+          <span className="font-mono text-base text-text">{speedInSeconds}s/q</span>
         </div>
 
         {/* Questions */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/80 font-mono">
+          <span className="font-mono text-base text-text">
             {session.correctAnswers || 0}/{session.totalQuestions || 0}
           </span>
         </div>
 
         {/* Date */}
         <div className="col-span-2 flex items-center justify-center">
-          <span className="text-base text-white/60 font-mono">{formattedDate}</span>
+          <span className="font-mono text-base text-text-muted">{formattedDate}</span>
         </div>
 
         {/* Expand Icon */}
         <div className="col-span-1 flex items-center justify-end">
-          <div className="flex-shrink-0 w-10 h-10 rounded-organic-md bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md border border-border-subtle bg-surface-mid transition-colors hover:bg-surface-neutral">
             <Plus
               className={cn(
-                "h-5 w-5 text-white/60 transition-transform duration-300",
-                isExpanded && "rotate-45"
+                "h-5 w-5 text-text-muted transition-transform duration-300",
+                isExpanded && "rotate-45",
               )}
             />
           </div>
@@ -133,13 +129,10 @@ function SessionCardComponent({
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className="mt-4 space-y-4 pt-4 border-t border-white/10">
-              {/* Mini Chart */}
+            <div className="mt-4 space-y-4 border-t border-border-subtle pt-4">
               {sessionDetail.progressData && sessionDetail.progressData.length > 0 && (
                 <div className="w-full">
-                  <h4 className="text-sm font-semibold text-white/70 mb-3">
-                    Session Progress
-                  </h4>
+                  <h4 className="mb-3 text-sm font-semibold text-text-muted">Session Progress</h4>
                   <div className="w-full">
                     <SessionMiniChart data={sessionDetail.progressData} />
                   </div>
@@ -154,7 +147,7 @@ function SessionCardComponent({
               {/* Show message if no data available */}
               {(!sessionDetail.progressData || sessionDetail.progressData.length === 0) &&
                (!sessionDetail.commonMistakes || sessionDetail.commonMistakes.length === 0) && (
-                <div className="text-sm text-white/40 text-center py-4">
+                <div className="py-4 text-center text-sm text-text-muted">
                   No detailed data available for this session
                 </div>
               )}

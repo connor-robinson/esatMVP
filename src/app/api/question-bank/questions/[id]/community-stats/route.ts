@@ -61,15 +61,25 @@ export async function GET(
     LETTERS.forEach((l) => (optionCounts[l] = 0));
     let timeSumMs = 0;
     let correctCount = 0;
+    let correctTimeSumMs = 0;
+    let correctTimeCount = 0;
 
     for (const row of rows) {
       const letter = normalizeOption(row.user_answer ?? "");
       if (LETTERS.includes(letter)) optionCounts[letter] = (optionCounts[letter] ?? 0) + 1;
       if (row.time_spent_ms != null) timeSumMs += row.time_spent_ms;
-      if (row.is_correct) correctCount += 1;
+      if (row.is_correct) {
+        correctCount += 1;
+        if (row.time_spent_ms != null) {
+          correctTimeSumMs += row.time_spent_ms;
+          correctTimeCount += 1;
+        }
+      }
     }
 
     const avgTimeSeconds = attempts > 0 ? timeSumMs / 1000 / attempts : 0;
+    const avgCorrectTimeSeconds =
+      correctTimeCount > 0 ? correctTimeSumMs / 1000 / correctTimeCount : 0;
     const correctPercentage = attempts > 0 ? (correctCount / attempts) * 100 : 0;
     const optionPercentages: Record<string, number> = {};
     for (const [letter, count] of Object.entries(optionCounts)) {
@@ -80,6 +90,7 @@ export async function GET(
       questionId,
       attempts,
       avgTimeSeconds,
+      avgCorrectTimeSeconds,
       correctPercentage,
       optionCounts,
       optionPercentages,

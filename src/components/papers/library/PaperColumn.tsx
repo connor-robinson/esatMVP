@@ -307,174 +307,136 @@ export function PaperColumn({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {/* Main paper row */}
       <div
         className={cn(
-          "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
-          isSelected
-            ? "bg-surface-neutral"
-            : "bg-surface-elevated hover:bg-surface-neutral"
+          "flex h-12 items-center gap-2.5 rounded-lg px-3 transition-colors",
+          isSelected ? "bg-surface-neutral" : "bg-surface-elevated hover:bg-surface-neutral"
         )}
       >
-        {/* Left: Dropdown icon for papers */}
+        {/* Expand toggle */}
         <button
+          type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-text-muted hover:text-text transition-colors"
+          className="flex h-6 w-6 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
+          aria-label={isExpanded ? "Collapse sections" : "Expand sections"}
         >
           <ChevronDown
-            className={cn(
-              "w-4 h-4 transition-transform duration-200",
-              isExpanded ? "rotate-0" : "-rotate-90"
-            )}
-            strokeWidth={3}
+            className={cn("h-4 w-4 transition-transform duration-200", isExpanded ? "rotate-0" : "-rotate-90")}
+            strokeWidth={2.5}
           />
         </button>
 
-        {/* Exam Name and Year */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <div className="text-base font-mono font-bold text-text">
-              {paper.examName} {paper.examYear}
-            </div>
-            {/* Completion status badge for paper */}
-            {paperCompletionStatus !== 'none' && (
-              <div className={cn(
-                "px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide flex items-center gap-1",
-                paperCompletionStatus === 'complete' 
-                  ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                  : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-              )}>
-                <CheckCircle2 className="w-3 h-3" />
-                {paperCompletionStatus === 'complete' ? 'Complete' : 'In Progress'}
-              </div>
-            )}
-          </div>
+        {/* Title */}
+        <div className="flex flex-1 min-w-0 items-center gap-2">
+          <span className="truncate text-sm font-semibold text-text">
+            {paper.examName} {paper.examYear}
+          </span>
+          {paperCompletionStatus !== "none" && (
+            <span
+              className={cn(
+                "inline-flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium",
+                paperCompletionStatus === "complete"
+                  ? "bg-success/15 text-success"
+                  : "bg-warning/15 text-warning"
+              )}
+            >
+              <CheckCircle2 className="h-2.5 w-2.5" />
+              {paperCompletionStatus === "complete" ? "Complete" : "In Progress"}
+            </span>
+          )}
         </div>
 
-        {/* Right: Official/Specimen Tag */}
+        {/* Exam type badge */}
         {paper.examType && (
-          <div className="px-2 py-1 rounded-md bg-surface-elevated text-[10px] uppercase font-mono tracking-wider text-text-subtle mr-2 border border-border">
+          <span className="shrink-0 rounded border border-border-subtle px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-muted">
             {paper.examType}
-          </div>
+          </span>
         )}
 
-        {/* Right: Plus button */}
+        {/* Add button */}
         <button
+          type="button"
           onClick={handleAddPaperClick}
-          className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-            "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
-          )}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface hover:text-text"
           aria-label="Add paper to session"
         >
-          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+          <Plus className="h-4 w-4" strokeWidth={2} />
         </button>
       </div>
 
-      {/* Expanded sections - show Section 1 and Section 2 as separate rows */}
-      <AnimatePresence>
+      {/* Expanded sections */}
+      <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="space-y-2 pl-11 overflow-hidden"
+            transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+            className="overflow-hidden pl-9"
           >
-            {loadingSections ? (
-              <div className="text-xs text-text-disabled py-2">Loading sections...</div>
-            ) : mainSections.length === 0 ? (
-              <div className="text-xs text-text-disabled py-2">No sections available</div>
-            ) : (
-              mainSections.map((mainSection) => {
-                const sectionNumber = mainSection.name === "Section 1" || mainSection.name === "Paper 1" ? "1" :
-                  mainSection.name === "Section 2" || mainSection.name === "Paper 2" ? "2" : null;
+            <div className="space-y-1 pb-1 pt-0.5">
+              {loadingSections ? (
+                <div className="py-2 text-xs text-text-muted">Loading sections…</div>
+              ) : mainSections.length === 0 ? (
+                <div className="py-2 text-xs text-text-muted">No sections available</div>
+              ) : (
+                mainSections.map((mainSection) => {
+                  const sectionNum =
+                    mainSection.name === "Section 1" || mainSection.name === "Paper 1"
+                      ? "1"
+                      : mainSection.name === "Section 2" || mainSection.name === "Paper 2"
+                      ? "2"
+                      : null;
+                  const allDone =
+                    mainSection.subjectParts.length > 0 &&
+                    mainSection.subjectParts.every((s) => sectionCompletionMap.get(s));
 
-                return (
-                  <div
-                    key={mainSection.name}
-                    className={cn(
-                      "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
-                      isSelected
-                        ? "bg-surface-neutral"
-                        : "bg-surface-elevated hover:bg-surface-neutral"
-                    )}
-                  >
-                    {/* Left: Number badge for sections */}
-                    {sectionNumber ? (
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-sm text-text"
-                        style={{ backgroundColor: paperColor }}
-                      >
-                        {sectionNumber}
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 flex-shrink-0" />
-                    )}
-
-                    {/* Section name */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <div className="text-sm font-mono font-semibold text-text-muted">
-                          {mainSection.name}
-                        </div>
-                        {/* Check if all sections in this main section are completed */}
-                        {(() => {
-                          const allCompleted = mainSection.subjectParts.length > 0 && 
-                            mainSection.subjectParts.every(section => sectionCompletionMap.get(section));
-                          const someCompleted = mainSection.subjectParts.some(section => sectionCompletionMap.get(section));
-                          
-                          if (allCompleted) {
-                            return (
-                              <div className="flex items-center gap-1 text-[10px] text-green-400">
-                                <CheckCircle2 className="w-3 h-3" />
-                                <span>Complete</span>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })()}
-                      </div>
-                      {/* Show individual section completion indicators */}
-                      {mainSection.subjectParts.length > 1 && (
-                        <div className="flex flex-wrap gap-1.5 mt-1">
-                          {mainSection.subjectParts.map((section) => {
-                            const isCompleted = sectionCompletionMap.get(section);
-                            if (!isCompleted) return null;
-                            return (
-                              <div
-                                key={section}
-                                className="text-[9px] text-green-400/80 font-medium flex items-center gap-0.5"
-                              >
-                                <CheckCircle2 className="w-2.5 h-2.5" />
-                                <span>{section}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Right: Plus button for section */}
-                    <button
-                      onClick={() => handleAddSectionClick(mainSection.name, mainSection.subjectParts)}
-                      className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-                        "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
-                      )}
-                      aria-label={`Add ${mainSection.name} to session`}
+                  return (
+                    <div
+                      key={mainSection.name}
+                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface px-3 transition-colors hover:bg-surface-mid"
                     >
-                      <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                    </button>
-                  </div>
-                );
-              })
-            )}
+                      {/* Section number badge */}
+                      {sectionNum ? (
+                        <div
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold text-text"
+                          style={{ backgroundColor: paperColor }}
+                        >
+                          {sectionNum}
+                        </div>
+                      ) : (
+                        <div className="h-6 w-6 shrink-0" />
+                      )}
+
+                      <span className="flex-1 min-w-0 truncate text-sm text-text-muted">
+                        {mainSection.name}
+                      </span>
+
+                      {allDone && (
+                        <span className="flex shrink-0 items-center gap-0.5 text-[10px] text-success">
+                          <CheckCircle2 className="h-2.5 w-2.5" />
+                          Complete
+                        </span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleAddSectionClick(mainSection.name, mainSection.subjectParts)}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                        aria-label={`Add ${mainSection.name}`}
+                      >
+                        <Plus className="h-4 w-4" strokeWidth={2} />
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
-
   );
 }

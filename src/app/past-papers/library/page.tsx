@@ -450,26 +450,24 @@ export default function PapersLibraryPage() {
 
   if (loading) {
     return (
-      <Container>
-        <div className='py-12 text-center text-text-subtle'>
-          Loading papers...
-        </div>
+      <Container size='lg'>
+        <div className='py-16 text-center text-sm text-text-muted'>Loading papers…</div>
       </Container>
     );
   }
 
   if (error && papers.length === 0) {
     return (
-      <Container>
-        <div className='py-12 text-center text-error'>{error}</div>
+      <Container size='lg'>
+        <div className='py-16 text-center text-sm text-error'>{error}</div>
       </Container>
     );
   }
 
   return (
-    <Container className='py-6'>
-      {/* Filters - Full width at top */}
-      <div className='mb-6'>
+    <Container size='lg' className='py-6 sm:py-8'>
+      {/* Filters */}
+      <div className='mb-4'>
         <PaperLibraryFilters
           papers={papers}
           searchQuery={searchQuery}
@@ -483,8 +481,8 @@ export default function PapersLibraryPage() {
         />
       </div>
 
-      {/* Two-column layout: library • session summary */}
-      <div className='grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(450px,550px)] gap-6 py-4'>
+      {/* Two-column layout */}
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start'>
         {/* Left: Paper library */}
         <div>
           <PaperLibraryGrid
@@ -525,7 +523,10 @@ export default function PapersLibraryPage() {
 
       {/* Error message */}
       {error && (
-        <div className='mt-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm'>
+        <div
+          role='alert'
+          className='mt-6 rounded-organic-lg border border-error/30 bg-error/10 p-4 text-sm text-error'
+        >
           {error}
         </div>
       )}

@@ -291,15 +291,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
             className={cn(
-              "relative rounded-organic-md p-5 transition-all overflow-hidden",
+              "relative overflow-hidden rounded-organic-md p-5 transition-colors",
               isHighlighted
                 ? "bg-primary/10 ring-1 ring-primary/20"
-                : "bg-white/[0.02] hover:bg-white/[0.04]"
+                : "bg-surface-subtle hover:bg-surface-mid/80",
             )}
         >
           {/* Progress Bar - Only for top 3 or current attempt */}
           {showProgressBar && (
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/[0.03]">
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-border-subtle">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${scorePercentage}%` }}
@@ -320,7 +320,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
             {/* Avatar + Name */}
             <div className="col-span-4 flex items-center gap-3 min-w-0">
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-mid">
                 {session.avatar ? (
                   <img 
                     src={session.avatar} 
@@ -332,17 +332,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       target.style.display = 'none';
                       const parent = target.parentElement;
                       if (parent) {
-                        parent.innerHTML = `<span class="text-xs font-medium text-white/70">${getInitials(session.username)}</span>`;
+                        parent.innerHTML = `<span class="text-xs font-medium text-text-muted">${getInitials(session.username)}</span>`;
                       }
                     }}
                   />
                 ) : (
-                  <span className="text-xs font-medium text-white/70">
+                  <span className="text-xs font-medium text-text-muted">
                     {getInitials(session.username)}
                   </span>
                 )}
               </div>
-              <span className="text-sm text-white/80 font-medium truncate">
+              <span className="truncate text-sm font-medium text-text">
                 {session.username}
               </span>
             </div>
@@ -350,10 +350,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                <div className="font-mono text-base font-bold tabular-nums text-text">
                   {session.score}
                 </div>
-                <div className="text-xs text-white/40 font-mono">/ 1000</div>
+                <div className="font-mono text-xs text-text-muted">/ 1000</div>
               </div>
             </div>
 
@@ -366,27 +366,27 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 )}>
                   {session.accuracy.toFixed(0)}%
                 </div>
-                <div className="text-xs text-white/40 font-mono">accuracy</div>
+                <div className="font-mono text-xs text-text-muted">accuracy</div>
               </div>
             </div>
 
             {/* Speed */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className="text-base font-bold text-white/90 tabular-nums font-mono">
+                <div className="font-mono text-base font-bold tabular-nums text-text">
                   {formatTimeMs(session.avgTimeMs)}
                 </div>
-                <div className="text-xs text-white/40 font-mono">per question</div>
+                <div className="font-mono text-xs text-text-muted">per question</div>
               </div>
             </div>
 
             {/* Questions */}
             <div className="col-span-1 flex items-center justify-end">
               <div className="text-right">
-                <div className="text-sm font-semibold text-white/80 tabular-nums font-mono">
+                <div className="font-mono text-sm font-semibold tabular-nums text-text">
                   {session.correctAnswers}/{session.totalQuestions}
                 </div>
-                <div className="text-xs text-white/40 font-mono">correct</div>
+                <div className="font-mono text-xs text-text-muted">correct</div>
               </div>
             </div>
           </div>
@@ -402,10 +402,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.03 }}
         className={cn(
-          "rounded-organic-md p-3 transition-all",
+          "rounded-organic-md border border-border-subtle bg-surface-mid p-3 transition-colors",
           isHighlighted
-            ? "bg-primary/10 ring-1 ring-primary/20"
-            : "bg-white/[0.02] hover:bg-white/[0.04]"
+            ? "ring-1 ring-primary/20 bg-primary/10"
+            : "hover:bg-surface-neutral/60",
         )}
       >
         <div className="flex items-center gap-6">
@@ -421,15 +421,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score and Topic Row */}
             <div className="flex items-baseline justify-between gap-4 mb-2">
               <div className="flex items-baseline gap-3 min-w-0">
-                <span className="text-xl font-bold text-white/90 tabular-nums font-mono">
+                <span className="font-mono text-xl font-bold tabular-nums text-text">
                   {session.score}
                 </span>
-                <span className="text-sm text-white/40 font-mono">/ 1000</span>
-                <span className="text-xs text-white/30 font-mono truncate">
+                <span className="font-mono text-sm text-text-muted">/ 1000</span>
+                <span className="truncate font-mono text-xs text-text-subtle">
                   {topicName}
                 </span>
               </div>
-              <span className="text-xs text-white/40 font-mono flex-shrink-0">
+              <span className="flex-shrink-0 font-mono text-xs text-text-muted">
                 {new Date(session.timestamp).toLocaleDateString()} {new Date(session.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -439,13 +439,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           {/* Right Side Stats */}
           <div className="flex-shrink-0 text-right">
             <div className="space-y-1">
-              <div className="text-xs font-mono text-white/70">
-                {formatTimeMs(session.avgTimeMs)} <span className="text-white/40">/ q</span>
+              <div className="font-mono text-xs text-text-muted">
+                {formatTimeMs(session.avgTimeMs)} <span className="text-text-subtle">/ q</span>
               </div>
-              <div className="text-xs font-mono text-white/70">
-                {session.correctAnswers}/{session.totalQuestions} <span className="text-white/40">correct</span>
+              <div className="font-mono text-xs text-text-muted">
+                {session.correctAnswers}/{session.totalQuestions}{" "}
+                <span className="text-text-subtle">correct</span>
               </div>
-              <div className="text-xs font-mono font-bold text-primary">
+              <div className="font-mono text-xs font-bold text-primary">
                 {session.accuracy.toFixed(0)}%
               </div>
             </div>
@@ -498,12 +499,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
         </div>
       );
-      
-      return (
-        <div className="text-center py-8 text-white/40 font-mono text-sm">
-          No attempts yet
-        </div>
-      );
     }
 
     // New structured format: { top3, currentRank, adjacent, allRankings }
@@ -551,10 +546,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         if (currentAttempt) {
           cards.push(
             <div key="ellipsis" className="flex justify-center py-2">
-              <span className={cn(
-                "text-2xl font-bold",
-                isGlobalView ? "text-primary/30" : "text-white/20"
-              )}>...</span>
+              <span
+                className={cn(
+                  "text-2xl font-bold",
+                  isGlobalView ? "text-primary/30" : "text-text-disabled",
+                )}
+              >
+                ...
+              </span>
             </div>
           );
           
@@ -596,11 +595,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
           </div>
         );
-        return (
-          <div className="text-center py-8 text-white/40 font-mono text-sm">
-            No attempts yet
-          </div>
-        );
       }
 
       return (
@@ -627,48 +621,49 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     }
 
     return (
-      <div className="text-center py-8 text-white/40 font-mono text-sm">
-        No attempts yet
-      </div>
+      <div className="py-8 text-center font-mono text-sm text-text-muted">No attempts yet</div>
     );
   };
 
+  const sessionSubtitle =
+    mode === "mental-math"
+      ? `Mental math session • ${result.totalQuestions} ${result.totalQuestions === 1 ? "question" : "questions"}`
+      : `${mode.replace("-", " ")} session • ${result.totalQuestions} questions`;
+
+  const resultsCard =
+    "rounded-organic-lg border border-border bg-surface-elevated";
+
   return (
     <div className="min-h-screen bg-background">
-      <Container size="lg" className="py-12">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <h1 className="text-4xl font-heading font-bold text-white/90 mb-2">
+      <Container size="lg" className="py-10 sm:py-12">
+        {/* Header */}
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
+            <h1 className="mb-2 font-heading text-3xl font-bold tracking-tight text-text sm:text-4xl">
               Session Complete! 🎉
             </h1>
-            <p className="text-white/50 font-mono text-sm uppercase tracking-wider">
-              {mode.replace("-", " ")} Session • {result.totalQuestions} Questions
-            </p>
+            <p className="text-sm text-text-muted sm:text-base">{sessionSubtitle}</p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4"
+            className="shrink-0"
           >
             <Button
               variant="secondary"
-              size="md"
+              size="sm"
               onClick={onBackToBuilder}
-              className="rounded-organic-md border-white/10 bg-white/5 hover:bg-white/10"
+              className="rounded-organic-md border-border bg-surface-mid px-4 py-2 text-sm font-semibold text-text shadow-sm hover:bg-surface-neutral"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              New Session
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Start new session
             </Button>
           </motion.div>
         </div>
 
-        {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+        {/* Stats row */}
+        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4">
           {/* Score Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -676,26 +671,31 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             transition={{ delay: 0.1 }}
             className="lg:col-span-1"
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
-              <div className="flex items-center justify-between mb-4">
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-primary" />
-                  <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Session Score</div>
+                  <Trophy className="h-4 w-4 text-warning" aria-hidden />
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                    Session score
+                  </div>
                 </div>
-                <button 
+                <button
+                  type="button"
                   onClick={() => setShowScoreInfo(true)}
-                  className="text-white/30 hover:text-white/60 transition-colors"
+                  className="rounded-organic-md p-1 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
+                  aria-label="How scoring works"
                 >
                   <Info className="h-4 w-4" />
                 </button>
               </div>
-              <div className="text-5xl font-bold text-primary tabular-nums leading-none mb-2">
+              <div className="mb-2 font-bold tabular-nums text-4xl leading-none text-warning sm:text-5xl">
                 {result.score}
               </div>
-              <div className="text-xs text-white/40 font-mono">Out of 1000 points</div>
+              <div className="text-xs text-text-subtle">Out of 1000 points</div>
               {result.topicBreakdown.length > 1 && (
-                <div className="text-[10px] text-white/35 font-mono mt-2 leading-snug">
-                  Combined score across {result.topicBreakdown.length} topics; each topic below has its own leaderboard score.
+                <div className="mt-3 text-[10px] leading-snug text-text-subtle">
+                  Combined score across {result.topicBreakdown.length} topics; each topic has its own
+                  leaderboard score below.
                 </div>
               )}
             </div>
@@ -707,15 +707,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-4">
-                <Target className="h-4 w-4 text-white/60" />
-                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Accuracy</div>
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Target className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Accuracy
+                </div>
               </div>
-              <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2">
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
                 {result.accuracy.toFixed(1)}%
               </div>
-              <div className="text-xs text-white/40 font-mono">
+              <div className="text-xs text-text-subtle">
                 {result.correctAnswers} / {result.totalQuestions} correct
               </div>
             </div>
@@ -727,15 +729,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-4">
-                <Clock className="h-4 w-4 text-white/60" />
-                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Avg Speed</div>
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Clock className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Avg speed
+                </div>
               </div>
-              <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2">
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
                 {formatTimeMs(result.averageTimeMs)}
               </div>
-              <div className="text-xs text-white/40 font-mono">per question</div>
+              <div className="text-xs text-text-subtle">per question</div>
             </div>
           </motion.div>
 
@@ -745,15 +749,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <div className="h-full p-6 rounded-organic-lg bg-white/[0.02]">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="h-4 w-4 text-white/60" />
-                <div className="text-sm text-white/50 font-mono uppercase tracking-tight">Fastest</div>
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Fastest
+                </div>
               </div>
-              <div className="text-4xl font-bold text-white/90 tabular-nums leading-none mb-2 text-interview">
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
                 {formatTime(result.fastestTimeMs)}
               </div>
-              <div className="text-xs text-white/40 font-mono">best performance</div>
+              <div className="text-xs lowercase text-text-subtle">Best performance</div>
             </div>
           </motion.div>
         </div>
@@ -764,18 +770,18 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45 }}
-            className="w-full"
+            className="mb-8 w-full"
           >
-            <div className="p-6 rounded-organic-lg bg-white/[0.02]">
+            <div className={`p-6 ${resultsCard}`}>
               <div className="mb-6">
-                <h2 className="text-2xl font-heading font-bold text-white/90 mb-1">
-                  Session Progress
+                <h2 className="mb-1 font-heading text-xl font-bold text-text sm:text-2xl">
+                  Session progress
                 </h2>
-                <p className="text-sm text-white/50 font-mono">
+                <p className="text-sm text-text-muted">
                   Accuracy and speed throughout the session
                 </p>
               </div>
-              <div className="h-[200px]">
+              <div className="h-[200px] min-h-[180px]">
                 <SessionMiniChart data={result.progressData} />
               </div>
             </div>
@@ -789,36 +795,60 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <div className="p-6 rounded-organic-lg bg-white/[0.02]">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div>
-                  <h2 className="text-2xl font-heading font-bold text-white/90 mb-1">
-                    Topic Breakdown
+            <div className={`p-6 ${resultsCard}`}>
+              <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <div className="mb-3">
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide",
+                        rankingView === "personal"
+                          ? "bg-difficulty-easy text-background"
+                          : "bg-secondary/20 text-secondary",
+                      )}
+                    >
+                      {rankingView === "personal" ? "Personal" : "Global"}
+                    </span>
+                  </div>
+                  <h2 className="mb-1 font-heading text-xl font-bold text-text sm:text-2xl">
+                    Topic breakdown
                   </h2>
-                  <p className="text-sm text-white/50 font-mono">
-                    Performance by topic area
-                  </p>
+                  <p className="text-sm text-text-muted">Performance by topic area</p>
                 </div>
 
-                <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                <div
+                  className="flex shrink-0 gap-1 border-b border-border-subtle sm:pt-1"
+                  role="tablist"
+                  aria-label="Ranking scope"
+                >
                   <button
+                    type="button"
+                    role="tab"
+                    aria-selected={rankingView === "personal"}
                     onClick={() => setRankingView("personal")}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-all",
-                      rankingView === "personal" ? "bg-primary/20 text-primary" : "text-white/40 hover:text-white/60"
+                      "flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+                      rankingView === "personal"
+                        ? "-mb-px border-warning text-text"
+                        : "border-transparent text-text-muted hover:text-text",
                     )}
                   >
-                    <User className="h-3 w-3" />
+                    <User className="h-3.5 w-3.5" aria-hidden />
                     Personal
                   </button>
                   <button
+                    type="button"
+                    role="tab"
+                    aria-selected={rankingView === "global"}
                     onClick={() => setRankingView("global")}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-mono transition-all",
-                      rankingView === "global" ? "bg-primary/20 text-primary" : "text-white/40 hover:text-white/60"
+                      "flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+                      rankingView === "global"
+                        ? "-mb-px border-warning text-text"
+                        : "border-transparent text-text-muted hover:text-text",
                     )}
                   >
-                    <Users className="h-3 w-3" />
+                    <Users className="h-3.5 w-3.5" aria-hidden />
                     Global
                   </button>
                 </div>
@@ -845,28 +875,40 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     >
                       {/* Topic Header */}
                       <div className="mb-6">
-                        <h3 className="text-xl font-heading font-bold text-white/90 mb-1">
+                        <h3 className="mb-1 font-heading text-xl font-bold text-text capitalize">
                           {topicName}
                         </h3>
                         {isGlobalView && (
-                          <div className="grid grid-cols-12 gap-4 items-center mt-4 pb-2 border-b border-white/5">
+                          <div className="mt-4 grid grid-cols-12 items-center gap-4 border-b border-border-subtle pb-2">
                             <div className="col-span-1 text-center">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Rank</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Rank
+                              </span>
                             </div>
                             <div className="col-span-4">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Player</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Player
+                              </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Score</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Score
+                              </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Accuracy</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Accuracy
+                              </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Speed</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Speed
+                              </span>
                             </div>
                             <div className="col-span-1 text-right">
-                              <span className="text-xs font-mono text-white/40 uppercase tracking-wider">Q's</span>
+                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                                Q&apos;s
+                              </span>
                             </div>
                           </div>
                         )}
@@ -874,11 +916,26 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
                       {/* Session Cards List */}
                       {isLoadingRankings ? (
-                        <div className="h-32 flex items-center justify-center bg-white/[0.02] rounded-lg border border-white/5">
-                          <div className="animate-pulse flex space-x-2">
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-primary/20" : "bg-white/20")}></div>
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-primary/20" : "bg-white/20")}></div>
-                            <div className={cn("h-2 w-2 rounded-full", isGlobalView ? "bg-primary/20" : "bg-white/20")}></div>
+                        <div className="flex h-32 items-center justify-center rounded-organic-lg border border-border-subtle bg-surface-subtle">
+                          <div className="flex animate-pulse space-x-2">
+                            <div
+                              className={cn(
+                                "h-2 w-2 rounded-full",
+                                isGlobalView ? "bg-primary/30" : "bg-text-muted/40",
+                              )}
+                            />
+                            <div
+                              className={cn(
+                                "h-2 w-2 rounded-full",
+                                isGlobalView ? "bg-primary/30" : "bg-text-muted/40",
+                              )}
+                            />
+                            <div
+                              className={cn(
+                                "h-2 w-2 rounded-full",
+                                isGlobalView ? "bg-primary/30" : "bg-text-muted/40",
+                              )}
+                            />
                           </div>
                         </div>
                       ) : (
@@ -899,34 +956,37 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4 backdrop-blur-sm"
               onClick={() => setShowScoreInfo(false)}
             >
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-background border border-white/10 rounded-organic-lg p-8 max-w-md w-full relative"
+                className="relative w-full max-w-md rounded-organic-xl border border-border bg-surface-elevated p-8 shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
+                  type="button"
                   onClick={() => setShowScoreInfo(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
+                  className="absolute right-4 top-4 rounded-full p-2 transition-colors hover:bg-surface-mid"
                 >
-                  <X className="h-4 w-4 text-white/40" />
+                  <X className="h-4 w-4 text-text-muted" />
                 </button>
 
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-organic-md bg-primary/20 flex items-center justify-center">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-organic-md bg-primary/20">
                     <Trophy className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-heading font-bold text-white/90">How Score works</h3>
-                    <p className="text-xs text-white/40 font-mono uppercase tracking-wider">The Agresti-Coull Method</p>
+                    <h3 className="font-heading text-xl font-bold text-text">How Score works</h3>
+                    <p className="font-mono text-xs uppercase tracking-wider text-text-muted">
+                      The Agresti-Coull Method
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-6 text-sm text-white/70 leading-relaxed">
+                <div className="space-y-6 text-sm leading-relaxed text-text-muted">
                   <p>
                     Your session score (0-1000) is calculated based on three weighted factors:
                   </p>
@@ -935,8 +995,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <div className="flex gap-4">
                       <div className="font-mono text-primary font-bold">50%</div>
                       <div>
-                        <div className="text-white/90 font-medium mb-1">Adjusted Accuracy</div>
-                        <p className="text-xs text-white/50">
+                        <div className="mb-1 font-medium text-text">Adjusted Accuracy</div>
+                        <p className="text-xs text-text-muted">
                           We use the Agresti-Coull (plus-four) adjustment which rewards consistency and ensures reliable scoring even for short sessions.
                         </p>
                       </div>
@@ -945,8 +1005,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <div className="flex gap-4">
                       <div className="font-mono text-primary font-bold">30%</div>
                       <div>
-                        <div className="text-white/90 font-medium mb-1">Speed Score</div>
-                        <p className="text-xs text-white/50">
+                        <div className="mb-1 font-medium text-text">Speed Score</div>
+                        <p className="text-xs text-text-muted">
                           Based on your average time per question. Scores higher as you approach the 3-second mastery baseline.
                         </p>
                       </div>
@@ -955,16 +1015,16 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <div className="flex gap-4">
                       <div className="font-mono text-primary font-bold">20%</div>
                       <div>
-                        <div className="text-white/90 font-medium mb-1">Volume Multiplier</div>
-                        <p className="text-xs text-white/50">
+                        <div className="mb-1 font-medium text-text">Volume Multiplier</div>
+                        <p className="text-xs text-text-muted">
                           A small bonus for completing more questions in a single session, scaling logarithmically.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-white/10">
-                    <p className="text-xs text-white/40 italic">
+                  <div className="border-t border-border-subtle pt-4">
+                    <p className="text-xs italic text-text-muted">
                       Note: The accuracy percentage shown on your summary is your raw score. The score uses the adjusted method to prevent "lucky" short streaks from dominating the rankings.
                     </p>
                   </div>

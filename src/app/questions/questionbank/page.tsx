@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useState, useEffect, useRef, Fragment, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Container } from '@/components/layout/Container';
@@ -15,7 +15,11 @@ import { FilterPopup } from '@/components/questionBank/FilterPopup';
 import { EditModal } from '@/components/questionBank/EditModal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { MathContent } from '@/components/shared/MathContent';
-import { SolutionModal } from '@/components/questionBank/SolutionModal';
+import {
+  HintModal,
+  SolutionModal,
+} from '@/components/questionBank/SolutionModal';
+import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { useQuestionEditor } from '@/hooks/useQuestionEditor';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -33,13 +37,19 @@ import {
   Filter,
   Lightbulb,
   Check,
-  Users,
+  StopCircle,
+  ClipboardList,
 } from 'lucide-react';
 import type {
   QuestionBankQuestion,
   QuestionBankCommunityStats,
   SubjectFilter,
+  TestTypeFilter,
 } from '@/types/questionBank';
+import {
+  QUESTION_BANK_HOME_LAUNCH_KEY,
+  type QuestionBankHomeLaunchPayload,
+} from '@/lib/questionBank/homeLaunch';
 import { cn, formatTime } from '@/lib/utils';
 
 const FREE_QUESTION_LIMIT = 10;
@@ -132,11 +142,6 @@ export default function QuestionBankPage() {
     Record<string, QuestionBankCommunityStats>
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
-  const [showCommunityStatsModal, setShowCommunityStatsModal] = useState(false);
-  const communityStatsRef = useRef<Record<string, QuestionBankCommunityStats>>(
-    {},
-  );
-  communityStatsRef.current = communityStatsByQuestionId;
 
   const [progressStats, setProgressStats] = useState<{
     attempted: number;
@@ -345,20 +350,22 @@ export default function QuestionBankPage() {
   }, [currentQuestion?.id]);
 
   useEffect(() => {
-    setShowCommunityStatsModal(false);
-  }, [currentQuestion?.id]);
-
-  const loadCommunityStatsForOpen = (qId: string) => {
-    if (communityStatsRef.current[qId]) return;
+    const qId = currentQuestion?.id;
+    if (!qId || !isAnswered || !isCorrect) return;
     setCommunityStatsLoading(true);
     fetch(`/api/question-bank/questions/${qId}/community-stats`)
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Failed to load'))))
+      .then((res) =>
+        res.ok ? res.json() : Promise.reject(new Error('Failed to load')),
+      )
       .then((data: QuestionBankCommunityStats) => {
-        setCommunityStatsByQuestionId((prev) => ({ ...prev, [data.questionId]: data }));
+        setCommunityStatsByQuestionId((prev) => ({
+          ...prev,
+          [data.questionId]: data,
+        }));
       })
       .catch(() => {})
       .finally(() => setCommunityStatsLoading(false));
-  };
+  }, [currentQuestion?.id, isAnswered, isCorrect]);
 
   // Timer effect - countdown for sessions, count-up for regular practice
   useEffect(() => {
@@ -435,11 +442,11 @@ export default function QuestionBankPage() {
       const totalSeconds = timeLimitMinutes * 60;
       const percentage = remainingTime / totalSeconds;
 
-      if (percentage <= 0.1) return 'text-red-400';
-      if (percentage <= 0.5) return 'text-yellow-400';
-      return 'text-white/90';
+      if (percentage <= 0.1) return 'text-error';
+      if (percentage <= 0.5) return 'text-warning';
+      return 'text-text';
     }
-    return 'text-white/90';
+    return 'text-text';
   };
 
   // Edit handlers
@@ -721,113 +728,196 @@ export default function QuestionBankPage() {
   const getFilterColor = (type: string, value: string) => {
     if (type === 'subject') {
       const subjectColors: Record<string, string> = {
-        'Math 1': 'bg-[#406166]/20 text-[#5da8f0]',
-        'Math 2': 'bg-[#406166]/20 text-[#5da8f0]',
-        Physics: 'bg-[#2f2835]/30 text-[#a78bfa]',
-        Chemistry: 'bg-[#854952]/20 text-[#ef7d7d]',
-        Biology: 'bg-[#506141]/20 text-[#85BC82]',
-        'Paper 1': 'bg-[#406166]/20 text-[#5da8f0]',
-        'Paper 2': 'bg-[#2f2835]/30 text-[#a78bfa]',
+        'Math 1': 'border border-maths/20 bg-maths/15 text-maths',
+        'Math 2': 'border border-accent/20 bg-accent/15 text-accent',
+        Physics: 'border border-physics/20 bg-physics/15 text-physics',
+        Chemistry:
+          'border border-chemistry/20 bg-chemistry/15 text-chemistry',
+        Biology: 'border border-primary/25 bg-primary/15 text-primary',
+        'Paper 1': 'border border-maths/20 bg-maths/15 text-maths',
+        'Paper 2': 'border border-physics/20 bg-physics/15 text-physics',
       };
-      return subjectColors[value] || 'bg-white/10 text-white/70';
+      return subjectColors[value] || 'border border-border-subtle bg-surface-mid text-text-muted';
     }
     if (type === 'difficulty') {
-      if (value === 'Easy') return 'bg-[#506141]/20 text-[#85BC82]';
-      if (value === 'Medium') return 'bg-[#967139]/20 text-[#b8a066]';
-      if (value === 'Hard') return 'bg-[#854952]/20 text-[#ef7d7d]';
-      return 'bg-white/10 text-white/70';
+      if (value === 'Easy')
+        return 'border border-transparent bg-difficulty-easy text-background';
+      if (value === 'Medium')
+        return 'border border-transparent bg-warning text-text';
+      if (value === 'Hard')
+        return 'border border-transparent bg-error text-text';
+      return 'border border-border-subtle bg-surface-mid text-text-muted';
     }
     if (type === 'attemptedStatus') {
       if (value === 'New' || value === 'Attempted')
-        return 'bg-white/20 text-white/70';
-      if (value === 'Mix') return 'bg-white/10 text-white/60';
-      return 'bg-white/10 text-white/70';
+        return 'border border-border-subtle bg-surface-neutral text-text';
+      if (value === 'Mix')
+        return 'border border-border-subtle bg-surface-elevated text-text-muted';
+      return 'border border-border-subtle bg-surface-mid text-text-muted';
     }
     if (type === 'attemptResult') {
-      return 'bg-white/20 text-white/70';
+      return 'border border-secondary/25 bg-secondary/12 text-secondary';
     }
     if (type === 'topic') {
-      return 'bg-white/10 text-white/70';
+      return 'border border-border-subtle bg-surface-mid text-text-muted';
     }
-    return 'bg-white/10 text-white/70';
+    return 'border border-border-subtle bg-surface-mid text-text-muted';
   };
 
-  const handleStartSession = async (config: {
-    count: number;
-    topics: string[];
-    difficulties: string[];
-  }) => {
-    // Build query params for session
-    const params = new URLSearchParams();
-    // Handle subject (can be array or single value)
-    const subjects = Array.isArray(filters.subject)
-      ? filters.subject
-      : filters.subject !== 'All'
-        ? [filters.subject]
-        : [];
-    if (subjects.length > 0) {
-      // For multiple subjects, we'll need to fetch separately or use OR logic
-      // For now, use the first subject or fetch all and filter client-side
-      if (subjects.length === 1) {
-        params.append('subject', subjects[0]);
+  const handleStartSession = useCallback(
+    async (
+      config: {
+        count: number;
+        topics: string[];
+        difficulties: string[];
+        timeLimitMinutes?: number;
+      },
+      scope?: {
+        subjects?: SubjectFilter[];
+        testType?: TestTypeFilter;
+      },
+    ) => {
+      const params = new URLSearchParams();
+
+      const subjectsResolved: SubjectFilter[] =
+        scope?.subjects != null && scope.subjects.length > 0
+          ? scope.subjects
+          : Array.isArray(filters.subject)
+            ? filters.subject
+            : filters.subject !== 'All'
+              ? [filters.subject]
+              : [];
+
+      const testResolved = scope?.testType ?? filters.testType;
+      if (testResolved === 'ESAT' || testResolved === 'TMUA') {
+        params.append('testType', testResolved);
       }
-    }
-    if (config.difficulties.length > 0) {
-      // If multiple difficulties, we need to fetch them separately or use a different approach
-      // For now, if multiple are selected, we'll fetch all and filter client-side
+
+      if (subjectsResolved.length === 1) {
+        params.append('subject', subjectsResolved[0]);
+      } else if (subjectsResolved.length > 1) {
+        params.append('subject', subjectsResolved.join(','));
+      }
+
       if (config.difficulties.length === 1) {
         params.append('difficulty', config.difficulties[0]);
       }
-    }
-    if (config.topics.length > 0) {
-      params.append('tags', config.topics.join(','));
-    }
-    // Fetch more questions than needed to account for filtering
-    params.append('limit', (config.count * 2).toString());
-    params.append('random', 'true');
 
-    try {
-      const response = await fetch(
-        `/api/question-bank/questions?${params.toString()}`,
-      );
-      if (!response.ok) throw new Error('Failed to fetch session questions');
+      if (config.topics.length > 0) {
+        params.append('tags', config.topics.join(','));
+      }
 
-      const data = await response.json();
-      if (data.questions && data.questions.length > 0) {
-        // Filter by difficulties if multiple were selected
-        let filteredQuestions = data.questions;
-        if (config.difficulties.length > 1) {
-          filteredQuestions = data.questions.filter((q: QuestionBankQuestion) =>
-            config.difficulties.includes(q.difficulty),
-          );
-        }
+      params.append('limit', (config.count * 2).toString());
+      params.append('random', 'true');
 
-        // Take only the requested count
-        const sessionQs = filteredQuestions.slice(0, config.count);
+      try {
+        const response = await fetch(
+          `/api/question-bank/questions?${params.toString()}`,
+        );
+        if (!response.ok) throw new Error('Failed to fetch session questions');
 
-        if (sessionQs.length > 0) {
-          setSessionQuestions(sessionQs);
-          setSessionCurrentIndex(0);
-          setSessionMode(true);
-          // Update current question to first session question
-          updateCurrentQuestion(sessionQs[0]);
+        const data = await response.json();
+        if (data.questions && data.questions.length > 0) {
+          let filteredQuestions = data.questions;
+          if (config.difficulties.length > 1) {
+            filteredQuestions = data.questions.filter((q: QuestionBankQuestion) =>
+              config.difficulties.includes(q.difficulty),
+            );
+          }
+
+          const sessionQs = filteredQuestions.slice(0, config.count);
+
+          if (sessionQs.length > 0) {
+            setSessionQuestions(sessionQs);
+            setSessionCurrentIndex(0);
+            setSessionMode(true);
+            updateCurrentQuestion(sessionQs[0]);
+
+            if (
+              config.timeLimitMinutes != null &&
+              config.timeLimitMinutes > 0
+            ) {
+              const startTime = Date.now();
+              const timeLimitMs = config.timeLimitMinutes * 60 * 1000;
+              setDeadline(startTime + timeLimitMs);
+              setTimerStartTime(startTime);
+              setTimeLimitMinutes(config.timeLimitMinutes);
+              setRemainingTime(Math.ceil(timeLimitMs / 1000));
+            }
+          } else {
+            alert(
+              'No questions found matching your criteria. Please try different filters.',
+            );
+          }
         } else {
           alert(
             'No questions found matching your criteria. Please try different filters.',
           );
         }
-      } else {
-        alert(
-          'No questions found matching your criteria. Please try different filters.',
-        );
+      } catch (err) {
+        console.error('Failed to start session:', err);
+        alert('Failed to start session. Please try again.');
       }
-    } catch (err) {
-      console.error('Failed to start session:', err);
-      alert('Failed to start session. Please try again.');
+    },
+    [filters.subject, filters.testType, updateCurrentQuestion],
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
+    if (!raw) return;
+
+    let data: QuestionBankHomeLaunchPayload;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
+      return;
     }
-  };
+    sessionStorage.removeItem(QUESTION_BANK_HOME_LAUNCH_KEY);
+
+    const d =
+      data.difficulties.length === 1 &&
+      (data.difficulties[0] === 'Easy' ||
+        data.difficulties[0] === 'Medium' ||
+        data.difficulties[0] === 'Hard')
+        ? data.difficulties[0]
+        : 'All';
+
+    setFilters({
+      testType: data.testType,
+      subject:
+        data.subjects.length === 1 ? data.subjects[0] : data.subjects,
+      difficulty: d,
+      searchTag: '',
+      attemptedStatus: 'Mix',
+      attemptResult: [],
+    });
+
+    void handleStartSession(
+      {
+        count: data.questionCount,
+        topics: [],
+        difficulties: data.difficulties,
+        timeLimitMinutes: data.timeLimitMinutes,
+      },
+      { subjects: data.subjects, testType: data.testType },
+    );
+  }, [handleStartSession, setFilters]);
 
   // Handle next question in session mode
+  const handleEndSession = async () => {
+    if (!sessionMode) return;
+    setSessionMode(false);
+    setIsDrillSession(false);
+    setSessionQuestions([]);
+    setSessionCurrentIndex(0);
+    setDeadline(null);
+    setRemainingTime(null);
+    await nextQuestion();
+  };
+
   const handleNextQuestionInSession = async () => {
     if (isFreeLimitReached) return;
     if (sessionMode && sessionQuestions.length > 0) {
@@ -853,150 +943,117 @@ export default function QuestionBankPage() {
 
   return (
     <Fragment>
-      <div className='min-h-[calc(100vh-3.5rem)] py-8 pb-24'>
+      <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-36 sm:py-8 sm:pb-40'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
             {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
             {!sessionMode &&
               drillWrongCount !== null &&
               drillWrongCount > 0 && (
-                <div className='rounded-organic-md p-4 border border-white/10 bg-white/[0.03] flex flex-wrap items-center justify-between gap-3'>
-                  <span className='text-sm text-white/70'>
+                <div className='flex flex-wrap items-center justify-between gap-3 rounded-organic-xl border border-border-subtle bg-surface p-4 ring-1 ring-white/[0.06]'>
+                  <span className='text-sm text-text-muted'>
                     You have{' '}
-                    <strong className='text-white/90'>{drillWrongCount}</strong>{' '}
-                    question{drillWrongCount === 1 ? '' : 's'} you got wrong.
+                    <strong className='text-text'>{drillWrongCount}</strong>{' '}
+                    question{drillWrongCount === 1 ? '' : 's'} marked wrong.
                   </span>
                   <Link
                     href='/questions/questionbank/drill'
-                    className='text-sm font-medium text-primary hover:text-primary/90 transition-colors'
+                    className='text-sm font-semibold text-primary transition-colors hover:text-primary/85'
                   >
                     Start drill
                   </Link>
                 </div>
               )}
-            {/* Session Progress Indicator */}
             {sessionMode && sessionQuestions.length > 0 && (
-              <div className='bg-primary/10 rounded-organic-md p-4 border border-primary/20'>
-                <div className='flex items-center justify-between mb-2'>
-                  <span className='text-sm font-medium text-primary'>
-                    {isDrillSession ? 'Drill (questions you got wrong)' : 'Session Mode'}
+              <div className='rounded-organic-xl border border-border-subtle bg-surface-elevated p-4 ring-1 ring-white/[0.06]'>
+                <div className='mb-3 flex flex-wrap items-center justify-between gap-2'>
+                  <span className='text-xs font-semibold uppercase tracking-wider text-secondary'>
+                    {isDrillSession ? 'Drill session' : 'Practice session'}
                   </span>
-                  <span className='text-xs text-white/60'>
+                  <span className='text-xs tabular-nums text-text-muted'>
                     Question {sessionCurrentIndex + 1} of{' '}
                     {sessionQuestions.length}
                   </span>
                 </div>
-                <div className='w-full bg-white/10 rounded-full h-2 overflow-hidden'>
+                <div className='h-2 w-full overflow-hidden rounded-full bg-surface-mid'>
                   <div
-                    className='bg-primary h-full transition-all duration-300 ease-signature'
+                    className='h-full bg-secondary transition-all duration-300 ease-signature'
                     style={{
-                      width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
+                      width: `${
+                        ((sessionCurrentIndex + 1) /
+                          sessionQuestions.length) *
+                        100
+                      }%`,
                     }}
                   />
                 </div>
               </div>
             )}
 
-            {/* Active Filters and Timer Row */}
-            <div className='flex items-center gap-4 flex-wrap'>
-              {/* Active Filters Container */}
-              <div className='flex items-center justify-between gap-4 flex-wrap px-6 py-4 rounded-organic-md bg-white/[0.02] flex-1 min-h-[56px]'>
-                <div className='flex items-center gap-2 flex-wrap'>
-                  <span className='text-sm font-medium text-white/50 font-mono'>
-                    Active Filters:
-                  </span>
+            <div className='flex flex-wrap items-stretch justify-between gap-3 rounded-organic-xl border border-border bg-surface px-4 py-3 ring-1 ring-white/[0.06]'>
+              <div className='flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-2'>
+                <span className='shrink-0 text-[11px] font-semibold uppercase tracking-wider text-text-muted'>
+                  Filters
+                </span>
+                <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2'>
                   {(() => {
                     const activeFilters = getActiveFilters();
                     if (activeFilters.length === 0) {
                       return (
-                        <span className='text-xs text-white/40 font-mono'>
-                          No filters active
+                        <span className='text-xs text-text-subtle'>
+                          All questions
                         </span>
                       );
                     }
-
-                    // Group filters by type
-                    const groupedFilters: Record<string, typeof activeFilters> =
-                      {};
+                    const groupedFilters: Record<
+                      string,
+                      typeof activeFilters
+                    > = {};
                     activeFilters.forEach((filter) => {
-                      if (!groupedFilters[filter.type]) {
+                      if (!groupedFilters[filter.type])
                         groupedFilters[filter.type] = [];
-                      }
                       groupedFilters[filter.type].push(filter);
                     });
-
-                    // Display groups with "/" within groups, spacing between groups
                     return (
-                      <div className='flex items-center gap-3 flex-wrap'>
-                        {Object.entries(groupedFilters).map(
-                          ([type, filters], groupIndex) => (
-                            <div key={type} className='flex items-center'>
-                              {filters.map((filter, index) => (
-                                <span
-                                  key={`${filter.type}-${filter.value}`}
-                                  className='flex items-center'
-                                >
-                                  <button
-                                    onClick={filter.onRemove}
-                                    className={cn(
-                                      'group relative px-3 py-1.5 rounded-organic-md text-xs font-mono transition-all duration-fast ease-signature cursor-pointer',
-                                      'hover:line-through',
-                                      getFilterColor(filter.type, filter.value),
-                                    )}
-                                    aria-label={`Remove ${filter.label} filter`}
-                                  >
-                                    <span>{filter.label}</span>
-                                  </button>
-                                  {index < filters.length - 1 && (
-                                    <span className='text-white/40 px-2'>
-                                      /
-                                    </span>
+                      <div className='flex flex-wrap items-center gap-2'>
+                        {Object.entries(groupedFilters).map(([type, flist]) => (
+                          <div key={type} className='flex flex-wrap items-center gap-1'>
+                            {flist.map((filter, index) => (
+                              <span key={`${filter.type}-${filter.value}`} className='flex items-center'>
+                                <button
+                                  type='button'
+                                  onClick={filter.onRemove}
+                                  className={cn(
+                                    'rounded-organic-md px-2.5 py-1 text-xs font-medium transition-colors duration-fast ease-signature hover:opacity-80',
+                                    getFilterColor(filter.type, filter.value),
                                   )}
-                                </span>
-                              ))}
-                            </div>
-                          ),
-                        )}
+                                  aria-label={`Remove ${filter.label} filter`}
+                                >
+                                  {filter.label}
+                                </button>
+                                {index < flist.length - 1 && (
+                                  <span className='px-1 text-text-subtle'>/</span>
+                                )}
+                              </span>
+                            ))}
+                          </div>
+                        ))}
                       </div>
                     );
                   })()}
                 </div>
-
-                {/* Filter button - top right */}
-                <button
-                  onClick={() => setShowFilterPopup(true)}
-                  className='p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center'
-                  title='Filters & Settings'
-                >
-                  <Filter className='w-4 h-4' />
-                </button>
               </div>
-
-              {/* Timer Container */}
-              {(sessionMode
-                ? remainingTime !== null
-                : elapsedTime !== undefined) && (
-                <div className='flex items-center gap-4 px-6 py-4 rounded-organic-md bg-white/[0.02] min-h-[56px]'>
-                  {!sessionMode && (
-                    <button
-                      onClick={resetTimer}
-                      className='p-2.5 bg-white/10 hover:bg-white/15 rounded-organic-md text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center'
-                      title='Reset timer'
-                    >
-                      <RotateCw className='w-4 h-4' />
-                    </button>
-                  )}
-                  <div
-                    className={cn(
-                      'text-xl font-bold tabular-nums tracking-tight select-none',
-                      getTimerColor(),
-                    )}
-                    style={{ fontFamily: "'Times New Roman', Times, serif" }}
-                  >
-                    {formatTimerDisplay()}
-                  </div>
-                </div>
-              )}
+              <button
+                type='button'
+                onClick={() => setShowFilterPopup(true)}
+                className='flex shrink-0 items-center justify-center gap-2 self-center rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-2 text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                title='Filters and session settings'
+              >
+                <Filter className='h-4 w-4' />
+                <span className='hidden text-xs font-semibold uppercase tracking-wider sm:inline'>
+                  Edit
+                </span>
+              </button>
             </div>
 
             {/* Loading State */}
@@ -1008,14 +1065,14 @@ export default function QuestionBankPage() {
 
             {/* Error State */}
             {error && !isLoading && (
-              <div className='bg-interview/10 rounded-organic-lg p-6 text-center'>
-                <div className='flex items-center justify-center gap-3 mb-4'>
-                  <AlertCircle className='w-5 h-5 text-interview' />
-                  <p className='text-interview font-mono text-sm'>{error}</p>
+              <div className='rounded-organic-xl border border-error/30 bg-error/10 p-6 text-center ring-1 ring-white/[0.06]'>
+                <div className='mb-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
+                  <AlertCircle className='h-5 w-5 shrink-0 text-error' />
+                  <p className='text-sm text-text'>{error}</p>
                 </div>
                 <Button onClick={nextQuestion} variant='secondary'>
-                  <RotateCw className='w-4 h-4 mr-2' />
-                  Try Again
+                  <RotateCw className='mr-2 h-4 w-4' />
+                  Try again
                 </Button>
               </div>
             )}
@@ -1039,153 +1096,46 @@ export default function QuestionBankPage() {
                   onSelectionChange={setCurrentSelection}
                   onIncorrectAnswersChange={setIncorrectAnswers}
                   isAuthenticated={!!session?.user}
-                />
-
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!(isAnswered && isCorrect)) return;
-                      if (!currentQuestion?.id) return;
-                      setShowCommunityStatsModal(true);
-                      loadCommunityStatsForOpen(currentQuestion.id);
-                    }}
-                    disabled={!(isAnswered && isCorrect)}
-                    className={cn(
-                      "inline-flex items-center gap-2 px-4 py-2 rounded-organic-md text-sm font-mono border transition-all",
-                      isAnswered && isCorrect
-                        ? "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 border-white/10"
-                        : "bg-white/[0.02] text-white/30 border-white/5 cursor-not-allowed"
-                    )}
-                  >
-                    <Users className="w-4 h-4" />
-                    Community stats
-                  </button>
-                </div>
-
-                {showCommunityStatsModal && currentQuestion && (
-                  <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-                    onClick={() => setShowCommunityStatsModal(false)}
-                  >
-                    <div
-                      className="bg-white/[0.08] rounded-organic-lg p-6 max-w-lg w-full border border-white/10 max-h-[85vh] overflow-y-auto"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-white/90">
-                          Community stats
-                        </h3>
+                  headerTrailing={
+                    <div className='flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2 sm:gap-3 sm:px-4'>
+                      {!sessionMode && (
                         <button
-                          type="button"
-                          onClick={() => setShowCommunityStatsModal(false)}
-                          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center"
-                          aria-label="Close"
+                          type='button'
+                          onClick={resetTimer}
+                          className='flex h-9 w-9 items-center justify-center rounded-organic-md text-text-muted transition-colors hover:bg-surface-mid hover:text-text'
+                          title='Reset timer'
+                          aria-label='Reset timer'
                         >
-                          <X className="w-4 h-4 text-white/60" />
+                          <RotateCw className='h-4 w-4' />
                         </button>
-                      </div>
-                      {(() => {
-                        const stats =
-                          communityStatsByQuestionId[currentQuestion.id];
-                        if (communityStatsLoading && !stats) {
-                          return (
-                            <p className="text-sm text-white/50">
-                              Loading…
-                            </p>
-                          );
-                        }
-                        if (!stats) {
-                          return (
-                            <p className="text-sm text-white/50">
-                              Could not load stats.
-                            </p>
-                          );
-                        }
-                        return (
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-white/50">Attempts</span>
-                              <span className="text-white/80 font-mono">
-                                {stats.attempts}
-                              </span>
-                            </div>
-                            {!stats.hasSufficientData ? (
-                              <p className="text-sm text-white/50 py-2">
-                                Not enough data yet
-                              </p>
-                            ) : (
-                              <>
-                                <div className="flex items-center justify-between py-2 border-t border-white/10">
-                                  <span className="text-xs text-white/50">
-                                    Average time
-                                  </span>
-                                  <span className="text-sm text-white/80 font-medium font-mono">
-                                    {formatTime(
-                                      Math.round(stats.avgTimeSeconds) * 1000,
-                                    )}
-                                  </span>
-                                </div>
-                                <div className="space-y-2 pt-2">
-                                  <div className="text-xs text-white/50 mb-2">
-                                    Answer distribution
-                                  </div>
-                                  <div className="space-y-1.5">
-                                    {Object.keys(currentQuestion.options)
-                                      .sort()
-                                      .map((letter) => {
-                                        const percentage =
-                                          stats.optionPercentages[letter] ?? 0;
-                                        const isCorrectOption =
-                                          letter ===
-                                          (
-                                            currentQuestion.correct_option || ''
-                                          ).toUpperCase();
-                                        const isUserChoice =
-                                          isAnswered &&
-                                          letter ===
-                                            (
-                                              selectedAnswer || ''
-                                            ).toUpperCase();
-                                        return (
-                                          <div
-                                            key={letter}
-                                            className="flex items-center gap-3"
-                                          >
-                                            <div className="w-5 text-xs text-white/60 font-medium">
-                                              {letter}
-                                            </div>
-                                            <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                              <div
-                                                className="h-full rounded-full transition-all duration-300"
-                                                style={{
-                                                  width: `${Math.max(percentage, 0.5)}%`,
-                                                  backgroundColor: isCorrectOption
-                                                    ? '#6c9e69'
-                                                    : isUserChoice
-                                                      ? '#b89f5a'
-                                                      : '#5a6370',
-                                                }}
-                                              />
-                                            </div>
-                                            <div className="w-10 text-xs text-white/50 text-right">
-                                              {percentage > 0
-                                                ? `${percentage.toFixed(0)}%`
-                                                : '—'}
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        );
-                      })()}
+                      )}
+                      <span
+                        className={cn(
+                          'tabular-nums text-lg font-semibold tracking-tight',
+                          getTimerColor(),
+                        )}
+                      >
+                        {formatTimerDisplay()}
+                      </span>
                     </div>
-                  </div>
-                )}
+                  }
+                  belowOptionsSlot={
+                    isAnswered &&
+                    isCorrect &&
+                    currentQuestion ? (
+                      <CommunityStatsPanel
+                        questionId={currentQuestion.id}
+                        options={currentQuestion.options}
+                        correctOption={currentQuestion.correct_option}
+                        stats={
+                          communityStatsByQuestionId[currentQuestion.id] ??
+                          null
+                        }
+                        loading={communityStatsLoading}
+                      />
+                    ) : null
+                  }
+                />
 
                 {/* Detailed Explanation Modal */}
                 {currentQuestion && (
@@ -1208,47 +1158,11 @@ export default function QuestionBankPage() {
                       graphSpecs={currentQuestion.graph_specs}
                     />
 
-                    {/* Hint Modal */}
-                    {showHint && currentQuestion.solution_key_insight && (
-                      <div
-                        className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm'
-                        onClick={() => setShowHint(false)}
-                      >
-                        <div
-                          className='bg-white/[0.08] rounded-organic-lg p-6 max-w-2xl w-full border border-white/10'
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className='flex items-center justify-between mb-4'>
-                            <div className='flex items-center gap-3'>
-                              <div className='w-10 h-10 rounded-organic-md bg-primary/20 flex items-center justify-center'>
-                                <Lightbulb className='w-5 h-5 text-primary' />
-                              </div>
-                              <h3 className='text-lg font-semibold text-white/90'>
-                                Hint
-                              </h3>
-                            </div>
-                            <button
-                              onClick={() => setShowHint(false)}
-                              className='w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all'
-                            >
-                              <X className='w-4 h-4 text-white/60' />
-                            </button>
-                          </div>
-                          <div
-                            className='text-white/90 leading-relaxed'
-                            style={{
-                              fontFamily: "'Times New Roman', Times, serif",
-                              fontSize: '1.125rem',
-                            }}
-                          >
-                            <MathContent
-                              content={currentQuestion.solution_key_insight}
-                              className='text-inherit'
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <HintModal
+                      isOpen={showHint && !!currentQuestion.solution_key_insight}
+                      onClose={() => setShowHint(false)}
+                      content={currentQuestion.solution_key_insight}
+                    />
                   </Fragment>
                 )}
 
@@ -1274,114 +1188,175 @@ export default function QuestionBankPage() {
           </div>
         </Container>
 
-        {/* Fixed Bottom Action Bar */}
+        {/* Fixed bottom bar — Figma: progress + secondary actions + secondary CTA */}
         {currentQuestion && !isLoading && (
-          <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-white/10'>
-            {/* Progress Bar: session progress in session/drill mode, overall bank progress otherwise */}
-            <div className='w-full h-1.5 bg-white/[0.03] relative overflow-hidden'>
-              <div
-                className='h-full bg-interview/40 transition-all duration-300 ease-signature'
-                style={{
-                  width: sessionMode && sessionQuestions.length > 0
-                    ? `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`
-                    : progressStats && progressStats.total > 0
-                      ? `${(progressStats.attempted / progressStats.total) * 100}%`
-                      : '0%',
-                }}
-              />
-            </div>
-            <Container size='lg'>
-              <div className='flex items-center justify-center gap-3 py-4 relative'>
-                {/* Left: Overall bank progress (hidden in session/drill so only session progress shows) */}
-                {progressStats && !sessionMode && (
-                  <div className='absolute left-0 flex items-center gap-2'>
-                    <span className='text-xs text-white/60 font-mono'>
-                      <span className='font-medium text-base'>
-                        {progressStats.attempted}
-                      </span>{' '}
-                      out of{' '}
-                      <span className='font-medium text-base'>
-                        {progressStats.total}
-                      </span>{' '}
-                      questions done
-                      {progressSubjects.length === 1 && (
-                        <Fragment>
-                          {' '}
-                          <button
-                            onClick={() =>
-                              setShowProgressFilter(!showProgressFilter)
-                            }
-                            className='text-white/40 hover:text-white font-normal transition-colors duration-fast ease-signature cursor-pointer'
-                          >
-                            for {progressSubjects[0]}
-                          </button>
-                        </Fragment>
-                      )}
-                      {progressSubjects.length > 1 && (
-                        <Fragment>
-                          {' '}
-                          <button
-                            onClick={() =>
-                              setShowProgressFilter(!showProgressFilter)
-                            }
-                            className='text-white/40 hover:text-white font-normal transition-colors duration-fast ease-signature cursor-pointer'
-                          >
-                            for {progressSubjects.length} subjects
-                          </button>
-                        </Fragment>
-                      )}
-                    </span>
-                  </div>
-                )}
+          <div className='fixed bottom-0 left-0 right-0 z-40 border-t border-border-subtle bg-background/98 shadow-bar-floating backdrop-blur-md'>
+            <Container size='lg' className='py-3 sm:py-4'>
+              <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
+                <div className='min-w-0 flex-1 space-y-2'>
+                  {sessionMode && sessionQuestions.length > 0 ? (
+                    <>
+                      <p className='text-xs text-text-muted sm:text-sm'>
+                        Questions remaining{' '}
+                        <span className='font-semibold tabular-nums text-text'>
+                          {Math.max(
+                            0,
+                            sessionQuestions.length - sessionCurrentIndex,
+                          )}
+                        </span>
+                        <span className='text-text-subtle'> / </span>
+                        <span className='tabular-nums text-text-muted'>
+                          {sessionQuestions.length}
+                        </span>
+                      </p>
+                      <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
+                        <div
+                          className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
+                          style={{
+                            width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </>
+                  ) : progressStats && progressStats.total > 0 ? (
+                    <>
+                      <p className='text-xs text-text-muted sm:text-sm'>
+                        <span className='font-semibold tabular-nums text-text'>
+                          {progressStats.attempted}
+                        </span>{' '}
+                        <span className='text-text-subtle'>/</span>{' '}
+                        <span className='tabular-nums text-text-muted'>
+                          {progressStats.total}
+                        </span>{' '}
+                        attempted
+                        {progressSubjects.length === 1 && (
+                          <>
+                            {' '}
+                            <button
+                              type='button'
+                              onClick={() =>
+                                setShowProgressFilter(!showProgressFilter)
+                              }
+                              className='text-secondary underline-offset-2 hover:underline'
+                            >
+                              ({progressSubjects[0]})
+                            </button>
+                          </>
+                        )}
+                        {progressSubjects.length > 1 && (
+                          <>
+                            {' '}
+                            <button
+                              type='button'
+                              onClick={() =>
+                                setShowProgressFilter(!showProgressFilter)
+                              }
+                              className='text-secondary underline-offset-2 hover:underline'
+                            >
+                              ({progressSubjects.length} subjects)
+                            </button>
+                          </>
+                        )}
+                      </p>
+                      <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
+                        <div
+                          className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
+                          style={{
+                            width: `${Math.min(100, (progressStats.attempted / progressStats.total) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <p className='text-xs text-text-muted sm:text-sm'>
+                      Free practice — open filters to narrow your bank.
+                    </p>
+                  )}
+                </div>
 
-                {/* Center: Action Buttons */}
-                <div className='flex items-center justify-center gap-3'>
-                  {/* Hint Button - always shown if hint exists */}
-                  {currentQuestion.solution_key_insight && (
+                <div className='flex flex-wrap items-center gap-2 sm:justify-end'>
+                  {sessionMode && (
                     <button
-                      onClick={() => setShowHint(true)}
-                      className='px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10'
+                      type='button'
+                      onClick={() => void handleEndSession()}
+                      className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
                     >
-                      <Lightbulb className='w-4 h-4' />
-                      <span>Hint</span>
+                      <StopCircle className='h-4 w-4 shrink-0' />
+                      End session
                     </button>
                   )}
 
-                  {/* Submit Answer OR Next Question (replaces Submit Answer) */}
-                  {answerRevealed || (isAnswered && isCorrect) ? (
-                    // Next Question Button - shown after answer is revealed or correct
+                  {currentQuestion.solution_key_insight && (
                     <button
+                      type='button'
+                      onClick={() => setShowHint(true)}
+                      className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                    >
+                      <Lightbulb className='h-4 w-4 shrink-0' />
+                      Hint
+                    </button>
+                  )}
+
+                  {hasFullAccess ? (
+                    answerRevealed || (isAnswered && isCorrect) ? (
+                      <button
+                        type='button'
+                        onClick={() => setShowDetailedExplanation(true)}
+                        className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                      >
+                        <ClipboardList className='h-4 w-4 shrink-0' />
+                        Detailed explanation
+                      </button>
+                    ) : (
+                      (!isAnswered || (isAnswered && !isCorrect)) && (
+                        <button
+                          type='button'
+                          onClick={() => setAnswerRevealed(true)}
+                          className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                        >
+                          <Eye className='h-4 w-4 shrink-0' />
+                          Reveal answer
+                        </button>
+                      )
+                    )
+                  ) : (
+                    (answerRevealed || isAnswered) && (
+                      <Link
+                        href='/pricing'
+                        className='inline-flex items-center gap-2 rounded-organic-lg border border-primary/30 bg-primary/15 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/25'
+                      >
+                        <BookOpen className='h-4 w-4 shrink-0' />
+                        Upgrade for solutions
+                      </Link>
+                    )
+                  )}
+
+                  {answerRevealed || (isAnswered && isCorrect) ? (
+                    <button
+                      type='button'
                       onClick={handleNextQuestionInSession}
                       disabled={isFreeLimitReached}
-                      className='px-6 py-3 rounded-organic-md bg-interview/40 hover:bg-interview/50 text-interview transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium'
-                      style={{
-                        boxShadow:
-                          'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.boxShadow =
-                          'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.boxShadow =
-                          'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-                      }}
+                      className={cn(
+                        'inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast ease-signature',
+                        'bg-secondary text-background shadow-glow hover:brightness-110',
+                        'disabled:cursor-not-allowed disabled:opacity-45',
+                      )}
                     >
                       <span>
                         {isFreeLimitReached
                           ? 'Upgrade to continue'
                           : sessionMode &&
                               sessionCurrentIndex < sessionQuestions.length - 1
-                            ? `Next (${sessionCurrentIndex + 1}/${sessionQuestions.length})`
+                            ? 'Next question'
                             : sessionMode
-                              ? 'Finish Session'
-                              : 'Next Question'}
+                              ? 'Finish session'
+                              : 'Next question'}
                       </span>
-                      <ArrowRight className='w-4 h-4' strokeWidth={2.5} />
+                      <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
                     </button>
                   ) : (
-                    // Submit Answer Button - shown when not answered correctly and not revealed
                     <button
+                      type='button'
                       onClick={() => {
                         if (
                           currentSelection &&
@@ -1411,49 +1386,16 @@ export default function QuestionBankPage() {
                         incorrectAnswers.has(currentSelection)
                       }
                       className={cn(
-                        'px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm font-medium border',
+                        'inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast ease-signature',
                         currentSelection &&
                           !incorrectAnswers.has(currentSelection)
-                          ? 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 border-white/10 cursor-pointer'
-                          : 'bg-white/5 text-white/40 cursor-not-allowed border-white/10',
+                          ? 'bg-secondary text-background shadow-glow hover:brightness-110'
+                          : 'cursor-not-allowed border border-border-subtle bg-surface-elevated text-text-disabled opacity-70',
                       )}
                     >
-                      <span>Submit Answer</span>
-                      <ArrowRight className='w-4 h-4' strokeWidth={2.5} />
+                      <span>Submit answer</span>
+                      <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
                     </button>
-                  )}
-
-                  {/* Right: Reveal Answer OR Explanation */}
-                  {hasFullAccess ? (
-                    answerRevealed || (isAnswered && isCorrect) ? (
-                      <button
-                        onClick={() => setShowDetailedExplanation(true)}
-                        className='px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10'
-                      >
-                        <BookOpen className='w-4 h-4' />
-                        <span>Explanation</span>
-                      </button>
-                    ) : (
-                      (!isAnswered || (isAnswered && !isCorrect)) && (
-                        <button
-                          onClick={() => setAnswerRevealed(true)}
-                          className='px-4 py-2.5 rounded-organic-md bg-white/5 hover:bg-white/10 text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-white/10'
-                        >
-                          <Eye className='w-4 h-4' />
-                          <span>Reveal Answer</span>
-                        </button>
-                      )
-                    )
-                  ) : (
-                    (answerRevealed || isAnswered) && (
-                      <a
-                        href='/pricing'
-                        className='px-4 py-2.5 rounded-organic-md bg-primary/20 hover:bg-primary/30 text-primary transition-all duration-fast ease-signature flex items-center gap-2 font-mono text-sm border border-primary/30'
-                      >
-                        <BookOpen className='w-4 h-4' />
-                        <span>Upgrade to view solutions</span>
-                      </a>
-                    )
                   )}
                 </div>
               </div>

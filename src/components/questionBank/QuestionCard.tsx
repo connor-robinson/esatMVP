@@ -1,14 +1,23 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useState, useEffect } from "react";
 import { MathContent } from "@/components/shared/MathContent";
 import { QuestionWithGraph } from "@/components/shared/QuestionWithGraph";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, XCircle, Pencil, Eye, ArrowRight, HelpCircle, Star, ThumbsDown } from "lucide-react";
-import type { QuestionRatingResponse, QuestionFeedbackResponse } from "@/types/questionBank";
+import {
+  ArrowRight,
+  Eye,
+  HelpCircle,
+  Pencil,
+  Star,
+  ThumbsDown,
+} from "lucide-react";
+import type {
+  QuestionRatingResponse,
+  QuestionFeedbackResponse,
+} from "@/types/questionBank";
 
 interface QuestionCardProps {
   question: QuestionBankQuestion;
@@ -25,50 +34,52 @@ interface QuestionCardProps {
   getTopicTitle?: (tag: string) => string;
   onSelectionChange?: (selectedAnswer: string | null) => void;
   onIncorrectAnswersChange?: (incorrectAnswers: Set<string>) => void;
-  /** If false or undefined, rating/dislike actions show "Sign in to rate" / read-only. */
   isAuthenticated?: boolean;
+  /** Timer + rotate (e.g.) aligned top-right of question panel */
+  headerTrailing?: ReactNode;
+  /** Centered pill under MCQ rows (e.g. Community stats) */
+  belowOptionsSlot?: ReactNode;
 }
 
-// Helper function to get subject color based on paper name
-const getSubjectColor = (subjects: string | null | undefined): string => {
-  if (!subjects) return 'bg-surface-subtle text-text-muted';
-  
-  const subjectsLower = subjects.toLowerCase().trim();
-  
-  // Math matching
-  if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
+const PANEL_SHELL =
+  "rounded-organic-xl border border-border bg-surface ring-1 ring-white/[0.06]";
+
+function difficultyBadgeClass(d: string): string {
+  switch (d) {
+    case "Easy":
+      return "bg-difficulty-easy text-background border border-transparent";
+    case "Medium":
+      return "bg-warning text-text border border-transparent";
+    case "Hard":
+      return "bg-error text-text border border-transparent";
+    default:
+      return "bg-surface-mid text-text-muted border border-border-subtle";
   }
-  if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
+}
+
+/** Theme-backed subject badges (DESIGN.md — no raw hex). */
+function subjectBadgeClass(subjects: string | null | undefined): string {
+  if (!subjects) return "bg-surface-mid text-text-muted border-border-subtle";
+  const s = subjects.toLowerCase().trim();
+  if (s === "math 1" || s === "math1" || s === "paper 1" || s === "paper1") {
+    return "bg-maths/15 text-maths border border-maths/20";
   }
-  
-  // Physics matching
-  if (subjectsLower === 'physics') {
-    return 'bg-[#2f2835]/30 text-[#a78bfa]';
+  if (
+    s === "math 2" ||
+    s === "math2" ||
+    s === "mathematics 2" ||
+    s === "paper 2" ||
+    s === "paper2"
+  ) {
+    return "bg-accent/15 text-accent border border-accent/20";
   }
-  
-  // Chemistry matching
-  if (subjectsLower === 'chemistry') {
-    return 'bg-[#854952]/20 text-[#ef7d7d]';
+  if (s === "physics") return "bg-physics/15 text-physics border border-physics/20";
+  if (s === "chemistry") {
+    return "bg-chemistry/15 text-chemistry border border-chemistry/20";
   }
-  
-  // Biology matching
-  if (subjectsLower === 'biology') {
-    return 'bg-[#506141]/20 text-[#85BC82]';
-  }
-  
-  // TMUA Paper matching
-  if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  
-  // Default fallback
-  return 'bg-surface-subtle text-text-muted';
-};
+  if (s === "biology") return "bg-primary/15 text-primary border border-primary/25";
+  return "bg-surface-mid text-text-muted border-border-subtle";
+}
 
 export function QuestionCard({
   question,
@@ -80,30 +91,37 @@ export function QuestionCard({
   onEditQuestionStem,
   onEditOption,
   answerRevealed = false,
-  onRevealAnswer,
   allowRetry = false,
   getTopicTitle,
   onSelectionChange,
   onIncorrectAnswersChange,
   isAuthenticated = false,
+  headerTrailing,
+  belowOptionsSlot,
 }: QuestionCardProps) {
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
-  const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(null);
-  const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(new Set());
-  const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(new Set());
+  const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
+    null,
+  );
+  const [revealedDistractors, setRevealedDistractors] = useState<Set<string>>(
+    new Set(),
+  );
+  const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
+    new Set(),
+  );
 
   const [rating, setRating] = useState<QuestionRatingResponse | null>(null);
   const [ratingLoading, setRatingLoading] = useState(true);
-  const [feedback, setFeedback] = useState<QuestionFeedbackResponse | null>(null);
+  const [feedback, setFeedback] = useState<QuestionFeedbackResponse | null>(
+    null,
+  );
   const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
   const [dislikeSubmitting, setDislikeSubmitting] = useState(false);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
 
-  // Get option letters from the options object
   const optionLetters = Object.keys(question.options).sort();
 
-  // Reset local state when question changes
   useEffect(() => {
     if (!isAnswered || allowRetry) {
       setLocalSelectedAnswer(null);
@@ -114,18 +132,16 @@ export function QuestionCard({
     setIncorrectAnswers(new Set());
   }, [question.id, isAnswered, allowRetry, onSelectionChange]);
 
-  // Notify parent when selection changes
   useEffect(() => {
     onSelectionChange?.(localSelectedAnswer);
   }, [localSelectedAnswer, onSelectionChange]);
-  
-  // Track incorrect answers when they're submitted
+
   useEffect(() => {
     if (isAnswered && !isCorrect && selectedAnswer) {
-      setIncorrectAnswers(prev => {
-        const newSet = new Set(prev).add(selectedAnswer);
-        onIncorrectAnswersChange?.(newSet);
-        return newSet;
+      setIncorrectAnswers((prev) => {
+        const next = new Set(prev).add(selectedAnswer);
+        onIncorrectAnswersChange?.(next);
+        return next;
       });
     }
   }, [isAnswered, isCorrect, selectedAnswer, onIncorrectAnswersChange]);
@@ -144,15 +160,25 @@ export function QuestionCard({
     setFeedbackLoading(true);
     const ratingAbort = new AbortController();
     const feedbackAbort = new AbortController();
-    fetch(`/api/question-bank/questions/${questionId}/rating`, { signal: ratingAbort.signal })
+    fetch(`/api/question-bank/questions/${questionId}/rating`, {
+      signal: ratingAbort.signal,
+    })
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data: QuestionRatingResponse) => setRating(data))
-      .catch((e) => e.name !== "AbortError" && setRating({ average: 0, count: 0 }))
+      .catch(
+        (e) =>
+          e.name !== "AbortError" && setRating({ average: 0, count: 0 }),
+      )
       .finally(() => setRatingLoading(false));
-    fetch(`/api/question-bank/questions/${questionId}/feedback`, { signal: feedbackAbort.signal })
+    fetch(`/api/question-bank/questions/${questionId}/feedback`, {
+      signal: feedbackAbort.signal,
+    })
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data: QuestionFeedbackResponse) => setFeedback(data))
-      .catch((e) => e.name !== "AbortError" && setFeedback({ dislikeCount: 0 }))
+      .catch(
+        (e) =>
+          e.name !== "AbortError" && setFeedback({ dislikeCount: 0 }),
+      )
       .finally(() => setFeedbackLoading(false));
     return () => {
       ratingAbort.abort();
@@ -171,11 +197,14 @@ export function QuestionCard({
         : { average: value, count: 1, userRating: value },
     );
     try {
-      const res = await fetch(`/api/question-bank/questions/${questionId}/rating`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating: value }),
-      });
+      const res = await fetch(
+        `/api/question-bank/questions/${questionId}/rating`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rating: value }),
+        },
+      );
       if (res.ok) {
         const data: QuestionRatingResponse = await res.json();
         setRating(data);
@@ -193,7 +222,10 @@ export function QuestionCard({
     if (!isAuthenticated || dislikeSubmitting) return;
     setDislikeSubmitting(true);
     try {
-      const res = await fetch(`/api/question-bank/questions/${questionId}/dislike`, { method: "POST" });
+      const res = await fetch(
+        `/api/question-bank/questions/${questionId}/dislike`,
+        { method: "POST" },
+      );
       if (res.ok) {
         const data: QuestionFeedbackResponse = await res.json();
         setFeedback(data);
@@ -203,154 +235,177 @@ export function QuestionCard({
     }
   };
 
-  // Notify parent when incorrect answers change
   useEffect(() => {
     onIncorrectAnswersChange?.(incorrectAnswers);
   }, [incorrectAnswers, onIncorrectAnswersChange]);
 
-  // Handle Enter key press
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && localSelectedAnswer && !isAnswered) {
+      if (e.key === "Enter" && localSelectedAnswer && !isAnswered) {
         handleSubmit();
       }
     };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [localSelectedAnswer, isAnswered]);
 
   const handleOptionClick = (optionLetter: string) => {
-    if (isAnswered && !allowRetry && !answerRevealed) return; // Prevent changing answer after submission unless retry is allowed
+    if (isAnswered && !allowRetry && !answerRevealed) return;
     setLocalSelectedAnswer(optionLetter);
   };
 
   const handleSubmit = () => {
-    if (!localSelectedAnswer || (isAnswered && !allowRetry && !answerRevealed)) return;
-    // Prevent submitting answers that are already known to be incorrect
+    if (!localSelectedAnswer || (isAnswered && !allowRetry && !answerRevealed))
+      return;
     if (incorrectAnswers.has(localSelectedAnswer)) return;
     const correct = localSelectedAnswer === question.correct_option;
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
-  const getOptionStyle = (optionLetter: string) => {
-    // If answered correctly, show green background (signature desaturated green)
-    if (isAnswered && isCorrect && optionLetter === correctAnswer) {
-      return "bg-[#85BC82]/20 text-[#85BC82] cursor-default";
+  const getOptionStyle = (letter: string) => {
+    if (isAnswered && isCorrect && letter === correctAnswer) {
+      return "cursor-default border border-primary/35 bg-primary/10";
     }
-    
-    // If answer is revealed, show correct answer with green
-    if (answerRevealed && optionLetter === correctAnswer) {
-      return "bg-[#85BC82]/20 text-[#85BC82] cursor-default";
+    if (answerRevealed && letter === correctAnswer) {
+      return "cursor-default border border-primary/35 bg-primary/10";
     }
-
-    // Always keep all previously wrong answers marked as red (signature desaturated red)
-    if (incorrectAnswers.has(optionLetter) && optionLetter !== correctAnswer) {
-      return "bg-[#854952]/20 text-[#854952] cursor-default";
+    if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
+      return "cursor-default border border-error/35 bg-error/10";
     }
-
-    // If wrong answer was selected and not revealed, show only that wrong answer
     if (isAnswered && !isCorrect && !answerRevealed) {
-      // Other options remain interactive
       if (allowRetry) {
-        if (localSelectedAnswer === optionLetter) {
-          return "bg-white/[0.08] hover:bg-white/[0.10] text-text cursor-pointer transition-all duration-fast ease-signature";
+        if (localSelectedAnswer === letter) {
+          return cn(
+            "cursor-pointer border border-border bg-surface-mid hover:bg-surface-neutral transition-colors duration-fast ease-signature",
+          );
         }
         return cn(
-          "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
-          hoveredOption === optionLetter && "bg-white/[0.06]"
+          "cursor-pointer border border-border-subtle bg-surface-elevated hover:bg-surface-mid transition-colors duration-fast ease-signature",
+          hoveredOption === letter && "border-border bg-surface-mid",
         );
       }
-      return "bg-white/[0.04] text-text-muted cursor-default";
+      return "cursor-default border border-border-subtle bg-surface-elevated opacity-70";
     }
-
-    // Before answering or after correct answer - lighter background when selected
-    if (localSelectedAnswer === optionLetter) {
-      return "bg-white/[0.08] hover:bg-white/[0.10] text-text cursor-pointer transition-all duration-fast ease-signature";
+    if (localSelectedAnswer === letter) {
+      return cn(
+        "cursor-pointer border border-secondary/35 bg-secondary/10 hover:bg-secondary/15 transition-colors duration-fast ease-signature",
+      );
     }
     return cn(
-      "bg-white/[0.04] hover:bg-white/[0.06] text-text cursor-pointer transition-all duration-fast ease-signature",
-      hoveredOption === optionLetter && "bg-white/[0.06]"
+      "cursor-pointer border border-border-subtle bg-surface-elevated hover:bg-surface-mid transition-colors duration-fast ease-signature",
+      hoveredOption === letter && "border-border bg-surface-mid",
     );
   };
 
+  const letterBadgeClass = (letter: string) => {
+    if (isAnswered && isCorrect && letter === correctAnswer) {
+      return "border border-primary/40 bg-primary/20 text-primary";
+    }
+    if (answerRevealed && letter === correctAnswer) {
+      return "border border-primary/40 bg-primary/20 text-primary";
+    }
+    if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
+      return "border border-error/40 bg-error/20 text-error";
+    }
+    if (
+      localSelectedAnswer === letter &&
+      (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
+    ) {
+      return "border border-secondary/40 bg-surface-neutral text-text";
+    }
+    return "border border-border-subtle bg-surface-mid text-text-muted";
+  };
+
+  const stemTypography = cn(
+    "text-text text-[1.05rem] sm:text-[1.125rem] leading-relaxed tracking-tight",
+    "font-sans",
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Question stem - in its own card */}
-      <div className="px-8 pt-6 pb-10 relative group bg-white/[0.02] rounded-organic-lg">
+    <div className="space-y-5">
+      <div className={cn(PANEL_SHELL, "relative px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10 group")}>
         {onEditQuestionStem && (
           <button
+            type="button"
             onClick={onEditQuestionStem}
-            className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-surface-elevated hover:bg-surface flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center rounded-organic-md bg-surface-elevated opacity-0 transition-opacity hover:bg-surface-mid group-hover:opacity-100 sm:right-8 sm:top-6"
             title="Edit question"
           >
-            <Pencil className="w-4 h-4 text-text-muted" />
+            <Pencil className="h-4 w-4 text-text-muted" />
           </button>
         )}
-        
-        {/* Question Details and Timer - inside question container */}
-        <div className="flex items-center justify-between gap-3 flex-wrap mb-6">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className={cn(
-              "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-              question.difficulty === 'Easy' && 'bg-[#506141]/20 text-[#85BC82]',
-              question.difficulty === 'Medium' && 'bg-[#967139]/20 text-[#b8a066]',
-              question.difficulty === 'Hard' && 'bg-[#854952]/20 text-[#ef7d7d]'
-            )}>
+
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 gap-y-2">
+            <span
+              className={cn(
+                "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide",
+                difficultyBadgeClass(question.difficulty),
+              )}
+            >
               {question.difficulty}
             </span>
-            {question.subjects && question.subjects.trim() && (
-              <span className={cn(
-                "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-                getSubjectColor(question.subjects)
-              )}>
+            {question.subjects?.trim() && (
+              <span
+                className={cn(
+                  "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold tracking-wide",
+                  subjectBadgeClass(question.subjects),
+                )}
+              >
                 {question.subjects}
               </span>
             )}
-            {/* TMUA variation mode label (FAR/SIBLINGS) */}
-            {question.subjects && (question.subjects === 'Paper 1' || question.subjects === 'Paper 2') && question.idea_plan && question.idea_plan.variation_mode && (
-              <span className={cn(
-                "px-3 py-1.5 rounded-organic-md text-xs font-mono",
-                question.idea_plan.variation_mode === 'FAR' 
-                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                  : question.idea_plan.variation_mode === 'SIBLINGS'
-                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                  : 'bg-surface-subtle text-text-muted'
-              )}>
-                {question.idea_plan.variation_mode}
-              </span>
-            )}
-            {/* Grouped primary and secondary tags */}
-            {(question.primary_tag || (question.secondary_tags && question.secondary_tags.length > 0)) && getTopicTitle && (
-              <div className="flex items-center gap-0">
-                {question.primary_tag && (
-                  <span className={cn(
-                    "px-3 py-1.5 bg-secondary/20 text-xs text-secondary font-mono",
-                    (!question.secondary_tags || question.secondary_tags.length === 0)
-                      ? "rounded-organic-md"
-                      : "rounded-l-organic-md border-r border-secondary/30"
-                  )}>
-                    {getTopicTitle(question.primary_tag)}
-                  </span>
-                )}
-                {question.secondary_tags && question.secondary_tags.length > 0 && question.secondary_tags.map((tag, index) => (
-                  <span 
-                    key={tag} 
-                    className={cn(
-                      "px-3 py-1.5 text-xs text-text-muted font-mono bg-surface-subtle",
-                      index === question.secondary_tags!.length - 1 ? "rounded-r-organic-md" : "border-r border-border"
-                    )}
-                  >
-                    {getTopicTitle(tag)}
-                  </span>
-                ))}
-              </div>
-            )}
+            {question.subjects &&
+              (question.subjects === "Paper 1" ||
+                question.subjects === "Paper 2") &&
+              question.idea_plan?.variation_mode && (
+                <span
+                  className={cn(
+                    "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide",
+                    question.idea_plan.variation_mode === "FAR"
+                      ? "border-accent/30 bg-accent/15 text-accent"
+                      : question.idea_plan.variation_mode === "SIBLINGS"
+                        ? "border-secondary/30 bg-secondary/15 text-secondary"
+                        : "border-border-subtle bg-surface-mid text-text-muted",
+                  )}
+                >
+                  {question.idea_plan.variation_mode}
+                </span>
+              )}
+            {(question.primary_tag ||
+              (question.secondary_tags &&
+                question.secondary_tags.length > 0)) &&
+              getTopicTitle && (
+                <div className="flex max-w-full flex-wrap items-center gap-1">
+                  {question.primary_tag && (
+                    <span
+                      className={cn(
+                        "rounded-organic-md border border-secondary/25 bg-secondary/12 px-2.5 py-1 text-xs font-medium text-secondary",
+                      )}
+                    >
+                      {getTopicTitle(question.primary_tag)}
+                    </span>
+                  )}
+                  {question.secondary_tags?.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-organic-md border border-secondary/15 bg-secondary/8 px-2.5 py-1 text-xs text-text-muted"
+                    >
+                      {getTopicTitle(tag)}
+                    </span>
+                  ))}
+                </div>
+              )}
           </div>
+          {headerTrailing ? (
+            <div className="flex shrink-0 items-center gap-3 sm:justify-end">
+              {headerTrailing}
+            </div>
+          ) : null}
         </div>
 
-        <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: 'calc(1.125rem * 1.15)', lineHeight: '2.25rem', marginTop: '0', marginBottom: '0', paddingTop: '0', paddingBottom: '0' }}>
-          {(question.graph_spec || question.graph_specs) ? (
+        <div className={stemTypography}>
+          {question.graph_spec || question.graph_specs ? (
             <QuestionWithGraph
               questionText={question.question_stem}
               graphSpec={question.graph_spec}
@@ -358,218 +413,260 @@ export function QuestionCard({
               className="text-text"
             />
           ) : (
-            <MathContent
-              content={question.question_stem}
-              className="text-text"
-            />
+            <MathContent content={question.question_stem} className="text-inherit" />
           )}
         </div>
       </div>
 
-      {/* Options - in a container */}
-      <div className="p-6 bg-white/[0.02] rounded-organic-lg pb-8">
+      <div className={cn(PANEL_SHELL, "p-5 sm:p-6")}>
         <div className="space-y-2">
-          {optionLetters.map((letter) => {
-          const hasDistractor = question.distractor_map && question.distractor_map[letter] && letter !== correctAnswer;
-          return (
-            <div key={letter} className="relative group">
-            <button
-              onClick={() => handleOptionClick(letter)}
-              onMouseEnter={() => (!isAnswered || allowRetry) && setHoveredOption(letter)}
-              onMouseLeave={() => setHoveredOption(null)}
-              disabled={isAnswered && !allowRetry && !answerRevealed}
-              className={cn(
-                "w-full py-3 px-4 rounded-organic-md transition-all duration-fast ease-signature text-left relative",
-                getOptionStyle(letter)
-              )}
-            >
-              <div className="flex items-center gap-3">
-                {/* Option letter badge */}
-                <div
-                  className={cn(
-                    "flex-shrink-0 w-10 h-10 rounded-organic-md flex items-center justify-center font-bold text-sm transition-all duration-fast ease-signature",
-                    isAnswered && isCorrect && letter === correctAnswer
-                      ? "bg-[#85BC82]/30 text-[#85BC82]"
-                      : answerRevealed && letter === correctAnswer
-                      ? "bg-[#85BC82]/30 text-[#85BC82]"
-                      : incorrectAnswers.has(letter) && letter !== correctAnswer
-                      ? "bg-[#854952]/30 text-[#854952]"
-                      : localSelectedAnswer === letter && (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
-                      ? "bg-white/[0.10] text-text"
-                      : "bg-white/[0.06] text-text-muted"
-                  )}
-                >
-                  {letter}
-                </div>
-
-                {/* Option text - with Times New Roman font, same size as question */}
-                <div className="flex-1 flex items-center gap-3" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
-                  <MathContent
-                    content={question.options[letter]}
-                    className="text-inherit"
-                  />
-                  {/* Distractor map reveal button or content for wrong answer - show for all incorrect answers */}
-                  {incorrectAnswers.has(letter) && letter !== correctAnswer && question.distractor_map && question.distractor_map[letter] && (
-                    <>
-                      {!revealedDistractors.has(letter) ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setRevealedDistractors(prev => new Set(prev).add(letter));
-                          }}
-                          className="flex items-center gap-2 px-3 h-10 rounded-organic-md bg-surface-elevated hover:bg-surface text-text-muted hover:text-text transition-all duration-fast ease-signature text-sm font-mono"
-                        >
-                          <HelpCircle className="w-4 h-4" strokeWidth={2.5} />
-                          <span>Reveal why this answer is wrong</span>
-                        </button>
-                      ) : (
-                        <span className="text-text-muted" style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: '1.125rem', lineHeight: '2.25rem' }}>
-                          <MathContent content={question.distractor_map[letter]} className="text-inherit" />
-                        </span>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {/* Submit button or Checkmark/X for answered state */}
-                <div className="flex-shrink-0 flex items-center justify-center">
-                  {/* Submit button - shown when option is selected and (not answered OR retry is allowed), but not for previously incorrect answers */}
-                  {((!isAnswered || (isAnswered && allowRetry)) && localSelectedAnswer === letter && !incorrectAnswers.has(letter)) && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSubmit();
-                      }}
-                      className="w-10 h-10 rounded-organic-md bg-white/[0.10] hover:bg-white/[0.12] text-white/70 hover:text-white/90 transition-all duration-fast ease-signature flex items-center justify-center"
-                      title="Submit answer"
-                    >
-                      <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
-                    </button>
-                  )}
-                  {/* Checkmark or X for answered state - using SVG icons from papers/mark, fixed width to prevent size changes */}
-                  {isAnswered && (
-                    <>
-                      {(isCorrect && letter === correctAnswer) || (answerRevealed && letter === correctAnswer) ? (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#85BC82" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      ) : incorrectAnswers.has(letter) && letter !== correctAnswer && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#854952" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-              {/* Edit button - absolutely positioned in top-left, overlapping */}
-              {onEditOption && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditOption(letter);
-                  }}
-                  className="absolute top-2 left-2 w-7 h-7 rounded-lg bg-surface-elevated hover:bg-surface flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10"
-                  title={`Edit option ${letter}`}
-                >
-                  <Pencil className="w-3.5 h-3.5 text-text-muted" style={{ transform: 'scaleX(-1)' }} />
-                </button>
-              )}
-            </button>
-            </div>
-          );
-        })}
-        </div>
-      </div>
-
-      {/* Community rating and dislike footer */}
-      <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs text-text-muted">Community:</span>
-          {ratingLoading ? (
-            <span className="text-xs text-text-muted">—</span>
-          ) : (
-            <>
-              <div
-                className="flex items-center gap-0.5"
-                role="group"
-                aria-label="Difficulty rating"
-                onMouseLeave={() => setHoverStar(null)}
+          {optionLetters.map((letter) => (
+            <div key={letter} className="group relative">
+              <button
+                type="button"
+                onClick={() => handleOptionClick(letter)}
+                onMouseEnter={() =>
+                  (!isAnswered || allowRetry) && setHoveredOption(letter)
+                }
+                onMouseLeave={() => setHoveredOption(null)}
+                disabled={isAnswered && !allowRetry && !answerRevealed}
+                className={cn(
+                  "relative w-full rounded-organic-lg py-3 pl-4 pr-3 text-left transition-all duration-fast ease-signature sm:py-3.5",
+                  getOptionStyle(letter),
+                )}
               >
-                {[1, 2, 3, 4, 5].map((value) => {
-                  const active = hoverStar !== null ? value <= hoverStar : (rating?.userRating ?? rating?.average ?? 0) >= value;
-                  const canRate = isAuthenticated && !ratingSubmitting;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      disabled={!canRate}
-                      onMouseEnter={() => setHoverStar(value)}
-                      onClick={() => canRate && handleRate(value)}
-                      className={cn(
-                        "p-0.5 rounded-md outline-none transition-transform duration-200 ease-out will-change-transform",
-                        canRate && "cursor-pointer hover:scale-[1.12] active:scale-95 focus-visible:ring-2 focus-visible:ring-amber-400/40",
-                        !canRate && "cursor-default"
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-sm font-bold transition-colors duration-fast ease-signature",
+                      letterBadgeClass(letter),
+                    )}
+                  >
+                    {letter}
+                  </div>
+
+                  <div className={cn("flex flex-1 items-center gap-3", stemTypography)}>
+                    <MathContent
+                      content={question.options[letter]}
+                      className="text-inherit"
+                    />
+                    {incorrectAnswers.has(letter) &&
+                      letter !== correctAnswer &&
+                      question.distractor_map?.[letter] && (
+                        <>
+                          {!revealedDistractors.has(letter) ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRevealedDistractors((prev) =>
+                                  new Set(prev).add(letter),
+                                );
+                              }}
+                              className="flex h-10 shrink-0 items-center gap-2 rounded-organic-md border border-border-subtle bg-surface-elevated px-3 text-sm text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                            >
+                              <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
+                              <span className="hidden sm:inline">Reveal why wrong</span>
+                            </button>
+                          ) : (
+                            <MathContent
+                              content={question.distractor_map[letter]}
+                              className="text-text-muted"
+                            />
+                          )}
+                        </>
                       )}
-                      title={isAuthenticated ? `Rate ${value} star${value === 1 ? "" : "s"}` : "Sign in to rate"}
-                    >
-                      <Star
-                        className={cn(
-                          "w-4 h-4 transition-colors duration-150 ease-out",
-                          active ? "fill-amber-400 text-amber-400" : "text-white/30",
-                        )}
-                        strokeWidth={1.5}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-              <span className="text-xs text-text-muted">
-                {rating?.count ? `${rating.average} (${rating.count})` : "Rate difficulty"}
-              </span>
-              {!isAuthenticated && (
-                <span className="text-xs text-text-muted">Sign in to rate</span>
-              )}
-            </>
-          )}
+                  </div>
+
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                    {((!isAnswered || (isAnswered && allowRetry)) &&
+                      localSelectedAnswer === letter &&
+                      !incorrectAnswers.has(letter)) && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSubmit();
+                        }}
+                        className="flex h-10 w-10 items-center justify-center rounded-organic-md border border-secondary/35 bg-secondary/15 text-secondary transition-colors hover:bg-secondary/25"
+                        title="Submit answer"
+                      >
+                        <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
+                      </button>
+                    )}
+                    {isAnswered && (
+                      <>
+                        {(isCorrect && letter === correctAnswer) ||
+                        (answerRevealed && letter === correctAnswer) ? (
+                          <svg
+                            className="text-primary"
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : incorrectAnswers.has(letter) &&
+                          letter !== correctAnswer ? (
+                          <svg
+                            className="text-error"
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {onEditOption && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditOption(letter);
+                    }}
+                    className="absolute left-12 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-organic-md bg-surface-elevated opacity-0 transition-opacity hover:bg-surface-mid group-hover:opacity-100"
+                    title={`Edit option ${letter}`}
+                  >
+                    <Pencil
+                      className="h-3.5 w-3.5 scale-x-[-1] text-text-muted"
+                      strokeWidth={2}
+                    />
+                  </button>
+                )}
+              </button>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          {feedbackLoading ? (
-            <span className="text-xs text-text-muted">0 found this unhelpful</span>
-          ) : (
-            <>
-              <span className="text-xs text-text-muted">
-                {feedback?.dislikeCount ?? 0} found this unhelpful
-              </span>
-              {isAuthenticated ? (
-                <button
-                  type="button"
-                  onClick={handleDislikeToggle}
-                  disabled={dislikeSubmitting}
-                  className={cn(
-                    "flex items-center gap-1 text-xs rounded-md px-2 py-1 transition-colors",
-                    feedback?.userDisliked
-                      ? "bg-red-500/20 text-red-300"
-                      : "text-text-muted hover:bg-white/10 hover:text-text"
-                  )}
-                  title={feedback?.userDisliked ? "Remove mark unhelpful" : "Mark unhelpful"}
+
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-organic-lg border border-border-subtle bg-surface-elevated/80 px-4 py-3 sm:px-5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Rate the difficulty
+            </span>
+            {ratingLoading ? (
+              <span className="text-xs text-text-muted">—</span>
+            ) : (
+              <>
+                <div
+                  className="flex items-center gap-0.5"
+                  role="group"
+                  aria-label="Difficulty rating"
+                  onMouseLeave={() => setHoverStar(null)}
                 >
-                  <ThumbsDown className={cn("w-3.5 h-3.5", feedback?.userDisliked && "fill-current")} />
-                  <span>{feedback?.userDisliked ? "Unhelpful" : "Mark unhelpful"}</span>
-                </button>
-              ) : (
-                <span className="text-xs text-text-muted">Sign in to mark unhelpful</span>
-              )}
-            </>
-          )}
+                  {[1, 2, 3, 4, 5].map((value) => {
+                    const active =
+                      hoverStar !== null
+                        ? value <= hoverStar
+                        : (rating?.userRating ?? rating?.average ?? 0) >=
+                          value;
+                    const canRate = isAuthenticated && !ratingSubmitting;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        disabled={!canRate}
+                        onMouseEnter={() => setHoverStar(value)}
+                        onClick={() => canRate && handleRate(value)}
+                        className={cn(
+                          "rounded-md p-0.5 outline-none transition-transform duration-200 ease-out will-change-transform",
+                          canRate &&
+                            "cursor-pointer hover:scale-[1.08] active:scale-95 focus-visible:ring-2 focus-visible:ring-secondary/35",
+                          !canRate && "cursor-default",
+                        )}
+                        title={
+                          isAuthenticated
+                            ? `Rate ${value} star${value === 1 ? "" : "s"}`
+                            : "Sign in to rate"
+                        }
+                      >
+                        <Star
+                          className={cn(
+                            "h-4 w-4 transition-colors duration-150",
+                            active
+                              ? "fill-secondary text-secondary"
+                              : "text-text-disabled",
+                          )}
+                          strokeWidth={1.5}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+                <span className="text-xs text-text-muted">
+                  {rating?.count
+                    ? `${rating.average.toFixed(1)} (${rating.count})`
+                    : "No ratings yet"}
+                </span>
+              </>
+            )}
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {!isAuthenticated && (
+              <button
+                type="button"
+                disabled
+                className="rounded-full border border-border-subtle bg-surface-mid px-3 py-1.5 text-xs font-medium text-text-muted"
+              >
+                Sign in to rate
+              </button>
+            )}
+            {feedbackLoading ? (
+              <span className="text-xs text-text-muted">…</span>
+            ) : (
+              <>
+                <span className="text-xs text-text-muted">
+                  {feedback?.dislikeCount ?? 0} unhelpful
+                </span>
+                {isAuthenticated ? (
+                  <button
+                    type="button"
+                    onClick={handleDislikeToggle}
+                    disabled={dislikeSubmitting}
+                    className={cn(
+                      "flex items-center gap-1 rounded-organic-md px-2 py-1 text-xs transition-colors",
+                      feedback?.userDisliked
+                        ? "bg-error/15 text-error"
+                        : "text-text-muted hover:bg-surface-elevated hover:text-text",
+                    )}
+                  >
+                    <ThumbsDown
+                      className={cn(
+                        "h-3.5 w-3.5",
+                        feedback?.userDisliked && "fill-current",
+                      )}
+                    />
+                    <span>Unhelpful</span>
+                  </button>
+                ) : (
+                  <span className="text-xs text-text-muted">
+                    Sign in to mark unhelpful
+                  </span>
+                )}
+              </>
+            )}
+          </div>
         </div>
+
+        {belowOptionsSlot ? (
+          <div className="mt-5">{belowOptionsSlot}</div>
+        ) : null}
       </div>
-
-      {/* Simple Feedback - shown by option colors */}
-
-      
     </div>
   );
 }
-

@@ -67,7 +67,7 @@ export function TrendIndicator({ trend, size = "md" }: TrendIndicatorProps) {
           "font-medium",
           trend.direction === "up" && "text-success/50",
           trend.direction === "down" && "text-error/50",
-          trend.direction === "neutral" && "text-white/30"
+          trend.direction === "neutral" && "text-text-disabled"
         )}
       >
         {getDisplayText()}

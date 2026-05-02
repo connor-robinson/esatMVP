@@ -1,11 +1,6 @@
-/**
- * QuestionLibraryGrid - Row-based layout grouped by subject
- */
-
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { Card } from "@/components/ui/Card";
 import { ChevronDown, Check, CheckCircle2, BookOpen } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -19,30 +14,29 @@ interface QuestionLibraryGridProps {
   onToggleQuestion: (questionId: string) => void;
 }
 
-const subjectColors: Record<string, string> = {
-  'Math 1': '#5da8f0',
-  'Math 2': '#ff69b4', // Pink for Math 2
-  'Physics': '#a78bfa',
-  'Chemistry': '#ef7d7d',
-  'Biology': '#85BC82',
-};
+function getSubjectTextClass(subject: string): string {
+  // Biology maps to yellowLight in theme — use accent (teal) to distinguish from warning/difficulty
+  if (subject === "Biology") return "text-accent";
+  if (subject === "Chemistry") return "text-chemistry";
+  if (subject === "Physics") return "text-physics";
+  if (subject === "Math 1" || subject === "Math 2") return "text-maths";
+  return "text-text-muted";
+}
 
-const difficultyColors: Record<string, string> = {
-  'Easy': '#85BC82',
-  'Medium': '#b8a066',
-  'Hard': '#ef7d7d',
-};
+function getDifficultyClass(difficulty: string): string {
+  if (difficulty === "Easy") return "bg-primary/15 text-primary";
+  if (difficulty === "Medium") return "bg-warning/15 text-warning";
+  if (difficulty === "Hard") return "bg-error/15 text-error";
+  return "bg-surface-neutral text-text-muted";
+}
 
 function getSubjectFromQuestion(question: QuestionBankQuestion): string {
-  // Use subjects field directly if available
   if (question.subjects) return question.subjects;
-  
-  // Fallback logic for backwards compatibility
-  if (question.schema_id?.startsWith('P')) return 'Physics';
-  if (question.schema_id?.startsWith('C')) return 'Chemistry';
-  if (question.schema_id?.startsWith('B')) return 'Biology';
-  if (question.schema_id?.startsWith('M')) return 'Math 1'; // Default to Math 1
-  return 'Unknown';
+  if (question.schema_id?.startsWith("P")) return "Physics";
+  if (question.schema_id?.startsWith("C")) return "Chemistry";
+  if (question.schema_id?.startsWith("B")) return "Biology";
+  if (question.schema_id?.startsWith("M")) return "Math 1";
+  return "Unknown";
 }
 
 export function QuestionLibraryGrid({
@@ -51,412 +45,270 @@ export function QuestionLibraryGrid({
   onToggleQuestion,
 }: QuestionLibraryGridProps) {
   const session = useSupabaseSession();
-  // Track expanded subjects - all collapsed by default (empty set means all collapsed)
+
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
-  // Track expanded primary tags - all collapsed by default (empty set means all collapsed)
   const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
-  // Curriculum data for tag lookups
   const [curriculum, setCurriculum] = useState<any>(null);
-  // Track which questions have been attempted
   const [attemptedQuestionIds, setAttemptedQuestionIds] = useState<Set<string>>(new Set());
 
-  // Fetch curriculum data
   useEffect(() => {
-    fetch('/api/question-bank/curriculum')
-      .then(res => res.json())
-      .then(data => setCurriculum(data))
-      .catch(err => console.error('Error fetching curriculum:', err));
+    fetch("/api/question-bank/curriculum")
+      .then((res) => res.json())
+      .then(setCurriculum)
+      .catch(() => {});
   }, []);
 
-  // Memoize question IDs to prevent infinite loops
-  const questionIds = useMemo(() => questions.map(q => q.id), [questions]);
-  const questionIdsString = useMemo(() => questionIds.join(','), [questionIds]);
+  const questionIds = useMemo(() => questions.map((q) => q.id), [questions]);
+  const questionIdsString = useMemo(() => questionIds.join(","), [questionIds]);
 
-  // Fetch attempted question IDs if user is logged in
   useEffect(() => {
     if (session?.user && questionIds.length > 0) {
-      // Fetch attempts for all questions at once
       fetch(`/api/question-bank/attempts?limit=1000`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
           if (data?.attempts) {
-            // Get unique question IDs that have been attempted
-            const attemptedIds = new Set<string>(
-              data.attempts
-                .filter((a: any) => questionIds.includes(a.question_id))
-                .map((a: any) => String(a.question_id))
+            setAttemptedQuestionIds(
+              new Set<string>(
+                data.attempts
+                  .filter((a: any) => questionIds.includes(a.question_id))
+                  .map((a: any) => String(a.question_id))
+              )
             );
-            setAttemptedQuestionIds(attemptedIds);
           }
         })
-        .catch(err => {
-          console.error('[QuestionLibraryGrid] Error fetching attempts:', err);
-        });
+        .catch(() => {});
     }
-  }, [session?.user, questionIdsString]); // Use stringified IDs to prevent re-runs
+  }, [session?.user, questionIdsString]);
 
-  // Helper to find topic title from tag code
   const getTopicTitle = (tagCode: string): string => {
     if (!tagCode) return tagCode;
-    
-    // First, check if tag has subject prefix format (e.g., "Chemistry - Oxidation, reduction and redox")
-    // Remove subject prefix before the '-' if present
-    const subjectPrefixes = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
-    for (const prefix of subjectPrefixes) {
-      const prefixPattern = new RegExp(`^${prefix}\\s*-\\s*`, 'i');
-      if (prefixPattern.test(tagCode)) {
-        // Remove the subject prefix and the dash
-        return tagCode.replace(prefixPattern, '').trim();
+    const prefixes = ["Math 1", "Math 2", "Physics", "Chemistry", "Biology", "Paper 1", "Paper 2"];
+    for (const p of prefixes) {
+      if (new RegExp(`^${p}\\s*-\\s*`, "i").test(tagCode)) {
+        return tagCode.replace(new RegExp(`^${p}\\s*-\\s*`, "i"), "").trim();
       }
     }
-    
-    // If no subject prefix found, try curriculum lookup
     if (!curriculum) return tagCode;
-    
-    // 1. Identify the paper and clean the code
-    let paperId = '';
-    let cleanCode = '';
-    
-    if (tagCode.startsWith('M1-')) { 
-      paperId = 'math1'; 
-      cleanCode = tagCode.replace('M1-', ''); 
-    } else if (tagCode.startsWith('M2-')) { 
-      paperId = 'math2'; 
-      cleanCode = tagCode.replace('M2-', ''); 
-    } else if (tagCode.startsWith('P-')) { 
-      paperId = 'physics'; 
-      cleanCode = tagCode.replace('P-', ''); 
-    } else if (tagCode.startsWith('biology-')) { 
-      paperId = 'biology'; 
-      cleanCode = tagCode.replace('biology-', ''); 
-    } else if (tagCode.startsWith('chemistry-')) { 
-      paperId = 'chemistry'; 
-      cleanCode = tagCode.replace('chemistry-', ''); 
-    }
-    
-    // If no prefix matched, try to find it in any paper
+    let paperId = "";
+    let cleanCode = "";
+    if (tagCode.startsWith("M1-")) { paperId = "math1"; cleanCode = tagCode.replace("M1-", ""); }
+    else if (tagCode.startsWith("M2-")) { paperId = "math2"; cleanCode = tagCode.replace("M2-", ""); }
+    else if (tagCode.startsWith("P-")) { paperId = "physics"; cleanCode = tagCode.replace("P-", ""); }
+    else if (tagCode.startsWith("biology-")) { paperId = "biology"; cleanCode = tagCode.replace("biology-", ""); }
+    else if (tagCode.startsWith("chemistry-")) { paperId = "chemistry"; cleanCode = tagCode.replace("chemistry-", ""); }
     if (!paperId) {
-      // Search all papers for this code
-      for (const paper of (curriculum.papers || [])) {
-        const topic = paper.topics?.find((t: any) => 
-          t.code === tagCode || 
-          t.code === tagCode.replace(/^[A-Z]+/, '')
-        );
+      for (const paper of curriculum.papers ?? []) {
+        const topic = paper.topics?.find((t: any) => t.code === tagCode || t.code === tagCode.replace(/^[A-Z]+/, ""));
         if (topic) return topic.title;
       }
       return tagCode;
     }
-    
-    // 2. Find the paper in curriculum
     const paper = curriculum.papers?.find((p: any) => p.paper_id === paperId);
     if (!paper) return tagCode;
-    
-    // 3. Match the topic by code
-    // Try exact match first (e.g., cleanCode "M5" matches topic code "M5")
-    let topic = paper.topics?.find((t: any) => t.code === cleanCode);
-    
-    // If not found, try removing letter prefix (e.g., cleanCode "M5" -> "5" matches topic code "5")
-    if (!topic) {
-      const numericCode = cleanCode.replace(/^[A-Z]+/, '');
-      topic = paper.topics?.find((t: any) => t.code === numericCode);
-    }
-    
-    // Final attempt: try matching with the original tag code
-    if (!topic) {
-      topic = paper.topics?.find((t: any) => t.code === tagCode);
-    }
-    
-    // 4. Return the title if found, otherwise return the original code
-    return topic?.title || tagCode;
+    const topic = paper.topics?.find((t: any) => t.code === cleanCode)
+      ?? paper.topics?.find((t: any) => t.code === cleanCode.replace(/^[A-Z]+/, ""))
+      ?? paper.topics?.find((t: any) => t.code === tagCode);
+    return topic?.title ?? tagCode;
   };
 
-  const toggleSubject = (subject: string) => {
-    setExpandedSubjects((prev) => {
-      const next = new Set(prev);
-      if (next.has(subject)) {
-        next.delete(subject); // Collapse
-      } else {
-        next.add(subject); // Expand
-      }
-      return next;
-    });
-  };
+  const toggleSubject = (s: string) =>
+    setExpandedSubjects((prev) => { const n = new Set(prev); n.has(s) ? n.delete(s) : n.add(s); return n; });
+  const toggleTag = (t: string) =>
+    setExpandedTags((prev) => { const n = new Set(prev); n.has(t) ? n.delete(t) : n.add(t); return n; });
 
-  const toggleTag = (tagKey: string) => {
-    setExpandedTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tagKey)) {
-        next.delete(tagKey); // Collapse
-      } else {
-        next.add(tagKey); // Expand
-      }
-      return next;
-    });
-  };
-
-  const isSubjectExpanded = (subject: string) => expandedSubjects.has(subject);
-  const isTagExpanded = (tagKey: string) => expandedTags.has(tagKey);
-
-  // Group questions by subject, then by primary_tag
   const questionsBySubjectAndTag = useMemo(() => {
     const grouped: Record<string, Record<string, QuestionBankQuestion[]>> = {};
-
-    questions.forEach((question) => {
-      const subject = getSubjectFromQuestion(question);
-      const primaryTag = question.primary_tag || 'Untagged';
-      
-      if (!grouped[subject]) {
-        grouped[subject] = {};
-      }
-      if (!grouped[subject][primaryTag]) {
-        grouped[subject][primaryTag] = [];
-      }
-      grouped[subject][primaryTag].push(question);
+    questions.forEach((q) => {
+      const subject = getSubjectFromQuestion(q);
+      const tag = q.primary_tag || "Untagged";
+      if (!grouped[subject]) grouped[subject] = {};
+      if (!grouped[subject][tag]) grouped[subject][tag] = [];
+      grouped[subject][tag].push(q);
     });
-
-    // Sort questions within each primary tag by generation_id or id
-    Object.keys(grouped).forEach((subject) => {
-      Object.keys(grouped[subject]).forEach((tag) => {
-        grouped[subject][tag].sort((a, b) => {
-          const aId = a.generation_id || a.id;
-          const bId = b.generation_id || b.id;
-          return aId.localeCompare(bId);
-        });
-      });
-    });
-
-    // Sort subjects: put Math 1 and Math 2 at the end, others alphabetically
+    Object.keys(grouped).forEach((s) =>
+      Object.keys(grouped[s]).forEach((t) =>
+        grouped[s][t].sort((a, b) => (a.generation_id || a.id).localeCompare(b.generation_id || b.id))
+      )
+    );
     const sortedSubjects = Object.keys(grouped).sort((a, b) => {
-      const isMath1 = a === 'Math 1';
-      const isMath2 = a === 'Math 2';
-      const isOtherMath1 = b === 'Math 1';
-      const isOtherMath2 = b === 'Math 2';
-      
-      // Math 1 and Math 2 go to the end
-      if (isMath1 || isMath2) {
-        if (isOtherMath1 || isOtherMath2) {
-          // Both are Math, sort Math 1 before Math 2
-          if (isMath1 && isOtherMath2) return -1;
-          if (isMath2 && isOtherMath1) return 1;
-          return 0;
-        }
-        return 1; // Math goes after non-Math
-      }
-      if (isOtherMath1 || isOtherMath2) {
-        return -1; // Non-Math goes before Math
-      }
-      // Both are non-Math, sort alphabetically
+      const isMathA = a === "Math 1" || a === "Math 2";
+      const isMathB = b === "Math 1" || b === "Math 2";
+      if (isMathA && !isMathB) return 1;
+      if (!isMathA && isMathB) return -1;
       return a.localeCompare(b);
     });
-
     return { grouped, sortedSubjects };
   }, [questions]);
 
   return (
-    <Card variant="flat" className="p-5 h-full bg-transparent">
-      <div className="flex items-center justify-between mb-5">
+    <div className="flex h-full flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-5">
+      {/* Header */}
+      <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/70">
-            Question Library
-          </h2>
-          <p className="text-sm font-mono text-white/50 mt-1">
+          <h2 className="text-base font-semibold text-text">Question Library</h2>
+          <p className="mt-0.5 text-sm text-text-muted">
             Browse questions and add them to your practice session.
           </p>
         </div>
-        <div className="text-xs text-white/50">
+        <span className="shrink-0 pt-0.5 text-xs text-text-muted">
           {questions.length} result{questions.length === 1 ? "" : "s"}
-        </div>
+        </span>
       </div>
 
       {questions.length === 0 ? (
-        <div className="h-[220px] min-h-[220px] flex flex-col items-center justify-center gap-4 py-12">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-surface-elevated mb-2">
-            <BookOpen className="w-8 h-8 text-text-muted" strokeWidth={1.5} />
+        <div className="flex min-h-[220px] flex-1 flex-col items-center justify-center gap-3 rounded-xl border border-border-subtle bg-surface-mid py-12">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-subtle bg-surface">
+            <BookOpen className="h-7 w-7 text-text-muted" strokeWidth={1.5} />
           </div>
-          <div className="text-center space-y-1.5">
-            <div className="text-base font-mono font-semibold text-text-muted">
-              No questions found
-            </div>
-            <div className="text-sm font-mono text-text-subtle max-w-xs">
-              Try adjusting your filters to find questions
-            </div>
+          <div className="space-y-1 text-center">
+            <p className="text-sm font-medium text-text">No questions found</p>
+            <p className="text-xs text-text-muted">Try adjusting your filters</p>
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {questionsBySubjectAndTag.sortedSubjects.map((subject) => {
             const subjectTags = questionsBySubjectAndTag.grouped[subject];
-            if (!subjectTags || Object.keys(subjectTags).length === 0) return null;
+            if (!subjectTags || !Object.keys(subjectTags).length) return null;
 
-            const subjectColor = subjectColors[subject] || '#ffffff';
-            const isSubjectExpandedState = isSubjectExpanded(subject);
-            const totalSubjectQuestions = Object.values(subjectTags).reduce((sum, questions) => sum + questions.length, 0);
+            const accentClass = getSubjectTextClass(subject);
+            const isExpanded = expandedSubjects.has(subject);
+            const totalQ = Object.values(subjectTags).reduce((s, arr) => s + arr.length, 0);
 
             return (
               <div
                 key={subject}
-                className="rounded-xl overflow-hidden transition-all duration-300"
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
-                }}
+                className="overflow-hidden rounded-xl border border-border-subtle bg-surface-mid"
               >
-                {/* Color-coded subject header */}
+                {/* Subject header */}
                 <button
+                  type="button"
                   onClick={() => toggleSubject(subject)}
-                  className="w-full px-6 py-7 flex items-center justify-between bg-white/[0.04] hover:bg-white/[0.06] transition-colors group"
+                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-neutral"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <ChevronDown
-                      className={cn(
-                        "w-4 h-4 transition-transform duration-300",
-                        isSubjectExpandedState ? "rotate-0" : "-rotate-90"
-                      )}
-                      style={{ color: subjectColor }}
-                      strokeWidth={3}
+                      className={cn("h-4 w-4 shrink-0 transition-transform duration-200", accentClass, !isExpanded && "-rotate-90")}
+                      strokeWidth={2.5}
+                      aria-hidden
                     />
-                    <h3 className="text-base font-mono font-bold uppercase tracking-wider" style={{ color: subjectColor }}>
+                    <span className={cn("text-sm font-semibold uppercase tracking-wide", accentClass)}>
                       {subject} Questions
-                    </h3>
+                    </span>
                   </div>
-                  <div className="text-xs opacity-40 font-mono tracking-tight group-hover:opacity-60 transition-opacity">
-                    {totalSubjectQuestions} question{totalSubjectQuestions === 1 ? "" : "s"}
-                  </div>
+                  <span className="text-xs text-text-muted">
+                    {totalQ} question{totalQ === 1 ? "" : "s"}
+                  </span>
                 </button>
 
-                {/* Primary tags for this subject */}
+                {/* Tags inside subject */}
                 <AnimatePresence initial={false}>
-                  {isSubjectExpandedState && (
+                  {isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="p-4 space-y-3">
-                        {Object.keys(subjectTags).sort().map((primaryTag) => {
-                          const tagQuestions = subjectTags[primaryTag];
-                          if (!tagQuestions || tagQuestions.length === 0) return null;
+                      <div className="space-y-1.5 border-t border-border-subtle p-3">
+                        {Object.keys(subjectTags)
+                          .sort()
+                          .map((primaryTag) => {
+                            const tagQuestions = subjectTags[primaryTag];
+                            if (!tagQuestions?.length) return null;
 
-                          const tagKey = `${subject}-${primaryTag}`;
-                          const isTagExpandedState = isTagExpanded(tagKey);
+                            const tagKey = `${subject}-${primaryTag}`;
+                            const isTagExpanded = expandedTags.has(tagKey);
 
-                          return (
-                            <div
-                              key={tagKey}
-                              className="rounded-lg overflow-hidden"
-                              style={{
-                                backgroundColor: "rgba(255, 255, 255, 0.015)",
-                              }}
-                            >
-                              {/* Primary tag header */}
-                              <button
-                                onClick={() => toggleTag(tagKey)}
-                                className="w-full px-4 py-3 flex items-center justify-between bg-white/[0.03] hover:bg-white/[0.05] transition-colors group"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <ChevronDown
-                                    className={cn(
-                                      "w-3.5 h-3.5 transition-transform duration-300",
-                                      isTagExpandedState ? "rotate-0" : "-rotate-90"
-                                    )}
-                                    style={{ color: subjectColor }}
-                                    strokeWidth={2.5}
-                                  />
-                                  <span className="text-sm font-mono font-medium text-white/80">
-                                    {getTopicTitle(primaryTag)}
+                            return (
+                              <div key={tagKey} className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
+                                {/* Tag header */}
+                                <button
+                                  type="button"
+                                  onClick={() => toggleTag(tagKey)}
+                                  className="group flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-surface-subtle"
+                                >
+                                  <div className="flex min-w-0 items-center gap-2">
+                                    <ChevronDown
+                                      className={cn("h-3.5 w-3.5 shrink-0 transition-transform duration-200", accentClass, !isTagExpanded && "-rotate-90")}
+                                      strokeWidth={2.5}
+                                      aria-hidden
+                                    />
+                                    <span className="truncate text-sm text-text-muted">
+                                      {getTopicTitle(primaryTag)}
+                                    </span>
+                                  </div>
+                                  <span className="shrink-0 pl-3 text-xs text-text-muted">
+                                    {tagQuestions.length}
                                   </span>
-                                </div>
-                                <div className="text-xs opacity-40 font-mono tracking-tight group-hover:opacity-60 transition-opacity">
-                                  {tagQuestions.length} question{tagQuestions.length === 1 ? "" : "s"}
-                                </div>
-                              </button>
+                                </button>
 
-                              {/* Questions for this primary tag */}
-                              <AnimatePresence initial={false}>
-                                {isTagExpandedState && (
-                                  <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="p-3 space-y-2">
-                                      {tagQuestions.map((question, index) => {
-                                        const isSelected = selectedQuestionIds.has(question.id);
-                                        const questionNumber = index + 1;
-                                        const hasBeenAttempted = attemptedQuestionIds.has(question.id);
+                                {/* Questions list */}
+                                <AnimatePresence initial={false}>
+                                  {isTagExpanded && (
+                                    <motion.div
+                                      initial={{ height: 0, opacity: 0 }}
+                                      animate={{ height: "auto", opacity: 1 }}
+                                      exit={{ height: 0, opacity: 0 }}
+                                      transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                                      className="overflow-hidden"
+                                    >
+                                      <div className="space-y-1.5 border-t border-border-subtle p-2.5">
+                                        {tagQuestions.map((question, index) => {
+                                          const isSelected = selectedQuestionIds.has(question.id);
+                                          const hasAttempted = attemptedQuestionIds.has(question.id);
 
-                                        return (
-                                          <div
-                                            key={question.id}
-                                            className={cn(
-                                              "flex items-start gap-3 p-3 rounded-lg transition-all cursor-pointer",
-                                              isSelected
-                                                ? "bg-white/[0.08] border border-white/20"
-                                                : "bg-white/[0.03] hover:bg-white/[0.05] border border-transparent"
-                                            )}
-                                            onClick={() => onToggleQuestion(question.id)}
-                                          >
-                                            {/* Selection checkbox */}
-                                            <div
+                                          return (
+                                            <button
+                                              key={question.id}
+                                              type="button"
+                                              onClick={() => onToggleQuestion(question.id)}
                                               className={cn(
-                                                "w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all",
+                                                "flex w-full items-start gap-3 rounded-lg p-3 text-left transition-colors",
                                                 isSelected
-                                                  ? "bg-white/20 border-white/40"
-                                                  : "bg-white/5 border-white/20"
+                                                  ? "bg-accent/10 border border-accent/25"
+                                                  : "border border-transparent bg-surface-mid hover:bg-surface-neutral"
                                               )}
                                             >
-                                              {isSelected && (
-                                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                                              )}
-                                            </div>
-
-                                            {/* Question content */}
-                                            <div className="flex-1 min-w-0 space-y-2">
-                                              {/* Header: Question Number, Difficulty, Attempted Badge */}
-                                              <div className="flex items-center gap-2 flex-wrap">
-                                                <span className="text-xs font-mono font-semibold text-white/90">
-                                                  Question {questionNumber}
-                                                </span>
-                                                {hasBeenAttempted && (
-                                                  <span title="You have attempted this question">
-                                                    <CheckCircle2 
-                                                      className="w-3.5 h-3.5 text-green-400" 
-                                                      strokeWidth={2.5}
-                                                    />
-                                                  </span>
+                                              {/* Checkbox */}
+                                              <div
+                                                className={cn(
+                                                  "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
+                                                  isSelected
+                                                    ? "border-accent bg-accent"
+                                                    : "border-border bg-surface"
                                                 )}
-                                                <span
-                                                  className="text-[10px] px-2 py-0.5 rounded uppercase font-mono tracking-wider"
-                                                  style={{
-                                                    backgroundColor: `${difficultyColors[question.difficulty]}20`,
-                                                    color: difficultyColors[question.difficulty],
-                                                  }}
-                                                >
-                                                  {question.difficulty}
-                                                </span>
+                                              >
+                                                {isSelected && <Check className="h-3 w-3 text-background" strokeWidth={3} />}
                                               </div>
 
-                                              {/* Question stem preview */}
-                                              <div className="text-sm text-white/70 line-clamp-2">
-                                                <MathContent
-                                                  content={question.question_stem}
-                                                  className="text-inherit"
-                                                />
+                                              <div className="min-w-0 flex-1 space-y-1.5">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                  <span className="text-xs font-semibold text-text">
+                                                    Question {index + 1}
+                                                  </span>
+                                                  {hasAttempted && (
+                                                    <CheckCircle2 className="h-3.5 w-3.5 text-success" strokeWidth={2.5} />
+                                                  )}
+                                                  <span className={cn("rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide", getDifficultyClass(question.difficulty))}>
+                                                    {question.difficulty}
+                                                  </span>
+                                                </div>
+                                                <div className="line-clamp-2 text-sm text-text-muted">
+                                                  <MathContent content={question.question_stem} className="text-inherit" />
+                                                </div>
                                               </div>
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                          );
-                        })}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                            );
+                          })}
                       </div>
                     </motion.div>
                   )}
@@ -466,7 +318,6 @@ export function QuestionLibraryGrid({
           })}
         </div>
       )}
-    </Card>
+    </div>
   );
 }
-

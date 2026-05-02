@@ -8,6 +8,7 @@ import { Check, Star, Plus, ListOrdered, Clock } from 'lucide-react';
 import { Topic, TopicVariant } from '@/types/core';
 import { getTopic } from '@/config/topics';
 import { cn } from '@/lib/utils';
+import { getDifficultyLabel } from '@/lib/drill-difficulty';
 
 interface DrillVariantsGridProps {
   topicId: string | null;
@@ -20,26 +21,6 @@ interface DrillVariantsGridProps {
   onRemoveVariant: (topicVariantId: string) => void;
 }
 
-/** Solid pills using global theme tokens (spec: lime / orange / red). */
-const getDifficultyLabel = (difficulty: number) => {
-  if (difficulty <= 2)
-    return {
-      label: 'Easy',
-      color: 'bg-primary text-background',
-    };
-  if (difficulty <= 3)
-    return {
-      label: 'Medium',
-      color: 'bg-warning text-background',
-    };
-  if (difficulty <= 4)
-    return {
-      label: 'Hard',
-      color: 'bg-error text-background',
-    };
-  return { label: 'Extra', color: 'bg-accent text-background' };
-};
-
 export function DrillVariantsGrid({
   topicId,
   selectedTopicIds,
@@ -50,7 +31,7 @@ export function DrillVariantsGrid({
 
   if (!topic || !topic.variants || topic.variants.length === 0) {
     return (
-      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg'>
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-mid shadow-lg ring-1 ring-white/[0.06]'>
         <div className='flex-1 overflow-y-auto p-8'>
           <div className='py-12 text-center text-text-subtle'>
             <p className='text-sm'>
@@ -65,7 +46,7 @@ export function DrillVariantsGrid({
   }
 
   return (
-    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg'>
+    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-mid shadow-lg ring-1 ring-white/[0.06]'>
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-8'>
       <div className='mb-8 flex items-end justify-between'>
         <div>
@@ -101,7 +82,7 @@ export function DrillVariantsGrid({
                 <div className='flex justify-between items-start mb-4'>
                   <span
                     className={cn(
-                      'text-[10px] font-bold px-2.5 py-1 rounded-organic-sm uppercase tracking-wide shadow-sm',
+                      'text-[10px] font-bold uppercase tracking-wide',
                       difficulty.color,
                     )}
                   >

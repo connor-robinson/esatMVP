@@ -815,8 +815,8 @@ export default function AnalyticsPage() {
   }, [todayYesterdayData]);
 
   return (
-    <Container size="lg" className="py-10 space-y-8">
-      <Suspense fallback={<div className="h-96 bg-white/5 rounded-lg animate-pulse" />}>
+    <Container size="lg" className="space-y-8 py-10 sm:py-12">
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-organic-xl bg-surface-elevated" />}>
         {userStats ? (
           <PersonalView
             timeRange={timeRange}
@@ -835,8 +835,10 @@ export default function AnalyticsPage() {
             commonMistakesMap={commonMistakesMap}
           />
         ) : (
-          <div className="h-96 bg-white/[0.03] rounded-organic-lg flex items-center justify-center">
-            <p className="text-white/60">No personal stats yet. Start a session to build your analytics profile.</p>
+          <div className="flex h-96 items-center justify-center rounded-organic-xl border border-dashed border-border-subtle bg-surface-subtle">
+            <p className="text-center text-sm text-text-muted">
+              No personal stats yet. Start a session to build your analytics profile.
+            </p>
           </div>
         )}
       </Suspense>

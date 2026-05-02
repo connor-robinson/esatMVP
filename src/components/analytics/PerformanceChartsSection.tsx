@@ -11,36 +11,39 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
+const sectionShell =
+  "relative overflow-hidden rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-8";
+
 interface PerformanceChartsSectionProps {
   performanceData: PerformanceDataPoint[];
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
-export function PerformanceChartsSection({ 
+export function PerformanceChartsSection({
   performanceData,
   isCollapsed = false,
   onToggleCollapse,
 }: PerformanceChartsSectionProps) {
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-[#121418] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_10px_20px_rgba(0,0,0,0.25)] border-0 p-6">
-      {/* Section Header */}
+    <div className={sectionShell}>
       <button
+        type="button"
         onClick={onToggleCollapse}
-        className="w-full flex items-center justify-between mb-4 group"
+        className="group mb-4 flex w-full items-center justify-between text-left"
       >
         <div>
-          <h2 className="text-base font-bold uppercase tracking-wider text-white/90 text-left group-hover:text-white transition-colors">
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text transition-colors sm:text-2xl">
             Performance Trends
           </h2>
-          <p className="text-sm text-white/60 mt-1 text-left">
-            Track your accuracy and speed progression over time
+          <p className="mt-1 text-left text-sm text-text-muted">
+            Accuracy and speed over time
           </p>
         </div>
-        <ChevronDown 
+        <ChevronDown
           className={cn(
-            "h-6 w-6 text-white/50 group-hover:text-white/70 transition-all duration-200",
-            isCollapsed && "rotate-180"
+            "h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text",
+            isCollapsed && "rotate-180",
           )}
         />
       </button>

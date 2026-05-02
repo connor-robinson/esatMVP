@@ -6,6 +6,8 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/config/**/*.{js,ts}",
+    "./src/lib/**/*.{js,ts}",
   ],
   theme: {
     extend: {
@@ -38,6 +40,9 @@ const config: Config = {
         success: "var(--color-success)",
         error: "var(--color-error)",
         warning: "var(--color-warning)",
+
+        /** Figma Easy pill — brighter than primary CTA lime */
+        "difficulty-easy": "var(--color-difficulty-easy)",
         
         // Text colors
         text: {
@@ -172,6 +177,7 @@ const config: Config = {
         "glow-focus": themeTokens.shadows.glowFocus,
         "bar-floating": themeTokens.shadows.barFloating,
         "badge-mint": themeTokens.shadows.badgeMint,
+        "modal-card": themeTokens.shadows.modalCard,
       },
       spacing: {
         "18": "4.5rem",

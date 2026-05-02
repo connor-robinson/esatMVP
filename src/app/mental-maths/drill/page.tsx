@@ -12,7 +12,7 @@
 
 "use client";
 
-import { useState, Suspense, lazy, useMemo } from "react";
+import { useState, Suspense, lazy, useMemo, useEffect } from "react";
 import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
@@ -24,6 +24,7 @@ import {
   type HighLevelCategory,
 } from "@/components/builder/TopicFolders";
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
+import { DrillsSelectedModal } from "@/components/builder/DrillsSelectedModal";
 import { useSubscription } from "@/hooks/useSubscription";
 // Lazy load session components
 const MentalMathSession = lazy(() =>
@@ -69,11 +70,18 @@ export default function BuilderPage() {
   const builder = useBuilderSession();
   const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("arithmetic");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const categoryTopics = useMemo(
     () => getTopicsForHighLevelCategory(allTopics, selectedCategory),
     [allTopics, selectedCategory],
   );
+
+  useEffect(() => {
+    if (reviewModalOpen && builder.selectedTopicVariants.length === 0) {
+      setReviewModalOpen(false);
+    }
+  }, [reviewModalOpen, builder.selectedTopicVariants.length]);
 
   // Builder view
   if (builder.view === "builder") {
@@ -136,12 +144,28 @@ export default function BuilderPage() {
               questionCountMax={100}
               canStartSession={builder.canStart}
               onClearAll={builder.clearTopics}
-              onStart={() => builder.startSession()}
+              onStart={() => setReviewModalOpen(true)}
               clearDisabled={builder.selectedTopicVariants.length === 0}
               startLabel="Review Selection"
             />
           </div>
         </div>
+
+        <DrillsSelectedModal
+          open={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          selectedTopicVariants={builder.selectedTopicVariants}
+          questionCount={builder.questionCount}
+          onRemoveVariant={builder.removeTopicVariant}
+          onClearAll={() => {
+            builder.clearTopics();
+            setReviewModalOpen(false);
+          }}
+          onStartSession={() => {
+            setReviewModalOpen(false);
+            builder.startSession();
+          }}
+        />
       </div>
     );
   }

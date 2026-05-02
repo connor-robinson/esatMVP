@@ -62,18 +62,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-background/50 backdrop-blur-xl border border-white/10 rounded-organic-md p-3 shadow-2xl">
-        <p className="text-white/90 font-mono font-semibold mb-2 text-xs">{data.fullDate}</p>
+      <div className="rounded-organic-md border border-border bg-surface-elevated p-3 shadow-lg backdrop-blur-sm">
+        <p className="mb-2 font-mono text-xs font-semibold text-text">{data.fullDate}</p>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-6">
-            <span className="text-white/50 text-xs font-mono">Avg Speed</span>
-            <span className="text-white/90 font-mono font-bold text-sm">
+            <span className="font-mono text-xs text-text-muted">Avg speed</span>
+            <span className="font-mono text-sm font-bold text-text">
               {data.speed !== null && data.speed > 0 ? `${data.speed.toFixed(1)} q/min` : "—"}
             </span>
           </div>
           <div className="flex items-center justify-between gap-6">
-            <span className="text-white/50 text-xs font-mono">Questions</span>
-            <span className="text-white/70 font-mono text-sm">
+            <span className="font-mono text-xs text-text-muted">Questions</span>
+            <span className="font-mono text-sm text-text-muted">
               {data.questionsAnswered || 0}
             </span>
           </div>
@@ -221,58 +221,59 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
   };
 
   return (
-    <div className="relative rounded-organic-lg overflow-hidden bg-white/5">
+    <div className="relative overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-mid">
       <div className="p-6">
-        {/* Header with animated icon and zoom controls */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.2, 1],
-                rotate: [0, 10, 0]
+                rotate: [0, 10, 0],
               }}
-              transition={{ 
-                duration: 1.5, 
+              transition={{
+                duration: 1.5,
                 repeat: Infinity,
-                repeatDelay: 4
+                repeatDelay: 4,
               }}
-              className="text-white"
+              className="text-warning"
             >
               <Zap className="h-5 w-5" />
             </motion.div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+            <h3 className="text-sm font-semibold tracking-tight text-text-muted">
               Speed Over Time
             </h3>
           </div>
 
-          {/* Zoom controls */}
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => setZoomLevel('week')}
-              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
+              className={`rounded-organic-md px-3 py-1.5 text-xs font-medium transition-all ${
                 zoomLevel === 'week'
                   ? 'bg-primary/20 text-primary'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10'
+                  : 'bg-surface-subtle text-text-muted hover:bg-surface-neutral'
               }`}
             >
               <ZoomIn className="h-3 w-3" />
             </button>
             <button
+              type="button"
               onClick={() => setZoomLevel('month')}
-              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
+              className={`rounded-organic-md px-3 py-1.5 text-xs font-medium transition-all ${
                 zoomLevel === 'month'
                   ? 'bg-primary/20 text-primary'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10'
+                  : 'bg-surface-subtle text-text-muted hover:bg-surface-neutral'
               }`}
             >
               30d
             </button>
             <button
+              type="button"
               onClick={() => setZoomLevel('all')}
-              className={`px-3 py-1.5 rounded-organic-md text-xs font-medium transition-all ${
+              className={`rounded-organic-md px-3 py-1.5 text-xs font-medium transition-all ${
                 zoomLevel === 'all'
                   ? 'bg-primary/20 text-primary'
-                  : 'bg-white/5 text-white/60 hover:bg-white/10'
+                  : 'bg-surface-subtle text-text-muted hover:bg-surface-neutral'
               }`}
             >
               <Maximize2 className="h-3 w-3" />
@@ -311,8 +312,8 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
             >
             <defs>
               <linearGradient id="speedGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(245, 158, 11, 0.1)" />
-                <stop offset="100%" stopColor="rgba(245, 158, 11, 0)" />
+                <stop offset="0%" stopColor="var(--color-warning)" stopOpacity={0.12} />
+                <stop offset="100%" stopColor="var(--color-warning)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -357,11 +358,10 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
               activeDot={false}
             />
             
-            {/* Smooth curved trend line - signature green */}
             <Line
               type="natural"
               dataKey="speed"
-              stroke="#85BC82"
+              stroke="var(--color-warning)"
               strokeWidth={2.5}
               dot={false}
               activeDot={false}
@@ -402,7 +402,7 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
         </ResponsiveContainer>
         </div>
 
-        <p className="text-xs text-white/30 mt-4 text-center">
+        <p className="mt-4 text-center text-xs text-text-subtle">
           Higher is better • Questions per minute
         </p>
       </div>

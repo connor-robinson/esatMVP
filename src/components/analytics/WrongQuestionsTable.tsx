@@ -33,25 +33,28 @@ export function WrongQuestionsTable({
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-sm font-semibold text-white/70 flex items-center gap-2">
+        <h4 className="flex items-center gap-2 text-sm font-semibold text-text-muted">
           <AlertCircle className="h-4 w-4 text-error" />
-          Commonly Wrong Questions
+          Commonly wrong questions
         </h4>
         {hasMore && (
           <button
+            type="button"
             onClick={() => setShowAll(!showAll)}
-            className="text-xs text-white/60 hover:text-white/80 transition-colors font-medium"
+            className="text-xs font-medium text-text-muted transition-colors hover:text-text"
           >
             {showAll ? "Show Less" : "View All"}
           </button>
         )}
       </div>
-      <div className={cn(
-        "rounded-xl border border-white/10 overflow-hidden bg-white/5",
-        showAll && "max-h-[400px] overflow-y-auto"
-      )}>
+      <div
+        className={cn(
+          "overflow-hidden rounded-organic-lg border border-border bg-surface-mid",
+          showAll && "max-h-[400px] overflow-y-auto",
+        )}
+      >
         <table className="w-full text-sm">
-          <thead className="text-xs text-white/40 border-b border-white/10 bg-white/5 sticky top-0">
+          <thead className="sticky top-0 border-b border-border-subtle bg-surface-elevated text-xs text-text-muted">
             <tr>
               <th className="text-left py-2 px-3 font-medium">Question</th>
               <th className="text-center py-2 px-3 font-medium">You</th>
@@ -63,9 +66,9 @@ export function WrongQuestionsTable({
             {displayedMistakes.map((mistake, index) => (
               <tr
                 key={index}
-                className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                className="border-b border-border-subtle transition-colors hover:bg-surface-subtle"
               >
-                <td className="py-2.5 px-3 font-mono text-white/80">
+                <td className="px-3 py-2.5 font-mono text-text">
                   {mistake.question}
                 </td>
                 <td className="text-center py-2.5 px-3">

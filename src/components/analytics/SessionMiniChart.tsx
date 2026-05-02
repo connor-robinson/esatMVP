@@ -19,25 +19,25 @@ interface SessionMiniChartProps {
   data: SessionProgressPoint[];
 }
 
+/** Figma Session Progress — accuracy line (accent teal), speed line (warning). */
+const ACCURACY_LINE = "#91b4a4";
+const SPEED_LINE = "#eaaf40";
+
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background/95 backdrop-blur-xl border border-white/10 rounded-organic-lg p-3 shadow-2xl">
-        <p className="text-white/90 font-semibold text-xs mb-2.5 font-mono">
+      <div className="rounded-organic-lg border border-border bg-surface-elevated p-3 shadow-bar-floating backdrop-blur-md">
+        <p className="mb-2.5 text-xs font-semibold text-text">
           Question #{payload[0].payload.questionNumber}
         </p>
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-white/50 text-xs font-mono">Accuracy:</span>
-            <span className="text-primary font-bold text-xs font-mono">
-              {payload[0].value.toFixed(1)}%
-            </span>
+            <span className="text-xs text-text-muted">Accuracy:</span>
+            <span className="text-xs font-bold text-accent">{payload[0].value.toFixed(1)}%</span>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-white/50 text-xs font-mono">Speed:</span>
-            <span className="text-warning/80 font-bold text-xs font-mono">
-              {payload[1].value.toFixed(1)} q/min
-            </span>
+            <span className="text-xs text-text-muted">Speed:</span>
+            <span className="text-xs font-bold text-warning">{payload[1].value.toFixed(1)} q/min</span>
           </div>
         </div>
       </div>
@@ -95,30 +95,36 @@ export function SessionMiniChart({ data }: SessionMiniChartProps) {
             yAxisId="left"
             type="monotone"
             dataKey="accuracy"
-            stroke="#85BC82"
+            stroke={ACCURACY_LINE}
             strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 5, fill: "#85BC82" }}
+            activeDot={{ r: 5, fill: ACCURACY_LINE }}
           />
           <Line
             yAxisId="right"
             type="monotone"
             dataKey="speed"
-            stroke="rgba(245,158,11,0.7)"
+            stroke={SPEED_LINE}
             strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 5, fill: "rgba(245,158,11,0.7)" }}
+            activeDot={{ r: 5, fill: SPEED_LINE }}
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="flex items-center justify-center gap-6 mt-4">
+      <div className="mt-4 flex items-center justify-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 rounded-sm bg-primary" />
-          <span className="text-xs text-white/60 font-mono">Accuracy</span>
+          <div
+            className="h-1 w-4 rounded-sm"
+            style={{ backgroundColor: ACCURACY_LINE }}
+          />
+          <span className="text-xs text-text-muted">Accuracy</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-1 rounded-sm bg-warning/70" />
-          <span className="text-xs text-white/60 font-mono">Speed</span>
+          <div
+            className="h-1 w-4 rounded-sm"
+            style={{ backgroundColor: SPEED_LINE }}
+          />
+          <span className="text-xs text-text-muted">Speed</span>
         </div>
       </div>
     </div>

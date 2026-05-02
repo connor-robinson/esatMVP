@@ -1,14 +1,8 @@
-/**
- * QuestionLibraryFilters - Compact filter/search panel for Question Library
- */
-
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter, DifficultyFilter, AttemptedFilter, AttemptResultFilter } from "@/types/questionBank";
 
@@ -25,10 +19,127 @@ interface QuestionLibraryFiltersProps {
   onAttemptResultFilterChange: (value: AttemptResultFilter | AttemptResultFilter[] | "ALL") => void;
 }
 
-const subjects: SubjectFilter[] = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology'];
-const difficulties: DifficultyFilter[] = ['Easy', 'Medium', 'Hard'];
-const attemptedStatuses: AttemptedFilter[] = ['Mix', 'New', 'Attempted'];
-const attemptResults: AttemptResultFilter[] = ['Mixed Results', 'Unseen', 'Incorrect Before'];
+const subjects: SubjectFilter[] = ["Math 1", "Math 2", "Physics", "Chemistry", "Biology"];
+const difficulties: DifficultyFilter[] = ["Easy", "Medium", "Hard"];
+const attemptedStatuses: AttemptedFilter[] = ["Mix", "New", "Attempted"];
+
+function getAttemptResultOptions(status: AttemptedFilter): Array<{ value: "ALL" | string; label: string }> {
+  let available: string[] = [];
+  if (status === "New") available = ["Unseen"];
+  else if (status === "Attempted") available = ["Mixed Results", "Incorrect Before"];
+  else available = ["Mixed Results", "Unseen", "Incorrect Before"];
+  return [{ value: "ALL", label: "All results" }, ...available.map((r) => ({ value: r, label: r }))];
+}
+
+function Dropdown<T extends string>({
+  value,
+  onChange,
+  options,
+  placeholder,
+  multi = false,
+}: {
+  value: T | T[] | "ALL";
+  onChange: (value: T | T[] | "ALL") => void;
+  options: Array<{ value: T | "ALL"; label: string }>;
+  placeholder: string;
+  multi?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const close = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, []);
+
+  const getLabel = () => {
+    if (value === "ALL") return placeholder;
+    if (Array.isArray(value)) {
+      if (value.length === 0) return placeholder;
+      if (value.length === 1) return options.find((o) => o.value === value[0])?.label ?? placeholder;
+      return `${value.length} selected`;
+    }
+    return options.find((o) => o.value === value)?.label ?? placeholder;
+  };
+
+  const isSelected = (optVal: string) => {
+    if (optVal === "ALL") return value === "ALL";
+    if (Array.isArray(value)) return value.includes(optVal as T);
+    return value === optVal;
+  };
+
+  const handleClick = (optVal: T | "ALL") => {
+    if (optVal === "ALL") {
+      onChange("ALL");
+    } else if (multi) {
+      const arr = Array.isArray(value) ? value : value === "ALL" ? [] : [value as T];
+      const next = arr.includes(optVal as T)
+        ? arr.filter((v) => v !== optVal)
+        : [...arr, optVal as T];
+      onChange(next.length > 0 ? next : "ALL");
+    } else {
+      onChange(optVal as T);
+    }
+    if (!multi) setIsOpen(false);
+  };
+
+  return (
+    <div className="relative shrink-0" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setIsOpen((v) => !v)}
+        aria-expanded={isOpen}
+        className="flex h-10 items-center gap-2 rounded-lg border border-border-subtle bg-surface-mid px-4 text-sm font-medium text-text transition-colors hover:border-border hover:bg-surface-neutral focus-visible:outline-none"
+      >
+        <span className="max-w-[140px] truncate">{getLabel()}</span>
+        <ChevronDown
+          className={cn(
+            "h-[14px] w-[14px] shrink-0 text-text-muted transition-transform duration-200",
+            isOpen && "rotate-180"
+          )}
+          strokeWidth={2.5}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-[9998]" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute left-0 top-full z-[9999] mt-1.5 min-w-[160px] overflow-hidden rounded-lg border border-border bg-surface-elevated shadow-lg"
+            >
+              {options.map((opt) => (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  onClick={() => handleClick(opt.value as T | "ALL")}
+                  className={cn(
+                    "flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors",
+                    isSelected(String(opt.value))
+                      ? "bg-accent/10 font-medium text-text"
+                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
+                  )}
+                >
+                  {isSelected(String(opt.value)) && (
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  )}
+                  {opt.label}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export function QuestionLibraryFilters({
   searchQuery,
@@ -42,295 +153,83 @@ export function QuestionLibraryFilters({
   attemptResultFilter,
   onAttemptResultFilterChange,
 }: QuestionLibraryFiltersProps) {
-  // Custom Dropdown Component
-  const CustomDropdown = ({
-    value,
-    onChange,
-    options,
-    placeholder,
-    minWidth,
-  }: {
-    value: string | string[] | "ALL";
-    onChange: (value: string | string[] | "ALL") => void;
-    options: Array<{ value: string | "ALL"; label: string }>;
-    placeholder: string;
-    minWidth?: string;
-  }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const [dropdownRect, setDropdownRect] = useState<{
-      top: number;
-      left: number;
-      width: number;
-    } | null>(null);
+  const subjectOptions = [
+    { value: "ALL" as const, label: "All subjects" },
+    ...subjects.map((s) => ({ value: s, label: s })),
+  ];
 
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-        }
-      };
+  const difficultyOptions = [
+    { value: "ALL" as const, label: "All difficulties" },
+    ...difficulties.map((d) => ({ value: d, label: d })),
+  ];
 
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+  const attemptedOptions = attemptedStatuses.map((s) => ({ value: s, label: s }));
 
-    useEffect(() => {
-      if (!isOpen || !dropdownRef.current) return;
-
-      const updatePosition = () => {
-        if (!dropdownRef.current) return;
-        const rect = dropdownRef.current.getBoundingClientRect();
-        setDropdownRect({
-          top: rect.bottom + 8,
-          left: rect.left,
-          width: rect.width,
-        });
-      };
-
-      updatePosition();
-      window.addEventListener("resize", updatePosition);
-      window.addEventListener("scroll", updatePosition, true);
-      return () => {
-        window.removeEventListener("resize", updatePosition);
-        window.removeEventListener("scroll", updatePosition, true);
-      };
-    }, [isOpen]);
-
-    const getSelectedLabel = () => {
-      if (value === "ALL") return placeholder;
-      if (Array.isArray(value)) {
-        if (value.length === 0) return placeholder;
-        if (value.length === 1) return options.find(opt => opt.value === value[0])?.label || placeholder;
-        return `${value.length} selected`;
-      }
-      return options.find(opt => opt.value === value)?.label || placeholder;
-    };
-
-    return (
-      <div className={cn("relative", minWidth)} ref={dropdownRef}>
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-10 pl-4 pr-10 rounded-lg bg-white/5 text-sm text-white/90 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all backdrop-blur-sm cursor-pointer flex items-center justify-between"
-        >
-          <span className="truncate text-left">{getSelectedLabel()}</span>
-          <ChevronDown
-            className={cn(
-              "absolute right-3 w-4 h-4 text-white/50 pointer-events-none transition-transform",
-              isOpen && "rotate-180"
-            )}
-          />
-        </button>
-
-        {typeof window !== "undefined" &&
-          createPortal(
-            <AnimatePresence>
-              {isOpen && dropdownRect && (
-                <>
-                  <div
-                    className="fixed inset-0 z-[9998]"
-                    onClick={() => setIsOpen(false)}
-                  />
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.16 }}
-                    className="fixed bg-[#1b2028] border border-white/15 rounded-lg shadow-2xl z-[9999] overflow-hidden"
-                    style={{
-                      top: dropdownRect.top,
-                      left: dropdownRect.left,
-                      width: dropdownRect.width,
-                    }}
-                  >
-                    <div className="max-h-60 overflow-y-auto">
-                      {options.map((option) => {
-                        const isSelected = value === "ALL"
-                          ? option.value === "ALL"
-                          : Array.isArray(value)
-                            ? value.includes(option.value as string)
-                            : value === option.value;
-
-                        return (
-                          <button
-                            key={String(option.value)}
-                            type="button"
-                            onClick={() => {
-                              if (option.value === "ALL") {
-                                onChange("ALL");
-                              } else if (Array.isArray(value)) {
-                                const newValue = isSelected
-                                  ? value.filter(v => v !== option.value)
-                                  : [...value, option.value as string];
-                                onChange(newValue.length > 0 ? newValue : "ALL");
-                              } else {
-                                onChange(option.value);
-                              }
-                              setIsOpen(false);
-                            }}
-                            className={cn(
-                              "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2 bg-[#1b2028]",
-                              isSelected
-                                ? "text-white ring-1 ring-primary/40"
-                                : "text-white/85 hover:bg-[#232b36] hover:text-white"
-                            )}
-                          >
-                            {isSelected && <span className="text-primary">✓</span>}
-                            {option.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>,
-            document.body
-          )}
-      </div>
-    );
-  };
-
-  const getSubjectOptions = () => {
-    return [
-      { value: "ALL" as const, label: "All subjects" },
-      ...subjects.map((subject) => ({ value: subject, label: subject })),
-    ];
-  };
-
-  const getDifficultyOptions = () => {
-    return [
-      { value: "ALL" as const, label: "All difficulties" },
-      ...difficulties.map((difficulty) => ({ value: difficulty, label: difficulty })),
-    ];
-  };
-
-  const getAttemptResultOptions = () => {
-    // Filter based on attemptedStatus
-    let available: AttemptResultFilter[] = [];
-    if (attemptedStatusFilter === 'New') {
-      available = ['Unseen'];
-    } else if (attemptedStatusFilter === 'Attempted') {
-      available = ['Mixed Results', 'Incorrect Before'];
-    } else {
-      available = ['Mixed Results', 'Unseen', 'Incorrect Before'];
-    }
-    
-    return [
-      { value: "ALL" as const, label: "All results" },
-      ...available.map((result) => ({ value: result, label: result })),
-    ];
-  };
+  const resultOptions = getAttemptResultOptions(attemptedStatusFilter);
 
   return (
-    <Card variant="flat" className="p-3">
-      <div className="mb-4">
-        <h2 className="text-xl font-mono font-semibold uppercase tracking-wider text-white/90 mb-1">
-          Filters
-        </h2>
-        <p className="text-xs font-mono text-white/50">
+    <div className="rounded-2xl border border-border-subtle bg-surface px-5 py-5">
+      {/* Header row */}
+      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+        <h2 className="text-base font-semibold text-text">Filters</h2>
+        <p className="max-w-md text-sm text-text-muted sm:text-right">
           Search and filter questions by ID, subject, difficulty, and attempt status.
         </p>
       </div>
-      <div className="flex items-center gap-4 flex-wrap">
+
+      {/* Inputs row */}
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
         {/* Search */}
-        <div className="flex-1 min-w-[200px]">
+        <div className="relative min-w-0 flex-1 sm:min-w-[220px]">
+          <Search
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+            strokeWidth={2}
+          />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by ID (C_xxxxx) or question content..."
-            className="w-full h-10 px-4 rounded-lg bg-white/5 outline-none border-0 placeholder:text-white/40 text-white/90 text-sm transition-all backdrop-blur-sm"
-            onFocus={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 0 2px rgba(64, 97, 102, 0.3)';
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.boxShadow = '';
-            }}
+            className="h-10 w-full rounded-lg border border-border-subtle bg-surface-mid pl-9 pr-4 text-sm text-text placeholder:text-text-muted transition-colors focus-visible:border-accent focus-visible:outline-none"
           />
         </div>
 
-        {/* Subject filter */}
-        <CustomDropdown
-          value={subjectFilter === "ALL" ? "ALL" : Array.isArray(subjectFilter) ? subjectFilter : [subjectFilter]}
-          onChange={(value) => {
-            if (value === "ALL") {
-              onSubjectFilterChange("ALL");
-            } else if (Array.isArray(value)) {
-              onSubjectFilterChange(value as SubjectFilter[]);
-            } else {
-              onSubjectFilterChange(value as SubjectFilter);
-            }
-          }}
-          options={getSubjectOptions()}
+        <Dropdown<SubjectFilter>
+          value={subjectFilter}
+          onChange={(v) => onSubjectFilterChange(v as SubjectFilter | SubjectFilter[] | "ALL")}
+          options={subjectOptions}
           placeholder="All subjects"
-          minWidth="min-w-[140px]"
+          multi
         />
 
-        {/* Difficulty filter */}
-        <CustomDropdown
-          value={difficultyFilter === "ALL" ? "ALL" : Array.isArray(difficultyFilter) ? difficultyFilter : [difficultyFilter]}
-          onChange={(value) => {
-            if (value === "ALL") {
-              onDifficultyFilterChange("ALL");
-            } else if (Array.isArray(value)) {
-              onDifficultyFilterChange(value as DifficultyFilter[]);
-            } else {
-              onDifficultyFilterChange(value as DifficultyFilter);
-            }
-          }}
-          options={getDifficultyOptions()}
+        <Dropdown<DifficultyFilter>
+          value={difficultyFilter}
+          onChange={(v) => onDifficultyFilterChange(v as DifficultyFilter | DifficultyFilter[] | "ALL")}
+          options={difficultyOptions}
           placeholder="All difficulties"
-          minWidth="min-w-[140px]"
+          multi
         />
 
-        {/* Attempted Status filter */}
-        <CustomDropdown
+        <Dropdown<AttemptedFilter>
           value={attemptedStatusFilter}
-          onChange={(value) => {
-            onAttemptedStatusFilterChange(value as AttemptedFilter);
-            // Reset attempt result when status changes
-            if (value === "ALL") {
-              onAttemptResultFilterChange("ALL");
-            } else if (value === 'New') {
-              onAttemptResultFilterChange(['Unseen']);
-            } else if (value === 'Attempted') {
-              onAttemptResultFilterChange(['Mixed Results']);
-            }
+          onChange={(v) => {
+            const status = (v === "ALL" ? "Mix" : v) as AttemptedFilter;
+            onAttemptedStatusFilterChange(status);
+            if (status === "New") onAttemptResultFilterChange(["Unseen"] as AttemptResultFilter[]);
+            else if (status === "Attempted") onAttemptResultFilterChange(["Mixed Results"] as AttemptResultFilter[]);
           }}
-          options={attemptedStatuses.map((status) => ({ value: status, label: status }))}
+          options={attemptedOptions}
           placeholder="Mix"
-          minWidth="min-w-[140px]"
         />
 
-        {/* Attempt Result filter */}
-        <CustomDropdown
-          value={attemptResultFilter === "ALL" ? "ALL" : Array.isArray(attemptResultFilter) ? attemptResultFilter : [attemptResultFilter]}
-          onChange={(value) => {
-            if (value === "ALL") {
-              onAttemptResultFilterChange("ALL");
-            } else if (Array.isArray(value)) {
-              onAttemptResultFilterChange(value as AttemptResultFilter[]);
-            } else {
-              onAttemptResultFilterChange(value as AttemptResultFilter);
-            }
-          }}
-          options={getAttemptResultOptions()}
+        <Dropdown<AttemptResultFilter>
+          value={attemptResultFilter}
+          onChange={(v) => onAttemptResultFilterChange(v as AttemptResultFilter | AttemptResultFilter[] | "ALL")}
+          options={resultOptions as Array<{ value: AttemptResultFilter | "ALL"; label: string }>}
           placeholder="All results"
-          minWidth="min-w-[160px]"
+          multi
         />
       </div>
-    </Card>
+    </div>
   );
 }
-
-
-
-
-
-
-
-
-
-

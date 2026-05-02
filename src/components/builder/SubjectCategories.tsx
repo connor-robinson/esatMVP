@@ -65,7 +65,7 @@ export function SubjectCategories({
   onSelectCategory,
 }: SubjectCategoriesProps) {
   return (
-    <aside className='hidden lg:flex h-full min-h-0 w-24 shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg xl:w-28'>
+    <aside className='hidden lg:flex h-full min-h-0 w-24 shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-elevated shadow-lg ring-1 ring-white/[0.06] xl:w-28'>
       <div className='flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-2 py-6'>
         <div className='space-y-8'>
           {(Object.keys(categoryConfig) as HighLevelCategory[]).map(

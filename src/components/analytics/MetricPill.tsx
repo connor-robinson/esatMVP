@@ -21,14 +21,14 @@ export function MetricPill({ icon: Icon, label, value, primary, muted }: MetricP
       <Icon
         className={cn(
           "flex-shrink-0",
-          primary ? "h-5 w-5 text-primary" : muted ? "h-3.5 w-3.5 text-white/30" : "h-4 w-4 text-white/40"
+          primary ? "h-5 w-5 text-primary" : muted ? "h-3.5 w-3.5 text-text-disabled" : "h-4 w-4 text-text-muted",
         )}
       />
       <div className="min-w-0 flex flex-col justify-center py-0.5">
         <div
           className={cn(
-            "text-white/50 leading-tight mb-0.5",
-            muted ? "text-[11px]" : primary ? "text-sm" : "text-xs"
+            "mb-0.5 leading-tight text-text-muted",
+            muted ? "text-[11px]" : primary ? "text-sm" : "text-xs",
           )}
         >
           {label}
@@ -36,11 +36,7 @@ export function MetricPill({ icon: Icon, label, value, primary, muted }: MetricP
         <div
           className={cn(
             "font-bold leading-tight",
-            primary
-              ? "text-xl text-white/90"
-              : muted
-              ? "text-xs text-white/50"
-              : "text-base text-white/80"
+            primary ? "text-xl text-text" : muted ? "text-xs text-text-muted" : "text-base text-text",
           )}
         >
           {value}
