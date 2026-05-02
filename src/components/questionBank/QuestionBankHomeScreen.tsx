@@ -196,6 +196,7 @@ export function QuestionBankHomeScreen() {
     aggregate && aggregate.total > 0
       ? Math.min(100, Math.round((aggregate.attempted / aggregate.total) * 100))
       : 0;
+  const aggregateTotal = aggregate?.total ?? 0;
 
   const siblingTilesForModal = useMemo(
     () =>
@@ -259,7 +260,7 @@ export function QuestionBankHomeScreen() {
                   <div
                     className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
                     style={{
-                      width: `${aggregate.total > 0 ? aggregatePct : 0}%`,
+                      width: `${aggregateTotal > 0 ? aggregatePct : 0}%`,
                     }}
                   />
                 </div>
