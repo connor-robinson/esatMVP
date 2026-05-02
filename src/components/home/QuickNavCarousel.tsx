@@ -81,7 +81,7 @@ export function QuickNavCarousel() {
           <div
             className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
             style={{
-              background: "rgba(133, 188, 130, 0.05)",
+              background: "color-mix(in srgb, var(--color-primary) 5%, transparent)",
               transform: "scale(1.2)",
               transformOrigin: "center",
               zIndex: -9999,
@@ -102,7 +102,7 @@ export function QuickNavCarousel() {
           <div
             className="absolute inset-0 rounded-organic-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
             style={{
-              background: "rgba(255, 255, 255, 0.05)",
+              background: "color-mix(in srgb, var(--color-text) 5%, transparent)",
               transform: "scale(1.2)",
               transformOrigin: "center",
               zIndex: -9999,
@@ -124,7 +124,7 @@ export function QuickNavCarousel() {
           <div
             className="absolute inset-0 rounded-organic-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
             style={{
-              background: "rgba(255, 255, 255, 0.05)",
+              background: "color-mix(in srgb, var(--color-text) 5%, transparent)",
               transform: "scale(1.1)",
               transformOrigin: "center",
               zIndex: -9999,

@@ -4,7 +4,7 @@
 
 import { cn } from "@/lib/utils";
 import type { PaperSection } from "@/types/papers";
-import { getSectionColor, PAPER_COLORS } from "@/config/colors";
+import { getSectionColor } from "@/config/colors";
 import { CheckCircle2 } from "lucide-react";
 
 interface SectionSelectorProps {
@@ -48,11 +48,11 @@ export function SectionSelector({
     <div className="space-y-4">
       {/* Warning Message */}
       {showWarning && warningMessage && (
-        <div className="flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: PAPER_COLORS.advanced }}>
-          <svg className="w-5 h-5 flex-shrink-0" style={{ color: "#ffffff" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-advanced text-background">
+          <svg className="w-5 h-5 flex-shrink-0 text-background" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
-          <span className="text-sm" style={{ color: "#ffffff" }}>{warningMessage}</span>
+          <span className="text-sm text-background">{warningMessage}</span>
         </div>
       )}
       
@@ -67,24 +67,19 @@ export function SectionSelector({
         const hex = getSectionColor(section);
         const styles = {
           bgColor: hex,
-          borderColor: hex,
           iconColor: hex,
-          textColor: "white"
         };
         
         return (
           <button
             key={section}
             onClick={() => onSectionToggle(section)}
+            style={isSelected ? { backgroundColor: styles.bgColor } : undefined}
             className={cn(
-              "p-4 rounded-organic-md transition-all duration-fast ease-signature text-center w-full outline-none focus:outline-none",
-              "interaction-scale"
+              "p-4 rounded-organic-md transition-all duration-fast ease-signature text-center w-full outline-none focus:outline-none interaction-scale",
+              !isSelected && isCompleted ? "bg-primary" : "",
+              !isSelected && !isCompleted ? "bg-surface-elevated" : ""
             )}
-            style={isSelected ? {
-              backgroundColor: styles.bgColor
-            } : isCompleted ? {
-              backgroundColor: "#506141"
-            } : { backgroundColor: "rgba(255,255,255,0.05)" }}
           >
             <div className="space-y-2">
               {/* Section Icon (top center) */}
@@ -94,8 +89,7 @@ export function SectionSelector({
                   style={{ backgroundColor: styles.iconColor }}
                 >
                   <svg 
-                    className="w-4 h-4" 
-                    style={{ color: styles.textColor }}
+                    className="w-4 h-4 text-background" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -117,9 +111,9 @@ export function SectionSelector({
               
               {/* Completion indicator */}
               {isCompleted && (
-                <div className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-md bg-green-500/20 border border-green-500/30">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-400" strokeWidth={2.5} />
-                  <span className="text-xs font-medium text-green-400">Completed</span>
+                <div className="flex items-center justify-center gap-1.5 px-2 py-1 rounded-md bg-success/20 border border-success/30">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-success" strokeWidth={2.5} />
+                  <span className="text-xs font-medium text-success">Completed</span>
                 </div>
               )}
             </div>

@@ -241,15 +241,15 @@ export function ActivityHeatmap() {
   }, []);
 
   const getColorScheme = (day: DayData) => {
-    if (day.examDate) return "bg-[#B8D4B5] border-2 border-[#B8D4B5]";
-    if (day.isToday) return "bg-[#B8D4B5] border-2 border-[#B8D4B5]";
-    if (day.isFuture) return "bg-[#243224]/65 border border-[#243224]/65";
+    if (day.examDate) return "bg-primary/60 border-2 border-primary/60";
+    if (day.isToday) return "bg-primary/60 border-2 border-primary/60";
+    if (day.isFuture) return "bg-surface-mid/65 border border-surface-mid/65";
 
-    if (day.questions === 0) return "bg-[#85BC82]/20 border border-[#85BC82]/20";
-    if (day.questions < 10) return "bg-[#85BC82]/30 border border-[#85BC82]/30";
-    if (day.questions < 20) return "bg-[#85BC82]/40 border border-[#85BC82]/40";
-    if (day.questions < 35) return "bg-[#85BC82]/50 border border-[#85BC82]/50";
-    return "bg-[#85BC82]/60 border border-[#85BC82]/60";
+    if (day.questions === 0) return "bg-biology/20 border border-biology/20";
+    if (day.questions < 10) return "bg-biology/30 border border-biology/30";
+    if (day.questions < 20) return "bg-biology/40 border border-biology/40";
+    if (day.questions < 35) return "bg-biology/50 border border-biology/50";
+    return "bg-biology/60 border border-biology/60";
   };
 
   const getTextColor = (day: DayData) => {
@@ -398,7 +398,7 @@ export function ActivityHeatmap() {
                               day.isToday || day.examDate ? "group-hover:scale-[2.55]" : ""
                             }`}
                             style={{
-                              background: "rgba(133, 188, 130, 0.05)",
+                              background: "color-mix(in srgb, var(--color-primary) 5%, transparent)",
                               transform: day.examDate ? "scale(2.5)" : "scale(1.75)",
                               transformOrigin: "center",
                               zIndex: -9999,
@@ -429,7 +429,7 @@ export function ActivityHeatmap() {
                           ) : day.isFuture ? (
                             <div
                               className="text-[11px] text-white/50 font-medium"
-                              style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
+                              style={{ textShadow: "0 1px 3px var(--color-background)" }}
                             >
                               Future
                             </div>
@@ -437,13 +437,13 @@ export function ActivityHeatmap() {
                             <>
                               <div
                                 className="text-[11px] font-bold text-white"
-                                style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
+                                style={{ textShadow: "0 1px 3px var(--color-background)" }}
                               >
                                 {day.questions}
                               </div>
                               <div
                                 className="text-[9px] text-white/60 uppercase tracking-wide"
-                                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
+                                style={{ textShadow: "0 1px 2px var(--color-background)" }}
                               >
                                 Questions
                               </div>
@@ -452,13 +452,13 @@ export function ActivityHeatmap() {
                             <>
                               <div
                                 className="text-[11px] font-bold text-white"
-                                style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
+                                style={{ textShadow: "0 1px 3px var(--color-background)" }}
                               >
                                 0
                               </div>
                               <div
                                 className="text-[9px] text-white/60 uppercase tracking-wide"
-                                style={{ textShadow: "0 1px 2px rgba(0,0,0,0.8)" }}
+                                style={{ textShadow: "0 1px 2px var(--color-background)" }}
                               >
                                 Questions
                               </div>
@@ -478,11 +478,11 @@ export function ActivityHeatmap() {
       <div className="flex items-center justify-center gap-4 mt-3 text-[10px] text-white/40">
         <span className="text-white/50 font-medium">Less</span>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-[#85BC82]/20 border border-[#85BC82]/20" />
-          <div className="w-3 h-3 rounded bg-[#85BC82]/30 border border-[#85BC82]/30" />
-          <div className="w-3 h-3 rounded bg-[#85BC82]/40 border border-[#85BC82]/40" />
-          <div className="w-3 h-3 rounded bg-[#85BC82]/50 border border-[#85BC82]/50" />
-          <div className="w-3 h-3 rounded bg-[#85BC82]/60 border border-[#85BC82]/60" />
+          <div className="w-3 h-3 rounded bg-biology/20 border border-biology/20" />
+          <div className="w-3 h-3 rounded bg-biology/30 border border-biology/30" />
+          <div className="w-3 h-3 rounded bg-biology/40 border border-biology/40" />
+          <div className="w-3 h-3 rounded bg-biology/50 border border-biology/50" />
+          <div className="w-3 h-3 rounded bg-biology/60 border border-biology/60" />
         </div>
         <span className="text-white/50 font-medium">More</span>
       </div>

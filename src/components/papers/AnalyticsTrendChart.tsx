@@ -30,6 +30,12 @@ export function AnalyticsTrendChart({
   selectedFilters = [],
   className 
 }: AnalyticsTrendChartProps) {
+  const CHART_GRID = "var(--color-border-subtle)";
+  const CHART_AXIS = "var(--color-border)";
+  const CHART_TICK = "var(--color-text-muted)";
+  const TOOLTIP_BG = "var(--color-surface-elevated)";
+  const TOOLTIP_BORDER = "var(--color-border-subtle)";
+
   const [animate, setAnimate] = useState(false);
   const [hoverPoint, setHoverPoint] = useState<{ 
     x: number; 
@@ -152,7 +158,7 @@ export function AnalyticsTrendChart({
       let color: string;
       if (isAllMode) {
         // Main line is white
-        color = "#ffffff";
+        color = "var(--color-text)";
       } else if (filterMode === "paper") {
         // Use desaturated paper type colors
         const paperColor = PAPER_TYPE_COLORS[key as PaperType] || PAPER_COLORS.mathematics;
@@ -173,7 +179,7 @@ export function AnalyticsTrendChart({
   if (allSessions.length === 0 || lines.length === 0) {
     return (
       <div className={`space-y-3 ${className}`}>
-        <div className="rounded-md bg-neutral-900 p-2 flex justify-center items-center h-64">
+        <div className="rounded-md bg-surface-elevated p-2 flex justify-center items-center h-64">
           <div className="text-xs text-neutral-500">
             {allSessions.length === 0 
               ? "No data to display"
@@ -206,7 +212,7 @@ export function AnalyticsTrendChart({
                 y1={y}
                 x2={width - padding - 6}
                 y2={y}
-                stroke="rgba(255, 255, 255, 0.05)"
+                stroke={CHART_GRID}
                 strokeWidth={1}
               />
             );
@@ -218,7 +224,7 @@ export function AnalyticsTrendChart({
             y1={height - padding}
             x2={width - padding - 6}
             y2={height - padding}
-            stroke="rgba(255, 255, 255, 0.2)"
+            stroke={CHART_AXIS}
             strokeWidth={1}
           />
           <line
@@ -226,7 +232,7 @@ export function AnalyticsTrendChart({
             y1={padding}
             x2={padding + 6}
             y2={height - padding}
-            stroke="rgba(255, 255, 255, 0.2)"
+            stroke={CHART_AXIS}
             strokeWidth={1}
           />
 
@@ -240,7 +246,7 @@ export function AnalyticsTrendChart({
                 y={y + 3}
                 textAnchor="end"
                 fontSize={10}
-                fill="rgba(255,255,255,0.2)"
+                fill={CHART_TICK}
               >
                 {pct}th
               </text>
@@ -312,8 +318,10 @@ export function AnalyticsTrendChart({
         {/* Tooltip */}
         {hoverPoint && (
           <div
-            className="absolute px-3 py-2 rounded-md text-xs bg-black/90 border border-white/20 pointer-events-none z-10 shadow-lg min-w-[180px]"
+            className="absolute px-3 py-2 rounded-md text-xs pointer-events-none z-10 shadow-lg min-w-[180px]"
             style={{ 
+              backgroundColor: TOOLTIP_BG,
+              border: `1px solid ${TOOLTIP_BORDER}`,
               left: Math.min(hoverPoint.x + 10, width - 190), 
               top: Math.max(hoverPoint.y - 50, 10),
             }}

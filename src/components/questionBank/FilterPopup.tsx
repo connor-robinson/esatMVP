@@ -12,6 +12,7 @@ import type {
 } from '@/types/questionBank';
 import { cn } from '@/lib/utils';
 import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
+import { SUBJECT_PILL_CLASS } from '@/lib/questionBank/subjectColors';
 
 interface FilterPopupProps {
   isOpen: boolean;
@@ -74,21 +75,21 @@ const FALLBACK_TOPIC_TAGS = [
 
 // Subject colors - borderless version (using signature colors from config/colors.ts)
 const subjectColors: Record<SubjectFilter, string> = {
-  All: 'bg-white/10 hover:bg-white/15 text-white/90',
-  'Math 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
-  'Math 2': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
-  Physics: 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
-  Chemistry: 'bg-[#854952]/20 hover:bg-[#854952]/30 text-[#ef7d7d]',
-  Biology: 'bg-[#506141]/20 hover:bg-[#506141]/30 text-[#85BC82]',
-  'Paper 1': 'bg-[#406166]/20 hover:bg-[#406166]/30 text-[#5da8f0]',
-  'Paper 2': 'bg-[#2f2835]/30 hover:bg-[#2f2835]/40 text-[#a78bfa]',
+  All: 'border border-border-subtle bg-surface-mid text-text-muted hover:bg-surface-neutral',
+  'Math 1': `${SUBJECT_PILL_CLASS['Math 1']} hover:bg-maths/30`,
+  'Math 2': `${SUBJECT_PILL_CLASS['Math 2']} hover:bg-maths/30`,
+  Physics: `${SUBJECT_PILL_CLASS.Physics} hover:bg-physics/30`,
+  Chemistry: `${SUBJECT_PILL_CLASS.Chemistry} hover:bg-chemistry/30`,
+  Biology: `${SUBJECT_PILL_CLASS.Biology} hover:bg-biology/30`,
+  'Paper 1': `${SUBJECT_PILL_CLASS['Paper 1']} hover:bg-maths/30`,
+  'Paper 2': `${SUBJECT_PILL_CLASS['Paper 2']} hover:bg-physics/30`,
 };
 
 // Subject type colors (ESAT/TMUA/BOTH)
 const subjectTypeColors: Record<'ESAT' | 'TMUA' | 'BOTH', string> = {
-  ESAT: 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0]',
-  TMUA: 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa]',
-  BOTH: 'bg-white/10 hover:bg-white/15 text-white/90',
+  ESAT: `${SUBJECT_PILL_CLASS['Math 1']} hover:bg-maths/30`,
+  TMUA: `${SUBJECT_PILL_CLASS['Paper 2']} hover:bg-physics/30`,
+  BOTH: 'border border-border-subtle bg-surface-mid text-text-muted hover:bg-surface-neutral',
 };
 
 export function FilterPopup({
@@ -511,11 +512,11 @@ export function FilterPopup({
                     if (!isSelected)
                       return 'bg-white/5 hover:bg-white/10 text-white/60';
                     if (difficulty === 'Easy')
-                      return 'bg-[#506141]/20 text-[#85BC82]';
+                      return 'bg-difficulty-easy text-background';
                     if (difficulty === 'Medium')
-                      return 'bg-[#967139]/20 text-[#b8a066]';
+                      return 'bg-warning text-text';
                     if (difficulty === 'Hard')
-                      return 'bg-[#854952]/20 text-[#ef7d7d]';
+                      return 'bg-error text-text';
                     return 'bg-white/5 hover:bg-white/10 text-white/60';
                   };
                   return (

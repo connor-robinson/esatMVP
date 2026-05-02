@@ -281,26 +281,9 @@ export function SessionFolder({
           className={cn(
             "w-full px-6 py-3 rounded-organic-md transition-all duration-fast ease-signature flex items-center justify-center gap-2 font-mono text-sm font-medium",
             canStart
-              ? "bg-primary/40 hover:bg-primary/50 text-text cursor-pointer border border-primary/50"
+              ? "bg-primary/40 hover:bg-primary/50 text-text cursor-pointer border border-primary/50 shadow-md hover:shadow-lg"
               : "bg-surface-elevated text-text-disabled cursor-not-allowed"
           )}
-          style={
-            canStart
-              ? {
-                  boxShadow: 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)'
-                }
-              : undefined
-          }
-          onMouseEnter={(e) => {
-            if (canStart) {
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 8px 0 rgba(0, 0, 0, 0.7)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (canStart) {
-              e.currentTarget.style.boxShadow = 'inset 0 -4px 0 rgba(0, 0, 0, 0.4), 0 6px 0 rgba(0, 0, 0, 0.6)';
-            }
-          }}
         >
           <span>Start Session</span>
           <ArrowRight className="w-4 h-4" strokeWidth={2.5} />

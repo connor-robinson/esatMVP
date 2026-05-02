@@ -2,56 +2,79 @@
  * Papers Analytics page - Detailed analytics for paper performance
  */
 
-"use client";
+'use client';
 
-import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/layout/Container";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { AnalyticsTrendChart } from "@/components/papers/AnalyticsTrendChart";
-import { MistakeChart } from "@/components/papers/MistakeChart";
-import { FileText, ChevronDown, TrendingUp, TrendingDown, Minus, Trash2, X, AlertTriangle } from "lucide-react";
-import type { PaperType, PaperSection } from "@/types/papers";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  fetchUserSessions, 
-  filterSessions, 
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Container } from '@/components/layout/Container';
+import { PageHeader } from '@/components/shared/PageHeader';
+import { AnalyticsTrendChart } from '@/components/papers/AnalyticsTrendChart';
+import { MistakeChart } from '@/components/papers/MistakeChart';
+import {
+  FileText,
+  ChevronDown,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Trash2,
+  X,
+  AlertTriangle,
+} from 'lucide-react';
+import type { PaperType, PaperSection } from '@/types/papers';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  fetchUserSessions,
+  filterSessions,
   calculateTrendDataWithPercentiles,
   calculateSessionAnalytics,
   extractYearFromVariant,
   calculatePercentileFromPaperDistribution,
   calculateSectionPerformance,
-  calculateTimeManagementInsights
-} from "@/lib/papers/analytics";
-import type { PaperSession } from "@/types/papers";
-import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { usePaperSessionStore } from "@/store/paperSessionStore";
-import { getPaperTypeColor, PAPER_TYPE_COLORS, desaturateColor } from "@/config/colors";
-import { cn } from "@/lib/utils";
-import { deletePaperSession } from "@/lib/supabase/papers";
+  calculateTimeManagementInsights,
+} from '@/lib/papers/analytics';
+import type { PaperSession } from '@/types/papers';
+import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
+import { usePaperSessionStore } from '@/store/paperSessionStore';
+import {
+  getPaperTypeColor,
+  PAPER_TYPE_COLORS,
+  desaturateColor,
+} from '@/config/colors';
+import { cn } from '@/lib/utils';
+import { deletePaperSession } from '@/lib/supabase/papers';
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
   const session = useSupabaseSession();
   const [sessions, setSessions] = useState<PaperSession[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const [selectedPaper, setSelectedPaper] = useState<PaperType | "ALL">("ALL");
-  const [selectedSection, setSelectedSection] = useState<PaperSection | "ALL">("ALL");
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter" | "all">("all");
-  const [sessionSortBy, setSessionSortBy] = useState<"recent" | "percentage" | "percentile">("recent");
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+
+  const [selectedPaper, setSelectedPaper] = useState<PaperType | 'ALL'>('ALL');
+  const [selectedSection, setSelectedSection] = useState<PaperSection | 'ALL'>(
+    'ALL',
+  );
+  const [timeRange, setTimeRange] = useState<
+    'week' | 'month' | 'quarter' | 'all'
+  >('all');
+  const [sessionSortBy, setSessionSortBy] = useState<
+    'recent' | 'percentage' | 'percentile'
+  >('recent');
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set(),
+  );
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
-  const [highlightedSessionId, setHighlightedSessionId] = useState<string | null>(null);
-  
+  const [highlightedSessionId, setHighlightedSessionId] = useState<
+    string | null
+  >(null);
+
   // Filter states for Performance Trends
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedPaperTypes, setSelectedPaperTypes] = useState<PaperType[]>([]);
-  
+
   // Multi-select dropdown states
   const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
   const [paperTypeDropdownOpen, setPaperTypeDropdownOpen] = useState(false);
@@ -61,10 +84,16 @@ export default function PapersAnalyticsPage() {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (topicDropdownRef.current && !topicDropdownRef.current.contains(event.target as Node)) {
+      if (
+        topicDropdownRef.current &&
+        !topicDropdownRef.current.contains(event.target as Node)
+      ) {
         setTopicDropdownOpen(false);
       }
-      if (paperTypeDropdownRef.current && !paperTypeDropdownRef.current.contains(event.target as Node)) {
+      if (
+        paperTypeDropdownRef.current &&
+        !paperTypeDropdownRef.current.contains(event.target as Node)
+      ) {
         setPaperTypeDropdownOpen(false);
       }
     };
@@ -75,12 +104,14 @@ export default function PapersAnalyticsPage() {
   // Fetch sessions on mount
   useEffect(() => {
     if (session?.user) {
-      fetchUserSessions().then(data => {
-        setSessions(data);
-        setLoading(false);
-      }).catch(() => {
-        setLoading(false);
-      });
+      fetchUserSessions()
+        .then((data) => {
+          setSessions(data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     } else {
       setLoading(false);
     }
@@ -89,27 +120,32 @@ export default function PapersAnalyticsPage() {
   // Handle highlighting and scrolling to session
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const urlParams = new URLSearchParams(window.location.search);
     const highlightId = urlParams.get('highlight');
-    
+
     if (highlightId && sessions.length > 0 && !loading) {
       setHighlightedSessionId(highlightId);
-      
+
       // Expand sessions section if collapsed
       if (collapsedSections.has('sessions')) {
-        setCollapsedSections(prev => {
+        setCollapsedSections((prev) => {
           const next = new Set(prev);
           next.delete('sessions');
           return next;
         });
       }
-      
+
       // Scroll to the highlighted session after a short delay to allow rendering
       setTimeout(() => {
-        const sessionElement = document.querySelector(`[data-session-id="${highlightId}"]`);
+        const sessionElement = document.querySelector(
+          `[data-session-id="${highlightId}"]`,
+        );
         if (sessionElement) {
-          sessionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          sessionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
           // Remove highlight after 5 seconds
           setTimeout(() => {
             setHighlightedSessionId(null);
@@ -126,18 +162,23 @@ export default function PapersAnalyticsPage() {
   // Helper function to map topic filter to sections
   const topicToSections = (topic: string): PaperSection[] => {
     switch (topic) {
-      case "Math 1":
-        return ["Mathematics", "Math"];
-      case "Math 2":
-        return ["Advanced Math", "Advanced Mathematics and Advanced Physics"];
-      case "All maths":
-        return ["Mathematics", "Math", "Advanced Math", "Advanced Mathematics and Advanced Physics"];
-      case "Physics":
-        return ["Physics"];
-      case "Chemistry":
-        return ["Chemistry"];
-      case "Biology":
-        return ["Biology"];
+      case 'Math 1':
+        return ['Mathematics', 'Math'];
+      case 'Math 2':
+        return ['Advanced Math', 'Advanced Mathematics and Advanced Physics'];
+      case 'All maths':
+        return [
+          'Mathematics',
+          'Math',
+          'Advanced Math',
+          'Advanced Mathematics and Advanced Physics',
+        ];
+      case 'Physics':
+        return ['Physics'];
+      case 'Chemistry':
+        return ['Chemistry'];
+      case 'Biology':
+        return ['Biology'];
       default:
         return [];
     }
@@ -154,22 +195,32 @@ export default function PapersAnalyticsPage() {
     // Apply topic filters (for Performance Trends)
     if (selectedTopics.length > 0) {
       const topicSections = new Set<PaperSection>();
-      selectedTopics.forEach(topic => {
-        topicToSections(topic).forEach(sec => topicSections.add(sec));
+      selectedTopics.forEach((topic) => {
+        topicToSections(topic).forEach((sec) => topicSections.add(sec));
       });
-      filtered = filtered.filter(s => {
-        if (!s.selectedSections || s.selectedSections.length === 0) return false;
-        return s.selectedSections.some(sec => topicSections.has(sec));
+      filtered = filtered.filter((s) => {
+        if (!s.selectedSections || s.selectedSections.length === 0)
+          return false;
+        return s.selectedSections.some((sec) => topicSections.has(sec));
       });
     }
 
     // Apply paper type filters (for Performance Trends)
     if (selectedPaperTypes.length > 0) {
-      filtered = filtered.filter(s => selectedPaperTypes.includes(s.paperName));
+      filtered = filtered.filter((s) =>
+        selectedPaperTypes.includes(s.paperName),
+      );
     }
 
     return filtered;
-  }, [sessions, selectedPaper, selectedSection, timeRange, selectedTopics, selectedPaperTypes]);
+  }, [
+    sessions,
+    selectedPaper,
+    selectedSection,
+    timeRange,
+    selectedTopics,
+    selectedPaperTypes,
+  ]);
 
   // Calculate trend data with percentiles (use filtered sessions for chart)
   const trendDataWithPercentiles = useMemo(() => {
@@ -178,7 +229,7 @@ export default function PapersAnalyticsPage() {
 
   // Convert percentile data to format expected by chart (we'll update the chart to use percentile instead of percentage)
   const trendDataForChart = useMemo(() => {
-    return trendDataWithPercentiles.map(d => ({
+    return trendDataWithPercentiles.map((d) => ({
       date: d.date,
       percentage: d.percentile, // Chart will display this as percentile
       paperType: d.paperType,
@@ -195,8 +246,8 @@ export default function PapersAnalyticsPage() {
   // Get all unique sections practiced
   const sectionsPracticed = useMemo(() => {
     const sections = new Set<PaperSection>();
-    filteredSessions.forEach(s => {
-      s.selectedSections?.forEach(sec => sections.add(sec));
+    filteredSessions.forEach((s) => {
+      s.selectedSections?.forEach((sec) => sections.add(sec));
     });
     return sections.size;
   }, [filteredSessions]);
@@ -205,21 +256,31 @@ export default function PapersAnalyticsPage() {
   const sessionsWithPercentiles = useMemo(() => {
     // Group scores by paper type
     const scoresByPaper = new Map<PaperType, number[]>();
-    filteredSessions.filter(s => s.score).forEach(session => {
-      const paperType = session.paperName;
-      const scorePercentage = session.score ? (session.score.correct / session.score.total) * 100 : 0;
-      if (!scoresByPaper.has(paperType)) {
-        scoresByPaper.set(paperType, []);
-      }
-      scoresByPaper.get(paperType)!.push(scorePercentage);
-    });
+    filteredSessions
+      .filter((s) => s.score)
+      .forEach((session) => {
+        const paperType = session.paperName;
+        const scorePercentage = session.score
+          ? (session.score.correct / session.score.total) * 100
+          : 0;
+        if (!scoresByPaper.has(paperType)) {
+          scoresByPaper.set(paperType, []);
+        }
+        scoresByPaper.get(paperType)!.push(scorePercentage);
+      });
 
-    return filteredSessions.map(session => {
-      const scorePercentage = session.score ? (session.score.correct / session.score.total) * 100 : null;
-      const allScoresForPaper = scoresByPaper.get(session.paperName) || [];
-      const percentile = scorePercentage !== null 
-        ? calculatePercentileFromPaperDistribution(scorePercentage, allScoresForPaper)
+    return filteredSessions.map((session) => {
+      const scorePercentage = session.score
+        ? (session.score.correct / session.score.total) * 100
         : null;
+      const allScoresForPaper = scoresByPaper.get(session.paperName) || [];
+      const percentile =
+        scorePercentage !== null
+          ? calculatePercentileFromPaperDistribution(
+              scorePercentage,
+              allScoresForPaper,
+            )
+          : null;
       return { ...session, percentile, scorePercentage };
     });
   }, [filteredSessions]);
@@ -227,11 +288,13 @@ export default function PapersAnalyticsPage() {
   // Sort sessions
   const sortedSessions = useMemo(() => {
     const sorted = [...sessionsWithPercentiles];
-    if (sessionSortBy === "recent") {
+    if (sessionSortBy === 'recent') {
       sorted.sort((a, b) => (b.startedAt || 0) - (a.startedAt || 0));
-    } else if (sessionSortBy === "percentage") {
-      sorted.sort((a, b) => (b.scorePercentage || 0) - (a.scorePercentage || 0));
-    } else if (sessionSortBy === "percentile") {
+    } else if (sessionSortBy === 'percentage') {
+      sorted.sort(
+        (a, b) => (b.scorePercentage || 0) - (a.scorePercentage || 0),
+      );
+    } else if (sessionSortBy === 'percentile') {
       sorted.sort((a, b) => (b.percentile || 0) - (a.percentile || 0));
     }
     return sorted;
@@ -255,7 +318,7 @@ export default function PapersAnalyticsPage() {
   // Aggregate mistake tags across all sessions
   const aggregatedMistakeTags = useMemo(() => {
     const allMistakes: any[] = [];
-    filteredSessions.forEach(session => {
+    filteredSessions.forEach((session) => {
       if (session.mistakeTags && session.mistakeTags.length > 0) {
         allMistakes.push(...session.mistakeTags);
       }
@@ -274,8 +337,12 @@ export default function PapersAnalyticsPage() {
     let allPerQuestionSec: number[] = [];
 
     // Use all sessions to analyze every guess made
-    sessions.forEach(session => {
-      if (session.guessedFlags && session.correctFlags && session.perQuestionSec) {
+    sessions.forEach((session) => {
+      if (
+        session.guessedFlags &&
+        session.correctFlags &&
+        session.perQuestionSec
+      ) {
         session.guessedFlags.forEach((guessed, idx) => {
           if (guessed) {
             totalGuessed++;
@@ -291,24 +358,32 @@ export default function PapersAnalyticsPage() {
       }
     });
 
-    const accuracy = totalGuessed > 0 ? (correctGuesses / totalGuessed) * 100 : 0;
-    const timeOnGuessed = guessedIndices.reduce((sum, idx) => sum + (allPerQuestionSec[idx] || 0), 0);
+    const accuracy =
+      totalGuessed > 0 ? (correctGuesses / totalGuessed) * 100 : 0;
+    const timeOnGuessed = guessedIndices.reduce(
+      (sum, idx) => sum + (allPerQuestionSec[idx] || 0),
+      0,
+    );
     const totalTime = allPerQuestionSec.reduce((sum, t) => sum + t, 0);
-    const shareOfTotalTime = totalTime > 0 ? (timeOnGuessed / totalTime) * 100 : 0;
+    const shareOfTotalTime =
+      totalTime > 0 ? (timeOnGuessed / totalTime) * 100 : 0;
 
     // Calculate average times for correct vs wrong guesses
     const correctGuessTimes = guessedIndices
-      .filter(idx => allCorrectFlags[idx] === true)
-      .map(idx => allPerQuestionSec[idx] || 0);
+      .filter((idx) => allCorrectFlags[idx] === true)
+      .map((idx) => allPerQuestionSec[idx] || 0);
     const wrongGuessTimes = guessedIndices
-      .filter(idx => allCorrectFlags[idx] === false)
-      .map(idx => allPerQuestionSec[idx] || 0);
-    const avgTimeCorrectGuess = correctGuessTimes.length > 0
-      ? correctGuessTimes.reduce((a, b) => a + b, 0) / correctGuessTimes.length
-      : 0;
-    const avgTimeWrongGuess = wrongGuessTimes.length > 0
-      ? wrongGuessTimes.reduce((a, b) => a + b, 0) / wrongGuessTimes.length
-      : 0;
+      .filter((idx) => allCorrectFlags[idx] === false)
+      .map((idx) => allPerQuestionSec[idx] || 0);
+    const avgTimeCorrectGuess =
+      correctGuessTimes.length > 0
+        ? correctGuessTimes.reduce((a, b) => a + b, 0) /
+          correctGuessTimes.length
+        : 0;
+    const avgTimeWrongGuess =
+      wrongGuessTimes.length > 0
+        ? wrongGuessTimes.reduce((a, b) => a + b, 0) / wrongGuessTimes.length
+        : 0;
 
     return {
       totalGuessed,
@@ -337,14 +412,17 @@ export default function PapersAnalyticsPage() {
   };
 
   // Function to delete session
-  const handleDeleteSession = async (sessionId: string, e: React.MouseEvent) => {
+  const handleDeleteSession = async (
+    sessionId: string,
+    e: React.MouseEvent,
+  ) => {
     e.stopPropagation();
     if (!confirm('Are you sure you want to delete this session?')) {
       return;
     }
     try {
       await deletePaperSession(sessionId);
-      setSessions(prev => prev.filter(s => s.id !== sessionId));
+      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
     } catch (error) {
       console.error('Failed to delete session:', error);
       alert('Failed to delete session. Please try again.');
@@ -354,7 +432,7 @@ export default function PapersAnalyticsPage() {
   // Function to clear all session history
   const handleClearAllSessions = async () => {
     if (!session?.user) return;
-    
+
     setIsClearing(true);
     try {
       const response = await fetch('/api/past-papers/sessions', {
@@ -390,9 +468,9 @@ export default function PapersAnalyticsPage() {
 
   if (loading) {
     return (
-      <Container size="lg">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <LoadingSpinner size="md" />
+      <Container size='lg'>
+        <div className='flex items-center justify-center min-h-[400px]'>
+          <LoadingSpinner size='md' />
         </div>
       </Container>
     );
@@ -400,63 +478,81 @@ export default function PapersAnalyticsPage() {
 
   if (!session?.user) {
     return (
-      <Container size="lg">
+      <Container size='lg'>
         <PageHeader
-          title="Papers Analytics"
-          description="Please log in to view your paper analytics."
+          title='Papers Analytics'
+          description='Please log in to view your paper analytics.'
         />
       </Container>
     );
   }
 
   return (
-    <Container size="lg" className="py-6">
-      <div className="space-y-8">
+    <Container size='lg' className='py-6'>
+      <div className='space-y-8'>
         {/* 1. Overview Section with Performance Summary */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6">
+        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
           <button
-            onClick={() => toggleSection("overview")}
-            className="w-full flex items-center justify-between mb-4 group"
+            onClick={() => toggleSection('overview')}
+            className='w-full flex items-center justify-between mb-4 group'
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
+              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
                 Quick Overview
               </h2>
-              <p className="text-sm text-text-muted mt-1 text-left">Your performance at a glance</p>
+              <p className='text-sm text-text-muted mt-1 text-left'>
+                Your performance at a glance
+              </p>
             </div>
-            <ChevronDown 
+            <ChevronDown
               className={cn(
-                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
-                collapsedSections.has("overview") && "rotate-180"
+                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                collapsedSections.has('overview') && 'rotate-180',
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("overview") && (
+            {!collapsedSections.has('overview') && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden"
+                className='overflow-hidden'
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Average Score</div>
-                    <div className="text-2xl font-bold text-text leading-none">{Math.round(analytics.averageScore)}%</div>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
+                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
+                      Average Score
+                    </div>
+                    <div className='text-2xl font-bold text-text leading-none'>
+                      {Math.round(analytics.averageScore)}%
+                    </div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Sessions Completed</div>
-                    <div className="text-2xl font-bold text-text leading-none">{analytics.totalSessions}</div>
+                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
+                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
+                      Sessions Completed
+                    </div>
+                    <div className='text-2xl font-bold text-text leading-none'>
+                      {analytics.totalSessions}
+                    </div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Avg Time</div>
-                    <div className="text-2xl font-bold text-text leading-none">{Math.round(analytics.averageTime)} min</div>
+                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
+                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
+                      Avg Time
+                    </div>
+                    <div className='text-2xl font-bold text-text leading-none'>
+                      {Math.round(analytics.averageTime)} min
+                    </div>
                   </div>
-                  <div className="relative rounded-organic-md overflow-hidden bg-surface-elevated p-4">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1">Sections Practiced</div>
-                    <div className="text-2xl font-bold text-text leading-none">{sectionsPracticed}</div>
+                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
+                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
+                      Sections Practiced
+                    </div>
+                    <div className='text-2xl font-bold text-text leading-none'>
+                      {sectionsPracticed}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -465,55 +561,57 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 2. Performance Chart with Percentiles */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
+        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
           <button
-            onClick={() => toggleSection("performance")}
-            className="w-full flex items-center justify-between mb-4 group"
+            onClick={() => toggleSection('performance')}
+            className='w-full flex items-center justify-between mb-4 group'
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
+              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
                 Performance Trends
               </h2>
-              <p className="text-sm text-text-muted mt-1 text-left">
+              <p className='text-sm text-text-muted mt-1 text-left'>
                 Track your percentile progression over time
               </p>
             </div>
-            <ChevronDown 
+            <ChevronDown
               className={cn(
-                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
-                collapsedSections.has("performance") && "rotate-180"
+                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                collapsedSections.has('performance') && 'rotate-180',
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("performance") && (
+            {!collapsedSections.has('performance') && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden"
+                className='overflow-hidden'
               >
                 {/* Filter Dropdowns */}
-                <div className="flex items-center gap-4 mb-6 flex-wrap">
+                <div className='flex items-center gap-4 mb-6 flex-wrap'>
                   {/* By Topic Filter */}
-                  <div className="relative" ref={topicDropdownRef}>
+                  <div className='relative' ref={topicDropdownRef}>
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => {
                         setTopicDropdownOpen(!topicDropdownOpen);
                         setPaperTypeDropdownOpen(false);
                       }}
-                      className="h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border"
+                      className='h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border'
                     >
-                      <span className="truncate text-left">
-                        {selectedTopics.length === 0 ? "By Topic" : `${selectedTopics.length} selected`}
+                      <span className='truncate text-left'>
+                        {selectedTopics.length === 0
+                          ? 'By Topic'
+                          : `${selectedTopics.length} selected`}
                       </span>
                       <ChevronDown
                         className={cn(
-                          "absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform",
-                          topicDropdownOpen && "rotate-180"
+                          'absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform',
+                          topicDropdownOpen && 'rotate-180',
                         )}
                       />
                     </button>
@@ -522,7 +620,7 @@ export default function PapersAnalyticsPage() {
                       {topicDropdownOpen && (
                         <>
                           <div
-                            className="fixed inset-0 z-40"
+                            className='fixed inset-0 z-40'
                             onClick={() => setTopicDropdownOpen(false)}
                           />
                           <motion.div
@@ -530,35 +628,44 @@ export default function PapersAnalyticsPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border"
+                            className='absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border'
                           >
-                            <div className="max-h-60 overflow-y-auto">
-                              {["Math 1", "Math 2", "All maths", "Physics", "Chemistry", "Biology"].map((topic) => (
+                            <div className='max-h-60 overflow-y-auto'>
+                              {[
+                                'Math 1',
+                                'Math 2',
+                                'All maths',
+                                'Physics',
+                                'Chemistry',
+                                'Biology',
+                              ].map((topic) => (
                                 <button
                                   key={topic}
-                                  type="button"
+                                  type='button'
                                   onClick={() => {
-                                    setSelectedTopics(prev =>
+                                    setSelectedTopics((prev) =>
                                       prev.includes(topic)
-                                        ? prev.filter(t => t !== topic)
-                                        : [...prev, topic]
+                                        ? prev.filter((t) => t !== topic)
+                                        : [...prev, topic],
                                     );
                                   }}
                                   className={cn(
-                                    "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
+                                    'w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2',
                                     selectedTopics.includes(topic)
-                                      ? "bg-surface-mid text-text"
-                                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
+                                      ? 'bg-surface-mid text-text'
+                                      : 'text-text-muted hover:bg-surface-subtle hover:text-text',
                                   )}
                                 >
-                                  <div className={cn(
-                                    "w-4 h-4 rounded border-2 flex items-center justify-center",
-                                    selectedTopics.includes(topic)
-                                      ? "bg-primary border-primary"
-                                      : "border-border"
-                                  )}>
+                                  <div
+                                    className={cn(
+                                      'w-4 h-4 rounded border-2 flex items-center justify-center',
+                                      selectedTopics.includes(topic)
+                                        ? 'bg-primary border-primary'
+                                        : 'border-border',
+                                    )}
+                                  >
                                     {selectedTopics.includes(topic) && (
-                                      <div className="w-2 h-2 bg-text rounded-sm" />
+                                      <div className='w-2 h-2 bg-text rounded-sm' />
                                     )}
                                   </div>
                                   {topic}
@@ -572,22 +679,24 @@ export default function PapersAnalyticsPage() {
                   </div>
 
                   {/* By Paper Type Filter */}
-                  <div className="relative" ref={paperTypeDropdownRef}>
+                  <div className='relative' ref={paperTypeDropdownRef}>
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => {
                         setPaperTypeDropdownOpen(!paperTypeDropdownOpen);
                         setTopicDropdownOpen(false);
                       }}
-                      className="h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border"
+                      className='h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border'
                     >
-                      <span className="truncate text-left">
-                        {selectedPaperTypes.length === 0 ? "By Paper Type" : `${selectedPaperTypes.length} selected`}
+                      <span className='truncate text-left'>
+                        {selectedPaperTypes.length === 0
+                          ? 'By Paper Type'
+                          : `${selectedPaperTypes.length} selected`}
                       </span>
                       <ChevronDown
                         className={cn(
-                          "absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform",
-                          paperTypeDropdownOpen && "rotate-180"
+                          'absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform',
+                          paperTypeDropdownOpen && 'rotate-180',
                         )}
                       />
                     </button>
@@ -596,7 +705,7 @@ export default function PapersAnalyticsPage() {
                       {paperTypeDropdownOpen && (
                         <>
                           <div
-                            className="fixed inset-0 z-40"
+                            className='fixed inset-0 z-40'
                             onClick={() => setPaperTypeDropdownOpen(false)}
                           />
                           <motion.div
@@ -604,35 +713,47 @@ export default function PapersAnalyticsPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border"
+                            className='absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border'
                           >
-                            <div className="max-h-60 overflow-y-auto">
-                              {(["TMUA", "ESAT", "NSAA", "ENGAA", "PAT", "MAT", "OTHER"] as PaperType[]).map((paperType) => (
+                            <div className='max-h-60 overflow-y-auto'>
+                              {(
+                                [
+                                  'TMUA',
+                                  'ESAT',
+                                  'NSAA',
+                                  'ENGAA',
+                                  'PAT',
+                                  'MAT',
+                                  'OTHER',
+                                ] as PaperType[]
+                              ).map((paperType) => (
                                 <button
                                   key={paperType}
-                                  type="button"
+                                  type='button'
                                   onClick={() => {
-                                    setSelectedPaperTypes(prev =>
+                                    setSelectedPaperTypes((prev) =>
                                       prev.includes(paperType)
-                                        ? prev.filter(t => t !== paperType)
-                                        : [...prev, paperType]
+                                        ? prev.filter((t) => t !== paperType)
+                                        : [...prev, paperType],
                                     );
                                   }}
                                   className={cn(
-                                    "w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2",
+                                    'w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2',
                                     selectedPaperTypes.includes(paperType)
-                                      ? "bg-surface-mid text-text"
-                                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
+                                      ? 'bg-surface-mid text-text'
+                                      : 'text-text-muted hover:bg-surface-subtle hover:text-text',
                                   )}
                                 >
-                                  <div className={cn(
-                                    "w-4 h-4 rounded border-2 flex items-center justify-center",
-                                    selectedPaperTypes.includes(paperType)
-                                      ? "bg-primary border-primary"
-                                      : "border-border"
-                                  )}>
+                                  <div
+                                    className={cn(
+                                      'w-4 h-4 rounded border-2 flex items-center justify-center',
+                                      selectedPaperTypes.includes(paperType)
+                                        ? 'bg-primary border-primary'
+                                        : 'border-border',
+                                    )}
+                                  >
                                     {selectedPaperTypes.includes(paperType) && (
-                                      <div className="w-2 h-2 bg-text rounded-sm" />
+                                      <div className='w-2 h-2 bg-text rounded-sm' />
                                     )}
                                   </div>
                                   {paperType}
@@ -649,13 +770,13 @@ export default function PapersAnalyticsPage() {
                 {trendDataForChart.length > 0 ? (
                   <AnalyticsTrendChart
                     allSessions={trendDataForChart}
-                    filterMode="all"
+                    filterMode='all'
                     selectedFilters={[]}
                   />
                 ) : (
-                  <div className="h-64 bg-surface-elevated rounded-organic-md border border-border flex items-center justify-center">
-                    <div className="text-center text-text-disabled">
-                      <div className="text-sm">No trend data available</div>
+                  <div className='h-64 bg-surface-elevated rounded-organic-md border border-border flex items-center justify-center'>
+                    <div className='text-center text-text-disabled'>
+                      <div className='text-sm'>No trend data available</div>
                     </div>
                   </div>
                 )}
@@ -665,103 +786,122 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 3. Session History - Scrollable with 5 visible */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1">
-              <h2 className="text-base font-bold uppercase tracking-wider text-text">
+        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
+          <div className='flex items-center gap-4 mb-6'>
+            <div className='flex-1'>
+              <h2 className='text-base font-bold uppercase tracking-wider text-text'>
                 Session History
               </h2>
-              <p className="text-sm text-text-muted mt-1">
+              <p className='text-sm text-text-muted mt-1'>
                 Your past paper sessions
               </p>
             </div>
-            <div className="relative">
+            <div className='relative'>
               <select
                 value={sessionSortBy}
-                onChange={(e) => setSessionSortBy(e.target.value as "recent" | "percentage" | "percentile")}
-                className="appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0"
-                style={{ colorScheme: "dark" }}
+                onChange={(e) =>
+                  setSessionSortBy(
+                    e.target.value as 'recent' | 'percentage' | 'percentile',
+                  )
+                }
+                className='appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0'
+                style={{ colorScheme: 'dark' }}
               >
-                <option value="recent" className="bg-neutral-800 text-text">Sort by Recent</option>
-                <option value="percentage" className="bg-neutral-800 text-text">Sort by Percentage</option>
-                <option value="percentile" className="bg-neutral-800 text-text">Sort by Percentile</option>
+                <option value='recent' className='bg-neutral-800 text-text'>
+                  Sort by Recent
+                </option>
+                <option value='percentage' className='bg-neutral-800 text-text'>
+                  Sort by Percentage
+                </option>
+                <option value='percentile' className='bg-neutral-800 text-text'>
+                  Sort by Percentile
+                </option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none" />
+              <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none' />
             </div>
             {sessions.length > 0 && (
               <button
                 onClick={() => setShowClearConfirm(true)}
-                className="px-3 py-2 rounded-organic-md bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors flex items-center gap-2"
+                className='px-3 py-2 rounded-organic-md bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors flex items-center gap-2'
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className='w-4 h-4' />
                 Clear All
               </button>
             )}
             <button
-              onClick={() => toggleSection("sessions")}
-              className="p-2 rounded-organic-md hover:bg-surface-elevated transition-colors group"
+              onClick={() => toggleSection('sessions')}
+              className='p-2 rounded-organic-md hover:bg-surface-elevated transition-colors group'
             >
-              <ChevronDown 
+              <ChevronDown
                 className={cn(
-                  "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
-                  collapsedSections.has("sessions") && "rotate-180"
+                  'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                  collapsedSections.has('sessions') && 'rotate-180',
                 )}
               />
             </button>
           </div>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("sessions") && (
+            {!collapsedSections.has('sessions') && (
               <motion.div
                 initial={{ maxHeight: 0, opacity: 0 }}
                 animate={{ maxHeight: 2000, opacity: 1 }}
                 exit={{ maxHeight: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="overflow-hidden"
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className='overflow-hidden'
               >
                 {visibleSessions.length > 0 ? (
-                  <div className="max-h-[600px] overflow-y-auto pr-2">
+                  <div className='max-h-[600px] overflow-y-auto pr-2'>
                     {/* Column Headers */}
-                    <div className="grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-text-subtle border-b border-border sticky top-0 bg-surface z-10">
-                      <div className="col-span-4">Paper</div>
-                      <div className="col-span-1 text-center">%</div>
-                      <div className="col-span-1 text-center">Score</div>
-                      <div className="col-span-1 text-center">Percentile</div>
-                      <div className="col-span-1 text-center">Time</div>
-                      <div className="col-span-2 text-center">Date</div>
-                      <div className="col-span-2"></div>
+                    <div className='grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-text-subtle border-b border-border sticky top-0 bg-surface z-10'>
+                      <div className='col-span-4'>Paper</div>
+                      <div className='col-span-1 text-center'>%</div>
+                      <div className='col-span-1 text-center'>Score</div>
+                      <div className='col-span-1 text-center'>Percentile</div>
+                      <div className='col-span-1 text-center'>Time</div>
+                      <div className='col-span-2 text-center'>Date</div>
+                      <div className='col-span-2'></div>
                     </div>
 
                     {/* Session Rows */}
-                    <div className="space-y-1">
+                    <div className='space-y-1'>
                       {visibleSessions.map((session) => {
                         const scorePercentage = session.scorePercentage;
                         const percentile = session.percentile;
-                        const date = session.startedAt 
-                          ? new Date(session.startedAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })
+                        const date = session.startedAt
+                          ? new Date(session.startedAt).toLocaleDateString(
+                              'en-US',
+                              {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              },
+                            )
                           : 'Unknown date';
                         const minutes = Math.round(session.timeLimitMinutes);
-                        
+
                         // Extract year from variant
-                        const year = extractYearFromVariant(session.paperVariant);
-                        const variantWithoutYear = year 
-                          ? session.paperVariant.replace(/\s*\d{4}\s*/, '').trim()
+                        const year = extractYearFromVariant(
+                          session.paperVariant,
+                        );
+                        const variantWithoutYear = year
+                          ? session.paperVariant
+                              .replace(/\s*\d{4}\s*/, '')
+                              .trim()
                           : session.paperVariant;
-                        
+
                         // Main title: Paper name + year
-                        const mainTitle = year 
+                        const mainTitle = year
                           ? `${session.paperName} ${year}`
                           : `${session.paperName} ${session.paperVariant}`;
-                        
+
                         // Section info
-                        const sectionInfo = session.selectedSections && session.selectedSections.length > 0
-                          ? session.selectedSections.join(", ")
-                          : variantWithoutYear || session.sessionName;
-                        
+                        const sectionInfo =
+                          session.selectedSections &&
+                          session.selectedSections.length > 0
+                            ? session.selectedSections.join(', ')
+                            : variantWithoutYear || session.sessionName;
+
                         // Icon color based on paper type
                         const iconColor = getPaperTypeColor(session.paperName);
 
@@ -769,110 +909,136 @@ export default function PapersAnalyticsPage() {
                         // Note: This requires question data and conversion tables which we don't have here
                         // For now, we'll show the raw percentage as the score
                         // TODO: Calculate actual converted score when question data is available
-                        const convertedScore: number | null = scorePercentage !== null 
-                          ? (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA")
-                            ? null // Would need conversion table calculation
-                            : null
-                          : null;
+                        const convertedScore: number | null =
+                          scorePercentage !== null
+                            ? session.paperName === 'ENGAA' ||
+                              session.paperName === 'NSAA' ||
+                              session.paperName === 'TMUA'
+                              ? null // Would need conversion table calculation
+                              : null
+                            : null;
 
-                        const isHighlighted = highlightedSessionId === session.id;
+                        const isHighlighted =
+                          highlightedSessionId === session.id;
                         return (
                           <button
                             key={session.id}
                             data-session-id={session.id}
                             onClick={() => handleViewMarkPage(session.id)}
                             className={cn(
-                              "w-full text-left grid grid-cols-12 gap-4 px-5 py-4 rounded-organic-md transition-all items-center",
+                              'w-full text-left grid grid-cols-12 gap-4 px-5 py-4 rounded-organic-md transition-all items-center',
                               isHighlighted
-                                ? "bg-primary/20 border-2 border-primary/50 shadow-lg shadow-primary/20"
-                                : "bg-surface-elevated hover:bg-surface-mid"
+                                ? 'bg-primary/20 border-2 border-primary/50 shadow-lg shadow-primary/20'
+                                : 'bg-surface-elevated hover:bg-surface-mid',
                             )}
-                            style={isHighlighted ? {
-                              animation: 'pulse 2s ease-in-out'
-                            } : undefined}
+                            style={
+                              isHighlighted
+                                ? {
+                                    animation: 'pulse 2s ease-in-out',
+                                  }
+                                : undefined
+                            }
                           >
                             {/* Paper Name & Sections */}
-                            <div className="col-span-4 flex items-center gap-3">
-                              <div 
-                                className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
-                                style={{ backgroundColor: desaturateColor(iconColor, 0.3) }}
+                            <div className='col-span-4 flex items-center gap-3'>
+                              <div
+                                className='w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0'
+                                style={{
+                                  backgroundColor: desaturateColor(
+                                    iconColor,
+                                    0.3,
+                                  ),
+                                }}
                               >
-                                <FileText className="w-4 h-4 text-text" />
+                                <FileText className='w-4 h-4 text-text' />
                               </div>
-                              <div className="min-w-0">
-                                <div className="font-medium text-text truncate">
+                              <div className='min-w-0'>
+                                <div className='font-medium text-text truncate'>
                                   {mainTitle}
                                 </div>
-                                <div className="text-xs text-text-muted truncate mt-0.5">
+                                <div className='text-xs text-text-muted truncate mt-0.5'>
                                   {sectionInfo}
                                 </div>
                               </div>
                             </div>
 
                             {/* Percentage */}
-                            <div className="col-span-1 flex items-center justify-center">
+                            <div className='col-span-1 flex items-center justify-center'>
                               {scorePercentage !== null ? (
-                                <span className="text-sm text-text-muted">
+                                <span className='text-sm text-text-muted'>
                                   {scorePercentage.toFixed(1)}%
                                 </span>
                               ) : (
-                                <span className="text-xs text-text-subtle">—</span>
+                                <span className='text-xs text-text-subtle'>
+                                  —
+                                </span>
                               )}
                             </div>
 
                             {/* Score (converted for ENGAA/NSAA/TMUA) */}
-                            <div className="col-span-1 flex items-center justify-center">
-                              {scorePercentage !== null && (session.paperName === "ENGAA" || session.paperName === "NSAA" || session.paperName === "TMUA") ? (
-                                <span className="text-xs text-text-subtle italic">—</span>
+                            <div className='col-span-1 flex items-center justify-center'>
+                              {scorePercentage !== null &&
+                              (session.paperName === 'ENGAA' ||
+                                session.paperName === 'NSAA' ||
+                                session.paperName === 'TMUA') ? (
+                                <span className='text-xs text-text-subtle italic'>
+                                  —
+                                </span>
                               ) : (
-                                <span className="text-xs text-text-subtle">—</span>
+                                <span className='text-xs text-text-subtle'>
+                                  —
+                                </span>
                               )}
                             </div>
 
                             {/* Percentile */}
-                            <div className="col-span-1 flex items-center justify-center">
+                            <div className='col-span-1 flex items-center justify-center'>
                               {percentile !== null ? (
-                                <span className="text-sm text-text-muted font-medium">
+                                <span className='text-sm text-text-muted font-medium'>
                                   {percentile.toFixed(1)}th
                                 </span>
                               ) : (
-                                <span className="text-xs text-text-subtle">—</span>
+                                <span className='text-xs text-text-subtle'>
+                                  —
+                                </span>
                               )}
                             </div>
 
                             {/* Time */}
-                            <div className="col-span-1 flex items-center justify-center">
-                              <span className="text-sm text-text-muted">
+                            <div className='col-span-1 flex items-center justify-center'>
+                              <span className='text-sm text-text-muted'>
                                 {minutes}m
                               </span>
                             </div>
 
                             {/* Date */}
-                            <div className="col-span-2 flex items-center justify-center">
-                              <span className="text-sm text-text-muted">
+                            <div className='col-span-2 flex items-center justify-center'>
+                              <span className='text-sm text-text-muted'>
                                 {date}
                               </span>
                             </div>
 
                             {/* Mark Button and Delete Button */}
-                            <div className="col-span-2 flex items-center justify-end gap-2">
+                            <div className='col-span-2 flex items-center justify-end gap-2'>
                               <Button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleViewMarkPage(session.id);
                                 }}
-                                variant="secondary"
-                                size="sm"
-                                className="whitespace-nowrap text-xs border-0"
+                                variant='secondary'
+                                size='sm'
+                                className='whitespace-nowrap text-xs border-0'
                               >
                                 Mark
                               </Button>
                               <button
-                                onClick={(e) => handleDeleteSession(session.id, e)}
-                                className="p-1.5 rounded-lg hover:bg-red-500/20 text-text-subtle hover:text-red-400 transition-colors flex-shrink-0"
-                                aria-label="Delete session"
+                                onClick={(e) =>
+                                  handleDeleteSession(session.id, e)
+                                }
+                                className='p-1.5 rounded-lg hover:bg-red-500/20 text-text-subtle hover:text-red-400 transition-colors flex-shrink-0'
+                                aria-label='Delete session'
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className='w-4 h-4' />
                               </button>
                             </div>
                           </button>
@@ -881,8 +1047,10 @@ export default function PapersAnalyticsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-neutral-500">
-                    <div className="text-sm">No sessions found for the selected filters</div>
+                  <div className='text-center py-8 text-neutral-500'>
+                    <div className='text-sm'>
+                      No sessions found for the selected filters
+                    </div>
                   </div>
                 )}
               </motion.div>
@@ -891,35 +1059,35 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 4. Mistake Breakdown Chart */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
+        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
           <button
-            onClick={() => toggleSection("mistakes")}
-            className="w-full flex items-center justify-between mb-4 group"
+            onClick={() => toggleSection('mistakes')}
+            className='w-full flex items-center justify-between mb-4 group'
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
+              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
                 Mistake Breakdown
               </h2>
-              <p className="text-sm text-text-muted mt-1 text-left">
+              <p className='text-sm text-text-muted mt-1 text-left'>
                 Common mistake patterns across all sessions
               </p>
             </div>
-            <ChevronDown 
+            <ChevronDown
               className={cn(
-                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
-                collapsedSections.has("mistakes") && "rotate-180"
+                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                collapsedSections.has('mistakes') && 'rotate-180',
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("mistakes") && (
+            {!collapsedSections.has('mistakes') && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden"
+                className='overflow-hidden'
               >
                 <MistakeChart mistakeTags={aggregatedMistakeTags} />
               </motion.div>
@@ -928,83 +1096,120 @@ export default function PapersAnalyticsPage() {
         </div>
 
         {/* 5. Guess Distribution & Time Distribution */}
-        <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border border-0 p-6">
+        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
           <button
-            onClick={() => toggleSection("distribution")}
-            className="w-full flex items-center justify-between mb-4 group"
+            onClick={() => toggleSection('distribution')}
+            className='w-full flex items-center justify-between mb-4 group'
           >
             <div>
-              <h2 className="text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors">
+              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
                 Guessing Behavior & Time Distribution
               </h2>
-              <p className="text-sm text-text-muted mt-1 text-left">
+              <p className='text-sm text-text-muted mt-1 text-left'>
                 Analyze guessing patterns and time allocation
               </p>
             </div>
-            <ChevronDown 
+            <ChevronDown
               className={cn(
-                "h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200",
-                collapsedSections.has("distribution") && "rotate-180"
+                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                collapsedSections.has('distribution') && 'rotate-180',
               )}
             />
           </button>
 
           <AnimatePresence initial={false}>
-            {!collapsedSections.has("distribution") && (
+            {!collapsedSections.has('distribution') && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
+                animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden"
+                className='overflow-hidden'
               >
-                <div className="space-y-6">
+                <div className='space-y-6'>
                   {/* Guessing Stats */}
-                  <div className="space-y-4">
-                    <div className="text-sm font-semibold text-text">Guessing Behavior</div>
-                    <div className="grid grid-cols-4 gap-3">
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-text-subtle mb-1">Total Guessed</div>
-                        <div className="text-lg font-semibold text-text">{guessingStats.totalGuessed}</div>
+                  <div className='space-y-4'>
+                    <div className='text-sm font-semibold text-text'>
+                      Guessing Behavior
+                    </div>
+                    <div className='grid grid-cols-4 gap-3'>
+                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
+                        <div className='text-xs text-text-subtle mb-1'>
+                          Total Guessed
+                        </div>
+                        <div className='text-lg font-semibold text-text'>
+                          {guessingStats.totalGuessed}
+                        </div>
                       </div>
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-text-subtle mb-1">Correct Guesses</div>
-                        <div className="text-lg font-semibold text-text">{guessingStats.correctGuesses}</div>
+                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
+                        <div className='text-xs text-text-subtle mb-1'>
+                          Correct Guesses
+                        </div>
+                        <div className='text-lg font-semibold text-text'>
+                          {guessingStats.correctGuesses}
+                        </div>
                       </div>
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-text-subtle mb-1">Guess Accuracy</div>
-                        <div className="text-lg font-semibold text-text">{guessingStats.accuracy}%</div>
+                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
+                        <div className='text-xs text-text-subtle mb-1'>
+                          Guess Accuracy
+                        </div>
+                        <div className='text-lg font-semibold text-text'>
+                          {guessingStats.accuracy}%
+                        </div>
                       </div>
-                      <div className="p-3 rounded-md bg-neutral-900 text-center">
-                        <div className="text-xs text-text-subtle mb-1">Time on Guesses</div>
-                        <div className="text-lg font-semibold text-text">{guessingStats.shareOfTotalTime}%</div>
+                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
+                        <div className='text-xs text-text-subtle mb-1'>
+                          Time on Guesses
+                        </div>
+                        <div className='text-lg font-semibold text-text'>
+                          {guessingStats.shareOfTotalTime}%
+                        </div>
                       </div>
                     </div>
 
                     {/* Guess Time Split */}
                     {guessingStats.totalGuessed > 0 && (
                       <div>
-                        <div className="text-xs text-text-subtle mb-2">Guess time split: correct vs wrong</div>
-                        <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
-                          <div className="flex w-full h-full">
+                        <div className='text-xs text-text-subtle mb-2'>
+                          Guess time split: correct vs wrong
+                        </div>
+                        <div className='w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5'>
+                          <div className='flex w-full h-full'>
                             {(() => {
-                              const correctTime = guessingStats.correctGuesses * guessingStats.avgTimeCorrectGuess;
-                              const wrongTime = guessingStats.wrongGuesses * guessingStats.avgTimeWrongGuess;
-                              const totalGuessTime = Math.max(1e-6, correctTime + wrongTime);
-                              const correctPct = Math.round((correctTime / totalGuessTime) * 100);
+                              const correctTime =
+                                guessingStats.correctGuesses *
+                                guessingStats.avgTimeCorrectGuess;
+                              const wrongTime =
+                                guessingStats.wrongGuesses *
+                                guessingStats.avgTimeWrongGuess;
+                              const totalGuessTime = Math.max(
+                                1e-6,
+                                correctTime + wrongTime,
+                              );
+                              const correctPct = Math.round(
+                                (correctTime / totalGuessTime) * 100,
+                              );
                               const wrongPct = Math.max(0, 100 - correctPct);
-                              
+
                               return (
                                 <>
                                   <div
-                                    className="h-full flex items-center justify-center text-[11px] font-medium"
-                                    style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
+                                    className='h-full flex items-center justify-center text-[11px] font-medium'
+                                    style={{
+                                      width: `${correctPct}%`,
+                                      backgroundColor:
+                                        'color-mix(in srgb, var(--color-success) 80%, transparent)',
+                                    }}
                                   >
                                     {correctPct >= 12 ? `${correctPct}%` : ''}
                                   </div>
                                   <div
-                                    className="h-full flex items-center justify-center text-[11px] font-medium"
-                                    style={{ width: `${wrongPct}%`, backgroundColor: `rgba(140, 82, 90, 0.8)` }}
+                                    className='h-full flex items-center justify-center text-[11px] font-medium'
+                                    style={{
+                                      width: `${wrongPct}%`,
+                                      backgroundColor:
+                                        'color-mix(in srgb, var(--color-error) 80%, transparent)',
+                                    }}
                                   >
                                     {wrongPct >= 12 ? `${wrongPct}%` : ''}
                                   </div>
@@ -1013,14 +1218,26 @@ export default function PapersAnalyticsPage() {
                             })()}
                           </div>
                         </div>
-                        <div className="mt-1 flex items-center justify-between text-[11px] text-text-subtle">
-                          <div className="flex items-center gap-2">
-                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#6c9e69' }} />
-                            <span>Correct • {guessingStats.correctGuesses} qns • avg {Math.round(guessingStats.avgTimeCorrectGuess)}s</span>
+                        <div className='mt-1 flex items-center justify-between text-[11px] text-text-subtle'>
+                          <div className='flex items-center gap-2'>
+                            <span
+                              className='inline-block w-2 h-2 rounded'
+                              style={{ backgroundColor: 'var(--color-success)' }}
+                            />
+                            <span>
+                              Correct • {guessingStats.correctGuesses} qns • avg{' '}
+                              {Math.round(guessingStats.avgTimeCorrectGuess)}s
+                            </span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="inline-block w-2 h-2 rounded" style={{ backgroundColor: '#8c525a' }} />
-                            <span>Wrong • {guessingStats.wrongGuesses} qns • avg {Math.round(guessingStats.avgTimeWrongGuess)}s</span>
+                          <div className='flex items-center gap-2'>
+                            <span
+                              className='inline-block w-2 h-2 rounded'
+                              style={{ backgroundColor: 'var(--color-error)' }}
+                            />
+                            <span>
+                              Wrong • {guessingStats.wrongGuesses} qns • avg{' '}
+                              {Math.round(guessingStats.avgTimeWrongGuess)}s
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -1029,50 +1246,109 @@ export default function PapersAnalyticsPage() {
                     {/* Guess Distribution Chart */}
                     {guessingStats.allGuessedFlags.length > 0 && (
                       <div>
-                        <div className="text-sm font-semibold text-text/200 mb-2">Guess Distribution</div>
+                        <div className='text-sm font-semibold text-text/200 mb-2'>
+                          Guess Distribution
+                        </div>
                         {(() => {
-                          const questionNumbers = Array.from({ length: guessingStats.allGuessedFlags.length }, (_, i) => i + 1);
-                          const w = Math.max(420, questionNumbers.length * 14 + 16);
-                          const h = 96; const pad = 12; const stripH = 16; const plotH = h - stripH - pad*3;
+                          const questionNumbers = Array.from(
+                            { length: guessingStats.allGuessedFlags.length },
+                            (_, i) => i + 1,
+                          );
+                          const w = Math.max(
+                            420,
+                            questionNumbers.length * 14 + 16,
+                          );
+                          const h = 96;
+                          const pad = 12;
+                          const stripH = 16;
+                          const plotH = h - stripH - pad * 3;
                           const windowSize = 2;
                           const vals = questionNumbers.map((_, i) => {
-                            let s = 0; let c = 0;
-                            for (let j = Math.max(0, i-windowSize); j <= Math.min(questionNumbers.length-1, i+windowSize); j++) { 
-                              c++; 
-                              s += (guessingStats.allGuessedFlags[j] ? 1 : 0); 
+                            let s = 0;
+                            let c = 0;
+                            for (
+                              let j = Math.max(0, i - windowSize);
+                              j <=
+                              Math.min(
+                                questionNumbers.length - 1,
+                                i + windowSize,
+                              );
+                              j++
+                            ) {
+                              c++;
+                              s += guessingStats.allGuessedFlags[j] ? 1 : 0;
                             }
                             return s / Math.max(1, c);
                           });
-                          const toX = (i:number) => pad + (i/(Math.max(1, vals.length-1))) * (w-2*pad);
-                          const toY = (v:number) => pad + (plotH - v * plotH);
-                          const path = vals.map((v,i) => `${i===0?'M':'L'} ${toX(i)},${toY(v)}`).join(' ');
-                          const area = `M ${toX(0)},${toY(0)} ` + vals.map((v,i)=>`L ${toX(i)},${toY(v)}`).join(' ') + ` L ${toX(vals.length-1)},${toY(0)} Z`;
-                          const guessColor = '#9e5974';
-                          const correctBorder = '#6c9e69';
-                          const wrongBorder = '#8c525a';
+                          const toX = (i: number) =>
+                            pad +
+                            (i / Math.max(1, vals.length - 1)) * (w - 2 * pad);
+                          const toY = (v: number) => pad + (plotH - v * plotH);
+                          const path = vals
+                            .map(
+                              (v, i) =>
+                                `${i === 0 ? 'M' : 'L'} ${toX(i)},${toY(v)}`,
+                            )
+                            .join(' ');
+                          const area =
+                            `M ${toX(0)},${toY(0)} ` +
+                            vals
+                              .map((v, i) => `L ${toX(i)},${toY(v)}`)
+                              .join(' ') +
+                            ` L ${toX(vals.length - 1)},${toY(0)} Z`;
+                          const guessColor = 'var(--color-secondary)';
+                          const correctBorder = 'var(--color-success)';
+                          const wrongBorder = 'var(--color-error)';
                           const len = Math.max(1, questionNumbers.length);
-                          const innerW = w - 2*pad;
+                          const innerW = w - 2 * pad;
                           const step = innerW / len;
                           const desiredBlockW = step - 2;
                           const blockW = Math.max(10, desiredBlockW);
-                          const blockInset = Math.max(1, (step - (blockW - 2)) / 2);
-                          
+                          const blockInset = Math.max(
+                            1,
+                            (step - (blockW - 2)) / 2,
+                          );
+
                           return (
-                            <div className="overflow-x-auto flex justify-center">
-                              <svg width={w} height={h} className="block">
+                            <div className='overflow-x-auto flex justify-center'>
+                              <svg width={w} height={h} className='block'>
                                 <path d={area} fill={`${guessColor}33`} />
-                                <path d={path} stroke={guessColor} strokeWidth={2} fill="none" />
+                                <path
+                                  d={path}
+                                  stroke={guessColor}
+                                  strokeWidth={2}
+                                  fill='none'
+                                />
                                 {questionNumbers.map((qn, idx) => {
                                   const bandStart = pad + idx * step;
                                   const rectX = bandStart + blockInset;
-                                  const guessed = guessingStats.allGuessedFlags[idx] === true;
-                                  const corr = guessingStats.allCorrectFlags[idx];
-                                  const fill = guessed ? guessColor : '#1a1f27';
-                                  const border = corr === true ? correctBorder : (corr === false ? wrongBorder : 'rgba(255,255,255,0.12)');
+                                  const guessed =
+                                    guessingStats.allGuessedFlags[idx] === true;
+                                  const corr =
+                                    guessingStats.allCorrectFlags[idx];
+                                  const fill = guessed
+                                    ? guessColor
+                                    : 'var(--color-surface-mid)';
+                                  const border =
+                                    corr === true
+                                      ? correctBorder
+                                      : corr === false
+                                        ? wrongBorder
+                                        : 'var(--color-border-subtle)';
                                   return (
                                     <g key={qn}>
-                                      <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr===true?' • Correct':(corr===false?' • Wrong':'')}`}</title>
-                                      <rect x={rectX} y={h - pad - stripH} width={blockW - 2} height={stripH} rx={4} ry={4} fill={fill} stroke={border} strokeWidth={1} />
+                                      <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr === true ? ' • Correct' : corr === false ? ' • Wrong' : ''}`}</title>
+                                      <rect
+                                        x={rectX}
+                                        y={h - pad - stripH}
+                                        width={blockW - 2}
+                                        height={stripH}
+                                        rx={4}
+                                        ry={4}
+                                        fill={fill}
+                                        stroke={border}
+                                        strokeWidth={1}
+                                      />
                                     </g>
                                   );
                                 })}
@@ -1086,8 +1362,10 @@ export default function PapersAnalyticsPage() {
 
                   {/* Time Distribution */}
                   {guessingStats.allPerQuestionSec.length > 0 && (
-                    <div className="space-y-4">
-                      <div className="text-sm font-semibold text-text">Time Distribution</div>
+                    <div className='space-y-4'>
+                      <div className='text-sm font-semibold text-text'>
+                        Time Distribution
+                      </div>
                       {(() => {
                         const times = guessingStats.allPerQuestionSec;
                         const total = times.reduce((a, b) => a + b, 0);
@@ -1098,31 +1376,47 @@ export default function PapersAnalyticsPage() {
                           if (corr === true) correctTimes.push(t);
                           else if (corr === false) wrongTimes.push(t);
                         });
-                        const correctTime = correctTimes.reduce((a, b) => a + b, 0);
+                        const correctTime = correctTimes.reduce(
+                          (a, b) => a + b,
+                          0,
+                        );
                         const wrongTime = wrongTimes.reduce((a, b) => a + b, 0);
-                        const correctPct = Math.min(100, Math.round((correctTime / Math.max(1, total)) * 100));
+                        const correctPct = Math.min(
+                          100,
+                          Math.round((correctTime / Math.max(1, total)) * 100),
+                        );
                         const wrongPct = Math.max(0, 100 - correctPct);
-                        
+
                         return (
                           <div>
-                            <div className="text-xs text-text-subtle mb-2">Time split: correct vs wrong answers</div>
-                            <div className="w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5">
-                              <div className="flex w-full h-full">
+                            <div className='text-xs text-text-subtle mb-2'>
+                              Time split: correct vs wrong answers
+                            </div>
+                            <div className='w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5'>
+                              <div className='flex w-full h-full'>
                                 <div
-                                  className="h-full flex items-center justify-center text-[11px] font-medium"
-                                  style={{ width: `${correctPct}%`, backgroundColor: `rgba(108, 158, 105, 0.8)` }}
+                                  className='h-full flex items-center justify-center text-[11px] font-medium'
+                                  style={{
+                                    width: `${correctPct}%`,
+                                      backgroundColor:
+                                        'color-mix(in srgb, var(--color-success) 80%, transparent)',
+                                  }}
                                 >
                                   {correctPct >= 12 ? `${correctPct}%` : ''}
                                 </div>
                                 <div
-                                  className="h-full flex items-center justify-center text-[11px] font-medium"
-                                  style={{ width: `${wrongPct}%`, backgroundColor: `rgba(140, 82, 90, 0.8)` }}
+                                  className='h-full flex items-center justify-center text-[11px] font-medium'
+                                  style={{
+                                    width: `${wrongPct}%`,
+                                      backgroundColor:
+                                        'color-mix(in srgb, var(--color-error) 80%, transparent)',
+                                  }}
                                 >
                                   {wrongPct >= 12 ? `${wrongPct}%` : ''}
                                 </div>
                               </div>
                             </div>
-                            <div className="mt-1 flex items-center justify-between text-[11px] text-text-subtle">
+                            <div className='mt-1 flex items-center justify-between text-[11px] text-text-subtle'>
                               <span>Correct {correctPct}%</span>
                               <span>Wrong {wrongPct}%</span>
                             </div>
@@ -1143,60 +1437,61 @@ export default function PapersAnalyticsPage() {
         {showClearConfirm && (
           <>
             <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className='fixed inset-0 bg-black/60 backdrop-blur-sm z-50'
               onClick={() => setShowClearConfirm(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+              className='fixed inset-0 z-50 flex items-center justify-center p-4'
             >
               <div
-                className="bg-surface rounded-organic-lg border border-border shadow-2xl max-w-md w-full p-6"
+                className='bg-surface rounded-organic-lg border border-border shadow-2xl max-w-md w-full p-6'
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                <div className='flex items-start gap-4 mb-6'>
+                  <div className='flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center'>
+                    <AlertTriangle className='w-6 h-6 text-red-400' />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-text mb-2">
+                  <div className='flex-1'>
+                    <h3 className='text-lg font-semibold text-text mb-2'>
                       Clear All Session History?
                     </h3>
-                    <p className="text-sm text-text-muted">
-                      This will permanently delete all {sessions.length} session{sessions.length !== 1 ? 's' : ''} from your history. 
-                      This action cannot be undone.
+                    <p className='text-sm text-text-muted'>
+                      This will permanently delete all {sessions.length} session
+                      {sessions.length !== 1 ? 's' : ''} from your history. This
+                      action cannot be undone.
                     </p>
                   </div>
                   <button
                     onClick={() => setShowClearConfirm(false)}
-                    className="flex-shrink-0 p-1 rounded-lg hover:bg-surface-elevated text-text-subtle hover:text-text transition-colors"
+                    className='flex-shrink-0 p-1 rounded-lg hover:bg-surface-elevated text-text-subtle hover:text-text transition-colors'
                   >
-                    <X className="w-5 h-5" />
+                    <X className='w-5 h-5' />
                   </button>
                 </div>
-                <div className="flex items-center justify-end gap-3">
+                <div className='flex items-center justify-end gap-3'>
                   <button
                     onClick={() => setShowClearConfirm(false)}
                     disabled={isClearing}
-                    className="px-4 py-2 rounded-lg bg-surface-elevated hover:bg-surface-mid text-text-muted text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className='px-4 py-2 rounded-lg bg-surface-elevated hover:bg-surface-mid text-text-muted text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleClearAllSessions}
                     disabled={isClearing}
-                    className="px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className='px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
                   >
                     {isClearing ? (
                       <>
-                        <LoadingSpinner size="sm" />
+                        <LoadingSpinner size='sm' />
                         Clearing...
                       </>
                     ) : (
                       <>
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className='w-4 h-4' />
                         Clear All
                       </>
                     )}

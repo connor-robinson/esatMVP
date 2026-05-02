@@ -142,8 +142,8 @@ export function SessionSummary({
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: "#506141" }}>
-            <Target className="w-4 h-4" style={{ color: "#ffffff" }} />
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-primary">
+            <Target className="w-4 h-4 text-background" />
           </div>
           <h3 className="text-lg font-semibold text-neutral-100">Session Summary</h3>
         </div>
@@ -213,7 +213,7 @@ export function SessionSummary({
                   <span className="font-medium text-neutral-100">
                     {sessionData.timeLimit} minutes
                   {isCustomTime && (
-                      <span className="ml-2 px-2 py-1 text-white text-xs rounded-full" style={{ backgroundColor: "#506141" }}>
+                      <span className="ml-2 px-2 py-1 text-background text-xs rounded-full bg-primary">
                         Custom
                       </span>
                     )}
@@ -298,20 +298,20 @@ export function SessionSummary({
                       <button
                         onClick={() => moveSectionLeft(index)}
                         disabled={index === 0}
-                        className="p-1 hover:bg-slate-500 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors outline-none focus:outline-none"
+                        className="p-1 hover:bg-surface-neutral rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors outline-none focus:outline-none"
                         title="Move up"
                       >
-                        <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                         </svg>
                       </button>
                       <button
                         onClick={() => moveSectionRight(index)}
                         disabled={index === (sectionOrder.length > 0 ? sectionOrder : sessionData.sections).length - 1}
-                        className="p-1 hover:bg-slate-500 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors outline-none focus:outline-none"
+                        className="p-1 hover:bg-surface-neutral rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors outline-none focus:outline-none"
                         title="Move down"
                       >
-                        <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
@@ -332,7 +332,7 @@ export function SessionSummary({
             onClick={handlePrepareAndStart}
             disabled={!canStart || isPreparing}
             className="w-full py-4 text-lg border-0 ring-0 outline-none focus:outline-none focus:ring-0"
-            style={isPreparing ? { backgroundColor: "#506141", borderColor: "#506141", color: "#ffffff" } : undefined}
+            style={undefined}
           >
             {(!canStart) ? "Complete Setup Above" : (
               isPreparing ? (

@@ -178,6 +178,7 @@ export function Navbar() {
 
   const isSettingsActive =
     pathname === '/settings' || pathname.startsWith('/profile');
+  const isPricingActive = pathname === '/pricing';
 
   const navIconSlotClass =
     'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-fast ease-signature hover:bg-surface-subtle interaction-scale';
@@ -303,7 +304,12 @@ export function Navbar() {
                 <>
                   <Link
                     href='/pricing'
-                    className='shrink-0 px-2 text-sm font-medium uppercase tracking-[0.08em] text-text-muted transition-colors hover:text-primary'
+                    className={cn(
+                      'shrink-0 px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature',
+                      isPricingActive
+                        ? 'bg-secondary/10 text-secondary'
+                        : 'text-text hover:bg-surface-subtle hover:text-text',
+                    )}
                   >
                     Pricing
                   </Link>

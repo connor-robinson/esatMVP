@@ -82,11 +82,11 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
     <div ref={ref} className={`relative ${className || ""}`}>
       <button
         type="button"
-        className="px-2 py-1.5 text-xs rounded-md bg-[#151921] text-neutral-300 hover:bg-[#171b23] flex items-center justify-between gap-1 focus:outline-none w-32 sm:w-36 flex-shrink-0"
+        className="px-2 py-1.5 text-xs rounded-md bg-surface-mid text-text-muted hover:bg-surface-neutral flex items-center justify-between gap-1 focus:outline-none w-32 sm:w-36 flex-shrink-0"
         onClick={() => setOpen(v => !v)}
         aria-expanded={open}
       >
-        <span className={`truncate ${value.length === 0 ? 'text-neutral-500' : 'text-neutral-200'}`}>
+        <span className={`truncate ${value.length === 0 ? 'text-text-subtle' : 'text-text'}`}>
           {value.length === 0 && '0 mistakes selected'}
           {value.length === 1 && value[0]}
           {value.length >= 2 && `${value.length}+ mistakes selected`}
@@ -97,19 +97,19 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
       </button>
 
       {open && panelPos && createPortal(
-        <div ref={panelRef} className="fixed rounded-md bg-[#0f1114] shadow-lg p-2" style={{ top: panelPos.top, left: panelPos.left, width: 180, zIndex: 2147483647 }}>
+        <div ref={panelRef} className="fixed rounded-md bg-surface-elevated border border-border-subtle shadow-lg p-2" style={{ top: panelPos.top, left: panelPos.left, width: 180, zIndex: 2147483647 }}>
           <div className="flex items-center gap-1 mb-2">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); createIfNeeded(); }} }
               placeholder={placeholder}
-              className="flex-1 px-2 py-1.5 text-xs rounded-md bg-[#151921] text-neutral-200 placeholder:text-neutral-500 outline-none"
+              className="flex-1 px-2 py-1.5 text-xs rounded-md bg-surface-mid text-text placeholder:text-text-subtle outline-none"
             />
             <button
               type="button"
               onClick={(e) => { e.preventDefault(); createIfNeeded(); }}
-              className="px-2 py-1 rounded-md text-xs bg-[#151921] text-neutral-300 hover:bg-[#171b23] focus:outline-none"
+              className="px-2 py-1 rounded-md text-xs bg-surface-mid text-text-muted hover:bg-surface-neutral focus:outline-none"
               title="Add tag"
             >
               +
@@ -117,7 +117,7 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
           </div>
           <div className="max-h-48 overflow-y-auto space-y-1">
             {filtered.length === 0 && (
-              <button className="w-full text-left px-2 py-1 text-xs rounded-md bg-[#151921] text-neutral-300" onClick={createIfNeeded}>
+              <button className="w-full text-left px-2 py-1 text-xs rounded-md bg-surface-mid text-text-muted" onClick={createIfNeeded}>
                 Create “{query.trim()}”
               </button>
             )}
@@ -126,11 +126,11 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
               return (
                 <button
                   key={opt}
-                  className={`w-full text-left px-2 py-1.5 text-xs rounded-md transition flex items-center justify-between ${active ? 'bg-[rgba(80,97,65,0.18)] text-neutral-100' : 'bg-transparent text-neutral-300 hover:bg-[#141820]'}`}
+                  className={`w-full text-left px-2 py-1.5 text-xs rounded-md transition flex items-center justify-between ${active ? 'bg-primary/20 text-text' : 'bg-transparent text-text-muted hover:bg-surface-mid'}`}
                   onClick={(e) => { e.preventDefault(); toggle(opt); }}
                 >
                   <span>{opt}</span>
-                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-[4px]" style={{ backgroundColor: active ? '#506141' : 'rgba(255,255,255,0.08)' }} />
+                  <span className={`inline-flex items-center justify-center w-4 h-4 rounded-[4px] ${active ? 'bg-primary' : 'bg-text/10'}`} />
                 </button>
               );
             })}
@@ -138,7 +138,7 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
           {value.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {value.map(v => (
-                <span key={v} className="text-[11px] px-2 py-0.5 rounded-full bg-[#151921] text-neutral-200">{v}</span>
+                <span key={v} className="text-[11px] px-2 py-0.5 rounded-full bg-surface-mid text-text">{v}</span>
               ))}
             </div>
           )}

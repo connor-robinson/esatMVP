@@ -50,6 +50,7 @@ import {
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
+import { SUBJECT_PILL_CLASS } from '@/lib/questionBank/subjectColors';
 import { cn, formatTime } from '@/lib/utils';
 
 const FREE_QUESTION_LIMIT = 10;
@@ -1430,52 +1431,7 @@ export default function QuestionBankPage() {
                   ] as SubjectFilter[]
                 ).map((subject) => {
                   const isSelected = progressSubjects.includes(subject);
-                  const subjectColors: Record<
-                    SubjectFilter,
-                    { bg: string; text: string; border: string }
-                  > = {
-                    'Math 1': {
-                      bg: 'bg-[#406166]/20',
-                      text: 'text-[#5da8f0]',
-                      border: 'border-[#5da8f0]/30',
-                    },
-                    'Math 2': {
-                      bg: 'bg-[#406166]/20',
-                      text: 'text-[#5da8f0]',
-                      border: 'border-[#5da8f0]/30',
-                    },
-                    Physics: {
-                      bg: 'bg-[#6B4C93]/30',
-                      text: 'text-[#B794F6]',
-                      border: 'border-[#B794F6]/30',
-                    },
-                    'Paper 1': {
-                      bg: 'bg-[#406166]/20',
-                      text: 'text-[#5da8f0]',
-                      border: 'border-[#5da8f0]/30',
-                    },
-                    'Paper 2': {
-                      bg: 'bg-[#6B4C93]/30',
-                      text: 'text-[#B794F6]',
-                      border: 'border-[#B794F6]/30',
-                    },
-                    Chemistry: {
-                      bg: 'bg-[#5A7C65]/20',
-                      text: 'text-[#85BC82]',
-                      border: 'border-[#85BC82]/30',
-                    },
-                    Biology: {
-                      bg: 'bg-[#5A7C65]/20',
-                      text: 'text-[#85BC82]',
-                      border: 'border-[#85BC82]/30',
-                    },
-                    All: {
-                      bg: 'bg-white/10',
-                      text: 'text-white/70',
-                      border: 'border-white/20',
-                    },
-                  };
-                  const colors = subjectColors[subject] || subjectColors['All'];
+                  const selectedPillClass = SUBJECT_PILL_CLASS[subject];
 
                   return (
                     <button
@@ -1492,7 +1448,7 @@ export default function QuestionBankPage() {
                       className={cn(
                         'w-full flex items-center gap-3 px-3 py-2 rounded-organic-md transition-all duration-fast ease-signature text-left border',
                         isSelected
-                          ? `${colors.bg} ${colors.text} ${colors.border} border-2`
+                          ? `${selectedPillClass} border-2`
                           : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10',
                       )}
                     >
@@ -1500,7 +1456,7 @@ export default function QuestionBankPage() {
                         className={cn(
                           'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0',
                           isSelected
-                            ? `${colors.border} ${colors.bg}`
+                            ? `${selectedPillClass}`
                             : 'border-white/30 bg-white/5',
                         )}
                       >

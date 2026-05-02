@@ -4,7 +4,7 @@
 
 'use client';
 
-import { Check, Star, Plus, ListOrdered, Clock } from 'lucide-react';
+import { Check, Star, Plus, ListOrdered, Clock, LayoutGrid } from 'lucide-react';
 import { Topic, TopicVariant } from '@/types/core';
 import { getTopic } from '@/config/topics';
 import { cn } from '@/lib/utils';
@@ -29,15 +29,30 @@ export function DrillVariantsGrid({
 }: DrillVariantsGridProps) {
   const topic = topicId ? getTopic(topicId) : null;
 
+  if (!topicId) {
+    return (
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid'>
+        <div className='flex min-h-0 flex-1 items-center justify-center p-6'>
+          <div className='rounded-organic-lg border border-border-subtle bg-surface-elevated px-6 py-6 text-center shadow-sm'>
+            <div className='mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-organic-md border border-border-subtle bg-surface-mid text-text-muted'>
+              <LayoutGrid className='h-4 w-4' />
+            </div>
+            <p className='max-w-[300px] text-sm leading-relaxed text-text-muted'>
+              Select a topic from the left panel to view drill variants.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!topic || !topic.variants || topic.variants.length === 0) {
     return (
       <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid'>
         <div className='flex-1 overflow-y-auto p-8'>
           <div className='py-12 text-center text-text-subtle'>
             <p className='text-sm'>
-              {topicId
-                ? 'No variants available for this topic'
-                : 'Select a topic to view drills'}
+              No variants available for this topic
             </p>
           </div>
         </div>

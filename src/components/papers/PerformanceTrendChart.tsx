@@ -17,7 +17,7 @@ interface PerformanceTrendChartProps {
 export function PerformanceTrendChart({ dataPoints, className }: PerformanceTrendChartProps) {
   const { path, strokeColor, trend } = useMemo(() => {
     if (dataPoints.length === 0) {
-      return { path: '', strokeColor: 'rgba(255,255,255,0.5)', trend: 'flat' as const };
+      return { path: '', strokeColor: 'var(--color-text-subtle)', trend: 'flat' as const };
     }
 
     const w = 320; // svg width (same as mark page)
@@ -47,7 +47,7 @@ export function PerformanceTrendChart({ dataPoints, className }: PerformanceTren
       ? PAPER_COLORS.biology 
       : trend === 'declining' 
         ? PAPER_COLORS.chemistry 
-        : 'rgba(255,255,255,0.5)';
+        : 'var(--color-text-subtle)';
 
     // Helpers to create a smooth path
     const stepX = (w - pad * 2) / Math.max(1, total - 1);
@@ -86,7 +86,7 @@ export function PerformanceTrendChart({ dataPoints, className }: PerformanceTren
   if (dataPoints.length === 0) {
     return (
       <div className={`space-y-2 ${className}`}>
-        <div className="rounded-md bg-neutral-900 p-2 flex justify-center items-center h-16">
+        <div className="rounded-md bg-surface-elevated p-2 flex justify-center items-center h-16">
           <div className="text-xs text-neutral-500">No data to display</div>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function PerformanceTrendChart({ dataPoints, className }: PerformanceTren
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="rounded-md bg-neutral-900 p-2 flex justify-center">
+      <div className="rounded-md bg-surface-elevated p-2 flex justify-center">
         <svg width={320} height={64} className="h-16 w-[320px] block">
           <path d={path} stroke={strokeColor} strokeWidth={2} fill="none" />
         </svg>

@@ -35,7 +35,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-4">
             <span className="text-white/50 text-xs">Accuracy:</span>
-            <span className="text-[#7ba3a0] font-bold text-xs">
+            <span className="text-accent font-bold text-xs">
               {payload[0].value.toFixed(1)}%
             </span>
           </div>
@@ -53,6 +53,12 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps) {
+  const CHART_GRID = "var(--color-border-subtle)";
+  const CHART_AXIS = "var(--color-border)";
+  const CHART_TICK = "var(--color-text-muted)";
+  const CHART_LABEL = "var(--color-text-subtle)";
+  const ACCURACY_LINE = "var(--color-accent)";
+  const SPEED_LINE = "var(--color-warning)";
   // Calculate trends
   const trends = useMemo(() => {
     if (sessions.length < 3) {
@@ -122,41 +128,41 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
           <LineChart data={sessions} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.06)"
+              stroke={CHART_GRID}
               vertical={false}
             />
             <XAxis
               dataKey="sessionNumber"
-              stroke="rgba(255,255,255,0.1)"
+              stroke={CHART_AXIS}
               style={{ fontSize: "10px" }}
-              tick={{ fill: "rgba(255,255,255,0.4)" }}
+              tick={{ fill: CHART_TICK }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+              axisLine={{ stroke: CHART_GRID }}
               label={{
                 value: "Session #",
                 position: "insideBottom",
                 offset: -5,
-                style: { fontSize: "10px", fill: "rgba(255,255,255,0.3)" },
+                style: { fontSize: "10px", fill: CHART_LABEL },
               }}
             />
             <YAxis
               yAxisId="left"
-              stroke="rgba(255,255,255,0.1)"
+              stroke={CHART_AXIS}
               style={{ fontSize: "10px" }}
-              tick={{ fill: "rgba(255,255,255,0.4)" }}
+              tick={{ fill: CHART_TICK }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+              axisLine={{ stroke: CHART_GRID }}
               domain={[0, 100]}
               tickFormatter={(value) => `${value}%`}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
-              stroke="rgba(255,255,255,0.1)"
+              stroke={CHART_AXIS}
               style={{ fontSize: "10px" }}
-              tick={{ fill: "rgba(255,255,255,0.4)" }}
+              tick={{ fill: CHART_TICK }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+              axisLine={{ stroke: CHART_GRID }}
               tickFormatter={(value) => `${value.toFixed(1)} q/min`}
             />
             <Tooltip content={<CustomTooltip />} />
@@ -164,19 +170,19 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
               yAxisId="left"
               type="monotone"
               dataKey="accuracy"
-              stroke="#7ba3a0"
+              stroke={ACCURACY_LINE}
               strokeWidth={2.5}
-              dot={{ fill: "#7ba3a0", r: 3 }}
-              activeDot={{ r: 5, fill: "#7ba3a0" }}
+              dot={{ fill: ACCURACY_LINE, r: 3 }}
+              activeDot={{ r: 5, fill: ACCURACY_LINE }}
             />
             <Line
               yAxisId="right"
               type="monotone"
               dataKey="speed"
-              stroke="#f59e0b"
+              stroke={SPEED_LINE}
               strokeWidth={2.5}
-              dot={{ fill: "#f59e0b", r: 3 }}
-              activeDot={{ r: 5, fill: "#f59e0b" }}
+              dot={{ fill: SPEED_LINE, r: 3 }}
+              activeDot={{ r: 5, fill: SPEED_LINE }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -184,7 +190,7 @@ export function TopicHistoryChart({ topicId, sessions }: TopicHistoryChartProps)
         {/* Legend */}
         <div className="flex items-center justify-center gap-4 mt-3">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-0.5 bg-[#7ba3a0]" />
+            <div className="w-3 h-0.5 bg-accent" />
             <span className="text-xs text-white/50">Accuracy</span>
           </div>
           <div className="flex items-center gap-1.5">

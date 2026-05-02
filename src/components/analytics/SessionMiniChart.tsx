@@ -20,8 +20,12 @@ interface SessionMiniChartProps {
 }
 
 /** Figma Session Progress — accuracy line (accent teal), speed line (warning). */
-const ACCURACY_LINE = "#91b4a4";
-const SPEED_LINE = "#eaaf40";
+const ACCURACY_LINE = "var(--color-accent)";
+const SPEED_LINE = "var(--color-warning)";
+const CHART_GRID = "var(--color-border-subtle)";
+const CHART_AXIS = "var(--color-border)";
+const CHART_TICK = "var(--color-text-muted)";
+const CHART_LABEL = "var(--color-text-subtle)";
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -53,41 +57,41 @@ export function SessionMiniChart({ data }: SessionMiniChartProps) {
         <LineChart data={data} margin={{ top: 12, right: 16, left: 8, bottom: 12 }}>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(255,255,255,0.04)"
+            stroke={CHART_GRID}
             vertical={false}
           />
           <XAxis
             dataKey="questionNumber"
-            stroke="rgba(255,255,255,0.08)"
+            stroke={CHART_AXIS}
             style={{ fontSize: "11px" }}
-            tick={{ fill: "rgba(255,255,255,0.5)" }}
+            tick={{ fill: CHART_TICK }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
+            axisLine={{ stroke: CHART_GRID }}
             label={{
               value: "Question #",
               position: "insideBottom",
               offset: -8,
-              style: { fontSize: "11px", fill: "rgba(255,255,255,0.4)" },
+              style: { fontSize: "11px", fill: CHART_LABEL },
             }}
           />
           <YAxis
             yAxisId="left"
-            stroke="rgba(255,255,255,0.08)"
+            stroke={CHART_AXIS}
             style={{ fontSize: "11px" }}
-            tick={{ fill: "rgba(255,255,255,0.5)" }}
+            tick={{ fill: CHART_TICK }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
+            axisLine={{ stroke: CHART_GRID }}
             domain={[0, 100]}
             tickFormatter={(value) => `${value}%`}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
-            stroke="rgba(255,255,255,0.08)"
+            stroke={CHART_AXIS}
             style={{ fontSize: "11px" }}
-            tick={{ fill: "rgba(255,255,255,0.5)" }}
+            tick={{ fill: CHART_TICK }}
             tickLine={false}
-            axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
+            axisLine={{ stroke: CHART_GRID }}
             tickFormatter={(value) => `${value.toFixed(1)} q/min`}
           />
           <Tooltip content={<CustomTooltip />} />

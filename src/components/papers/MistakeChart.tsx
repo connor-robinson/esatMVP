@@ -64,7 +64,7 @@ export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
               cy={centerY}
               r={radius}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.1)"
+              stroke="var(--color-border)"
               strokeWidth={strokeWidth}
             />
             

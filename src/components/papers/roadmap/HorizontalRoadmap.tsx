@@ -124,10 +124,13 @@ export function HorizontalRoadmap({
                 const pathData = `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
                 const firstNode = nodes[0];
                 const pathColor = firstNode.isCompleted
-                  ? "rgba(52, 211, 153, 0.4)"
+                  ? "var(--color-success)"
+                  : "var(--color-text)";
+                const pathOpacity = firstNode.isCompleted
+                  ? 0.4
                   : firstNode.isUnlocked
-                  ? "rgba(255, 255, 255, 0.35)"
-                  : "rgba(255, 255, 255, 0.2)";
+                  ? 0.35
+                  : 0.2;
                 
                 return (
                   <path
@@ -135,6 +138,7 @@ export function HorizontalRoadmap({
                     d={pathData}
                     fill="none"
                     stroke={pathColor}
+                    strokeOpacity={pathOpacity}
                     strokeWidth="2"
                     strokeDasharray="6 10"
                     strokeLinecap="round"
@@ -171,10 +175,13 @@ export function HorizontalRoadmap({
 
                 // Determine path color based on completion status
                 const pathColor = node.isCompleted
-                  ? "rgba(52, 211, 153, 0.4)"
+                  ? "var(--color-success)"
+                  : "var(--color-text)";
+                const pathOpacity = node.isCompleted
+                  ? 0.4
                   : node.isUnlocked
-                  ? "rgba(255, 255, 255, 0.35)"
-                  : "rgba(255, 255, 255, 0.2)";
+                  ? 0.35
+                  : 0.2;
 
                 return (
                   <path
@@ -182,6 +189,7 @@ export function HorizontalRoadmap({
                     d={pathData}
                     fill="none"
                     stroke={pathColor}
+                    strokeOpacity={pathOpacity}
                     strokeWidth="2"
                     strokeDasharray="6 10"
                     strokeLinecap="round"
@@ -208,10 +216,13 @@ export function HorizontalRoadmap({
                 const pathData = `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
                 const lastNode = nodes[nodes.length - 1];
                 const pathColor = lastNode.isCompleted
-                  ? "rgba(52, 211, 153, 0.4)"
+                  ? "var(--color-success)"
+                  : "var(--color-text)";
+                const pathOpacity = lastNode.isCompleted
+                  ? 0.4
                   : lastNode.isUnlocked
-                  ? "rgba(255, 255, 255, 0.35)"
-                  : "rgba(255, 255, 255, 0.2)";
+                  ? 0.35
+                  : 0.2;
                 
                 return (
                   <path
@@ -219,6 +230,7 @@ export function HorizontalRoadmap({
                     d={pathData}
                     fill="none"
                     stroke={pathColor}
+                    strokeOpacity={pathOpacity}
                     strokeWidth="2"
                     strokeDasharray="6 10"
                     strokeLinecap="round"

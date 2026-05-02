@@ -5,7 +5,7 @@ import { MathContent } from "@/components/shared/MathContent";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { getSubjectPillClass } from "@/lib/questionBank/subjectColors";
 
 interface Question {
   id: string;
@@ -38,47 +38,6 @@ interface SimplifiedQuestionDetailViewProps {
   onApprove?: (questionId: string) => Promise<void>;
   onReject?: (questionId: string) => Promise<void>;
 }
-
-// Helper function to get subject color based on subjects name
-const getSubjectColor = (subjects: string | null | undefined): string => {
-  if (!subjects) return 'bg-white/10 text-white/70';
-  
-  const subjectsLower = subjects.toLowerCase().trim();
-  
-  // Math matching
-  if (subjectsLower === 'math 1' || subjectsLower === 'math1') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  if (subjectsLower === 'math 2' || subjectsLower === 'math2') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  
-  // Physics matching
-  if (subjectsLower === 'physics') {
-    return 'bg-[#2f2835]/30 text-[#a78bfa]';
-  }
-  
-  // Chemistry matching
-  if (subjectsLower === 'chemistry') {
-    return 'bg-[#854952]/20 text-[#ef7d7d]';
-  }
-  
-  // Biology matching
-  if (subjectsLower === 'biology') {
-    return 'bg-[#506141]/20 text-[#85BC82]';
-  }
-  
-  // TMUA Paper matching
-  if (subjectsLower === 'paper 1' || subjectsLower === 'paper1') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  if (subjectsLower === 'paper 2' || subjectsLower === 'paper2') {
-    return 'bg-[#406166]/20 text-[#5da8f0]';
-  }
-  
-  // Default fallback
-  return 'bg-white/10 text-white/70';
-};
 
 export function SimplifiedQuestionDetailView({
   question,
@@ -152,7 +111,7 @@ export function SimplifiedQuestionDetailView({
           <Badge variant="default">{question.difficulty}</Badge>
           <Badge variant="default">{question.status}</Badge>
           {question.subjects && (
-            <Badge className={getSubjectColor(question.subjects)}>
+            <Badge className={getSubjectPillClass(question.subjects)}>
               {question.subjects}
             </Badge>
           )}

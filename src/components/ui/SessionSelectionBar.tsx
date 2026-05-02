@@ -180,7 +180,7 @@ export function SessionSelectionBar({
             <div className="flex shrink-0 -space-x-2">
               <div
                 className={cn(
-                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-[#0d0c0f]",
+                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-background",
                   "bg-accent shadow-sm shadow-accent/30",
                 )}
               >
@@ -189,7 +189,7 @@ export function SessionSelectionBar({
               <div
                 className={cn(
                   "relative z-20 flex h-7 w-7 items-center justify-center rounded-lg",
-                  "border border-white/10 bg-[#111318] text-text shadow-sm",
+                  "border border-white/10 bg-surface-mid text-text shadow-sm",
                 )}
               >
                 <Clock className="h-3 w-3 text-text-muted" aria-hidden />
@@ -256,7 +256,7 @@ export function SessionSelectionBar({
             <div className="flex -space-x-3 shrink-0">
               <div
                 className={cn(
-                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-organic-lg border border-white/10 text-[#0d0c0f]",
+                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-organic-lg border border-white/10 text-background",
                   "bg-accent shadow-badge-mint",
                 )}
               >
@@ -265,7 +265,7 @@ export function SessionSelectionBar({
               <div
                 className={cn(
                   "relative z-20 flex h-9 w-9 items-center justify-center rounded-organic-lg",
-                  "border border-white/10 bg-[#111318] text-text shadow-[0_4px_4px_rgba(0,0,0,0.25)]",
+                  "border border-white/10 bg-surface-mid text-text shadow-sm",
                 )}
               >
                 <Clock className="h-4 w-4 text-text-muted" aria-hidden />

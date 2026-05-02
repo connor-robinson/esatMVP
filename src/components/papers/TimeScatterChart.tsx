@@ -20,6 +20,16 @@ export function TimeScatterChart({
   guessedFlags,
   className
 }: TimeScatterChartProps) {
+  const CHART_GRID = "var(--color-border-subtle)";
+  const CHART_AXIS = "var(--color-border)";
+  const CHART_TICK = "var(--color-text-muted)";
+  const CHART_LABEL = "var(--color-text-subtle)";
+  const COLOR_UNANSWERED = "var(--color-text-subtle)";
+  const COLOR_CORRECT = "var(--color-success)";
+  const COLOR_GUESSED = "var(--color-warning)";
+  const TREND_DASH = "var(--color-text-muted)";
+  const TREND_SMOOTH = "var(--color-text)";
+
   const chartData = useMemo(() => {
     return questionNumbers.map((questionNumber, index) => {
       const timeSec = perQuestionSec[index] || 0;
@@ -57,10 +67,10 @@ export function TimeScatterChart({
   };
 
   const getPointColor = (data: typeof chartData[0]) => {
-    if (!data.answered) return "#737373"; // unanswered neutral
-    if (data.correct === true) return "#6c9e69"; // correct
+    if (!data.answered) return COLOR_UNANSWERED; // unanswered neutral
+    if (data.correct === true) return COLOR_CORRECT; // correct
     if (data.correct === false) return PAPER_COLORS.chemistry; // wrong
-    return "#a3a3a3"; // unmarked
+    return COLOR_UNANSWERED; // unmarked
   };
 
   const [hover, setHover] = useState<null | { x: number; y: number; data: typeof chartData[0] }>(null);
@@ -154,7 +164,7 @@ export function TimeScatterChart({
                 y1={y}
                 x2={width - xPadding}
                 y2={y}
-                stroke="rgba(255, 255, 255, 0.05)"
+                stroke={CHART_GRID}
                 strokeWidth={1}
               />
             );
@@ -166,7 +176,7 @@ export function TimeScatterChart({
             y1={height - padding}
             x2={width - xPadding}
             y2={height - padding}
-            stroke="rgba(255, 255, 255, 0.2)"
+            stroke={CHART_AXIS}
             strokeWidth={1}
           />
           <line
@@ -174,7 +184,7 @@ export function TimeScatterChart({
             y1={padding}
             x2={xPadding}
             y2={height - padding}
-            stroke="rgba(255, 255, 255, 0.2)"
+            stroke={CHART_AXIS}
             strokeWidth={1}
           />
 
@@ -191,20 +201,20 @@ export function TimeScatterChart({
               <g>
                 {ticks.map((q) => (
                   <g key={`xt-${q}`}>
-                    <line x1={scaleX(q)} y1={height - padding} x2={scaleX(q)} y2={height - padding + 4} stroke="rgba(255,255,255,0.2)" />
-                    <text x={scaleX(q)} y={height - padding + 16} textAnchor="middle" fontSize={10} fill="rgba(255,255,255,0.2)">{q}</text>
+                    <line x1={scaleX(q)} y1={height - padding} x2={scaleX(q)} y2={height - padding + 4} stroke={CHART_AXIS} />
+                    <text x={scaleX(q)} y={height - padding + 16} textAnchor="middle" fontSize={10} fill={CHART_TICK}>{q}</text>
                   </g>
                 ))}
               </g>
             );
           })()}
           {([0, 0.25, 0.5, 0.75, 1].map((t) => (
-            <text key={`yt-${t}`} x={xPadding - 6} y={scaleY(t * maxTime) + 3} textAnchor="end" fontSize={10} fill="rgba(255,255,255,0.2)">{Math.round(t * maxTime)}</text>
+            <text key={`yt-${t}`} x={xPadding - 6} y={scaleY(t * maxTime) + 3} textAnchor="end" fontSize={10} fill={CHART_TICK}>{Math.round(t * maxTime)}</text>
           )))}
 
           {/* Axis titles */}
-          <text x={width / 2} y={height - 4} textAnchor="middle" fontSize={11} fill="rgba(255,255,255,0.2)">Question Number</text>
-          <text x={-height / 2} y={12} transform={`rotate(-90)`} textAnchor="middle" fontSize={11} fill="rgba(255,255,255,0.2)">Time (s)</text>
+          <text x={width / 2} y={height - 4} textAnchor="middle" fontSize={11} fill={CHART_LABEL}>Question Number</text>
+          <text x={-height / 2} y={12} transform={`rotate(-90)`} textAnchor="middle" fontSize={11} fill={CHART_LABEL}>Time (s)</text>
 
           {/* Points */}
           {chartData.map((data) => {
@@ -277,7 +287,7 @@ export function TimeScatterChart({
               y1={linearLine.y1}
               x2={linearLine.x2}
               y2={linearLine.y2}
-              stroke="rgba(255,255,255,0.35)"
+              stroke={TREND_DASH}
               strokeWidth={2}
               strokeDasharray="10 8"
               opacity={0.8}
@@ -287,7 +297,7 @@ export function TimeScatterChart({
             <path
               d={smoothPath}
               fill="none"
-              stroke="#ffffff"
+              stroke={TREND_SMOOTH}
               strokeWidth={2}
               pathLength={1}
               style={{ strokeDasharray: 1, strokeDashoffset: animate ? 0 : 1, transition: 'stroke-dashoffset 900ms ease' }}
@@ -299,7 +309,7 @@ export function TimeScatterChart({
         {/* Tooltip */}
         {hover && (
           <div
-            className="absolute px-2 py-1 rounded-md text-xs text-neutral-200 bg-black/80 border border-white/10 pointer-events-none"
+            className="absolute px-2 py-1 rounded-md text-xs text-text bg-surface-elevated/95 border border-border-subtle pointer-events-none"
             style={{ left: Math.min(hover.x, width - 160), top: Math.max(hover.y - 32, 0) }}
           >
             <div>Q{hover.data.questionNumber}</div>
@@ -311,7 +321,7 @@ export function TimeScatterChart({
         {/* Legend */}
         <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-neutral-400">
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full" style={{ background: "#6c9e69" }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: COLOR_CORRECT }} />
             <span>Correct</span>
           </div>
           <div className="flex items-center gap-1">
@@ -319,11 +329,11 @@ export function TimeScatterChart({
             <span>Wrong</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full border-2 border-neutral-400" />
+            <div className="w-3 h-3 rounded-full border-2 border-warning" />
             <span>Guessed</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-neutral-600" />
+            <div className="w-2 h-2" style={{ background: COLOR_UNANSWERED }} />
             <span>Unanswered</span>
           </div>
         </div>

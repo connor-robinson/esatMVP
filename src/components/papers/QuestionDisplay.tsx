@@ -159,14 +159,14 @@ export function QuestionDisplay({
       )}
       
       {imageError && (
-        <div className="flex items-center justify-center h-64 bg-red-500/10 border border-red-500/30 rounded-lg">
+        <div className="flex items-center justify-center h-64 bg-error/10 border border-error/30 rounded-lg">
           <div className="text-center space-y-2">
-            <div className="w-8 h-8 text-red-400 mx-auto">
+            <div className="w-8 h-8 text-error mx-auto">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 18.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <p className="text-sm text-red-400">Failed to load question image</p>
+            <p className="text-sm text-error">Failed to load question image</p>
             <Button
               variant="secondary"
               size="sm"
@@ -199,7 +199,7 @@ export function QuestionDisplay({
                   ref={scrollContainerRef}
                   className="absolute inset-0 overflow-y-auto overflow-x-hidden scrollbar-hide transition-colors duration-300 ease-in-out"
                   style={{
-                    backgroundColor: isDarkMode ? '#000000' : '#ffffff' // Match the exact image background colors
+                    backgroundColor: isDarkMode ? 'var(--color-background)' : 'var(--color-surface)' // Match the exact image background colors
                   }}
                 >
                   <div className="flex flex-col items-center justify-center min-h-full pt-12 pb-12 px-8">
@@ -221,7 +221,7 @@ export function QuestionDisplay({
                             position: 'relative',
                             display: 'inline-block',
                             lineHeight: 0,
-                            backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                            backgroundColor: isDarkMode ? 'var(--color-text)' : 'transparent'
                           }}
                         >
                           <img
@@ -361,7 +361,7 @@ export function QuestionDisplay({
                           flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200
                           backdrop-blur-sm ${isDarkMode ? 'bg-black/50' : 'bg-white/80'}
                           ${isFlaggedForReview 
-                            ? `text-[#5B8D94]`
+                            ? `text-accent`
                             : `${isDarkMode ? 'text-neutral-300' : 'text-neutral-700'}`
                           }
                         `}
@@ -395,7 +395,7 @@ export function QuestionDisplay({
                 right: 0,
                 bottom: 0,
                 zIndex: 99999,
-                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                backgroundColor: 'var(--color-background)',
                 backdropFilter: 'blur(20px)'
               }}
             >
@@ -423,7 +423,7 @@ export function QuestionDisplay({
                       position: 'relative',
                       display: 'inline-block',
                       lineHeight: 0,
-                      backgroundColor: isDarkMode ? '#ffffff' : 'transparent'
+                      backgroundColor: isDarkMode ? 'var(--color-text)' : 'transparent'
                     }}
                   >
                     <img

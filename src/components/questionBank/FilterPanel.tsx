@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import type { TestTypeFilter, SubjectFilter, DifficultyFilter, AttemptedFilter, ReviewStatusFilter, QuestionBankFilters } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
+import { SUBJECT_PILL_CLASS } from "@/lib/questionBank/subjectColors";
 
 interface FilterPanelProps {
   filters: QuestionBankFilters;
@@ -29,21 +30,21 @@ const curriculumTopics = [
 
 // Subject colors matching the CSS variables
 const subjectColors: Record<SubjectFilter, string> = {
-  'All': 'bg-white/10 hover:bg-white/15 text-white/90',
-  'Math 1': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
-  'Math 2': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
-  'Physics': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
-  'Chemistry': 'bg-[#ef7d7d]/20 hover:bg-[#ef7d7d]/30 text-[#ef7d7d] border border-[#ef7d7d]/30',
-  'Biology': 'bg-[#85BC82]/20 hover:bg-[#85BC82]/30 text-[#85BC82] border border-[#85BC82]/30',
-  'Paper 1': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
-  'Paper 2': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
+  'All': 'border border-border-subtle bg-surface-mid text-text-muted hover:bg-surface-neutral',
+  'Math 1': `${SUBJECT_PILL_CLASS['Math 1']} hover:bg-maths/30`,
+  'Math 2': `${SUBJECT_PILL_CLASS['Math 2']} hover:bg-maths/30`,
+  'Physics': `${SUBJECT_PILL_CLASS.Physics} hover:bg-physics/30`,
+  'Chemistry': `${SUBJECT_PILL_CLASS.Chemistry} hover:bg-chemistry/30`,
+  'Biology': `${SUBJECT_PILL_CLASS.Biology} hover:bg-biology/30`,
+  'Paper 1': `${SUBJECT_PILL_CLASS['Paper 1']} hover:bg-maths/30`,
+  'Paper 2': `${SUBJECT_PILL_CLASS['Paper 2']} hover:bg-physics/30`,
 };
 
 // Subject type colors (ESAT/TMUA/BOTH)
 const subjectTypeColors: Record<'ESAT' | 'TMUA' | 'BOTH', string> = {
-  'ESAT': 'bg-[#5da8f0]/20 hover:bg-[#5da8f0]/30 text-[#5da8f0] border border-[#5da8f0]/30',
-  'TMUA': 'bg-[#a78bfa]/20 hover:bg-[#a78bfa]/30 text-[#a78bfa] border border-[#a78bfa]/30',
-  'BOTH': 'bg-white/10 hover:bg-white/15 text-white/90',
+  'ESAT': `${SUBJECT_PILL_CLASS['Math 1']} hover:bg-maths/30`,
+  'TMUA': `${SUBJECT_PILL_CLASS['Paper 2']} hover:bg-physics/30`,
+  'BOTH': 'border border-border-subtle bg-surface-mid text-text-muted hover:bg-surface-neutral',
 };
 
 export function FilterPanel({ filters, onFilterChange, onToggleFilters, showToggle = false }: FilterPanelProps) {
@@ -239,7 +240,7 @@ export function FilterPanel({ filters, onFilterChange, onToggleFilters, showTogg
                     ? (status === 'Pending' || status === 'Deleted')
                       ? "bg-error/20 text-error border border-error/30"
                       : status === 'Approved'
-                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                      ? "bg-success/20 text-success border border-success/30"
                       : "bg-primary/20 text-primary border border-primary/30"
                     : "bg-white/5 hover:bg-white/10 text-white/60"
                 )}

@@ -115,6 +115,7 @@ export function QuestionBankHomeScreen() {
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
   const [query, setQuery] = useState("");
   const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(null);
+  const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [tiles, setTiles] = useState<
     Record<SubjectKey, { attempted: number; total: number; loading: boolean }>
   >(() =>
@@ -128,7 +129,7 @@ export function QuestionBankHomeScreen() {
   );
 
   const loadStats = useCallback(async () => {
-    const aggStr = ALL_SUBJECT_KEYS.join(",");
+    setIsLoadingProgress(true);
     const aggRes = fetch(`${progressUrlSubjects(ALL_SUBJECT_KEYS)}`, {
       credentials: "include",
     }).then((r) => (r.ok ? r.json() : { attempted: 0, total: 0 }));
@@ -171,6 +172,8 @@ export function QuestionBankHomeScreen() {
         });
         return next;
       });
+    } finally {
+      setIsLoadingProgress(false);
     }
   }, []);
 
@@ -245,7 +248,7 @@ export function QuestionBankHomeScreen() {
           </div>
 
           <div className="mt-6">
-            {aggregate === null ? (
+            {isLoadingProgress ? (
               <div className="flex h-10 items-center gap-2 text-sm text-text-muted">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Loading progress…

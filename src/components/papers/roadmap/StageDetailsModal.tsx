@@ -234,7 +234,7 @@ export function StageDetailsModal({
       />
 
       {/* Modal Content */}
-      <div className="relative bg-neutral-900 rounded-organic-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative bg-surface-elevated rounded-organic-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3 flex-1">
@@ -323,14 +323,14 @@ export function StageDetailsModal({
                       <div className={cn(
                         "inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs transition",
                         isSelected 
-                          ? 'bg-[rgba(80,97,65,0.25)] text-neutral-100' 
-                          : 'bg-[#141820] text-neutral-300 hover:bg-[#161a21]'
+                          ? 'bg-primary/20 text-text border border-primary/30'
+                          : 'bg-surface-mid text-text-muted hover:bg-surface-neutral'
                       )}>
                         <span 
-                          className="inline-block w-3 h-3 rounded-[4px] transition-colors" 
-                          style={{ 
-                            backgroundColor: isSelected ? '#85BC82' : 'rgba(255,255,255,0.08)' 
-                          }} 
+                          className={cn(
+                            "inline-block w-3 h-3 rounded-[4px] transition-colors",
+                            isSelected ? "bg-primary" : "bg-text/10"
+                          )}
                         />
                         {isSelected ? 'Selected' : 'Select'}
                       </div>
@@ -357,7 +357,7 @@ export function StageDetailsModal({
                             "px-3 py-1.5 text-xs font-medium rounded-md transition-colors flex-shrink-0",
                             isMarking === partKey
                               ? "bg-white/5 text-white/30 cursor-not-allowed"
-                              : "bg-[#0f1114] text-neutral-300 hover:bg-[#121418] ring-1 ring-white/10"
+                              : "bg-surface-mid text-text-muted hover:bg-surface-neutral ring-1 ring-text/10"
                           )}
                         >
                           {isMarking === partKey ? "Marking..." : "Mark Done"}
@@ -407,7 +407,7 @@ export function StageDetailsModal({
                             "px-3 py-1.5 text-xs font-medium rounded-md transition-colors",
                             isMarking === partKey
                               ? "bg-white/5 text-white/30 cursor-not-allowed"
-                              : "bg-[#0f1114] text-neutral-300 hover:bg-[#121418] ring-1 ring-white/10"
+                              : "bg-surface-mid text-text-muted hover:bg-surface-neutral ring-1 ring-text/10"
                           )}
                         >
                           {isMarking === partKey ? "Marking..." : "Mark Done"}

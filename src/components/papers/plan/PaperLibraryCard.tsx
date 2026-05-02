@@ -28,8 +28,8 @@ export function PaperLibraryCard({
       onClick={onToggleSelect}
       className={cn(
         "relative flex flex-col items-stretch rounded-2xl p-4 text-left transition-all",
-        "bg-[#101216] hover:bg-[#141820] border border-white/8 shadow-sm",
-        isSelected && "ring-2 ring-offset-0 ring-[rgba(133,188,130,0.7)]"
+        "bg-surface-mid hover:bg-surface-neutral border border-border-subtle shadow-sm",
+        isSelected && "ring-2 ring-offset-0 ring-primary/70"
       )}
     >
       {/* Exam + year pill */}
@@ -62,7 +62,7 @@ export function PaperLibraryCard({
           className={cn(
             "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors",
             isSelected
-              ? "bg-[rgba(133,188,130,0.18)] text-[#E0F4DF]"
+              ? "bg-primary/20 text-text"
               : "bg-white/5 text-white/70"
           )}
         >

@@ -23,6 +23,15 @@ interface AccuracyChartProps {
   data: PerformanceDataPoint[];
 }
 
+const CHART_GRID = "var(--color-border-subtle)";
+const CHART_AXIS = "var(--color-border)";
+const CHART_TICK = "var(--color-text-muted)";
+const CHART_TICK_STRONG = "var(--color-text)";
+const CHART_CURSOR = "var(--color-border)";
+const TREND_LINE = "var(--color-text-subtle)";
+const ACTIVE_DOT_FILL = "var(--color-text)";
+const ACTIVE_DOT_STROKE = "var(--color-border)";
+
 // Custom cross marker - clean minimal design
 const CustomCross = (props: any) => {
   const { cx, cy, payload } = props;
@@ -40,7 +49,7 @@ const CustomCross = (props: any) => {
         y1={cy - 5}
         x2={cx + 5}
         y2={cy + 5}
-        stroke="rgba(255,255,255,0.4)"
+        stroke={CHART_TICK}
         strokeWidth={2}
         strokeLinecap="round"
       />
@@ -49,7 +58,7 @@ const CustomCross = (props: any) => {
         y1={cy + 5}
         x2={cx + 5}
         y2={cy - 5}
-        stroke="rgba(255,255,255,0.4)"
+        stroke={CHART_TICK}
         strokeWidth={2}
         strokeLinecap="round"
       />
@@ -320,41 +329,41 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.06)"
+              stroke={CHART_GRID}
               vertical={false}
             />
             <XAxis
               dataKey="date"
-              stroke="rgba(255,255,255,0.1)"
+              stroke={CHART_AXIS}
               style={{ fontSize: "11px", fontWeight: 500 }}
-              tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 11 }}
+              tick={{ fill: CHART_TICK_STRONG, fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+              axisLine={{ stroke: CHART_AXIS }}
               interval={xAxisInterval}
               angle={zoomLevel === 'month' || zoomLevel === 'all' ? -45 : 0}
               textAnchor={zoomLevel === 'month' || zoomLevel === 'all' ? "end" : "middle"}
               height={zoomLevel === 'month' || zoomLevel === 'all' ? 60 : 30}
             />
             <YAxis
-              stroke="rgba(255,255,255,0.1)"
+              stroke={CHART_AXIS}
               style={{ fontSize: "10px", fontWeight: 500 }}
-              tick={{ fill: "rgba(255,255,255,0.4)" }}
+              tick={{ fill: CHART_TICK }}
               tickLine={false}
-              axisLine={{ stroke: "rgba(255,255,255,0.05)" }}
+              axisLine={{ stroke: CHART_GRID }}
               domain={yDomain}
               tickFormatter={(value) => `${value}%`}
               width={45}
             />
             <Tooltip 
               content={<CustomTooltip />} 
-              cursor={{ stroke: "rgba(255,255,255,0.2)", strokeWidth: 1.5 }}
+              cursor={{ stroke: CHART_CURSOR, strokeWidth: 1.5 }}
             />
             
             {/* Grey straight line of best fit */}
             <Line
               type="monotone"
               dataKey="trend"
-              stroke="rgba(255,255,255,0.3)"
+              stroke={TREND_LINE}
               strokeWidth={2}
               dot={false}
               activeDot={false}
@@ -390,8 +399,8 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
                       cx={props.cx}
                       cy={props.cy}
                       r={6}
-                      fill="rgba(255,255,255,0.9)"
-                      stroke="rgba(255,255,255,0.5)"
+                      fill={ACTIVE_DOT_FILL}
+                      stroke={ACTIVE_DOT_STROKE}
                       strokeWidth={1.5}
                     />
                     <CustomCross {...props} />
