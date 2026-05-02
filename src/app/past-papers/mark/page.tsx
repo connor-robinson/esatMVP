@@ -1275,7 +1275,7 @@ export default function PapersMarkPage() {
         <PageHeader title="Mark Session" description="Review answers, mark correctness, and study solutions." />
 
         {/* Main two-column layout - connected container with equal height */}
-        <Card className="p-0 bg-neutral-900 border-0 overflow-hidden lg:h-[156vh]">
+        <Card className="p-0 bg-surface border border-border overflow-hidden lg:h-[156vh]">
           <div
             className="grid grid-cols-1 lg:[grid-template-columns:var(--left-col)_minmax(0,1fr)] h-full"
             style={{ ['--left-col' as any]: `${LEFT_COLUMN_WIDTH_PX}px` }}

@@ -854,7 +854,7 @@ export default function QuestionBankPage() {
   return (
     <Fragment>
       <div className='min-h-[calc(100vh-3.5rem)] py-8 pb-24'>
-        <Container size='lg'>
+        <Container size='lg' className='py-2'>
           <div className='space-y-6'>
             {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
             {!sessionMode &&

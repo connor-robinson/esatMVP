@@ -2,24 +2,42 @@
  * Drill variants grid - Right column (styled like example3 drill cards)
  */
 
-"use client";
+'use client';
 
-import { Check, Star, Plus, ListOrdered, Clock } from "lucide-react";
-import { Topic, TopicVariant } from "@/types/core";
-import { getTopic } from "@/config/topics";
-import { cn } from "@/lib/utils";
+import { Check, Star, Plus, ListOrdered, Clock } from 'lucide-react';
+import { Topic, TopicVariant } from '@/types/core';
+import { getTopic } from '@/config/topics';
+import { cn } from '@/lib/utils';
 
 interface DrillVariantsGridProps {
   topicId: string | null;
   selectedTopicIds: string[];
-  onAddVariant: (topicVariantId: string, topicId: string, variantId: string) => void;
+  onAddVariant: (
+    topicVariantId: string,
+    topicId: string,
+    variantId: string,
+  ) => void;
   onRemoveVariant: (topicVariantId: string) => void;
 }
 
+/** Solid pills using global theme tokens (spec: lime / orange / red). */
 const getDifficultyLabel = (difficulty: number) => {
-  if (difficulty <= 2) return { label: "Easy", color: "bg-success/15 text-success/80" };
-  if (difficulty <= 4) return { label: "Medium", color: "bg-warning/15 text-warning/80" };
-  return { label: "Hard", color: "bg-error/15 text-error/80" };
+  if (difficulty <= 2)
+    return {
+      label: 'Easy',
+      color: 'bg-primary text-background',
+    };
+  if (difficulty <= 3)
+    return {
+      label: 'Medium',
+      color: 'bg-warning text-background',
+    };
+  if (difficulty <= 4)
+    return {
+      label: 'Hard',
+      color: 'bg-error text-background',
+    };
+  return { label: 'Extra', color: 'bg-accent text-background' };
 };
 
 export function DrillVariantsGrid({
@@ -32,28 +50,35 @@ export function DrillVariantsGrid({
 
   if (!topic || !topic.variants || topic.variants.length === 0) {
     return (
-      <div className="flex-1 flex flex-col bg-surface-mid rounded-2xl p-8 overflow-y-auto shadow-lg">
-        <div className="text-center text-text-subtle py-12">
-          <p className="text-sm">
-            {topicId ? "No variants available for this topic" : "Select a topic to view drills"}
-          </p>
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg'>
+        <div className='flex-1 overflow-y-auto p-8'>
+          <div className='py-12 text-center text-text-subtle'>
+            <p className='text-sm'>
+              {topicId
+                ? 'No variants available for this topic'
+                : 'Select a topic to view drills'}
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-surface-mid rounded-2xl p-8 overflow-y-auto shadow-lg">
-      <div className="flex items-end justify-between mb-8">
+    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-8'>
+      <div className='mb-8 flex items-end justify-between'>
         <div>
-          <h2 className="text-2xl font-bold text-text mb-2">{topic.name} Drills</h2>
-          <p className="text-text-muted">
+          <h2 className='mb-2 text-2xl font-bold text-text'>
+            {topic.name} Drills
+          </h2>
+          <p className='text-sm text-text-muted'>
             Select one or more drills to build your custom practice session.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {topic.variants.map((variant) => {
           const variantId = `${topic.id}-${variant.id}`;
           const isSelected = selectedTopicIds.includes(variantId);
@@ -63,59 +88,65 @@ export function DrillVariantsGrid({
             <div
               key={variantId}
               className={cn(
-                "relative group rounded-xl transition-all",
+                'relative group rounded-organic-lg border transition-all',
                 isSelected
-                  ? "bg-surface-elevated ring-2 ring-primary/40 shadow-md"
-                  : "bg-surface-elevated hover:bg-surface-neutral hover:shadow-sm"
+                  ? 'border-primary/55 bg-surface-elevated shadow-md ring-1 ring-primary/35'
+                  : 'border-border-subtle/60 bg-surface-elevated hover:border-border hover:shadow-sm',
               )}
             >
               {isSelected && (
-                <div className="absolute inset-0 bg-primary/8 rounded-xl z-0" />
+                <div className='absolute inset-0 bg-primary/5 rounded-organic-lg z-0 pointer-events-none' />
               )}
-              <div className="relative z-10 p-6 flex flex-col h-full">
-                <div className="flex justify-between items-start mb-4">
+              <div className='relative z-10 p-6 flex flex-col h-full'>
+                <div className='flex justify-between items-start mb-4'>
                   <span
                     className={cn(
-                      "text-[10px] font-bold px-2 py-0.5 rounded uppercase",
-                      difficulty.color
+                      'text-[10px] font-bold px-2.5 py-1 rounded-organic-sm uppercase tracking-wide shadow-sm',
+                      difficulty.color,
                     )}
                   >
                     {difficulty.label}
                   </span>
                   {isSelected ? (
-                    <Check className="text-primary/80 w-5 h-5" />
+                    <Check className='text-primary w-5 h-5 shrink-0' strokeWidth={2.5} />
                   ) : (
-                    <Star className="text-text-muted/50 w-5 h-5" />
+                    <Star className='text-text-muted/45 w-5 h-5 shrink-0' strokeWidth={1.5} />
                   )}
                 </div>
-                <h4 className="text-lg font-bold text-text mb-1">{variant.name}</h4>
-                <p className="text-sm text-text-muted mb-6 flex-1">
+                <h4 className='text-lg font-bold text-text mb-1'>
+                  {variant.name}
+                </h4>
+                <p className='text-sm text-text-muted mb-6 flex-1'>
                   {variant.description || `${topic.name}: ${variant.name}`}
                 </p>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-3 text-xs text-text-muted font-medium">
-                    <span className="flex items-center gap-1">
-                      <ListOrdered className="w-3 h-3" />
+                <div className='flex items-center justify-between mt-auto'>
+                  <div className='flex items-center gap-3 text-xs text-text-muted font-medium'>
+                    <span className='flex items-center gap-1'>
+                      <ListOrdered className='w-3 h-3' />
                       10 Qs
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <span className='flex items-center gap-1'>
+                      <Clock className='w-3 h-3' />
                       5m
                     </span>
                   </div>
                   {isSelected ? (
                     <button
+                      type='button'
                       onClick={() => onRemoveVariant(variantId)}
-                      className="bg-primary/25 text-primary/90 hover:bg-primary/35 text-xs font-bold px-4 py-2 rounded-lg transition-colors"
+                      className='rounded-organic-md border border-border-subtle bg-surface-mid px-4 py-2 text-xs font-bold text-text-muted transition-colors hover:bg-surface-neutral hover:text-text'
                     >
                       Remove
                     </button>
                   ) : (
                     <button
-                      onClick={() => onAddVariant(variantId, topic.id, variant.id)}
-                      className="bg-primary hover:bg-primary-hover text-background text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-1"
+                      type='button'
+                      onClick={() =>
+                        onAddVariant(variantId, topic.id, variant.id)
+                      }
+                      className='flex items-center gap-1 rounded-organic-md bg-primary px-4 py-2 text-xs font-bold text-background shadow-md shadow-primary/25 transition-colors hover:bg-primary-hover hover:text-background'
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className='w-3 h-3' />
                       Add
                     </button>
                   )}
@@ -124,6 +155,7 @@ export function DrillVariantsGrid({
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

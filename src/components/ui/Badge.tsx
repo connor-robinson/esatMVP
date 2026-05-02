@@ -6,7 +6,17 @@ import { HTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: "default" | "success" | "error" | "warning" | "primary";
+  variant?:
+    | "default"
+    | "success"
+    | "error"
+    | "warning"
+    | "primary"
+    | "maths"
+    | "physics"
+    | "chemistry"
+    | "biology"
+    | "advanced";
 }
 
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
@@ -14,11 +24,16 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
     const baseStyles = "inline-flex items-center px-3 py-1 text-xs font-medium rounded-organic-sm transition-all duration-fast ease-signature";
     
     const variants = {
-      default: "bg-white/10 text-neutral-400 border border-white/10",
+      default: "bg-surface-subtle text-text-muted border border-border-subtle",
       success: "bg-primary/20 text-primary ring-1 ring-primary/30",
       error: "bg-error/20 text-error ring-1 ring-error/30",
       warning: "bg-warning/20 text-warning ring-1 ring-warning/30",
       primary: "bg-primary/20 text-primary ring-1 ring-primary/30",
+      maths: "bg-maths/20 text-maths ring-1 ring-maths/30",
+      physics: "bg-physics/20 text-physics ring-1 ring-physics/30",
+      chemistry: "bg-chemistry/20 text-chemistry ring-1 ring-chemistry/30",
+      biology: "bg-biology/20 text-biology ring-1 ring-biology/30",
+      advanced: "bg-advanced/20 text-advanced ring-1 ring-advanced/30",
     };
     
     return (

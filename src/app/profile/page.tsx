@@ -610,7 +610,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <Container size="lg">
+    <Container size="lg" className="py-4">
       <div className="py-8">
         {/* Header */}
         <div className="mb-8">

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { applyThemeCssVariables } from "@/config/theme";
 
 type Theme = "dark" | "light";
 
@@ -47,6 +48,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.add("light");
       document.documentElement.classList.remove("dark");
     }
+    applyThemeCssVariables(currentTheme);
     
     setMounted(true);
   }, []);
@@ -61,6 +63,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.classList.add("light");
         document.documentElement.classList.remove("dark");
       }
+      applyThemeCssVariables(theme);
     }
   }, [theme, mounted]);
 

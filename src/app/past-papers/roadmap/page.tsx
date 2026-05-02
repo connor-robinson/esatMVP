@@ -642,7 +642,7 @@ export default function PapersRoadmapPage() {
 
   if (loading) {
     return (
-      <Container>
+      <Container className='py-6'>
         <PageHeader title='Practice Roadmap' />
         <div className='py-12 text-center text-white/50'>Loading...</div>
       </Container>
@@ -681,10 +681,10 @@ export default function PapersRoadmapPage() {
   });
 
   return (
-    <Container>
+    <Container className='py-6'>
       {/* Custom Title Section with proper padding */}
-      <div className='pt-8 pb-6'>
-        <h1 className='text-2xl font-semibold uppercase tracking-wider text-white/90'>
+      <div className='pt-4 pb-6'>
+        <h1 className='text-2xl font-semibold uppercase tracking-[0.12em] text-text'>
           Practice Roadmap
         </h1>
       </div>

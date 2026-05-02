@@ -2,47 +2,62 @@
  * Subject categories sidebar - Left column
  */
 
-"use client";
+'use client';
 
-import { Calculator, FunctionSquare, Triangle, BarChart3, Atom, Zap, Infinity } from "lucide-react";
-import { TopicCategory } from "@/types/core";
-import { cn } from "@/lib/utils";
+import {
+  Calculator,
+  FunctionSquare,
+  Triangle,
+  BarChart3,
+  Atom,
+  Zap,
+  Infinity,
+} from 'lucide-react';
+import { TopicCategory } from '@/types/core';
+import { cn } from '@/lib/utils';
 
 type HighLevelCategory =
-  | "arithmetic"
-  | "algebra"
-  | "geometry"
-  | "number_theory"
-  | "shortcuts"
-  | "trigonometry"
-  | "physics"
-  | "other";
+  | 'arithmetic'
+  | 'algebra'
+  | 'geometry'
+  | 'number_theory'
+  | 'shortcuts'
+  | 'trigonometry'
+  | 'physics'
+  | 'other';
 
 interface SubjectCategoriesProps {
   selectedCategory: HighLevelCategory | null;
   onSelectCategory: (category: HighLevelCategory) => void;
 }
 
-// Helper to convert hex to rgba with opacity
-const hexToRgba = (hex: string, opacity: number): string => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+/** Selected capsule fills — Tailwind semantic colors from theme tokens. */
+const categorySelectedClasses: Record<HighLevelCategory, string> = {
+  arithmetic: 'bg-accent text-background shadow-md shadow-accent/20',
+  algebra: 'bg-maths text-background shadow-md shadow-maths/20',
+  geometry: 'bg-biology text-background shadow-md shadow-biology/25',
+  number_theory: 'bg-advanced text-background shadow-md shadow-advanced/25',
+  shortcuts: 'bg-secondary text-background shadow-md shadow-secondary/25',
+  trigonometry: 'bg-chemistry text-background shadow-md shadow-chemistry/25',
+  physics: 'bg-physics text-background shadow-md shadow-physics/25',
+  other: 'bg-primary text-background shadow-md shadow-primary/25',
 };
 
 const categoryConfig: Record<
   HighLevelCategory,
-  { label: string; icon: React.ComponentType<{ className?: string }>; colorHex: string }
+  {
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }
 > = {
-  arithmetic: { label: "Arithmetic", icon: Calculator, colorHex: "#3d6064" }, // maths
-  algebra: { label: "Algebra", icon: FunctionSquare, colorHex: "#5a8a8c" }, // accent
-  geometry: { label: "Geometry", icon: Triangle, colorHex: "#4e6b8a" }, // biology
-  number_theory: { label: "Number Theory", icon: Infinity, colorHex: "#9e5974" }, // advanced
-  shortcuts: { label: "Shortcuts", icon: Zap, colorHex: "#7b6fa6" }, // secondary
-  trigonometry: { label: "Trigonometry", icon: Triangle, colorHex: "#8c525a" }, // chemistry
-  physics: { label: "Physics", icon: Atom, colorHex: "#6b5e94" }, // physics
-  other: { label: "Other", icon: BarChart3, colorHex: "#85BC82" }, // primary (success)
+  arithmetic: { label: 'Arithmetic', icon: Calculator },
+  algebra: { label: 'Algebra', icon: FunctionSquare },
+  geometry: { label: 'Geometry', icon: Triangle },
+  number_theory: { label: 'Number Theory', icon: Infinity },
+  shortcuts: { label: 'Shortcuts', icon: Zap },
+  trigonometry: { label: 'Trigonometry', icon: Triangle },
+  physics: { label: 'Physics', icon: Atom },
+  other: { label: 'Other', icon: BarChart3 },
 };
 
 export function SubjectCategories({
@@ -50,48 +65,47 @@ export function SubjectCategories({
   onSelectCategory,
 }: SubjectCategoriesProps) {
   return (
-    <aside className="hidden lg:flex w-24 xl:w-28 flex-col items-center py-6 bg-surface-mid">
-      <div className="space-y-8">
-        {(Object.keys(categoryConfig) as HighLevelCategory[]).map((category) => {
-          const config = categoryConfig[category];
-          const Icon = config.icon;
-          const isSelected = selectedCategory === category;
+    <aside className='hidden lg:flex h-full min-h-0 w-24 shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border-subtle/40 bg-surface-mid shadow-lg xl:w-28'>
+      <div className='flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-2 py-6'>
+        <div className='space-y-8'>
+          {(Object.keys(categoryConfig) as HighLevelCategory[]).map(
+            (category) => {
+              const config = categoryConfig[category];
+              const Icon = config.icon;
+              const isSelected = selectedCategory === category;
 
-          return (
-            <button
-              key={category}
-              onClick={() => onSelectCategory(category)}
-              className={cn(
-                "flex flex-col items-center gap-2 w-full px-2 transition-all",
-                !isSelected && "opacity-60 hover:opacity-100"
-              )}
-            >
-              <div
-                className={cn(
-                  "w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-lg",
-                  isSelected ? "text-background" : "bg-surface-elevated text-white hover:bg-surface-neutral"
-                )}
-                style={
-                  isSelected
-                    ? { 
-                        backgroundColor: hexToRgba(config.colorHex, 0.75) // Lighter for black icons
-                      }
-                    : undefined
-                }
-              >
-                <Icon className="w-7 h-7" />
-              </div>
-              <span
-                className={cn(
-                  "text-[11px] font-semibold uppercase tracking-[0.14em]",
-                  isSelected ? "text-text" : "text-white/70"
-                )}
-              >
-                {config.label}
-              </span>
-            </button>
-          );
-        })}
+              return (
+                <button
+                  key={category}
+                  onClick={() => onSelectCategory(category)}
+                  className={cn(
+                    'flex flex-col items-center gap-2 w-full px-2 transition-all',
+                    !isSelected && 'opacity-60 hover:opacity-100',
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'flex h-14 w-14 items-center justify-center rounded-2xl transition-all',
+                      isSelected
+                        ? categorySelectedClasses[category]
+                        : 'bg-surface-elevated text-text-muted hover:bg-surface-neutral hover:text-text',
+                    )}
+                  >
+                    <Icon className='w-7 h-7' />
+                  </div>
+                  <span
+                    className={cn(
+                      'text-[11px] font-semibold uppercase tracking-[0.14em]',
+                      isSelected ? 'text-text' : 'text-text-muted',
+                    )}
+                  >
+                    {config.label}
+                  </span>
+                </button>
+              );
+            },
+          )}
+        </div>
       </div>
     </aside>
   );

@@ -410,7 +410,7 @@ export default function PapersAnalyticsPage() {
   }
 
   return (
-    <Container size="lg">
+    <Container size="lg" className="py-6">
       <div className="space-y-8">
         {/* 1. Overview Section with Performance Summary */}
         <div className="relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6">

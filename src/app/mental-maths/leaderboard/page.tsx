@@ -192,7 +192,7 @@ export default function LeaderboardPage() {
   }, [session?.user, supabase, selectedTopic]);
 
   return (
-    <Container size="lg" className="py-10 space-y-8">
+    <Container size="lg" className="py-6 space-y-8">
       {leaderboardLoading && leaderboardData.length === 0 && (
         <div className="h-12 rounded-lg bg-surface-elevated animate-pulse" />
       )}

@@ -235,7 +235,7 @@ export default function QuestionsLibraryPage() {
   }
 
   return (
-    <Container>
+    <Container className="py-6">
       {/* Filters - Full width at top */}
       <div className="mb-6">
         <QuestionLibraryFilters

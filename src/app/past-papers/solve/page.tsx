@@ -398,7 +398,7 @@ export default function PapersSolvePage() {
   useEffect(() => {
     // Set transition for smooth color change
     document.body.style.transition = 'background-color 300ms ease-in-out';
-    const backgroundColor = isDarkMode ? '#000000' : '#ffffff';
+    const backgroundColor = isDarkMode ? 'var(--color-background)' : '#ffffff';
     document.body.style.backgroundColor = backgroundColor;
 
     // Cleanup on unmount
@@ -1049,7 +1049,7 @@ export default function PapersSolvePage() {
   }
 
   return (
-    <Container size='lg' className='min-h-screen'>
+    <Container size='lg' className='min-h-screen py-4'>
       <div className='space-y-0 flex flex-col' style={{ minHeight: '100vh' }}>
         {/* Question Interface */}
         {/* QUESTION DIV HEIGHT: Change both '80vh' values below to adjust question div height */}

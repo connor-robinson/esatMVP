@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { themeTokens } from "./src/config/theme";
 
 const config: Config = {
   content: [
@@ -82,42 +83,44 @@ const config: Config = {
         
         // Glow effects (using theme colors with opacity)
         glow: {
-          primary: "rgba(133, 188, 130, 0.4)",
-          focus: "rgba(133, 188, 130, 0.3)",
+          primary: themeTokens.shadows.glow.replace("0 0 12px 0 ", ""),
+          focus: themeTokens.shadows.glowFocus.replace("0 0 0 3px ", ""),
         },
       },
       fontFamily: {
-        sans: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-        heading: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Consolas", "monospace"],
-        serif: ["Garamond", "EB Garamond", "Georgia", "serif"],
+        sans: [...themeTokens.typography.fontFamily.sans],
+        heading: [...themeTokens.typography.fontFamily.heading],
+        mono: [...themeTokens.typography.fontFamily.mono],
+        serif: [...themeTokens.typography.fontFamily.serif],
       },
-      fontSize: {
-        xs: ["0.71rem", { lineHeight: "1.4" }],
-        sm: ["0.857rem", { lineHeight: "1.4" }],
-        base: ["1rem", { lineHeight: "1.5" }],
-        lg: ["1.4rem", { lineHeight: "1.4" }],
-        xl: ["1.96rem", { lineHeight: "1.3" }],
-        "2xl": ["2.744rem", { lineHeight: "1.2" }],
-        "3xl": ["3.842rem", { lineHeight: "1.1" }],
+      // Theme tuples widen to `(string | object)[]`; double-cast matches Tailwind's `[size, theme]` tuple type
+      fontSize: { ...themeTokens.typography.fontSize } as unknown as NonNullable<
+        NonNullable<Config["theme"]>["extend"]
+      >["fontSize"],
+      letterSpacing: {
+        footnote: "0.1em",
+        /** Headline / Light node `247:3340` */
+        "headline-light": "0.4px",
+        /** H2 / Bold node `247:3350` */
+        "h2-bold": "1.17px",
       },
       borderRadius: {
-        "organic-sm": "6px",
-        "organic-md": "10px",
-        "organic-lg": "16px",
-        "organic-xl": "24px",
-        xl: "1rem",
-        "2xl": "1.5rem",
-        "3xl": "2rem",
+        "organic-sm": themeTokens.radius.organicSm,
+        "organic-md": themeTokens.radius.organicMd,
+        "organic-lg": themeTokens.radius.organicLg,
+        "organic-xl": themeTokens.radius.organicXl,
+        xl: themeTokens.radius.xl,
+        "2xl": themeTokens.radius["2xl"],
+        "3xl": themeTokens.radius["3xl"],
       },
       transitionTimingFunction: {
-        signature: "cubic-bezier(0.32, 0.72, 0, 1)",
+        signature: themeTokens.motion.timing.signature,
       },
       transitionDuration: {
-        instant: "120ms",
-        fast: "200ms",
-        normal: "300ms",
-        "400": "400ms",
+        instant: themeTokens.motion.duration.instant,
+        fast: themeTokens.motion.duration.fast,
+        normal: themeTokens.motion.duration.normal,
+        "400": themeTokens.motion.duration["400"],
       },
       animation: {
         "fade-in": "fadeIn 0.3s ease-in-out",
@@ -153,7 +156,7 @@ const config: Config = {
         },
         glowIn: {
           "0%": { boxShadow: "0 0 0 0 transparent" },
-          "100%": { boxShadow: "0 0 12px 0 rgba(133, 188, 130, 0.4)" },
+          "100%": { boxShadow: "0 0 12px 0 rgba(169, 177, 103, 0.4)" },
         },
         softScale: {
           "0%": { transform: "scale(1)" },
@@ -165,8 +168,10 @@ const config: Config = {
         },
       },
       boxShadow: {
-        glow: "0 0 12px 0 rgba(133, 188, 130, 0.4)",
-        "glow-focus": "0 0 0 3px rgba(133, 188, 130, 0.3)",
+        glow: themeTokens.shadows.glow,
+        "glow-focus": themeTokens.shadows.glowFocus,
+        "bar-floating": themeTokens.shadows.barFloating,
+        "badge-mint": themeTokens.shadows.badgeMint,
       },
       spacing: {
         "18": "4.5rem",

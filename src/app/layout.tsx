@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { EB_Garamond, Space_Grotesk } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { SupabaseSessionProvider } from "@/components/auth/SupabaseSessionProvider";
 import { createServerClient } from "@/lib/supabase/server";
@@ -15,7 +16,22 @@ import { SessionRestore } from "@/components/papers/SessionRestore";
 import { SessionPersistenceHandler } from "@/components/papers/SessionPersistenceHandler";
 import { UsernameGate } from "@/components/auth/UsernameGate";
 import { BRAND_CONFIG } from "@/config/brand";
+import { buildCssVariables } from "@/config/theme";
 import "@/styles/globals.css";
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-eb-garamond",
+  display: "swap",
+});
 
 export const dynamic = 'force-dynamic';
 
@@ -31,13 +47,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const darkVars = buildCssVariables("dark");
+  const lightVars = buildCssVariables("light");
   const supabase = createServerClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${ebGaramond.variable}`}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -45,6 +67,17 @@ export default async function RootLayout({
               (function() {
                 try {
                   var theme = localStorage.getItem('theme');
+                  var darkVars = ${JSON.stringify(darkVars)};
+                  var lightVars = ${JSON.stringify(lightVars)};
+                  var vars = theme === 'light' ? lightVars : darkVars;
+                  Object.keys(vars).forEach(function(name) {
+                    document.documentElement.style.setProperty(name, vars[name]);
+                  });
+                  document.documentElement.style.setProperty('--subj-maths', 'var(--color-maths)');
+                  document.documentElement.style.setProperty('--subj-physics', 'var(--color-physics)');
+                  document.documentElement.style.setProperty('--subj-chem', 'var(--color-chemistry)');
+                  document.documentElement.style.setProperty('--subj-bio', 'var(--color-biology)');
+                  document.documentElement.style.setProperty('--subj-interview', 'var(--color-secondary)');
                   if (theme === 'light' || theme === 'dark') {
                     document.documentElement.classList.add(theme);
                     document.documentElement.classList.remove(theme === 'light' ? 'dark' : 'light');
@@ -65,7 +98,7 @@ export default async function RootLayout({
               margin: 0; 
               background: var(--color-background, #0e0f13); 
               color: var(--color-text, #e5e7eb); 
-              font-family: system-ui, -apple-system, sans-serif;
+              font-family: var(--font-space-grotesk), "Space Grotesk", system-ui, -apple-system, sans-serif;
             }
             .loading { 
               display: flex; 
@@ -87,8 +120,6 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <meta
           name="viewport"

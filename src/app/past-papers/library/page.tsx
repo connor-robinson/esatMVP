@@ -467,9 +467,9 @@ export default function PapersLibraryPage() {
   }
 
   return (
-    <Container>
+    <Container className='py-6'>
       {/* Filters - Full width at top */}
-      <div className='mb-6 pt-6'>
+      <div className='mb-6'>
         <PaperLibraryFilters
           papers={papers}
           searchQuery={searchQuery}

@@ -9,7 +9,7 @@ interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   value: number; // 0-100
   max?: number;
   showLabel?: boolean;
-  variant?: "default" | "success" | "warning";
+  variant?: "default" | "success" | "warning" | "neutral";
 }
 
 export function Progress({
@@ -26,11 +26,12 @@ export function Progress({
     default: "bg-primary shadow-[0_0_8px_0_rgba(74,140,111,0.3)]",
     success: "bg-success shadow-[0_0_8px_0_rgba(82,182,154,0.3)]",
     warning: "bg-warning shadow-[0_0_8px_0_rgba(245,158,11,0.3)]",
+    neutral: "bg-text-muted/60 shadow-none",
   };
   
   return (
     <div className={cn("relative", className)} {...props}>
-      <div className="h-3 w-full overflow-hidden rounded-organic-sm bg-white/10">
+      <div className="h-3 w-full overflow-hidden rounded-organic-sm bg-surface-mid/90 border border-border-subtle">
         <div
           className={cn(
             "h-full transition-all duration-500 ease-signature rounded-organic-sm",
@@ -40,7 +41,7 @@ export function Progress({
         />
       </div>
       {showLabel && (
-        <div className="mt-1 text-xs text-neutral-500 text-right text-micro">
+        <div className="mt-1 text-right text-xs text-text-muted">
           {Math.round(percentage)}%
         </div>
       )}

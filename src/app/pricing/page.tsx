@@ -4,18 +4,16 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Button, PricingTable, type PricingTier } from "@/components/ui";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { useSubscription } from "@/hooks/useSubscription";
 import {
   getBestValuePlan,
-  getPlanComparisons,
   getWeeksUntilExam,
   getSeasonPassPrice,
   type PlanId,
 } from "@/lib/stripe/best-value";
-import { Check, Zap, Crown, ArrowRight } from "lucide-react";
+import { Zap, ArrowRight } from "lucide-react";
 
 const FEATURES = {
   free: [
@@ -45,8 +43,61 @@ export default function PricingPage() {
   const weeksUntilExam = getWeeksUntilExam();
   const weeks = typeof weeksInput === "number" ? weeksInput : weeksUntilExam;
   const { plan: bestPlan, reason } = getBestValuePlan(weeks);
-  const comparisons = getPlanComparisons(weeks);
   const seasonPrice = getSeasonPassPrice();
+
+  const tiers: PricingTier[] = [
+    {
+      id: "free",
+      name: "Free",
+      price: "£0",
+      caption: "Starter access",
+      features: FEATURES.free,
+      ctaLabel: tier === "free" ? "Current plan" : "Downgrade via profile",
+      highlighted: false,
+    },
+    {
+      id: "weekly",
+      name: "Weekly",
+      price: "£8",
+      caption: "per week",
+      features: FEATURES.paid,
+      ctaLabel:
+        loading === "weekly"
+          ? "Loading…"
+          : tier === "weekly"
+            ? "Current plan"
+            : "Subscribe",
+      highlighted: bestPlan === "weekly",
+    },
+    {
+      id: "monthly",
+      name: "Monthly",
+      price: "£25",
+      caption: "£6.25/week",
+      features: FEATURES.paid,
+      ctaLabel:
+        loading === "monthly"
+          ? "Loading…"
+          : tier === "monthly"
+            ? "Current plan"
+            : "Subscribe",
+      highlighted: bestPlan === "monthly",
+    },
+    {
+      id: "season_pass",
+      name: "Exam Season Pass",
+      price: `£${seasonPrice}`,
+      caption: `one-time · ~£${(seasonPrice / weeks).toFixed(1)}/week`,
+      features: FEATURES.paid,
+      ctaLabel:
+        loading === "season_pass"
+          ? "Loading…"
+          : tier === "season_pass"
+            ? "Current plan"
+            : "Get access",
+      highlighted: bestPlan === "season_pass",
+    },
+  ];
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -78,8 +129,8 @@ export default function PricingPage() {
   };
 
   return (
-    <Container size="xl" className="py-12">
-      <div className="text-center mb-12">
+    <Container size="xl" className="py-10">
+      <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-text mb-2">Choose your plan</h1>
         <p className="text-text-muted max-w-xl mx-auto">
           Prepare for ESAT / TMUA. Full access to past papers, mental maths, and
@@ -111,125 +162,15 @@ export default function PricingPage() {
         )}
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Free */}
-        <Card
-          variant="flat"
-          className="p-6 flex flex-col"
-        >
-          <div className="font-semibold text-text mb-1">Free</div>
-          <div className="text-2xl font-bold text-text mb-4">£0</div>
-          <ul className="space-y-2 text-sm text-text-muted flex-1 mb-6">
-            {FEATURES.free.map((f, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                {f}
-              </li>
-            ))}
-          </ul>
-          <Button variant="secondary" className="w-full" disabled>
-            {tier === "free" ? "Current plan" : "Downgrade via profile"}
-          </Button>
-        </Card>
-
-        {/* Weekly */}
-        <Card
-          variant={bestPlan === "weekly" ? "elevated" : "default"}
-          className={`p-6 flex flex-col relative ${bestPlan === "weekly" ? "ring-2 ring-primary" : ""}`}
-        >
-          {bestPlan === "weekly" && (
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary text-white text-xs font-medium rounded">
-              Best value
-            </div>
-          )}
-          <div className="font-semibold text-text mb-1">Weekly</div>
-          <div className="text-2xl font-bold text-text mb-1">£8</div>
-          <div className="text-sm text-text-muted mb-4">per week</div>
-          <ul className="space-y-2 text-sm text-text-muted flex-1 mb-6">
-            {FEATURES.paid.map((f, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                {f}
-              </li>
-            ))}
-          </ul>
-          <Button
-            variant={tier === "weekly" ? "secondary" : "primary"}
-            className="w-full"
-            onClick={() => handleCheckout("weekly")}
-            disabled={!!loading || tier === "weekly"}
-          >
-            {loading === "weekly" ? "Loading…" : tier === "weekly" ? "Current plan" : "Subscribe"}
-          </Button>
-        </Card>
-
-        {/* Monthly */}
-        <Card
-          variant={bestPlan === "monthly" ? "elevated" : "default"}
-          className={`p-6 flex flex-col relative ${bestPlan === "monthly" ? "ring-2 ring-primary" : ""}`}
-        >
-          {bestPlan === "monthly" && (
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary text-white text-xs font-medium rounded">
-              Best value
-            </div>
-          )}
-          <div className="font-semibold text-text mb-1">Monthly</div>
-          <div className="text-2xl font-bold text-text mb-1">£25</div>
-          <div className="text-sm text-text-muted mb-4">£6.25/week</div>
-          <ul className="space-y-2 text-sm text-text-muted flex-1 mb-6">
-            {FEATURES.paid.map((f, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                {f}
-              </li>
-            ))}
-          </ul>
-          <Button
-            variant={tier === "monthly" ? "secondary" : "primary"}
-            className="w-full"
-            onClick={() => handleCheckout("monthly")}
-            disabled={!!loading || tier === "monthly"}
-          >
-            {loading === "monthly" ? "Loading…" : tier === "monthly" ? "Current plan" : "Subscribe"}
-          </Button>
-        </Card>
-
-        {/* Exam Season Pass */}
-        <Card
-          variant={bestPlan === "season_pass" ? "elevated" : "default"}
-          className={`p-6 flex flex-col relative ${bestPlan === "season_pass" ? "ring-2 ring-primary" : ""}`}
-        >
-          {bestPlan === "season_pass" && (
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-primary text-white text-xs font-medium rounded flex items-center gap-1">
-              <Crown className="w-3 h-3" /> Best value
-            </div>
-          )}
-          <div className="font-semibold text-text mb-1">Exam Season Pass</div>
-          <div className="text-2xl font-bold text-text mb-1">£{seasonPrice}</div>
-          <div className="text-sm text-text-muted mb-4">
-            one-time · access until exam (Oct 2026)
-          </div>
-          <div className="text-xs text-text-muted mb-2">
-            ≈ £{(seasonPrice / weeks).toFixed(1)}/week
-          </div>
-          <ul className="space-y-2 text-sm text-text-muted flex-1 mb-6">
-            {FEATURES.paid.map((f, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                {f}
-              </li>
-            ))}
-          </ul>
-          <Button
-            variant={tier === "season_pass" ? "secondary" : "primary"}
-            className="w-full"
-            onClick={() => handleCheckout("season_pass")}
-            disabled={!!loading || tier === "season_pass"}
-          >
-            {loading === "season_pass" ? "Loading…" : tier === "season_pass" ? "Current plan" : "Get access"}
-          </Button>
-        </Card>
-      </div>
+      <PricingTable
+        tiers={tiers}
+        onSelect={(id) => {
+          if (id === "free") return;
+          if (id === "weekly" || id === "monthly" || id === "season_pass") {
+            handleCheckout(id);
+          }
+        }}
+      />
 
       <div className="mt-12 text-center">
         {!session?.user ? (

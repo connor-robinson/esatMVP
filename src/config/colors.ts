@@ -2,30 +2,30 @@
  * Central color configuration for the papers/library page
  * Now uses the centralized theme system
  * 
- * SECTION COLOR SCHEME:
- * - Question Bank: Signature Purple (#7b6fa6) - Used for selected states, highlights, and interactive elements
- * - Past Papers: Blue (#406166 - mathematics color) - Used for paper sessions and related features
- * - Mental Maths: Green (#85BC82 - primary color) - Used for mental math practice features
+ * SECTION COLOR SCHEME (from Figma Color System → `theme.ts` tokens):
+ * - Question Bank: Purple (secondary subject tone)
+ * - Past Papers / maths: Blue Dark
+ * - Mental Maths: Green (primary palette)
  */
 
-import { getThemeColor } from '@/lib/theme/colors';
+import { colorTokens } from "@/config/theme";
 
 // Get colors from theme system (dark mode by default, can be made theme-aware later)
 export const PAPER_COLORS = {
   // Mathematics & ESAT & MAT
-  mathematics: getThemeColor('maths', 'dark'), // Unified from theme
+  mathematics: colorTokens.maths.dark,
 
   // Physics & TMUA & Long Answers  
-  physics: getThemeColor('physics', 'dark'), // Unified from theme
+  physics: colorTokens.physics.dark,
 
   // Chemistry & PAT
-  chemistry: getThemeColor('chemistry', 'dark'), // Unified from theme
+  chemistry: colorTokens.chemistry.dark,
 
   // Biology & NSAA & Completed years
-  biology: getThemeColor('biology', 'dark'), // Unified from theme
+  biology: colorTokens.biology.dark,
 
   // Advanced Math & ENGAA & Multiple Choice
-  advanced: getThemeColor('advanced', 'dark') // Unified from theme
+  advanced: colorTokens.advanced.dark
 } as const;
 
 /**

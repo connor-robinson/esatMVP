@@ -173,24 +173,24 @@ export function Navbar() {
           </button>
         )}
       {showMainNavStrip && (
-      <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md'>
+      <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
         <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
-          <div className='flex h-16 items-center justify-between'>
+          <div className='flex h-[65px] items-center justify-between'>
             <div className='flex items-center space-x-8'>
               <Link href='/' className='interaction-scale'>
-                <span className='text-sm font-semibold uppercase tracking-wider text-text transition-colors duration-fast ease-signature hover:text-text-muted'>
+                <span className='text-sm font-semibold uppercase tracking-[0.14em] text-text transition-colors duration-fast ease-signature hover:text-text-muted'>
                   No-Calc
                 </span>
               </Link>
 
               {!hasActiveSession && (
-                <div className='flex items-center space-x-3'>
+                <div className='flex items-center space-x-3 rounded-organic-lg bg-surface-subtle/60 px-3 py-1.5 ring-1 ring-border-subtle/50'>
                   <Link
                     href='/mental-maths/drill'
                     className={cn(
                       'text-sm font-semibold uppercase tracking-wider transition-colors duration-fast ease-signature',
                       currentSection === 'skills'
-                        ? 'text-primary'
+                        ? 'rounded-md bg-text px-2.5 py-1 text-background'
                         : 'text-text-muted hover:text-text',
                     )}
                   >
@@ -241,11 +241,11 @@ export function Navbar() {
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseUp}
                         className={cn(
-                          'px-3 py-2 rounded-lg text-sm font-semibold uppercase tracking-wider transition-all duration-instant ease-signature will-change-transform',
+                          'px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature will-change-transform',
                           'active:scale-[0.97]',
                           isActive
                             ? currentSection === 'skills'
-                              ? 'bg-primary/10 text-primary'
+                              ? 'bg-secondary/15 text-secondary'
                               : currentSection === 'papers'
                                 ? 'bg-maths/10 text-maths'
                                 : 'bg-secondary/10 text-secondary'
@@ -269,7 +269,7 @@ export function Navbar() {
                 <div className='flex items-center gap-2'>
                   <Link
                     href='/pricing'
-                    className='text-sm font-medium text-text-muted hover:text-primary transition-colors px-2'
+                    className='text-sm font-medium text-text-muted hover:text-primary transition-colors px-2 uppercase tracking-[0.08em]'
                   >
                     Pricing
                   </Link>
@@ -336,6 +336,11 @@ export function Navbar() {
             </div>
           </div>
         </div>
+        {/* Product accent rail — matches mental-maths / Question Bank secondary (magenta) spec */}
+        <div
+          className='h-0.5 w-full bg-secondary/75'
+          aria-hidden
+        />
       </nav>
       )}
       {hasActiveSession && <SessionProgressBar embedded />}

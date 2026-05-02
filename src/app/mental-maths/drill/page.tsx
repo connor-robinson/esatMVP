@@ -12,26 +12,19 @@
 
 "use client";
 
-import { useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useMemo } from "react";
 import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
-import { ArrowRight, ListOrdered, Clock, Calculator } from "lucide-react";
+import { SessionSelectionBar } from "@/components/ui/SessionSelectionBar";
 import { SubjectCategories } from "@/components/builder/SubjectCategories";
-import { TopicFolders } from "@/components/builder/TopicFolders";
+import {
+  TopicFolders,
+  getTopicsForHighLevelCategory,
+  type HighLevelCategory,
+} from "@/components/builder/TopicFolders";
 import { DrillVariantsGrid } from "@/components/builder/DrillVariantsGrid";
 import { useSubscription } from "@/hooks/useSubscription";
-
-type HighLevelCategory =
-  | "arithmetic"
-  | "algebra"
-  | "geometry"
-  | "number_theory"
-  | "shortcuts"
-  | "trigonometry"
-  | "physics"
-  | "other";
-
 // Lazy load session components
 const MentalMathSession = lazy(() =>
   import("@/components/mental-math/MentalMathSession").then((mod) => ({
@@ -64,20 +57,29 @@ const QuizLoadingSkeleton = () => (
 );
 
 export default function BuilderPage() {
-  const allTopics = getAllTopics();
+  const allTopics = useMemo(() => getAllTopics(), []);
   const { hasFullAccess } = useSubscription();
-  const topics = hasFullAccess
-    ? allTopics
-    : allTopics.filter((t) => t.id === "addition");
+  const accessibleTopicIds = useMemo(
+    () =>
+      new Set(
+        hasFullAccess ? allTopics.map((t) => t.id) : ["addition"],
+      ),
+    [hasFullAccess, allTopics],
+  );
   const builder = useBuilderSession();
   const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("arithmetic");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
+  const categoryTopics = useMemo(
+    () => getTopicsForHighLevelCategory(allTopics, selectedCategory),
+    [allTopics, selectedCategory],
+  );
+
   // Builder view
   if (builder.view === "builder") {
     return (
-      <div className="relative min-h-[calc(100vh-4rem)] bg-background">
-        <div className="flex h-full overflow-hidden">
+      <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
+        <div className="flex h-full min-h-0 gap-6 overflow-hidden px-6 py-6">
           {/* Column 1: Subject Categories */}
           <SubjectCategories
             selectedCategory={selectedCategory}
@@ -88,11 +90,17 @@ export default function BuilderPage() {
           />
 
           {/* Columns 2 & 3: Topic Folders + Drill Variants */}
-          <div className="flex-1 flex gap-6 p-6 overflow-hidden">
+          <div className="flex min-h-0 min-w-0 flex-1 gap-6 overflow-hidden">
             {/* Column 2: Topic Folders (Operations-style) */}
-            <Suspense fallback={<div className="w-80 rounded-2xl bg-surface-mid animate-pulse" />}>
+            <Suspense
+              fallback={
+                <div className="h-full min-h-0 w-full shrink-0 md:w-80 lg:w-72 xl:w-80 rounded-2xl bg-surface-mid animate-pulse" />
+              }
+            >
               <TopicFolders
-                topics={topics}
+                categoryTopics={categoryTopics}
+                accessibleTopicIds={accessibleTopicIds}
+                showUpgradeCard={!hasFullAccess}
                 selectedCategory={selectedCategory}
                 selectedTopicId={selectedTopicId}
                 onSelectTopic={setSelectedTopicId}
@@ -101,7 +109,11 @@ export default function BuilderPage() {
             </Suspense>
 
             {/* Column 3: Drill Variants Grid */}
-            <Suspense fallback={<div className="flex-1 rounded-2xl bg-surface-mid animate-pulse" />}>
+            <Suspense
+              fallback={
+                <div className="min-h-0 min-w-0 flex-1 rounded-2xl bg-surface-mid animate-pulse" />
+              }
+            >
               <DrillVariantsGrid
                 topicId={selectedTopicId}
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
@@ -109,73 +121,25 @@ export default function BuilderPage() {
                 onRemoveVariant={builder.removeTopicVariant}
               />
             </Suspense>
-            {!hasFullAccess && (
-              <div className="p-4 rounded-2xl bg-surface-subtle border border-border text-center">
-                <p className="text-sm text-text-muted mb-2">
-                  Free: Addition only. Upgrade for all mental maths modules.
-                </p>
-                <a href="/pricing" className="text-primary hover:underline text-sm font-medium">
-                  View plans
-                </a>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Floating action bar */}
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 z-50">
-          <div className="rounded-2xl bg-surface-elevated shadow-2xl px-4 py-4 md:px-5 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-5 w-full md:w-auto">
-              <div className="flex -space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-background shadow-glow border border-border-subtle/40">
-                  <Calculator className="w-5 h-5" />
-                </div>
-                <div className="w-9 h-9 rounded-xl bg-surface-mid flex items-center justify-center text-text shadow-lg border border-border-subtle/30">
-                  <Clock className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="flex-1 md:flex-none">
-                <h5 className="text-sm font-semibold text-text">
-                  {builder.selectedTopicVariants.length || 0}{" "}
-                  {builder.selectedTopicVariants.length === 1 ? "drill" : "drills"} selected
-                </h5>
-                <p className="text-[11px] font-medium text-text-subtle flex items-center gap-3 mt-0.5">
-                  <span className="inline-flex items-center gap-1">
-                    <ListOrdered className="w-3 h-3" />
-                    <input
-                      type="number"
-                      value={builder.questionCount}
-                      onChange={(e) => builder.setQuestionCount(Number(e.target.value) || 1)}
-                      min="1"
-                      max="100"
-                      className="w-12 bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-text text-center font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-0 m-0"
-                      style={{ boxShadow: 'none' }}
-                    />{" "}
-                    questions
-                  </span>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 w-full md:w-auto justify-end">
-              <button
-                type="button"
-                onClick={builder.clearTopics}
-                disabled={builder.selectedTopicVariants.length === 0}
-                className="text-sm font-medium text-text-subtle hover:text-text transition-colors disabled:opacity-40"
-              >
-                Clear all
-              </button>
-              <button
-                type="button"
-                onClick={() => builder.startSession()}
-                disabled={!builder.canStart}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-background font-semibold text-sm shadow-lg shadow-black/40 transition-all disabled:bg-surface-mid disabled:text-text-disabled disabled:shadow-none disabled:cursor-not-allowed active:scale-95"
-              >
-                Review &amp; start session
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Compact floating chip — bottom-right (new UI). Pass density="full" for wide centered bar. */}
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-end p-4 md:p-6">
+          <div className="pointer-events-auto">
+            <SessionSelectionBar
+              density="compact"
+              compactVariant="figma"
+              questionCount={builder.questionCount}
+              onQuestionCountChange={(n) => builder.setQuestionCount(n)}
+              questionCountMin={1}
+              questionCountMax={100}
+              canStartSession={builder.canStart}
+              onClearAll={builder.clearTopics}
+              onStart={() => builder.startSession()}
+              clearDisabled={builder.selectedTopicVariants.length === 0}
+              startLabel="Review Selection"
+            />
           </div>
         </div>
       </div>
