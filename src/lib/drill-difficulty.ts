@@ -19,7 +19,7 @@ export function getDifficultyLabel(difficulty: number): {
   const t = difficultyTokens[key];
   return {
     label: t.label,
-    color: [t.bg, t.text, t.shadow, "rounded-full", "px-2.5", "py-1"]
+    color: [t.bg, t.text, t.shadow, "rounded-organic-sm", "px-2.5", "py-1"]
       .filter(Boolean)
       .join(" "),
   };

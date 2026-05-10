@@ -50,10 +50,14 @@ export const colorTokens = {
   accent: { dark: figmaPalette.blueLight, light: figmaPalette.blueDark },
   background: { dark: figmaNeutralScale.n50, light: figmaNeutralScale.n900 },
   surface: { dark: figmaNeutralScale.n100, light: "#ffffff" },
-  surfaceElevated: { dark: figmaNeutralScale.n200, light: figmaNeutralScale.n850 },
+  surfaceElevated: { dark: figmaNeutralScale.n200, light: figmaNeutralScale.n900 },
   surfaceSubtle: { dark: "#17161c", light: figmaNeutralScale.n850 },
   surfaceMid: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n800 },
   surfaceNeutral: { dark: figmaNeutralScale.n400, light: figmaNeutralScale.n850 },
+  /** Folder/topic item cards: n300 dark (#2b2831), n900 light (#f4f1f5) */
+  folderCard: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n900 },
+  /** Muted button / remove button background: n500 in both modes */
+  surfaceDark: { dark: figmaNeutralScale.n500, light: figmaNeutralScale.n500 },
   border: {
     dark: "rgba(64, 60, 70, 0.35)",
     light: "rgba(64, 60, 70, 0.15)",
@@ -74,10 +78,10 @@ export const colorTokens = {
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   error: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
   warning: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
-  /**
-   * Easy-difficulty pill (Figma mental-maths drills) — brighter chartreuse than `--color-primary` CTAs (#a9b167).
-   */
-  difficultyEasy: { dark: "#D9E88E", light: "#CAD890" },
+  /** Easy difficulty pill — teal-grey, same in both modes */
+  difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
+  /** Medium difficulty pill: muted amber dark, warm-brown light */
+  difficultyMedium: { dark: "#BF8C58", light: figmaPalette.yellowDark },
 } as const satisfies Record<string, ModeToken>;
 
 export const surfaceOpacityTokens = {
@@ -202,13 +206,13 @@ export const difficultyTokens = {
   easy: {
     label: "Easy",
     bg: "bg-difficulty-easy",
-    text: "text-background", // dark ink on chartreuse (uses --color-background)
+    text: "text-background",
     shadow: "shadow-sm",
   },
   medium: {
     label: "Medium",
-    bg: "bg-warning",
-    text: "text-text",      // light label on amber
+    bg: "bg-difficulty-medium",
+    text: "text-text",
     shadow: "shadow-sm",
   },
   hard: {
@@ -285,7 +289,10 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-success": colorTokens.success[mode],
     "--color-error": colorTokens.error[mode],
     "--color-warning": colorTokens.warning[mode],
+    "--color-folder-card": colorTokens.folderCard[mode],
+    "--color-surface-dark": colorTokens.surfaceDark[mode],
     "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
+    "--color-difficulty-medium": colorTokens.difficultyMedium[mode],
     "--surface-02": surfaceOpacityTokens["02"][mode],
     "--surface-05": surfaceOpacityTokens["05"][mode],
     "--surface-10": surfaceOpacityTokens["10"][mode],

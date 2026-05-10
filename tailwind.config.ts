@@ -41,8 +41,14 @@ const config: Config = {
         error: "var(--color-error)",
         warning: "var(--color-warning)",
 
-        /** Figma Easy pill — brighter than primary CTA lime */
+        /** Folder/topic item card background */
+        "folder-card": "var(--color-folder-card)",
+        /** Muted button background (n500) */
+        "surface-dark": "var(--color-surface-dark)",
+        /** Easy difficulty pill */
         "difficulty-easy": "var(--color-difficulty-easy)",
+        /** Medium difficulty pill */
+        "difficulty-medium": "var(--color-difficulty-medium)",
         
         // Text colors
         text: {

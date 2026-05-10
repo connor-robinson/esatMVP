@@ -91,7 +91,7 @@ export function TopicFolders({
   };
 
   return (
-    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-mid md:w-80 lg:w-72 xl:w-80'>
+    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface md:w-80 lg:w-72 xl:w-80'>
       <div className='flex shrink-0 items-center justify-between border-b border-border-subtle px-6 pb-4 pt-5'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory
@@ -135,8 +135,8 @@ export function TopicFolders({
                   className={cn(
                     'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
                     isSelected
-                      ? 'border border-secondary/35 bg-surface-elevated shadow-sm'
-                      : 'border border-border-subtle bg-surface-elevated hover:border-border hover:bg-surface-neutral',
+                      ? 'border border-secondary/35 bg-folder-card shadow-sm ring-1 ring-secondary/35'
+                      : 'border border-border-subtle bg-folder-card hover:border-border hover:bg-surface-neutral',
                   )}
                 >
                   {isSelected && (
@@ -179,7 +179,7 @@ export function TopicFolders({
                   return (
                     <div
                       key={topic.id}
-                      className='w-full rounded-xl border border-border-subtle/50 bg-surface-elevated/40 p-4 opacity-80'
+                      className='w-full rounded-organic-lg border border-border-subtle/50 bg-surface-elevated/40 p-4 opacity-80'
                       aria-disabled
                     >
                       <div className='flex justify-between items-start gap-2'>
