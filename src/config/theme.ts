@@ -82,6 +82,8 @@ export const colorTokens = {
   difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
   /** Medium difficulty pill: muted amber dark, warm-brown light */
   difficultyMedium: { dark: "#BF8C58", light: figmaPalette.yellowDark },
+  /** TMUA exam label — Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
+  tmuaAccent: { dark: "#CA7BB3", light: "#8B4F7A" },
 } as const satisfies Record<string, ModeToken>;
 
 export const surfaceOpacityTokens = {
@@ -293,6 +295,7 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-surface-dark": colorTokens.surfaceDark[mode],
     "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
     "--color-difficulty-medium": colorTokens.difficultyMedium[mode],
+    "--color-tmua-accent": colorTokens.tmuaAccent[mode],
     "--surface-02": surfaceOpacityTokens["02"][mode],
     "--surface-05": surfaceOpacityTokens["05"][mode],
     "--surface-10": surfaceOpacityTokens["10"][mode],

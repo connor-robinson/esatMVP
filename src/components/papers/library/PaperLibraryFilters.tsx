@@ -50,7 +50,7 @@ function Dropdown({
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        className="flex h-10 items-center gap-2 rounded-lg border border-border-subtle bg-surface-mid px-4 text-sm font-medium text-text transition-colors hover:border-border hover:bg-surface-neutral focus-visible:outline-none"
+        className="flex h-10 items-center gap-2 rounded-lg bg-surface-mid px-4 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
       >
         <span>{selected}</span>
         <ChevronDown
@@ -126,7 +126,7 @@ export function PaperLibraryFilters({
   }, [papers]);
 
   return (
-    <div className="rounded-2xl border border-border-subtle bg-surface px-5 py-5">
+    <div className="rounded-organic-lg bg-surface px-5 py-5">
       {/* Header row */}
       <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <h2 className="text-base font-semibold text-text">Filters</h2>
@@ -148,7 +148,7 @@ export function PaperLibraryFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search by exam, paper, or year..."
-            className="h-10 w-full rounded-lg border border-border-subtle bg-surface-mid pl-9 pr-4 text-sm text-text placeholder:text-text-muted transition-colors focus-visible:border-accent focus-visible:outline-none"
+            className="h-10 w-full rounded-lg bg-surface-elevated pl-9 pr-4 text-sm text-text placeholder:text-text-muted transition-colors focus-visible:outline-none"
           />
         </div>
 

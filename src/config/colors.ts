@@ -79,10 +79,10 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-advanced";
-  if (key === "NSAA") return "text-biology";
-  if (key === "TMUA") return "text-physics";
-  if (key === "ESAT") return "text-maths";
+  if (key === "ENGAA") return "text-biology";       // #EAAF40 yellowLight
+  if (key === "NSAA") return "text-accent";          // #91B4A4 blueLight
+  if (key === "TMUA") return "text-tmua-accent";     // #CA7BB3
+  if (key === "ESAT") return "text-maths";           // #4B6B64 blueDark
   if (key === "PAT") return "text-chemistry";
   if (key === "MAT") return "text-maths";
   return "text-maths";

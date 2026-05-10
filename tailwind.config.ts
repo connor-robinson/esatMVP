@@ -49,6 +49,8 @@ const config: Config = {
         "difficulty-easy": "var(--color-difficulty-easy)",
         /** Medium difficulty pill */
         "difficulty-medium": "var(--color-difficulty-medium)",
+        /** TMUA exam label accent (#CA7BB3 dark) */
+        "tmua-accent": "var(--color-tmua-accent)",
         
         // Text colors
         text: {

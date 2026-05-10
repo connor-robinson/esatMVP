@@ -76,26 +76,26 @@ export function PaperLibraryGrid({
   }, [papers]);
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border-subtle bg-surface px-5 py-5">
-      {/* Header */}
-      <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="flex h-full flex-col gap-3">
+      {/* Header — sits on page background, no card */}
+      <div className="flex items-start justify-between gap-4 pb-1">
         <div>
-          <h2 className="text-base font-semibold text-text">Paper Library</h2>
-          <p className="mt-0.5 text-sm text-text-muted">
+          <h2 className="text-xl font-bold text-text">Paper Library</h2>
+          <p className="mt-1 text-sm text-text-muted">
             Browse past papers and add them to your practice session.
           </p>
         </div>
-        <span className="shrink-0 pt-0.5 text-xs text-text-muted">
+        <span className="shrink-0 pt-1 text-xs text-text-muted">
           {papers.length} result{papers.length === 1 ? "" : "s"}
         </span>
       </div>
 
       {papers.length === 0 ? (
-        <div className="flex min-h-[220px] flex-1 items-center justify-center rounded-xl border border-border-subtle bg-surface-mid text-sm text-text-muted">
+        <div className="flex min-h-[220px] flex-1 items-center justify-center rounded-organic-lg bg-surface text-sm text-text-muted">
           No papers match the current filters.
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {papersByExam.sortedExams.map((examName) => {
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
@@ -106,13 +106,13 @@ export function PaperLibraryGrid({
             return (
               <div
                 key={examName}
-                className="overflow-hidden rounded-xl border border-border-subtle bg-surface-mid"
+                className="overflow-hidden rounded-organic-lg bg-surface"
               >
                 {/* Exam group header */}
                 <button
                   type="button"
                   onClick={() => toggleExam(examName)}
-                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-neutral"
+                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid"
                 >
                   <div className="flex items-center gap-2.5">
                     <ChevronDown
@@ -143,7 +143,7 @@ export function PaperLibraryGrid({
                       transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="space-y-1.5 border-t border-border-subtle p-3">
+                      <div className="space-y-1.5 p-3">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}

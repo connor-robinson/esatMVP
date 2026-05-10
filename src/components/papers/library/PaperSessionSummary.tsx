@@ -24,7 +24,7 @@ import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/se
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
 
-const panelClass = "rounded-2xl border border-border-subtle bg-surface px-5 py-5";
+const panelClass = "rounded-2xl bg-surface px-5 py-5";
 
 interface SelectedPaper {
   paper: Paper;
@@ -619,120 +619,118 @@ export function PaperSessionSummary({
   const totalItems = selectedPapers.length;
 
   return (
-    <div className={cn(panelClass, "flex min-h-0 flex-col gap-5")}>
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col gap-3">
+      {/* Header — on page background, matching left column header height */}
+      <div className="flex items-start justify-between gap-4 pb-1">
         <div>
-          <h2 className="text-base font-semibold text-text">Practice Session</h2>
-          <p className="mt-0.5 text-sm text-text-muted">Select subjects for each section.</p>
+          <h2 className="text-xl font-bold text-text">Practice Session</h2>
+          <p className="mt-1 text-sm text-text-muted">Select subjects for each section.</p>
         </div>
-        <span className="shrink-0 pt-0.5 text-xs text-text-muted">
+        <span className="shrink-0 pt-1 text-xs text-text-muted">
           {totalItems} {totalItems === 1 ? "paper" : "papers"}
         </span>
       </div>
 
-      {/* Selected papers */}
-      <div
-        className="min-h-[300px] space-y-2 overflow-y-auto rounded-xl bg-surface-elevated p-3"
-        // eslint-disable-next-line react/forbid-dom-props
-        style={{ outline: "none" }}
-      >
-        {selectedPapers.length === 0 ? (
-          <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-3 py-12">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-subtle bg-surface">
-              <BookOpen className="h-7 w-7 text-text-muted" strokeWidth={1.5} />
+      {/* Content card */}
+      <div className="rounded-lg bg-surface px-5 py-5 flex flex-col gap-5">
+        {/* Selected papers */}
+        <div
+          className="min-h-[220px] space-y-2 overflow-y-auto rounded-lg bg-surface-elevated p-3"
+          // eslint-disable-next-line react/forbid-dom-props
+          style={{ outline: "none" }}
+        >
+          {selectedPapers.length === 0 ? (
+            <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-3 py-10">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
+                <BookOpen className="h-7 w-7 text-background" strokeWidth={1.5} />
+              </div>
+              <div className="space-y-1 text-center">
+                <div className="text-sm font-medium text-text">No papers selected yet</div>
+                <div className="max-w-xs text-xs text-text-muted">
+                  Browse the library to add papers to your practice session
+                </div>
+              </div>
             </div>
-            <div className="space-y-1 text-center">
-              <div className="text-sm font-medium text-text">No papers selected yet</div>
-              <div className="max-w-xs text-xs text-text-muted">
-                Browse the library to add papers to your practice session
+          ) : (
+            selectedPapers.map(({ paper, selectedSections }) => (
+              <PaperItem
+                key={paper.id}
+                paper={paper}
+                selectedSections={selectedSections}
+                paperData={paperData.get(paper.id)}
+                paperExpandedSections={expandedSections.get(paper.id) || new Set<string>()}
+                onRemovePaper={onRemovePaper}
+                onToggleSection={onToggleSection}
+                onToggleSectionExpanded={toggleSectionExpanded}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Session Name & Stats */}
+        {totalItems > 0 && (
+          <div className="space-y-4 rounded-organic-md bg-surface-mid p-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
+                <FileText className="w-3.5 h-3.5" />
+                Session Name
+              </div>
+              <div className="flex items-center gap-2">
+                {isEditingName ? (
+                  <Input
+                    value={sessionName}
+                    onChange={(e) => setSessionName(e.target.value)}
+                    onBlur={() => setIsEditingName(false)}
+                    onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
+                    className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-surface-elevated text-text text-sm font-mono"
+                    autoFocus
+                  />
+                ) : (
+                  <>
+                    <span className="font-mono font-medium text-text flex-1 text-sm">{sessionName}</span>
+                    <button
+                      onClick={() => setIsEditingName(true)}
+                      className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border">
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Subjects</div>
+                <div className="text-lg font-mono font-semibold text-text">{sessionStats.totalSections}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Questions</div>
+                <div className="text-lg font-mono font-semibold text-text">
+                  {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Time</div>
+                <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-text">
+                  <Clock className="w-4 h-4" />
+                  {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
+                </div>
               </div>
             </div>
           </div>
-        ) : (
-          selectedPapers.map(({ paper, selectedSections }, index) => (
-            <PaperItem
-              key={paper.id}
-              paper={paper}
-              selectedSections={selectedSections}
-              paperData={paperData.get(paper.id)}
-              paperExpandedSections={expandedSections.get(paper.id) || new Set<string>()}
-              onRemovePaper={onRemovePaper}
-              onToggleSection={onToggleSection}
-              onToggleSectionExpanded={toggleSectionExpanded}
-            />
-          ))
         )}
       </div>
 
-      {/* Session Name & Stats */}
-      {totalItems > 0 && (
-        <div className="space-y-4 rounded-xl border border-border-subtle bg-surface-mid p-4">
-          {/* Session Name */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
-              <FileText className="w-3.5 h-3.5" />
-              Session Name
-            </div>
-            <div className="flex items-center gap-2">
-              {isEditingName ? (
-                <Input
-                  value={sessionName}
-                  onChange={(e) => setSessionName(e.target.value)}
-                  onBlur={() => setIsEditingName(false)}
-                  onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
-                  className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-surface-elevated text-text text-sm font-mono"
-                  autoFocus
-                />
-              ) : (
-                <>
-                  <span className="font-mono font-medium text-text flex-1 text-sm">{sessionName}</span>
-                  <button
-                    onClick={() => setIsEditingName(true)}
-                    className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border">
-            <div className="space-y-1">
-              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Subjects</div>
-              <div className="text-lg font-mono font-semibold text-text">
-                {sessionStats.totalSections}
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Questions</div>
-              <div className="text-lg font-mono font-semibold text-text">
-                {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Time</div>
-              <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-text">
-                <Clock className="w-4 h-4" />
-                {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Start session CTA */}
+      {/* Start button — outside card, on page background */}
       <button
         type="button"
         onClick={onStartSession}
         disabled={!canStart}
         className={cn(
-          "flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-colors duration-fast focus-visible:outline-none disabled:cursor-not-allowed",
+          "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 text-sm font-semibold transition-colors duration-fast focus-visible:outline-none disabled:cursor-not-allowed",
           canStart
-            ? "bg-surface-neutral text-text hover:bg-surface-mid"
-            : "bg-surface-elevated text-text-muted opacity-50"
+            ? "bg-accent text-background hover:bg-accent/85"
+            : "bg-accent/30 text-background/60"
         )}
       >
         Start Practice Session

@@ -311,7 +311,7 @@ export function PaperColumn({
       {/* Main paper row */}
       <div
         className={cn(
-          "flex h-12 items-center gap-2.5 rounded-lg px-3 transition-colors",
+          "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
           isSelected ? "bg-surface-neutral" : "bg-surface-elevated hover:bg-surface-neutral"
         )}
       >
@@ -350,7 +350,7 @@ export function PaperColumn({
 
         {/* Exam type badge */}
         {paper.examType && (
-          <span className="shrink-0 rounded border border-border-subtle px-2 py-0.5 text-[10px] uppercase tracking-wide text-text-muted">
+          <span className="inline-flex h-8 shrink-0 items-center rounded-[6px] bg-surface-neutral px-3 text-[10px] uppercase tracking-wide text-text-muted">
             {paper.examType}
           </span>
         )}
@@ -359,7 +359,7 @@ export function PaperColumn({
         <button
           type="button"
           onClick={handleAddPaperClick}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface hover:text-text"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
           aria-label="Add paper to session"
         >
           <Plus className="h-4 w-4" strokeWidth={2} />
@@ -396,7 +396,7 @@ export function PaperColumn({
                   return (
                     <div
                       key={mainSection.name}
-                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface px-3 transition-colors hover:bg-surface-mid"
+                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface-elevated px-3 transition-colors hover:bg-surface-mid"
                     >
                       {/* Section number badge */}
                       {sectionNum ? (
