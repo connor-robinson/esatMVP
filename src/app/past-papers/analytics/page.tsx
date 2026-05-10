@@ -7,21 +7,16 @@
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/layout/Container';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { AnalyticsTrendChart } from '@/components/papers/AnalyticsTrendChart';
 import { MistakeChart } from '@/components/papers/MistakeChart';
 import {
   FileText,
   ChevronDown,
-  TrendingUp,
-  TrendingDown,
-  Minus,
   Trash2,
   X,
   AlertTriangle,
+  BookOpen,
 } from 'lucide-react';
 import type { PaperType, PaperSection } from '@/types/papers';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -40,11 +35,13 @@ import { useSupabaseSession } from '@/components/auth/SupabaseSessionProvider';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import {
   getPaperTypeColor,
-  PAPER_TYPE_COLORS,
   desaturateColor,
 } from '@/config/colors';
 import { cn } from '@/lib/utils';
 import { deletePaperSession } from '@/lib/supabase/papers';
+
+const sectionShell =
+  'relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8';
 
 export default function PapersAnalyticsPage() {
   const router = useRouter();
@@ -71,17 +68,14 @@ export default function PapersAnalyticsPage() {
     string | null
   >(null);
 
-  // Filter states for Performance Trends
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedPaperTypes, setSelectedPaperTypes] = useState<PaperType[]>([]);
 
-  // Multi-select dropdown states
   const [topicDropdownOpen, setTopicDropdownOpen] = useState(false);
   const [paperTypeDropdownOpen, setPaperTypeDropdownOpen] = useState(false);
   const topicDropdownRef = useRef<HTMLDivElement>(null);
   const paperTypeDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -101,7 +95,6 @@ export default function PapersAnalyticsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch sessions on mount
   useEffect(() => {
     if (session?.user) {
       fetchUserSessions()
@@ -117,7 +110,6 @@ export default function PapersAnalyticsPage() {
     }
   }, [session]);
 
-  // Handle highlighting and scrolling to session
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -127,7 +119,6 @@ export default function PapersAnalyticsPage() {
     if (highlightId && sessions.length > 0 && !loading) {
       setHighlightedSessionId(highlightId);
 
-      // Expand sessions section if collapsed
       if (collapsedSections.has('sessions')) {
         setCollapsedSections((prev) => {
           const next = new Set(prev);
@@ -136,7 +127,6 @@ export default function PapersAnalyticsPage() {
         });
       }
 
-      // Scroll to the highlighted session after a short delay to allow rendering
       setTimeout(() => {
         const sessionElement = document.querySelector(
           `[data-session-id="${highlightId}"]`,
@@ -146,10 +136,8 @@ export default function PapersAnalyticsPage() {
             behavior: 'smooth',
             block: 'center',
           });
-          // Remove highlight after 5 seconds
           setTimeout(() => {
             setHighlightedSessionId(null);
-            // Remove query parameter from URL
             const url = new URL(window.location.href);
             url.searchParams.delete('highlight');
             router.replace(url.pathname + url.search);
@@ -159,7 +147,6 @@ export default function PapersAnalyticsPage() {
     }
   }, [sessions, loading, collapsedSections, router]);
 
-  // Helper function to map topic filter to sections
   const topicToSections = (topic: string): PaperSection[] => {
     switch (topic) {
       case 'Math 1':
@@ -184,7 +171,6 @@ export default function PapersAnalyticsPage() {
     }
   };
 
-  // Filter sessions based on selected filters
   const filteredSessions = useMemo(() => {
     let filtered = filterSessions(sessions, {
       paperType: selectedPaper,
@@ -192,7 +178,6 @@ export default function PapersAnalyticsPage() {
       timeRange,
     });
 
-    // Apply topic filters (for Performance Trends)
     if (selectedTopics.length > 0) {
       const topicSections = new Set<PaperSection>();
       selectedTopics.forEach((topic) => {
@@ -205,7 +190,6 @@ export default function PapersAnalyticsPage() {
       });
     }
 
-    // Apply paper type filters (for Performance Trends)
     if (selectedPaperTypes.length > 0) {
       filtered = filtered.filter((s) =>
         selectedPaperTypes.includes(s.paperName),
@@ -222,28 +206,24 @@ export default function PapersAnalyticsPage() {
     selectedPaperTypes,
   ]);
 
-  // Calculate trend data with percentiles (use filtered sessions for chart)
   const trendDataWithPercentiles = useMemo(() => {
     return calculateTrendDataWithPercentiles(filteredSessions);
   }, [filteredSessions]);
 
-  // Convert percentile data to format expected by chart (we'll update the chart to use percentile instead of percentage)
   const trendDataForChart = useMemo(() => {
     return trendDataWithPercentiles.map((d) => ({
       date: d.date,
-      percentage: d.percentile, // Chart will display this as percentile
+      percentage: d.percentile,
       paperType: d.paperType,
       section: d.section,
-      rawScore: d.rawScore, // Include raw score for tooltip
+      rawScore: d.rawScore,
     }));
   }, [trendDataWithPercentiles]);
 
-  // Calculate analytics
   const analytics = useMemo(() => {
     return calculateSessionAnalytics(filteredSessions);
   }, [filteredSessions]);
 
-  // Get all unique sections practiced
   const sectionsPracticed = useMemo(() => {
     const sections = new Set<PaperSection>();
     filteredSessions.forEach((s) => {
@@ -252,9 +232,7 @@ export default function PapersAnalyticsPage() {
     return sections.size;
   }, [filteredSessions]);
 
-  // Calculate percentiles for filtered sessions for display
   const sessionsWithPercentiles = useMemo(() => {
-    // Group scores by paper type
     const scoresByPaper = new Map<PaperType, number[]>();
     filteredSessions
       .filter((s) => s.score)
@@ -285,7 +263,6 @@ export default function PapersAnalyticsPage() {
     });
   }, [filteredSessions]);
 
-  // Sort sessions
   const sortedSessions = useMemo(() => {
     const sorted = [...sessionsWithPercentiles];
     if (sessionSortBy === 'recent') {
@@ -300,22 +277,6 @@ export default function PapersAnalyticsPage() {
     return sorted;
   }, [sessionsWithPercentiles, sessionSortBy]);
 
-  // Use all sorted sessions (removed limit for full scrollability)
-  const visibleSessions = useMemo(() => {
-    return sortedSessions;
-  }, [sortedSessions]);
-
-  // Calculate section performance with trends
-  const sectionPerformance = useMemo(() => {
-    return calculateSectionPerformance(filteredSessions);
-  }, [filteredSessions]);
-
-  // Calculate time management insights
-  const timeManagementInsights = useMemo(() => {
-    return calculateTimeManagementInsights(filteredSessions);
-  }, [filteredSessions]);
-
-  // Aggregate mistake tags across all sessions
   const aggregatedMistakeTags = useMemo(() => {
     const allMistakes: any[] = [];
     filteredSessions.forEach((session) => {
@@ -326,82 +287,8 @@ export default function PapersAnalyticsPage() {
     return allMistakes;
   }, [filteredSessions]);
 
-  // Aggregate guessing data across all sessions (use all sessions, not filtered)
-  const guessingStats = useMemo(() => {
-    let totalGuessed = 0;
-    let correctGuesses = 0;
-    let wrongGuesses = 0;
-    let guessedIndices: number[] = [];
-    let allGuessedFlags: boolean[] = [];
-    let allCorrectFlags: (boolean | null)[] = [];
-    let allPerQuestionSec: number[] = [];
-
-    // Use all sessions to analyze every guess made
-    sessions.forEach((session) => {
-      if (
-        session.guessedFlags &&
-        session.correctFlags &&
-        session.perQuestionSec
-      ) {
-        session.guessedFlags.forEach((guessed, idx) => {
-          if (guessed) {
-            totalGuessed++;
-            guessedIndices.push(allGuessedFlags.length);
-            const correct = session.correctFlags[idx];
-            if (correct === true) correctGuesses++;
-            else if (correct === false) wrongGuesses++;
-          }
-          allGuessedFlags.push(guessed);
-          allCorrectFlags.push(session.correctFlags[idx] ?? null);
-          allPerQuestionSec.push(session.perQuestionSec[idx] || 0);
-        });
-      }
-    });
-
-    const accuracy =
-      totalGuessed > 0 ? (correctGuesses / totalGuessed) * 100 : 0;
-    const timeOnGuessed = guessedIndices.reduce(
-      (sum, idx) => sum + (allPerQuestionSec[idx] || 0),
-      0,
-    );
-    const totalTime = allPerQuestionSec.reduce((sum, t) => sum + t, 0);
-    const shareOfTotalTime =
-      totalTime > 0 ? (timeOnGuessed / totalTime) * 100 : 0;
-
-    // Calculate average times for correct vs wrong guesses
-    const correctGuessTimes = guessedIndices
-      .filter((idx) => allCorrectFlags[idx] === true)
-      .map((idx) => allPerQuestionSec[idx] || 0);
-    const wrongGuessTimes = guessedIndices
-      .filter((idx) => allCorrectFlags[idx] === false)
-      .map((idx) => allPerQuestionSec[idx] || 0);
-    const avgTimeCorrectGuess =
-      correctGuessTimes.length > 0
-        ? correctGuessTimes.reduce((a, b) => a + b, 0) /
-          correctGuessTimes.length
-        : 0;
-    const avgTimeWrongGuess =
-      wrongGuessTimes.length > 0
-        ? wrongGuessTimes.reduce((a, b) => a + b, 0) / wrongGuessTimes.length
-        : 0;
-
-    return {
-      totalGuessed,
-      correctGuesses,
-      wrongGuesses,
-      accuracy: Math.round(accuracy),
-      shareOfTotalTime: Math.round(shareOfTotalTime),
-      avgTimeCorrectGuess,
-      avgTimeWrongGuess,
-      allGuessedFlags,
-      allCorrectFlags,
-      allPerQuestionSec,
-    };
-  }, [sessions]);
-
   const { loadSessionFromDatabase } = usePaperSessionStore();
 
-  // Function to load session and navigate to mark page
   const handleViewMarkPage = async (sessionId: string) => {
     try {
       await loadSessionFromDatabase(sessionId);
@@ -411,7 +298,6 @@ export default function PapersAnalyticsPage() {
     }
   };
 
-  // Function to delete session
   const handleDeleteSession = async (
     sessionId: string,
     e: React.MouseEvent,
@@ -429,7 +315,6 @@ export default function PapersAnalyticsPage() {
     }
   };
 
-  // Function to clear all session history
   const handleClearAllSessions = async () => {
     if (!session?.user) return;
 
@@ -443,7 +328,6 @@ export default function PapersAnalyticsPage() {
         throw new Error('Failed to clear sessions');
       }
 
-      // Clear local state
       setSessions([]);
       setShowClearConfirm(false);
     } catch (error) {
@@ -478,958 +362,562 @@ export default function PapersAnalyticsPage() {
 
   if (!session?.user) {
     return (
-      <Container size='lg'>
-        <PageHeader
-          title='Papers Analytics'
-          description='Please log in to view your paper analytics.'
-        />
+      <Container size='lg' className='py-10 sm:py-12'>
+        <header className='border-b border-border-subtle pb-8'>
+          <h1 className='text-3xl font-bold tracking-tight text-text sm:text-4xl'>
+            Past Papers Analytics
+          </h1>
+          <p className='mt-2 max-w-2xl text-sm text-text-muted sm:text-base'>
+            Please log in to view your paper analytics.
+          </p>
+        </header>
       </Container>
     );
   }
 
   return (
-    <Container size='lg' className='py-6'>
-      <div className='space-y-8'>
-        {/* 1. Overview Section with Performance Summary */}
-        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
-          <button
-            onClick={() => toggleSection('overview')}
-            className='w-full flex items-center justify-between mb-4 group'
-          >
-            <div>
-              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
-                Quick Overview
-              </h2>
-              <p className='text-sm text-text-muted mt-1 text-left'>
-                Your performance at a glance
-              </p>
-            </div>
-            <ChevronDown
-              className={cn(
-                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
-                collapsedSections.has('overview') && 'rotate-180',
-              )}
-            />
-          </button>
+    <Container size='lg' className='space-y-8 py-10 sm:py-12'>
+      <header className='border-b border-border-subtle pb-8'>
+        <h1 className='text-3xl font-bold tracking-tight text-text sm:text-4xl'>
+          Past Papers Analytics
+        </h1>
+        <p className='mt-2 max-w-2xl text-sm text-text-muted sm:text-base'>
+          Review session history and trends across your paper practice.
+        </p>
+      </header>
 
-          <AnimatePresence initial={false}>
-            {!collapsedSections.has('overview') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className='overflow-hidden'
-              >
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
-                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
-                      Average Score
-                    </div>
-                    <div className='text-2xl font-bold text-text leading-none'>
-                      {Math.round(analytics.averageScore)}%
-                    </div>
-                  </div>
-                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
-                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
-                      Sessions Completed
-                    </div>
-                    <div className='text-2xl font-bold text-text leading-none'>
-                      {analytics.totalSessions}
-                    </div>
-                  </div>
-                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
-                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
-                      Avg Time
-                    </div>
-                    <div className='text-2xl font-bold text-text leading-none'>
-                      {Math.round(analytics.averageTime)} min
-                    </div>
-                  </div>
-                  <div className='relative rounded-organic-md overflow-hidden bg-surface-elevated p-4'>
-                    <div className='text-xs font-semibold uppercase tracking-wider text-text-subtle mb-1'>
-                      Sections Practiced
-                    </div>
-                    <div className='text-2xl font-bold text-text leading-none'>
-                      {sectionsPracticed}
-                    </div>
-                  </div>
+      {/* 1. Session History */}
+      <div className={sectionShell}>
+        <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between'>
+          <div className='min-w-0 flex-1'>
+            <h2 className='font-heading text-xl font-bold tracking-tight text-text sm:text-2xl'>
+              Session History
+            </h2>
+            <p className='mt-1 text-sm text-text-muted'>
+              Your past paper sessions, sorted and reviewable
+            </p>
+          </div>
+
+          <div className='flex flex-wrap items-center gap-2 sm:justify-end'>
+            {!collapsedSections.has('sessions') && (
+              <>
+                <div className='relative'>
+                  <select
+                    value={sessionSortBy}
+                    onChange={(e) =>
+                      setSessionSortBy(
+                        e.target.value as 'recent' | 'percentage' | 'percentile',
+                      )
+                    }
+                    className={cn(
+                      'appearance-none cursor-pointer rounded-organic-md border border-border bg-surface-mid py-2.5 pl-4 pr-10 text-sm font-medium text-text',
+                      'transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-subtle',
+                    )}
+                    style={{ colorScheme: 'dark' }}
+                  >
+                    <option value='recent'>Sort by Recent</option>
+                    <option value='percentage'>Sort by Percentage</option>
+                    <option value='percentile'>Sort by Percentile</option>
+                  </select>
+                  <ChevronDown className='pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted' />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 2. Performance Chart with Percentiles */}
-        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
-          <button
-            onClick={() => toggleSection('performance')}
-            className='w-full flex items-center justify-between mb-4 group'
-          >
-            <div>
-              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
-                Performance Trends
-              </h2>
-              <p className='text-sm text-text-muted mt-1 text-left'>
-                Track your percentile progression over time
-              </p>
-            </div>
-            <ChevronDown
-              className={cn(
-                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
-                collapsedSections.has('performance') && 'rotate-180',
-              )}
-            />
-          </button>
-
-          <AnimatePresence initial={false}>
-            {!collapsedSections.has('performance') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className='overflow-hidden'
-              >
-                {/* Filter Dropdowns */}
-                <div className='flex items-center gap-4 mb-6 flex-wrap'>
-                  {/* By Topic Filter */}
-                  <div className='relative' ref={topicDropdownRef}>
-                    <button
-                      type='button'
-                      onClick={() => {
-                        setTopicDropdownOpen(!topicDropdownOpen);
-                        setPaperTypeDropdownOpen(false);
-                      }}
-                      className='h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border'
-                    >
-                      <span className='truncate text-left'>
-                        {selectedTopics.length === 0
-                          ? 'By Topic'
-                          : `${selectedTopics.length} selected`}
-                      </span>
-                      <ChevronDown
-                        className={cn(
-                          'absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform',
-                          topicDropdownOpen && 'rotate-180',
-                        )}
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {topicDropdownOpen && (
-                        <>
-                          <div
-                            className='fixed inset-0 z-40'
-                            onClick={() => setTopicDropdownOpen(false)}
-                          />
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className='absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border'
-                          >
-                            <div className='max-h-60 overflow-y-auto'>
-                              {[
-                                'Math 1',
-                                'Math 2',
-                                'All maths',
-                                'Physics',
-                                'Chemistry',
-                                'Biology',
-                              ].map((topic) => (
-                                <button
-                                  key={topic}
-                                  type='button'
-                                  onClick={() => {
-                                    setSelectedTopics((prev) =>
-                                      prev.includes(topic)
-                                        ? prev.filter((t) => t !== topic)
-                                        : [...prev, topic],
-                                    );
-                                  }}
-                                  className={cn(
-                                    'w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2',
-                                    selectedTopics.includes(topic)
-                                      ? 'bg-surface-mid text-text'
-                                      : 'text-text-muted hover:bg-surface-subtle hover:text-text',
-                                  )}
-                                >
-                                  <div
-                                    className={cn(
-                                      'w-4 h-4 rounded border-2 flex items-center justify-center',
-                                      selectedTopics.includes(topic)
-                                        ? 'bg-primary border-primary'
-                                        : 'border-border',
-                                    )}
-                                  >
-                                    {selectedTopics.includes(topic) && (
-                                      <div className='w-2 h-2 bg-text rounded-sm' />
-                                    )}
-                                  </div>
-                                  {topic}
-                                </button>
-                              ))}
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* By Paper Type Filter */}
-                  <div className='relative' ref={paperTypeDropdownRef}>
-                    <button
-                      type='button'
-                      onClick={() => {
-                        setPaperTypeDropdownOpen(!paperTypeDropdownOpen);
-                        setTopicDropdownOpen(false);
-                      }}
-                      className='h-10 pl-4 pr-10 rounded-lg bg-surface-elevated text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer flex items-center justify-between min-w-[160px] border border-border'
-                    >
-                      <span className='truncate text-left'>
-                        {selectedPaperTypes.length === 0
-                          ? 'By Paper Type'
-                          : `${selectedPaperTypes.length} selected`}
-                      </span>
-                      <ChevronDown
-                        className={cn(
-                          'absolute right-3 w-4 h-4 text-text-subtle pointer-events-none transition-transform',
-                          paperTypeDropdownOpen && 'rotate-180',
-                        )}
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {paperTypeDropdownOpen && (
-                        <>
-                          <div
-                            className='fixed inset-0 z-40'
-                            onClick={() => setPaperTypeDropdownOpen(false)}
-                          />
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className='absolute top-full mt-2 w-full bg-surface rounded-lg shadow-2xl z-50 overflow-hidden min-w-[200px] border border-border'
-                          >
-                            <div className='max-h-60 overflow-y-auto'>
-                              {(
-                                [
-                                  'TMUA',
-                                  'ESAT',
-                                  'NSAA',
-                                  'ENGAA',
-                                  'PAT',
-                                  'MAT',
-                                  'OTHER',
-                                ] as PaperType[]
-                              ).map((paperType) => (
-                                <button
-                                  key={paperType}
-                                  type='button'
-                                  onClick={() => {
-                                    setSelectedPaperTypes((prev) =>
-                                      prev.includes(paperType)
-                                        ? prev.filter((t) => t !== paperType)
-                                        : [...prev, paperType],
-                                    );
-                                  }}
-                                  className={cn(
-                                    'w-full px-4 py-2.5 text-left text-sm transition-all flex items-center gap-2',
-                                    selectedPaperTypes.includes(paperType)
-                                      ? 'bg-surface-mid text-text'
-                                      : 'text-text-muted hover:bg-surface-subtle hover:text-text',
-                                  )}
-                                >
-                                  <div
-                                    className={cn(
-                                      'w-4 h-4 rounded border-2 flex items-center justify-center',
-                                      selectedPaperTypes.includes(paperType)
-                                        ? 'bg-primary border-primary'
-                                        : 'border-border',
-                                    )}
-                                  >
-                                    {selectedPaperTypes.includes(paperType) && (
-                                      <div className='w-2 h-2 bg-text rounded-sm' />
-                                    )}
-                                  </div>
-                                  {paperType}
-                                </button>
-                              ))}
-                            </div>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                {trendDataForChart.length > 0 ? (
-                  <AnalyticsTrendChart
-                    allSessions={trendDataForChart}
-                    filterMode='all'
-                    selectedFilters={[]}
-                  />
-                ) : (
-                  <div className='h-64 bg-surface-elevated rounded-organic-md border border-border flex items-center justify-center'>
-                    <div className='text-center text-text-disabled'>
-                      <div className='text-sm'>No trend data available</div>
-                    </div>
-                  </div>
+                {sessions.length > 0 && (
+                  <button
+                    type='button'
+                    onClick={() => setShowClearConfirm(true)}
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-organic-md border border-error/35 bg-error/10 px-4 py-2.5 text-sm font-medium text-error',
+                      'transition-colors hover:bg-error/20',
+                    )}
+                  >
+                    Clear All
+                    <Trash2 className='h-4 w-4' strokeWidth={2} />
+                  </button>
                 )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 3. Session History - Scrollable with 5 visible */}
-        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
-          <div className='flex items-center gap-4 mb-6'>
-            <div className='flex-1'>
-              <h2 className='text-base font-bold uppercase tracking-wider text-text'>
-                Session History
-              </h2>
-              <p className='text-sm text-text-muted mt-1'>
-                Your past paper sessions
-              </p>
-            </div>
-            <div className='relative'>
-              <select
-                value={sessionSortBy}
-                onChange={(e) =>
-                  setSessionSortBy(
-                    e.target.value as 'recent' | 'percentage' | 'percentile',
-                  )
-                }
-                className='appearance-none cursor-pointer bg-surface-elevated hover:bg-surface-mid rounded-organic-md px-4 py-2.5 pr-10 text-sm font-medium text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 border-0'
-                style={{ colorScheme: 'dark' }}
-              >
-                <option value='recent' className='bg-neutral-800 text-text'>
-                  Sort by Recent
-                </option>
-                <option value='percentage' className='bg-neutral-800 text-text'>
-                  Sort by Percentage
-                </option>
-                <option value='percentile' className='bg-neutral-800 text-text'>
-                  Sort by Percentile
-                </option>
-              </select>
-              <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-subtle pointer-events-none' />
-            </div>
-            {sessions.length > 0 && (
-              <button
-                onClick={() => setShowClearConfirm(true)}
-                className='px-3 py-2 rounded-organic-md bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors flex items-center gap-2'
-              >
-                <Trash2 className='w-4 h-4' />
-                Clear All
-              </button>
+              </>
             )}
             <button
+              type='button'
               onClick={() => toggleSection('sessions')}
-              className='p-2 rounded-organic-md hover:bg-surface-elevated transition-colors group'
+              className='group inline-flex h-10 w-10 items-center justify-center rounded-organic-md border border-border bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text'
+              aria-label={
+                collapsedSections.has('sessions')
+                  ? 'Expand session history'
+                  : 'Collapse session history'
+              }
             >
               <ChevronDown
                 className={cn(
-                  'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
+                  'h-5 w-5 transition-transform duration-200',
                   collapsedSections.has('sessions') && 'rotate-180',
                 )}
               />
             </button>
           </div>
+        </div>
 
-          <AnimatePresence initial={false}>
-            {!collapsedSections.has('sessions') && (
-              <motion.div
-                initial={{ maxHeight: 0, opacity: 0 }}
-                animate={{ maxHeight: 2000, opacity: 1 }}
-                exit={{ maxHeight: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className='overflow-hidden'
-              >
-                {visibleSessions.length > 0 ? (
-                  <div className='max-h-[600px] overflow-y-auto pr-2'>
-                    {/* Column Headers */}
-                    <div className='grid grid-cols-12 gap-4 px-5 py-3 mb-2 text-xs font-semibold text-text-subtle border-b border-border sticky top-0 bg-surface z-10'>
-                      <div className='col-span-4'>Paper</div>
-                      <div className='col-span-1 text-center'>%</div>
-                      <div className='col-span-1 text-center'>Score</div>
-                      <div className='col-span-1 text-center'>Percentile</div>
-                      <div className='col-span-1 text-center'>Time</div>
-                      <div className='col-span-2 text-center'>Date</div>
-                      <div className='col-span-2'></div>
-                    </div>
+        <AnimatePresence initial={false}>
+          {!collapsedSections.has('sessions') && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+              className='overflow-hidden'
+            >
+              {sortedSessions.length > 0 ? (
+                <div className='overflow-x-auto rounded-organic-lg border border-border-subtle'>
+                  <table className='w-full min-w-[720px] border-collapse text-left text-sm'>
+                    <thead>
+                      <tr className='border-b border-border-subtle bg-surface-mid/80 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-muted'>
+                        <th className='px-4 py-3'>Paper</th>
+                        <th className='px-4 py-3'>Sections</th>
+                        <th className='px-4 py-3 text-right tabular-nums'>%</th>
+                        <th className='px-4 py-3 text-right tabular-nums'>Percentile</th>
+                        <th className='px-4 py-3 text-right tabular-nums'>Time</th>
+                        <th className='px-4 py-3 text-right tabular-nums'>Date</th>
+                        <th className='px-4 py-3 text-right'>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedSessions.map((s) => {
+                        const scorePercentage = s.scorePercentage;
+                        const percentile = s.percentile;
+                        const date = s.startedAt
+                          ? new Date(s.startedAt).toLocaleDateString('en-GB', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })
+                          : 'Unknown';
+                        const minutes = Math.round(s.timeLimitMinutes);
 
-                    {/* Session Rows */}
-                    <div className='space-y-1'>
-                      {visibleSessions.map((session) => {
-                        const scorePercentage = session.scorePercentage;
-                        const percentile = session.percentile;
-                        const date = session.startedAt
-                          ? new Date(session.startedAt).toLocaleDateString(
-                              'en-US',
-                              {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              },
-                            )
-                          : 'Unknown date';
-                        const minutes = Math.round(session.timeLimitMinutes);
-
-                        // Extract year from variant
-                        const year = extractYearFromVariant(
-                          session.paperVariant,
-                        );
-                        const variantWithoutYear = year
-                          ? session.paperVariant
-                              .replace(/\s*\d{4}\s*/, '')
-                              .trim()
-                          : session.paperVariant;
-
-                        // Main title: Paper name + year
+                        const year = extractYearFromVariant(s.paperVariant);
                         const mainTitle = year
-                          ? `${session.paperName} ${year}`
-                          : `${session.paperName} ${session.paperVariant}`;
+                          ? `${s.paperName} ${year}`
+                          : `${s.paperName} ${s.paperVariant}`;
 
-                        // Section info
                         const sectionInfo =
-                          session.selectedSections &&
-                          session.selectedSections.length > 0
-                            ? session.selectedSections.join(', ')
-                            : variantWithoutYear || session.sessionName;
+                          s.selectedSections && s.selectedSections.length > 0
+                            ? s.selectedSections.join(', ')
+                            : s.sessionName || '—';
 
-                        // Icon color based on paper type
-                        const iconColor = getPaperTypeColor(session.paperName);
+                        const iconColor = getPaperTypeColor(s.paperName);
+                        const isHighlighted = highlightedSessionId === s.id;
 
-                        // Calculate converted score (for ENGAA/NSAA/TMUA with conversion tables)
-                        // Note: This requires question data and conversion tables which we don't have here
-                        // For now, we'll show the raw percentage as the score
-                        // TODO: Calculate actual converted score when question data is available
-                        const convertedScore: number | null =
-                          scorePercentage !== null
-                            ? session.paperName === 'ENGAA' ||
-                              session.paperName === 'NSAA' ||
-                              session.paperName === 'TMUA'
-                              ? null // Would need conversion table calculation
-                              : null
-                            : null;
-
-                        const isHighlighted =
-                          highlightedSessionId === session.id;
                         return (
-                          <button
-                            key={session.id}
-                            data-session-id={session.id}
-                            onClick={() => handleViewMarkPage(session.id)}
+                          <tr
+                            key={s.id}
+                            data-session-id={s.id}
+                            onClick={() => handleViewMarkPage(s.id)}
                             className={cn(
-                              'w-full text-left grid grid-cols-12 gap-4 px-5 py-4 rounded-organic-md transition-all items-center',
+                              'cursor-pointer border-b border-border-subtle transition-colors',
                               isHighlighted
-                                ? 'bg-primary/20 border-2 border-primary/50 shadow-lg shadow-primary/20'
-                                : 'bg-surface-elevated hover:bg-surface-mid',
+                                ? 'bg-accent/15 ring-2 ring-inset ring-accent/40'
+                                : 'bg-surface-elevated hover:bg-surface-mid/60',
                             )}
-                            style={
-                              isHighlighted
-                                ? {
-                                    animation: 'pulse 2s ease-in-out',
-                                  }
-                                : undefined
-                            }
                           >
-                            {/* Paper Name & Sections */}
-                            <div className='col-span-4 flex items-center gap-3'>
-                              <div
-                                className='w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0'
-                                style={{
-                                  backgroundColor: desaturateColor(
-                                    iconColor,
-                                    0.3,
-                                  ),
-                                }}
-                              >
-                                <FileText className='w-4 h-4 text-text' />
-                              </div>
-                              <div className='min-w-0'>
-                                <div className='font-medium text-text truncate'>
+                            <td className='px-4 py-3'>
+                              <div className='flex items-center gap-2'>
+                                <div
+                                  className='h-8 w-8 shrink-0 rounded-md flex items-center justify-center'
+                                  style={{
+                                    backgroundColor: desaturateColor(iconColor, 0.3),
+                                  }}
+                                >
+                                  <FileText className='h-4 w-4 text-text' />
+                                </div>
+                                <span className='font-medium text-text truncate'>
                                   {mainTitle}
-                                </div>
-                                <div className='text-xs text-text-muted truncate mt-0.5'>
-                                  {sectionInfo}
-                                </div>
+                                </span>
                               </div>
-                            </div>
-
-                            {/* Percentage */}
-                            <div className='col-span-1 flex items-center justify-center'>
-                              {scorePercentage !== null ? (
-                                <span className='text-sm text-text-muted'>
-                                  {scorePercentage.toFixed(1)}%
-                                </span>
-                              ) : (
-                                <span className='text-xs text-text-subtle'>
-                                  —
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Score (converted for ENGAA/NSAA/TMUA) */}
-                            <div className='col-span-1 flex items-center justify-center'>
-                              {scorePercentage !== null &&
-                              (session.paperName === 'ENGAA' ||
-                                session.paperName === 'NSAA' ||
-                                session.paperName === 'TMUA') ? (
-                                <span className='text-xs text-text-subtle italic'>
-                                  —
-                                </span>
-                              ) : (
-                                <span className='text-xs text-text-subtle'>
-                                  —
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Percentile */}
-                            <div className='col-span-1 flex items-center justify-center'>
-                              {percentile !== null ? (
-                                <span className='text-sm text-text-muted font-medium'>
-                                  {percentile.toFixed(1)}th
-                                </span>
-                              ) : (
-                                <span className='text-xs text-text-subtle'>
-                                  —
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Time */}
-                            <div className='col-span-1 flex items-center justify-center'>
-                              <span className='text-sm text-text-muted'>
-                                {minutes}m
-                              </span>
-                            </div>
-
-                            {/* Date */}
-                            <div className='col-span-2 flex items-center justify-center'>
-                              <span className='text-sm text-text-muted'>
-                                {date}
-                              </span>
-                            </div>
-
-                            {/* Mark Button and Delete Button */}
-                            <div className='col-span-2 flex items-center justify-end gap-2'>
-                              <Button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleViewMarkPage(session.id);
-                                }}
-                                variant='secondary'
-                                size='sm'
-                                className='whitespace-nowrap text-xs border-0'
-                              >
-                                Mark
-                              </Button>
-                              <button
-                                onClick={(e) =>
-                                  handleDeleteSession(session.id, e)
-                                }
-                                className='p-1.5 rounded-lg hover:bg-red-500/20 text-text-subtle hover:text-red-400 transition-colors flex-shrink-0'
-                                aria-label='Delete session'
-                              >
-                                <Trash2 className='w-4 h-4' />
-                              </button>
-                            </div>
-                          </button>
+                            </td>
+                            <td className='max-w-[180px] truncate px-4 py-3 text-text-muted'>
+                              {sectionInfo}
+                            </td>
+                            <td className='px-4 py-3 text-right tabular-nums text-text'>
+                              {scorePercentage !== null
+                                ? `${scorePercentage.toFixed(1)}%`
+                                : '—'}
+                            </td>
+                            <td className='px-4 py-3 text-right tabular-nums text-text-muted'>
+                              {percentile !== null
+                                ? `${percentile.toFixed(1)}th`
+                                : '—'}
+                            </td>
+                            <td className='px-4 py-3 text-right tabular-nums text-text-muted'>
+                              {minutes}m
+                            </td>
+                            <td className='px-4 py-3 text-right tabular-nums text-text-muted'>
+                              {date}
+                            </td>
+                            <td className='px-4 py-3 text-right'>
+                              <div className='flex items-center justify-end gap-2'>
+                                <button
+                                  type='button'
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleViewMarkPage(s.id);
+                                  }}
+                                  className='h-9 rounded-organic-md border border-border bg-surface-mid px-3 text-xs font-semibold text-text transition-colors hover:bg-surface-neutral'
+                                >
+                                  Mark
+                                </button>
+                                <button
+                                  type='button'
+                                  onClick={(e) => handleDeleteSession(s.id, e)}
+                                  className='flex h-9 w-9 items-center justify-center rounded-organic-md border border-border bg-surface-mid text-text-muted transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error'
+                                  aria-label='Delete session'
+                                >
+                                  <Trash2 className='h-4 w-4' />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
                         );
                       })}
-                    </div>
-                  </div>
-                ) : (
-                  <div className='text-center py-8 text-neutral-500'>
-                    <div className='text-sm'>
-                      No sessions found for the selected filters
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 4. Mistake Breakdown Chart */}
-        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
-          <button
-            onClick={() => toggleSection('mistakes')}
-            className='w-full flex items-center justify-between mb-4 group'
-          >
-            <div>
-              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
-                Mistake Breakdown
-              </h2>
-              <p className='text-sm text-text-muted mt-1 text-left'>
-                Common mistake patterns across all sessions
-              </p>
-            </div>
-            <ChevronDown
-              className={cn(
-                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
-                collapsedSections.has('mistakes') && 'rotate-180',
-              )}
-            />
-          </button>
-
-          <AnimatePresence initial={false}>
-            {!collapsedSections.has('mistakes') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className='overflow-hidden'
-              >
-                <MistakeChart mistakeTags={aggregatedMistakeTags} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 5. Guess Distribution & Time Distribution */}
-        <div className='relative rounded-organic-lg overflow-hidden bg-surface shadow-lg border border-border p-6'>
-          <button
-            onClick={() => toggleSection('distribution')}
-            className='w-full flex items-center justify-between mb-4 group'
-          >
-            <div>
-              <h2 className='text-base font-bold uppercase tracking-wider text-text text-left group-hover:text-text transition-colors'>
-                Guessing Behavior & Time Distribution
-              </h2>
-              <p className='text-sm text-text-muted mt-1 text-left'>
-                Analyze guessing patterns and time allocation
-              </p>
-            </div>
-            <ChevronDown
-              className={cn(
-                'h-6 w-6 text-text-subtle group-hover:text-text-muted transition-all duration-200',
-                collapsedSections.has('distribution') && 'rotate-180',
-              )}
-            />
-          </button>
-
-          <AnimatePresence initial={false}>
-            {!collapsedSections.has('distribution') && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className='overflow-hidden'
-              >
-                <div className='space-y-6'>
-                  {/* Guessing Stats */}
-                  <div className='space-y-4'>
-                    <div className='text-sm font-semibold text-text'>
-                      Guessing Behavior
-                    </div>
-                    <div className='grid grid-cols-4 gap-3'>
-                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
-                        <div className='text-xs text-text-subtle mb-1'>
-                          Total Guessed
-                        </div>
-                        <div className='text-lg font-semibold text-text'>
-                          {guessingStats.totalGuessed}
-                        </div>
-                      </div>
-                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
-                        <div className='text-xs text-text-subtle mb-1'>
-                          Correct Guesses
-                        </div>
-                        <div className='text-lg font-semibold text-text'>
-                          {guessingStats.correctGuesses}
-                        </div>
-                      </div>
-                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
-                        <div className='text-xs text-text-subtle mb-1'>
-                          Guess Accuracy
-                        </div>
-                        <div className='text-lg font-semibold text-text'>
-                          {guessingStats.accuracy}%
-                        </div>
-                      </div>
-                      <div className='p-3 rounded-md bg-neutral-900 text-center'>
-                        <div className='text-xs text-text-subtle mb-1'>
-                          Time on Guesses
-                        </div>
-                        <div className='text-lg font-semibold text-text'>
-                          {guessingStats.shareOfTotalTime}%
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Guess Time Split */}
-                    {guessingStats.totalGuessed > 0 && (
-                      <div>
-                        <div className='text-xs text-text-subtle mb-2'>
-                          Guess time split: correct vs wrong
-                        </div>
-                        <div className='w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5'>
-                          <div className='flex w-full h-full'>
-                            {(() => {
-                              const correctTime =
-                                guessingStats.correctGuesses *
-                                guessingStats.avgTimeCorrectGuess;
-                              const wrongTime =
-                                guessingStats.wrongGuesses *
-                                guessingStats.avgTimeWrongGuess;
-                              const totalGuessTime = Math.max(
-                                1e-6,
-                                correctTime + wrongTime,
-                              );
-                              const correctPct = Math.round(
-                                (correctTime / totalGuessTime) * 100,
-                              );
-                              const wrongPct = Math.max(0, 100 - correctPct);
-
-                              return (
-                                <>
-                                  <div
-                                    className='h-full flex items-center justify-center text-[11px] font-medium'
-                                    style={{
-                                      width: `${correctPct}%`,
-                                      backgroundColor:
-                                        'color-mix(in srgb, var(--color-success) 80%, transparent)',
-                                    }}
-                                  >
-                                    {correctPct >= 12 ? `${correctPct}%` : ''}
-                                  </div>
-                                  <div
-                                    className='h-full flex items-center justify-center text-[11px] font-medium'
-                                    style={{
-                                      width: `${wrongPct}%`,
-                                      backgroundColor:
-                                        'color-mix(in srgb, var(--color-error) 80%, transparent)',
-                                    }}
-                                  >
-                                    {wrongPct >= 12 ? `${wrongPct}%` : ''}
-                                  </div>
-                                </>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                        <div className='mt-1 flex items-center justify-between text-[11px] text-text-subtle'>
-                          <div className='flex items-center gap-2'>
-                            <span
-                              className='inline-block w-2 h-2 rounded'
-                              style={{ backgroundColor: 'var(--color-success)' }}
-                            />
-                            <span>
-                              Correct • {guessingStats.correctGuesses} qns • avg{' '}
-                              {Math.round(guessingStats.avgTimeCorrectGuess)}s
-                            </span>
-                          </div>
-                          <div className='flex items-center gap-2'>
-                            <span
-                              className='inline-block w-2 h-2 rounded'
-                              style={{ backgroundColor: 'var(--color-error)' }}
-                            />
-                            <span>
-                              Wrong • {guessingStats.wrongGuesses} qns • avg{' '}
-                              {Math.round(guessingStats.avgTimeWrongGuess)}s
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Guess Distribution Chart */}
-                    {guessingStats.allGuessedFlags.length > 0 && (
-                      <div>
-                        <div className='text-sm font-semibold text-text/200 mb-2'>
-                          Guess Distribution
-                        </div>
-                        {(() => {
-                          const questionNumbers = Array.from(
-                            { length: guessingStats.allGuessedFlags.length },
-                            (_, i) => i + 1,
-                          );
-                          const w = Math.max(
-                            420,
-                            questionNumbers.length * 14 + 16,
-                          );
-                          const h = 96;
-                          const pad = 12;
-                          const stripH = 16;
-                          const plotH = h - stripH - pad * 3;
-                          const windowSize = 2;
-                          const vals = questionNumbers.map((_, i) => {
-                            let s = 0;
-                            let c = 0;
-                            for (
-                              let j = Math.max(0, i - windowSize);
-                              j <=
-                              Math.min(
-                                questionNumbers.length - 1,
-                                i + windowSize,
-                              );
-                              j++
-                            ) {
-                              c++;
-                              s += guessingStats.allGuessedFlags[j] ? 1 : 0;
-                            }
-                            return s / Math.max(1, c);
-                          });
-                          const toX = (i: number) =>
-                            pad +
-                            (i / Math.max(1, vals.length - 1)) * (w - 2 * pad);
-                          const toY = (v: number) => pad + (plotH - v * plotH);
-                          const path = vals
-                            .map(
-                              (v, i) =>
-                                `${i === 0 ? 'M' : 'L'} ${toX(i)},${toY(v)}`,
-                            )
-                            .join(' ');
-                          const area =
-                            `M ${toX(0)},${toY(0)} ` +
-                            vals
-                              .map((v, i) => `L ${toX(i)},${toY(v)}`)
-                              .join(' ') +
-                            ` L ${toX(vals.length - 1)},${toY(0)} Z`;
-                          const guessColor = 'var(--color-secondary)';
-                          const correctBorder = 'var(--color-success)';
-                          const wrongBorder = 'var(--color-error)';
-                          const len = Math.max(1, questionNumbers.length);
-                          const innerW = w - 2 * pad;
-                          const step = innerW / len;
-                          const desiredBlockW = step - 2;
-                          const blockW = Math.max(10, desiredBlockW);
-                          const blockInset = Math.max(
-                            1,
-                            (step - (blockW - 2)) / 2,
-                          );
-
-                          return (
-                            <div className='overflow-x-auto flex justify-center'>
-                              <svg width={w} height={h} className='block'>
-                                <path d={area} fill={`${guessColor}33`} />
-                                <path
-                                  d={path}
-                                  stroke={guessColor}
-                                  strokeWidth={2}
-                                  fill='none'
-                                />
-                                {questionNumbers.map((qn, idx) => {
-                                  const bandStart = pad + idx * step;
-                                  const rectX = bandStart + blockInset;
-                                  const guessed =
-                                    guessingStats.allGuessedFlags[idx] === true;
-                                  const corr =
-                                    guessingStats.allCorrectFlags[idx];
-                                  const fill = guessed
-                                    ? guessColor
-                                    : 'var(--color-surface-mid)';
-                                  const border =
-                                    corr === true
-                                      ? correctBorder
-                                      : corr === false
-                                        ? wrongBorder
-                                        : 'var(--color-border-subtle)';
-                                  return (
-                                    <g key={qn}>
-                                      <title>{`Q${qn}${guessed ? ' • Guessed' : ''}${corr === true ? ' • Correct' : corr === false ? ' • Wrong' : ''}`}</title>
-                                      <rect
-                                        x={rectX}
-                                        y={h - pad - stripH}
-                                        width={blockW - 2}
-                                        height={stripH}
-                                        rx={4}
-                                        ry={4}
-                                        fill={fill}
-                                        stroke={border}
-                                        strokeWidth={1}
-                                      />
-                                    </g>
-                                  );
-                                })}
-                              </svg>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Time Distribution */}
-                  {guessingStats.allPerQuestionSec.length > 0 && (
-                    <div className='space-y-4'>
-                      <div className='text-sm font-semibold text-text'>
-                        Time Distribution
-                      </div>
-                      {(() => {
-                        const times = guessingStats.allPerQuestionSec;
-                        const total = times.reduce((a, b) => a + b, 0);
-                        const correctTimes: number[] = [];
-                        const wrongTimes: number[] = [];
-                        times.forEach((t, i) => {
-                          const corr = guessingStats.allCorrectFlags[i];
-                          if (corr === true) correctTimes.push(t);
-                          else if (corr === false) wrongTimes.push(t);
-                        });
-                        const correctTime = correctTimes.reduce(
-                          (a, b) => a + b,
-                          0,
-                        );
-                        const wrongTime = wrongTimes.reduce((a, b) => a + b, 0);
-                        const correctPct = Math.min(
-                          100,
-                          Math.round((correctTime / Math.max(1, total)) * 100),
-                        );
-                        const wrongPct = Math.max(0, 100 - correctPct);
-
-                        return (
-                          <div>
-                            <div className='text-xs text-text-subtle mb-2'>
-                              Time split: correct vs wrong answers
-                            </div>
-                            <div className='w-full h-6 bg-neutral-900 rounded-full overflow-hidden border border-white/5'>
-                              <div className='flex w-full h-full'>
-                                <div
-                                  className='h-full flex items-center justify-center text-[11px] font-medium'
-                                  style={{
-                                    width: `${correctPct}%`,
-                                      backgroundColor:
-                                        'color-mix(in srgb, var(--color-success) 80%, transparent)',
-                                  }}
-                                >
-                                  {correctPct >= 12 ? `${correctPct}%` : ''}
-                                </div>
-                                <div
-                                  className='h-full flex items-center justify-center text-[11px] font-medium'
-                                  style={{
-                                    width: `${wrongPct}%`,
-                                      backgroundColor:
-                                        'color-mix(in srgb, var(--color-error) 80%, transparent)',
-                                  }}
-                                >
-                                  {wrongPct >= 12 ? `${wrongPct}%` : ''}
-                                </div>
-                              </div>
-                            </div>
-                            <div className='mt-1 flex items-center justify-between text-[11px] text-text-subtle'>
-                              <span>Correct {correctPct}%</span>
-                              <span>Wrong {wrongPct}%</span>
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  )}
+                    </tbody>
+                  </table>
                 </div>
-              </motion.div>
+              ) : (
+                <p className='rounded-organic-lg border border-dashed border-border-subtle bg-surface-mid/50 py-10 text-center text-sm text-text-muted'>
+                  No sessions found for the selected filters.
+                </p>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 2. Quick Overview */}
+      <div className={sectionShell}>
+        <button
+          type='button'
+          onClick={() => toggleSection('overview')}
+          className='group mb-6 flex w-full items-center justify-between text-left'
+        >
+          <div>
+            <h2 className='font-heading text-xl font-bold tracking-tight text-text transition-colors sm:text-2xl'>
+              Quick Overview
+            </h2>
+            <p className='mt-1 text-sm text-text-muted'>
+              Your performance at a glance
+            </p>
+          </div>
+          <ChevronDown
+            className={cn(
+              'h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text',
+              collapsedSections.has('overview') && 'rotate-180',
             )}
-          </AnimatePresence>
-        </div>
+          />
+        </button>
+
+        <AnimatePresence initial={false}>
+          {!collapsedSections.has('overview') && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className='overflow-hidden'
+            >
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+                <div className='relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4'>
+                  <div className='text-xs font-semibold uppercase tracking-wider text-text-muted mb-1'>
+                    Average Score
+                  </div>
+                  <div className='text-2xl font-bold text-text leading-none'>
+                    {Math.round(analytics.averageScore)}%
+                  </div>
+                </div>
+                <div className='relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4'>
+                  <div className='text-xs font-semibold uppercase tracking-wider text-text-muted mb-1'>
+                    Sessions Completed
+                  </div>
+                  <div className='text-2xl font-bold text-text leading-none'>
+                    {analytics.totalSessions}
+                  </div>
+                </div>
+                <div className='relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4'>
+                  <div className='text-xs font-semibold uppercase tracking-wider text-text-muted mb-1'>
+                    Avg Time
+                  </div>
+                  <div className='text-2xl font-bold text-text leading-none'>
+                    {Math.round(analytics.averageTime)} min
+                  </div>
+                </div>
+                <div className='relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4'>
+                  <div className='text-xs font-semibold uppercase tracking-wider text-text-muted mb-1'>
+                    Sections Practiced
+                  </div>
+                  <div className='text-2xl font-bold text-text leading-none'>
+                    {sectionsPracticed}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 3. Performance Trends */}
+      <div className={sectionShell}>
+        <button
+          type='button'
+          onClick={() => toggleSection('performance')}
+          className='group mb-6 flex w-full items-center justify-between text-left'
+        >
+          <div>
+            <h2 className='font-heading text-xl font-bold tracking-tight text-text transition-colors sm:text-2xl'>
+              Performance Trends
+            </h2>
+            <p className='mt-1 text-sm text-text-muted'>
+              Track your percentile progression over time
+            </p>
+          </div>
+          <ChevronDown
+            className={cn(
+              'h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text',
+              collapsedSections.has('performance') && 'rotate-180',
+            )}
+          />
+        </button>
+
+        <AnimatePresence initial={false}>
+          {!collapsedSections.has('performance') && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className='overflow-hidden'
+            >
+              {/* Filter dropdowns */}
+              <div className='mb-6 flex flex-wrap items-center gap-3'>
+                <div className='relative' ref={topicDropdownRef}>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      setTopicDropdownOpen(!topicDropdownOpen);
+                      setPaperTypeDropdownOpen(false);
+                    }}
+                    className='flex h-10 min-w-[140px] cursor-pointer items-center justify-between rounded-organic-md bg-surface-mid pl-4 pr-10 text-sm text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30'
+                  >
+                    <span className='truncate text-left'>
+                      {selectedTopics.length === 0
+                        ? 'By Topic'
+                        : `${selectedTopics.length} selected`}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        'pointer-events-none absolute right-3 h-4 w-4 text-text-muted transition-transform',
+                        topicDropdownOpen && 'rotate-180',
+                      )}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {topicDropdownOpen && (
+                      <>
+                        <div
+                          className='fixed inset-0 z-40'
+                          onClick={() => setTopicDropdownOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className='absolute top-full z-50 mt-2 min-w-[200px] overflow-hidden rounded-organic-md bg-surface-mid shadow-2xl'
+                        >
+                          <div className='max-h-60 overflow-y-auto py-1'>
+                            {[
+                              'Math 1',
+                              'Math 2',
+                              'All maths',
+                              'Physics',
+                              'Chemistry',
+                              'Biology',
+                            ].map((topic) => (
+                              <button
+                                key={topic}
+                                type='button'
+                                onClick={() => {
+                                  setSelectedTopics((prev) =>
+                                    prev.includes(topic)
+                                      ? prev.filter((t) => t !== topic)
+                                      : [...prev, topic],
+                                  );
+                                }}
+                                className={cn(
+                                  'flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors',
+                                  selectedTopics.includes(topic)
+                                    ? 'bg-surface-neutral text-text'
+                                    : 'text-text-muted hover:bg-surface-neutral hover:text-text',
+                                )}
+                              >
+                                <div
+                                  className={cn(
+                                    'flex h-4 w-4 items-center justify-center rounded border-2',
+                                    selectedTopics.includes(topic)
+                                      ? 'border-accent bg-accent'
+                                      : 'border-border',
+                                  )}
+                                >
+                                  {selectedTopics.includes(topic) && (
+                                    <div className='h-2 w-2 rounded-sm bg-background' />
+                                  )}
+                                </div>
+                                {topic}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <div className='relative' ref={paperTypeDropdownRef}>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      setPaperTypeDropdownOpen(!paperTypeDropdownOpen);
+                      setTopicDropdownOpen(false);
+                    }}
+                    className='flex h-10 min-w-[140px] cursor-pointer items-center justify-between rounded-organic-md bg-surface-mid pl-4 pr-10 text-sm text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30'
+                  >
+                    <span className='truncate text-left'>
+                      {selectedPaperTypes.length === 0
+                        ? 'By Paper Type'
+                        : `${selectedPaperTypes.length} selected`}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        'pointer-events-none absolute right-3 h-4 w-4 text-text-muted transition-transform',
+                        paperTypeDropdownOpen && 'rotate-180',
+                      )}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {paperTypeDropdownOpen && (
+                      <>
+                        <div
+                          className='fixed inset-0 z-40'
+                          onClick={() => setPaperTypeDropdownOpen(false)}
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                          className='absolute top-full z-50 mt-2 min-w-[200px] overflow-hidden rounded-organic-md bg-surface-mid shadow-2xl'
+                        >
+                          <div className='max-h-60 overflow-y-auto py-1'>
+                            {(
+                              [
+                                'TMUA',
+                                'ESAT',
+                                'NSAA',
+                                'ENGAA',
+                                'PAT',
+                                'MAT',
+                                'OTHER',
+                              ] as PaperType[]
+                            ).map((paperType) => (
+                              <button
+                                key={paperType}
+                                type='button'
+                                onClick={() => {
+                                  setSelectedPaperTypes((prev) =>
+                                    prev.includes(paperType)
+                                      ? prev.filter((t) => t !== paperType)
+                                      : [...prev, paperType],
+                                  );
+                                }}
+                                className={cn(
+                                  'flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors',
+                                  selectedPaperTypes.includes(paperType)
+                                    ? 'bg-surface-neutral text-text'
+                                    : 'text-text-muted hover:bg-surface-neutral hover:text-text',
+                                )}
+                              >
+                                <div
+                                  className={cn(
+                                    'flex h-4 w-4 items-center justify-center rounded border-2',
+                                    selectedPaperTypes.includes(paperType)
+                                      ? 'border-accent bg-accent'
+                                      : 'border-border',
+                                  )}
+                                >
+                                  {selectedPaperTypes.includes(paperType) && (
+                                    <div className='h-2 w-2 rounded-sm bg-background' />
+                                  )}
+                                </div>
+                                {paperType}
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {trendDataForChart.length > 0 ? (
+                <AnalyticsTrendChart
+                  allSessions={trendDataForChart}
+                  filterMode='all'
+                  selectedFilters={[]}
+                />
+              ) : (
+                <div className='flex h-64 items-center justify-center rounded-organic-md border border-dashed border-border-subtle bg-surface-mid'>
+                  <p className='text-sm text-text-muted'>No trend data available</p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 4. Mistake Analysis */}
+      <div className={sectionShell}>
+        <button
+          type='button'
+          onClick={() => toggleSection('mistakes')}
+          className='group mb-6 flex w-full items-center justify-between text-left'
+        >
+          <div>
+            <h2 className='font-heading text-xl font-bold tracking-tight text-text transition-colors sm:text-2xl'>
+              Mistake Analysis
+            </h2>
+            <p className='mt-1 text-sm text-text-muted'>
+              Common mistake patterns across all sessions
+            </p>
+          </div>
+          <ChevronDown
+            className={cn(
+              'h-6 w-6 text-text-muted transition-all duration-200 group-hover:text-text',
+              collapsedSections.has('mistakes') && 'rotate-180',
+            )}
+          />
+        </button>
+
+        <AnimatePresence initial={false}>
+          {!collapsedSections.has('mistakes') && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className='overflow-hidden'
+            >
+              <MistakeChart mistakeTags={aggregatedMistakeTags} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Clear All Confirmation Modal */}
@@ -1447,12 +935,12 @@ export default function PapersAnalyticsPage() {
               className='fixed inset-0 z-50 flex items-center justify-center p-4'
             >
               <div
-                className='bg-surface rounded-organic-lg border border-border shadow-2xl max-w-md w-full p-6'
+                className='bg-surface rounded-organic-lg border border-border shadow-modal-card max-w-md w-full p-6'
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className='flex items-start gap-4 mb-6'>
-                  <div className='flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center'>
-                    <AlertTriangle className='w-6 h-6 text-red-400' />
+                  <div className='flex-shrink-0 w-12 h-12 rounded-full bg-error/15 flex items-center justify-center'>
+                    <AlertTriangle className='w-6 h-6 text-error' />
                   </div>
                   <div className='flex-1'>
                     <h3 className='text-lg font-semibold text-text mb-2'>
@@ -1465,6 +953,7 @@ export default function PapersAnalyticsPage() {
                     </p>
                   </div>
                   <button
+                    type='button'
                     onClick={() => setShowClearConfirm(false)}
                     className='flex-shrink-0 p-1 rounded-lg hover:bg-surface-elevated text-text-subtle hover:text-text transition-colors'
                   >
@@ -1473,16 +962,18 @@ export default function PapersAnalyticsPage() {
                 </div>
                 <div className='flex items-center justify-end gap-3'>
                   <button
+                    type='button'
                     onClick={() => setShowClearConfirm(false)}
                     disabled={isClearing}
-                    className='px-4 py-2 rounded-lg bg-surface-elevated hover:bg-surface-mid text-text-muted text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='px-4 py-2 rounded-organic-md bg-surface-mid hover:bg-surface-neutral text-text-muted text-sm font-medium transition-colors disabled:opacity-50'
                   >
                     Cancel
                   </button>
                   <button
+                    type='button'
                     onClick={handleClearAllSessions}
                     disabled={isClearing}
-                    className='px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                    className='flex items-center gap-2 px-4 py-2 rounded-organic-md bg-error/15 hover:bg-error/25 text-error text-sm font-medium transition-colors disabled:opacity-50'
                   >
                     {isClearing ? (
                       <>
