@@ -215,7 +215,7 @@ export function Navbar() {
                     className={cn(
                       'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
                       currentSection === 'skills'
-                        ? 'font-bold text-text'
+                        ? 'font-bold text-primary'
                         : 'font-semibold text-text-muted hover:text-text',
                     )}
                   >
@@ -232,7 +232,7 @@ export function Navbar() {
                     className={cn(
                       'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
                       currentSection === 'papers'
-                        ? 'font-bold text-text'
+                        ? 'font-bold text-accent'
                         : 'font-semibold text-text-muted hover:text-text',
                     )}
                   >
@@ -248,9 +248,9 @@ export function Navbar() {
                     href='/questions'
                     className={cn(
                       'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
-                      pathname.startsWith('/questions')
-                        ? 'font-bold text-text'
-                        : 'font-semibold text-secondary hover:text-secondary/90',
+                      currentSection === 'questions'
+                        ? 'font-bold text-secondary'
+                        : 'font-semibold text-text-muted hover:text-text',
                     )}
                   >
                     Question Bank
@@ -280,9 +280,9 @@ export function Navbar() {
                           'active:scale-[0.97]',
                           isActive
                             ? currentSection === 'skills'
-                              ? 'bg-secondary/15 text-secondary'
+                              ? 'bg-primary/15 text-primary'
                               : currentSection === 'papers'
-                                ? 'bg-maths/10 text-maths'
+                                ? 'bg-accent/10 text-accent'
                                 : 'bg-secondary/10 text-secondary'
                             : 'text-text hover:bg-surface-subtle hover:text-text',
                           isPressed &&
