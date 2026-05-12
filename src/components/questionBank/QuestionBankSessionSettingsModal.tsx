@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Check, ChevronDown, ArrowRight, Minus, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
 import type { SubjectTileConfig } from "./QuestionBankHomeScreen";
 
-const TIME_PRESETS_MIN = [10, 15, 20, 25, 30, 45, 60];
-const QUESTION_STEP = 5;
-const QUESTION_MIN = 5;
+const TIME_PRESETS_MIN = [5, 10, 15, 20, 25, 30, 45, 60, 90];
+const QUESTION_STEP = 1;
+const QUESTION_MIN = 1;
 const QUESTION_MAX = 120;
 
 export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
@@ -17,10 +18,10 @@ export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
 interface QuestionBankSessionSettingsModalProps {
   open: boolean;
   originTile: SubjectTileConfig | null;
-  /** Same-exam tiles (click Start on one — can add sibling subjects before launch) */
   siblingTiles: SubjectTileConfig[];
   onClose: () => void;
   onConfirm: (payload: QuestionBankHomeLaunchPayload) => void;
+  isMixed?: boolean;
 }
 
 function uiDifficultyToApiDifficulty(d: UiDifficultyLabel): string {
@@ -34,27 +35,38 @@ export function QuestionBankSessionSettingsModal({
   siblingTiles,
   onClose,
   onConfirm,
+  isMixed = false,
 }: QuestionBankSessionSettingsModalProps) {
   const [minutes, setMinutes] = useState(20);
   const [questionCount, setQuestionCount] = useState(30);
   const [subjectKeys, setSubjectKeys] = useState<SubjectFilter[]>([]);
   const [difficultyUi, setDifficultyUi] = useState<UiDifficultyLabel>("Easy");
+  const [timeLimitOpen, setTimeLimitOpen] = useState(false);
+  const timeLimitRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (timeLimitRef.current && !timeLimitRef.current.contains(e.target as Node)) {
+        setTimeLimitOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!open || !originTile) return;
-    setSubjectKeys([originTile.key]);
+    if (isMixed) {
+      setSubjectKeys(siblingTiles.map((t) => t.key as SubjectFilter));
+    } else {
+      setSubjectKeys([originTile.key as SubjectFilter]);
+    }
     setMinutes(20);
     setQuestionCount(30);
     setDifficultyUi("Easy");
-  }, [open, originTile?.key]);
-
-  const subjectSummaryLabel = useMemo(() => {
-    if (!originTile) return "";
-    if (subjectKeys.length === 1) {
-      return `${originTile.testType === "ESAT" ? "ESAT" : "TMUA"} — ${subjectKeys[0]}`;
-    }
-    return `${originTile.testType === "ESAT" ? "ESAT" : "TMUA"} — ${subjectKeys.length} subjects`;
-  }, [originTile, subjectKeys]);
+    setTimeLimitOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, originTile?.key, isMixed]);
 
   const toggleSubject = (key: SubjectFilter) => {
     setSubjectKeys((prev) => {
@@ -67,7 +79,7 @@ export function QuestionBankSessionSettingsModal({
   };
 
   const clearAllSubjectsKeepOrigin = () => {
-    if (originTile) setSubjectKeys([originTile.key]);
+    if (originTile) setSubjectKeys([originTile.key as SubjectFilter]);
   };
 
   const bumpQuestions = (delta: number) => {
@@ -112,9 +124,16 @@ export function QuestionBankSessionSettingsModal({
       case "Extreme":
         return "border-accent/35 bg-accent/15 text-accent";
       default:
-        return "border-primary/30 bg-primary/20 text-primary";
+        return "border-secondary/30 bg-secondary/20 text-secondary";
     }
   };
+
+  const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
+  const subjectLabel = isMixed
+    ? `${subjectKeys.length} subject${subjectKeys.length !== 1 ? "s" : ""} selected`
+    : subjectKeys.length === 1
+      ? `${originTile.testType} — ${subjectKeys[0]}`
+      : `${originTile.testType} — ${subjectKeys.length} subjects`;
 
   return (
     <div
@@ -135,9 +154,10 @@ export function QuestionBankSessionSettingsModal({
           "border border-border-subtle bg-surface p-6 shadow-modal-card",
         )}
       >
+        {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <h2 id="session-settings-title" className="text-lg font-semibold text-text">
-            Session Settings
+            {modalTitle}
           </h2>
           <button
             type="button"
@@ -150,9 +170,10 @@ export function QuestionBankSessionSettingsModal({
         </div>
 
         <p className="mt-3 inline-flex max-w-full rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-1.5 text-xs font-medium text-text-muted">
-          {subjectSummaryLabel}
+          {subjectLabel}
         </p>
 
+        {/* Subject toggles */}
         {siblingTiles.length > 1 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {siblingTiles.map((t) => (
@@ -173,31 +194,81 @@ export function QuestionBankSessionSettingsModal({
           </div>
         )}
 
+        {/* Settings row */}
         <div className="mt-6 grid gap-5 md:grid-cols-3">
+          {/* Time Limit — custom styled dropdown */}
           <div className="space-y-2">
-            <label className="block text-xs font-medium text-text-muted">Time Limit</label>
-            <div className="relative">
-              <select
-                value={minutes}
-                onChange={(e) => setMinutes(Number(e.target.value))}
+            <label className="block text-xs font-medium text-text-muted">
+              Time Limit
+            </label>
+            <div className="relative" ref={timeLimitRef}>
+              <button
+                type="button"
+                onClick={() => setTimeLimitOpen((v) => !v)}
                 className={cn(
-                  "h-11 w-full cursor-pointer appearance-none rounded-organic-lg border border-border-subtle bg-surface-elevated",
-                  "pl-3 pr-10 text-sm text-text outline-none ring-0",
-                  "focus:border-secondary/35 focus:ring-1 focus:ring-secondary/25",
+                  "flex h-11 w-full items-center justify-between rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 text-sm text-text",
+                  "transition-colors hover:bg-surface-mid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/25",
+                  timeLimitOpen && "border-secondary/30 bg-surface-mid",
                 )}
               >
-                {TIME_PRESETS_MIN.map((m) => (
-                  <option key={m} value={m}>
-                    {m} mins
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
+                <span>{minutes} mins</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 text-text-muted transition-transform duration-200",
+                    timeLimitOpen && "rotate-180",
+                  )}
+                />
+              </button>
+
+              <AnimatePresence>
+                {timeLimitOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setTimeLimitOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
+                      className="absolute top-full z-50 mt-1.5 w-full overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid shadow-modal-card"
+                    >
+                      <div className="py-1">
+                        {TIME_PRESETS_MIN.map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => {
+                              setMinutes(m);
+                              setTimeLimitOpen(false);
+                            }}
+                            className={cn(
+                              "flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                              m === minutes
+                                ? "bg-surface-neutral font-medium text-text"
+                                : "text-text-muted hover:bg-surface-neutral hover:text-text",
+                            )}
+                          >
+                            {m} mins
+                            {m === minutes && (
+                              <Check className="h-3.5 w-3.5 text-secondary" strokeWidth={2.5} />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
+          {/* Number of Questions — continuous stepper */}
           <div className="space-y-2">
-            <label className="block text-xs font-medium text-text-muted">Number Of Question</label>
+            <label className="block text-xs font-medium text-text-muted">
+              Number Of Questions
+            </label>
             <div className="flex h-11 items-center justify-between rounded-organic-lg border border-border-subtle bg-surface-elevated px-1">
               <button
                 type="button"
@@ -221,8 +292,11 @@ export function QuestionBankSessionSettingsModal({
             </div>
           </div>
 
-          <div className="space-y-2 md:col-span-1">
-            <span className="block text-xs font-medium text-text-muted">Difficulty Limit</span>
+          {/* Difficulty */}
+          <div className="space-y-2">
+            <span className="block text-xs font-medium text-text-muted">
+              Difficulty Limit
+            </span>
             <div className="flex flex-wrap gap-1.5">
               {difficulties.map((d) => {
                 const active = difficultyUi === d;
@@ -247,13 +321,14 @@ export function QuestionBankSessionSettingsModal({
           </div>
         </div>
 
+        {/* Footer */}
         <div className="mt-8 flex flex-col gap-4 border-t border-border-subtle pt-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-text">
             <span className="font-medium">
               {subjectKeys.length}{" "}
               {subjectKeys.length === 1 ? "subject" : "subjects"} selected
             </span>
-            {siblingTiles.length > 1 && (
+            {(siblingTiles.length > 1 || isMixed) && (
               <>
                 {" · "}
                 <button
@@ -261,7 +336,7 @@ export function QuestionBankSessionSettingsModal({
                   onClick={clearAllSubjectsKeepOrigin}
                   className="font-medium text-text-muted underline-offset-4 hover:text-secondary hover:underline"
                 >
-                  Clear all
+                  Reset
                 </button>
               </>
             )}

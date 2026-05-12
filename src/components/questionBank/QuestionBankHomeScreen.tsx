@@ -113,6 +113,7 @@ export function QuestionBankHomeScreen() {
   const router = useRouter();
   const [sessionModalOpen, setSessionModalOpen] = useState(false);
   const [modalTile, setModalTile] = useState<SubjectTileConfig | null>(null);
+  const [mixedModalOpen, setMixedModalOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [aggregate, setAggregate] = useState<{ attempted: number; total: number } | null>(null);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
@@ -224,7 +225,16 @@ export function QuestionBankHomeScreen() {
   };
 
   const startMixed = () => {
-    router.push("/questions/questionbank?mixed=1");
+    setMixedModalOpen(true);
+  };
+
+  const handleMixedConfirm = (payload: QuestionBankHomeLaunchPayload) => {
+    try {
+      sessionStorage.setItem(QUESTION_BANK_HOME_LAUNCH_KEY, JSON.stringify(payload));
+    } catch {
+      /* quota / private mode */
+    }
+    router.push("/questions/questionbank");
   };
 
   return (
@@ -303,7 +313,7 @@ export function QuestionBankHomeScreen() {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {filteredTiles.map((tile) => {
               const stats = tiles[tile.key];
               const pct =
@@ -316,42 +326,43 @@ export function QuestionBankHomeScreen() {
                 <div
                   key={tile.key}
                   className={cn(
-                    "flex flex-col rounded-organic-xl border border-border-subtle bg-surface p-4 transition-colors",
+                    "flex min-h-[270px] flex-col rounded-[18px] border border-border-subtle bg-surface-elevated px-6 pb-6 pt-10 transition-colors",
                     "hover:border-border",
                   )}
                 >
-                  <div className="min-h-[4.25rem]">
+                  {/* Title block */}
+                  <div className="min-h-[5rem]">
                     <p
                       className={cn(
-                        "text-base font-semibold leading-snug",
+                        "text-lg font-semibold leading-snug",
                         tile.titleClass,
                       )}
                     >
                       {tile.headline}
                     </p>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                       {tile.topicCaps}
                     </p>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-text-muted">
-                    <span className="flex items-center gap-1.5 tabular-nums">
-                      <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      {stats.loading ? "…" : `${stats.total} Qs`}
-                    </span>
-                    <span className="flex items-center gap-1.5 tabular-nums">
-                      <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                      {stats.loading ? "…" : stats.total === 0 ? "—" : `~${mins} min`}
-                    </span>
-                  </div>
-
-                  <div className="mt-auto flex shrink-0 items-center gap-3 pt-4">
+                  {/* Stats + Start button on same row */}
+                  <div className="mt-auto flex shrink-0 items-center justify-between pt-5">
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted">
+                      <span className="flex items-center gap-1.5 tabular-nums">
+                        <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {stats.loading ? "…" : `${stats.total} Qs`}
+                      </span>
+                      <span className="flex items-center gap-1.5 tabular-nums">
+                        <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {stats.loading ? "…" : stats.total === 0 ? "—" : `~${mins} min`}
+                      </span>
+                    </div>
                     <button
                       type="button"
                       disabled={stats.loading || stats.total === 0}
                       onClick={() => openSessionModal(tile)}
                       className={cn(
-                        "rounded-organic-md px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
+                        "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
                         "disabled:cursor-not-allowed disabled:opacity-40",
                         tile.startBtnClass,
                       )}
@@ -360,7 +371,8 @@ export function QuestionBankHomeScreen() {
                     </button>
                   </div>
 
-                  <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-surface-elevated">
+                  {/* Progress bar */}
+                  <div className="mt-8 h-1 w-full overflow-hidden rounded-full bg-surface-neutral">
                     <div
                       className={cn("h-full rounded-full transition-[width]", tile.accentBarClass)}
                       style={{ width: `${stats.loading ? 0 : pct}%`, opacity: 0.85 }}
@@ -370,7 +382,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex flex-col items-center justify-center rounded-organic-xl border border-dashed border-border-subtle bg-surface-elevated/40 px-4 py-12 text-center min-h-[200px]">
+            <div className="flex min-h-[270px] flex-col items-center justify-center rounded-[18px] border border-dashed border-border bg-surface-elevated/30 px-4 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
@@ -414,6 +426,15 @@ export function QuestionBankHomeScreen() {
           setModalTile(null);
         }}
         onConfirm={handleSessionConfirm}
+      />
+
+      <QuestionBankSessionSettingsModal
+        open={mixedModalOpen}
+        originTile={SUBJECT_TILES[0]}
+        siblingTiles={SUBJECT_TILES}
+        onClose={() => setMixedModalOpen(false)}
+        onConfirm={handleMixedConfirm}
+        isMixed
       />
     </div>
   );
