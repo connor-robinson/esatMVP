@@ -206,26 +206,26 @@ export const shadowTokens = {
 } as const;
 
 /**
- * Difficulty pills for drill cards — only semantic theme colors (`success`,
- * `warning`, `error`) + `text-surface` / `text-background` with `dark:` for
- * light-tint + dark glyph in dark UI vs solid + light glyph in light UI.
+ * Difficulty pills for drill cards — semantic `success` / `warning` / `error`
+ * at 35% opacity (same light-tint fill in light and dark). Light UI: white
+ * label; dark UI: `text-background` for dark ink on the tint.
  */
 export const difficultyTokens = {
   easy: {
     label: "Easy",
-    bg: "bg-success text-surface shadow-sm dark:bg-success/35 dark:text-background",
+    bg: "bg-success/35 text-white shadow-sm dark:text-background",
     text: undefined,
     shadow: undefined,
   },
   medium: {
     label: "Medium",
-    bg: "bg-warning text-surface shadow-sm dark:bg-warning/35 dark:text-background",
+    bg: "bg-warning/35 text-white shadow-sm dark:text-background",
     text: undefined,
     shadow: undefined,
   },
   hard: {
     label: "Hard",
-    bg: "bg-error text-surface shadow-sm dark:bg-error/35 dark:text-background",
+    bg: "bg-error/35 text-white shadow-sm dark:text-background",
     text: undefined,
     shadow: undefined,
   },
