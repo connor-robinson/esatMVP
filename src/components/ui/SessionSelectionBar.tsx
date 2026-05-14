@@ -186,7 +186,7 @@ export function SessionSelectionBar({
                       No drills yet — add from the grid.
                     </li>
                   ) : (
-                    (selectedDrills ?? []).map((sel) => {
+                    (selectedDrills ?? []).map((sel, index) => {
                       const id = `${sel.topicId}-${sel.variantId}`;
                       const topic = getTopic(sel.topicId);
                       const variant = topic?.variants?.find(
@@ -197,7 +197,13 @@ export function SessionSelectionBar({
 
                       return (
                         <li key={id}>
-                          <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                          <div className="flex items-center gap-2 rounded-organic-md py-2 pl-1.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                            <span
+                              className="flex w-7 shrink-0 justify-end pr-0.5 text-xs font-bold tabular-nums leading-none text-text-muted"
+                              aria-hidden
+                            >
+                              {index + 1}.
+                            </span>
                             <div className="min-w-0 flex-1 py-0.5">
                               <p className="truncate text-[13px] font-medium leading-snug text-text">
                                 {title}
@@ -211,10 +217,10 @@ export function SessionSelectionBar({
                             <button
                               type="button"
                               onClick={() => onRemoveDrill?.(id)}
-                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
+                              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150 ease-out hover:bg-surface-mid hover:text-text active:scale-[0.94] active:bg-surface-neutral/90"
                               aria-label={`Remove ${title}`}
                             >
-                              <X className="h-4 w-4" strokeWidth={2} />
+                              <X className="h-5 w-5" strokeWidth={2.5} />
                             </button>
                           </div>
                         </li>
