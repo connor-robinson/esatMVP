@@ -184,7 +184,7 @@ export function MentalMathSession({
           <div className="w-full max-w-2xl flex flex-col items-center gap-12">
             {/* Topic badge */}
             <div className="flex justify-center">
-              <span className="text-text-subtle text-xs font-mono uppercase tracking-wider">
+              <span className="text-text-subtle text-xs font-sans uppercase tracking-wider">
                 {displayTopicName}
               </span>
             </div>

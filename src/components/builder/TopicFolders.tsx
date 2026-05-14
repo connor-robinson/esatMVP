@@ -97,7 +97,7 @@ export function TopicFolders({
             ? categoryLabels[selectedCategory] || 'Operations'
             : 'Operations'}
         </h2>
-        <span className='rounded-organic-sm bg-secondary/12 px-2 py-1 text-xs font-bold text-secondary'>
+        <span className='rounded-organic-sm bg-primary/12 px-2 py-1 text-xs font-bold text-primary'>
           {categoryTopics.length} Total
         </span>
       </div>
@@ -134,7 +134,7 @@ export function TopicFolders({
                   className={cn(
                     'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
                     isSelected
-                      ? 'bg-folder-card-selected shadow-sm'
+                      ? 'bg-folder-card-selected shadow-sm ring-1 ring-inset ring-primary/30'
                       : 'bg-folder-card hover:bg-surface-neutral',
                   )}
                 >
@@ -146,7 +146,7 @@ export function TopicFolders({
                       </p>
                     </div>
                     {isSelected ? (
-                      <FolderOpen className='ml-2 h-5 w-5 flex-shrink-0 text-secondary' />
+                      <FolderOpen className='ml-2 h-5 w-5 flex-shrink-0 text-primary' />
                     ) : (
                       <Folder className='ml-2 h-5 w-5 flex-shrink-0 text-text-muted/60 transition-colors group-hover:text-text-muted' />
                     )}

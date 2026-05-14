@@ -72,7 +72,7 @@ export function DrillsSelectedModal({
         <div className='relative flex shrink-0 items-center justify-center border-b border-border-subtle py-4 pl-4 pr-12'>
           <div className='flex max-w-[calc(100%-2.5rem)] flex-wrap items-center justify-center gap-x-3 gap-y-1.5'>
             <span
-              className='relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent shadow-sm ring-2 ring-accent/35'
+              className='relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary shadow-sm ring-2 ring-primary/35'
               aria-hidden
             >
               <Calculator
@@ -89,7 +89,7 @@ export function DrillsSelectedModal({
               id='drills-selected-title'
               className='text-center text-base font-bold leading-tight tracking-tight text-text'
             >
-              <span className='border-b-2 border-maths pb-0.5'>
+              <span className='border-b-2 border-primary pb-0.5'>
                 Drills Selected
               </span>
             </h2>
@@ -174,7 +174,7 @@ export function DrillsSelectedModal({
           <div className='flex items-center justify-between gap-4'>
             {/* Left: count + clear */}
             <div className='flex items-baseline gap-1.5 text-sm'>
-              <span className='font-bold tabular-nums text-text'>
+              <span className='font-bold tabular-nums text-primary'>
                 {questionCount}
               </span>
               <button

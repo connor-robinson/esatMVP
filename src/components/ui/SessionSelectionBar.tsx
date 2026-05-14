@@ -273,7 +273,7 @@ export function SessionSelectionBar({
                 </div>
               ) : (
                 <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
-                  <span className="text-xl font-bold tabular-nums leading-none text-text">
+                  <span className="text-xl font-bold tabular-nums leading-none text-primary">
                     {questionCount}
                   </span>
                   <span className="text-sm font-medium text-text-muted">
