@@ -148,9 +148,6 @@ export default function BuilderPage() {
               onStart={() => setReviewModalOpen(true)}
               clearDisabled={builder.selectedTopicVariants.length === 0}
               startLabel="Review selection"
-              detailLine={`${builder.selectedTopicVariants.length} drill${
-                builder.selectedTopicVariants.length === 1 ? "" : "s"
-              } in session`}
               selectedDrills={builder.selectedTopicVariants}
               onRemoveDrill={builder.removeTopicVariant}
             />

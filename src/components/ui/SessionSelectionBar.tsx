@@ -76,6 +76,7 @@ export function SessionSelectionBar({
   const showDrillPopover = Boolean(
     compactFigma && selectedDrills && onRemoveDrill,
   );
+  const drillSessionCount = selectedDrills?.length ?? 0;
 
   const [drillListOpen, setDrillListOpen] = useState(false);
   const islandRef = useRef<HTMLDivElement>(null);
@@ -243,8 +244,16 @@ export function SessionSelectionBar({
 
           <div className="flex flex-col gap-2.5 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
             <div className="flex min-w-0 flex-1 items-start gap-3">
-              {showDrillPopover ? (
-                <div className="relative shrink-0">
+              <div className="relative shrink-0">
+                {drillSessionCount > 0 ? (
+                  <span
+                    className="pointer-events-none absolute -left-1 -top-1 z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold tabular-nums leading-none text-background shadow-sm"
+                    aria-hidden
+                  >
+                    {drillSessionCount > 99 ? "99+" : drillSessionCount}
+                  </span>
+                ) : null}
+                {showDrillPopover ? (
                   <button
                     type="button"
                     onClick={() => setDrillListOpen((o) => !o)}
@@ -256,19 +265,19 @@ export function SessionSelectionBar({
                       drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                     )}
-                    aria-label="View or remove drills in session"
+                    aria-label={`View or remove drills in session${drillSessionCount > 0 ? `, ${drillSessionCount} selected` : ""}`}
                   >
                     <ListOrdered className="h-5 w-5" strokeWidth={2} />
                   </button>
-                </div>
-              ) : (
-                <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
-                  aria-hidden
-                >
-                  <ListOrdered className="h-5 w-5" strokeWidth={2} />
-                </div>
-              )}
+                ) : (
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
+                    aria-hidden
+                  >
+                    <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                  </div>
+                )}
+              </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                   Session length
@@ -349,11 +358,6 @@ export function SessionSelectionBar({
                     </span>
                   </div>
                 )}
-                {detailLine ? (
-                  <p className="mt-1.5 text-xs leading-snug text-text-muted">
-                    {detailLine}
-                  </p>
-                ) : null}
               </div>
             </div>
 
