@@ -50,6 +50,11 @@ const config: Config = {
         "difficulty-easy": "var(--color-difficulty-easy)",
         /** Medium difficulty pill */
         "difficulty-medium": "var(--color-difficulty-medium)",
+        /** Drill card difficulty pills (theme-aware fill + shared ink) */
+        "difficulty-drill-easy": "var(--color-difficulty-drill-pill-easy-bg)",
+        "difficulty-drill-medium": "var(--color-difficulty-drill-pill-medium-bg)",
+        "difficulty-drill-hard": "var(--color-difficulty-drill-pill-hard-bg)",
+        "difficulty-drill-ink": "var(--color-difficulty-drill-pill-ink)",
         /** TMUA exam label accent (#CA7BB3 dark) */
         "tmua-accent": "var(--color-tmua-accent)",
         

@@ -4,7 +4,7 @@
 
 'use client';
 
-import { Check, Star, Plus, ListOrdered, Clock, LayoutGrid } from 'lucide-react';
+import { Check, Plus, ListOrdered, Clock, LayoutGrid } from 'lucide-react';
 import { getTopic } from '@/config/topics';
 import { cn } from '@/lib/utils';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
@@ -88,27 +88,22 @@ export function DrillVariantsGrid({
                 )}
               >
                 <div className='flex h-full flex-col p-4'>
-                  <div className='mb-4 flex items-start justify-between'>
-                    <span
-                      className={cn(
-                        'text-[10px] font-bold uppercase tracking-wide',
-                        difficulty.color,
-                      )}
-                    >
-                      {difficulty.label}
-                    </span>
-                    {isSelected ? (
-                      <Check
-                        className='h-5 w-5 shrink-0 text-primary'
-                        strokeWidth={2.5}
-                      />
-                    ) : (
-                      <Star
-                        className='h-5 w-5 shrink-0 text-text-muted/45'
-                        strokeWidth={1.5}
-                      />
+                <div className='mb-4 flex items-start justify-between gap-2'>
+                  <span
+                    className={cn(
+                      'text-[10px] font-bold uppercase tracking-wide',
+                      difficulty.color,
                     )}
-                  </div>
+                  >
+                    {difficulty.label}
+                  </span>
+                  {isSelected ? (
+                    <Check
+                      className='h-5 w-5 shrink-0 text-primary'
+                      strokeWidth={2.5}
+                    />
+                  ) : null}
+                </div>
                   <h4 className='mb-1 text-base font-bold text-text'>
                     {variant.name}
                   </h4>
