@@ -13,7 +13,6 @@ import {
   Zap,
   Infinity,
 } from 'lucide-react';
-import { TopicCategory } from '@/types/core';
 import { cn } from '@/lib/utils';
 
 type HighLevelCategory =
