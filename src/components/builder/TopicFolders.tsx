@@ -91,7 +91,7 @@ export function TopicFolders({
   };
 
   return (
-    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface md:w-80 lg:w-72 xl:w-80'>
+    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface shadow-sm md:w-80 lg:w-72 xl:w-80'>
       <div className='flex shrink-0 items-center justify-between border-b border-border-subtle px-6 pb-4 pt-5'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory

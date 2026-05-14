@@ -102,7 +102,7 @@ export default function BuilderPage() {
             {/* Column 2: Topic Folders (Operations-style) */}
             <Suspense
               fallback={
-                <div className="h-full min-h-0 w-full shrink-0 md:w-80 lg:w-72 xl:w-80 rounded-2xl bg-surface-mid animate-pulse" />
+                <div className="h-full min-h-0 w-full shrink-0 animate-pulse rounded-organic-xl border border-border bg-surface md:w-80 lg:w-72 xl:w-80" />
               }
             >
               <TopicFolders
@@ -119,7 +119,7 @@ export default function BuilderPage() {
             {/* Column 3: Drill Variants Grid */}
             <Suspense
               fallback={
-                <div className="min-h-0 min-w-0 flex-1 rounded-2xl bg-surface-mid animate-pulse" />
+                <div className="min-h-0 min-w-0 flex-1 animate-pulse rounded-organic-xl bg-background" />
               }
             >
               <DrillVariantsGrid
