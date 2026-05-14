@@ -6,6 +6,7 @@
  */
 
 import { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Calculator, Clock, ListOrdered, ArrowRight, X } from "lucide-react";
 import { getTopic } from "@/config/topics";
 import type { TopicVariantSelection } from "@/types/core";
@@ -152,66 +153,72 @@ export function SessionSelectionBar({
           className,
         )}
       >
-        {drillListOpen && showDrillPopover ? (
-          <div
-            id="session-drill-popover"
-            role="dialog"
-            aria-label="Drills in this session"
-            className="absolute bottom-[calc(100%+10px)] left-0 right-0 z-[60] max-h-[min(55vh,22rem)] overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-elevated shadow-2xl sm:left-auto sm:right-0 sm:w-[min(100%,20rem)]"
-          >
-            <div className="border-b border-border-subtle px-3 py-2.5">
-              <p className="text-xs font-semibold text-text">Session drills</p>
-              <p className="text-[11px] text-text-muted">
-                Remove any drill; changes apply immediately.
+        <AnimatePresence>
+          {drillListOpen && showDrillPopover && (
+            <motion.div
+              key="session-drill-popover"
+              id="session-drill-popover"
+              role="dialog"
+              aria-label="Drills in this session"
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{
+                duration: 0.22,
+                ease: [0.32, 0.72, 0, 1],
+              }}
+              className="absolute bottom-[calc(100%+12px)] left-0 right-0 z-[60] max-h-[min(52vh,20rem)] overflow-hidden rounded-organic-lg bg-surface-elevated/95 shadow-bar-floating backdrop-blur-md sm:left-auto sm:right-0 sm:w-[min(100%,17.5rem)]"
+            >
+              <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                In session
               </p>
-            </div>
-            <ul className="scrollbar-hide max-h-[min(48vh,18rem)] overflow-y-auto p-2">
-              {(selectedDrills ?? []).length === 0 ? (
-                <li className="rounded-organic-md px-3 py-6 text-center text-sm text-text-muted">
-                  No drills yet. Add drills from the grid.
-                </li>
-              ) : (
-                (selectedDrills ?? []).map((sel) => {
-                  const id = `${sel.topicId}-${sel.variantId}`;
-                  const topic = getTopic(sel.topicId);
-                  const variant = topic?.variants?.find(
-                    (v) => v.id === sel.variantId,
-                  );
-                  const title = variant?.name ?? "Drill";
-                  const topicName = topic?.name ?? "";
+              <ul className="scrollbar-hide max-h-[min(44vh,15rem)] overflow-y-auto px-2 pb-3">
+                {(selectedDrills ?? []).length === 0 ? (
+                  <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
+                    No drills yet — add from the grid.
+                  </li>
+                ) : (
+                  (selectedDrills ?? []).map((sel) => {
+                    const id = `${sel.topicId}-${sel.variantId}`;
+                    const topic = getTopic(sel.topicId);
+                    const variant = topic?.variants?.find(
+                      (v) => v.id === sel.variantId,
+                    );
+                    const title = variant?.name ?? "Drill";
+                    const topicName = topic?.name ?? "";
 
-                  return (
-                    <li
-                      key={id}
-                      className="flex items-start gap-2 rounded-organic-md px-2 py-2 hover:bg-surface-mid/80"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-text">
-                          {title}
-                        </p>
-                        {topicName ? (
-                          <p className="truncate text-[11px] text-text-muted">
-                            {topicName}
-                          </p>
-                        ) : null}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => onRemoveDrill?.(id)}
-                        className="shrink-0 rounded-organic-sm p-1.5 text-text-muted transition-colors hover:bg-error/10 hover:text-error"
-                        aria-label={`Remove ${title}`}
-                      >
-                        <X className="h-4 w-4" strokeWidth={2} />
-                      </button>
-                    </li>
-                  );
-                })
-              )}
-            </ul>
-          </div>
-        ) : null}
+                    return (
+                      <li key={id}>
+                        <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                          <div className="min-w-0 flex-1 py-0.5">
+                            <p className="truncate text-[13px] font-medium leading-snug text-text">
+                              {title}
+                            </p>
+                            {topicName ? (
+                              <p className="truncate text-[11px] text-text-subtle">
+                                {topicName}
+                              </p>
+                            ) : null}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => onRemoveDrill?.(id)}
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
+                            aria-label={`Remove ${title}`}
+                          >
+                            <X className="h-4 w-4" strokeWidth={2} />
+                          </button>
+                        </div>
+                      </li>
+                    );
+                  })
+                )}
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        <div className="flex flex-col gap-3 rounded-organic-xl bg-surface-elevated/45 p-3 shadow-bar-floating backdrop-blur-xl sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-organic-xl border-0 bg-surface p-3 shadow-bar-floating backdrop-blur-sm transition-[box-shadow,transform] duration-200 ease-signature sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             {showDrillPopover ? (
               <button
@@ -220,10 +227,10 @@ export function SessionSelectionBar({
                 aria-expanded={drillListOpen}
                 aria-controls="session-drill-popover"
                 className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md transition-colors",
-                  "text-primary hover:bg-primary/15",
-                  drillListOpen && "bg-primary/18",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
+                  "text-primary hover:bg-primary/12",
+                  drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                 )}
                 aria-label="View or remove drills in session"
               >
@@ -282,15 +289,15 @@ export function SessionSelectionBar({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 pt-1 sm:gap-3 sm:pt-0">
+          <div className="flex shrink-0 items-center justify-between gap-2 pt-0.5 sm:gap-3 sm:pt-0">
             <button
               type="button"
               onClick={onClearAll}
               disabled={clearDisabled}
               className={cn(
-                "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors",
-                "hover:bg-surface-mid/80 hover:text-text",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
+                "hover:bg-surface-mid/60 hover:text-text",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
                 clearDisabled &&
                   "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
                 !clearDisabled &&
@@ -305,11 +312,11 @@ export function SessionSelectionBar({
               onClick={onStart}
               disabled={!canStartSession}
               className={cn(
-                "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-fast ease-signature sm:flex-initial",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature sm:flex-initial",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
                 "disabled:cursor-not-allowed",
                 canStartSession
-                  ? "bg-primary text-background shadow-md shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]"
+                  ? "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]"
                   : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
               )}
             >
