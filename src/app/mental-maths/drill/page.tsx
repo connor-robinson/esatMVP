@@ -87,7 +87,7 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
-        <div className="flex h-full min-h-0 gap-6 overflow-hidden px-6 py-6">
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-[min(100%,1400px)] items-stretch justify-center gap-6 overflow-hidden px-4 py-6 sm:px-6">
           {/* Column 1: Subject Categories */}
           <SubjectCategories
             selectedCategory={selectedCategory}
@@ -98,11 +98,11 @@ export default function BuilderPage() {
           />
 
           {/* Columns 2 & 3: Topic Folders + Drill Variants */}
-          <div className="flex min-h-0 min-w-0 flex-1 gap-6 overflow-hidden">
+          <div className="flex min-h-0 min-w-0 flex-1 items-stretch justify-center gap-6 overflow-hidden">
             {/* Column 2: Topic Folders (Operations-style) */}
             <Suspense
               fallback={
-                <div className="h-full min-h-0 w-full shrink-0 animate-pulse rounded-organic-xl border border-border bg-surface md:w-80 lg:w-72 xl:w-80" />
+                <div className="h-full min-h-0 w-full shrink-0 animate-pulse rounded-organic-xl bg-surface md:w-80 lg:w-72 xl:w-80" />
               }
             >
               <TopicFolders

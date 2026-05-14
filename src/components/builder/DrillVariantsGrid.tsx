@@ -58,7 +58,7 @@ export function DrillVariantsGrid({
   }
 
   return (
-    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface shadow-sm'>
+    <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl bg-surface'>
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
         <div className='mb-6 flex items-end justify-between'>
           <div>
@@ -81,10 +81,10 @@ export function DrillVariantsGrid({
               <div
                 key={variantId}
                 className={cn(
-                  'relative group rounded-organic-md border transition-all',
+                  'relative group rounded-organic-md transition-all',
                   isSelected
-                    ? 'border-primary/55 bg-primary/5 shadow-sm ring-1 ring-primary/35'
-                    : 'border-border-subtle bg-surface-elevated hover:border-border hover:bg-surface-neutral',
+                    ? 'bg-primary/10 shadow-sm'
+                    : 'bg-surface-elevated hover:bg-surface-neutral',
                 )}
               >
                 <div className='flex h-full flex-col p-4'>

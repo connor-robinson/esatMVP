@@ -15,8 +15,7 @@ export type HighLevelCategory =
   | 'number_theory'
   | 'shortcuts'
   | 'trigonometry'
-  | 'physics'
-  | 'other';
+  | 'physics';
 
 const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   arithmetic: 'arithmetic',
@@ -35,13 +34,13 @@ const CATEGORY_MAP: Record<TopicCategory, HighLevelCategory> = {
   electricity: 'physics',
   thermodynamics: 'physics',
   atomic_structure: 'physics',
-  reactions: 'other',
-  organic: 'other',
-  analytical: 'other',
-  cell_biology: 'other',
-  genetics: 'other',
-  evolution: 'other',
-  ecology: 'other',
+  reactions: 'number_theory',
+  organic: 'number_theory',
+  analytical: 'number_theory',
+  cell_biology: 'number_theory',
+  genetics: 'number_theory',
+  evolution: 'number_theory',
+  ecology: 'number_theory',
 };
 
 /** Topics in this sidebar category, catalog order. Pair with `accessibleTopicIds` for lock rows. */
@@ -51,7 +50,7 @@ export function getTopicsForHighLevelCategory(
 ): Topic[] {
   if (!selectedCategory) return [];
   return topics.filter((topic) => {
-    const highLevel = CATEGORY_MAP[topic.category] ?? 'other';
+    const highLevel = CATEGORY_MAP[topic.category] ?? 'number_theory';
     return highLevel === selectedCategory;
   });
 }
@@ -91,8 +90,8 @@ export function TopicFolders({
   };
 
   return (
-    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl border border-border bg-surface shadow-sm md:w-80 lg:w-72 xl:w-80'>
-      <div className='flex shrink-0 items-center justify-between border-b border-border-subtle px-6 pb-4 pt-5'>
+    <div className='flex h-full min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface md:w-80 lg:w-72 xl:w-80'>
+      <div className='flex shrink-0 items-center justify-between px-6 pb-4 pt-5'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory
             ? categoryLabels[selectedCategory] || 'Operations'
@@ -111,7 +110,7 @@ export function TopicFolders({
               {Array.from({ length: 3 }).map((_, idx) => (
                 <div
                   key={`topic-skel-${idx}`}
-                  className='h-20 animate-pulse rounded-organic-lg border border-border-subtle bg-surface-elevated'
+                  className='h-20 animate-pulse rounded-organic-lg bg-surface-elevated'
                 />
               ))}
             </div>
@@ -135,13 +134,10 @@ export function TopicFolders({
                   className={cn(
                     'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
                     isSelected
-                      ? 'border border-secondary/35 bg-folder-card shadow-sm ring-1 ring-secondary/35'
-                      : 'border border-border-subtle bg-folder-card hover:border-border hover:bg-surface-neutral',
+                      ? 'bg-secondary/12 shadow-sm'
+                      : 'bg-folder-card hover:bg-surface-neutral',
                   )}
                 >
-                  {isSelected && (
-                    <div className='absolute top-0 left-0 h-full w-1 rounded-l-organic-xl bg-secondary/80' />
-                  )}
                   <div className='flex justify-between items-start'>
                     <div className='flex-1 min-w-0'>
                       <h3 className='font-bold text-text mb-1'>{topic.name}</h3>
@@ -179,7 +175,7 @@ export function TopicFolders({
                   return (
                     <div
                       key={topic.id}
-                      className='w-full rounded-organic-lg border border-border-subtle/50 bg-surface-elevated/40 p-4 opacity-80'
+                      className='w-full rounded-organic-lg bg-surface-elevated/40 p-4 opacity-80'
                       aria-disabled
                     >
                       <div className='flex justify-between items-start gap-2'>
@@ -212,7 +208,7 @@ export function TopicFolders({
       </div>
 
       {showUpgradeCard && (
-        <div className='mt-6 flex flex-col gap-3 rounded-organic-xl border border-border-subtle bg-surface-elevated p-4 text-center shadow-md'>
+        <div className='mt-6 flex flex-col gap-3 rounded-organic-xl bg-surface-elevated p-4 text-center shadow-md'>
           <div className='flex justify-center'>
             <Crown className='h-8 w-8 text-amber-400/90' aria-hidden />
           </div>
@@ -240,5 +236,4 @@ const categoryLabels: Record<HighLevelCategory, string> = {
   shortcuts: 'Shortcuts',
   trigonometry: 'Trigonometry',
   physics: 'Physics',
-  other: 'Other',
 };
