@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * Figma "Bars" section `219:594` — Start Bar / Selected Start Bar composite.
- * Tokens: background n50, surface n100 overlay, CTA idle n200 + muted text, CTA ready primaryHover (greenDark) + black label.
+ * Floating session summary + actions. Uses theme tokens (`surface`, `border`,
+ * `primary`, `text`) so light/dark stay consistent with the rest of the app.
  */
 
 import { Calculator, Clock, ListOrdered, ArrowRight } from "lucide-react";
@@ -36,6 +36,8 @@ export interface SessionSelectionBarProps {
   compactVariant?: "icons" | "figma";
   /** For figma compact bar, hides the numeric input and shows plain count text. */
   showQuestionInput?: boolean;
+  /** Extra line under the main count (e.g. “3 drills selected”). */
+  detailLine?: string;
   className?: string;
 }
 
@@ -56,6 +58,7 @@ export function SessionSelectionBar({
   density = "full",
   compactVariant = "figma",
   showQuestionInput = true,
+  detailLine,
   className,
 }: SessionSelectionBarProps) {
   const clearVisuallyMuted = clearDimmedWhenReady && canStartSession;
@@ -65,7 +68,7 @@ export function SessionSelectionBar({
   const countControl = (
     <span
       className={cn(
-        "inline-flex items-center tabular-nums ring-1 ring-white/5",
+        "inline-flex items-center tabular-nums ring-1 ring-border-subtle",
         compact
           ? "gap-1 rounded-md bg-surface-elevated px-1.5 py-0.5"
           : "gap-1.5 rounded-lg bg-surface-elevated px-2 py-1",
@@ -98,75 +101,102 @@ export function SessionSelectionBar({
     </span>
   );
 
-  /** Figma mental-maths drill: wide pill, questions-first, no icon clutter. */
+  /** Mental-maths style: rounded island, session stats + clear + primary CTA. */
   if (compactFigma) {
     return (
       <div
-        className={cn("w-max max-w-[calc(100vw-2rem)]", className)}
+        className={cn(
+          "w-full max-w-[min(100%,28rem)] sm:w-max sm:max-w-[calc(100vw-2rem)]",
+          className,
+        )}
       >
-        <div
-          className={cn(
-            "flex items-center gap-4 rounded-full border border-border-subtle/70 bg-surface px-4 py-2.5",
-            "shadow-bar-floating backdrop-blur-md",
-          )}
-        >
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 sm:flex-nowrap">
-            <p className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-text">
+        <div className="flex flex-col gap-3 rounded-organic-xl border border-border bg-surface-elevated/95 p-3 shadow-bar-floating backdrop-blur-md sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
+              aria-hidden
+            >
+              <ListOrdered className="h-5 w-5" strokeWidth={2} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                Session length
+              </p>
               {showQuestionInput ? (
-                <span className="inline-flex items-center gap-1 tabular-nums">
+                <div className="mt-1 flex flex-wrap items-baseline gap-2">
                   <input
                     type="number"
                     value={questionCount}
                     onChange={(e) =>
-                      onQuestionCountChange(Number(e.target.value) || questionCountMin)
+                      onQuestionCountChange(
+                        Number(e.target.value) || questionCountMin,
+                      )
                     }
                     min={questionCountMin}
                     max={questionCountMax}
                     className={cn(
-                      "w-11 rounded-md border border-border-subtle bg-surface-elevated px-1.5 py-0.5 text-center text-sm font-semibold text-text outline-none",
-                      "focus-visible:ring-2 focus-visible:ring-primary/40 [appearance:textfield]",
+                      "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
+                      "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
                       "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
                     )}
                     aria-label="Number of questions"
                   />
-                  <span>Questions Selected</span>
-                </span>
+                  <span className="text-sm font-medium text-text-muted">
+                    {questionSuffix}
+                  </span>
+                </div>
               ) : (
-                <span className="tabular-nums">{questionCount} Questions Selected</span>
+                <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
+                  <span className="text-xl font-bold tabular-nums leading-none text-text">
+                    {questionCount}
+                  </span>
+                  <span className="text-sm font-medium text-text-muted">
+                    {questionCount === 1 ? "question" : "questions"}
+                  </span>
+                </p>
               )}
-            </p>
+              {detailLine ? (
+                <p className="mt-1.5 text-xs leading-snug text-text-muted">
+                  {detailLine}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle pt-3 sm:border-t-0 sm:pt-0">
             <button
               type="button"
               onClick={onClearAll}
               disabled={clearDisabled}
               className={cn(
-                "shrink-0 text-sm font-normal underline decoration-text-muted/80 underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-sm",
-                clearDisabled && "cursor-not-allowed opacity-40 no-underline",
+                "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors",
+                "hover:bg-surface-mid hover:text-text",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                clearDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
                 !clearDisabled &&
-                  (clearVisuallyMuted
-                    ? "text-text-muted/50"
-                    : "text-text-muted hover:text-text"),
+                  clearVisuallyMuted &&
+                  "text-text-subtle hover:text-text-muted",
               )}
             >
               {clearLabel}
             </button>
+            <button
+              type="button"
+              onClick={onStart}
+              disabled={!canStartSession}
+              className={cn(
+                "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-fast ease-signature sm:flex-initial",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                "disabled:cursor-not-allowed",
+                canStartSession
+                  ? "bg-primary text-background shadow-md shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]"
+                  : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
+              )}
+            >
+              {startLabel}
+              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onStart}
-            disabled={!canStartSession}
-            className={cn(
-              "inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-fast ease-signature",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-              "disabled:cursor-not-allowed",
-              canStartSession
-                ? "bg-primary text-background shadow-md shadow-primary/30 hover:bg-primary-hover hover:text-background active:scale-[0.98]"
-                : "bg-surface-elevated text-text/50 [&_svg]:opacity-30",
-            )}
-          >
-            {startLabel}
-            <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-          </button>
         </div>
       </div>
     );
@@ -175,12 +205,12 @@ export function SessionSelectionBar({
   if (compact) {
     return (
       <div className={cn("w-max max-w-[min(20rem,calc(100vw-1.5rem))]", className)}>
-        <div className="rounded-2xl border border-border-subtle/60 bg-surface/95 p-2 shadow-lg shadow-black/40 backdrop-blur-md">
+        <div className="rounded-organic-xl border border-border bg-surface-elevated/95 p-2 shadow-bar-floating backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
             <div className="flex shrink-0 -space-x-2">
               <div
                 className={cn(
-                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-background",
+                  "relative z-10 flex h-7 w-7 items-center justify-center rounded-lg border border-border-subtle text-background",
                   "bg-accent shadow-sm shadow-accent/30",
                 )}
               >
@@ -189,7 +219,7 @@ export function SessionSelectionBar({
               <div
                 className={cn(
                   "relative z-20 flex h-7 w-7 items-center justify-center rounded-lg",
-                  "border border-white/10 bg-surface-mid text-text shadow-sm",
+                  "border border-border-subtle bg-surface-mid text-text shadow-sm",
                 )}
               >
                 <Clock className="h-3 w-3 text-text-muted" aria-hidden />
@@ -256,7 +286,7 @@ export function SessionSelectionBar({
             <div className="flex -space-x-3 shrink-0">
               <div
                 className={cn(
-                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-organic-lg border border-white/10 text-background",
+                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-organic-lg border border-border-subtle text-background",
                   "bg-accent shadow-badge-mint",
                 )}
               >
@@ -265,7 +295,7 @@ export function SessionSelectionBar({
               <div
                 className={cn(
                   "relative z-20 flex h-9 w-9 items-center justify-center rounded-organic-lg",
-                  "border border-white/10 bg-surface-mid text-text shadow-sm",
+                  "border border-border-subtle bg-surface-mid text-text shadow-sm",
                 )}
               >
                 <Clock className="h-4 w-4 text-text-muted" aria-hidden />
