@@ -135,7 +135,7 @@ export function DrillVariantsGrid({
                         onClick={() =>
                           onAddVariant(variantId, topic.id, variant.id)
                         }
-                        className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3.5 py-2.5 text-sm font-bold text-text-muted shadow-sm transition-colors hover:bg-surface-neutral hover:text-text'
+                        className='flex items-center gap-1.5 rounded-organic-sm bg-surface-dark px-3.5 py-2.5 text-sm font-bold text-[#9a939f] shadow-sm transition-colors hover:bg-surface-mid hover:text-text dark:text-[#c4bec9]'
                       >
                         <Plus className='h-3.5 w-3.5 shrink-0' />
                         Add
