@@ -154,11 +154,11 @@ export function DrillsSelectedModal({
                         0.5 m
                       </span>
                     </div>
-                    {/* Remove — Figma: small dark bordered button */}
+                    {/* Remove — brand green for testing (inverse of grid) */}
                     <button
                       type='button'
                       onClick={() => onRemoveVariant(id)}
-                      className='rounded-organic-sm border border-border bg-surface-elevated px-3 py-1 text-[11px] font-semibold text-text-muted transition-colors hover:border-border hover:bg-surface-neutral hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'
+                      className='rounded-organic-sm bg-primary px-3 py-1 text-[11px] font-semibold text-background shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'
                     >
                       Remove
                     </button>
