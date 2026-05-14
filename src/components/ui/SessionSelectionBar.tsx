@@ -5,7 +5,10 @@
  * `primary`, `text`) so light/dark stay consistent with the rest of the app.
  */
 
-import { Calculator, Clock, ListOrdered, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Calculator, Clock, ListOrdered, ArrowRight, X } from "lucide-react";
+import { getTopic } from "@/config/topics";
+import type { TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
 
 export interface SessionSelectionBarProps {
@@ -38,6 +41,9 @@ export interface SessionSelectionBarProps {
   showQuestionInput?: boolean;
   /** Extra line under the main count (e.g. “3 drills selected”). */
   detailLine?: string;
+  /** When set with `onRemoveDrill`, the list control opens a drill picker popover. */
+  selectedDrills?: TopicVariantSelection[];
+  onRemoveDrill?: (topicVariantId: string) => void;
   className?: string;
 }
 
@@ -59,11 +65,46 @@ export function SessionSelectionBar({
   compactVariant = "figma",
   showQuestionInput = true,
   detailLine,
+  selectedDrills,
+  onRemoveDrill,
   className,
 }: SessionSelectionBarProps) {
   const clearVisuallyMuted = clearDimmedWhenReady && canStartSession;
   const compact = density === "compact";
   const compactFigma = compact && compactVariant === "figma";
+  const showDrillPopover = Boolean(
+    compactFigma && selectedDrills && onRemoveDrill,
+  );
+
+  const [drillListOpen, setDrillListOpen] = useState(false);
+  const islandRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showDrillPopover) {
+      setDrillListOpen(false);
+      return;
+    }
+    if (!drillListOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (
+        islandRef.current &&
+        !islandRef.current.contains(e.target as Node)
+      ) {
+        setDrillListOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [drillListOpen, showDrillPopover]);
+
+  useEffect(() => {
+    if (!drillListOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrillListOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [drillListOpen]);
 
   const countControl = (
     <span
@@ -101,23 +142,101 @@ export function SessionSelectionBar({
     </span>
   );
 
-  /** Mental-maths style: rounded island, session stats + clear + primary CTA. */
+  /** Mental-maths style: frosted island, session stats, drill list popover, actions. */
   if (compactFigma) {
     return (
       <div
+        ref={islandRef}
         className={cn(
-          "w-full max-w-[min(100%,28rem)] sm:w-max sm:max-w-[calc(100vw-2rem)]",
+          "relative w-full max-w-[min(100%,28rem)] sm:w-max sm:max-w-[calc(100vw-2rem)]",
           className,
         )}
       >
-        <div className="flex flex-col gap-3 rounded-organic-xl border border-border bg-surface-elevated/95 p-3 shadow-bar-floating backdrop-blur-md sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
-          <div className="flex min-w-0 flex-1 items-start gap-3">
-            <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
-              aria-hidden
-            >
-              <ListOrdered className="h-5 w-5" strokeWidth={2} />
+        {drillListOpen && showDrillPopover ? (
+          <div
+            id="session-drill-popover"
+            role="dialog"
+            aria-label="Drills in this session"
+            className="absolute bottom-[calc(100%+10px)] left-0 right-0 z-[60] max-h-[min(55vh,22rem)] overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-elevated shadow-2xl sm:left-auto sm:right-0 sm:w-[min(100%,20rem)]"
+          >
+            <div className="border-b border-border-subtle px-3 py-2.5">
+              <p className="text-xs font-semibold text-text">Session drills</p>
+              <p className="text-[11px] text-text-muted">
+                Remove any drill; changes apply immediately.
+              </p>
             </div>
+            <ul className="scrollbar-hide max-h-[min(48vh,18rem)] overflow-y-auto p-2">
+              {(selectedDrills ?? []).length === 0 ? (
+                <li className="rounded-organic-md px-3 py-6 text-center text-sm text-text-muted">
+                  No drills yet. Add drills from the grid.
+                </li>
+              ) : (
+                (selectedDrills ?? []).map((sel) => {
+                  const id = `${sel.topicId}-${sel.variantId}`;
+                  const topic = getTopic(sel.topicId);
+                  const variant = topic?.variants?.find(
+                    (v) => v.id === sel.variantId,
+                  );
+                  const title = variant?.name ?? "Drill";
+                  const topicName = topic?.name ?? "";
+
+                  return (
+                    <li
+                      key={id}
+                      className="flex items-start gap-2 rounded-organic-md px-2 py-2 hover:bg-surface-mid/80"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-text">
+                          {title}
+                        </p>
+                        {topicName ? (
+                          <p className="truncate text-[11px] text-text-muted">
+                            {topicName}
+                          </p>
+                        ) : null}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveDrill?.(id)}
+                        className="shrink-0 rounded-organic-sm p-1.5 text-text-muted transition-colors hover:bg-error/10 hover:text-error"
+                        aria-label={`Remove ${title}`}
+                      >
+                        <X className="h-4 w-4" strokeWidth={2} />
+                      </button>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </div>
+        ) : null}
+
+        <div className="flex flex-col gap-3 rounded-organic-xl bg-surface-elevated/45 p-3 shadow-bar-floating backdrop-blur-xl sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            {showDrillPopover ? (
+              <button
+                type="button"
+                onClick={() => setDrillListOpen((o) => !o)}
+                aria-expanded={drillListOpen}
+                aria-controls="session-drill-popover"
+                className={cn(
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md transition-colors",
+                  "text-primary hover:bg-primary/15",
+                  drillListOpen && "bg-primary/18",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                )}
+                aria-label="View or remove drills in session"
+              >
+                <ListOrdered className="h-5 w-5" strokeWidth={2} />
+              </button>
+            ) : (
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
+                aria-hidden
+              >
+                <ListOrdered className="h-5 w-5" strokeWidth={2} />
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                 Session length
@@ -163,16 +282,17 @@ export function SessionSelectionBar({
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border-subtle pt-3 sm:border-t-0 sm:pt-0">
+          <div className="flex shrink-0 items-center justify-between gap-2 pt-1 sm:gap-3 sm:pt-0">
             <button
               type="button"
               onClick={onClearAll}
               disabled={clearDisabled}
               className={cn(
                 "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors",
-                "hover:bg-surface-mid hover:text-text",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
-                clearDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
+                "hover:bg-surface-mid/80 hover:text-text",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+                clearDisabled &&
+                  "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
                 !clearDisabled &&
                   clearVisuallyMuted &&
                   "text-text-subtle hover:text-text-muted",
@@ -186,7 +306,7 @@ export function SessionSelectionBar({
               disabled={!canStartSession}
               className={cn(
                 "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-fast ease-signature sm:flex-initial",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
                 "disabled:cursor-not-allowed",
                 canStartSession
                   ? "bg-primary text-background shadow-md shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]"
