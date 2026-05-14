@@ -87,24 +87,6 @@ export const colorTokens = {
   difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
   /** Medium difficulty pill: muted amber dark, warm-brown light */
   difficultyMedium: { dark: "#BF8C58", light: figmaPalette.yellowDark },
-  /** Drill builder pills: light fill + dark label (dark UI), dark fill + light label (light UI) */
-  difficultyDrillPillEasyBg: { dark: "#c5ddd0", light: "#2a3d34" },
-  difficultyDrillPillMediumBg: { dark: "#e8d4bc", light: "#3d3225" },
-  difficultyDrillPillHardBg: { dark: "#ebc8c8", light: "#3d2828" },
-  difficultyDrillPillInk: { dark: "#0e0f12", light: "#f4f1f5" },
-  /**
-   * Mental-maths left rail: icon tiles. Dark UI = pastel fills + near-black ink;
-   * light UI = deep fills + light ink. (Muted tile uses one neutral pair.)
-   */
-  categoryRailInk: { dark: "#0e0f12", light: "#f4f1f5" },
-  categoryRailMutedBg: { dark: "#8f8a9c", light: "#524a5f" },
-  categoryRailArithmeticBg: { dark: "#bfe8dc", light: "#234038" },
-  categoryRailAlgebraBg: { dark: "#bdd4ef", light: "#243b52" },
-  categoryRailGeometryBg: { dark: "#cdd4f2", light: "#2c3350" },
-  categoryRailNumberTheoryBg: { dark: "#edd0df", light: "#4a3040" },
-  categoryRailShortcutsBg: { dark: "#ddd0f4", light: "#3a2f4d" },
-  categoryRailTrigonometryBg: { dark: "#edd4cf", light: "#4a322c" },
-  categoryRailPhysicsBg: { dark: "#dbd4f0", light: "#352f48" },
   /** TMUA exam label — Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
   tmuaAccent: { dark: "#CA7BB3", light: "#8B4F7A" },
 } as const satisfies Record<string, ModeToken>;
@@ -224,26 +206,27 @@ export const shadowTokens = {
 } as const;
 
 /**
- * Difficulty pills for drill cards (DrillVariantsGrid, DrillsSelectedModal).
- * Dark theme: pastel fills + near-black ink. Light theme: deep fills + light ink.
+ * Difficulty pills for drill cards — only semantic theme colors (`success`,
+ * `warning`, `error`) + `text-surface` / `text-background` with `dark:` for
+ * light-tint + dark glyph in dark UI vs solid + light glyph in light UI.
  */
 export const difficultyTokens = {
   easy: {
     label: "Easy",
-    bg: "bg-difficulty-drill-easy",
-    text: "text-difficulty-drill-ink",
+    bg: "bg-success text-surface shadow-sm dark:bg-success/35 dark:text-background",
+    text: undefined,
     shadow: undefined,
   },
   medium: {
     label: "Medium",
-    bg: "bg-difficulty-drill-medium",
-    text: "text-difficulty-drill-ink",
+    bg: "bg-warning text-surface shadow-sm dark:bg-warning/35 dark:text-background",
+    text: undefined,
     shadow: undefined,
   },
   hard: {
     label: "Hard",
-    bg: "bg-difficulty-drill-hard",
-    text: "text-difficulty-drill-ink",
+    bg: "bg-error text-surface shadow-sm dark:bg-error/35 dark:text-background",
+    text: undefined,
     shadow: undefined,
   },
 } as const;
@@ -312,19 +295,6 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-surface-dark": colorTokens.surfaceDark[mode],
     "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
     "--color-difficulty-medium": colorTokens.difficultyMedium[mode],
-    "--color-difficulty-drill-pill-easy-bg": colorTokens.difficultyDrillPillEasyBg[mode],
-    "--color-difficulty-drill-pill-medium-bg": colorTokens.difficultyDrillPillMediumBg[mode],
-    "--color-difficulty-drill-pill-hard-bg": colorTokens.difficultyDrillPillHardBg[mode],
-    "--color-difficulty-drill-pill-ink": colorTokens.difficultyDrillPillInk[mode],
-    "--color-category-rail-ink": colorTokens.categoryRailInk[mode],
-    "--color-category-rail-muted-bg": colorTokens.categoryRailMutedBg[mode],
-    "--color-category-rail-arithmetic-bg": colorTokens.categoryRailArithmeticBg[mode],
-    "--color-category-rail-algebra-bg": colorTokens.categoryRailAlgebraBg[mode],
-    "--color-category-rail-geometry-bg": colorTokens.categoryRailGeometryBg[mode],
-    "--color-category-rail-number-theory-bg": colorTokens.categoryRailNumberTheoryBg[mode],
-    "--color-category-rail-shortcuts-bg": colorTokens.categoryRailShortcutsBg[mode],
-    "--color-category-rail-trigonometry-bg": colorTokens.categoryRailTrigonometryBg[mode],
-    "--color-category-rail-physics-bg": colorTokens.categoryRailPhysicsBg[mode],
     "--color-tmua-accent": colorTokens.tmuaAccent[mode],
     "--surface-02": surfaceOpacityTokens["02"][mode],
     "--surface-05": surfaceOpacityTokens["05"][mode],

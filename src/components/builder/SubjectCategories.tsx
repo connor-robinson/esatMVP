@@ -11,6 +11,7 @@ import {
   Atom,
   Zap,
   Infinity,
+  type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
@@ -30,22 +31,27 @@ const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
   'physics',
 ];
 
-/** Selected chip fill — theme tokens: light fill + dark ink (dark UI), deep fill + light ink (light UI). */
-const categoryRailSelectedBg: Record<HighLevelCategory, string> = {
-  arithmetic: 'bg-category-rail-arithmetic',
-  algebra: 'bg-category-rail-algebra',
-  geometry: 'bg-category-rail-geometry',
-  number_theory: 'bg-category-rail-number-theory',
-  shortcuts: 'bg-category-rail-shortcuts',
-  trigonometry: 'bg-category-rail-trigonometry',
-  physics: 'bg-category-rail-physics',
+/** Selected chip — existing palette colors only; same light-tint / dark-ink vs solid / light-ink pattern as drill difficulty pills. */
+const categorySelectedChip: Record<HighLevelCategory, string> = {
+  arithmetic:
+    'bg-primary text-surface shadow-sm dark:bg-primary/35 dark:text-background',
+  algebra: 'bg-accent text-surface shadow-sm dark:bg-accent/35 dark:text-background',
+  geometry:
+    'bg-secondary text-surface shadow-sm dark:bg-secondary/35 dark:text-background',
+  number_theory:
+    'bg-biology text-surface shadow-sm dark:bg-biology/35 dark:text-background',
+  shortcuts:
+    'bg-advanced text-surface shadow-sm dark:bg-advanced/35 dark:text-background',
+  trigonometry:
+    'bg-chemistry text-surface shadow-sm dark:bg-chemistry/35 dark:text-background',
+  physics: 'bg-physics text-surface shadow-sm dark:bg-physics/35 dark:text-background',
 };
 
 const categoryConfig: Record<
   HighLevelCategory,
   {
     label: string;
-    icon: React.ComponentType<{ className?: string }>;
+    icon: LucideIcon;
   }
 > = {
   arithmetic: { label: 'Arithmetic', icon: Calculator },
@@ -84,11 +90,8 @@ export function SubjectCategories({
                   className={cn(
                     'flex h-12 w-12 items-center justify-center rounded-organic-lg transition-all xl:h-14 xl:w-14',
                     isSelected
-                      ? cn(
-                          categoryRailSelectedBg[category],
-                          'text-category-rail-ink shadow-sm',
-                        )
-                      : 'bg-category-rail-muted text-category-rail-ink',
+                      ? categorySelectedChip[category]
+                      : 'bg-surface-mid text-text-muted',
                   )}
                 >
                   <Icon className='h-5 w-5 xl:h-6 xl:w-6' strokeWidth={isSelected ? 2.25 : 2} />
