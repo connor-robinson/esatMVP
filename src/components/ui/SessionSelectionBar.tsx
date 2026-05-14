@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Floating session summary + actions. Uses theme tokens (`surface`, `border`,
+ * Floating session summary + actions. Uses theme tokens (`surface-elevated`,
  * `primary`, `text`) so light/dark stay consistent with the rest of the app.
  */
 
@@ -143,7 +143,7 @@ export function SessionSelectionBar({
     </span>
   );
 
-  /** Mental-maths style: frosted island, session stats, drill list popover, actions. */
+  /** Mental-maths style: session island + drill list as one elevated surface. */
   if (compactFigma) {
     return (
       <div
@@ -153,178 +153,187 @@ export function SessionSelectionBar({
           className,
         )}
       >
-        <div className="flex flex-col gap-2.5 rounded-organic-xl border border-border-subtle/60 bg-surface-elevated p-3 shadow-bar-floating backdrop-blur-sm transition-[box-shadow,transform] duration-200 ease-signature sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
-          <div className="flex min-w-0 flex-1 items-start gap-3">
-            {showDrillPopover ? (
-              <div className="relative shrink-0">
-                <AnimatePresence>
-                  {drillListOpen && (
-                    <motion.div
-                      key="session-drill-popover"
-                      id="session-drill-popover"
-                      role="dialog"
-                      aria-label="Drills in this session"
-                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                      transition={{
-                        duration: 0.22,
-                        ease: [0.32, 0.72, 0, 1],
-                      }}
-                      style={{ transformOrigin: "bottom center" }}
-                      className="absolute bottom-full left-0 z-[60] mb-2 max-h-[min(52vh,20rem)] w-[min(17.5rem,calc(100vw-2rem))] overflow-hidden rounded-organic-lg bg-surface-elevated/95 shadow-bar-floating backdrop-blur-md"
-                    >
-                      <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                        In session
-                      </p>
-                      <ul className="scrollbar-hide max-h-[min(44vh,15rem)] overflow-y-auto px-2 pb-3">
-                        {(selectedDrills ?? []).length === 0 ? (
-                          <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
-                            No drills yet — add from the grid.
-                          </li>
-                        ) : (
-                          (selectedDrills ?? []).map((sel) => {
-                            const id = `${sel.topicId}-${sel.variantId}`;
-                            const topic = getTopic(sel.topicId);
-                            const variant = topic?.variants?.find(
-                              (v) => v.id === sel.variantId,
-                            );
-                            const title = variant?.name ?? "Drill";
-                            const topicName = topic?.name ?? "";
-
-                            return (
-                              <li key={id}>
-                                <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
-                                  <div className="min-w-0 flex-1 py-0.5">
-                                    <p className="truncate text-[13px] font-medium leading-snug text-text">
-                                      {title}
-                                    </p>
-                                    {topicName ? (
-                                      <p className="truncate text-[11px] text-text-subtle">
-                                        {topicName}
-                                      </p>
-                                    ) : null}
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => onRemoveDrill?.(id)}
-                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
-                                    aria-label={`Remove ${title}`}
-                                  >
-                                    <X className="h-4 w-4" strokeWidth={2} />
-                                  </button>
-                                </div>
-                              </li>
-                            );
-                          })
-                        )}
-                      </ul>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <button
-                  type="button"
-                  onClick={() => setDrillListOpen((o) => !o)}
-                  aria-expanded={drillListOpen}
-                  aria-controls="session-drill-popover"
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
-                    "text-primary hover:bg-primary/12",
-                    drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
-                  )}
-                  aria-label="View or remove drills in session"
-                >
-                  <ListOrdered className="h-5 w-5" strokeWidth={2} />
-                </button>
-              </div>
-            ) : (
-              <div
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
-                aria-hidden
+        <div
+          className={cn(
+            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated",
+            /** Solid “stamp” shadow (no soft multi-layer blur). */
+            "shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]",
+            "transition-[box-shadow,transform] duration-200 ease-signature",
+          )}
+        >
+          <AnimatePresence initial={false}>
+            {drillListOpen && showDrillPopover && (
+              <motion.div
+                key="session-drill-popover"
+                id="session-drill-popover"
+                role="dialog"
+                aria-label="Drills in this session"
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{
+                  duration: 0.2,
+                  ease: [0.32, 0.72, 0, 1],
+                }}
+                className="flex max-h-[min(52vh,20rem)] w-full shrink-0 flex-col border-b border-border-subtle/50 bg-surface-elevated"
               >
-                <ListOrdered className="h-5 w-5" strokeWidth={2} />
-              </div>
+                <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                  In session
+                </p>
+                <ul className="scrollbar-hide max-h-[min(44vh,15rem)] min-h-0 flex-1 overflow-y-auto px-2 pb-3">
+                  {(selectedDrills ?? []).length === 0 ? (
+                    <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
+                      No drills yet — add from the grid.
+                    </li>
+                  ) : (
+                    (selectedDrills ?? []).map((sel) => {
+                      const id = `${sel.topicId}-${sel.variantId}`;
+                      const topic = getTopic(sel.topicId);
+                      const variant = topic?.variants?.find(
+                        (v) => v.id === sel.variantId,
+                      );
+                      const title = variant?.name ?? "Drill";
+                      const topicName = topic?.name ?? "";
+
+                      return (
+                        <li key={id}>
+                          <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                            <div className="min-w-0 flex-1 py-0.5">
+                              <p className="truncate text-[13px] font-medium leading-snug text-text">
+                                {title}
+                              </p>
+                              {topicName ? (
+                                <p className="truncate text-[11px] text-text-subtle">
+                                  {topicName}
+                                </p>
+                              ) : null}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => onRemoveDrill?.(id)}
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
+                              aria-label={`Remove ${title}`}
+                            >
+                              <X className="h-4 w-4" strokeWidth={2} />
+                            </button>
+                          </div>
+                        </li>
+                      );
+                    })
+                  )}
+                </ul>
+              </motion.div>
             )}
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                Session length
-              </p>
-              {showQuestionInput ? (
-                <div className="mt-1 flex flex-wrap items-baseline gap-2">
-                  <input
-                    type="number"
-                    value={questionCount}
-                    onChange={(e) =>
-                      onQuestionCountChange(
-                        Number(e.target.value) || questionCountMin,
-                      )
-                    }
-                    min={questionCountMin}
-                    max={questionCountMax}
+          </AnimatePresence>
+
+          <div className="flex flex-col gap-2.5 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              {showDrillPopover ? (
+                <div className="relative shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setDrillListOpen((o) => !o)}
+                    aria-expanded={drillListOpen}
+                    aria-controls="session-drill-popover"
                     className={cn(
-                      "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
-                      "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
-                      "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                      "flex h-10 w-10 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
+                      "text-primary hover:bg-primary/12",
+                      drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                     )}
-                    aria-label="Number of questions"
-                  />
-                  <span className="text-sm font-medium text-text-muted">
-                    {questionSuffix}
-                  </span>
+                    aria-label="View or remove drills in session"
+                  >
+                    <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                  </button>
                 </div>
               ) : (
-                <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
-                  <span className="text-xl font-bold tabular-nums leading-none text-primary">
-                    {questionCount}
-                  </span>
-                  <span className="text-sm font-medium text-text-muted">
-                    {questionCount === 1 ? "question" : "questions"}
-                  </span>
-                </p>
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
+                  aria-hidden
+                >
+                  <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                </div>
               )}
-              {detailLine ? (
-                <p className="mt-1.5 text-xs leading-snug text-text-muted">
-                  {detailLine}
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                  Session length
                 </p>
-              ) : null}
+                {showQuestionInput ? (
+                  <div className="mt-1 flex flex-wrap items-baseline gap-2">
+                    <input
+                      type="number"
+                      value={questionCount}
+                      onChange={(e) =>
+                        onQuestionCountChange(
+                          Number(e.target.value) || questionCountMin,
+                        )
+                      }
+                      min={questionCountMin}
+                      max={questionCountMax}
+                      className={cn(
+                        "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
+                        "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
+                        "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                      )}
+                      aria-label="Number of questions"
+                    />
+                    <span className="text-sm font-medium text-text-muted">
+                      {questionSuffix}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
+                    <span className="text-xl font-bold tabular-nums leading-none text-primary">
+                      {questionCount}
+                    </span>
+                    <span className="text-sm font-medium text-text-muted">
+                      {questionCount === 1 ? "question" : "questions"}
+                    </span>
+                  </p>
+                )}
+                {detailLine ? (
+                  <p className="mt-1.5 text-xs leading-snug text-text-muted">
+                    {detailLine}
+                  </p>
+                ) : null}
+              </div>
             </div>
-          </div>
 
-          <div className="flex shrink-0 items-center justify-between gap-2 pt-0.5 sm:gap-3 sm:pt-0">
-            <button
-              type="button"
-              onClick={onClearAll}
-              disabled={clearDisabled}
-              className={cn(
-                "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
-                "hover:bg-surface-mid/60 hover:text-text",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
-                clearDisabled &&
-                  "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
-                !clearDisabled &&
-                  clearVisuallyMuted &&
-                  "text-text-subtle hover:text-text-muted",
-              )}
-            >
-              {clearLabel}
-            </button>
-            <button
-              type="button"
-              onClick={onStart}
-              disabled={!canStartSession}
-              className={cn(
-                "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature sm:flex-initial",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
-                "disabled:cursor-not-allowed",
-                canStartSession
-                  ? "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]"
-                  : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
-              )}
-            >
-              {startLabel}
-              <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
-            </button>
+            <div className="flex shrink-0 items-center justify-between gap-2 pt-0.5 sm:gap-3 sm:pt-0">
+              <button
+                type="button"
+                onClick={onClearAll}
+                disabled={clearDisabled}
+                className={cn(
+                  "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
+                  "hover:bg-surface-mid/60 hover:text-text",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                  clearDisabled &&
+                    "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
+                  !clearDisabled &&
+                    clearVisuallyMuted &&
+                    "text-text-subtle hover:text-text-muted",
+                )}
+              >
+                {clearLabel}
+              </button>
+              <button
+                type="button"
+                onClick={onStart}
+                disabled={!canStartSession}
+                className={cn(
+                  "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature sm:flex-initial",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                  "disabled:cursor-not-allowed",
+                  canStartSession
+                    ? "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]"
+                    : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
+                )}
+              >
+                {startLabel}
+                <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+              </button>
+            </div>
           </div>
         </div>
       </div>
