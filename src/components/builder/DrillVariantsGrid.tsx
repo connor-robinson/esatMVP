@@ -125,7 +125,7 @@ export function DrillVariantsGrid({
                       <button
                         type='button'
                         onClick={() => onRemoveVariant(variantId)}
-                        className='rounded-organic-sm bg-primary px-3 py-2 text-xs font-bold text-background shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover hover:text-background'
+                        className='rounded-organic-sm bg-primary px-3.5 py-2.5 text-sm font-bold text-background shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover hover:text-background'
                       >
                         Remove
                       </button>
@@ -135,9 +135,9 @@ export function DrillVariantsGrid({
                         onClick={() =>
                           onAddVariant(variantId, topic.id, variant.id)
                         }
-                        className='flex items-center gap-1 rounded-organic-sm border border-border bg-surface-mid px-3 py-2 text-xs font-bold text-text-muted shadow-sm transition-colors hover:border-border-subtle hover:bg-surface-neutral hover:text-text'
+                        className='flex items-center gap-1.5 rounded-organic-sm border border-border bg-surface-elevated px-3.5 py-2.5 text-sm font-bold text-text-muted shadow-sm transition-colors hover:border-border-subtle hover:bg-surface-neutral hover:text-text'
                       >
-                        <Plus className='h-3 w-3' />
+                        <Plus className='h-3.5 w-3.5 shrink-0' />
                         Add
                       </button>
                     )}
