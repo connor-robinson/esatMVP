@@ -83,7 +83,7 @@ export function DrillVariantsGrid({
                 className={cn(
                   'relative group rounded-organic-md transition-all',
                   isSelected
-                    ? 'bg-primary/10 shadow-sm'
+                    ? 'bg-folder-card-selected shadow-sm'
                     : 'bg-surface-elevated hover:bg-surface-neutral',
                 )}
               >

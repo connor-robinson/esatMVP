@@ -56,6 +56,11 @@ export const colorTokens = {
   surfaceNeutral: { dark: figmaNeutralScale.n400, light: figmaNeutralScale.n850 },
   /** Folder/topic item cards: n300 dark (#2b2831), n900 light (#f4f1f5) */
   folderCard: { dark: figmaNeutralScale.n300, light: figmaNeutralScale.n900 },
+  /** Selected topic / added drill tile — lifted in dark, pressed-in in light */
+  folderCardSelected: {
+    dark: figmaNeutralScale.n400,
+    light: figmaNeutralScale.n800,
+  },
   /** Muted button / remove button background: n500 in both modes */
   surfaceDark: { dark: figmaNeutralScale.n500, light: figmaNeutralScale.n500 },
   border: {
@@ -292,6 +297,7 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-error": colorTokens.error[mode],
     "--color-warning": colorTokens.warning[mode],
     "--color-folder-card": colorTokens.folderCard[mode],
+    "--color-folder-card-selected": colorTokens.folderCardSelected[mode],
     "--color-surface-dark": colorTokens.surfaceDark[mode],
     "--color-difficulty-easy": colorTokens.difficultyEasy[mode],
     "--color-difficulty-medium": colorTokens.difficultyMedium[mode],

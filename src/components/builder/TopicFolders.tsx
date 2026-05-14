@@ -134,7 +134,7 @@ export function TopicFolders({
                   className={cn(
                     'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
                     isSelected
-                      ? 'bg-secondary/12 shadow-sm'
+                      ? 'bg-folder-card-selected shadow-sm'
                       : 'bg-folder-card hover:bg-surface-neutral',
                   )}
                 >

@@ -43,6 +43,7 @@ const config: Config = {
 
         /** Folder/topic item card background */
         "folder-card": "var(--color-folder-card)",
+        "folder-card-selected": "var(--color-folder-card-selected)",
         /** Muted button background (n500) */
         "surface-dark": "var(--color-surface-dark)",
         /** Easy difficulty pill */
