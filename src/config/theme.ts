@@ -83,6 +83,16 @@ export const colorTokens = {
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   error: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
   warning: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
+  /**
+   * Drill card difficulty pill fills — same saturated hues as dark UI
+   * (`greenLight` / `yellowLight` / `redLight`) in light and dark theme.
+   */
+  difficultyPillEasy: { dark: figmaPalette.greenLight, light: figmaPalette.greenLight },
+  difficultyPillMedium: {
+    dark: figmaPalette.yellowLight,
+    light: figmaPalette.yellowLight,
+  },
+  difficultyPillHard: { dark: figmaPalette.redLight, light: figmaPalette.redLight },
   /** Easy difficulty pill — teal-grey, same in both modes */
   difficultyEasy: { dark: "#8CABA0", light: "#8CABA0" },
   /** Medium difficulty pill: muted amber dark, warm-brown light */
@@ -206,25 +216,25 @@ export const shadowTokens = {
 } as const;
 
 /**
- * Difficulty pills for drill cards — solid semantic fills (`success` /
- * `warning` / `error`) with white labels in both light and dark themes.
+ * Difficulty pills — pill-specific fills (dark-mode saturation in both
+ * themes) + white type and a light text shadow for depth.
  */
 export const difficultyTokens = {
   easy: {
     label: "Easy",
-    bg: "bg-success text-white shadow-sm",
+    bg: "bg-difficulty-pill-easy text-white shadow-sm [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45)]",
     text: undefined,
     shadow: undefined,
   },
   medium: {
     label: "Medium",
-    bg: "bg-warning text-white shadow-sm",
+    bg: "bg-difficulty-pill-medium text-white shadow-sm [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45)]",
     text: undefined,
     shadow: undefined,
   },
   hard: {
     label: "Hard",
-    bg: "bg-error text-white shadow-sm",
+    bg: "bg-difficulty-pill-hard text-white shadow-sm [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45)]",
     text: undefined,
     shadow: undefined,
   },
@@ -289,6 +299,9 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-success": colorTokens.success[mode],
     "--color-error": colorTokens.error[mode],
     "--color-warning": colorTokens.warning[mode],
+    "--color-difficulty-pill-easy": colorTokens.difficultyPillEasy[mode],
+    "--color-difficulty-pill-medium": colorTokens.difficultyPillMedium[mode],
+    "--color-difficulty-pill-hard": colorTokens.difficultyPillHard[mode],
     "--color-folder-card": colorTokens.folderCard[mode],
     "--color-folder-card-selected": colorTokens.folderCardSelected[mode],
     "--color-surface-dark": colorTokens.surfaceDark[mode],

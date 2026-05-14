@@ -40,6 +40,10 @@ const config: Config = {
         success: "var(--color-success)",
         error: "var(--color-error)",
         warning: "var(--color-warning)",
+        /** Drill card pills — dark-UI saturation in both light and dark */
+        "difficulty-pill-easy": "var(--color-difficulty-pill-easy)",
+        "difficulty-pill-medium": "var(--color-difficulty-pill-medium)",
+        "difficulty-pill-hard": "var(--color-difficulty-pill-hard)",
 
         /** Folder/topic item card background */
         "folder-card": "var(--color-folder-card)",
