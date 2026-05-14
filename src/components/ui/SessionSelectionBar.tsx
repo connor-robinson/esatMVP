@@ -79,6 +79,15 @@ export function SessionSelectionBar({
 
   const [drillListOpen, setDrillListOpen] = useState(false);
   const islandRef = useRef<HTMLDivElement>(null);
+  const figmaPlainCount = compactFigma && !showQuestionInput;
+  const [countDraft, setCountDraft] = useState(() => String(questionCount));
+  const countInputFocused = useRef(false);
+
+  useEffect(() => {
+    if (!figmaPlainCount) return;
+    if (countInputFocused.current) return;
+    setCountDraft(String(questionCount));
+  }, [questionCount, figmaPlainCount]);
 
   useEffect(() => {
     if (!showDrillPopover) {
@@ -288,14 +297,57 @@ export function SessionSelectionBar({
                     </span>
                   </div>
                 ) : (
-                  <p className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
-                    <span className="text-xl font-bold tabular-nums leading-none text-primary">
-                      {questionCount}
-                    </span>
+                  <div className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      maxLength={3}
+                      value={countDraft}
+                      onFocus={() => {
+                        countInputFocused.current = true;
+                        setCountDraft(String(questionCount));
+                      }}
+                      onChange={(e) => {
+                        const digits = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 3);
+                        setCountDraft(digits);
+                        if (digits === "") return;
+                        const n = parseInt(digits, 10);
+                        if (Number.isNaN(n)) return;
+                        onQuestionCountChange(
+                          Math.min(
+                            questionCountMax,
+                            Math.max(questionCountMin, n),
+                          ),
+                        );
+                      }}
+                      onBlur={() => {
+                        countInputFocused.current = false;
+                        if (countDraft === "" || !/^\d+$/.test(countDraft)) {
+                          onQuestionCountChange(questionCountMin);
+                          setCountDraft(String(questionCountMin));
+                          return;
+                        }
+                        const n = parseInt(countDraft, 10);
+                        const clamped = Math.min(
+                          questionCountMax,
+                          Math.max(questionCountMin, n),
+                        );
+                        onQuestionCountChange(clamped);
+                        setCountDraft(String(clamped));
+                      }}
+                      className={cn(
+                        "min-w-[2.25rem] max-w-[4.25rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
+                        "rounded-organic-sm border-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
+                      )}
+                      aria-label="Number of questions"
+                    />
                     <span className="text-sm font-medium text-text-muted">
                       {questionCount === 1 ? "question" : "questions"}
                     </span>
-                  </p>
+                  </div>
                 )}
                 {detailLine ? (
                   <p className="mt-1.5 text-xs leading-snug text-text-muted">
