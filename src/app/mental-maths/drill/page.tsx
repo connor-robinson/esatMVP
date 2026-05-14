@@ -133,7 +133,7 @@ export default function BuilderPage() {
         </div>
 
         {/* Compact floating chip — bottom-right (new UI). Pass density="full" for wide centered bar. */}
-        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center p-4 sm:justify-end md:p-6">
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center p-4 pb-7 pr-5 sm:justify-end sm:pb-9 sm:pr-9 md:pb-10 md:pr-10">
           <div className="pointer-events-auto w-full max-w-[min(100%,28rem)] sm:w-auto sm:max-w-none">
             <SessionSelectionBar
               density="compact"

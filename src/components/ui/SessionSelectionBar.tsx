@@ -153,89 +153,91 @@ export function SessionSelectionBar({
           className,
         )}
       >
-        <AnimatePresence>
-          {drillListOpen && showDrillPopover && (
-            <motion.div
-              key="session-drill-popover"
-              id="session-drill-popover"
-              role="dialog"
-              aria-label="Drills in this session"
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
-              transition={{
-                duration: 0.22,
-                ease: [0.32, 0.72, 0, 1],
-              }}
-              className="absolute bottom-[calc(100%+12px)] left-0 right-0 z-[60] max-h-[min(52vh,20rem)] overflow-hidden rounded-organic-lg bg-surface-elevated/95 shadow-bar-floating backdrop-blur-md sm:left-auto sm:right-0 sm:w-[min(100%,17.5rem)]"
-            >
-              <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                In session
-              </p>
-              <ul className="scrollbar-hide max-h-[min(44vh,15rem)] overflow-y-auto px-2 pb-3">
-                {(selectedDrills ?? []).length === 0 ? (
-                  <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
-                    No drills yet — add from the grid.
-                  </li>
-                ) : (
-                  (selectedDrills ?? []).map((sel) => {
-                    const id = `${sel.topicId}-${sel.variantId}`;
-                    const topic = getTopic(sel.topicId);
-                    const variant = topic?.variants?.find(
-                      (v) => v.id === sel.variantId,
-                    );
-                    const title = variant?.name ?? "Drill";
-                    const topicName = topic?.name ?? "";
-
-                    return (
-                      <li key={id}>
-                        <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
-                          <div className="min-w-0 flex-1 py-0.5">
-                            <p className="truncate text-[13px] font-medium leading-snug text-text">
-                              {title}
-                            </p>
-                            {topicName ? (
-                              <p className="truncate text-[11px] text-text-subtle">
-                                {topicName}
-                              </p>
-                            ) : null}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => onRemoveDrill?.(id)}
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
-                            aria-label={`Remove ${title}`}
-                          >
-                            <X className="h-4 w-4" strokeWidth={2} />
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  })
-                )}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="flex flex-col gap-2.5 rounded-organic-xl border-0 bg-surface p-3 shadow-bar-floating backdrop-blur-sm transition-[box-shadow,transform] duration-200 ease-signature sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
+        <div className="flex flex-col gap-2.5 rounded-organic-xl border border-border-subtle/60 bg-surface-elevated p-3 shadow-bar-floating backdrop-blur-sm transition-[box-shadow,transform] duration-200 ease-signature sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             {showDrillPopover ? (
-              <button
-                type="button"
-                onClick={() => setDrillListOpen((o) => !o)}
-                aria-expanded={drillListOpen}
-                aria-controls="session-drill-popover"
-                className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
-                  "text-primary hover:bg-primary/12",
-                  drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
-                )}
-                aria-label="View or remove drills in session"
-              >
-                <ListOrdered className="h-5 w-5" strokeWidth={2} />
-              </button>
+              <div className="relative shrink-0">
+                <AnimatePresence>
+                  {drillListOpen && (
+                    <motion.div
+                      key="session-drill-popover"
+                      id="session-drill-popover"
+                      role="dialog"
+                      aria-label="Drills in this session"
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                      transition={{
+                        duration: 0.22,
+                        ease: [0.32, 0.72, 0, 1],
+                      }}
+                      style={{ transformOrigin: "bottom center" }}
+                      className="absolute bottom-full left-0 z-[60] mb-2 max-h-[min(52vh,20rem)] w-[min(17.5rem,calc(100vw-2rem))] overflow-hidden rounded-organic-lg bg-surface-elevated/95 shadow-bar-floating backdrop-blur-md"
+                    >
+                      <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                        In session
+                      </p>
+                      <ul className="scrollbar-hide max-h-[min(44vh,15rem)] overflow-y-auto px-2 pb-3">
+                        {(selectedDrills ?? []).length === 0 ? (
+                          <li className="rounded-organic-md px-3 py-8 text-center text-xs leading-relaxed text-text-muted">
+                            No drills yet — add from the grid.
+                          </li>
+                        ) : (
+                          (selectedDrills ?? []).map((sel) => {
+                            const id = `${sel.topicId}-${sel.variantId}`;
+                            const topic = getTopic(sel.topicId);
+                            const variant = topic?.variants?.find(
+                              (v) => v.id === sel.variantId,
+                            );
+                            const title = variant?.name ?? "Drill";
+                            const topicName = topic?.name ?? "";
+
+                            return (
+                              <li key={id}>
+                                <div className="flex items-center gap-1 rounded-organic-md py-1.5 pl-2.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                                  <div className="min-w-0 flex-1 py-0.5">
+                                    <p className="truncate text-[13px] font-medium leading-snug text-text">
+                                      {title}
+                                    </p>
+                                    {topicName ? (
+                                      <p className="truncate text-[11px] text-text-subtle">
+                                        {topicName}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => onRemoveDrill?.(id)}
+                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors duration-150 hover:bg-surface-mid hover:text-text active:scale-95"
+                                    aria-label={`Remove ${title}`}
+                                  >
+                                    <X className="h-4 w-4" strokeWidth={2} />
+                                  </button>
+                                </div>
+                              </li>
+                            );
+                          })
+                        )}
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <button
+                  type="button"
+                  onClick={() => setDrillListOpen((o) => !o)}
+                  aria-expanded={drillListOpen}
+                  aria-controls="session-drill-popover"
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
+                    "text-primary hover:bg-primary/12",
+                    drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
+                  )}
+                  aria-label="View or remove drills in session"
+                >
+                  <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                </button>
+              </div>
             ) : (
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
@@ -297,7 +299,7 @@ export function SessionSelectionBar({
               className={cn(
                 "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
                 "hover:bg-surface-mid/60 hover:text-text",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
                 clearDisabled &&
                   "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
                 !clearDisabled &&
@@ -313,7 +315,7 @@ export function SessionSelectionBar({
               disabled={!canStartSession}
               className={cn(
                 "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature sm:flex-initial",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
                 "disabled:cursor-not-allowed",
                 canStartSession
                   ? "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]"
