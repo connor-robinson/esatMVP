@@ -95,6 +95,56 @@ def extract_raw_svg(text: str) -> Optional[str]:
     return frag.strip()
 
 
+def _ensure_svg_root_attrs(svg: str) -> str:
+    out = svg
+    # Ensure xmlns exists for consistent browser parsing.
+    if not re.search(r"<svg\b[^>]*\bxmlns\s*=", out, flags=re.I):
+        out = re.sub(r"<svg\b", '<svg xmlns="http://www.w3.org/2000/svg"', out, count=1, flags=re.I)
+    # Ensure preserveAspectRatio exists.
+    if not re.search(r"<svg\b[^>]*\bpreserveAspectRatio\s*=", out, flags=re.I):
+        out = re.sub(r"<svg\b", '<svg preserveAspectRatio="xMidYMid meet"', out, count=1, flags=re.I)
+    # Ensure viewBox exists; derive from width/height if possible.
+    has_vb = re.search(r"<svg\b[^>]*\bviewBox\s*=", out, flags=re.I) is not None
+    if not has_vb:
+        w_m = re.search(r"\bwidth\s*=\s*['\"]?([0-9]+(?:\.[0-9]+)?)", out, flags=re.I)
+        h_m = re.search(r"\bheight\s*=\s*['\"]?([0-9]+(?:\.[0-9]+)?)", out, flags=re.I)
+        if w_m and h_m:
+            w = float(w_m.group(1))
+            h = float(h_m.group(1))
+            if w > 0 and h > 0:
+                out = re.sub(r"<svg\b", f'<svg viewBox="0 0 {int(w)} {int(h)}"', out, count=1, flags=re.I)
+            else:
+                out = re.sub(r"<svg\b", '<svg viewBox="0 0 600 420"', out, count=1, flags=re.I)
+        else:
+            out = re.sub(r"<svg\b", '<svg viewBox="0 0 600 420"', out, count=1, flags=re.I)
+    return out
+
+
+def _normalize_dark_svg_colors(svg: str) -> str:
+    # Keep transparent fill semantics; map hard dark colors to currentColor for theme-safe render.
+    out = svg
+    out = re.sub(r'(\b(?:stroke|fill)\s*=\s*["\'])#(?:000|000000|111|111111|222|222222|333|333333)(["\'])',
+                 r"\1currentColor\2", out, flags=re.I)
+    out = re.sub(r'(\b(?:stroke|fill)\s*=\s*["\'])black(["\'])', r"\1currentColor\2", out, flags=re.I)
+    out = re.sub(r'(\b(?:stroke|fill)\s*=\s*["\'])rgb\(\s*(?:0|1[0-9]|2[0-9]|3[0-9])\s*,\s*(?:0|1[0-9]|2[0-9]|3[0-9])\s*,\s*(?:0|1[0-9]|2[0-9]|3[0-9])\s*\)(["\'])',
+                 r"\1currentColor\2", out, flags=re.I)
+    return out
+
+
+def _has_drawable_elements(svg: str) -> bool:
+    return re.search(r"<(?:line|circle|rect|path|polyline|polygon|ellipse|text|image)\b", svg, flags=re.I) is not None
+
+
+def normalize_generated_svg(svg: str) -> Optional[str]:
+    if not svg or "<svg" not in svg.lower():
+        return None
+    out = _ensure_svg_root_attrs(svg)
+    out = _normalize_dark_svg_colors(out)
+    if not _has_drawable_elements(out):
+        return None
+    return out.strip()
+
+
 def parse_merged_html_delimited(text: str) -> Optional[str]:
     if "===MERGED_HTML===" not in text:
         return None
@@ -278,7 +328,7 @@ def generate_svg_via_pipeline(
         trace_label="quality_gate_svg_render",
     )
     chunks.append("[render_raw]\n" + raw_svg[:2500])
-    svg = extract_raw_svg(raw_svg)
+    svg = normalize_generated_svg(extract_raw_svg(raw_svg) or "")
     _t(
         f"[diagram:pipeline] 4/5 render — raw_chars={len(raw_svg or '')} "
         f"extracted_svg={'yes' if svg else 'no'} svg_chars={len(svg or '')}"
@@ -327,7 +377,7 @@ def generate_svg_for_graph_candidate(
         temperature=temperature,
         trace_label="quality_gate_svg_diagram",
     )
-    svg = extract_raw_svg(raw)
+    svg = normalize_generated_svg(extract_raw_svg(raw) or "")
     _t(
         f"[diagram:single_shot] output raw_chars={len(raw or '')} extracted_svg={'yes' if svg else 'no'} "
         f"svg_chars={len(svg or '')}"

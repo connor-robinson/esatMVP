@@ -30,6 +30,42 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
     setEditedQuestion(q);
   }, []);
 
+  const patchPartial = useCallback(
+    async (payload: Record<string, unknown>, reason: string): Promise<ReviewQuestion> => {
+      const prev = saveChainRef.current;
+      const mine = prev.catch(() => {}).then(async (): Promise<ReviewQuestion> => {
+        const q = editedQuestionRef.current;
+        if (!q?.id) throw new Error("No question loaded");
+        const response = await fetch(`/api/review/${q.id}/update`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await response.json();
+        if (!response.ok || !data?.question) {
+          throw new Error(data?.error || data?.details || `Failed partial save (${reason})`);
+        }
+        const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
+        lastPersistedUpdatedAtRef.current = normalizedSavedQuestion.updated_at || "";
+        commitLocal(normalizedSavedQuestion);
+        onSaveComplete?.(normalizedSavedQuestion);
+        console.log("[review-persist] partial PATCH applied", {
+          reason,
+          id: normalizedSavedQuestion.id,
+          updated_at: normalizedSavedQuestion.updated_at,
+          correct_option: normalizedSavedQuestion.correct_option,
+          has_backup: !!normalizedSavedQuestion.question_stem_before_auto_diagram,
+        });
+        return normalizedSavedQuestion;
+      });
+      saveChainRef.current = mine.catch(() => null);
+      return mine;
+    },
+    [commitLocal, onSaveComplete]
+  );
+
   // Save function - defined first so other functions can use it
   const saveChanges = useCallback(async (_questionToSave?: ReviewQuestion): Promise<ReviewQuestion | null> => {
     const prev = saveChainRef.current;
@@ -518,11 +554,11 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
       });
       commitLocal(updated);
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveChanges(updated).catch((err) => {
+      patchPartial({ correct_option: L }, "correct_option").catch((err) => {
         console.error("[useQuestionEditor] Save correct option failed:", err);
       });
     },
-    [editedQuestion, saveChanges, commitLocal]
+    [editedQuestion, commitLocal, patchPartial]
   );
 
   const reorderOption = useCallback(
@@ -626,22 +662,55 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
   /** After quality-gate auto-SVG: keep current stem (with diagram) or revert to saved pre-diagram stem. */
   const resolveAutoDiagramStemChoice = useCallback(
     async (choice: "keep_diagram" | "revert"): Promise<void> => {
-      const q = editedQuestionRef.current;
-      const rawBackup = q?.question_stem_before_auto_diagram;
-      if (!q || rawBackup == null || !String(rawBackup).trim()) return;
+      const q0 = editedQuestionRef.current;
+      const rawBackup = q0?.question_stem_before_auto_diagram;
+      if (!q0 || rawBackup == null || !String(rawBackup).trim()) return;
 
-      const next: ReviewQuestion =
-        choice === "keep_diagram"
-          ? { ...q, question_stem_before_auto_diagram: null }
-          : {
-              ...q,
-              question_stem: String(rawBackup),
-              question_stem_before_auto_diagram: null,
-            };
-      commitLocal(next);
-      await saveChanges(next);
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      const prev = saveChainRef.current;
+      const mine = prev.catch(() => {}).then(async (): Promise<void> => {
+        const q = editedQuestionRef.current;
+        if (!q?.id) throw new Error("No question loaded");
+        const optimistic: ReviewQuestion =
+          choice === "keep_diagram"
+            ? { ...q, question_stem_before_auto_diagram: null }
+            : {
+                ...q,
+                question_stem: String(rawBackup),
+                question_stem_before_auto_diagram: null,
+              };
+        commitLocal(optimistic);
+
+        const response = await fetch(`/api/review/${q.id}/resolve-auto-diagram`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ choice }),
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const data = await response.json();
+        if (!response.ok || !data?.question) {
+          throw new Error(data?.error || data?.details || "Failed to resolve auto diagram choice");
+        }
+        const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
+        lastPersistedUpdatedAtRef.current = normalizedSavedQuestion.updated_at || "";
+        commitLocal(normalizedSavedQuestion);
+        onSaveComplete?.(normalizedSavedQuestion);
+        console.log("[review-persist] resolveAutoDiagramStemChoice applied", {
+          id: normalizedSavedQuestion.id,
+          choice,
+          has_backup: !!normalizedSavedQuestion.question_stem_before_auto_diagram,
+          updated_at: normalizedSavedQuestion.updated_at,
+        });
+      });
+
+      saveChainRef.current = mine.catch(() => null);
+      await mine;
     },
-    [commitLocal, saveChanges]
+    [commitLocal, onSaveComplete]
   );
 
   // Cleanup timeout on unmount

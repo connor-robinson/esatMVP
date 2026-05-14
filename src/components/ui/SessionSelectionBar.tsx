@@ -7,10 +7,22 @@
 
 import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calculator, Clock, ListOrdered, ArrowRight, X } from "lucide-react";
+import {
+  Calculator,
+  Clock,
+  ListOrdered,
+  ArrowRight,
+  X,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import { getTopic } from "@/config/topics";
 import type { TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
+
+/** White label + light depth on primary buttons (dark theme). */
+const PRIMARY_CTA_LABEL_DARK =
+  "dark:text-white dark:[text-shadow:0_0.5px_1px_rgba(0,0,0,0.55),0_1px_2px_rgba(0,0,0,0.35)] dark:hover:text-white";
 
 export interface SessionSelectionBarProps {
   /** Ignored when `density="compact"` and `compactVariant="figma"`. */
@@ -44,7 +56,8 @@ export interface SessionSelectionBarProps {
   detailLine?: string;
   /** When set with `onRemoveDrill`, the list control opens a drill picker popover. */
   selectedDrills?: TopicVariantSelection[];
-  onRemoveDrill?: (topicVariantId: string) => void;
+  /** When false, hides the “Clear all” control (compact figma island). */
+  showClearAll?: boolean;
   className?: string;
 }
 
@@ -68,6 +81,7 @@ export function SessionSelectionBar({
   detailLine,
   selectedDrills,
   onRemoveDrill,
+  showClearAll = true,
   className,
 }: SessionSelectionBarProps) {
   const clearVisuallyMuted = clearDimmedWhenReady && canStartSession;
@@ -89,6 +103,53 @@ export function SessionSelectionBar({
     if (countInputFocused.current) return;
     setCountDraft(String(questionCount));
   }, [questionCount, figmaPlainCount]);
+
+  const bumpQuestionCount = (delta: number) => {
+    onQuestionCountChange(
+      Math.min(
+        questionCountMax,
+        Math.max(questionCountMin, questionCount + delta),
+      ),
+    );
+  };
+
+  /** Minimal ↑↓ for mental-maths island (compact figma). */
+  const figmaCountStepper = (
+    <div
+      className="flex shrink-0 flex-col"
+      role="group"
+      aria-label="Adjust number of questions"
+    >
+      <button
+        type="button"
+        onClick={() => bumpQuestionCount(1)}
+        disabled={questionCount >= questionCountMax}
+        className={cn(
+          "flex h-[22px] w-7 items-center justify-center rounded-t-organic-sm text-text-muted transition-colors",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
+          "disabled:pointer-events-none disabled:opacity-20",
+        )}
+        aria-label="Increase number of questions"
+      >
+        <ChevronUp className="h-3 w-3" strokeWidth={2.5} aria-hidden />
+      </button>
+      <button
+        type="button"
+        onClick={() => bumpQuestionCount(-1)}
+        disabled={questionCount <= questionCountMin}
+        className={cn(
+          "flex h-[22px] w-7 items-center justify-center rounded-b-organic-sm text-text-muted transition-colors",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
+          "disabled:pointer-events-none disabled:opacity-20",
+        )}
+        aria-label="Decrease number of questions"
+      >
+        <ChevronDown className="h-3 w-3" strokeWidth={2.5} aria-hidden />
+      </button>
+    </div>
+  );
 
   useEffect(() => {
     if (!showDrillPopover) {
@@ -283,112 +344,129 @@ export function SessionSelectionBar({
                   Session length
                 </p>
                 {showQuestionInput ? (
-                  <div className="mt-1 flex flex-wrap items-baseline gap-2">
-                    <input
-                      type="number"
-                      value={questionCount}
-                      onChange={(e) =>
-                        onQuestionCountChange(
-                          Number(e.target.value) || questionCountMin,
-                        )
-                      }
-                      min={questionCountMin}
-                      max={questionCountMax}
-                      className={cn(
-                        "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
-                        "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
-                        "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-                      )}
-                      aria-label="Number of questions"
-                    />
-                    <span className="text-sm font-medium text-text-muted">
-                      {questionSuffix}
-                    </span>
+                  <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-2">
+                      <input
+                        type="number"
+                        value={questionCount}
+                        onChange={(e) =>
+                          onQuestionCountChange(
+                            Number(e.target.value) || questionCountMin,
+                          )
+                        }
+                        min={questionCountMin}
+                        max={questionCountMax}
+                        className={cn(
+                          "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
+                          "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
+                          "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                        )}
+                        aria-label="Number of questions"
+                      />
+                      <span className="text-sm font-medium text-text-muted">
+                        {questionSuffix}
+                      </span>
+                    </div>
+                    {figmaCountStepper}
                   </div>
                 ) : (
-                  <div className="mt-0.5 flex flex-wrap items-baseline gap-1.5">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="off"
-                      maxLength={3}
-                      value={countDraft}
-                      onFocus={() => {
-                        countInputFocused.current = true;
-                        setCountDraft(String(questionCount));
-                      }}
-                      onChange={(e) => {
-                        const digits = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 3);
-                        setCountDraft(digits);
-                        if (digits === "") return;
-                        const n = parseInt(digits, 10);
-                        if (Number.isNaN(n)) return;
-                        onQuestionCountChange(
-                          Math.min(
+                  <div className="mt-0.5 flex min-w-0 items-center justify-between gap-2">
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-1.5">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        maxLength={3}
+                        value={countDraft}
+                        onFocus={() => {
+                          countInputFocused.current = true;
+                          setCountDraft(String(questionCount));
+                        }}
+                        onChange={(e) => {
+                          const digits = e.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 3);
+                          setCountDraft(digits);
+                          if (digits === "") return;
+                          const n = parseInt(digits, 10);
+                          if (Number.isNaN(n)) return;
+                          onQuestionCountChange(
+                            Math.min(
+                              questionCountMax,
+                              Math.max(questionCountMin, n),
+                            ),
+                          );
+                        }}
+                        onBlur={() => {
+                          countInputFocused.current = false;
+                          if (countDraft === "" || !/^\d+$/.test(countDraft)) {
+                            onQuestionCountChange(questionCountMin);
+                            setCountDraft(String(questionCountMin));
+                            return;
+                          }
+                          const n = parseInt(countDraft, 10);
+                          const clamped = Math.min(
                             questionCountMax,
                             Math.max(questionCountMin, n),
-                          ),
-                        );
-                      }}
-                      onBlur={() => {
-                        countInputFocused.current = false;
-                        if (countDraft === "" || !/^\d+$/.test(countDraft)) {
-                          onQuestionCountChange(questionCountMin);
-                          setCountDraft(String(questionCountMin));
-                          return;
-                        }
-                        const n = parseInt(countDraft, 10);
-                        const clamped = Math.min(
-                          questionCountMax,
-                          Math.max(questionCountMin, n),
-                        );
-                        onQuestionCountChange(clamped);
-                        setCountDraft(String(clamped));
-                      }}
-                      className={cn(
-                        "min-w-[2.25rem] max-w-[4.25rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
-                        "rounded-organic-sm border-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
-                      )}
-                      aria-label="Number of questions"
-                    />
-                    <span className="text-sm font-medium text-text-muted">
-                      {questionCount === 1 ? "question" : "questions"}
-                    </span>
+                          );
+                          onQuestionCountChange(clamped);
+                          setCountDraft(String(clamped));
+                        }}
+                        className={cn(
+                          "min-w-[2.25rem] max-w-[4.25rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
+                          "rounded-organic-sm border-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
+                        )}
+                        aria-label="Number of questions"
+                      />
+                      <span className="text-sm font-medium text-text-muted">
+                        {questionCount === 1 ? "question" : "questions"}
+                      </span>
+                    </div>
+                    {figmaCountStepper}
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center justify-between gap-2 pt-0.5 sm:gap-3 sm:pt-0">
-              <button
-                type="button"
-                onClick={onClearAll}
-                disabled={clearDisabled}
-                className={cn(
-                  "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
-                  "hover:bg-surface-mid/60 hover:text-text",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
-                  clearDisabled &&
-                    "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
-                  !clearDisabled &&
-                    clearVisuallyMuted &&
-                    "text-text-subtle hover:text-text-muted",
-                )}
-              >
-                {clearLabel}
-              </button>
+            <div
+              className={cn(
+                "flex shrink-0 items-center gap-2 pt-0.5 sm:gap-3 sm:pt-0",
+                showClearAll ? "justify-between" : "justify-end",
+              )}
+            >
+              {showClearAll ? (
+                <button
+                  type="button"
+                  onClick={onClearAll}
+                  disabled={clearDisabled}
+                  className={cn(
+                    "min-h-[2.75rem] min-w-[4.5rem] rounded-organic-md px-3 text-sm font-medium text-text-muted transition-colors duration-150 ease-out",
+                    "hover:bg-surface-mid/60 hover:text-text",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                    clearDisabled &&
+                      "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-text-muted",
+                    !clearDisabled &&
+                      clearVisuallyMuted &&
+                      "text-text-subtle hover:text-text-muted",
+                  )}
+                >
+                  {clearLabel}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={onStart}
                 disabled={!canStartSession}
                 className={cn(
-                  "inline-flex min-h-[2.75rem] flex-1 items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature sm:flex-initial",
+                  "inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature",
+                  showClearAll ? "flex-1 sm:flex-initial" : "w-full min-w-0 flex-1 sm:w-auto sm:min-w-[12rem]",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
                   "disabled:cursor-not-allowed",
                   canStartSession
-                    ? "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]"
+                    ? cn(
+                        "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
+                        PRIMARY_CTA_LABEL_DARK,
+                      )
                     : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
                 )}
               >
@@ -459,7 +537,10 @@ export function SessionSelectionBar({
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                   "disabled:cursor-not-allowed",
                   canStartSession
-                    ? "bg-primary text-background shadow-sm shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]"
+                    ? cn(
+                        "bg-primary text-background shadow-sm shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]",
+                        PRIMARY_CTA_LABEL_DARK,
+                      )
                     : "bg-surface-elevated text-text/50 [&_svg]:opacity-30",
                 )}
               >
@@ -535,7 +616,10 @@ export function SessionSelectionBar({
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 "disabled:cursor-not-allowed",
                 canStartSession
-                  ? "bg-primary text-background shadow-md shadow-primary/30 hover:bg-primary-hover hover:text-background active:scale-[0.98]"
+                  ? cn(
+                      "bg-primary text-background shadow-md shadow-primary/30 hover:bg-primary-hover hover:text-background active:scale-[0.98]",
+                      PRIMARY_CTA_LABEL_DARK,
+                    )
                   : "bg-surface-elevated text-text/50 [&_svg]:opacity-30",
               )}
             >

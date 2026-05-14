@@ -79,6 +79,15 @@ def _quality_gate_action_label(action: Optional[str]) -> str:
     }.get(action, action)
 
 
+def _graph_mode_label(row: dict[str, Any]) -> str:
+    mode = str(row.get("quality_gate_graph_mode") or "").strip().lower()
+    if mode == "missing_expected":
+        return "Missing graph"
+    if mode == "candidate" or row.get("quality_gate_graph_candidate") is True:
+        return "Graph add"
+    return "—"
+
+
 def _sort_rows_for_results_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Review workload first: Major → Minor → Pass with graph candidate → rest; then by AI action urgency."""
 
@@ -111,7 +120,7 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
         code = code_raw if code_raw else (qid if qid else "—")
         tier = r.get("quality_gate_calibration_tier")
         gold = "Gold" if tier == "gold" else "—"
-        graph = "Graph" if r.get("quality_gate_graph_candidate") is True else "—"
+        graph = _graph_mode_label(r)
         verdict = (r.get("quality_gate_verdict") or "—").strip() or "—"
         action = r.get("quality_gate_action")
         wf = (r.get("status") or "—").strip() or "—"
@@ -139,7 +148,7 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
         code = code_raw if code_raw else (qid if qid else "—")
         tier = r.get("quality_gate_calibration_tier")
         gold = "Gold" if tier == "gold" else "—"
-        graph = "Graph" if r.get("quality_gate_graph_candidate") is True else "—"
+        graph = _graph_mode_label(r)
         verdict = (r.get("quality_gate_verdict") or "—").strip() or "—"
         action = r.get("quality_gate_action")
         wf = (r.get("status") or "—").strip() or "—"
@@ -950,6 +959,10 @@ with tab_after:
                     parts = [f"{k}: {v}" for k, v in sorted(cts.get("by_action", {}).items())]
                     st.caption("By AI action")
                     st.caption("\n".join(parts) if parts else "—")
+                st.caption(
+                    f"Graph modes — add: {cts.get('graph_candidates', 0)}, "
+                    f"missing expected: {cts.get('graph_missing_expected', 0)}"
+                )
 
                 with st.expander("Raw summary JSON", expanded=False):
                     st.json(cts)

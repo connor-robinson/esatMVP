@@ -139,6 +139,7 @@ export default function BuilderPage() {
               density="compact"
               compactVariant="figma"
               showQuestionInput={false}
+              showClearAll={false}
               questionCount={builder.questionCount}
               onQuestionCountChange={(n) => builder.setQuestionCount(n)}
               questionCountMin={1}
@@ -160,10 +161,6 @@ export default function BuilderPage() {
           selectedTopicVariants={builder.selectedTopicVariants}
           questionCount={builder.questionCount}
           onRemoveVariant={builder.removeTopicVariant}
-          onClearAll={() => {
-            builder.clearTopics();
-            setReviewModalOpen(false);
-          }}
           onStartSession={() => {
             setReviewModalOpen(false);
             builder.startSession();

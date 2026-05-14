@@ -582,8 +582,12 @@ class SchemaQueue:
             )
             return best
 
-    def claim_next_schema_global(self) -> Optional[str]:
-        """Next incomplete schema across all queued subjects (no per-worker range split)."""
+    def claim_next_schema_global(self, *, allow_overflow: bool = False) -> Optional[str]:
+        """Next incomplete schema across all queued subjects (no per-worker range split).
+
+        If ``allow_overflow`` is True and every schema is at/above its per-schema target,
+        pick the least-filled schema so generation can continue (no session caps).
+        """
         with self.queue_lock:
             self.refresh_coverage_from_db()
             for schema_id in self.ordered_schema_ids:
@@ -620,6 +624,26 @@ class SchemaQueue:
                         echo=False,
                     )
                     return schema_id
+            if allow_overflow and self.ordered_schema_ids:
+                best = min(
+                    self.ordered_schema_ids,
+                    key=lambda sid: self.get_current_count(sid),
+                )
+                sc = self.generated.get(best, 0)
+                self.generated[best] = sc + 1
+                cur = self.get_current_count(best)
+                req = self.get_required_count(best)
+                plog(
+                    "ui",
+                    "claim_global_overflow",
+                    detail={
+                        "schema_id": best,
+                        "current": cur,
+                        "required": req,
+                    },
+                    echo=False,
+                )
+                return best
             return None
 
     def increment_schema_count(self, schema_id: str):
@@ -681,7 +705,7 @@ class GenerationController:
     
     def __init__(self, base_dir: str, queue: SchemaQueue, schemas: Dict[str, dict],
                  cfg: RunConfig, models: ModelsConfig, ui_callback, ui_instance=None,
-                 max_workers: int = 3,
+                 max_workers: int = 2,
                  active_schema_prefixes: Optional[Tuple[str, ...]] = None):
         self.base_dir = base_dir
         self.queue = queue
@@ -907,7 +931,7 @@ class GenerationController:
         forced_math_paper is set for M* when one of Math1/Math2 session caps is already met.
         """
         if self._cap_disabled:
-            sid = self.queue.claim_next_schema_global()
+            sid = self.queue.claim_next_schema_global(allow_overflow=True)
             return (sid, None) if sid else None
 
         if self._all_session_targets_met():
@@ -1301,7 +1325,7 @@ class GenerationController:
             self.ui_callback("stats", stats)
 
     def _generation_loop(self):
-        """Parallel loop: shared job queue, optional per-session caps (Math1/Math2/P/C/B)."""
+        """Parallel loop: shared job queue; optional per-session caps if ESAT_DISABLE_SESSION_CAP is unset."""
         try:
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
                 active_futures: Dict[Any, str] = {}
@@ -1361,7 +1385,10 @@ class GenerationController:
                             elif self._cap_disabled:
                                 self.ui_callback(
                                     "status",
-                                    {"text": "All schemas complete!", "color": "green"},
+                                    {
+                                        "text": "No claimable schema (empty list).",
+                                        "color": "orange",
+                                    },
                                 )
                             else:
                                 self.ui_callback(
@@ -1677,9 +1704,9 @@ class SimpleGeneratorUI:
         )
         
         try:
-            max_workers = max(1, min(16, int(os.environ.get("MAX_WORKERS", "3"))))
+            max_workers = max(1, min(16, int(os.environ.get("MAX_WORKERS", "2"))))
         except ValueError:
-            max_workers = 3
+            max_workers = 2
         # Match in-flight Gemini calls to worker count unless the user set a custom cap.
         if not (os.environ.get("GEMINI_MAX_CONCURRENT") or "").strip():
             # Fewer simultaneous in-flight Vertex calls than threadpool size reduces 429 bursts (RPM/TPM).
@@ -2416,7 +2443,7 @@ class SimpleGeneratorUI:
 
         if stats.get("session_cap_disabled"):
             self.session_quota_label.config(
-                text="Tonight quota: off (ESAT_DISABLE_SESSION_CAP)",
+                text="Session subject caps: off (runs until you stop; schemas cycle past per-schema targets)",
             )
         else:
             sp = stats.get("session_physics", 0)
@@ -2476,6 +2503,10 @@ def main():
         print("Need GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION.")
         print(f"Add them to: {project_root / '.env.local'} or {base_dir / '.env.local'}\n")
         sys.exit(1)
+
+    # Simple UI: no per-session subject caps (e.g. 30 physics then stop). Set ESAT_DISABLE_SESSION_CAP=0 to restore.
+    if not (os.environ.get("ESAT_DISABLE_SESSION_CAP") or "").strip():
+        os.environ["ESAT_DISABLE_SESSION_CAP"] = "1"
 
     init_pipeline_log(str(base_dir))
     if not SUPABASE_AVAILABLE:

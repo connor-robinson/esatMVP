@@ -49,11 +49,19 @@ Do **not** set `gold` for items you would only call “fine” or “Pass”. Wh
 
 ---
 
-## Graph / diagram enrichment (`graph_enrichment`)
+## Graph / diagram classification (`graph_enrichment`)
 
-Figures are **optional** and should be used **sparingly**. The optional **auto-SVG** pipeline uses your `notes_for_human`, `suggested_stem_edits`, and `insertion_placeholders` — keep them **specific and drawable** (objects, labels, measurements, relationships).
+Classify each item into one of three graph modes:
 
-**Default:** `"is_candidate": false`. Set `"is_candidate": true` only when **all** of the following hold:
+- `"mode": "none"` — no graph work needed.
+- `"mode": "candidate"` — optional enrichment diagram could help but is not strictly required.
+- `"mode": "missing_expected"` — a graph/diagram appears expected for clarity/fairness, but there is no graph in the current stem. This is a **label-only** queue signal (do not assume immediate generation).
+
+Figures are **optional** and should be used **sparingly**. The optional SVG/backfill pipeline uses your `notes_for_human`, `suggested_stem_edits`, and `insertion_placeholders` — keep them **specific and drawable** (objects, labels, measurements, relationships).
+
+**Default:** `"mode": "none"` and `"is_candidate": false`.
+
+Use `"mode": "candidate"` (and `is_candidate: true`) only when **all** of the following hold:
 
 1. **Real benefit** — A diagram would clarify **setup or structure** (geometry layout, force directions, circuit topology, molecular arrangement, qualitative curve shape, labelled regions, etc.) in a way **text alone** makes awkward or error-prone.
 2. **Does not spoil the item** — The figure must **not** let a candidate **read off the keyed answer** or replace the intended reasoning. If the question asks for a **count** (e.g. number of solutions, roots, intersections, crossing points), a **plot that exposes those counts visually** is **not** a candidate — set `is_candidate` false. Same if the graph would reveal **which option is correct** (exact intercepts, crossing order, extrema that match one choice only) without doing the work the question is testing.
@@ -65,13 +73,19 @@ Figures are **optional** and should be used **sparingly**. The optional **auto-S
 
 **Bias when it truly helps:** Do **not** withhold `is_candidate` out of excessive caution when the item **clearly passes** the spoiler test above **and** a figure would **materially help** the question (clearer reading, fewer misinterpretations, fairer spatial or structural setup). In that situation, prefer **`true`** — but **only** for that combination; never flag “nice to have” decoration or figures that do not measurably support the intended task.
 
-When `is_candidate` is true, you **must** fill helpfully:
+When `mode` is `"candidate"` or `"missing_expected"`, you **must** fill helpfully:
 
 - `suggested_stem_edits` — concrete wording changes (can use angle-bracket placeholders).
 - `insertion_placeholders` — short strings such as `<insert schematic: forces on the block only, no numeric answer from the figure>` (avoid placeholders that invite a spoiler graph).
 - `notes_for_human` — what the figure should convey **without** solving the question; axis/labels if relevant; explicit note if the stem must be tweaked so the **figure is illustrative, not the answer key**.
 
-If not a good graph item, set `is_candidate` false and use empty strings / empty array for the other fields.
+For `"mode": "missing_expected"`:
+
+- keep `"is_candidate": false` (so it is not treated as optional auto-enrichment),
+- explain what is missing in `notes_for_human`,
+- include practical insertion placeholders and any minimal stem edits needed.
+
+If not a graph item, set `mode: "none"`, `is_candidate: false`, and use empty strings / empty array for the other fields.
 
 ---
 
@@ -94,6 +108,7 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
   "calibration_tier": null,
   "calibration_notes": null,
   "graph_enrichment": {
+    "mode": "none",
     "is_candidate": false,
     "suggested_stem_edits": "",
     "insertion_placeholders": [],
@@ -102,6 +117,6 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
 }
 ```
 
-**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown).
+**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`).
 
 `scores` use integers **1–5** (5 best). `confidence` is `high`, `medium`, or `low`.

@@ -7,6 +7,7 @@ Verdict = Literal["Pass", "Minor", "Major"]
 RecommendedAction = Literal["approve", "human_review", "regenerate", "delete"]
 Confidence = Literal["high", "medium", "low"]
 CalibrationTier = Literal["gold"]
+GraphMode = Literal["none", "candidate", "missing_expected"]
 
 
 @dataclass
@@ -22,6 +23,12 @@ class QualityGateResult:
     calibration_notes: Optional[str] = None
     """True if a light reword + SVG graph/diagram would materially help ESAT-style interpretation practice."""
     graph_candidate: bool = False
+    """Graph classification:
+    - none: no graph work needed
+    - candidate: optional enrichment diagram may help
+    - missing_expected: question appears to require a graph/diagram that is currently missing
+    """
+    graph_mode: GraphMode = "none"
     graph_suggested_stem_edits: str = ""
     graph_insertion_placeholders: List[str] = field(default_factory=list)
     graph_notes_for_human: str = ""
@@ -39,6 +46,7 @@ class QualityGateResult:
             "calibration_notes": self.calibration_notes,
             "graph_enrichment": {
                 "is_candidate": self.graph_candidate,
+                "mode": self.graph_mode,
                 "suggested_stem_edits": self.graph_suggested_stem_edits,
                 "insertion_placeholders": list(self.graph_insertion_placeholders),
                 "notes_for_human": self.graph_notes_for_human,
@@ -54,6 +62,7 @@ def parse_quality_gate_json(data: Dict[str, Any]) -> QualityGateResult:
     if not isinstance(data.get("graph_enrichment"), dict):
         data["graph_enrichment"] = {
             "is_candidate": False,
+            "mode": "none",
             "suggested_stem_edits": "",
             "insertion_placeholders": [],
             "notes_for_human": "",
@@ -100,7 +109,18 @@ def parse_quality_gate_json(data: Dict[str, Any]) -> QualityGateResult:
             cal_notes = cal_notes[:4000]
 
     ge = data.get("graph_enrichment") if isinstance(data.get("graph_enrichment"), dict) else {}
-    graph_candidate = bool(ge.get("is_candidate"))
+    mode_raw = str(ge.get("mode") or "").strip().lower()
+    if mode_raw in ("candidate", "enrichment_candidate"):
+        graph_mode: GraphMode = "candidate"
+    elif mode_raw in ("missing_expected", "missing_graph", "missing"):
+        graph_mode = "missing_expected"
+    elif mode_raw in ("none", ""):
+        graph_mode = "none"
+    else:
+        # Back-compat for older model output that only had is_candidate.
+        graph_mode = "candidate" if bool(ge.get("is_candidate")) else "none"
+
+    graph_candidate = graph_mode == "candidate"
     stem_edits = str(ge.get("suggested_stem_edits") or "").strip()
     notes_human = str(ge.get("notes_for_human") or "").strip()
     ph_raw = ge.get("insertion_placeholders")
@@ -123,6 +143,7 @@ def parse_quality_gate_json(data: Dict[str, Any]) -> QualityGateResult:
         calibration_tier=cal,
         calibration_notes=cal_notes,
         graph_candidate=graph_candidate,
+        graph_mode=graph_mode,
         graph_suggested_stem_edits=stem_edits[:8000],
         graph_insertion_placeholders=placeholders[:12],
         graph_notes_for_human=notes_human[:8000],
@@ -170,15 +191,17 @@ def effective_action_with_graph_queue(result: QualityGateResult, base: Recommend
     """
     if base in ("delete", "regenerate", "human_review"):
         return base
-    if result.graph_candidate and result.verdict != "Major":
+    if result.graph_mode in ("candidate", "missing_expected") and result.verdict != "Major":
         return "human_review"
     return base
 
 
 def build_graph_notes_for_db(result: QualityGateResult) -> Optional[str]:
-    if not result.graph_candidate:
+    if result.graph_mode not in ("candidate", "missing_expected"):
         return None
     parts: List[str] = []
+    if result.graph_mode == "missing_expected":
+        parts.append("Graph mode: missing_expected (question likely requires a graph/diagram currently absent).")
     if result.graph_notes_for_human:
         parts.append(result.graph_notes_for_human)
     if result.graph_suggested_stem_edits:

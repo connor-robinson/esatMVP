@@ -90,6 +90,7 @@ def _commit_gate_row(
             calibration_tier=None,
             calibration_notes=None,
             graph_candidate=False,
+            graph_mode="none",
             graph_suggested_stem_edits="",
             graph_insertion_placeholders=[],
             graph_notes_for_human="",
@@ -117,6 +118,7 @@ def _commit_gate_row(
             "quality_gate_calibration_tier": result.calibration_tier,
             "quality_gate_calibration_notes": result.calibration_notes,
             "quality_gate_graph_candidate": bool(result.graph_candidate),
+            "quality_gate_graph_mode": result.graph_mode,
             "quality_gate_graph_notes": graph_notes,
         }
         if (
@@ -140,13 +142,15 @@ def _commit_gate_row(
         _append_log(
             log_lines,
             f"[dry] {qid} verdict={result.verdict} eff={eff} gold={result.calibration_tier!r} "
-            f"graph={result.graph_candidate} {result.reasoning[:100]}",
+            f"graph={result.graph_candidate} graph_mode={result.graph_mode} {result.reasoning[:100]}",
         )
     else:
         if result.calibration_tier == "gold":
             stats["calibration_gold"] += 1
-        if result.graph_candidate:
+        if result.graph_mode == "candidate":
             stats["graph_candidates"] += 1
+        if result.graph_mode == "missing_expected":
+            stats["graph_missing_expected"] += 1
         if auto_applied:
             stats["auto_approved"] += 1
         else:
@@ -155,7 +159,7 @@ def _commit_gate_row(
         _append_log(
             log_lines,
             f"[ok] {qid} verdict={result.verdict} eff={eff} auto_approve={auto_applied} "
-            f"gold={result.calibration_tier!r} graph={result.graph_candidate}",
+            f"gold={result.calibration_tier!r} graph={result.graph_candidate} graph_mode={result.graph_mode}",
         )
 
     if on_row is not None:
@@ -235,6 +239,7 @@ def run_quality_gate_job(
         "skipped_deleted": 0,
         "calibration_gold": 0,
         "graph_candidates": 0,
+        "graph_missing_expected": 0,
         "batch_api_jobs": 0,
         "diagrams_inserted": 0,
         "diagram_errors": 0,
@@ -408,7 +413,7 @@ def run_quality_gate_job(
                     auto_svg_diagrams
                     and not dry_run
                     and client is not None
-                    and result.graph_candidate
+                    and result.graph_mode == "candidate"
                     and result.verdict != "Major"
                     and eff != "delete"
                     and not row_err

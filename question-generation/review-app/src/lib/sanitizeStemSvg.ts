@@ -23,6 +23,14 @@ function normalizeSvgVisibilityColors(svg: string): string {
   return out;
 }
 
+function extractOriginalViewBox(svgMarkup: string): string | null {
+  const m = svgMarkup.match(/\bviewBox\s*=\s*["']([^"']+)["']/i);
+  if (!m) return null;
+  const value = m[1].trim();
+  if (/^-?\d+(\.\d+)?(?:\s+-?\d+(\.\d+)?){3}$/.test(value)) return value;
+  return null;
+}
+
 const STEM_TABLE_SANITIZE: Parameters<typeof DOMPurify.sanitize>[1] = {
   ALLOWED_TAGS: [
     "table",
@@ -66,7 +74,9 @@ const STEM_SVG_SANITIZE: Parameters<typeof DOMPurify.sanitize>[1] = {
   USE_PROFILES: { svg: true, svgFilters: true },
   ADD_ATTR: [
     "viewBox",
+    "viewbox",
     "preserveAspectRatio",
+    "preserveaspectratio",
     "xmlns",
     "xmlns:xlink",
     "xml:space",
@@ -198,8 +208,16 @@ export function sanitizeStemQgDiagramFigure(html: string): string {
   if (typeof window === "undefined") {
     return "";
   }
-  const safe = DOMPurify.sanitize(html, STEM_QG_FIGURE_BLOCK);
-  return normalizeSvgVisibilityColors(safe);
+  // Figure-level sanitization has been observed to collapse/strip valid geometry in some qg blocks.
+  // Sanitize the inner <svg> directly, then re-wrap in a controlled figure container.
+  const svgMatch = html.match(/<svg\b[\s\S]*?<\/\s*svg\s*>/i);
+  if (!svgMatch) {
+    const safeFallback = DOMPurify.sanitize(html, STEM_QG_FIGURE_BLOCK);
+    return normalizeSvgVisibilityColors(safeFallback);
+  }
+  const safeSvg = sanitizeStemSvg(svgMatch[0]);
+  if (!safeSvg) return "";
+  return `<figure class="qg-diagram" style="margin:1em 0;text-align:center;">${safeSvg}</figure>`;
 }
 
 /**
@@ -210,7 +228,17 @@ export function sanitizeStemSvg(svgMarkup: string): string {
     return "";
   }
   const out = DOMPurify.sanitize(svgMarkup, STEM_SVG_SANITIZE);
-  const visible = normalizeSvgVisibilityColors(out);
+  let visible = normalizeSvgVisibilityColors(out);
+  const hasViewBox = /\bviewBox\s*=|\bviewbox\s*=/i.test(visible);
+  if (!hasViewBox) {
+    const vb = extractOriginalViewBox(svgMarkup);
+    if (vb) {
+      visible = visible.replace(
+        /<svg\b/i,
+        `<svg viewBox="${vb}" preserveAspectRatio="xMidYMid meet"`
+      );
+    }
+  }
   const inLen = svgMarkup.trim().length;
   const outLen = visible.trim().length;
   if (inLen > 0 && outLen === 0) {

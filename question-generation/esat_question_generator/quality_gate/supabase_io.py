@@ -126,7 +126,7 @@ def fetch_all_assessed_rows_for_overview(
             client.table(TABLE)
             .select(
                 "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
-                "quality_gate_calibration_tier, quality_gate_graph_candidate, "
+                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode, "
                 "quality_gate_assessed_at, quality_gate_job_id"
             )
             .neq("status", "deleted")
@@ -263,7 +263,7 @@ def fetch_quality_gate_job_result_rows(
             client.table(TABLE)
             .select(
                 "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
-                "quality_gate_calibration_tier, quality_gate_graph_candidate"
+                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode"
             )
             .eq("quality_gate_job_id", job_id)
             .neq("status", "deleted")
@@ -280,16 +280,19 @@ def fetch_quality_gate_job_result_rows(
 
 
 def summarize_quality_gate_job(client: Any, job_id: str) -> Dict[str, Any]:
-    """Histogram of actions plus calibration gold and graph-candidate counts (paginated)."""
+    """Histogram of actions plus calibration and graph-mode counts (paginated)."""
     page = 500
     offset = 0
     by_action: Dict[str, int] = {}
     calibration_gold = 0
     graph_candidates = 0
+    graph_missing_expected = 0
     while True:
         resp = (
             client.table(TABLE)
-            .select("quality_gate_action,quality_gate_calibration_tier,quality_gate_graph_candidate")
+            .select(
+                "quality_gate_action,quality_gate_calibration_tier,quality_gate_graph_candidate,quality_gate_graph_mode"
+            )
             .eq("quality_gate_job_id", job_id)
             .neq("status", "deleted")
             .range(offset, offset + page - 1)
@@ -303,6 +306,8 @@ def summarize_quality_gate_job(client: Any, job_id: str) -> Dict[str, Any]:
                 calibration_gold += 1
             if r.get("quality_gate_graph_candidate") is True:
                 graph_candidates += 1
+            if (r.get("quality_gate_graph_mode") or "") == "missing_expected":
+                graph_missing_expected += 1
         if len(rows) < page:
             break
         offset += page
@@ -310,6 +315,7 @@ def summarize_quality_gate_job(client: Any, job_id: str) -> Dict[str, Any]:
         "by_action": by_action,
         "calibration_gold": calibration_gold,
         "graph_candidates": graph_candidates,
+        "graph_missing_expected": graph_missing_expected,
     }
 
 
@@ -406,11 +412,11 @@ def list_distinct_job_ids_from_questions(
 
 
 def count_graph_flagged_rows(client: Any) -> int:
-    """Non-deleted rows currently flagged ``quality_gate_graph_candidate`` (capped count)."""
+    """Non-deleted rows currently graph-flagged (candidate or missing_expected)."""
     resp = (
         client.table(TABLE)
         .select("id")
-        .eq("quality_gate_graph_candidate", True)
+        .or_("quality_gate_graph_candidate.eq.true,quality_gate_graph_mode.eq.missing_expected")
         .neq("status", "deleted")
         .limit(10_001)
         .execute()
@@ -461,7 +467,7 @@ def fetch_graph_candidates_missing_embedded_svg(
     require_operator_queue: bool = False,
 ) -> List[Dict[str, Any]]:
     """
-    Rows with ``quality_gate_graph_candidate`` true whose ``question_stem`` does not yet contain ``<svg``.
+    Rows graph-flagged (candidate or missing_expected) whose ``question_stem`` does not yet contain ``<svg``.
 
     When ``require_operator_queue`` is True, only rows with ``svg_operator_backfill_choice`` = ``queue``
     (operator marked for regeneration in the Streamlit queue).
@@ -480,7 +486,7 @@ def fetch_graph_candidates_missing_embedded_svg(
         q = (
             client.table(TABLE)
             .select(select_cols)
-            .eq("quality_gate_graph_candidate", True)
+            .or_("quality_gate_graph_candidate.eq.true,quality_gate_graph_mode.eq.missing_expected")
             .neq("status", "deleted")
         )
         if require_operator_queue:
@@ -513,7 +519,7 @@ def count_graph_candidates_missing_embedded_svg(client: Any, *, max_scan: int = 
 
 def clear_quality_gate_for_graph_flagged_rows(client: Any) -> int:
     """
-    Clear quality-gate columns **only** for rows where ``quality_gate_graph_candidate`` is true,
+    Clear quality-gate columns **only** for rows graph-flagged (candidate or missing_expected),
     so they can be re-scored. Other questions are unchanged.
     """
     n = count_graph_flagged_rows(client)
@@ -530,8 +536,11 @@ def clear_quality_gate_for_graph_flagged_rows(client: Any) -> int:
         "quality_gate_calibration_tier": None,
         "quality_gate_calibration_notes": None,
         "quality_gate_graph_candidate": False,
+        "quality_gate_graph_mode": None,
         "quality_gate_graph_notes": None,
         "svg_operator_backfill_choice": None,
     }
-    client.table(TABLE).update(patch).eq("quality_gate_graph_candidate", True).neq("status", "deleted").execute()
+    client.table(TABLE).update(patch).or_(
+        "quality_gate_graph_candidate.eq.true,quality_gate_graph_mode.eq.missing_expected"
+    ).neq("status", "deleted").execute()
     return n

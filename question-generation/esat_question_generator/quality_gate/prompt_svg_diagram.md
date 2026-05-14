@@ -20,6 +20,8 @@ CORE GOAL
 Generate an SVG diagram that:
 - matches the mathematical situation in the question
 - includes only the information that helps solve the question
+- includes only labels strictly necessary to understand the setup (minimal labeling)
+- avoids pre-labeling target unknowns the student is meant to identify/deduce
 - avoids decorative or artistic choices
 - uses a restrained exam-paper visual style
 - positions all labels clearly so they do not overlap lines, fills, or each other
@@ -249,6 +251,8 @@ If the problem is about:
 - circles or geometry: show only the necessary points, arcs, chords, tangents, shading, or symmetry lines
 
 Do not overload the figure with unnecessary ticks, grids, decorations, or captions.
+Do not add labels that give away what the question asks students to determine.
+Example: if a segment length is to be inferred as `R`, do not pre-label that segment `R` unless the stem explicitly states it.
 
 ==================================================
 TYPE-SPECIFIC RULES

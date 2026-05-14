@@ -28,6 +28,9 @@ Rules:
 
 - Copy **numbers and ordering** from the brief faithfully; if ambiguous, state the simplest defensible interpretation in `constraints`.
 - `labels_required` must cover every **required_elements** string that is a label or measurement call-out.
+- Keep labeling minimal: include only labels strictly necessary to interpret the given setup.
+- Do **not** add labels that reveal a target unknown the student is expected to determine from the question.
+- Example: if the task asks the student to identify or deduce which segment is length `R` (e.g. a hypotenuse/radius relation), do not pre-label that segment as `R` unless the stem explicitly gives that label.
 - Prefer **sparse** figures: `non_goals` lists decorative items you will not draw.
 
 **Function graphs (`curve` / `axes` entities):** When the question involves **explicit functions** (polynomial, exponential, trig, line, piecewise, etc.), put in `constraints` the **exact formulas** and the **intended plot domain** (e.g. `"y=x^2 on x in [0,5] for display"`, `"y=2^x same window"`). State **intersection coordinates** if given (e.g. `(2,4)`, `(4,16)`). In `non_goals`, forbid **hand-fitted Bézier sketches** — the downstream renderer must use **numeric sampling** from those formulas, not aesthetic curves.

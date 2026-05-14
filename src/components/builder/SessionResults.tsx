@@ -44,6 +44,9 @@ type RankingView = "personal" | "global";
 export function SessionResults({ session, attempts, onBackToBuilder, mode = "standard" }: SessionResultsProps) {
   const supabase = useSupabaseClient();
   const authSession = useSupabaseSession();
+  const mentalMathUi = mode === "mental-math";
+  /** Topic breakdown + leaderboard rows: Space Grotesk for drill, mono elsewhere */
+  const topicStatsFontClass = mentalMathUi ? "font-sans tabular-nums tracking-tight" : "font-mono";
   const [showScoreInfo, setShowScoreInfo] = useState(false);
   const [rankingView, setRankingView] = useState<RankingView>("personal");
   const [rankingsData, setRankingsData] = useState<Record<string, any>>({});
@@ -292,6 +295,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           transition={{ delay: idx * 0.03 }}
             className={cn(
               "relative overflow-hidden rounded-organic-md p-5 transition-colors",
+              mentalMathUi && "rounded-organic-lg sm:p-6",
               isHighlighted
                 ? "bg-primary/10 ring-1 ring-primary/20"
                 : "bg-surface-subtle hover:bg-surface-mid/80",
@@ -313,7 +317,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           <div className="grid grid-cols-12 gap-4 items-center relative z-10">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
-              <div className="text-lg font-bold tabular-nums font-mono text-primary">
+              <div className={cn("text-lg font-bold tabular-nums text-primary", topicStatsFontClass)}>
                 {session.rank}
               </div>
             </div>
@@ -350,43 +354,46 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className="font-mono text-base font-bold tabular-nums text-text">
+                <div className={cn("text-base font-bold tabular-nums text-text", topicStatsFontClass)}>
                   {session.score}
                 </div>
-                <div className="font-mono text-xs text-text-muted">/ 1000</div>
+                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>/ 1000</div>
               </div>
             </div>
 
             {/* Accuracy */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className={cn(
-                  "text-base font-bold font-mono",
-                  "text-primary"
-                )}>
+                <div
+                  className={cn(
+                    "text-base font-bold",
+                    "text-primary",
+                    topicStatsFontClass,
+                  )}
+                >
                   {session.accuracy.toFixed(0)}%
                 </div>
-                <div className="font-mono text-xs text-text-muted">accuracy</div>
+                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>accuracy</div>
               </div>
             </div>
 
             {/* Speed */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className="font-mono text-base font-bold tabular-nums text-text">
+                <div className={cn("text-base font-bold tabular-nums text-text", topicStatsFontClass)}>
                   {formatTimeMs(session.avgTimeMs)}
                 </div>
-                <div className="font-mono text-xs text-text-muted">per question</div>
+                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>per question</div>
               </div>
             </div>
 
             {/* Questions */}
             <div className="col-span-1 flex items-center justify-end">
               <div className="text-right">
-                <div className="font-mono text-sm font-semibold tabular-nums text-text">
+                <div className={cn("text-sm font-semibold tabular-nums text-text", topicStatsFontClass)}>
                   {session.correctAnswers}/{session.totalQuestions}
                 </div>
-                <div className="font-mono text-xs text-text-muted">correct</div>
+                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>correct</div>
               </div>
             </div>
           </div>
@@ -402,7 +409,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.03 }}
         className={cn(
-          "rounded-organic-md border border-border-subtle bg-surface-mid p-3 transition-colors",
+          "rounded-organic-md border border-border-subtle bg-surface-mid transition-colors",
+          mentalMathUi ? "p-4 sm:p-5" : "p-3",
           isHighlighted
             ? "ring-1 ring-primary/20 bg-primary/10"
             : "hover:bg-surface-neutral/60",
@@ -411,7 +419,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         <div className="flex items-center gap-6">
           {/* Rank Number - Leftmost */}
           <div className="flex-shrink-0">
-            <div className="text-lg font-bold tabular-nums font-mono text-primary">
+            <div className={cn("text-lg font-bold tabular-nums text-primary", topicStatsFontClass)}>
               {session.rank}
             </div>
           </div>
@@ -421,15 +429,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score and Topic Row */}
             <div className="flex items-baseline justify-between gap-4 mb-2">
               <div className="flex items-baseline gap-3 min-w-0">
-                <span className="font-mono text-xl font-bold tabular-nums text-text">
+                <span className={cn("text-xl font-bold tabular-nums text-text", topicStatsFontClass)}>
                   {session.score}
                 </span>
-                <span className="font-mono text-sm text-text-muted">/ 1000</span>
-                <span className="truncate font-mono text-xs text-text-subtle">
+                <span className={cn("text-sm text-text-muted", topicStatsFontClass)}>/ 1000</span>
+                <span className={cn("truncate text-xs text-text-subtle", topicStatsFontClass)}>
                   {topicName}
                 </span>
               </div>
-              <span className="flex-shrink-0 font-mono text-xs text-text-muted">
+              <span className={cn("flex-shrink-0 text-xs text-text-muted", topicStatsFontClass)}>
                 {new Date(session.timestamp).toLocaleDateString()} {new Date(session.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -439,14 +447,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           {/* Right Side Stats */}
           <div className="flex-shrink-0 text-right">
             <div className="space-y-1">
-              <div className="font-mono text-xs text-text-muted">
+              <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
                 {formatTimeMs(session.avgTimeMs)} <span className="text-text-subtle">/ q</span>
               </div>
-              <div className="font-mono text-xs text-text-muted">
+              <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
                 {session.correctAnswers}/{session.totalQuestions}{" "}
                 <span className="text-text-subtle">correct</span>
               </div>
-              <div className="font-mono text-xs font-bold text-primary">
+              <div className={cn("text-xs font-bold text-primary", topicStatsFontClass)}>
                 {session.accuracy.toFixed(0)}%
               </div>
             </div>
@@ -621,7 +629,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     }
 
     return (
-      <div className="py-8 text-center font-mono text-sm text-text-muted">No attempts yet</div>
+      <div className={cn("py-8 text-center text-sm text-text-muted", topicStatsFontClass)}>No attempts yet</div>
     );
   };
 
@@ -798,26 +806,38 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div className={`p-6 ${resultsCard}`}>
               <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <div className="mb-3">
-                    <span
-                      className={cn(
-                        "inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide",
-                        rankingView === "personal"
-                          ? "bg-difficulty-easy text-background"
-                          : "bg-secondary/20 text-secondary",
-                      )}
-                    >
-                      {rankingView === "personal" ? "Personal" : "Global"}
-                    </span>
-                  </div>
-                  <h2 className="mb-1 font-heading text-xl font-bold text-text sm:text-2xl">
+                  {!mentalMathUi && (
+                    <div className="mb-3">
+                      <span
+                        className={cn(
+                          "inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide",
+                          rankingView === "personal"
+                            ? "bg-difficulty-easy text-background"
+                            : "bg-secondary/20 text-secondary",
+                        )}
+                      >
+                        {rankingView === "personal" ? "Personal" : "Global"}
+                      </span>
+                    </div>
+                  )}
+                  <h2
+                    className={cn(
+                      "mb-1 text-xl font-bold text-text sm:text-2xl",
+                      mentalMathUi ? "font-sans" : "font-heading",
+                    )}
+                  >
                     Topic breakdown
                   </h2>
-                  <p className="text-sm text-text-muted">Performance by topic area</p>
+                  <p className={cn("text-sm text-text-muted", mentalMathUi && "font-sans")}>
+                    Performance by topic area
+                  </p>
                 </div>
 
                 <div
-                  className="flex shrink-0 gap-1 border-b border-border-subtle sm:pt-1"
+                  className={cn(
+                    "flex shrink-0 gap-1 sm:pt-1",
+                    mentalMathUi ? "gap-2" : "border-b border-border-subtle",
+                  )}
                   role="tablist"
                   aria-label="Ranking scope"
                 >
@@ -827,13 +847,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     aria-selected={rankingView === "personal"}
                     onClick={() => setRankingView("personal")}
                     className={cn(
-                      "flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
-                      rankingView === "personal"
-                        ? "-mb-px border-warning text-text"
-                        : "border-transparent text-text-muted hover:text-text",
+                      "flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+                      mentalMathUi
+                        ? rankingView === "personal"
+                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-background shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
+                          : "rounded-organic-lg bg-surface-mid/50 px-4 py-2 text-text-muted hover:bg-surface-mid hover:text-text"
+                        : rankingView === "personal"
+                          ? "-mb-px border-b-2 border-primary text-text"
+                          : "-mb-px border-b-2 border-transparent text-text-muted hover:text-text",
                     )}
                   >
-                    <User className="h-3.5 w-3.5" aria-hidden />
+                    {!mentalMathUi && <User className="h-3.5 w-3.5" aria-hidden />}
                     Personal
                   </button>
                   <button
@@ -842,19 +866,23 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     aria-selected={rankingView === "global"}
                     onClick={() => setRankingView("global")}
                     className={cn(
-                      "flex items-center gap-2 border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
-                      rankingView === "global"
-                        ? "-mb-px border-warning text-text"
-                        : "border-transparent text-text-muted hover:text-text",
+                      "flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors",
+                      mentalMathUi
+                        ? rankingView === "global"
+                          ? "rounded-organic-lg bg-primary px-4 py-2 font-bold text-background shadow-[0_2px_6px_rgba(0,0,0,0.2)] [text-shadow:0_0.5px_1px_rgba(0,0,0,0.2)]"
+                          : "rounded-organic-lg bg-surface-mid/50 px-4 py-2 text-text-muted hover:bg-surface-mid hover:text-text"
+                        : rankingView === "global"
+                          ? "-mb-px border-b-2 border-primary text-text"
+                          : "-mb-px border-b-2 border-transparent text-text-muted hover:text-text",
                     )}
                   >
-                    <Users className="h-3.5 w-3.5" aria-hidden />
+                    {!mentalMathUi && <Users className="h-3.5 w-3.5" aria-hidden />}
                     Global
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-8">
+              <div className={cn(mentalMathUi ? "space-y-10" : "space-y-8")}>
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicInfo = getTopic(topic.topicId);
                   if (!topicInfo && topic.topicId !== SESSION_FALLBACK_TOPIC_ID) {
@@ -872,41 +900,87 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 + idx * 0.1 }}
+                      className={cn(
+                        mentalMathUi &&
+                          "rounded-organic-xl bg-surface-mid/20 p-5 shadow-sm sm:p-6 dark:bg-surface-mid/15",
+                      )}
                     >
                       {/* Topic Header */}
-                      <div className="mb-6">
-                        <h3 className="mb-1 font-heading text-xl font-bold text-text capitalize">
+                      <div className={cn("mb-6", mentalMathUi && "mb-5")}>
+                        <h3
+                          className={cn(
+                            "mb-1 text-xl font-bold capitalize text-text",
+                            mentalMathUi ? "font-sans tracking-tight" : "font-heading",
+                          )}
+                        >
                           {topicName}
                         </h3>
                         {isGlobalView && (
-                          <div className="mt-4 grid grid-cols-12 items-center gap-4 border-b border-border-subtle pb-2">
+                          <div
+                            className={cn(
+                              "mt-4 grid grid-cols-12 items-center gap-3 gap-y-2 sm:gap-4",
+                              mentalMathUi
+                                ? "rounded-organic-lg bg-surface-subtle/80 px-3 py-3 sm:px-4"
+                                : "border-b border-border-subtle pb-2",
+                            )}
+                          >
                             <div className="col-span-1 text-center">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Rank
                               </span>
                             </div>
                             <div className="col-span-4">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Player
                               </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Score
                               </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Accuracy
                               </span>
                             </div>
                             <div className="col-span-2 text-right">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Speed
                               </span>
                             </div>
                             <div className="col-span-1 text-right">
-                              <span className="text-xs font-mono uppercase tracking-wider text-text-muted">
+                              <span
+                                className={cn(
+                                  "text-[11px] font-bold uppercase tracking-wide text-text-muted",
+                                  mentalMathUi ? "font-sans" : "font-mono",
+                                )}
+                              >
                                 Q&apos;s
                               </span>
                             </div>
@@ -916,7 +990,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
                       {/* Session Cards List */}
                       {isLoadingRankings ? (
-                        <div className="flex h-32 items-center justify-center rounded-organic-lg border border-border-subtle bg-surface-subtle">
+                        <div
+                          className={cn(
+                            "flex h-32 items-center justify-center rounded-organic-lg",
+                            mentalMathUi
+                              ? "bg-surface-subtle/60"
+                              : "border border-border-subtle bg-surface-subtle",
+                          )}
+                        >
                           <div className="flex animate-pulse space-x-2">
                             <div
                               className={cn(
