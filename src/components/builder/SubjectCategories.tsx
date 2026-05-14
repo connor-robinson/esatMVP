@@ -31,7 +31,7 @@ const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
   'physics',
 ];
 
-/** Selected pill fills only (icon + label use white + glyph shadows below). */
+/** Selected pill fills only; icon stays white, caption is dark in light / white in dark. */
 const categorySelectedPillBg: Record<HighLevelCategory, string> = {
   arithmetic: 'bg-primary dark:bg-primary/35',
   algebra: 'bg-accent dark:bg-accent/35',
@@ -44,8 +44,9 @@ const categorySelectedPillBg: Record<HighLevelCategory, string> = {
 
 const selectedGlyphShadow =
   'text-white [filter:drop-shadow(0_0.5px_1.5px_rgb(0_0_0_/_0.55))_drop-shadow(0_1px_2px_rgb(0_0_0_/_0.35))]';
-const selectedLabelShadow =
-  'text-white [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)]';
+/** Caption under icon: near-black on pills in light UI; white + shadow in dark UI. */
+const selectedLabelClasses =
+  'text-background [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)]';
 
 const categoryConfig: Record<
   HighLevelCategory,
@@ -105,7 +106,7 @@ export function SubjectCategories({
                 <span
                   className={cn(
                     'text-center text-[10px] font-medium leading-tight tracking-[0.06em]',
-                    isSelected ? selectedLabelShadow : 'text-text-muted',
+                    isSelected ? selectedLabelClasses : 'text-text-muted',
                   )}
                 >
                   {config.label}
