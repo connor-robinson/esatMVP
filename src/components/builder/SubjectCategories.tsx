@@ -30,15 +30,15 @@ const SIDEBAR_CATEGORY_ORDER: HighLevelCategory[] = [
   'physics',
 ];
 
-/** Selected capsule fills — Tailwind semantic colors from theme tokens. */
-const categorySelectedClasses: Record<HighLevelCategory, string> = {
-  arithmetic: 'bg-accent text-background shadow-md shadow-accent/20',
-  algebra: 'bg-maths text-background shadow-md shadow-maths/20',
-  geometry: 'bg-biology text-background shadow-md shadow-biology/25',
-  number_theory: 'bg-advanced text-background shadow-md shadow-advanced/25',
-  shortcuts: 'bg-secondary text-background shadow-md shadow-secondary/25',
-  trigonometry: 'bg-chemistry text-background shadow-md shadow-chemistry/25',
-  physics: 'bg-physics text-background shadow-md shadow-physics/25',
+/** Selected chip fill — theme tokens: light fill + dark ink (dark UI), deep fill + light ink (light UI). */
+const categoryRailSelectedBg: Record<HighLevelCategory, string> = {
+  arithmetic: 'bg-category-rail-arithmetic',
+  algebra: 'bg-category-rail-algebra',
+  geometry: 'bg-category-rail-geometry',
+  number_theory: 'bg-category-rail-number-theory',
+  shortcuts: 'bg-category-rail-shortcuts',
+  trigonometry: 'bg-category-rail-trigonometry',
+  physics: 'bg-category-rail-physics',
 };
 
 const categoryConfig: Record<
@@ -77,18 +77,21 @@ export function SubjectCategories({
                 onClick={() => onSelectCategory(category)}
                 className={cn(
                   'flex w-full flex-col items-center gap-1.5 px-1.5 transition-all',
-                  !isSelected && 'opacity-60 hover:opacity-100',
+                  !isSelected && 'opacity-70 hover:opacity-100',
                 )}
               >
                 <div
                   className={cn(
                     'flex h-12 w-12 items-center justify-center rounded-organic-lg transition-all xl:h-14 xl:w-14',
                     isSelected
-                      ? categorySelectedClasses[category]
-                      : 'bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text',
+                      ? cn(
+                          categoryRailSelectedBg[category],
+                          'text-category-rail-ink shadow-sm',
+                        )
+                      : 'bg-category-rail-muted text-category-rail-ink',
                   )}
                 >
-                  <Icon className='h-5 w-5 xl:h-6 xl:w-6' />
+                  <Icon className='h-5 w-5 xl:h-6 xl:w-6' strokeWidth={isSelected ? 2.25 : 2} />
                 </div>
                 <span
                   className={cn(

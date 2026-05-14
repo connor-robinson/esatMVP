@@ -55,6 +55,16 @@ const config: Config = {
         "difficulty-drill-medium": "var(--color-difficulty-drill-pill-medium-bg)",
         "difficulty-drill-hard": "var(--color-difficulty-drill-pill-hard-bg)",
         "difficulty-drill-ink": "var(--color-difficulty-drill-pill-ink)",
+        /** Mental-maths category rail (sidebar icon chips) */
+        "category-rail-ink": "var(--color-category-rail-ink)",
+        "category-rail-muted": "var(--color-category-rail-muted-bg)",
+        "category-rail-arithmetic": "var(--color-category-rail-arithmetic-bg)",
+        "category-rail-algebra": "var(--color-category-rail-algebra-bg)",
+        "category-rail-geometry": "var(--color-category-rail-geometry-bg)",
+        "category-rail-number-theory": "var(--color-category-rail-number-theory-bg)",
+        "category-rail-shortcuts": "var(--color-category-rail-shortcuts-bg)",
+        "category-rail-trigonometry": "var(--color-category-rail-trigonometry-bg)",
+        "category-rail-physics": "var(--color-category-rail-physics-bg)",
         /** TMUA exam label accent (#CA7BB3 dark) */
         "tmua-accent": "var(--color-tmua-accent)",
         

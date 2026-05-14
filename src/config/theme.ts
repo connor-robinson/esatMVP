@@ -92,6 +92,19 @@ export const colorTokens = {
   difficultyDrillPillMediumBg: { dark: "#e8d4bc", light: "#3d3225" },
   difficultyDrillPillHardBg: { dark: "#ebc8c8", light: "#3d2828" },
   difficultyDrillPillInk: { dark: "#0e0f12", light: "#f4f1f5" },
+  /**
+   * Mental-maths left rail: icon tiles. Dark UI = pastel fills + near-black ink;
+   * light UI = deep fills + light ink. (Muted tile uses one neutral pair.)
+   */
+  categoryRailInk: { dark: "#0e0f12", light: "#f4f1f5" },
+  categoryRailMutedBg: { dark: "#8f8a9c", light: "#524a5f" },
+  categoryRailArithmeticBg: { dark: "#bfe8dc", light: "#234038" },
+  categoryRailAlgebraBg: { dark: "#bdd4ef", light: "#243b52" },
+  categoryRailGeometryBg: { dark: "#cdd4f2", light: "#2c3350" },
+  categoryRailNumberTheoryBg: { dark: "#edd0df", light: "#4a3040" },
+  categoryRailShortcutsBg: { dark: "#ddd0f4", light: "#3a2f4d" },
+  categoryRailTrigonometryBg: { dark: "#edd4cf", light: "#4a322c" },
+  categoryRailPhysicsBg: { dark: "#dbd4f0", light: "#352f48" },
   /** TMUA exam label — Figma #CA7BB3 (lighter pink-purple, distinct from physics) */
   tmuaAccent: { dark: "#CA7BB3", light: "#8B4F7A" },
 } as const satisfies Record<string, ModeToken>;
@@ -303,6 +316,15 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-difficulty-drill-pill-medium-bg": colorTokens.difficultyDrillPillMediumBg[mode],
     "--color-difficulty-drill-pill-hard-bg": colorTokens.difficultyDrillPillHardBg[mode],
     "--color-difficulty-drill-pill-ink": colorTokens.difficultyDrillPillInk[mode],
+    "--color-category-rail-ink": colorTokens.categoryRailInk[mode],
+    "--color-category-rail-muted-bg": colorTokens.categoryRailMutedBg[mode],
+    "--color-category-rail-arithmetic-bg": colorTokens.categoryRailArithmeticBg[mode],
+    "--color-category-rail-algebra-bg": colorTokens.categoryRailAlgebraBg[mode],
+    "--color-category-rail-geometry-bg": colorTokens.categoryRailGeometryBg[mode],
+    "--color-category-rail-number-theory-bg": colorTokens.categoryRailNumberTheoryBg[mode],
+    "--color-category-rail-shortcuts-bg": colorTokens.categoryRailShortcutsBg[mode],
+    "--color-category-rail-trigonometry-bg": colorTokens.categoryRailTrigonometryBg[mode],
+    "--color-category-rail-physics-bg": colorTokens.categoryRailPhysicsBg[mode],
     "--color-tmua-accent": colorTokens.tmuaAccent[mode],
     "--surface-02": surfaceOpacityTokens["02"][mode],
     "--surface-05": surfaceOpacityTokens["05"][mode],
