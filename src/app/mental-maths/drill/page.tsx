@@ -199,15 +199,13 @@ export default function BuilderPage() {
           totalQuestions={builder.totalQuestions}
           progress={builder.progress}
           remainingSeconds={builder.remainingSeconds}
-          isOpenEnded={builder.isOpenEndedQuestions}
+          isUnlimitedSession={builder.isUnlimitedSession}
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
-          onExit={() => {
-            builder.exitSession();
-          }}
+          onEndSession={() => builder.endSession()}
         />
       </Suspense>
     );

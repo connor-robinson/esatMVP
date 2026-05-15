@@ -132,6 +132,10 @@ export function useBuilderSession() {
   const isOpenEndedQuestions =
     currentSession?.config?.sessionLengthMode === "questions" &&
     questionLimit === 0;
+  const isUnlimitedTime =
+    currentSession?.config?.sessionLengthMode === "time" &&
+    (currentSession?.config?.timeLimitMinutes ?? 0) === 0;
+  const isUnlimitedSession = isOpenEndedQuestions || isUnlimitedTime;
   const hasFiniteQuestionCap =
     currentSession?.config?.sessionLengthMode === "questions" &&
     questionLimit > 0;
@@ -630,20 +634,22 @@ export function useBuilderSession() {
     const limit = cfg?.questionLimit ?? 0;
     const finiteQuestions =
       cfg?.sessionLengthMode === "questions" && limit > 0;
-    const atLastInPool = currentQuestionIndex >= currentSession.questions.length - 1;
-    const onFinalQuestion =
-      finiteQuestions && currentQuestionIndex + 1 >= limit;
+    const nextIndex = currentQuestionIndex + 1;
 
-    if (onFinalQuestion) {
+    if (finiteQuestions && nextIndex >= limit) {
       finishSession(currentSession.attempts);
       return;
     }
 
-    if (atLastInPool) {
-      setCurrentSession((prev) => (prev ? appendQuestionToSession(prev) : prev));
+    let sessionForAdvance = currentSession;
+    if (nextIndex >= sessionForAdvance.questions.length) {
+      while (sessionForAdvance.questions.length <= nextIndex) {
+        sessionForAdvance = appendQuestionToSession(sessionForAdvance);
+      }
+      setCurrentSession(sessionForAdvance);
     }
 
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    setCurrentQuestionIndex(nextIndex);
     setQuestionStartTime(Date.now());
     setLastAttempt(null);
   }, [
@@ -653,6 +659,12 @@ export function useBuilderSession() {
     finishSession,
     appendQuestionToSession,
   ]);
+
+  /** Finish the run and show results (open-ended, timed, or manual stop). */
+  const endSession = useCallback(() => {
+    if (!currentSession) return;
+    finishSession(currentSession.attempts);
+  }, [currentSession, finishSession]);
 
   const submitAnswer = useCallback(
     (userAnswer: string) => {
@@ -764,6 +776,34 @@ export function useBuilderSession() {
     setQuestionStartTime(Date.now());
   }, [currentQuestionIndex]);
 
+  /** If index outruns the pool (open-ended / timed), append the next question. */
+  useEffect(() => {
+    if (view !== "running" || !currentSession?.config) return;
+    if (currentQuestion) return;
+
+    const cfg = currentSession.config;
+    const finiteQuestions =
+      cfg.sessionLengthMode === "questions" && cfg.questionLimit > 0;
+    if (
+      finiteQuestions &&
+      currentQuestionIndex >= cfg.questionLimit
+    ) {
+      return;
+    }
+
+    if (currentQuestionIndex < currentSession.questions.length) return;
+
+    setCurrentSession((prev) =>
+      prev ? appendQuestionToSession(prev) : prev,
+    );
+  }, [
+    view,
+    currentSession,
+    currentQuestion,
+    currentQuestionIndex,
+    appendQuestionToSession,
+  ]);
+
   const handleDragStart = useCallback((id: string) => {
     setActiveId(id);
   }, []);
@@ -806,6 +846,7 @@ export function useBuilderSession() {
     remainingSeconds,
     isTimedSession,
     isOpenEndedQuestions,
+    isUnlimitedSession,
     hasFiniteQuestionCap,
     presets,
     createPreset,
@@ -818,6 +859,7 @@ export function useBuilderSession() {
     clearTopics,
     canStart,
     startSession,
+    endSession,
     submitAnswer,
     continueAfterIncorrect,
     exitSession,

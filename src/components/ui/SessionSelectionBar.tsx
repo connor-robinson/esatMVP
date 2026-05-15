@@ -303,14 +303,6 @@ export function SessionSelectionBar({
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p
-                  className={cn(
-                    "text-[10px] font-semibold uppercase tracking-wider",
-                    FIGMA_SESSION_LABEL,
-                  )}
-                >
-                  Session length
-                </p>
                 {showSessionModeToggle ? (
                   <SessionLengthControl
                     mode={sessionLengthMode}
@@ -325,7 +317,6 @@ export function SessionSelectionBar({
                     timeLimitMin={timeLimitMin}
                     timeLimitMax={timeLimitMax}
                     usePlainInput={figmaPlainCount}
-                    className="mt-0.5"
                   />
                 ) : (
                   <SessionLengthControl
@@ -339,7 +330,6 @@ export function SessionSelectionBar({
                     timeLimitMinutes={timeLimitMinutes}
                     onTimeLimitChange={() => {}}
                     usePlainInput={figmaPlainCount}
-                    className="mt-0.5"
                   />
                 )}
               </div>

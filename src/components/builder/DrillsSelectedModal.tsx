@@ -189,9 +189,6 @@ export function DrillsSelectedModal({
         <div className='shrink-0 bg-surface-neutral px-5 py-6 dark:bg-surface-mid sm:px-6'>
           <div className='flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8'>
             <div className='min-w-0 flex-1'>
-              <p className='mb-2 text-[10px] font-semibold uppercase tracking-wider text-session-green dark:text-text'>
-                Session length
-              </p>
               <SessionLengthControl
                 mode={sessionLengthMode}
                 onModeChange={onSessionLengthModeChange}

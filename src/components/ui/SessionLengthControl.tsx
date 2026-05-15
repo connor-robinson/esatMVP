@@ -9,9 +9,9 @@ export type SessionLengthMode = "questions" | "time";
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
 
 const INFINITE_QUESTIONS_HINT =
-  "Clear the number for an open-ended session—practice until you stop.";
+  "Clear the number for an open-ended session. Practice until you stop.";
 const INFINITE_TIME_HINT =
-  "Clear the number for unlimited time—practice until you stop.";
+  "Clear the number for unlimited time. Practice until you stop.";
 
 export interface SessionLengthControlProps {
   mode: SessionLengthMode;

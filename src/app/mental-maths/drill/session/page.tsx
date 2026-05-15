@@ -55,15 +55,14 @@ export default function SessionPage() {
           questionNumber={builder.currentQuestionIndex + 1}
           totalQuestions={builder.totalQuestions}
           progress={builder.progress}
+          remainingSeconds={builder.remainingSeconds}
+          isUnlimitedSession={builder.isUnlimitedSession}
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
-          onExit={() => {
-            builder.exitSession();
-            router.push("/mental-maths/drill");
-          }}
+          onEndSession={() => builder.endSession()}
         />
       </Suspense>
     );

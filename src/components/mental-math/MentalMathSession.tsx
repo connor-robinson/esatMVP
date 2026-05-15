@@ -33,10 +33,12 @@ interface MentalMathSessionProps {
   correctCount: number;
   /** When set, show countdown instead of question cap. */
   remainingSeconds?: number | null;
-  isOpenEnded?: boolean;
+  /** Open-ended questions or unlimited time — no fixed total. */
+  isUnlimitedSession?: boolean;
   onSubmitAnswer: (answer: string) => void;
   onContinueAfterIncorrect: () => void;
-  onExit: () => void;
+  /** Finish run and show results. */
+  onEndSession: () => void;
 }
 
 export function MentalMathSession({
@@ -48,10 +50,10 @@ export function MentalMathSession({
   lastAttempt,
   correctCount,
   remainingSeconds = null,
-  isOpenEnded = false,
+  isUnlimitedSession = false,
   onSubmitAnswer,
   onContinueAfterIncorrect,
-  onExit,
+  onEndSession,
 }: MentalMathSessionProps) {
   const [answer, setAnswer] = useState("");
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
@@ -164,37 +166,34 @@ export function MentalMathSession({
         <Container size="xl">
           <div className="space-y-2">
             <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Progress
-                  value={
-                    remainingSeconds != null
-                      ? questionNumber
-                      : isOpenEnded
-                        ? Math.min(questionNumber, 20)
-                        : questionNumber
-                  }
-                  max={
-                    remainingSeconds != null
-                      ? Math.max(totalQuestions, questionNumber, 1)
-                      : isOpenEnded
-                        ? 20
+              {!isUnlimitedSession ? (
+                <div className="flex-1">
+                  <Progress
+                    value={questionNumber}
+                    max={
+                      remainingSeconds != null
+                        ? Math.max(totalQuestions, questionNumber, 1)
                         : Math.max(totalQuestions, 1)
-                  }
-                />
-              </div>
+                    }
+                  />
+                </div>
+              ) : (
+                <div className="flex-1" />
+              )}
               <button
-                onClick={onExit}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-elevated border border-border text-text-muted hover:bg-error/10 hover:border-error/30 hover:text-error transition-all text-sm font-medium flex-shrink-0 z-50"
+                type="button"
+                onClick={onEndSession}
+                className="flex shrink-0 items-center gap-2 rounded-organic-lg bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral active:scale-[0.98] dark:bg-surface-neutral dark:hover:bg-surface-mid"
               >
-                <LogOut className="h-4 w-4" strokeWidth={2} />
-                <span>Exit</span>
+                <LogOut className="h-4 w-4" strokeWidth={2} aria-hidden />
+                End session
               </button>
             </div>
             <div className="flex items-center justify-between text-sm px-4">
               <span className="font-semibold text-primary text-base tabular-nums">
                 {remainingSeconds != null ? (
                   <>Time {formatCountdown(remainingSeconds)}</>
-                ) : isOpenEnded ? (
+                ) : isUnlimitedSession ? (
                   <>Question {questionNumber}</>
                 ) : (
                   <>
