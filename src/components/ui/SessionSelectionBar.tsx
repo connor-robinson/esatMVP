@@ -132,7 +132,7 @@ export function SessionSelectionBar({
         disabled={questionCount >= questionCountMax}
         className={cn(
           "flex h-[22px] w-7 items-center justify-center rounded-t-organic-sm text-text-muted transition-colors",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral/80",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
           "disabled:pointer-events-none disabled:opacity-20",
         )}
@@ -146,7 +146,7 @@ export function SessionSelectionBar({
         disabled={questionCount <= questionCountMin}
         className={cn(
           "flex h-[22px] w-7 items-center justify-center rounded-b-organic-sm text-text-muted transition-colors",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral/80",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
           "disabled:pointer-events-none disabled:opacity-20",
         )}
@@ -332,7 +332,7 @@ export function SessionSelectionBar({
       >
         <div
           className={cn(
-            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated",
+            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-mid",
             /** Solid “stamp” shadow (no soft multi-layer blur). */
             "shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]",
             "transition-[box-shadow,transform] duration-200 ease-signature",
@@ -352,7 +352,7 @@ export function SessionSelectionBar({
                   duration: 0.2,
                   ease: [0.32, 0.72, 0, 1],
                 }}
-                className="flex max-h-[min(52vh,20rem)] w-full shrink-0 flex-col border-b border-border-subtle/50 bg-surface-elevated"
+                className="flex max-h-[min(52vh,20rem)] w-full shrink-0 flex-col border-b border-border-subtle/50 bg-surface-elevated dark:bg-surface-mid"
               >
                 <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   In session
@@ -374,7 +374,7 @@ export function SessionSelectionBar({
 
                       return (
                         <li key={id}>
-                          <div className="flex items-center gap-2 rounded-organic-md py-2 pl-1.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70">
+                          <div className="flex items-center gap-2 rounded-organic-md py-2 pl-1.5 pr-1 transition-colors duration-150 ease-out hover:bg-surface-mid/70 dark:hover:bg-surface-neutral/50">
                             <span
                               className="flex w-7 shrink-0 justify-end pr-0.5 text-xs font-bold tabular-nums leading-none text-text-muted"
                               aria-hidden
@@ -394,7 +394,7 @@ export function SessionSelectionBar({
                             <button
                               type="button"
                               onClick={() => onRemoveDrill?.(id)}
-                              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150 ease-out hover:bg-surface-mid hover:text-text active:scale-[0.94] active:bg-surface-neutral/90"
+                              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150 ease-out hover:bg-surface-mid hover:text-text active:scale-[0.94] active:bg-surface-neutral/90 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral"
                               aria-label={`Remove ${title}`}
                             >
                               <X className="h-5 w-5" strokeWidth={2.5} />
@@ -485,14 +485,14 @@ export function SessionSelectionBar({
                 className={cn(
                   "inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature",
                   showClearAll ? "flex-1 sm:flex-initial" : "w-full min-w-0 flex-1 sm:w-auto sm:min-w-[12rem]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-mid",
                   "disabled:cursor-not-allowed",
                   canStartSession
                     ? cn(
                         "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
                         PRIMARY_CTA_LABEL_DARK,
                       )
-                    : "bg-surface-mid text-text-disabled [&_svg]:opacity-40",
+                    : "bg-surface-mid text-text-disabled dark:bg-surface-neutral [&_svg]:opacity-40",
                 )}
               >
                 {startLabel}
