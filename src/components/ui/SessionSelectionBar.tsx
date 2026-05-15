@@ -56,6 +56,7 @@ export interface SessionSelectionBarProps {
   detailLine?: string;
   /** When set with `onRemoveDrill`, the list control opens a drill picker popover. */
   selectedDrills?: TopicVariantSelection[];
+  onRemoveDrill?: (topicVariantId: string) => void;
   /** When false, hides the “Clear all” control (compact figma island). */
   showClearAll?: boolean;
   className?: string;
