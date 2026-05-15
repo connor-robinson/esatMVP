@@ -189,6 +189,19 @@ export interface SessionPreset {
   createdAt: number;
 }
 
+export type SessionLengthMode = "questions" | "time";
+
+export interface BuilderSessionConfig {
+  sessionLengthMode: SessionLengthMode;
+  /** 0 = open-ended (questions mode). */
+  questionLimit: number;
+  /** 0 = unlimited time (time mode). */
+  timeLimitMinutes: number;
+  topicIds: string[];
+  variantToLevelMap: Record<string, number>;
+  topicVariantSelections: TopicVariantSelection[];
+}
+
 export interface BuilderSession {
   id: string;
   questions: GeneratedQuestion[];
@@ -196,6 +209,9 @@ export interface BuilderSession {
   endedAt?: number;
   attempts: number;
   results?: DrillResult[];
+  config?: BuilderSessionConfig;
+  /** Wall-clock end for finite timed sessions. */
+  deadlineAt?: number | null;
 }
 
 export interface TriangleDiagramData {

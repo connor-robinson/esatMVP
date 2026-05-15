@@ -17,6 +17,12 @@ import { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
 import { cn } from "@/lib/utils";
 
+function formatCountdown(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 interface MentalMathSessionProps {
   currentQuestion: GeneratedQuestion;
   questionNumber: number;
@@ -25,6 +31,9 @@ interface MentalMathSessionProps {
   showFeedback: boolean;
   lastAttempt: QuestionAttempt | null;
   correctCount: number;
+  /** When set, show countdown instead of question cap. */
+  remainingSeconds?: number | null;
+  isOpenEnded?: boolean;
   onSubmitAnswer: (answer: string) => void;
   onContinueAfterIncorrect: () => void;
   onExit: () => void;
@@ -38,6 +47,8 @@ export function MentalMathSession({
   showFeedback,
   lastAttempt,
   correctCount,
+  remainingSeconds = null,
+  isOpenEnded = false,
   onSubmitAnswer,
   onContinueAfterIncorrect,
   onExit,
@@ -154,7 +165,22 @@ export function MentalMathSession({
           <div className="space-y-2">
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <Progress value={questionNumber} max={totalQuestions} />
+                <Progress
+                  value={
+                    remainingSeconds != null
+                      ? questionNumber
+                      : isOpenEnded
+                        ? Math.min(questionNumber, 20)
+                        : questionNumber
+                  }
+                  max={
+                    remainingSeconds != null
+                      ? Math.max(totalQuestions, questionNumber, 1)
+                      : isOpenEnded
+                        ? 20
+                        : Math.max(totalQuestions, 1)
+                  }
+                />
               </div>
               <button
                 onClick={onExit}
@@ -165,8 +191,16 @@ export function MentalMathSession({
               </button>
             </div>
             <div className="flex items-center justify-between text-sm px-4">
-              <span className="font-semibold text-primary text-base">
-                {questionNumber} / {totalQuestions}
+              <span className="font-semibold text-primary text-base tabular-nums">
+                {remainingSeconds != null ? (
+                  <>Time {formatCountdown(remainingSeconds)}</>
+                ) : isOpenEnded ? (
+                  <>Question {questionNumber}</>
+                ) : (
+                  <>
+                    {questionNumber} / {totalQuestions}
+                  </>
+                )}
               </span>
               {accuracy > 0 && (
                 <span className="text-text-subtle text-sm">

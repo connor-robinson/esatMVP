@@ -5,14 +5,25 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import type { SessionPreset, BuilderSession, GeneratedQuestion, QuestionAttempt, TopicVariantSelection } from "@/types/core";
+import type {
+  SessionPreset,
+  BuilderSession,
+  BuilderSessionConfig,
+  GeneratedQuestion,
+  QuestionAttempt,
+  SessionLengthMode,
+  TopicVariantSelection,
+} from "@/types/core";
 import type { SessionPresetInsert } from "@/lib/supabase/types";
-import { generateMixedQuestions } from "@/lib/generators";
+import { generateMixedQuestions, generateQuestionForTopic } from "@/lib/generators";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
 import { expressionsEqual } from "@/lib/answer-checker";
 
 type ViewState = "builder" | "running" | "results";
+
+/** Pre-generated pool for open-ended / timed sessions. */
+const SESSION_QUESTION_POOL = 500;
 
 const mapPresetRow = (row: any): SessionPreset => {
   const topicLevelsData = row.topic_levels as any;
@@ -77,6 +88,10 @@ export function useBuilderSession() {
   // Session configuration
   const [selectedTopicVariants, setSelectedTopicVariants] = useState<TopicVariantSelection[]>([]);
   const [questionCount, setQuestionCount] = useState(20);
+  const [sessionLengthMode, setSessionLengthMode] =
+    useState<SessionLengthMode>("questions");
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState(10);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
 
   const [presets, setPresets] = useState<SessionPreset[]>([]);
 
@@ -112,9 +127,22 @@ export function useBuilderSession() {
   const canStart = selectedTopicVariants.length > 0;
   const currentQuestion = currentSession?.questions[currentQuestionIndex] || null;
   const isComplete = !!currentSession?.endedAt;
-  const progress = currentSession?.questions.length
-    ? currentQuestionIndex / currentSession.questions.length
+  const questionLimit = currentSession?.config?.questionLimit ?? questionCount;
+  const isTimedSession = currentSession?.config?.sessionLengthMode === "time";
+  const isOpenEndedQuestions =
+    currentSession?.config?.sessionLengthMode === "questions" &&
+    questionLimit === 0;
+  const hasFiniteQuestionCap =
+    currentSession?.config?.sessionLengthMode === "questions" &&
+    questionLimit > 0;
+
+  const progress = hasFiniteQuestionCap && currentSession?.questions.length
+    ? currentQuestionIndex / Math.min(questionLimit, currentSession.questions.length)
     : 0;
+
+  const displayTotalQuestions = hasFiniteQuestionCap
+    ? Math.min(questionLimit, currentSession?.questions.length ?? questionLimit)
+    : currentSession?.questions.length ?? 0;
   
   // Calculate correct count from attempt log
   const correctCount = attemptLog.filter(attempt => attempt.isCorrect).length;
@@ -305,6 +333,19 @@ export function useBuilderSession() {
     [authSession?.user, supabase],
   );
 
+  const appendQuestionToSession = useCallback(
+    (session: BuilderSession): BuilderSession => {
+      const cfg = session.config;
+      if (!cfg || cfg.topicIds.length === 0) return session;
+      const topicIndex = session.questions.length % cfg.topicIds.length;
+      const topicId = cfg.topicIds[topicIndex];
+      const level = cfg.variantToLevelMap[topicId] ?? 1;
+      const question = generateQuestionForTopic(topicId, level);
+      return { ...session, questions: [...session.questions, question] };
+    },
+    [],
+  );
+
   const startSession = useCallback(() => {
     if (selectedTopicVariants.length === 0) {
       console.warn("[startSession] No topics selected, cannot start");
@@ -346,22 +387,42 @@ export function useBuilderSession() {
       }
     });
     
-    const questions = generateMixedQuestions(topicIds, questionCount, variantToLevelMap);
-    
+    const config: BuilderSessionConfig = {
+      sessionLengthMode,
+      questionLimit: questionCount,
+      timeLimitMinutes,
+      topicIds,
+      variantToLevelMap,
+      topicVariantSelections: [...selectedTopicVariants],
+    };
+
+    const poolSize =
+      sessionLengthMode === "questions" && questionCount > 0
+        ? questionCount
+        : SESSION_QUESTION_POOL;
+
+    const questions = generateMixedQuestions(topicIds, poolSize, variantToLevelMap);
+
     if (questions.length === 0) {
       console.error("[startSession] No questions generated!");
       alert("Failed to generate questions. Please try again.");
       return;
     }
-    
+
     const sessionId = generateId();
     const startedAt = Date.now();
+    const deadlineAt =
+      sessionLengthMode === "time" && timeLimitMinutes > 0
+        ? startedAt + timeLimitMinutes * 60 * 1000
+        : null;
 
     const session: BuilderSession = {
       id: sessionId,
       questions,
       startedAt,
       attempts: 0,
+      config,
+      deadlineAt,
     };
 
     setCurrentSession(session);
@@ -387,6 +448,8 @@ export function useBuilderSession() {
               settings: {
                 selectedTopicVariants,
                 questionCount,
+                sessionLengthMode,
+                timeLimitMinutes,
               },
             })
             .select("id")
@@ -443,7 +506,14 @@ export function useBuilderSession() {
         }
       })();
     }
-  }, [authSession?.user, questionCount, selectedTopicVariants, supabase]);
+  }, [
+    authSession?.user,
+    questionCount,
+    sessionLengthMode,
+    timeLimitMinutes,
+    selectedTopicVariants,
+    supabase,
+  ]);
 
   const persistAttempt = useCallback(
     (sessionId: string, attempt: QuestionAttempt) => {
@@ -528,9 +598,70 @@ export function useBuilderSession() {
     [authSession?.user, supabase, currentSession, attemptLog],
   );
 
+  const finishSession = useCallback(
+    (attemptsTotal: number) => {
+      if (!currentSession) return;
+      setCurrentSession((prev) =>
+        prev ? { ...prev, attempts: attemptsTotal, endedAt: Date.now() } : prev,
+      );
+      setView("results");
+      finalizeSession(currentSession.id, attemptsTotal);
+    },
+    [currentSession, finalizeSession],
+  );
+
+  const sessionTimeExpired = useCallback((session: BuilderSession) => {
+    return (
+      session.config?.sessionLengthMode === "time" &&
+      session.deadlineAt != null &&
+      Date.now() >= session.deadlineAt
+    );
+  }, []);
+
+  const advanceToNextQuestion = useCallback(() => {
+    if (!currentSession) return;
+
+    if (sessionTimeExpired(currentSession)) {
+      finishSession(currentSession.attempts);
+      return;
+    }
+
+    const cfg = currentSession.config;
+    const limit = cfg?.questionLimit ?? 0;
+    const finiteQuestions =
+      cfg?.sessionLengthMode === "questions" && limit > 0;
+    const atLastInPool = currentQuestionIndex >= currentSession.questions.length - 1;
+    const onFinalQuestion =
+      finiteQuestions && currentQuestionIndex + 1 >= limit;
+
+    if (onFinalQuestion) {
+      finishSession(currentSession.attempts);
+      return;
+    }
+
+    if (atLastInPool) {
+      setCurrentSession((prev) => (prev ? appendQuestionToSession(prev) : prev));
+    }
+
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    setQuestionStartTime(Date.now());
+    setLastAttempt(null);
+  }, [
+    currentSession,
+    currentQuestionIndex,
+    sessionTimeExpired,
+    finishSession,
+    appendQuestionToSession,
+  ]);
+
   const submitAnswer = useCallback(
     (userAnswer: string) => {
       if (!currentSession || !currentQuestion) return;
+
+      if (sessionTimeExpired(currentSession)) {
+        finishSession(currentSession.attempts);
+        return;
+      }
 
       const timeTakenMs = Date.now() - questionStartTime;
       
@@ -575,47 +706,27 @@ export function useBuilderSession() {
       if (isCorrect) {
         setTimeout(() => {
           setShowFeedback(false);
-
-          if (currentQuestionIndex < (currentSession?.questions.length ?? 0) - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setQuestionStartTime(Date.now());
-            setLastAttempt(null);
-          } else {
-            const attemptsTotal = (currentSession?.attempts ?? 0) + 1;
-            setCurrentSession((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    attempts: attemptsTotal,
-                    endedAt: Date.now(),
-                  }
-                : prev,
-            );
-            setView("results");
-            finalizeSession(currentSession.id, attemptsTotal);
-          }
+          advanceToNextQuestion();
         }, 80);
       }
     },
-    [currentSession, currentQuestion, currentQuestionIndex, questionStartTime, persistAttempt, finalizeSession],
+    [
+      currentSession,
+      currentQuestion,
+      questionStartTime,
+      persistAttempt,
+      sessionTimeExpired,
+      finishSession,
+      advanceToNextQuestion,
+    ],
   );
 
   const continueAfterIncorrect = useCallback(() => {
     if (!currentSession || view !== "running") return;
 
     setShowFeedback(false);
-
-    if (currentQuestionIndex < currentSession.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setQuestionStartTime(Date.now());
-      setLastAttempt(null);
-    } else {
-      const attemptsTotal = currentSession.attempts;
-      setCurrentSession({ ...currentSession, endedAt: Date.now() });
-      setView("results");
-      finalizeSession(currentSession.id, attemptsTotal);
-    }
-  }, [currentSession, currentQuestionIndex, finalizeSession, view]);
+    advanceToNextQuestion();
+  }, [currentSession, view, advanceToNextQuestion]);
 
   const exitSession = useCallback(() => {
     setView("builder");
@@ -624,7 +735,30 @@ export function useBuilderSession() {
     setShowFeedback(false);
     setLastAttempt(null);
     setAttemptLog([]);
+    setRemainingSeconds(null);
   }, []);
+
+  useEffect(() => {
+    if (view !== "running" || !currentSession?.deadlineAt) {
+      setRemainingSeconds(null);
+      return;
+    }
+
+    const tick = () => {
+      const left = Math.max(
+        0,
+        Math.ceil((currentSession.deadlineAt! - Date.now()) / 1000),
+      );
+      setRemainingSeconds(left);
+      if (left <= 0) {
+        finishSession(currentSession.attempts);
+      }
+    };
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [view, currentSession?.deadlineAt, currentSession?.attempts, finishSession]);
 
   useEffect(() => {
     setQuestionStartTime(Date.now());
@@ -665,6 +799,14 @@ export function useBuilderSession() {
     selectedTopicVariants,
     questionCount,
     setQuestionCount,
+    sessionLengthMode,
+    setSessionLengthMode,
+    timeLimitMinutes,
+    setTimeLimitMinutes,
+    remainingSeconds,
+    isTimedSession,
+    isOpenEndedQuestions,
+    hasFiniteQuestionCap,
     presets,
     createPreset,
     loadPreset,
@@ -682,7 +824,7 @@ export function useBuilderSession() {
     currentSession,
     currentQuestion,
     currentQuestionIndex,
-    totalQuestions: currentSession?.questions.length || 0,
+    totalQuestions: displayTotalQuestions,
     isComplete,
     progress,
     showFeedback,

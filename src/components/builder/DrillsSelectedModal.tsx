@@ -4,15 +4,28 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight, X } from 'lucide-react';
 import { getTopic } from '@/config/topics';
-import type { TopicVariantSelection } from '@/types/core';
+import type { SessionLengthMode, TopicVariantSelection } from '@/types/core';
 import { cn } from '@/lib/utils';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
+import {
+  SessionLengthControl,
+  formatSessionLengthSummary,
+} from '@/components/ui/SessionLengthControl';
 
 export type DrillsSelectedModalProps = {
   open: boolean;
   onClose: () => void;
   selectedTopicVariants: TopicVariantSelection[];
+  sessionLengthMode: SessionLengthMode;
+  onSessionLengthModeChange: (mode: SessionLengthMode) => void;
   questionCount: number;
+  onQuestionCountChange: (n: number) => void;
+  questionCountMin?: number;
+  questionCountMax?: number;
+  timeLimitMinutes: number;
+  onTimeLimitChange: (n: number) => void;
+  timeLimitMin?: number;
+  timeLimitMax?: number;
   onRemoveVariant: (topicVariantId: string) => void;
   onStartSession: () => void;
 };
@@ -25,7 +38,16 @@ export function DrillsSelectedModal({
   open,
   onClose,
   selectedTopicVariants,
+  sessionLengthMode,
+  onSessionLengthModeChange,
   questionCount,
+  onQuestionCountChange,
+  questionCountMin = 0,
+  questionCountMax = 100,
+  timeLimitMinutes,
+  onTimeLimitChange,
+  timeLimitMin = 0,
+  timeLimitMax = 180,
   onRemoveVariant,
   onStartSession,
 }: DrillsSelectedModalProps) {
@@ -51,6 +73,11 @@ export function DrillsSelectedModal({
 
   const canStart = selectedTopicVariants.length > 0;
   const drillCount = selectedTopicVariants.length;
+  const lengthSummary = formatSessionLengthSummary(
+    sessionLengthMode,
+    questionCount,
+    timeLimitMinutes,
+  );
 
   return createPortal(
     <div
@@ -64,7 +91,7 @@ export function DrillsSelectedModal({
         className='flex max-h-[min(90vh,640px)] w-full max-w-[min(100%,28rem)] flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]'
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Upper: review + drills — light: lighter base; dark: deeper base */}
+        {/* Upper: review + drills ??? light: lighter base; dark: deeper base */}
         <div className='flex min-h-0 flex-1 flex-col bg-surface-elevated dark:bg-surface'>
           <div className='relative shrink-0 px-5 pb-4 pt-5'>
             <h2
@@ -74,8 +101,7 @@ export function DrillsSelectedModal({
               Review session
             </h2>
             <p className='mt-2 text-sm leading-relaxed text-text-muted'>
-              {drillCount} drill{drillCount === 1 ? '' : 's'} · {questionCount}{' '}
-              {questionCount === 1 ? 'question' : 'questions'}
+              {drillCount} drill{drillCount === 1 ? '' : 's'} ? {lengthSummary}
             </p>
             <button
               type='button'
@@ -159,15 +185,28 @@ export function DrillsSelectedModal({
           </div>
         </div>
 
-        {/* Lower: start CTA — light: one step lighter; dark: one step darker */}
+        {/* Lower: start CTA ??? light: one step lighter; dark: one step darker */}
         <div className='shrink-0 bg-surface-neutral px-5 py-6 dark:bg-surface-mid sm:px-6'>
-          <div className='flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8'>
-            <p className='text-sm leading-relaxed text-text-muted'>
-              <span className='font-bold tabular-nums text-primary'>
-                {questionCount}
-              </span>{' '}
-              {questionCount === 1 ? 'question' : 'questions'} in this run
-            </p>
+          <div className='flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8'>
+            <div className='min-w-0 flex-1'>
+              <p className='mb-2 text-[10px] font-semibold uppercase tracking-wider text-session-green dark:text-text'>
+                Session length
+              </p>
+              <SessionLengthControl
+                mode={sessionLengthMode}
+                onModeChange={onSessionLengthModeChange}
+                showModeToggle
+                questionCount={questionCount}
+                onQuestionCountChange={onQuestionCountChange}
+                questionCountMin={questionCountMin}
+                questionCountMax={questionCountMax}
+                timeLimitMinutes={timeLimitMinutes}
+                onTimeLimitChange={onTimeLimitChange}
+                timeLimitMin={timeLimitMin}
+                timeLimitMax={timeLimitMax}
+                usePlainInput
+              />
+            </div>
 
             <button
               type='button'

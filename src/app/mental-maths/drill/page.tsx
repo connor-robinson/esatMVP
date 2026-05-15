@@ -144,6 +144,12 @@ export default function BuilderPage() {
               onQuestionCountChange={(n) => builder.setQuestionCount(n)}
               questionCountMin={0}
               questionCountMax={100}
+              sessionLengthMode={builder.sessionLengthMode}
+              onSessionLengthModeChange={(m) => builder.setSessionLengthMode(m)}
+              timeLimitMinutes={builder.timeLimitMinutes}
+              onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
+              timeLimitMin={0}
+              timeLimitMax={180}
               canStartSession={builder.canStart}
               onClearAll={builder.clearTopics}
               onStart={() => setReviewModalOpen(true)}
@@ -159,7 +165,14 @@ export default function BuilderPage() {
           open={reviewModalOpen}
           onClose={() => setReviewModalOpen(false)}
           selectedTopicVariants={builder.selectedTopicVariants}
+          sessionLengthMode={builder.sessionLengthMode}
+          onSessionLengthModeChange={(m) => builder.setSessionLengthMode(m)}
           questionCount={builder.questionCount}
+          onQuestionCountChange={(n) => builder.setQuestionCount(n)}
+          questionCountMin={0}
+          questionCountMax={100}
+          timeLimitMinutes={builder.timeLimitMinutes}
+          onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
           onRemoveVariant={builder.removeTopicVariant}
           onStartSession={() => {
             setReviewModalOpen(false);
@@ -185,6 +198,8 @@ export default function BuilderPage() {
           questionNumber={builder.currentQuestionIndex + 1}
           totalQuestions={builder.totalQuestions}
           progress={builder.progress}
+          remainingSeconds={builder.remainingSeconds}
+          isOpenEnded={builder.isOpenEndedQuestions}
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}

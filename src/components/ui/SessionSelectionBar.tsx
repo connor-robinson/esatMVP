@@ -13,12 +13,11 @@ import {
   ListOrdered,
   ArrowRight,
   X,
-  ChevronUp,
-  ChevronDown,
 } from "lucide-react";
 import { getTopic } from "@/config/topics";
-import type { TopicVariantSelection } from "@/types/core";
+import type { SessionLengthMode, TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
+import { SessionLengthControl } from "@/components/ui/SessionLengthControl";
 
 /** Session length + “questions” — session green in light, inverted text in dark. */
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
@@ -34,6 +33,12 @@ export interface SessionSelectionBarProps {
   onQuestionCountChange: (n: number) => void;
   questionCountMin?: number;
   questionCountMax?: number;
+  sessionLengthMode?: SessionLengthMode;
+  onSessionLengthModeChange?: (mode: SessionLengthMode) => void;
+  timeLimitMinutes?: number;
+  onTimeLimitChange?: (n: number) => void;
+  timeLimitMin?: number;
+  timeLimitMax?: number;
   canStartSession: boolean;
   onClearAll: () => void;
   onStart: () => void;
@@ -71,6 +76,12 @@ export function SessionSelectionBar({
   onQuestionCountChange,
   questionCountMin = 1,
   questionCountMax = 100,
+  sessionLengthMode = "questions",
+  onSessionLengthModeChange,
+  timeLimitMinutes = 10,
+  onTimeLimitChange,
+  timeLimitMin = 0,
+  timeLimitMax = 180,
   canStartSession,
   onClearAll,
   onStart,
@@ -99,165 +110,8 @@ export function SessionSelectionBar({
   const [drillListOpen, setDrillListOpen] = useState(false);
   const islandRef = useRef<HTMLDivElement>(null);
   const figmaPlainCount = compactFigma && !showQuestionInput;
-  const [countDraft, setCountDraft] = useState(() => String(questionCount));
-  const countInputFocused = useRef(false);
-
-  useEffect(() => {
-    if (!figmaPlainCount) return;
-    if (countInputFocused.current) return;
-    setCountDraft(
-      questionCount === 0 && questionCountMin <= 0 ? "" : String(questionCount),
-    );
-  }, [questionCount, figmaPlainCount, questionCountMin]);
-
-  const bumpQuestionCount = (delta: number) => {
-    onQuestionCountChange(
-      Math.min(
-        questionCountMax,
-        Math.max(questionCountMin, questionCount + delta),
-      ),
-    );
-  };
-
-  const infiniteSessionHint =
-    "Clear the number for an open-ended session—practice until you stop.";
-
-  /** Minimal ↑↓ for mental-maths island (compact figma). */
-  const figmaCountStepper = (
-    <div
-      className="flex shrink-0 flex-col"
-      role="group"
-      aria-label="Adjust number of questions"
-    >
-      <button
-        type="button"
-        onClick={() => bumpQuestionCount(1)}
-        disabled={questionCount >= questionCountMax}
-        className={cn(
-          "flex h-[22px] w-7 items-center justify-center rounded-t-organic-sm text-text-muted transition-colors dark:text-text/80",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
-          "disabled:pointer-events-none disabled:opacity-20",
-        )}
-        aria-label="Increase number of questions"
-      >
-        <ChevronUp className="h-3 w-3" strokeWidth={2.5} aria-hidden />
-      </button>
-      <button
-        type="button"
-        onClick={() => bumpQuestionCount(-1)}
-        disabled={questionCount <= questionCountMin}
-        className={cn(
-          "flex h-[22px] w-7 items-center justify-center rounded-b-organic-sm text-text-muted transition-colors dark:text-text/80",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
-          "disabled:pointer-events-none disabled:opacity-20",
-        )}
-        aria-label="Decrease number of questions"
-      >
-        <ChevronDown className="h-3 w-3" strokeWidth={2.5} aria-hidden />
-      </button>
-    </div>
-  );
-
-  const figmaSessionCountRow = (usePlainCountInput: boolean) => (
-    <div
-      className="group/count relative mt-0.5 flex w-full min-w-0 items-center gap-1.5 sm:gap-2"
-      role="group"
-      aria-describedby="session-length-hint"
-    >
-      {usePlainCountInput ? (
-        <input
-          type="text"
-          inputMode="numeric"
-          autoComplete="off"
-          maxLength={3}
-          value={countDraft}
-          onFocus={() => {
-            countInputFocused.current = true;
-            if (questionCount === 0) setCountDraft("");
-            else setCountDraft(String(questionCount));
-          }}
-          onChange={(e) => {
-            const digits = e.target.value.replace(/\D/g, "").slice(0, 3);
-            setCountDraft(digits);
-            if (digits === "") {
-              if (questionCountMin <= 0) onQuestionCountChange(0);
-              return;
-            }
-            const n = parseInt(digits, 10);
-            if (Number.isNaN(n)) return;
-            onQuestionCountChange(
-              Math.min(questionCountMax, Math.max(questionCountMin, n)),
-            );
-          }}
-          onBlur={() => {
-            countInputFocused.current = false;
-            if (countDraft === "" || !/^\d+$/.test(countDraft)) {
-              if (questionCountMin <= 0) {
-                onQuestionCountChange(0);
-                setCountDraft("");
-                return;
-              }
-              onQuestionCountChange(questionCountMin);
-              setCountDraft(String(questionCountMin));
-              return;
-            }
-            const n = parseInt(countDraft, 10);
-            const clamped = Math.min(
-              questionCountMax,
-              Math.max(questionCountMin, n),
-            );
-            onQuestionCountChange(clamped);
-            setCountDraft(String(clamped));
-          }}
-          placeholder={questionCountMin <= 0 ? "∞" : undefined}
-          className={cn(
-            "w-[2.75rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-session-green dark:text-primary",
-            "rounded-organic-sm border-0 outline-none placeholder:text-session-green/35 placeholder:dark:text-primary/35 focus-visible:ring-2 focus-visible:ring-session-green/35 focus-visible:dark:ring-primary/35",
-          )}
-          aria-label="Number of questions"
-        />
-      ) : (
-        <input
-          type="number"
-          value={questionCount}
-          onChange={(e) =>
-            onQuestionCountChange(Number(e.target.value) || questionCountMin)
-          }
-          min={questionCountMin}
-          max={questionCountMax}
-          className={cn(
-            "w-14 shrink-0 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
-            "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
-            "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-          )}
-          aria-label="Number of questions"
-        />
-      )}
-      <div className="flex min-w-[2rem] flex-1 items-center justify-center">
-        {figmaCountStepper}
-      </div>
-      <span className={cn("shrink-0 text-sm font-medium", FIGMA_SESSION_LABEL)}>
-        {questionCount === 0 && questionCountMin <= 0
-          ? "open-ended"
-          : questionCount === 1
-            ? "question"
-            : "questions"}
-      </span>
-      <div
-        id="session-length-hint"
-        role="tooltip"
-        className={cn(
-          "pointer-events-none absolute bottom-full left-0 z-20 mb-2 max-w-[13.5rem] rounded-organic-md px-3 py-2",
-          "border border-border-subtle bg-surface-elevated text-[11px] leading-snug text-text-muted shadow-md",
-          "opacity-0 transition-opacity duration-150 ease-out",
-          "group-hover/count:opacity-100 group-focus-within/count:opacity-100",
-        )}
-      >
-        {infiniteSessionHint}
-      </div>
-    </div>
+  const showSessionModeToggle = Boolean(
+    onSessionLengthModeChange && onTimeLimitChange,
   );
 
   useEffect(() => {
@@ -457,7 +311,37 @@ export function SessionSelectionBar({
                 >
                   Session length
                 </p>
-                {figmaSessionCountRow(!showQuestionInput)}
+                {showSessionModeToggle ? (
+                  <SessionLengthControl
+                    mode={sessionLengthMode}
+                    onModeChange={onSessionLengthModeChange!}
+                    showModeToggle
+                    questionCount={questionCount}
+                    onQuestionCountChange={onQuestionCountChange}
+                    questionCountMin={questionCountMin}
+                    questionCountMax={questionCountMax}
+                    timeLimitMinutes={timeLimitMinutes}
+                    onTimeLimitChange={onTimeLimitChange!}
+                    timeLimitMin={timeLimitMin}
+                    timeLimitMax={timeLimitMax}
+                    usePlainInput={figmaPlainCount}
+                    className="mt-0.5"
+                  />
+                ) : (
+                  <SessionLengthControl
+                    mode="questions"
+                    onModeChange={() => {}}
+                    showModeToggle={false}
+                    questionCount={questionCount}
+                    onQuestionCountChange={onQuestionCountChange}
+                    questionCountMin={questionCountMin}
+                    questionCountMax={questionCountMax}
+                    timeLimitMinutes={timeLimitMinutes}
+                    onTimeLimitChange={() => {}}
+                    usePlainInput={figmaPlainCount}
+                    className="mt-0.5"
+                  />
+                )}
               </div>
             </div>
 
