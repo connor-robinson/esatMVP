@@ -142,7 +142,7 @@ export default function BuilderPage() {
               showClearAll={false}
               questionCount={builder.questionCount}
               onQuestionCountChange={(n) => builder.setQuestionCount(n)}
-              questionCountMin={1}
+              questionCountMin={0}
               questionCountMax={100}
               canStartSession={builder.canStart}
               onClearAll={builder.clearTopics}

@@ -102,8 +102,10 @@ export function SessionSelectionBar({
   useEffect(() => {
     if (!figmaPlainCount) return;
     if (countInputFocused.current) return;
-    setCountDraft(String(questionCount));
-  }, [questionCount, figmaPlainCount]);
+    setCountDraft(
+      questionCount === 0 && questionCountMin <= 0 ? "" : String(questionCount),
+    );
+  }, [questionCount, figmaPlainCount, questionCountMin]);
 
   const bumpQuestionCount = (delta: number) => {
     onQuestionCountChange(
@@ -113,6 +115,9 @@ export function SessionSelectionBar({
       ),
     );
   };
+
+  const infiniteSessionHint =
+    "Clear the number for an open-ended session—practice until you stop.";
 
   /** Minimal ↑↓ for mental-maths island (compact figma). */
   const figmaCountStepper = (
@@ -149,6 +154,106 @@ export function SessionSelectionBar({
       >
         <ChevronDown className="h-3 w-3" strokeWidth={2.5} aria-hidden />
       </button>
+    </div>
+  );
+
+  const figmaSessionCountRow = (usePlainCountInput: boolean) => (
+    <div
+      className="group/count relative mt-0.5 flex w-full min-w-0 items-center gap-1.5 sm:gap-2"
+      role="group"
+      aria-describedby="session-length-hint"
+    >
+      {usePlainCountInput ? (
+        <input
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          maxLength={3}
+          value={countDraft}
+          onFocus={() => {
+            countInputFocused.current = true;
+            if (questionCount === 0) setCountDraft("");
+            else setCountDraft(String(questionCount));
+          }}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, "").slice(0, 3);
+            setCountDraft(digits);
+            if (digits === "") {
+              if (questionCountMin <= 0) onQuestionCountChange(0);
+              return;
+            }
+            const n = parseInt(digits, 10);
+            if (Number.isNaN(n)) return;
+            onQuestionCountChange(
+              Math.min(questionCountMax, Math.max(questionCountMin, n)),
+            );
+          }}
+          onBlur={() => {
+            countInputFocused.current = false;
+            if (countDraft === "" || !/^\d+$/.test(countDraft)) {
+              if (questionCountMin <= 0) {
+                onQuestionCountChange(0);
+                setCountDraft("");
+                return;
+              }
+              onQuestionCountChange(questionCountMin);
+              setCountDraft(String(questionCountMin));
+              return;
+            }
+            const n = parseInt(countDraft, 10);
+            const clamped = Math.min(
+              questionCountMax,
+              Math.max(questionCountMin, n),
+            );
+            onQuestionCountChange(clamped);
+            setCountDraft(String(clamped));
+          }}
+          placeholder={questionCountMin <= 0 ? "∞" : undefined}
+          className={cn(
+            "w-[2.75rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
+            "rounded-organic-sm border-0 outline-none placeholder:text-primary/35 focus-visible:ring-2 focus-visible:ring-primary/35",
+          )}
+          aria-label="Number of questions"
+        />
+      ) : (
+        <input
+          type="number"
+          value={questionCount}
+          onChange={(e) =>
+            onQuestionCountChange(Number(e.target.value) || questionCountMin)
+          }
+          min={questionCountMin}
+          max={questionCountMax}
+          className={cn(
+            "w-14 shrink-0 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
+            "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
+            "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+          )}
+          aria-label="Number of questions"
+        />
+      )}
+      <div className="flex min-w-[2rem] flex-1 items-center justify-center">
+        {figmaCountStepper}
+      </div>
+      <span className="shrink-0 text-sm font-medium text-text-muted">
+        {questionCount === 0 && questionCountMin <= 0
+          ? "open-ended"
+          : questionCount === 1
+            ? "question"
+            : "questions"}
+      </span>
+      <div
+        id="session-length-hint"
+        role="tooltip"
+        className={cn(
+          "pointer-events-none absolute bottom-full left-0 z-20 mb-2 max-w-[13.5rem] rounded-organic-md px-3 py-2",
+          "border border-border-subtle bg-surface-elevated text-[11px] leading-snug text-text-muted shadow-md",
+          "opacity-0 transition-opacity duration-150 ease-out",
+          "group-hover/count:opacity-100 group-focus-within/count:opacity-100",
+        )}
+      >
+        {infiniteSessionHint}
+      </div>
     </div>
   );
 
@@ -305,7 +410,7 @@ export function SessionSelectionBar({
           </AnimatePresence>
 
           <div className="flex flex-col gap-2.5 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-3.5">
-            <div className="flex min-w-0 flex-1 items-start gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
               <div className="relative shrink-0">
                 {drillSessionCount > 0 ? (
                   <span
@@ -344,94 +449,13 @@ export function SessionSelectionBar({
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                   Session length
                 </p>
-                {showQuestionInput ? (
-                  <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
-                    <div className="flex min-w-0 flex-wrap items-baseline gap-2">
-                      <input
-                        type="number"
-                        value={questionCount}
-                        onChange={(e) =>
-                          onQuestionCountChange(
-                            Number(e.target.value) || questionCountMin,
-                          )
-                        }
-                        min={questionCountMin}
-                        max={questionCountMax}
-                        className={cn(
-                          "w-14 rounded-organic-sm border border-border bg-surface px-2 py-1.5 text-center text-base font-bold tabular-nums text-text outline-none transition-colors",
-                          "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/30 [appearance:textfield]",
-                          "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-                        )}
-                        aria-label="Number of questions"
-                      />
-                      <span className="text-sm font-medium text-text-muted">
-                        {questionSuffix}
-                      </span>
-                    </div>
-                    {figmaCountStepper}
-                  </div>
-                ) : (
-                  <div className="mt-0.5 flex min-w-0 items-center justify-between gap-2">
-                    <div className="flex min-w-0 flex-wrap items-baseline gap-1.5">
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="off"
-                        maxLength={3}
-                        value={countDraft}
-                        onFocus={() => {
-                          countInputFocused.current = true;
-                          setCountDraft(String(questionCount));
-                        }}
-                        onChange={(e) => {
-                          const digits = e.target.value
-                            .replace(/\D/g, "")
-                            .slice(0, 3);
-                          setCountDraft(digits);
-                          if (digits === "") return;
-                          const n = parseInt(digits, 10);
-                          if (Number.isNaN(n)) return;
-                          onQuestionCountChange(
-                            Math.min(
-                              questionCountMax,
-                              Math.max(questionCountMin, n),
-                            ),
-                          );
-                        }}
-                        onBlur={() => {
-                          countInputFocused.current = false;
-                          if (countDraft === "" || !/^\d+$/.test(countDraft)) {
-                            onQuestionCountChange(questionCountMin);
-                            setCountDraft(String(questionCountMin));
-                            return;
-                          }
-                          const n = parseInt(countDraft, 10);
-                          const clamped = Math.min(
-                            questionCountMax,
-                            Math.max(questionCountMin, n),
-                          );
-                          onQuestionCountChange(clamped);
-                          setCountDraft(String(clamped));
-                        }}
-                        className={cn(
-                          "min-w-[2.25rem] max-w-[4.25rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
-                          "rounded-organic-sm border-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
-                        )}
-                        aria-label="Number of questions"
-                      />
-                      <span className="text-sm font-medium text-text-muted">
-                        {questionCount === 1 ? "question" : "questions"}
-                      </span>
-                    </div>
-                    {figmaCountStepper}
-                  </div>
-                )}
+                {figmaSessionCountRow(!showQuestionInput)}
               </div>
             </div>
 
             <div
               className={cn(
-                "flex shrink-0 items-center gap-2 pt-0.5 sm:gap-3 sm:pt-0",
+                "flex shrink-0 items-center gap-2 sm:gap-3 self-center",
                 showClearAll ? "justify-between" : "justify-end",
               )}
             >
