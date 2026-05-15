@@ -87,13 +87,13 @@ export function DrillsSelectedModal({
             </button>
           </div>
 
-          <div className='min-h-0 flex-1 overflow-y-auto px-5 py-6'>
+          <div className='min-h-0 flex-1 overflow-y-auto px-5 py-7 sm:px-6'>
             {selectedTopicVariants.length === 0 ? (
               <p className='py-8 text-center text-sm leading-relaxed text-text-muted'>
                 No drills in this session yet.
               </p>
             ) : (
-              <ul className='flex flex-col gap-5'>
+              <ul className='flex flex-col gap-6'>
                 {selectedTopicVariants.map((sel, index) => {
                   const id = toTopicVariantId(sel);
                   const topic = getTopic(sel.topicId);
@@ -108,28 +108,30 @@ export function DrillsSelectedModal({
                     <li key={id}>
                       <div
                         className={cn(
-                          'flex items-start gap-4 rounded-organic-xl px-4 py-4 sm:px-5 sm:py-5',
+                          'flex items-start gap-4 rounded-organic-xl px-5 py-5 sm:gap-5 sm:px-6 sm:py-6',
                           'bg-surface-subtle dark:bg-surface-mid',
                         )}
                       >
                         <span
-                          className='mt-0.5 flex w-7 shrink-0 justify-end text-xs font-bold tabular-nums text-text-muted'
+                          className='mt-1 flex w-7 shrink-0 justify-end text-xs font-bold tabular-nums text-text-muted'
                           aria-hidden
                         >
                           {index + 1}.
                         </span>
-                        <div className='min-w-0 flex-1 space-y-1.5'>
-                          <span
-                            className={cn(
-                              'inline-block text-[10px] font-bold uppercase tracking-wide',
-                              difficulty.color,
-                            )}
-                          >
-                            {difficulty.label}
-                          </span>
-                          <p className='text-[15px] font-semibold leading-snug text-text'>
-                            {title}
-                          </p>
+                        <div className='min-w-0 flex-1 space-y-2.5'>
+                          <div className='flex items-start justify-between gap-3 sm:gap-4'>
+                            <p className='min-w-0 flex-1 text-[15px] font-semibold leading-snug text-text'>
+                              {title}
+                            </p>
+                            <span
+                              className={cn(
+                                'shrink-0 text-[10px] font-bold uppercase tracking-wide',
+                                difficulty.color,
+                              )}
+                            >
+                              {difficulty.label}
+                            </span>
+                          </div>
                           {topicName ? (
                             <p className='text-xs leading-relaxed text-text-muted'>
                               {topicName}
@@ -157,9 +159,9 @@ export function DrillsSelectedModal({
           </div>
         </div>
 
-        {/* Lower: start CTA — light: darker strip; dark: lighter strip */}
-        <div className='shrink-0 bg-surface-mid px-5 py-5 dark:bg-surface-neutral'>
-          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
+        {/* Lower: start CTA — light: one step lighter; dark: one step darker */}
+        <div className='shrink-0 bg-surface-neutral px-5 py-6 dark:bg-surface-mid sm:px-6'>
+          <div className='flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8'>
             <p className='text-sm leading-relaxed text-text-muted'>
               <span className='font-bold tabular-nums text-primary'>
                 {questionCount}
