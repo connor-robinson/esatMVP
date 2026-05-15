@@ -22,8 +22,8 @@ import { expressionsEqual } from "@/lib/answer-checker";
 
 type ViewState = "builder" | "running" | "results";
 
-/** Pre-generated pool for open-ended / timed sessions. */
-const SESSION_QUESTION_POOL = 500;
+/** Initial questions when length is not fixed (open-ended or time-based). */
+const ON_DEMAND_SESSION_START_SIZE = 1;
 
 const mapPresetRow = (row: any): SessionPreset => {
   const topicLevelsData = row.topic_levels as any;
@@ -146,7 +146,12 @@ export function useBuilderSession() {
 
   const displayTotalQuestions = hasFiniteQuestionCap
     ? Math.min(questionLimit, currentSession?.questions.length ?? questionLimit)
-    : currentSession?.questions.length ?? 0;
+    : isUnlimitedSession
+      ? 0
+      : Math.max(
+          currentQuestionIndex + 1,
+          currentSession?.questions.length ?? 1,
+        );
   
   // Calculate correct count from attempt log
   const correctCount = attemptLog.filter(attempt => attempt.isCorrect).length;
@@ -400,10 +405,11 @@ export function useBuilderSession() {
       topicVariantSelections: [...selectedTopicVariants],
     };
 
-    const poolSize =
-      sessionLengthMode === "questions" && questionCount > 0
-        ? questionCount
-        : SESSION_QUESTION_POOL;
+    const finiteQuestionSession =
+      sessionLengthMode === "questions" && questionCount > 0;
+    const poolSize = finiteQuestionSession
+      ? questionCount
+      : ON_DEMAND_SESSION_START_SIZE;
 
     const questions = generateMixedQuestions(topicIds, poolSize, variantToLevelMap);
 
