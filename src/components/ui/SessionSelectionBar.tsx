@@ -20,6 +20,9 @@ import { getTopic } from "@/config/topics";
 import type { TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
 
+/** Session length + “questions” — brand greenLight in light, inverted text in dark. */
+const FIGMA_SESSION_LABEL = "text-[#929a49] dark:text-text";
+
 /** White label + light depth on primary buttons (dark theme). */
 const PRIMARY_CTA_LABEL_DARK =
   "dark:text-white dark:[text-shadow:0_0.5px_1px_rgba(0,0,0,0.55),0_1px_2px_rgba(0,0,0,0.35)] dark:hover:text-white";
@@ -131,8 +134,8 @@ export function SessionSelectionBar({
         onClick={() => bumpQuestionCount(1)}
         disabled={questionCount >= questionCountMax}
         className={cn(
-          "flex h-[22px] w-7 items-center justify-center rounded-t-organic-sm text-text-muted transition-colors",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral/80",
+          "flex h-[22px] w-7 items-center justify-center rounded-t-organic-sm text-text-muted transition-colors dark:text-text/80",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
           "disabled:pointer-events-none disabled:opacity-20",
         )}
@@ -145,8 +148,8 @@ export function SessionSelectionBar({
         onClick={() => bumpQuestionCount(-1)}
         disabled={questionCount <= questionCountMin}
         className={cn(
-          "flex h-[22px] w-7 items-center justify-center rounded-b-organic-sm text-text-muted transition-colors",
-          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral/80",
+          "flex h-[22px] w-7 items-center justify-center rounded-b-organic-sm text-text-muted transition-colors dark:text-text/80",
+          "hover:bg-surface-mid/80 hover:text-text active:bg-surface-neutral/70",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/35",
           "disabled:pointer-events-none disabled:opacity-20",
         )}
@@ -235,7 +238,7 @@ export function SessionSelectionBar({
       <div className="flex min-w-[2rem] flex-1 items-center justify-center">
         {figmaCountStepper}
       </div>
-      <span className="shrink-0 text-sm font-medium text-text-muted">
+      <span className={cn("shrink-0 text-sm font-medium", FIGMA_SESSION_LABEL)}>
         {questionCount === 0 && questionCountMin <= 0
           ? "open-ended"
           : questionCount === 1
@@ -332,7 +335,7 @@ export function SessionSelectionBar({
       >
         <div
           className={cn(
-            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-mid",
+            "flex flex-col overflow-hidden rounded-organic-xl bg-surface-elevated dark:bg-surface-elevated",
             /** Solid “stamp” shadow (no soft multi-layer blur). */
             "shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]",
             "transition-[box-shadow,transform] duration-200 ease-signature",
@@ -352,7 +355,7 @@ export function SessionSelectionBar({
                   duration: 0.2,
                   ease: [0.32, 0.72, 0, 1],
                 }}
-                className="flex max-h-[min(52vh,20rem)] w-full shrink-0 flex-col border-b border-border-subtle/50 bg-surface-elevated dark:bg-surface-mid"
+                className="flex max-h-[min(52vh,20rem)] w-full shrink-0 flex-col border-b border-border-subtle/50 bg-surface-elevated dark:bg-surface-elevated"
               >
                 <p className="px-4 pt-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-text-muted">
                   In session
@@ -446,7 +449,12 @@ export function SessionSelectionBar({
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                <p
+                  className={cn(
+                    "text-[10px] font-semibold uppercase tracking-wider",
+                    FIGMA_SESSION_LABEL,
+                  )}
+                >
                   Session length
                 </p>
                 {figmaSessionCountRow(!showQuestionInput)}
@@ -485,7 +493,7 @@ export function SessionSelectionBar({
                 className={cn(
                   "inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-lg px-5 text-sm font-bold transition-all duration-200 ease-signature",
                   showClearAll ? "flex-1 sm:flex-initial" : "w-full min-w-0 flex-1 sm:w-auto sm:min-w-[12rem]",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-mid",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-elevated dark:focus-visible:ring-offset-surface-elevated",
                   "disabled:cursor-not-allowed",
                   canStartSession
                     ? cn(
