@@ -80,6 +80,8 @@ export const colorTokens = {
   chemistry: { dark: figmaPalette.redDark, light: figmaPalette.redDark },
   biology: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
   advanced: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
+  /** Island “questions” label + easy pill — always Figma greenLight in both themes. */
+  sessionGreen: { dark: figmaPalette.greenLight, light: figmaPalette.greenLight },
   success: { dark: figmaPalette.greenLight, light: figmaPalette.greenDark },
   error: { dark: figmaPalette.redLight, light: figmaPalette.redDark },
   warning: { dark: figmaPalette.yellowLight, light: figmaPalette.yellowDark },
@@ -87,7 +89,10 @@ export const colorTokens = {
    * Drill card difficulty pill fills — same saturated hues as dark UI
    * (`greenLight` / `yellowLight` / `redLight`) in light and dark theme.
    */
-  difficultyPillEasy: { dark: figmaPalette.greenLight, light: figmaPalette.greenLight },
+  difficultyPillEasy: {
+    dark: figmaPalette.greenLight,
+    light: figmaPalette.greenLight,
+  },
   difficultyPillMedium: {
     dark: figmaPalette.yellowLight,
     light: figmaPalette.yellowLight,
@@ -222,7 +227,7 @@ export const shadowTokens = {
 export const difficultyTokens = {
   easy: {
     label: "Easy",
-    bg: "bg-difficulty-pill-easy text-white shadow-sm [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45)]",
+    bg: "bg-session-green text-white shadow-sm [text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45)]",
     text: undefined,
     shadow: undefined,
   },
@@ -296,6 +301,7 @@ export function buildCssVariables(mode: ThemeMode): Record<string, string> {
     "--color-chemistry": colorTokens.chemistry[mode],
     "--color-biology": colorTokens.biology[mode],
     "--color-advanced": colorTokens.advanced[mode],
+    "--color-session-green": colorTokens.sessionGreen[mode],
     "--color-success": colorTokens.success[mode],
     "--color-error": colorTokens.error[mode],
     "--color-warning": colorTokens.warning[mode],

@@ -20,8 +20,8 @@ import { getTopic } from "@/config/topics";
 import type { TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
 
-/** Session length + “questions” — brand greenLight in light, inverted text in dark. */
-const FIGMA_SESSION_LABEL = "text-[#929a49] dark:text-text";
+/** Session length + “questions” — session green in light, inverted text in dark. */
+const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
 
 /** White label + light depth on primary buttons (dark theme). */
 const PRIMARY_CTA_LABEL_DARK =
@@ -213,8 +213,8 @@ export function SessionSelectionBar({
           }}
           placeholder={questionCountMin <= 0 ? "∞" : undefined}
           className={cn(
-            "w-[2.75rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-primary",
-            "rounded-organic-sm border-0 outline-none placeholder:text-primary/35 focus-visible:ring-2 focus-visible:ring-primary/35",
+            "w-[2.75rem] shrink-0 cursor-text bg-transparent p-0 text-left text-xl font-bold tabular-nums leading-none text-session-green dark:text-primary",
+            "rounded-organic-sm border-0 outline-none placeholder:text-session-green/35 placeholder:dark:text-primary/35 focus-visible:ring-2 focus-visible:ring-session-green/35 focus-visible:dark:ring-primary/35",
           )}
           aria-label="Number of questions"
         />

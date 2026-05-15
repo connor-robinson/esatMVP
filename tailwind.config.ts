@@ -37,6 +37,7 @@ const config: Config = {
         advanced: "var(--color-advanced)",
         
         // Status colors
+        "session-green": "var(--color-session-green)",
         success: "var(--color-success)",
         error: "var(--color-error)",
         warning: "var(--color-warning)",
