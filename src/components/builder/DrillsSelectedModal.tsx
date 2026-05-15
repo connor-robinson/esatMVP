@@ -61,12 +61,12 @@ export function DrillsSelectedModal({
       onClick={onClose}
     >
       <div
-        className='flex max-h-[min(90vh,640px)] w-full max-w-[min(100%,28rem)] flex-col overflow-hidden rounded-organic-xl border border-border-subtle/60 bg-surface-elevated shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]'
+        className='flex max-h-[min(90vh,640px)] w-full max-w-[min(100%,28rem)] flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-[0_5px_0_0_rgba(0,0,0,0.12)] dark:shadow-[0_7px_0_0_rgba(0,0,0,0.38)]'
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Upper: review copy + drill list — softer wash */}
-        <div className='flex min-h-0 flex-1 flex-col bg-surface-subtle/70 dark:bg-surface/40'>
-          <div className='relative shrink-0 border-b border-border-subtle/50 px-5 pb-4 pt-5'>
+        {/* Upper: review + drills — light: lighter base; dark: deeper base */}
+        <div className='flex min-h-0 flex-1 flex-col bg-surface-elevated dark:bg-surface'>
+          <div className='relative shrink-0 px-5 pb-4 pt-5'>
             <h2
               id='drills-selected-title'
               className='pr-11 text-lg font-bold leading-snug tracking-tight text-text'
@@ -80,7 +80,7 @@ export function DrillsSelectedModal({
             <button
               type='button'
               onClick={onClose}
-              className='absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-colors duration-150 hover:bg-surface-mid/80 hover:text-text active:scale-[0.96]'
+              className='absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-colors duration-150 hover:bg-surface-subtle hover:text-text active:scale-[0.96] dark:hover:bg-surface-mid'
               aria-label='Close'
             >
               <X className='h-5 w-5' strokeWidth={2.25} />
@@ -109,7 +109,7 @@ export function DrillsSelectedModal({
                       <div
                         className={cn(
                           'flex items-start gap-4 rounded-organic-xl px-4 py-4 sm:px-5 sm:py-5',
-                          'border border-border-subtle/50 bg-surface-mid/20 shadow-sm dark:bg-surface-mid/25',
+                          'bg-surface-subtle dark:bg-surface-mid',
                         )}
                       >
                         <span
@@ -141,8 +141,8 @@ export function DrillsSelectedModal({
                           onClick={() => onRemoveVariant(id)}
                           className={cn(
                             'flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150',
-                            'hover:bg-surface-elevated/90 hover:text-text active:scale-[0.94]',
-                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
+                            'hover:bg-surface-mid/80 hover:text-text active:scale-[0.94] dark:hover:bg-surface-neutral',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35',
                           )}
                           aria-label={`Remove ${title}`}
                         >
@@ -157,8 +157,8 @@ export function DrillsSelectedModal({
           </div>
         </div>
 
-        {/* Lower: start CTA — slightly deeper surface */}
-        <div className='shrink-0 border-t border-border-subtle bg-surface-mid/35 px-5 py-5 dark:bg-surface-mid/40'>
+        {/* Lower: start CTA — light: darker strip; dark: lighter strip */}
+        <div className='shrink-0 bg-surface-mid px-5 py-5 dark:bg-surface-neutral'>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
             <p className='text-sm leading-relaxed text-text-muted'>
               <span className='font-bold tabular-nums text-primary'>
@@ -173,7 +173,7 @@ export function DrillsSelectedModal({
               onClick={onStartSession}
               className={cn(
                 'inline-flex min-h-[2.75rem] w-full shrink-0 items-center justify-center gap-2 rounded-organic-lg px-6 text-sm font-bold transition-all duration-200 ease-signature sm:w-auto sm:min-w-[11rem]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-mid',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45',
                 canStart
                   ? cn(
                       'bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]',
