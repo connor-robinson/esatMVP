@@ -152,11 +152,11 @@ export default function BuilderPage() {
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}
+          remainingSeconds={builder.remainingSeconds}
+          isUnlimitedSession={builder.isUnlimitedSession}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
-          onExit={() => {
-            builder.exitSession();
-          }}
+          onEndSession={() => builder.endSession()}
         />
       </Suspense>
     );
