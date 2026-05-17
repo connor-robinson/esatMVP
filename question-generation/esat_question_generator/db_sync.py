@@ -523,7 +523,42 @@ class DatabaseSync:
             }
             if snap and str(snap).strip():
                 db_record["schema_block_snapshot"] = str(snap).strip()
-            
+
+            # V4 visual fields (added by migration 20260517190000_add_v4_visual_fields.sql).
+            # We always populate these on the record; ``insert`` is retried below
+            # without them if the columns don't yet exist on the target DB.
+            v4_pipeline_marker = question_item.get("pipeline")
+            if v4_pipeline_marker:
+                db_record["pipeline"] = str(v4_pipeline_marker)
+            if "has_visual" in question_item:
+                db_record["has_visual"] = bool(question_item.get("has_visual"))
+            if question_item.get("visual_type"):
+                db_record["visual_type"] = str(question_item.get("visual_type"))
+            if "answer_depends_on_visual" in question_item:
+                db_record["answer_depends_on_visual"] = bool(
+                    question_item.get("answer_depends_on_visual")
+                )
+            visual_assets_payload = question_item.get("visual_assets")
+            if isinstance(visual_assets_payload, list) and visual_assets_payload:
+                db_record["visual_assets"] = visual_assets_payload
+                # Surface the renderer + final qc from the first (primary) asset
+                # so simple filters like "visuals where renderer = gemini_image_v1"
+                # work without a JSONB query.
+                primary = visual_assets_payload[0]
+                if isinstance(primary, dict):
+                    if primary.get("renderer"):
+                        db_record["visual_renderer"] = primary.get("renderer")
+                    if primary.get("qc_status"):
+                        db_record["visual_qc_status"] = primary.get("qc_status")
+            # Existing column from 20250115000000_add_tmua_fields_complete.sql.
+            graphs_payload = question_item.get("graphs")
+            if isinstance(graphs_payload, dict) and graphs_payload:
+                db_record["graphs"] = graphs_payload
+            # Backup of the pre-splice stem so reviewers can see Before/Current.
+            pre_splice_stem = question_item.get("question_stem_before_auto_diagram")
+            if isinstance(pre_splice_stem, str) and pre_splice_stem.strip():
+                db_record["question_stem_before_auto_diagram"] = pre_splice_stem
+
             # Normalize math spacing in text fields
             db_record = normalize_question_math_spacing(db_record)
             
@@ -565,7 +600,42 @@ class DatabaseSync:
             # PostgREST rejects unknown columns; legacy code or merges must never send ``paper``.
             db_record.pop("paper", None)
 
-            result = self.client.table("ai_generated_questions").insert(db_record).execute()
+            # Columns added by 20260517190000_add_v4_visual_fields.sql. If the
+            # migration hasn't been applied yet the insert will fail with
+            # "column ... does not exist"; we retry once without these keys so
+            # legacy DBs keep working.
+            v4_optional_keys = (
+                "pipeline",
+                "has_visual",
+                "visual_type",
+                "answer_depends_on_visual",
+                "visual_assets",
+                "visual_renderer",
+                "visual_qc_status",
+            )
+
+            def _insert(record: Dict[str, Any]):
+                return self.client.table("ai_generated_questions").insert(record).execute()
+
+            try:
+                result = _insert(db_record)
+            except Exception as col_err:
+                err_text = str(col_err).lower()
+                if "column" in err_text and ("does not exist" in err_text or "could not find" in err_text):
+                    stripped = {k: v for k, v in db_record.items() if k not in v4_optional_keys}
+                    plog(
+                        "db_sync",
+                        "v4_visual_columns_missing_retry_without",
+                        level="warning",
+                        detail={
+                            "hint": "Apply supabase/migrations/20260517190000_add_v4_visual_fields.sql.",
+                            "stripped_keys": [k for k in v4_optional_keys if k in db_record],
+                        },
+                        echo=True,
+                    )
+                    result = _insert(stripped)
+                else:
+                    raise
 
             if result.data and len(result.data) > 0:
                 db_id = result.data[0].get("id")

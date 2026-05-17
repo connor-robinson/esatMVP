@@ -1,0 +1,34 @@
+{
+  "designer_required_keys": [
+    "schema_id",
+    "module",
+    "variation_mode",
+    "target_difficulty",
+    "idea_summary",
+    "schema_invariant",
+    "discrimination_mechanism",
+    "minimum_reasoning_depth",
+    "task_signature",
+    "primary_tag",
+    "visual_need",
+    "intended_wrong_paths",
+    "anti_plug_and_chug_check"
+  ],
+  "implementer_required_keys": [
+    "metadata",
+    "question",
+    "visual_requirements",
+    "solution",
+    "distractor_map",
+    "quality_self_check"
+  ],
+  "graph_spec_required_keys": [
+    "graph_id",
+    "graph_type",
+    "x_axis",
+    "y_axis",
+    "data",
+    "answer_bearing_features",
+    "render_checks"
+  ]
+}

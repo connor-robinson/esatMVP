@@ -1051,17 +1051,61 @@ class GenerationController:
                                     echo=False,
                                 )
             
-            result = run_once(
-                base_dir=self.base_dir,
-                cfg=self.cfg,
-                models=self.models,
-                callbacks={
-                    "on_stage_start": lambda stage, info: self.ui_callback("stage", f"[{schema_id}] {stage}: {info}"),
-                },
-                forced_schema_id=schema_id,
-                curriculum_parser=self.curriculum_parser,
-                math_paper=run_math_paper,
+            # V4 toggle: Physics-only clean pipeline core under ``pipeline_v4/``.
+            # Set ESAT_USE_PIPELINE_V4=1 to route Physics schemas through V4
+            # (Designer -> Idea Judge -> Implementer -> Deterministic Validator
+            #  -> Verifier -> Style Checker -> Visual Router -> Tag Labeler).
+            # Math/Chem/Biology and the math router below keep using the legacy
+            # ``run_once`` path until V4 covers them.
+            use_v4 = (
+                (os.environ.get("ESAT_USE_PIPELINE_V4", "") or "").strip().lower()
+                not in ("", "0", "false", "no", "off")
             )
+            is_physics = bool(schema_id) and str(schema_id)[0].upper() == "P"
+            if use_v4 and is_physics:
+                try:
+                    from pipeline_v4 import run_once_v4
+                    result = run_once_v4(
+                        base_dir=self.base_dir,
+                        forced_schema_id=schema_id,
+                        difficulty=difficulty,
+                        callbacks={
+                            "on_stage_start": lambda stage, info: self.ui_callback(
+                                "stage", f"[{schema_id}] V4 {stage}: {info}"
+                            ),
+                        },
+                    )
+                except Exception as v4_err:
+                    plog(
+                        "ui",
+                        "pipeline_v4_error_fallback_legacy",
+                        level="warning",
+                        detail={"schema_id": schema_id, "error": str(v4_err)},
+                        echo=True,
+                    )
+                    result = run_once(
+                        base_dir=self.base_dir,
+                        cfg=self.cfg,
+                        models=self.models,
+                        callbacks={
+                            "on_stage_start": lambda stage, info: self.ui_callback("stage", f"[{schema_id}] {stage}: {info}"),
+                        },
+                        forced_schema_id=schema_id,
+                        curriculum_parser=self.curriculum_parser,
+                        math_paper=run_math_paper,
+                    )
+            else:
+                result = run_once(
+                    base_dir=self.base_dir,
+                    cfg=self.cfg,
+                    models=self.models,
+                    callbacks={
+                        "on_stage_start": lambda stage, info: self.ui_callback("stage", f"[{schema_id}] {stage}: {info}"),
+                    },
+                    forced_schema_id=schema_id,
+                    curriculum_parser=self.curriculum_parser,
+                    math_paper=run_math_paper,
+                )
             
             if result.get("status") == "accepted":
                 item = result.get("item")
