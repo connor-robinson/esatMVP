@@ -33,7 +33,7 @@ from .stem_splice import (
     splice_graph_svg_into_stem,
     splice_schematic_svg_into_stem,
 )
-from .storage import RunStore, build_manifest, create_run_store
+from .storage import RunStore, build_manifest, create_run_store, get_uploader
 from .validators import deterministic_validate
 from .stages import (
     run_designer,
@@ -145,6 +145,10 @@ def run_once_v4(
 
     store = create_run_store(base_dir, subject="physics", status="pending")
     llm = V4LLMClient(prompt_trace=callbacks.get("on_llm_prompt"))
+    # Lazy-init the asset uploader. ``enabled`` will be False when SUPABASE_URL
+    # is missing -- the orchestrator silently falls back to inline base64 then.
+    uploader = get_uploader() if cfg.enable_asset_upload else None
+    upload_generation_id: Optional[str] = None  # set once we know the question id
 
     stage_records: List[Dict[str, Any]] = []
     retry_counts: Dict[str, int] = {}
@@ -450,11 +454,24 @@ def run_once_v4(
                     or "g1"
                 )
                 graphs_for_db[str(graph_id)] = graph_spec_payload
+                svg_url: str = ""
                 if cfg.enable_svg_rendering:
                     try:
                         svg = render_graph_svg(graph_spec_payload)
                         svg_path = store.write_asset_text("graph.svg", svg)
+                        # Best-effort upload to the public ``question-images`` bucket.
+                        if uploader and uploader.enabled:
+                            up = uploader.upload_bytes(
+                                svg.encode("utf-8"),
+                                generation_id=store.qid,
+                                filename="graph.svg",
+                                content_type="image/svg+xml",
+                            )
+                            if up:
+                                svg_url = up["url"]
                         # Splice the SVG into the stem so the reviewer shows it.
+                        # We inline the SVG (cheap, ~5 KB) even when also uploaded;
+                        # the URL is recorded on the asset record for downstream use.
                         stem = implemented.get("question", {}).get("stem", "")
                         new_stem, replaced = splice_graph_svg_into_stem(
                             stem,
@@ -476,7 +493,7 @@ def run_once_v4(
                     VisualAssetRecord(
                         kind="graph_spec",
                         spec_path=str(spec_path) if spec_path else "",
-                        image_paths=[str(svg_path)] if svg_path else [],
+                        image_paths=[svg_url] if svg_url else ([str(svg_path)] if svg_path else []),
                         renderer="deterministic_graph_renderer_v1" if svg_path else "spec_only",
                         qc_status="pending",
                         answer_bearing=True,
@@ -516,10 +533,20 @@ def run_once_v4(
             svg_path = None
             if sch_payload:
                 spec_path = store.write_json("schematic_spec.json", sch_payload)
+                svg_url = ""
                 if cfg.enable_svg_rendering:
                     try:
                         svg = render_schematic_svg(sch_payload)
                         svg_path = store.write_asset_text("schematic.svg", svg)
+                        if uploader and uploader.enabled:
+                            up = uploader.upload_bytes(
+                                svg.encode("utf-8"),
+                                generation_id=store.qid,
+                                filename="schematic.svg",
+                                content_type="image/svg+xml",
+                            )
+                            if up:
+                                svg_url = up["url"]
                         diagram_id = (
                             sch_payload.get("diagram_id")
                             or sch_payload.get("schematic_id")
@@ -546,7 +573,7 @@ def run_once_v4(
                     VisualAssetRecord(
                         kind="schematic_spec",
                         spec_path=str(spec_path) if spec_path else "",
-                        image_paths=[str(svg_path)] if svg_path else [],
+                        image_paths=[svg_url] if svg_url else ([str(svg_path)] if svg_path else []),
                         renderer="deterministic_schematic_renderer_v1" if svg_path else "spec_only",
                         qc_status="pending",
                         answer_bearing=True,
@@ -580,8 +607,10 @@ def run_once_v4(
             )
             record(cip_result)
             image_paths: List[str] = []
+            image_urls: List[str] = []
             image_gen_error: Optional[str] = None
             generated_image_path: Optional[Path] = None
+            generated_image_url: str = ""
             if cip_result.payload:
                 store.write_json("concept_image_prompt.json", cip_result.payload)
 
@@ -609,9 +638,31 @@ def run_once_v4(
                             )
                             generated_image_path = out_img
                             image_paths.append(str(out_img))
+                            # Upload PNG to public bucket so we can reference it by URL
+                            # rather than base64-embedding it in the question_stem.
+                            if uploader and uploader.enabled:
+                                up = uploader.upload_file(
+                                    out_img,
+                                    generation_id=store.qid,
+                                    filename="concept_image_v1.png",
+                                    content_type="image/png",
+                                )
+                                if up:
+                                    generated_image_url = up["url"]
+                                    image_urls.append(generated_image_url)
+                                    _emit(
+                                        callbacks,
+                                        "on_stage_start",
+                                        "Concept Image Upload",
+                                        {"url": generated_image_url},
+                                    )
                             store.write_json(
                                 "concept_image_generation.json",
-                                {"meta": meta, "prompt_used": prompt_text},
+                                {
+                                    "meta": meta,
+                                    "prompt_used": prompt_text,
+                                    "public_url": generated_image_url or None,
+                                },
                             )
                         else:
                             image_gen_error = "empty_prompt"
@@ -673,9 +724,23 @@ def run_once_v4(
                                 )
                                 generated_image_path = out_img
                                 image_paths.append(str(out_img))
+                                if uploader and uploader.enabled:
+                                    up = uploader.upload_file(
+                                        out_img,
+                                        generation_id=store.qid,
+                                        filename=f"concept_image_v{regens + 1}.png",
+                                        content_type="image/png",
+                                    )
+                                    if up:
+                                        generated_image_url = up["url"]
+                                        image_urls.append(generated_image_url)
                                 store.write_json(
                                     f"concept_image_generation_v{regens + 1}.json",
-                                    {"meta": meta, "prompt_used": refined_prompt},
+                                    {
+                                        "meta": meta,
+                                        "prompt_used": refined_prompt,
+                                        "public_url": generated_image_url or None,
+                                    },
                                 )
                         except Exception as gen_err:
                             image_gen_error = str(gen_err)
@@ -702,7 +767,8 @@ def run_once_v4(
                         stem = implemented.get("question", {}).get("stem", "")
                         new_stem, replaced = splice_concept_image_into_stem(
                             stem,
-                            image_path=generated_image_path,
+                            image_url=generated_image_url or None,
+                            image_path=generated_image_path if not generated_image_url else None,
                             placeholder_id="img1",
                             alt=cip_result.payload.get("alt_text", "")
                             or cip_result.payload.get("caption", "")
@@ -719,11 +785,13 @@ def run_once_v4(
                             {"error": str(splice_err)},
                         )
 
+                # Prefer canonical bucket URLs over local Windows paths when both exist.
+                stored_paths = image_urls if image_urls else image_paths
                 visual_assets.append(
                     VisualAssetRecord(
                         kind="concept_image",
                         spec_path=str(store.root / "concept_image_prompt.json"),
-                        image_paths=image_paths,
+                        image_paths=stored_paths,
                         renderer=(
                             "gemini_image_v1"
                             if generated_image_path

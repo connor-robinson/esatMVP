@@ -50,19 +50,33 @@ def _figure_with_svg(svg: str, *, caption: str = "") -> str:
     return f'<figure class="qg-diagram">{svg.strip()}{caption_html}</figure>'
 
 
-def _png_as_svg_figure(png_bytes: bytes, *, alt: str = "") -> str:
-    """Wrap raw PNG bytes in an inline ``<svg><image href=data:.../></svg>`` block.
+def _png_as_svg_figure(
+    *,
+    png_bytes: Optional[bytes] = None,
+    image_url: Optional[str] = None,
+    alt: str = "",
+) -> str:
+    """Wrap a PNG (either by URL or by bytes) inside ``<svg><image href=.../></svg>``.
 
-    We embed PNGs inside SVG so the reviewer's SVG-only inline path still
-    surfaces them without us having to upload to Supabase Storage. The image is
-    scaled to the standard 600x420 viewport used by ``StemContent.ensureSvgViewport``.
+    The reviewer's ``maskQgDiagramFigures`` only inlines ``<figure>...<svg>...</svg></figure>``
+    blocks; using SVG-wrapped image keeps the reviewer code untouched.
+
+    Prefer ``image_url`` (Supabase Storage public URL) over inline base64
+    bytes -- it keeps the question_stem column small (<5 KB) and gives us a
+    canonical URL we can reuse across the review-app / question-bank.
     """
-    b64 = base64.b64encode(png_bytes).decode("ascii")
     safe_alt = (alt or "").replace('"', "&quot;")
+    if image_url:
+        href = image_url.replace('"', "&quot;")
+    elif png_bytes is not None:
+        b64 = base64.b64encode(png_bytes).decode("ascii")
+        href = f"data:image/png;base64,{b64}"
+    else:
+        raise ValueError("_png_as_svg_figure requires either image_url or png_bytes")
     inner = (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" '
         'width="600" height="420" role="img" aria-label="' + safe_alt + '">'
-        '<image href="data:image/png;base64,' + b64 + '" '
+        '<image href="' + href + '" '
         'x="0" y="0" width="600" height="420" preserveAspectRatio="xMidYMid meet" />'
         "</svg>"
     )
@@ -131,21 +145,29 @@ def splice_schematic_svg_into_stem(
 def splice_concept_image_into_stem(
     stem: str,
     *,
-    image_path: Path,
+    image_path: Optional[Path] = None,
+    image_url: Optional[str] = None,
     placeholder_id: str = "img1",
     alt: str = "",
 ) -> Tuple[str, bool]:
-    """Embed a concept image PNG as base64 inside the stem.
+    """Embed a concept image inside the stem, by URL when possible.
 
-    The reviewer's ``StemContent`` masks ``<figure>...<svg>...</svg></figure>``
-    blocks and inlines them. We therefore embed the PNG as an ``<image>``
-    element inside an ``<svg>`` so it lands on the same render path.
+    Prefer ``image_url`` (Supabase Storage public URL) so the stem stays small.
+    Falls back to reading ``image_path`` bytes and base64-embedding only when
+    no URL is supplied (e.g. offline runs).
     """
-    image_path = Path(image_path)
-    if not image_path.is_file():
-        return stem, False
-    data = image_path.read_bytes()
-    figure = _png_as_svg_figure(data, alt=alt or placeholder_id)
+    if image_url:
+        figure = _png_as_svg_figure(image_url=image_url, alt=alt or placeholder_id)
+    else:
+        if image_path is None:
+            return stem, False
+        image_path = Path(image_path)
+        if not image_path.is_file():
+            return stem, False
+        figure = _png_as_svg_figure(
+            png_bytes=image_path.read_bytes(),
+            alt=alt or placeholder_id,
+        )
 
     replaced = False
 

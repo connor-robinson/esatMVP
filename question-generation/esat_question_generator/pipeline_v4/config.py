@@ -97,6 +97,7 @@ class V4RunConfig:
     enable_visual_pipeline: bool = True
     enable_concept_image_generation: bool = True  # Gemini/Imagen wired in v4 image_gen.py
     enable_svg_rendering: bool = True  # deterministic graph/schematic renderers
+    enable_asset_upload: bool = True  # upload PNG/SVG to Supabase question-images bucket
     variation_mode: str = "base"  # base|sibling|far (designer picks if "base")
     difficulty_weights: Optional[Dict[str, float]] = None
     seed: Optional[int] = None
@@ -126,6 +127,7 @@ class V4RunConfig:
                 "ESAT_ENABLE_CONCEPT_IMAGE_GEN", True
             ),
             enable_svg_rendering=_bool("ESAT_ENABLE_SVG_RENDERING", True),
+            enable_asset_upload=_bool("ESAT_ENABLE_ASSET_UPLOAD", True),
             variation_mode=(os.environ.get("VARIATION_MODE") or "base").strip().lower() or "base",
         )
 
