@@ -5,6 +5,9 @@ Usage examples::
     # generate one Physics question
     python -m pipeline_v4.cli --subject physics --difficulty Hard --n 1
 
+    # diagram test mode: retry until accepted with has_visual=True (Imagen PNG by default)
+    python -m pipeline_v4.cli --until-diagram --sync-db
+
     # force a specific Physics schema
     python -m pipeline_v4.cli --schema P_acb9793b --difficulty Medium
 
@@ -72,12 +75,9 @@ def _load_repo_env_local(base_dir: str) -> None:
         pass
 
 
-def _cmd_run(args: argparse.Namespace) -> int:
-    from pipeline_v4 import run_once_v4
+def _configure_run(args: argparse.Namespace, base_dir: str):
+    """Shared config/models/db_sync setup for ``_cmd_run`` and ``_cmd_until_diagram``."""
     from pipeline_v4.config import V4ModelsConfig, V4RunConfig
-
-    base_dir = args.base_dir or str(_GEN_DIR)
-    _load_repo_env_local(base_dir)
 
     cfg = V4RunConfig.from_env()
     if args.prefer_visual:
@@ -95,20 +95,117 @@ def _cmd_run(args: argparse.Namespace) -> int:
 
     models = V4ModelsConfig.from_env()
 
-    # Eagerly load Supabase creds from .env.local if requested. db_sync does
-    # this too, but doing it up-front lets us fail fast if the user passed
-    # ``--sync-db`` without credentials.
     db_sync_fn = None
     if args.sync_db:
         try:
-            from dotenv import load_dotenv  # type: ignore
-            env_path = Path(base_dir).parent.parent / ".env.local"
-            if env_path.is_file():
-                load_dotenv(env_path)
             from db_sync import sync_question_from_pipeline as db_sync_fn  # type: ignore
         except Exception as e:
             print(f"[warn] --sync-db requested but db_sync unavailable: {e}", flush=True)
             db_sync_fn = None
+
+    return cfg, models, db_sync_fn
+
+
+def _cmd_until_diagram(args: argparse.Namespace) -> int:
+    """Retry full pipeline runs until one question is accepted **with** a diagram."""
+    from pipeline_v4 import run_once_v4
+
+    base_dir = args.base_dir or str(_GEN_DIR)
+    _load_repo_env_local(base_dir)
+
+    cfg, models, db_sync_fn = _configure_run(args, base_dir)
+
+    # Diagram-test mode: bias toward Imagen PNG unless user passed --force-visual.
+    if not args.force_visual:
+        cfg.visual_route_override = "concept_image_prompt"
+        cfg.prefer_visual = True
+
+    max_attempts = max(1, int(args.max_attempts))
+    print(
+        f"[until-diagram] Will run up to {max_attempts} question(s) until "
+        f"status=accepted and has_visual=True.",
+        flush=True,
+    )
+    if cfg.visual_route_override:
+        print(f"[until-diagram] visual_route_override={cfg.visual_route_override}", flush=True)
+    if cfg.prefer_visual:
+        print("[until-diagram] prefer_visual=True (router none → concept_image_prompt)", flush=True)
+
+    for attempt in range(1, max_attempts + 1):
+        print(f"\n{'=' * 60}", flush=True)
+        print(f"[until-diagram] attempt {attempt}/{max_attempts}", flush=True)
+        print(f"{'=' * 60}", flush=True)
+        try:
+            result = run_once_v4(
+                base_dir=base_dir,
+                forced_schema_id=args.schema,
+                difficulty=args.difficulty,
+                cfg=cfg,
+                models=models,
+                callbacks={
+                    "on_stage_start": lambda stage, info: print(
+                        f"[stage] {stage}: {info}", flush=True
+                    ),
+                    "on_stage_error": lambda stage, info: print(
+                        f"[error] {stage}: {info}", flush=True
+                    ),
+                },
+            )
+        except KeyboardInterrupt:
+            print("Interrupted.")
+            return 130
+        except Exception as e:
+            print(f"[error] run_once_v4 raised: {e}")
+            traceback.print_exc()
+            continue
+
+        _print_stage_summary(result)
+        item = result.get("item") or {}
+        status = str(result.get("status") or "")
+        has_visual = bool(item.get("has_visual"))
+        visual_type = item.get("visual_type") or "?"
+        run_dir = result.get("run_dir") or ""
+
+        if status == "accepted" and has_visual:
+            print(
+                f"\n[until-diagram] SUCCESS on attempt {attempt}: "
+                f"visual_type={visual_type} run_dir={run_dir}",
+                flush=True,
+            )
+            if db_sync_fn is not None:
+                try:
+                    db_id = db_sync_fn(item, base_dir, status="pending")
+                    if db_id:
+                        print(f"[db_sync] inserted as {db_id}", flush=True)
+                        print(f"[review] open /review/{db_id}", flush=True)
+                except Exception as sync_err:
+                    print(f"[db_sync] error: {sync_err}", flush=True)
+            return 0
+
+        rej = result.get("rejection") or {}
+        gate = rej.get("gate") or status
+        reasons = rej.get("reasons") or []
+        reason_txt = "; ".join(str(r) for r in reasons[:2]) if reasons else ""
+        print(
+            f"[until-diagram] no diagram yet: status={status} has_visual={has_visual} "
+            f"visual_type={visual_type} gate={gate} {reason_txt}".strip(),
+            flush=True,
+        )
+
+    print(
+        f"\n[until-diagram] Gave up after {max_attempts} attempts with no accepted diagram question.",
+        flush=True,
+    )
+    return 1
+
+
+def _cmd_run(args: argparse.Namespace) -> int:
+    from pipeline_v4 import run_once_v4
+
+    base_dir = args.base_dir or str(_GEN_DIR)
+    _load_repo_env_local(base_dir)
+
+    cfg, models, db_sync_fn = _configure_run(args, base_dir)
 
     accepted = 0
     rejected = 0
@@ -254,6 +351,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--schema", default=None, help="Force a specific schema_id (e.g. P_acb9793b).")
     p.add_argument("-n", "--n", default=1, help="Number of questions to attempt.")
     p.add_argument(
+        "--until-diagram",
+        action="store_true",
+        help=(
+            "Diagram test mode: keep generating until one run is accepted with "
+            "has_visual=True (see --max-attempts). Defaults to concept_image_prompt + prefer_visual."
+        ),
+    )
+    p.add_argument(
+        "--max-attempts",
+        type=int,
+        default=25,
+        help="Max pipeline runs for --until-diagram (default 25).",
+    )
+    p.add_argument(
         "--prefer-visual",
         action="store_true",
         help=(
@@ -302,6 +413,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.test_concept_image_prompt:
         return _cmd_test_concept_image_prompt(args)
+    if args.until_diagram:
+        if (args.subject or "").lower() != "physics":
+            print("Only --subject physics is supported by V4 right now.")
+            return 2
+        return _cmd_until_diagram(args)
     if (args.subject or "").lower() != "physics":
         print("Only --subject physics is supported by V4 right now.")
         return 2
