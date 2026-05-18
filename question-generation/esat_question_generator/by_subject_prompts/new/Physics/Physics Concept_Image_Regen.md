@@ -36,7 +36,9 @@ Typical fixes include:
 - clearer measurement-arrow meaning,
 - more sensible comparative proportions,
 - stronger simplification of human/object figures,
-- explicit removal of unrequested arrows, symbols, field patterns, arcs, and overlays.
+- explicit removal of unrequested arrows, symbols, field patterns, arcs, and overlays,
+- corrected `label_anchors` and prompt wording when medium labels pointed at objects (leader must target empty medium; text outside container),
+- `pure white #FFFFFF` background when verifier flagged grey/cream tint.
 
 ---
 

@@ -12,7 +12,7 @@ It is a reference file for prompt-writing and QC.
 Based on typical admissions-test diagrams and the supplied examples, the target style has these features:
 
 ### 1. Monochrome print look
-- Very light grey or off-white paper background.
+- **Pure white** background (`#FFFFFF`) for concept images; no grey wash, gradient, or paper texture.
 - Black or dark charcoal line work.
 - No bright colour blocks.
 - Shading, if present, is subtle and functional.
@@ -31,6 +31,7 @@ Based on typical admissions-test diagrams and the supplied examples, the target 
 
 ### 4. Label discipline
 - Labels sit outside main objects when possible.
+- **Medium / fluid / gas labels:** text outside the container; leader ends on **empty** homogeneous volume of that medium — never on submerged objects or walls.
 - Leader lines are clean and direct.
 - No overlapping text.
 - No crossing leader lines unless unavoidable.
@@ -72,7 +73,7 @@ Useful prompt phrases:
 - `Draw this as a professional monochrome admissions-test diagram.`
 - `Use Times New Roman-like serif labels and italic serif maths variables.`
 - `Keep all labels separate from lines and objects; no overlap.`
-- `Use clean black/charcoal vector-like strokes on a very light grey paper background.`
+- `Use clean black/charcoal vector-like strokes on a pure white #FFFFFF background.`
 - `Match the style of TMUA / ENGAA printed exam diagrams.`
 - `Use only the listed labels and no extra annotations.`
 - `If included, set “[diagram not to scale]” centred beneath the image.`
