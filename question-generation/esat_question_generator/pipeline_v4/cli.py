@@ -60,13 +60,30 @@ def _short_status(stage_dict: Dict[str, Any]) -> str:
     return f"  - {stage}: {status}"
 
 
+def _load_repo_env_local(base_dir: str) -> None:
+    """Load repo-root ``.env.local`` so image/Vertex keys work without ``--sync-db``."""
+    try:
+        from dotenv import load_dotenv  # type: ignore
+
+        env_path = Path(base_dir).parent.parent / ".env.local"
+        if env_path.is_file():
+            load_dotenv(env_path)
+    except Exception:
+        pass
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     from pipeline_v4 import run_once_v4
     from pipeline_v4.config import V4ModelsConfig, V4RunConfig
 
     base_dir = args.base_dir or str(_GEN_DIR)
+    _load_repo_env_local(base_dir)
 
     cfg = V4RunConfig.from_env()
+    if args.prefer_visual:
+        cfg.prefer_visual = True
+    if args.force_visual:
+        cfg.visual_route_override = str(args.force_visual).strip().lower()
     if args.no_visual:
         cfg.enable_visual_pipeline = False
     if args.no_tags:
@@ -236,6 +253,24 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--difficulty", default=None, help="Easy | Medium | Hard | Extreme")
     p.add_argument("--schema", default=None, help="Force a specific schema_id (e.g. P_acb9793b).")
     p.add_argument("-n", "--n", default=1, help="Number of questions to attempt.")
+    p.add_argument(
+        "--prefer-visual",
+        action="store_true",
+        help=(
+            "If the Visual Router chooses 'none', bump to concept_image_prompt anyway "
+            "(dev/testing; also V4_PREFER_VISUAL=1 in .env.local)."
+        ),
+    )
+    p.add_argument(
+        "--force-visual",
+        metavar="ROUTE",
+        default=None,
+        choices=["concept_image_prompt", "accurate_graph_json", "accurate_schematic_json"],
+        help=(
+            "Always use this visual route, ignoring the router (dev/testing). "
+            "concept_image_prompt is the usual choice for PNG diagrams."
+        ),
+    )
     p.add_argument("--no-visual", action="store_true", help="Disable the visual pipeline.")
     p.add_argument("--no-tags", action="store_true", help="Disable tag labeling.")
     p.add_argument(

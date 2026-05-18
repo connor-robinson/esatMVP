@@ -54,6 +54,41 @@ from .stages import (
 
 # -------------- helpers --------------
 
+_FORCEABLE_VISUAL_ROUTES = frozenset(
+    {"concept_image_prompt", "accurate_graph_json", "accurate_schematic_json"}
+)
+
+
+def _apply_visual_route_bias(
+    route: str,
+    cfg: V4RunConfig,
+    router_payload: Optional[Dict[str, Any]],
+) -> str:
+    """Apply ``cfg.prefer_visual`` / ``cfg.visual_route_override`` after the LLM router.
+
+    V5 prompts default to ``none``; these knobs exist for local testing and review-app
+    diagram QA. The original router verdict is preserved on the payload for auditing.
+    """
+    original = (route or "none").strip().lower()
+    final = original
+    reason: Optional[str] = None
+
+    override = (cfg.visual_route_override or "").strip().lower()
+    if override and override in _FORCEABLE_VISUAL_ROUTES:
+        final = override
+        reason = f"forced to {override} (router chose {original})"
+    elif cfg.prefer_visual and original == "none":
+        final = "concept_image_prompt"
+        reason = "prefer_visual bumped none → concept_image_prompt"
+
+    if reason and router_payload is not None:
+        router_payload["visual_route_original"] = original
+        router_payload["visual_route"] = final
+        router_payload["visual_route_override_reason"] = reason
+
+    return final
+
+
 def _pick_difficulty(weights: Optional[Dict[str, float]]) -> str:
     if not weights:
         return random.choice(["Easy", "Medium", "Hard", "Extreme"])
@@ -423,6 +458,7 @@ def run_once_v4(
         record(router_result)
         route = (router_result.payload or {}).get("visual_route", "none") if router_result.payload else "none"
         answer_depends_on_visual = bool((router_result.payload or {}).get("answer_depends_on_visual", False))
+        route = _apply_visual_route_bias(route, cfg, router_result.payload)
         _emit(callbacks, "on_stage_complete", "Visual Router", {"route": route})
 
         if route == "unsupported_visual_dependency":

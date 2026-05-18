@@ -14,9 +14,23 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional, Tuple
 
 
+def _sanitize_env_value(raw: str) -> str:
+    """Strip whitespace and trailing ``#`` comments from env values."""
+    v = (raw or "").strip()
+    if not v:
+        return ""
+    if v[0] in "\"'":
+        return v.strip("\"'").strip()
+    # Inline comment (PowerShell Get-Content loader does not strip these).
+    hash_idx = v.find("#")
+    if hash_idx > 0:
+        v = v[:hash_idx].rstrip()
+    return v.strip()
+
+
 def _env(*names: str, default: str = "") -> str:
     for n in names:
-        v = (os.environ.get(n) or "").strip()
+        v = _sanitize_env_value(os.environ.get(n) or "")
         if v:
             return v
     return default
@@ -101,6 +115,9 @@ class V4RunConfig:
     variation_mode: str = "base"  # base|sibling|far (designer picks if "base")
     difficulty_weights: Optional[Dict[str, float]] = None
     seed: Optional[int] = None
+    # Dev/testing knobs (V5 defaults visuals to ``none``). See ``cli --prefer-visual``.
+    prefer_visual: bool = False  # router ``none`` → ``concept_image_prompt``
+    visual_route_override: Optional[str] = None  # force route, skip router verdict
 
     @classmethod
     def from_env(cls) -> "V4RunConfig":
@@ -129,6 +146,11 @@ class V4RunConfig:
             enable_svg_rendering=_bool("ESAT_ENABLE_SVG_RENDERING", True),
             enable_asset_upload=_bool("ESAT_ENABLE_ASSET_UPLOAD", True),
             variation_mode=(os.environ.get("VARIATION_MODE") or "base").strip().lower() or "base",
+            prefer_visual=_bool("V4_PREFER_VISUAL", False),
+            visual_route_override=_sanitize_env_value(
+                os.environ.get("V4_VISUAL_ROUTE_OVERRIDE") or ""
+            )
+            or None,
         )
 
 
