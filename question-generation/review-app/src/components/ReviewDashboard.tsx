@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { ReviewQuestion, PaperType } from "@/types/review";
-import { stripHtml, cn } from "@/lib/utils";
+import { stripHtml, cn, hasDiagram } from "@/lib/utils";
 import { resolveReviewQuestionInput } from "@/lib/reviewLookup";
-import { ChevronLeft, ChevronRight, ListVideo, Video } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageIcon, ListVideo, RefreshCw, Video } from "lucide-react";
 import {
   ReviewDashboardFilters,
   type DashboardFilterState,
@@ -402,14 +402,21 @@ export function ReviewDashboard() {
                   q.media_upload_code.trim().toUpperCase()) ||
                 walkCodes[q.id] ||
                 null;
+              const hasDiag = hasDiagram(q);
+              const regenStatus = q.diagram_regen_status ?? null;
+              const regenPending =
+                regenStatus === "queued" || regenStatus === "in_progress";
 
               return (
                 <li key={q.id}>
                   <Link href={`/review/${encodeURIComponent(q.id)}`} className="block group">
                     <article
                       className={cn(
-                        "rounded-organic-lg border border-white/10 bg-white/[0.03] p-4",
-                        "hover:border-primary/35 hover:bg-white/[0.06] transition-colors"
+                        "rounded-organic-lg p-4",
+                        hasDiag
+                          ? "bg-sky-500/[0.08] hover:bg-sky-500/[0.13] ring-1 ring-sky-400/35 hover:ring-sky-300/50"
+                          : "bg-white/[0.03] hover:bg-white/[0.06] ring-1 ring-white/10 hover:ring-primary/35",
+                        "transition-colors"
                       )}
                     >
                       <div className="flex flex-wrap items-baseline justify-between gap-2 gap-y-1">
@@ -491,6 +498,45 @@ export function ReviewDashboard() {
                             title="Stored schema_id is pre-rename; canonical id is schema_reclass_new_id — keep or delete"
                           >
                             Reclass · review
+                          </span>
+                        ) : null}
+                        {hasDiag ? (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-sky-500/25 text-sky-100 ring-1 ring-sky-400/50"
+                            title={
+                              q.visual_type && q.visual_type !== "none"
+                                ? `Diagram · ${q.visual_type.replace(/_/g, " ")}`
+                                : "This question has a diagram in the stem"
+                            }
+                          >
+                            <ImageIcon className="w-3 h-3 shrink-0" aria-hidden />
+                            Diagram
+                          </span>
+                        ) : null}
+                        {regenPending ? (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-amber-500/25 text-amber-100 ring-1 ring-amber-400/50"
+                            title={
+                              regenStatus === "queued"
+                                ? "Diagram regen queued for the worker"
+                                : "Diagram is being regenerated in the background"
+                            }
+                          >
+                            <RefreshCw
+                              className={cn(
+                                "w-3 h-3 shrink-0",
+                                regenStatus === "in_progress" && "animate-spin"
+                              )}
+                              aria-hidden
+                            />
+                            {regenStatus === "queued" ? "Regen queued" : "Regenerating"}
+                          </span>
+                        ) : regenStatus === "failed" ? (
+                          <span
+                            className="text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-rose-500/20 text-rose-100 ring-1 ring-rose-400/40"
+                            title={q.diagram_regen_last_error || "Last regen attempt failed"}
+                          >
+                            Regen failed
                           </span>
                         ) : null}
                       </div>

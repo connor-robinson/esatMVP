@@ -659,6 +659,83 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
     setEditingField(null);
   }, [editingField, saveChanges]);
 
+  /** Queue a background diagram regeneration job. The worker picks it up and
+   * writes back the new stem + status. Optimistically reflects ``queued`` in
+   * local state so the UI shows the spinner right away. */
+  const requestDiagramRegen = useCallback(
+    async (userNote: string): Promise<ReviewQuestion | null> => {
+      const q0 = editedQuestionRef.current;
+      if (!q0?.id) return null;
+
+      const prev = saveChainRef.current;
+      const mine = prev.catch(() => {}).then(async (): Promise<ReviewQuestion | null> => {
+        const q = editedQuestionRef.current;
+        if (!q?.id) return null;
+        const optimistic: ReviewQuestion = {
+          ...q,
+          diagram_regen_status: "queued",
+          diagram_regen_user_note: userNote || null,
+          diagram_regen_reason: null,
+          diagram_regen_new_prompt: null,
+          diagram_regen_last_error: null,
+          diagram_regen_requested_at: new Date().toISOString(),
+          diagram_regen_completed_at: null,
+        };
+        commitLocal(optimistic);
+
+        const response = await fetch(
+          `/api/review/${q.id}/regenerate-diagram`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userNote }),
+            cache: "no-store",
+            credentials: "same-origin",
+          }
+        );
+        const data = await response.json();
+        if (!response.ok || !data?.question) {
+          throw new Error(
+            data?.error || data?.details || "Failed to queue diagram regeneration"
+          );
+        }
+        const normalized = normalizeReviewQuestion(data.question);
+        lastPersistedUpdatedAtRef.current = normalized.updated_at || "";
+        commitLocal(normalized);
+        onSaveComplete?.(normalized);
+        return normalized;
+      });
+
+      saveChainRef.current = mine.catch(() => null);
+      return mine;
+    },
+    [commitLocal, onSaveComplete]
+  );
+
+  /** Lightweight poll for the regen status — called by the panel while a job is queued/in_progress. */
+  const refreshDiagramRegenStatus = useCallback(async (): Promise<void> => {
+    const q = editedQuestionRef.current;
+    if (!q?.id) return;
+    try {
+      const r = await fetch(
+        `/api/review/${q.id}/regenerate-diagram?_cb=${Date.now()}`,
+        { cache: "no-store", credentials: "same-origin" }
+      );
+      const data = (await r.json()) as { question?: ReviewQuestion };
+      if (!r.ok || !data?.question) return;
+      const normalized = normalizeReviewQuestion(data.question);
+      const refTs = editedQuestionRef.current?.updated_at || "";
+      const newTs = normalized.updated_at || "";
+      /** Don't clobber live edits with a stale poll: only apply when server is newer. */
+      if (newTs >= refTs) {
+        commitLocal(normalized);
+        onSaveComplete?.(normalized);
+      }
+    } catch {
+      /* ignore poll errors; the next tick will retry */
+    }
+  }, [commitLocal, onSaveComplete]);
+
   /** After quality-gate auto-SVG: keep current stem (with diagram) or revert to saved pre-diagram stem. */
   const resolveAutoDiagramStemChoice = useCallback(
     async (choice: "keep_diagram" | "revert"): Promise<void> => {
@@ -744,6 +821,8 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
     removeSecondaryTag,
     saveChanges,
     resolveAutoDiagramStemChoice,
+    requestDiagramRegen,
+    refreshDiagramRegenStatus,
     startEditingField,
     stopEditingField,
   };

@@ -250,7 +250,109 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       typeof data.quality_gate_graph_notes === "string" && data.quality_gate_graph_notes.trim()
         ? data.quality_gate_graph_notes.trim()
         : null,
+    pipeline:
+      typeof data.pipeline === "string" && data.pipeline.trim()
+        ? data.pipeline.trim()
+        : null,
+    has_visual: data.has_visual === true,
+    visual_type: normalizeVisualType(data.visual_type),
+    answer_depends_on_visual: data.answer_depends_on_visual === true,
+    visual_renderer:
+      typeof data.visual_renderer === "string" && data.visual_renderer.trim()
+        ? data.visual_renderer.trim()
+        : null,
+    visual_qc_status:
+      typeof data.visual_qc_status === "string" && data.visual_qc_status.trim()
+        ? data.visual_qc_status.trim()
+        : null,
+    visual_assets: parseJsonArray(data.visual_assets),
+    diagram_regen_status: normalizeDiagramRegenStatus(data.diagram_regen_status),
+    diagram_regen_user_note:
+      typeof data.diagram_regen_user_note === "string" && data.diagram_regen_user_note.trim()
+        ? data.diagram_regen_user_note
+        : null,
+    diagram_regen_reason:
+      typeof data.diagram_regen_reason === "string" && data.diagram_regen_reason.trim()
+        ? data.diagram_regen_reason
+        : null,
+    diagram_regen_new_prompt:
+      typeof data.diagram_regen_new_prompt === "string" && data.diagram_regen_new_prompt.trim()
+        ? data.diagram_regen_new_prompt
+        : null,
+    diagram_regen_requested_at:
+      typeof data.diagram_regen_requested_at === "string" && data.diagram_regen_requested_at.trim()
+        ? data.diagram_regen_requested_at
+        : null,
+    diagram_regen_completed_at:
+      typeof data.diagram_regen_completed_at === "string" && data.diagram_regen_completed_at.trim()
+        ? data.diagram_regen_completed_at
+        : null,
+    diagram_regen_attempts:
+      typeof data.diagram_regen_attempts === "number" &&
+      Number.isFinite(data.diagram_regen_attempts)
+        ? data.diagram_regen_attempts
+        : null,
+    diagram_regen_last_error:
+      typeof data.diagram_regen_last_error === "string" && data.diagram_regen_last_error.trim()
+        ? data.diagram_regen_last_error
+        : null,
   };
+}
+
+const VISUAL_TYPES = new Set([
+  "none",
+  "accurate_graph_json",
+  "accurate_schematic_json",
+  "concept_image_prompt",
+  "concept_image",
+  "unsupported_visual_dependency",
+]);
+
+function normalizeVisualType(raw: unknown): ReviewQuestion["visual_type"] {
+  if (typeof raw !== "string") return null;
+  const t = raw.trim();
+  return VISUAL_TYPES.has(t) ? (t as ReviewQuestion["visual_type"]) : null;
+}
+
+const REGEN_STATUSES = new Set(["queued", "in_progress", "done", "failed"]);
+function normalizeDiagramRegenStatus(raw: unknown): ReviewQuestion["diagram_regen_status"] {
+  if (typeof raw !== "string") return null;
+  const t = raw.trim();
+  return REGEN_STATUSES.has(t)
+    ? (t as ReviewQuestion["diagram_regen_status"])
+    : null;
+}
+
+function parseJsonArray(value: unknown): Array<Record<string, unknown>> | null {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value as Array<Record<string, unknown>>;
+  if (typeof value === "string") {
+    try {
+      const a = JSON.parse(value) as unknown;
+      if (Array.isArray(a)) return a as Array<Record<string, unknown>>;
+    } catch {
+      /* ignore */
+    }
+  }
+  return null;
+}
+
+/**
+ * Source-of-truth diagram detection. ``has_visual`` is the V4 pipeline marker;
+ * older / quality-gate / hand-authored rows may embed SVG or ``<figure>``
+ * directly in the stem. We treat any of those signals as "has diagram".
+ */
+export function hasDiagram(q: Pick<ReviewQuestion, "has_visual" | "visual_type" | "question_stem">): boolean {
+  if (q.has_visual === true) {
+    if (q.visual_type && q.visual_type === "none") return false;
+    return true;
+  }
+  const stem = q.question_stem || "";
+  if (!stem) return false;
+  if (stem.includes("<figure class=\"qg-diagram\"")) return true;
+  if (stem.includes("<svg")) return true;
+  if (stem.includes("<img")) return true;
+  return false;
 }
 
 /**

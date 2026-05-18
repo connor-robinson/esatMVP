@@ -4,8 +4,9 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { MathContent } from "./shared/MathContent";
 import { StemContent } from "./shared/StemContent";
 import { DiagramInsertToolbar } from "./DiagramInsertToolbar";
+import { DiagramRegenPanel } from "./DiagramRegenPanel";
 import { WalkthroughVideoPlayer } from "./WalkthroughVideoPlayer";
-import { cn } from "@/lib/utils";
+import { cn, hasDiagram } from "@/lib/utils";
 import { Eye, Pencil, X, Plus, ChevronDown, ChevronUp, Video } from "lucide-react";
 import { getQuestionTagText, formatTagDisplay, getPaperType, getTopicsForPaper, type TopicOption } from "@/lib/curriculum";
 import type { ReviewQuestion } from "@/types/review";
@@ -114,8 +115,13 @@ interface QuestionPanelProps {
   onRemoveSecondaryTag?: (tag: string) => void;
   onStartEditingField?: (fieldName: string) => void;
   onStopEditingField?: () => void;
-  /** Quality-gate auto-SVG left a pre-diagram stem snapshot; pick final version. */
+  /** Legacy: pre-diagram stem snapshot resolver. Side-by-side UI was removed,
+   * but the callback is preserved so power users can still revert via dev tools. */
   onResolveAutoDiagramStem?: (choice: "keep_diagram" | "revert") => void | Promise<void>;
+  /** Queue a background diagram-regeneration job. Resolves once the job is enqueued. */
+  onRequestDiagramRegen?: (userNote: string) => Promise<ReviewQuestion | null>;
+  /** Poll for regen status updates. Panel calls this on a timer while pending. */
+  onRefreshDiagramRegenStatus?: () => Promise<void>;
 }
 
 export function QuestionPanel({
@@ -137,6 +143,8 @@ export function QuestionPanel({
   onStartEditingField,
   onStopEditingField,
   onResolveAutoDiagramStem,
+  onRequestDiagramRegen,
+  onRefreshDiagramRegenStatus,
 }: QuestionPanelProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   const [editingPill, setEditingPill] = useState<string | null>(null);
@@ -146,11 +154,11 @@ export function QuestionPanel({
   
   const options = question.options || {};
   const optionLetters = Object.keys(options).sort();
-  /** `question_stem_before_auto_diagram` populated in DB → show Before / Current compare strip. */
-  const hasStemBeforeAutoDiagram =
-    typeof question.question_stem_before_auto_diagram === "string" &&
-    question.question_stem_before_auto_diagram.trim().length > 0;
   const secondaryTags = question.secondary_tags || [];
+  /** Side-by-side ``Before / Current`` compare was removed; the stem already
+   * has the diagram inline. Kept for downstream callers that still pass the
+   * resolver prop. */
+  void onResolveAutoDiagramStem;
   const paperType = getPaperType(question);
   const availablePapers = ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology', 'Paper 1', 'Paper 2'];
   
@@ -604,62 +612,13 @@ export function QuestionPanel({
               </p>
             </div>
           ) : null}
-          {hasStemBeforeAutoDiagram && (
-              <div className="rounded-xl border border-sky-500/35 bg-sky-950/25 px-4 py-3 space-y-3">
-                <p className="text-xs font-mono text-sky-200/95 leading-relaxed">
-                  Auto-generated diagram (quality gate / backfill) updated the stem. Compare both
-                  versions, then accept one — this clears the snapshot on the row.
-                </p>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] font-mono uppercase tracking-wide text-white/50">
-                      Before (no auto diagram)
-                    </div>
-                    <div
-                      className="text-white/90 font-serif text-sm leading-relaxed"
-                      style={{
-                        fontFamily: "'Times New Roman', Times, serif",
-                        lineHeight: 1.75,
-                      }}
-                    >
-                      <StemContent content={question.question_stem_before_auto_diagram} />
-                    </div>
-                    {onResolveAutoDiagramStem ? (
-                      <button
-                        type="button"
-                        onClick={() => void onResolveAutoDiagramStem("revert")}
-                        className="w-full rounded-organic-md border border-amber-400/40 bg-amber-950/40 px-3 py-2 text-xs font-mono text-amber-100 hover:bg-amber-900/50 transition-colors"
-                      >
-                        Use this version (remove diagram from stem)
-                      </button>
-                    ) : null}
-                  </div>
-                  <div className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
-                    <div className="text-[10px] font-mono uppercase tracking-wide text-white/50">
-                      Current (with diagram)
-                    </div>
-                    <div
-                      className="text-white/90 font-serif text-sm leading-relaxed"
-                      style={{
-                        fontFamily: "'Times New Roman', Times, serif",
-                        lineHeight: 1.75,
-                      }}
-                    >
-                      <StemContent content={question.question_stem} />
-                    </div>
-                    {onResolveAutoDiagramStem ? (
-                      <button
-                        type="button"
-                        onClick={() => void onResolveAutoDiagramStem("keep_diagram")}
-                        className="w-full rounded-organic-md border border-sky-400/40 bg-sky-950/50 px-3 py-2 text-xs font-mono text-sky-100 hover:bg-sky-900/50 transition-colors"
-                      >
-                        Keep diagram version
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            )}
+          {hasDiagram(question) ? (
+            <DiagramRegenPanel
+              question={question}
+              onRequestRegen={onRequestDiagramRegen}
+              onPollStatus={onRefreshDiagramRegenStatus}
+            />
+          ) : null}
           <div className="flex items-center gap-2">
             <label className="text-xs font-mono text-white/60 uppercase tracking-wide">
               Question
@@ -702,11 +661,6 @@ export function QuestionPanel({
                 style={{ fontFamily: "'Times New Roman', Times, serif", lineHeight: '1.8' }}
               />
             </div>
-          ) : hasStemBeforeAutoDiagram && onResolveAutoDiagramStem ? (
-            <p className="text-xs text-white/45 font-mono leading-relaxed">
-              Active stem is the &ldquo;Current (with diagram)&rdquo; column above until you choose a
-              version. Use the pencil to edit the stem manually.
-            </p>
           ) : (
             <div
               className="text-white/95 font-serif text-base leading-relaxed"

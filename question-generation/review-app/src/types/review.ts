@@ -59,6 +59,33 @@ export interface ReviewQuestion {
   quality_gate_calibration_notes?: string | null;
   quality_gate_graph_candidate?: boolean;
   quality_gate_graph_notes?: string | null;
+
+  /** V4 visual pipeline metadata (see ``20260517190000_add_v4_visual_fields.sql``). */
+  pipeline?: string | null;
+  has_visual?: boolean;
+  visual_type?:
+    | 'none'
+    | 'accurate_graph_json'
+    | 'accurate_schematic_json'
+    | 'concept_image_prompt'
+    | 'concept_image'
+    | 'unsupported_visual_dependency'
+    | null;
+  answer_depends_on_visual?: boolean;
+  visual_renderer?: string | null;
+  visual_qc_status?: string | null;
+  /** Array of ``VisualAssetRecord`` dicts from the V4 pipeline. */
+  visual_assets?: Array<Record<string, unknown>> | null;
+
+  /** Background diagram regeneration queue (see ``20260518130000_add_diagram_regen_queue.sql``). */
+  diagram_regen_status?: 'queued' | 'in_progress' | 'done' | 'failed' | null;
+  diagram_regen_user_note?: string | null;
+  diagram_regen_reason?: string | null;
+  diagram_regen_new_prompt?: string | null;
+  diagram_regen_requested_at?: string | null;
+  diagram_regen_completed_at?: string | null;
+  diagram_regen_attempts?: number | null;
+  diagram_regen_last_error?: string | null;
 }
 
 export type PaperType = 'All' | 'TMUA' | 'ESAT';

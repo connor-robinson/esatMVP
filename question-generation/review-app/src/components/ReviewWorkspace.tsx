@@ -66,6 +66,8 @@ export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspacePro
     startEditingField,
     stopEditingField,
     resolveAutoDiagramStemChoice,
+    requestDiagramRegen,
+    refreshDiagramRegenStatus,
   } = useQuestionEditor(currentQuestion, (updated) => {
     setCurrentQuestion(updated);
     setNotification({ type: "success", message: "Changes saved" });
@@ -275,6 +277,8 @@ export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspacePro
                 onStartEditingField={startEditingField}
                 onStopEditingField={stopEditingField}
                 onResolveAutoDiagramStem={resolveAutoDiagramStemChoice}
+                onRequestDiagramRegen={requestDiagramRegen}
+                onRefreshDiagramRegenStatus={refreshDiagramRegenStatus}
               />
             ) : null}
           </div>
