@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Set
 
 _GRAPH_TAG = re.compile(r"<GRAPH\s+id\s*=\s*\"([^\"]+)\"\s*/?>", re.IGNORECASE)
 _DIAG_TAG = re.compile(r"<DIAGRAM\s+id\s*=\s*\"([^\"]+)\"\s*/?>", re.IGNORECASE)
+_QG_DIAGRAM_FIGURE = re.compile(r'<figure\s+class="qg-diagram"', re.IGNORECASE)
 
 _VALID_VISUAL_NEEDS = {
     "none",
@@ -55,8 +56,11 @@ def validate_visual_linkage(
     has_graph_placeholder = bool(_GRAPH_TAG.search(stem))
     has_diagram_placeholder = bool(_DIAG_TAG.search(stem))
 
+    # After a successful SVG splice the placeholder is replaced by ``<figure class="qg-diagram">``.
+    already_spliced = bool(_QG_DIAGRAM_FIGURE.search(stem))
+
     if visual_need == "accurate_graph_json":
-        if not has_graph_placeholder:
+        if not has_graph_placeholder and not (graph_spec is not None and already_spliced):
             errs.append(
                 {
                     "field": "question.stem",
@@ -76,7 +80,7 @@ def validate_visual_linkage(
                     }
                 )
     elif visual_need == "accurate_schematic_json":
-        if not has_diagram_placeholder:
+        if not has_diagram_placeholder and not (schematic_spec is not None and already_spliced):
             errs.append(
                 {
                     "field": "question.stem",
