@@ -175,6 +175,18 @@ export function getExamSectionNumberBadgeClass(examName: string): string {
   return "bg-maths text-background dark:text-white";
 }
 
+/** Borderless icon tile for session history rows (theme tokens only). */
+export function getPaperSessionIconClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-advanced/15 text-advanced";
+  if (key === "NSAA") return "bg-biology/15 text-biology";
+  if (key === "TMUA") return "bg-physics/15 text-physics";
+  if (key === "ESAT") return "bg-maths/15 text-maths";
+  if (key === "PAT") return "bg-chemistry/15 text-chemistry";
+  if (key === "MAT") return "bg-maths/15 text-maths";
+  return "bg-maths/15 text-maths";
+}
+
 /** Badge / tile accents for roadmap headers (surface + border + text). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();

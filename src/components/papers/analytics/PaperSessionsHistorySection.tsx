@@ -1,14 +1,23 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ChevronDown, Trash2, FileText } from 'lucide-react';
+import { ChevronDown, Trash2, ScrollText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { EnrichedPaperSession } from '@/lib/papers/analytics';
 import { extractYearFromVariant } from '@/lib/papers/analytics';
-import { getPaperTypeColor, desaturateColor } from '@/config/colors';
+import { getPaperSessionIconClass } from '@/config/colors';
 import { ClearSessionHistoryModal } from '@/components/analytics/ClearSessionHistoryModal';
+import {
+  sessionHistoryClearBtnClass,
+  sessionHistoryCollapseBtnClass,
+  sessionHistoryDeleteBtnClass,
+  sessionHistoryReviewBtnClass,
+  sessionHistorySelectClass,
+  sessionHistoryShowLessBtnClass,
+  sessionHistoryShowMoreBtnClass,
+} from '@/components/analytics/sessionHistoryStyles';
 import { cn } from '@/lib/utils';
-import { analyticsSelectClass, sectionShell } from './styles';
+import { sectionShell } from './styles';
 
 const SESSION_HISTORY_PREVIEW = 4;
 
@@ -40,6 +49,7 @@ export function PaperSessionsHistorySection({
   const [listExpanded, setListExpanded] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
   const [clearBusy, setClearBusy] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const sortedSessions = useMemo(() => {
     const sorted = [...sessions];
@@ -55,9 +65,9 @@ export function PaperSessionsHistorySection({
     return sorted;
   }, [sessions, sessionSortBy]);
 
-  const hasMore = sortedSessions.length > SESSION_HISTORY_PREVIEW;
+  const hasMoreSessions = sortedSessions.length > SESSION_HISTORY_PREVIEW;
   const visibleSessions =
-    listExpanded || !hasMore
+    listExpanded || !hasMoreSessions
       ? sortedSessions
       : sortedSessions.slice(0, SESSION_HISTORY_PREVIEW);
 
@@ -70,6 +80,13 @@ export function PaperSessionsHistorySection({
     } finally {
       setClearBusy(false);
     }
+  };
+
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (deletingId) return;
+    setDeletingId(id);
+    Promise.resolve(onDeleteSession(id, e)).finally(() => setDeletingId(null));
   };
 
   return (
@@ -93,34 +110,30 @@ export function PaperSessionsHistorySection({
                   onChange={(e) =>
                     setSessionSortBy(e.target.value as PaperSessionSortMode)
                   }
-                  className={cn(analyticsSelectClass, 'min-w-[160px]')}
+                  className={cn(sessionHistorySelectClass, 'min-w-[160px]')}
                   aria-label="Sort sessions"
                 >
-                  <option value="recent">Sort by recent</option>
-                  <option value="percentage">Sort by score %</option>
-                  <option value="percentile">Sort by percentile</option>
+                  <option value="recent">Sort by Recent</option>
+                  <option value="percentage">Highest score %</option>
+                  <option value="percentile">Highest percentile</option>
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
               </div>
-              {allSessionCount > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setClearOpen(true)}
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded-organic-md border border-error/35 bg-error/10 px-4 py-2.5 text-sm font-medium text-error',
-                    'transition-colors hover:bg-error/20',
-                  )}
-                >
-                  Clear all
-                  <Trash2 className="h-4 w-4" strokeWidth={2} />
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setClearOpen(true)}
+                disabled={allSessionCount === 0}
+                className={sessionHistoryClearBtnClass}
+              >
+                Clear All
+                <Trash2 className="h-4 w-4" strokeWidth={2} />
+              </button>
             </>
           )}
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="group inline-flex h-10 w-10 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+            className={sessionHistoryCollapseBtnClass}
             aria-label={
               isCollapsed ? 'Expand session history' : 'Collapse session history'
             }
@@ -175,7 +188,7 @@ export function PaperSessionsHistorySection({
                           s.selectedSections && s.selectedSections.length > 0
                             ? s.selectedSections.join(', ')
                             : s.sessionName || '—';
-                        const iconColor = getPaperTypeColor(s.paperName);
+                        const iconClass = getPaperSessionIconClass(s.paperName);
                         const isHighlighted = highlightedSessionId === s.id;
                         const date = s.startedAt
                           ? new Date(s.startedAt).toLocaleDateString('en-GB', {
@@ -198,32 +211,33 @@ export function PaperSessionsHistorySection({
                             )}
                           >
                             <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-3">
                                 <div
-                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
-                                  style={{
-                                    backgroundColor: desaturateColor(
-                                      iconColor,
-                                      0.3,
-                                    ),
-                                  }}
+                                  className={cn(
+                                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md',
+                                    iconClass,
+                                  )}
                                 >
-                                  <FileText className="h-4 w-4 text-text" />
+                                  <ScrollText
+                                    className="h-4 w-4"
+                                    strokeWidth={2}
+                                    aria-hidden
+                                  />
                                 </div>
                                 <span className="truncate font-medium text-text">
                                   {mainTitle}
                                 </span>
                               </div>
                             </td>
-                            <td className="max-w-[180px] truncate px-4 py-3 text-text-muted">
+                            <td className="max-w-[200px] truncate px-4 py-3 text-text-muted">
                               {sectionInfo}
                             </td>
-                            <td className="px-4 py-3 text-right tabular-nums text-text">
+                            <td className="px-4 py-3 text-right tabular-nums text-maths">
                               {s.scorePercentage !== null
                                 ? `${s.scorePercentage.toFixed(1)}%`
                                 : '—'}
                             </td>
-                            <td className="px-4 py-3 text-right tabular-nums text-text-muted">
+                            <td className="px-4 py-3 text-right tabular-nums text-accent">
                               {s.percentile !== null
                                 ? `${s.percentile.toFixed(1)}th`
                                 : '—'}
@@ -242,14 +256,16 @@ export function PaperSessionsHistorySection({
                                     e.stopPropagation();
                                     onViewMarkPage(s.id);
                                   }}
-                                  className="h-9 rounded-organic-md bg-surface-mid px-3 text-xs font-semibold text-text transition-colors hover:bg-surface-neutral"
+                                  className={sessionHistoryReviewBtnClass}
                                 >
                                   Mark
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={(e) => onDeleteSession(s.id, e)}
-                                  className="flex h-9 w-9 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors hover:bg-error/10 hover:text-error"
+                                  onClick={(e) => handleDelete(e, s.id)}
+                                  disabled={deletingId === s.id}
+                                  title="Delete session"
+                                  className={sessionHistoryDeleteBtnClass}
                                   aria-label="Delete session"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -262,26 +278,39 @@ export function PaperSessionsHistorySection({
                     </tbody>
                   </table>
                 </div>
-                {hasMore && (
+
+                {hasMoreSessions && !listExpanded ? (
+                  <>
+                    <div
+                      className="pointer-events-none absolute inset-x-0 bottom-10 h-24 rounded-b-organic-lg bg-gradient-to-t from-surface-elevated via-surface-elevated/95 to-transparent"
+                      aria-hidden
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setListExpanded(true)}
+                      className={sessionHistoryShowMoreBtnClass}
+                      aria-label={`Show all ${sortedSessions.length} sessions`}
+                    >
+                      <span className="text-base leading-none tracking-widest text-text-subtle">
+                        …
+                      </span>
+                      <span>
+                        Show all {sortedSessions.length} sessions
+                      </span>
+                    </button>
+                  </>
+                ) : null}
+
+                {hasMoreSessions && listExpanded ? (
                   <button
                     type="button"
-                    onClick={() => setListExpanded((v) => !v)}
-                    className={cn(
-                      'relative z-10 flex w-full items-center justify-center gap-2 rounded-b-organic-lg bg-surface-elevated py-3 text-sm font-medium text-text-muted transition-colors',
-                      'hover:bg-surface-mid/80 hover:text-text',
-                    )}
+                    onClick={() => setListExpanded(false)}
+                    className={sessionHistoryShowLessBtnClass}
                   >
-                    {listExpanded
-                      ? 'Show fewer sessions'
-                      : `Show all ${sortedSessions.length} sessions`}
-                    <ChevronDown
-                      className={cn(
-                        'h-4 w-4 transition-transform',
-                        listExpanded && 'rotate-180',
-                      )}
-                    />
+                    Show less
+                    <ChevronDown className="h-4 w-4 rotate-180" strokeWidth={2} />
                   </button>
-                )}
+                ) : null}
               </div>
             )}
           </motion.div>

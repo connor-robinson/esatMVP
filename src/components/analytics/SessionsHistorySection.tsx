@@ -9,7 +9,15 @@ import { SessionMiniChart } from "./SessionMiniChart";
 import { WrongQuestionsTable } from "./WrongQuestionsTable";
 import { ClearSessionHistoryModal } from "./ClearSessionHistoryModal";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
+import {
+  sessionHistoryClearBtnClass,
+  sessionHistoryCollapseBtnClass,
+  sessionHistoryDeleteBtnClass,
+  sessionHistoryReviewBtnClass,
+  sessionHistorySelectClass,
+  sessionHistoryShowLessBtnClass,
+  sessionHistoryShowMoreBtnClass,
+} from "@/components/analytics/sessionHistoryStyles";
 
 const sectionShell =
   "relative overflow-hidden rounded-organic-xl bg-surface-elevated p-6 sm:p-8";
@@ -145,10 +153,7 @@ export function SessionsHistorySection({
                   onChange={(e) =>
                     setSortBy(e.target.value as SessionSortMode)
                   }
-                  className={cn(
-                    "appearance-none cursor-pointer rounded-organic-md border border-border bg-surface-mid py-2.5 pl-4 pr-10 text-sm font-medium text-text",
-                    "transition-colors hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-subtle",
-                  )}
+                  className={cn(sessionHistorySelectClass, "min-w-[160px]")}
                 >
                   <option value="recent">Sort by Recent</option>
                   <option value="oldest">Oldest first</option>
@@ -161,10 +166,7 @@ export function SessionsHistorySection({
                 type="button"
                 onClick={() => setClearOpen(true)}
                 disabled={sessions.length === 0}
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-organic-md border border-error/35 bg-error/10 px-4 py-2.5 text-sm font-medium text-error",
-                  "transition-colors hover:bg-error/20 disabled:cursor-not-allowed disabled:opacity-40",
-                )}
+                className={sessionHistoryClearBtnClass}
               >
                 Clear All
                 <Trash2 className="h-4 w-4" strokeWidth={2} />
@@ -174,7 +176,7 @@ export function SessionsHistorySection({
           <button
             type="button"
             onClick={onToggleCollapse}
-            className="group inline-flex h-10 w-10 items-center justify-center rounded-organic-md border border-border bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+            className={sessionHistoryCollapseBtnClass}
             aria-label={isCollapsed ? "Expand session history" : "Collapse session history"}
           >
             <ChevronDown
@@ -240,11 +242,14 @@ export function SessionsHistorySection({
                             }
                           >
                             <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <BookOpen
-                                  className="h-4 w-4 shrink-0 text-text-muted"
-                                  strokeWidth={2}
-                                />
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md bg-primary/15 text-primary">
+                                  <BookOpen
+                                    className="h-4 w-4"
+                                    strokeWidth={2}
+                                    aria-hidden
+                                  />
+                                </div>
                                 <span className="font-medium text-text">
                                   {sessionLabel(row)}
                                 </span>
@@ -262,7 +267,7 @@ export function SessionsHistorySection({
                                 ? `${row.accuracy.toFixed(1)}%`
                                 : "0.0%"}
                             </td>
-                            <td className="px-4 py-3 text-right tabular-nums text-warning">
+                            <td className="px-4 py-3 text-right tabular-nums text-maths">
                               {row.totalQuestions > 0 ? row.score : "—"}
                             </td>
                             <td className="px-4 py-3 text-right tabular-nums text-text-muted">
@@ -280,11 +285,9 @@ export function SessionsHistorySection({
                             </td>
                             <td className="px-4 py-3 text-right">
                               <div className="flex items-center justify-end gap-2">
-                                <Button
+                                <button
                                   type="button"
-                                  variant="secondary"
-                                  size="sm"
-                                  className="h-9 rounded-organic-md border border-border bg-surface-mid px-3 py-1.5 text-xs font-semibold text-text hover:bg-surface-neutral"
+                                  className={sessionHistoryReviewBtnClass}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setExpandedId((id) =>
@@ -293,7 +296,7 @@ export function SessionsHistorySection({
                                   }}
                                 >
                                   Review
-                                </Button>
+                                </button>
                                 <button
                                   type="button"
                                   onClick={(e) =>
@@ -301,11 +304,7 @@ export function SessionsHistorySection({
                                   }
                                   disabled={deletingId === row.id}
                                   title="Delete session"
-                                  className={cn(
-                                    "flex h-9 w-9 items-center justify-center rounded-organic-md border border-border bg-surface-mid text-text-muted transition-colors hover:border-error/40 hover:bg-error/10 hover:text-error",
-                                    deletingId === row.id &&
-                                      "pointer-events-none opacity-50",
-                                  )}
+                                  className={sessionHistoryDeleteBtnClass}
                                   aria-label="Delete session"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -365,10 +364,7 @@ export function SessionsHistorySection({
                     <button
                       type="button"
                       onClick={() => setListExpanded(true)}
-                      className={cn(
-                        "relative z-10 flex w-full items-center justify-center gap-2 rounded-b-organic-lg border border-t-0 border-border-subtle bg-surface-elevated py-3 text-sm font-medium text-text-muted transition-colors",
-                        "hover:bg-surface-mid/50 hover:text-text",
-                      )}
+                      className={sessionHistoryShowMoreBtnClass}
                       aria-label={`Show all ${sortedSessions.length} sessions`}
                     >
                       <span className="text-base leading-none tracking-widest text-text-subtle">
@@ -388,10 +384,7 @@ export function SessionsHistorySection({
                       setListExpanded(false);
                       setExpandedId(null);
                     }}
-                    className={cn(
-                      "mt-2 flex w-full items-center justify-center gap-2 rounded-organic-md py-2.5 text-sm font-medium text-text-muted transition-colors",
-                      "hover:bg-surface-mid/50 hover:text-text",
-                    )}
+                    className={sessionHistoryShowLessBtnClass}
                   >
                     Show less
                     <ChevronDown className="h-4 w-4 rotate-180" strokeWidth={2} />
