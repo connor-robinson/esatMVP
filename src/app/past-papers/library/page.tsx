@@ -464,18 +464,8 @@ export default function PapersLibraryPage() {
   }
 
   return (
-    <Container size='lg' className='py-6 sm:py-8'>
-      <header className='mb-6 max-w-2xl'>
-        <h1 className='font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl'>
-          Past Papers
-        </h1>
-        <p className='mt-2 text-sm leading-relaxed text-text-muted sm:text-base'>
-          Build a custom practice session from real exam papers — filter by exam,
-          year, and type, then start when you are ready.
-        </p>
-      </header>
-
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start'>
+    <Container size='lg' className='py-7 sm:py-9'>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6'>
         <div>
           <PaperLibraryGrid
             filterSourcePapers={papers}

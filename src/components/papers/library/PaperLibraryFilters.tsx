@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
 
 interface PaperLibraryFiltersProps {
+  /** When true, search and filters share one inset panel inside Paper Library. */
+  embedded?: boolean;
   papers: Paper[];
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -23,11 +25,13 @@ function Dropdown({
   onChange,
   options,
   placeholder,
+  embedded,
 }: {
   value: string | number | "ALL";
   onChange: (value: string | number | "ALL") => void;
   options: Array<{ value: string | number | "ALL"; label: string }>;
   placeholder: string;
+  embedded?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,7 +54,12 @@ function Dropdown({
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        className="flex h-8 w-full items-center justify-between gap-2 rounded-organic-md bg-surface-mid px-3 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
+        className={cn(
+          "flex h-9 w-full items-center justify-between gap-2 rounded-organic-md px-3 font-heading text-sm font-medium text-text transition-colors focus-visible:outline-none",
+          embedded
+            ? "bg-surface-elevated/80 hover:bg-surface-elevated"
+            : "bg-surface-mid hover:bg-surface-neutral",
+        )}
       >
         <span className="truncate">{selected}</span>
         <ChevronDown
@@ -103,6 +112,7 @@ function Dropdown({
 }
 
 export function PaperLibraryFilters({
+  embedded = false,
   papers,
   searchQuery,
   onSearchChange,
@@ -145,39 +155,45 @@ export function PaperLibraryFilters({
     onTypeFilterChange("ALL");
   };
 
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <div className="relative min-w-0 flex-1">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
-            strokeWidth={2}
-          />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search exam, paper, or year…"
-            className={cn(
-              "h-8 w-full rounded-organic-md bg-surface-mid pl-9 pr-3 text-sm text-text placeholder:text-text-muted",
-              "border-0 outline-none shadow-none ring-0",
-              "focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
-            )}
-          />
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setFiltersOpen((o) => !o)}
-          aria-expanded={filtersOpen}
+  const toolbar = (
+    <div className="flex items-center gap-2.5">
+      <div className="relative min-w-0 flex-1">
+        <Search
+          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+          strokeWidth={2}
+        />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search exam, paper, or year…"
           className={cn(
-            "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-organic-md px-2.5 text-xs font-semibold transition-colors sm:px-3 sm:text-sm",
-            "focus-visible:outline-none",
-            filtersOpen || activeFilterCount > 0
-              ? "bg-surface-neutral text-text"
-              : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+            "h-9 w-full rounded-organic-md pl-10 pr-3 font-heading text-sm text-text placeholder:text-text-muted",
+            "border-0 outline-none shadow-none ring-0",
+            "focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
+            embedded
+              ? "bg-surface-elevated/80 focus:bg-surface-elevated"
+              : "bg-surface-mid",
           )}
-        >
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setFiltersOpen((o) => !o)}
+        aria-expanded={filtersOpen}
+        className={cn(
+          "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-organic-md px-3 font-heading text-xs font-semibold transition-colors sm:text-sm",
+          "focus-visible:outline-none",
+          filtersOpen || activeFilterCount > 0
+            ? embedded
+              ? "bg-surface-elevated text-text"
+              : "bg-surface-neutral text-text"
+            : embedded
+              ? "bg-surface-elevated/80 text-text-muted hover:bg-surface-elevated hover:text-text"
+              : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+        )}
+      >
           <SlidersHorizontal className="h-4 w-4 shrink-0" strokeWidth={2} />
           <span className="hidden sm:inline">Filters</span>
           {activeFilterCount > 0 ? (
@@ -193,60 +209,85 @@ export function PaperLibraryFilters({
             strokeWidth={2.5}
           />
         </button>
-      </div>
+    </div>
+  );
 
-      <AnimatePresence initial={false}>
-        {filtersOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
-            className="overflow-hidden"
+  const filterRow = (
+    <AnimatePresence initial={false}>
+      {filtersOpen && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
+          className="overflow-hidden"
+        >
+          <div
+            className={cn(
+              "flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center",
+              embedded ? "pt-3" : "pt-2",
+            )}
           >
-            <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
-              <Dropdown
-                value={examFilter}
-                onChange={(v) => onExamFilterChange(v as string | "ALL")}
-                options={[
-                  { value: "ALL", label: "All exams" },
-                  ...exams.map((e) => ({ value: e, label: e })),
-                ]}
-                placeholder="All exams"
-              />
-              <Dropdown
-                value={yearFilter}
-                onChange={(v) =>
-                  onYearFilterChange(v === "ALL" ? "ALL" : (v as number))
-                }
-                options={[
-                  { value: "ALL", label: "All years" },
-                  ...years.map((y) => ({ value: y, label: String(y) })),
-                ]}
-                placeholder="All years"
-              />
-              <Dropdown
-                value={typeFilter}
-                onChange={(v) => onTypeFilterChange(v as string | "ALL")}
-                options={[
-                  { value: "ALL", label: "All types" },
-                  ...types.map((t) => ({ value: t, label: t })),
-                ]}
-                placeholder="All types"
-              />
-              {activeFilterCount > 0 ? (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="h-9 shrink-0 px-2 text-xs font-medium text-text-muted transition-colors hover:text-text"
-                >
-                  Clear filters
-                </button>
-              ) : null}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Dropdown
+              embedded={embedded}
+              value={examFilter}
+              onChange={(v) => onExamFilterChange(v as string | "ALL")}
+              options={[
+                { value: "ALL", label: "All exams" },
+                ...exams.map((e) => ({ value: e, label: e })),
+              ]}
+              placeholder="All exams"
+            />
+            <Dropdown
+              embedded={embedded}
+              value={yearFilter}
+              onChange={(v) =>
+                onYearFilterChange(v === "ALL" ? "ALL" : (v as number))
+              }
+              options={[
+                { value: "ALL", label: "All years" },
+                ...years.map((y) => ({ value: y, label: String(y) })),
+              ]}
+              placeholder="All years"
+            />
+            <Dropdown
+              embedded={embedded}
+              value={typeFilter}
+              onChange={(v) => onTypeFilterChange(v as string | "ALL")}
+              options={[
+                { value: "ALL", label: "All types" },
+                ...types.map((t) => ({ value: t, label: t })),
+              ]}
+              placeholder="All types"
+            />
+            {activeFilterCount > 0 ? (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="h-9 shrink-0 px-2 font-heading text-xs font-medium text-text-muted transition-colors hover:text-text"
+              >
+                Clear filters
+              </button>
+            ) : null}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  if (embedded) {
+    return (
+      <div className="rounded-organic-md bg-surface-mid/35 px-3.5 py-3.5 sm:px-4 sm:py-4">
+        {toolbar}
+        {filterRow}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {toolbar}
+      {filterRow}
     </div>
   );
 }

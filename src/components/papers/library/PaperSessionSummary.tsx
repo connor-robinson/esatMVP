@@ -619,20 +619,23 @@ export function PaperSessionSummary({
   const totalItems = selectedPapers.length;
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Header — on page background, matching left column header height */}
-      <div className="flex items-start justify-between gap-4 pb-1">
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start justify-between gap-4 pb-0.5">
         <div>
-          <h2 className="text-xl font-bold text-text">Practice Session</h2>
-          <p className="mt-1 text-sm text-text-muted">Select subjects for each section.</p>
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-[1.35rem]">
+            Practice Session
+          </h2>
+          <p className="mt-1.5 font-heading text-sm text-text-muted">
+            Select subjects for each section.
+          </p>
         </div>
-        <span className="shrink-0 pt-1 text-xs text-text-muted">
+        <span className="shrink-0 pt-1 font-heading text-xs text-text-muted">
           {totalItems} {totalItems === 1 ? "paper" : "papers"}
         </span>
       </div>
 
       {/* Content card */}
-      <div className="rounded-lg bg-surface px-5 py-5 flex flex-col gap-5">
+      <div className="flex flex-col gap-5 rounded-organic-xl bg-surface px-5 py-5 sm:px-6 sm:py-6">
         {/* Selected papers */}
         <div
           className="min-h-[220px] space-y-2 overflow-y-auto rounded-lg bg-surface-elevated p-3"

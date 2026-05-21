@@ -96,18 +96,19 @@ export function PaperLibraryGrid({
   }, [papers]);
 
   return (
-    <div className="flex h-full flex-col gap-3">
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-xl font-bold text-text">Paper Library</h2>
-          <span className="shrink-0 text-xs tabular-nums text-text-muted">
-            {papers.length} result{papers.length === 1 ? "" : "s"}
-          </span>
-        </div>
-        <p className="text-xs leading-snug text-text-muted sm:text-sm">
-          Search and filter papers by exam, year, and type to find what you need.
-        </p>
+    <section className="flex h-full flex-col rounded-organic-xl bg-surface px-5 py-5 sm:px-6 sm:py-6">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-[1.35rem]">
+          Paper Library
+        </h2>
+        <span className="shrink-0 font-heading text-xs font-medium tabular-nums text-text-muted">
+          {papers.length} result{papers.length === 1 ? "" : "s"}
+        </span>
+      </div>
+
+      <div className="mt-4">
         <PaperLibraryFilters
+          embedded
           papers={filterSourcePapers}
           searchQuery={searchQuery}
           onSearchChange={onSearchChange}
@@ -121,11 +122,11 @@ export function PaperLibraryGrid({
       </div>
 
       {papers.length === 0 ? (
-        <div className="flex min-h-[220px] flex-1 items-center justify-center rounded-organic-lg bg-surface text-sm text-text-muted">
+        <div className="mt-5 flex min-h-[14rem] flex-1 items-center justify-center rounded-organic-md bg-surface-mid/35 px-4 text-sm text-text-muted">
           No papers match the current filters.
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
           {papersByExam.sortedExams.map((examName) => {
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
@@ -136,12 +137,12 @@ export function PaperLibraryGrid({
             return (
               <div
                 key={examName}
-                className="overflow-hidden rounded-organic-lg bg-surface"
+                className="overflow-hidden rounded-organic-lg bg-surface-mid/35"
               >
                 <button
                   type="button"
                   onClick={() => toggleExam(examName)}
-                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid"
+                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid/70"
                 >
                   <div className="flex items-center gap-2.5">
                     <ChevronDown
@@ -155,14 +156,14 @@ export function PaperLibraryGrid({
                     />
                     <span
                       className={cn(
-                        "text-sm font-semibold uppercase tracking-wide",
+                        "font-heading text-sm font-semibold uppercase tracking-wide",
                         accentClass,
                       )}
                     >
                       {examName} Papers
                     </span>
                   </div>
-                  <span className="text-xs text-text-muted">
+                  <span className="font-heading text-xs text-text-muted">
                     {examPapers.length} paper{examPapers.length === 1 ? "" : "s"} available
                   </span>
                 </button>
@@ -176,7 +177,7 @@ export function PaperLibraryGrid({
                       transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="space-y-1.5 p-3">
+                      <div className="space-y-2 p-4">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}
@@ -201,6 +202,6 @@ export function PaperLibraryGrid({
           })}
         </div>
       )}
-    </div>
+    </section>
   );
 }
