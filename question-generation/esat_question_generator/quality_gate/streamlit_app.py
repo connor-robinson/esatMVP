@@ -63,7 +63,7 @@ def _review_base_url() -> str:
     raw = (
         os.environ.get("REVIEW_APP_URL")
         or os.environ.get("NEXT_PUBLIC_REVIEW_APP_URL")
-        or "http://localhost:3000"
+        or "https://questions-reviewer.vercel.app"
     )
     return raw.rstrip("/")
 
@@ -1099,7 +1099,7 @@ python quality_gate/cli.py generate-missing-svgs --limit 20 --operator-queue-onl
         "`migrations/add_quality_gate_calibration_graph.sql` in Supabase if you use calibration/graph columns. "
         "For the SVG backfill **operator queue** UI: `migrations/add_svg_operator_backfill_choice.sql`. "
         "Optional stem snapshot: `migrations/add_question_stem_before_auto_diagram.sql`.\n\n"
-        "**Review links in Streamlit:** set `REVIEW_APP_URL` (e.g. `http://localhost:3000`) so the results table "
+        "**Review links in Streamlit:** set `REVIEW_APP_URL` (default: `https://questions-reviewer.vercel.app`) so the results table "
         "“Open” links point at your Next.js review app. **After a run** needs `pandas` (see `requirements_quality_gate.txt`).\n\n"
         "**Auto-SVG:** diagram generation uses a **4-phase pipeline** (scene → layout → collision → render) plus an "
         "**archetype library** (`quality_gate/svg_archetypes.md`). Set env `QUALITY_GATE_SVG_PIPELINE=0` (or use "
