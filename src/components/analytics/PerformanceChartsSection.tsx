@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const sectionShell =
-  "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
+  "relative overflow-hidden rounded-organic-xl bg-surface-elevated p-6 sm:p-8";
 
 interface PerformanceChartsSectionProps {
   /** Daily aggregate chart data (fallback when session mode unavailable) */

@@ -230,7 +230,7 @@ function AccuracyChartComponent({ data }: AccuracyChartProps) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-mid">
+    <div className="relative overflow-hidden rounded-organic-lg bg-surface-mid">
       <div className="p-6">
         {/* Header with animated icon and zoom controls */}
         <div className="flex items-center justify-between mb-6">

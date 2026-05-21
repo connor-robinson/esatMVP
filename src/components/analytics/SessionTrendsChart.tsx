@@ -94,14 +94,14 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
 
   if (chartData.length === 0) {
     return (
-      <p className="rounded-organic-lg border border-border-subtle bg-surface-mid px-4 py-12 text-center text-sm text-text-muted">
+      <p className="rounded-organic-lg bg-surface-mid px-4 py-12 text-center text-sm text-text-muted">
         Complete sessions to see performance trends.
       </p>
     );
   }
 
   return (
-    <div className="rounded-organic-lg border border-border-subtle bg-surface-mid p-4 sm:p-6">
+    <div className="rounded-organic-lg bg-surface-mid p-4 sm:p-6">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
         <div className="relative shrink-0">
           <select

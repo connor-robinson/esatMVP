@@ -230,7 +230,7 @@ function SpeedChartComponent({ data }: SpeedChartProps) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-mid">
+    <div className="relative overflow-hidden rounded-organic-lg bg-surface-mid">
       <div className="p-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">

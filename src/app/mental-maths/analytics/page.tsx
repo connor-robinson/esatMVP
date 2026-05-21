@@ -788,7 +788,7 @@ export default function AnalyticsPage() {
             onClearAllSessions={handleClearAllSessions}
           />
         ) : (
-          <div className="flex h-96 items-center justify-center rounded-organic-xl border border-dashed border-border-subtle bg-surface-subtle">
+          <div className="flex h-96 items-center justify-center rounded-organic-xl bg-surface-subtle">
             <p className="text-center text-sm text-text-muted">
               No personal stats yet. Start a session to build your analytics profile.
             </p>

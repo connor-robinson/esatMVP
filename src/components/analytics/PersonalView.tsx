@@ -1,5 +1,5 @@
 /**
- * Mental Maths personal analytics — session history → overview → trends → mistakes
+ * Mental Maths personal analytics — overview → trends → session history → mistakes
  */
 
 "use client";
@@ -72,14 +72,6 @@ export function PersonalView({
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <SessionsHistorySection
-        sessions={sessions}
-        isCollapsed={collapsedSections.has("sessions")}
-        onToggleCollapse={() => toggleSection("sessions")}
-        onDeleteSession={onDeleteSession}
-        onClearAllSessions={onClearAllSessions}
-      />
-
       <StatsHero
         variant="drill"
         sessions={sessions}
@@ -103,6 +95,14 @@ export function PersonalView({
         performanceData={performanceData}
         isCollapsed={collapsedSections.has("performance")}
         onToggleCollapse={() => toggleSection("performance")}
+      />
+
+      <SessionsHistorySection
+        sessions={sessions}
+        isCollapsed={collapsedSections.has("sessions")}
+        onToggleCollapse={() => toggleSection("sessions")}
+        onDeleteSession={onDeleteSession}
+        onClearAllSessions={onClearAllSessions}
       />
 
       <MistakeAnalysisSection

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 const sectionShell =
-  "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
+  "relative overflow-hidden rounded-organic-xl bg-surface-elevated p-6 sm:p-8";
 
 const BUCKETS: { label: string; cssVar: string }[] = [
   { label: "Rushed calculation", cssVar: "--color-primary" },
@@ -106,7 +106,7 @@ export function MistakeAnalysisSection({
             className="overflow-hidden"
           >
             {totalWrong === 0 ? (
-              <p className="rounded-organic-lg border border-dashed border-border-subtle bg-surface-mid/50 px-4 py-10 text-center text-sm text-text-muted">
+              <p className="rounded-organic-lg bg-surface-mid/50 px-4 py-10 text-center text-sm text-text-muted">
                 No wrong answers in stored session attempts yet — keep practising to
                 populate this breakdown.
               </p>

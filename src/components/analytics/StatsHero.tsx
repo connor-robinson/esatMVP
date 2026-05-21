@@ -12,10 +12,10 @@ import type { SessionSummary } from "@/types/analytics";
 import { useMemo } from "react";
 
 const sectionShell =
-  "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
+  "relative overflow-hidden rounded-organic-xl bg-surface-elevated p-6 sm:p-8";
 
 const statTile =
-  "relative overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid p-4";
+  "relative overflow-hidden rounded-organic-md bg-surface-mid p-4";
 
 interface DrillOverview {
   avgSessionAccuracyPct: number;

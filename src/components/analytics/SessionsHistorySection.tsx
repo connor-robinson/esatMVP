@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
 const sectionShell =
-  "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
+  "relative overflow-hidden rounded-organic-xl bg-surface-elevated p-6 sm:p-8";
 
 /** Default visible rows before “show all” (mental maths analytics). */
 const SESSION_HISTORY_PREVIEW = 4;
@@ -197,7 +197,7 @@ export function SessionsHistorySection({
             className="overflow-hidden"
           >
             {sortedSessions.length === 0 ? (
-              <p className="rounded-organic-lg border border-dashed border-border-subtle bg-surface-mid/50 py-10 text-center text-sm text-text-muted">
+              <p className="rounded-organic-lg bg-surface-mid/50 py-10 text-center text-sm text-text-muted">
                 No completed sessions yet. Finish a drill to see history here.
               </p>
             ) : (
