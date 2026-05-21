@@ -24,7 +24,7 @@ interface PaperLibraryGridProps {
   selectedPaperIds: Set<number>;
   selectedSectionsByPaper: Map<number, Set<PaperSection>>;
   onToggleSection: (paperId: number, section: PaperSection) => void;
-  onAddFullPaper: (paper: Paper, sections: PaperSection[]) => void;
+  onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
 }

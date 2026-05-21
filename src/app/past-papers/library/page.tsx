@@ -39,6 +39,29 @@ function paperHasSelectedSubjects(
   return false;
 }
 
+function mergeMainSectionMaps(
+  existing: Map<string, Set<PaperSection>>,
+  incoming: Map<string, Set<PaperSection>>,
+): Map<string, Set<PaperSection>> {
+  const merged = new Map(existing);
+  incoming.forEach((subjects, mainSectionName) => {
+    const next = new Set(merged.get(mainSectionName) ?? []);
+    subjects.forEach((subject) => next.add(subject));
+    merged.set(mainSectionName, next);
+  });
+  return merged;
+}
+
+function cloneMainSectionMap(
+  source: Map<string, Set<PaperSection>>,
+): Map<string, Set<PaperSection>> {
+  const copy = new Map<string, Set<PaperSection>>();
+  source.forEach((subjects, mainSectionName) => {
+    copy.set(mainSectionName, new Set(subjects));
+  });
+  return copy;
+}
+
 export default function PapersLibraryPage() {
   const router = useRouter();
   const { startSession, loadQuestions } = usePaperSessionStore();
@@ -121,23 +144,21 @@ export default function PapersLibraryPage() {
     }
   };
 
-  // Add full paper with all sections
-  const handleAddFullPaper = (paper: Paper, sections: PaperSection[]) => {
+  // Add full paper with all main sections (e.g. TMUA Paper 1 + Paper 2, ENGAA Section 1 + 2)
+  const handleAddFullPaper = (
+    paper: Paper,
+    sectionsByMain: Map<string, Set<PaperSection>>,
+  ) => {
     const existingPaper = selectedPapers.find((sp) => sp.paper.id === paper.id);
     if (existingPaper) {
-      // Paper already selected, select all available sections
-      // For full paper, we need to determine which main sections these belong to
-      // This is a simplified version - in practice, we'd need to load the paper data
-      const allSections = new Map<string, Set<PaperSection>>();
-      allSections.set('Section 1', new Set(sections));
-      handleUpdateSections(paper.id, allSections);
+      handleUpdateSections(
+        paper.id,
+        mergeMainSectionMaps(existingPaper.selectedSections, sectionsByMain),
+      );
     } else {
-      // Add paper with all sections selected
-      const allSections = new Map<string, Set<PaperSection>>();
-      allSections.set('Section 1', new Set(sections));
       setSelectedPapers((prev) => [
         ...prev,
-        { paper, selectedSections: allSections },
+        { paper, selectedSections: cloneMainSectionMap(sectionsByMain) },
       ]);
     }
   };

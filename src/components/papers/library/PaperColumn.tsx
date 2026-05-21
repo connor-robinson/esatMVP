@@ -22,7 +22,7 @@ interface PaperColumnProps {
   isSelected: boolean;
   selectedSections: Set<PaperSection>;
   onToggleSection: (paperId: number, section: PaperSection) => void;
-  onAddFullPaper: (paper: Paper, sections: PaperSection[]) => void;
+  onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
   allPapers?: Paper[];
@@ -288,12 +288,37 @@ export function PaperColumn({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- loadingCompletion intentionally excluded to prevent infinite loop (effect toggles it)
   }, [availableSections, session?.user?.id, paper]);
 
+  const buildSectionsByMain = (): Map<string, Set<PaperSection>> => {
+    const sectionsByMain = new Map<string, Set<PaperSection>>();
+    mainSections.forEach((mainSection) => {
+      sectionsByMain.set(mainSection.name, new Set(mainSection.subjectParts));
+    });
+    return sectionsByMain;
+  };
+
   const handleAddPaperClick = () => {
-    if (availableSections.length > 0) {
-      onAddFullPaper(paper, availableSections);
-    } else {
-      onAddPaper(paper);
+    if (mainSections.length > 0) {
+      onAddFullPaper(paper, buildSectionsByMain());
+      return;
     }
+
+    if (availableSections.length > 0) {
+      const sectionsByMain = new Map<string, Set<PaperSection>>();
+      if (paperType === "TMUA") {
+        for (const section of availableSections) {
+          if (section === "Paper 1" || section === "Paper 2") {
+            sectionsByMain.set(section, new Set([section]));
+          }
+        }
+      }
+      if (sectionsByMain.size === 0) {
+        sectionsByMain.set("Section 1", new Set(availableSections));
+      }
+      onAddFullPaper(paper, sectionsByMain);
+      return;
+    }
+
+    onAddPaper(paper);
   };
 
   const handleAddSectionClick = (sectionName: string, subjectParts: PaperSection[]) => {

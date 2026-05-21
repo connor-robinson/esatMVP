@@ -21,7 +21,7 @@ interface PaperRowProps {
   selectedSections: Set<PaperSection>;
   onToggleSelect: (paper: Paper) => void;
   onToggleSection: (paperId: number, section: PaperSection) => void;
-  onAddFullPaper: (paper: Paper, sections: PaperSection[]) => void;
+  onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
 }
 
 export function PaperRow({
@@ -96,10 +96,21 @@ export function PaperRow({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- loadingCompletion intentionally excluded to prevent infinite loop (effect toggles it)
   }, [availableSections, session?.user?.id, paper]);
 
-  const handleAddFullPaper = () => {
-    if (availableSections.length > 0) {
-      onAddFullPaper(paper, availableSections);
+  const handleAddFullPaperClick = () => {
+    if (availableSections.length === 0) return;
+    const sectionsByMain = new Map<string, Set<PaperSection>>();
+    const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
+    if (paperType === "TMUA") {
+      for (const section of availableSections) {
+        if (section === "Paper 1" || section === "Paper 2") {
+          sectionsByMain.set(section, new Set([section]));
+        }
+      }
     }
+    if (sectionsByMain.size === 0) {
+      sectionsByMain.set("Section 1", new Set(availableSections));
+    }
+    onAddFullPaper(paper, sectionsByMain);
   };
 
   return (
