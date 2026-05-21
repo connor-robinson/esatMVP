@@ -30,6 +30,15 @@ interface SelectedPaper {
 const TMUA_SECTIONS = ['Paper 1', 'Paper 2'] as const;
 type TmuaSection = (typeof TMUA_SECTIONS)[number];
 
+function paperHasSelectedSubjects(
+  sections: Map<string, Set<PaperSection>>,
+): boolean {
+  for (const subjects of sections.values()) {
+    if (subjects.size > 0) return true;
+  }
+  return false;
+}
+
 export default function PapersLibraryPage() {
   const router = useRouter();
   const { startSession, loadQuestions } = usePaperSessionStore();
@@ -171,19 +180,12 @@ export default function PapersLibraryPage() {
   ) => {
     const selectedPaper = selectedPapers.find((sp) => sp.paper.id === paperId);
 
-    // If paper is not in selection, add it first
     if (!selectedPaper) {
       const paper = papers.find((p) => p.id === paperId);
-      if (!paper) return;
+      if (!paper || !mainSectionName) return;
 
-      // Add paper with the selected section
       const newSections = new Map<string, Set<PaperSection>>();
-      if (mainSectionName) {
-        newSections.set(mainSectionName, new Set([section]));
-      } else {
-        // Fallback: use "Section 1" if no main section name provided
-        newSections.set('Section 1', new Set([section]));
-      }
+      newSections.set(mainSectionName, new Set([section]));
       setSelectedPapers((prev) => [
         ...prev,
         { paper, selectedSections: newSections },
@@ -191,32 +193,33 @@ export default function PapersLibraryPage() {
       return;
     }
 
-    // Use the provided main section name, or default to "Section 1"
-    const sectionName = mainSectionName || 'Section 1';
+    if (!mainSectionName) return;
+
     const newSections = new Map(selectedPaper.selectedSections);
     const sectionSubjects =
-      newSections.get(sectionName) || new Set<PaperSection>();
+      newSections.get(mainSectionName) || new Set<PaperSection>();
 
     if (sectionSubjects.has(section)) {
       sectionSubjects.delete(section);
-      // If no subjects left in this section, remove the section entry
-      if (sectionSubjects.size === 0) {
-        newSections.delete(sectionName);
-        // If no sections left at all, remove the paper
-        if (newSections.size === 0) {
-          setSelectedPapers((prev) =>
-            prev.filter((sp) => sp.paper.id !== paperId),
-          );
-          return;
-        }
-      } else {
-        newSections.set(sectionName, sectionSubjects);
-      }
     } else {
       sectionSubjects.add(section);
-      newSections.set(sectionName, sectionSubjects);
     }
 
+    if (sectionSubjects.size === 0) {
+      newSections.delete(mainSectionName);
+    } else {
+      newSections.set(mainSectionName, sectionSubjects);
+    }
+
+    handleUpdateSections(paperId, newSections);
+  };
+
+  const handleClearMainSection = (paperId: number, mainSectionName: string) => {
+    const selectedPaper = selectedPapers.find((sp) => sp.paper.id === paperId);
+    if (!selectedPaper) return;
+
+    const newSections = new Map(selectedPaper.selectedSections);
+    newSections.delete(mainSectionName);
     handleUpdateSections(paperId, newSections);
   };
 
@@ -261,6 +264,11 @@ export default function PapersLibraryPage() {
     paperId: number,
     sections: Map<string, Set<PaperSection>>,
   ) => {
+    if (!paperHasSelectedSubjects(sections)) {
+      setSelectedPapers((prev) => prev.filter((sp) => sp.paper.id !== paperId));
+      return;
+    }
+
     setSelectedPapers((prev) =>
       prev.map((sp) =>
         sp.paper.id === paperId ? { ...sp, selectedSections: sections } : sp,
@@ -443,9 +451,9 @@ export default function PapersLibraryPage() {
     }
   };
 
-  const canStart =
-    selectedPapers.length > 0 &&
-    selectedPapers.some((sp) => sp.selectedSections.size > 0);
+  const canStart = selectedPapers.some((sp) =>
+    paperHasSelectedSubjects(sp.selectedSections),
+  );
 
   if (loading) {
     return (
@@ -491,8 +499,7 @@ export default function PapersLibraryPage() {
           <PaperSessionSummary
             selectedPapers={selectedPapers}
             onRemovePaper={handleRemovePaper}
-            onToggleSection={(paperId, section) => {
-              // Also register sections for stats if not present yet
+            onToggleSection={(paperId, section, mainSectionName) => {
               const existing = availableSectionsByPaper.get(paperId);
               if (!existing || existing.length === 0) {
                 const candidate = Array.from(
@@ -500,8 +507,9 @@ export default function PapersLibraryPage() {
                 ) as PaperSection[];
                 registerAvailableSections(paperId, candidate);
               }
-              handleToggleSection(paperId, section);
+              handleToggleSection(paperId, section, mainSectionName);
             }}
+            onClearMainSection={handleClearMainSection}
             onReorderPaper={handleReorderPaper}
             availableSectionsByPaper={availableSectionsByPaper}
             canStart={canStart && !isStartingSession}

@@ -25,6 +25,15 @@ import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 
+function paperHasSelectedSubjects(
+  sections: Map<string, Set<PaperSection>>,
+): boolean {
+  for (const subjects of sections.values()) {
+    if (subjects.size > 0) return true;
+  }
+  return false;
+}
+
 const panelClass = "rounded-2xl bg-surface px-5 py-5";
 
 interface SelectedPaper {
@@ -36,6 +45,7 @@ interface PaperSessionSummaryProps {
   selectedPapers: SelectedPaper[];
   onRemovePaper: (paperId: number) => void;
   onToggleSection: (paperId: number, section: PaperSection, mainSectionName?: string) => void;
+  onClearMainSection: (paperId: number, mainSectionName: string) => void;
   onReorderPaper: (paperId: number, direction: "up" | "down") => void;
   availableSectionsByPaper: Map<number, PaperSection[]>;
   canStart: boolean;
@@ -126,6 +136,7 @@ interface PaperItemProps {
   paperExpandedSections: Set<string>;
   onRemovePaper: (paperId: number) => void;
   onToggleSection: (paperId: number, section: PaperSection, mainSectionName?: string) => void;
+  onClearMainSection: (paperId: number, mainSectionName: string) => void;
   onToggleSectionExpanded: (paperId: number, sectionName: string) => void;
 }
 
@@ -136,6 +147,7 @@ function PaperItemComponent({
   paperExpandedSections,
   onRemovePaper,
   onToggleSection,
+  onClearMainSection,
   onToggleSectionExpanded,
 }: PaperItemProps) {
   const loading = !paperData || paperData.loading;
@@ -145,6 +157,10 @@ function PaperItemComponent({
     const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
     return mainSection.subjectParts.some((part) => sectionSubjects.has(part));
   });
+
+  if (!loading && !paperHasSelectedSubjects(selectedSections)) {
+    return null;
+  }
 
   return (
     <div className="overflow-hidden rounded-organic-md bg-surface-mid/70">
@@ -176,11 +192,7 @@ function PaperItemComponent({
         <div className="border-t border-border-subtle/40 bg-surface-elevated/60 px-3 py-2">
           <SectionsLoadingState />
         </div>
-      ) : visibleSections.length === 0 ? (
-        <div className="border-t border-border-subtle/40 bg-surface-elevated/60 px-3 py-3 font-heading text-xs text-text-muted">
-          No sections available
-        </div>
-      ) : (
+      ) : visibleSections.length === 0 ? null : (
         visibleSections.map((mainSection) => {
           const isExpanded = paperExpandedSections.has(mainSection.name);
           const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
@@ -224,15 +236,9 @@ function PaperItemComponent({
                 {selectedCount > 0 ? (
                   <button
                     type="button"
-                    onClick={() => {
-                      mainSection.subjectParts.forEach((subject) => {
-                        if (sectionSubjects.has(subject)) {
-                          onToggleSection(paper.id, subject, mainSection.name);
-                        }
-                      });
-                    }}
+                    onClick={() => onClearMainSection(paper.id, mainSection.name)}
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-mid/80 text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
-                    aria-label={`Deselect all subjects in ${mainSection.name}`}
+                    aria-label={`Remove ${mainSection.name} from session`}
                   >
                     <X className="h-3.5 w-3.5 stroke-[2.5]" />
                   </button>
@@ -363,6 +369,7 @@ export function PaperSessionSummary({
   selectedPapers,
   onRemovePaper,
   onToggleSection,
+  onClearMainSection,
   onReorderPaper,
   availableSectionsByPaper,
   canStart,
@@ -591,7 +598,15 @@ export function PaperSessionSummary({
     return { totalSections, totalQuestions, totalTimeMinutes };
   }, [selectedPapers, paperData]);
 
-  const totalItems = selectedPapers.length;
+  const basketPapers = useMemo(
+    () =>
+      selectedPapers.filter((sp) =>
+        paperHasSelectedSubjects(sp.selectedSections),
+      ),
+    [selectedPapers],
+  );
+
+  const totalItems = basketPapers.length;
 
   const itemCountLabel =
     totalItems === 0
@@ -633,7 +648,7 @@ export function PaperSessionSummary({
               : "min-h-[14rem] max-h-[min(52vh,26rem)] flex-1 sm:min-h-[16rem] sm:max-h-[min(58vh,28rem)]",
           )}
         >
-          {selectedPapers.length === 0 ? (
+          {basketPapers.length === 0 ? (
             <div className="flex min-h-[14rem] flex-1 flex-col items-center justify-center gap-2.5 px-3 py-6 text-center sm:min-h-[16rem]">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-elevated text-text-muted">
                 <BookOpen className="h-5 w-5" strokeWidth={1.75} aria-hidden />
@@ -644,7 +659,7 @@ export function PaperSessionSummary({
               </p>
             </div>
           ) : (
-            selectedPapers.map(({ paper, selectedSections }) => (
+            basketPapers.map(({ paper, selectedSections }) => (
               <PaperItem
                 key={paper.id}
                 paper={paper}
@@ -653,6 +668,7 @@ export function PaperSessionSummary({
                 paperExpandedSections={expandedSections.get(paper.id) || new Set<string>()}
                 onRemovePaper={onRemovePaper}
                 onToggleSection={onToggleSection}
+                onClearMainSection={onClearMainSection}
                 onToggleSectionExpanded={toggleSectionExpanded}
               />
             ))
