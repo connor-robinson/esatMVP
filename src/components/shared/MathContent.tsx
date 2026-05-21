@@ -52,7 +52,7 @@ export function MathContent({ content, className }: MathContentProps) {
     <div
       ref={containerRef}
       className={cn("math-content", className)}
-      style={{ whiteSpace: "pre-wrap" }}
+      style={{ whiteSpace: "normal" }}
       dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
   );

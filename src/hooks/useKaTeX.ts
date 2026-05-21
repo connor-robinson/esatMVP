@@ -6,6 +6,7 @@
 
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import { normalizeStemWhitespace } from "@/lib/utils/stemWhitespace";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
 
@@ -257,11 +258,21 @@ export function renderMath(
  * Render parsed math content to HTML
  * Handles escaping of text content and rendering of math
  */
+function renderMathTextSegment(contentStr: string): string {
+  const escaped = contentStr
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  return escaped;
+}
+
 export function renderMathContent(text: string): string {
   // Ensure text is a string
   if (text == null) return "";
-  const textStr = String(text);
-  
+  const textStr = normalizeStemWhitespace(String(text));
+
   // Add spacing around inline math expressions before parsing
   const textWithSpacing = addSpacingAroundInlineMath(textStr);
   const segments = parseMathContent(textWithSpacing);
@@ -269,17 +280,17 @@ export function renderMathContent(text: string): string {
 
   for (const segment of segments) {
     if (segment.type === "text") {
-      // Ensure segment.content is a string before calling replace
       const contentStr = segment.content != null ? String(segment.content) : "";
-      // Escape HTML in text content and preserve newlines
-      const escaped = contentStr
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;")
-        .replace(/\n/g, "<br>");
-      htmlParts.push(escaped);
+      const paragraphs = contentStr.split(/\n\n+/).map((p) => p.replace(/\n/g, " ").trim()).filter(Boolean);
+      if (paragraphs.length <= 1) {
+        htmlParts.push(renderMathTextSegment(paragraphs[0] ?? contentStr.replace(/\n/g, " ")));
+      } else {
+        for (const para of paragraphs) {
+          htmlParts.push(
+            `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`
+          );
+        }
+      }
     } else if (segment.type === "inline") {
       const contentStr = segment.content != null ? String(segment.content) : "";
       const rendered = renderMath(contentStr, false);

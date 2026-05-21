@@ -33,6 +33,7 @@ from .stem_splice import (
     splice_graph_svg_into_stem,
     splice_schematic_svg_into_stem,
 )
+from .stem_whitespace import apply_stem_whitespace_to_question_pkg
 from .storage import RunStore, build_manifest, create_run_store, get_uploader
 from .validators import deterministic_validate
 from .stages import (
@@ -347,7 +348,7 @@ def run_once_v4(
             previous_implemented = previous_implemented or {}
             continue
 
-        implemented = impl_result.payload
+        implemented = apply_stem_whitespace_to_question_pkg(impl_result.payload)
         previous_implemented = implemented
         _emit(callbacks, "on_stage_complete", "Implementer", implemented)
 

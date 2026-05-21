@@ -47,6 +47,15 @@ KaTeX / Math Delimiters:
 Text inequality wrappers (ONLY when plain text, not inside $...$):
 - Replace raw <, >, <=, >= with {<}, {>}, {<=}, {>=}
 
+Stem whitespace cleanup (format-only):
+- Collapse 3 or more consecutive newlines to exactly 2.
+- In `question.stem`, remove blank lines between ordinary prose sentences.
+- Preserve blank lines around display math blocks (`$$ ... $$`).
+- Preserve line breaks between simultaneous equations when clearly intentional.
+- Preserve line breaks before/after `<GRAPH id="..."/>` and `<DIAGRAM id="..."/>`.
+- For text-only stems, prefer one compact prose block with at most one break before the final question.
+- Do not change physics meaning, values, labels, or the correct answer.
+
 ------------------------------------------------------------
 
 STRICT PROHIBITIONS

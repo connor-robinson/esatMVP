@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { renderMathContent } from "@/hooks/useKaTeX";
+import { normalizeStemWhitespace } from "@/lib/stemWhitespace";
 import { maskQgDiagramFigures, splitStemWithSvg } from "@/lib/stemSegments";
 import {
   sanitizeStemTable,
@@ -105,7 +106,7 @@ function renderMarkdownTableBlock(lines: string[]): string {
 }
 
 function renderTextSegment(text: string, blocks: string[]): string {
-  const lines = text.split("\n");
+  const lines = normalizeStemWhitespace(text).split("\n");
   const out: string[] = [];
   let i = 0;
 
@@ -174,7 +175,7 @@ export function StemContent({ content, className }: StemContentProps) {
       setRenderedHtml("");
       return;
     }
-    const s = String(content);
+    const s = normalizeStemWhitespace(String(content));
     if (s.length === 0) {
       setRenderedHtml("");
       return;
@@ -244,7 +245,7 @@ export function StemContent({ content, className }: StemContentProps) {
   return (
     <div
       className={cn("stem-content math-content", className)}
-      style={{ whiteSpace: "pre-wrap" }}
+      style={{ whiteSpace: "normal" }}
       dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
   );

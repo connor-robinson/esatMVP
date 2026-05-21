@@ -141,6 +141,44 @@ Extreme should still feel like an admissions MCQ, not an olympiad problem.
 
 ---
 
+## Stem Line-Break Policy
+
+Default: write `question.stem` as **one compact paragraph** of prose.
+
+Use line breaks only when they improve exam readability.
+
+**Allowed line breaks:**
+
+- before and after a display equation block (`$$ ... $$`)
+- before and after `<GRAPH id="..."/>` or `<DIAGRAM id="..."/>`
+- between two or more given equations that form a system
+- between a short setup and the final question — **at most one** blank line
+- for short bullet-like givens only when there are **3+** givens and the compact version would be harder to read
+
+**Forbidden:**
+
+- do not put every sentence on its own line
+- do not insert blank lines between ordinary prose sentences
+- do not use `\n\n` after every sentence
+- do not create large vertical gaps in a plain text-only question
+- do not use paragraph breaks just to make the stem look more formal
+
+For normal prose, prefer **spaces** over newlines.
+
+**Maximum:**
+
+- for a text-only stem with no equations/graph/diagram, use **at most one** paragraph break (usually before the final question sentence)
+- for a stem with display equations, preserve equation spacing but keep surrounding prose compact
+
+Before output, check `question.stem`:
+
+- normal prose is compact
+- no repeated unnecessary `\n\n`
+- no sentence-by-sentence paragraphing
+- line breaks are used only for equations, graph/diagram placeholders, or genuinely structured givens
+
+---
+
 ## Visual Rules — Simpler by Default
 
 The Designer provides:

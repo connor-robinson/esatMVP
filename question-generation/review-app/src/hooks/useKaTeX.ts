@@ -10,6 +10,7 @@ import "katex/dist/katex.min.css";
 // @ts-ignore
 import "katex/dist/contrib/mhchem.min.js";
 import { sanitizeStemTable } from "@/lib/sanitizeStemSvg";
+import { normalizeStemWhitespace } from "@/lib/stemWhitespace";
 
 export interface MathSegment {
   type: "text" | "inline" | "display";
@@ -373,9 +374,13 @@ function escapeHtml(text: string): string {
     .replace(/'/g, "&#39;");
 }
 
+function renderMathTextSegment(contentStr: string): string {
+  return escapeHtml(contentStr);
+}
+
 export function renderMathContent(text: string): string {
   if (text == null) return "";
-  const textStr = String(text);
+  const textStr = normalizeStemWhitespace(String(text));
   
   // First, parse and replace markdown tables
   const textWithTables = parseMarkdownTable(textStr);
@@ -393,14 +398,21 @@ export function renderMathContent(text: string): string {
           `<div class="stem-table">${sanitizeStemTable(contentStr)}</div>`
         );
       } else {
-        const escaped = contentStr
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#39;")
-          .replace(/\n/g, "<br>");
-        htmlParts.push(escaped);
+        const paragraphs = contentStr
+          .split(/\n\n+/)
+          .map((p) => p.replace(/\n/g, " ").trim())
+          .filter(Boolean);
+        if (paragraphs.length <= 1) {
+          htmlParts.push(
+            renderMathTextSegment(paragraphs[0] ?? contentStr.replace(/\n/g, " "))
+          );
+        } else {
+          for (const para of paragraphs) {
+            htmlParts.push(
+              `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`
+            );
+          }
+        }
       }
     } else if (segment.type === "inline") {
       const contentStr = segment.content != null ? String(segment.content) : "";
