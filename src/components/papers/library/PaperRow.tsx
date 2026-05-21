@@ -228,7 +228,7 @@ export function PaperRow({
                   Sections ({selectedSections.size}/{availableSections.length})
                 </span>
                 <button
-                  onClick={handleAddFullPaper}
+                  onClick={handleAddFullPaperClick}
                   disabled={allSectionsSelected}
                   className={cn(
                     "px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors",
