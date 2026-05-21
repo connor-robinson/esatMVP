@@ -30,7 +30,6 @@ const skillsNavItems = [
 const papersNavItems = [
   { href: '/past-papers/roadmap', label: 'Roadmap' },
   { href: '/past-papers/library', label: 'Library' },
-  { href: '/past-papers/drill', label: 'Drill' },
   { href: '/past-papers/analytics', label: 'Analytics' },
 ];
 
@@ -120,7 +119,6 @@ export function Navbar() {
       '/mental-maths/analytics',
       '/past-papers/roadmap',
       '/past-papers/library',
-      '/past-papers/drill',
       '/past-papers/analytics',
       '/questions',
       '/questions/questionbank',
