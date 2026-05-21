@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronUp, Clock, ListOrdered } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type SessionLengthMode = "questions" | "time";
@@ -16,7 +16,6 @@ const INFINITE_TIME_HINT =
 export interface SessionLengthControlProps {
   mode: SessionLengthMode;
   onModeChange: (mode: SessionLengthMode) => void;
-  showModeToggle?: boolean;
   questionCount: number;
   onQuestionCountChange: (n: number) => void;
   questionCountMin?: number;
@@ -27,6 +26,8 @@ export interface SessionLengthControlProps {
   timeLimitMax?: number;
   /** Plain text field (island); otherwise number input. */
   usePlainInput?: boolean;
+  /** Click suffix to switch questions ↔ minutes (no separate toggle row). */
+  showModeToggle?: boolean;
   className?: string;
 }
 
@@ -126,45 +127,10 @@ export function SessionLengthControl({
     </div>
   );
 
-  return (
-    <div className={cn("space-y-2", className)}>
-      {showModeToggle ? (
-        <div
-          className="flex w-full max-w-[14rem] rounded-organic-md bg-surface-mid/50 p-0.5 dark:bg-surface-neutral/40"
-          role="group"
-          aria-label="Session length type"
-        >
-          <button
-            type="button"
-            onClick={() => onModeChange("questions")}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-organic-sm px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-colors",
-              isQuestions
-                ? "bg-surface-elevated text-text shadow-sm dark:bg-surface-mid"
-                : "text-text-muted hover:text-text",
-            )}
-            aria-pressed={isQuestions}
-          >
-            <ListOrdered className="h-3 w-3 shrink-0" aria-hidden />
-            Questions
-          </button>
-          <button
-            type="button"
-            onClick={() => onModeChange("time")}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-organic-sm px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-colors",
-              !isQuestions
-                ? "bg-surface-elevated text-text shadow-sm dark:bg-surface-mid"
-                : "text-text-muted hover:text-text",
-            )}
-            aria-pressed={!isQuestions}
-          >
-            <Clock className="h-3 w-3 shrink-0" aria-hidden />
-            Time
-          </button>
-        </div>
-      ) : null}
+  const toggleMode = () => onModeChange(isQuestions ? "time" : "questions");
 
+  return (
+    <div className={cn(className)}>
       <div
         className="group/count relative flex w-full min-w-0 items-center gap-1.5 sm:gap-2"
         role="group"
@@ -239,9 +205,29 @@ export function SessionLengthControl({
         <div className="flex min-w-[2rem] flex-1 items-center justify-center">
           {stepper}
         </div>
-        <span className={cn("shrink-0 text-sm font-medium", FIGMA_SESSION_LABEL)}>
-          {suffix}
-        </span>
+        {showModeToggle ? (
+          <button
+            type="button"
+            onClick={toggleMode}
+            className={cn(
+              "shrink-0 text-sm font-medium transition-colors",
+              FIGMA_SESSION_LABEL,
+              "rounded-organic-sm underline-offset-2 hover:underline",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-session-green/35 focus-visible:dark:ring-primary/35",
+            )}
+            aria-label={
+              isQuestions
+                ? "Switch to time limit in minutes"
+                : "Switch to question count"
+            }
+          >
+            {suffix}
+          </button>
+        ) : (
+          <span className={cn("shrink-0 text-sm font-medium", FIGMA_SESSION_LABEL)}>
+            {suffix}
+          </span>
+        )}
         {allowInfinite ? (
           <div
             id={hintId}

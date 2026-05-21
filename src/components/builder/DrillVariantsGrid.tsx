@@ -7,6 +7,7 @@
 import { Check, Plus, ListOrdered, Clock, LayoutGrid } from 'lucide-react';
 import { getTopic } from '@/config/topics';
 import { cn } from '@/lib/utils';
+import { primaryButtonLabelClasses } from '@/config/theme';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
 
 interface DrillVariantsGridProps {
@@ -125,7 +126,10 @@ export function DrillVariantsGrid({
                       <button
                         type='button'
                         onClick={() => onRemoveVariant(variantId)}
-                        className='rounded-organic-sm bg-primary px-3.5 py-2.5 text-sm font-bold text-background shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover hover:text-background'
+                        className={cn(
+                          'rounded-organic-sm bg-primary px-3.5 py-2.5 text-sm font-bold shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover',
+                          primaryButtonLabelClasses,
+                        )}
                       >
                         Remove
                       </button>

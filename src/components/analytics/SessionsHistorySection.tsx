@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/Button";
 const sectionShell =
   "relative overflow-hidden rounded-organic-xl border border-border-subtle bg-surface-elevated p-6 sm:p-8";
 
+/** Default visible rows before “show all” (mental maths analytics). */
+const SESSION_HISTORY_PREVIEW = 4;
+
 export type SessionSortMode = "recent" | "oldest" | "scoreHigh" | "scoreLow";
 
 interface SessionsHistorySectionProps {
@@ -61,6 +64,7 @@ export function SessionsHistorySection({
   onClearAllSessions,
 }: SessionsHistorySectionProps) {
   const [sortBy, setSortBy] = useState<SessionSortMode>("recent");
+  const [listExpanded, setListExpanded] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [clearOpen, setClearOpen] = useState(false);
   const [clearBusy, setClearBusy] = useState(false);
@@ -87,6 +91,12 @@ export function SessionsHistorySection({
     return list;
   }, [sessions, sortBy]);
 
+  const hasMoreSessions = sortedSessions.length > SESSION_HISTORY_PREVIEW;
+  const visibleSessions =
+    listExpanded || !hasMoreSessions
+      ? sortedSessions
+      : sortedSessions.slice(0, SESSION_HISTORY_PREVIEW);
+
   const detailFor = (s: SessionSummary): SessionDetail =>
     generateSessionDetail(s);
 
@@ -108,6 +118,7 @@ export function SessionsHistorySection({
       await onClearAllSessions();
       setClearOpen(false);
       setExpandedId(null);
+      setListExpanded(false);
     } finally {
       setClearBusy(false);
     }
@@ -190,29 +201,30 @@ export function SessionsHistorySection({
                 No completed sessions yet. Finish a drill to see history here.
               </p>
             ) : (
-              <div className="overflow-x-auto rounded-organic-lg border border-border-subtle">
-                <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-border-subtle bg-surface-mid/80 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                      <th className="px-4 py-3">Session</th>
-                      <th className="px-4 py-3">Subject</th>
-                      <th className="px-4 py-3 text-right tabular-nums">%</th>
-                      <th className="px-4 py-3 text-right tabular-nums">Score</th>
-                      <th className="px-4 py-3 text-right tabular-nums">Percentile</th>
-                      <th className="px-4 py-3 text-right tabular-nums">Time</th>
-                      <th className="px-4 py-3 text-right tabular-nums">Date</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedSessions.map((row) => {
-                      const open = expandedId === row.id;
-                      const detail = open ? detailFor(row) : null;
-                      const subj =
-                        row.topicNames.length > 0
-                          ? row.topicNames.join(", ")
-                          : "—";
-                      return (
+              <div className="relative">
+                <div className="overflow-x-auto rounded-organic-lg border border-border-subtle">
+                  <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-border-subtle bg-surface-mid/80 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                        <th className="px-4 py-3">Session</th>
+                        <th className="px-4 py-3">Subject</th>
+                        <th className="px-4 py-3 text-right tabular-nums">%</th>
+                        <th className="px-4 py-3 text-right tabular-nums">Score</th>
+                        <th className="px-4 py-3 text-right tabular-nums">Percentile</th>
+                        <th className="px-4 py-3 text-right tabular-nums">Time</th>
+                        <th className="px-4 py-3 text-right tabular-nums">Date</th>
+                        <th className="px-4 py-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleSessions.map((row) => {
+                        const open = expandedId === row.id;
+                        const detail = open ? detailFor(row) : null;
+                        const subj =
+                          row.topicNames.length > 0
+                            ? row.topicNames.join(", ")
+                            : "—";
+                        return (
                         <Fragment key={row.id}>
                           <tr
                             className={cn(
@@ -338,10 +350,53 @@ export function SessionsHistorySection({
                             </tr>
                           )}
                         </Fragment>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {hasMoreSessions && !listExpanded ? (
+                  <>
+                    <div
+                      className="pointer-events-none absolute inset-x-0 bottom-10 h-24 rounded-b-organic-lg bg-gradient-to-t from-surface-elevated via-surface-elevated/95 to-transparent"
+                      aria-hidden
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setListExpanded(true)}
+                      className={cn(
+                        "relative z-10 flex w-full items-center justify-center gap-2 rounded-b-organic-lg border border-t-0 border-border-subtle bg-surface-elevated py-3 text-sm font-medium text-text-muted transition-colors",
+                        "hover:bg-surface-mid/50 hover:text-text",
+                      )}
+                      aria-label={`Show all ${sortedSessions.length} sessions`}
+                    >
+                      <span className="text-base leading-none tracking-widest text-text-subtle">
+                        …
+                      </span>
+                      <span>
+                        Show all {sortedSessions.length} sessions
+                      </span>
+                    </button>
+                  </>
+                ) : null}
+
+                {hasMoreSessions && listExpanded ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setListExpanded(false);
+                      setExpandedId(null);
+                    }}
+                    className={cn(
+                      "mt-2 flex w-full items-center justify-center gap-2 rounded-organic-md py-2.5 text-sm font-medium text-text-muted transition-colors",
+                      "hover:bg-surface-mid/50 hover:text-text",
+                    )}
+                  >
+                    Show less
+                    <ChevronDown className="h-4 w-4 rotate-180" strokeWidth={2} />
+                  </button>
+                ) : null}
               </div>
             )}
           </motion.div>

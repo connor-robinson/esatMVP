@@ -18,7 +18,7 @@ const sectionShell =
 interface PerformanceChartsSectionProps {
   /** Daily aggregate chart data (fallback when session mode unavailable) */
   performanceData?: PerformanceDataPoint[];
-  /** When provided, shows session-indexed percentile / score trends */
+  /** When provided, shows per-session accuracy & speed vs date/time */
   sessions?: SessionSummary[];
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -43,8 +43,8 @@ export function PerformanceChartsSection({
           </h2>
           <p className="mt-1 text-left text-sm text-text-muted">
             {sessions?.length
-              ? "Percentile and score trajectory across sessions"
-              : "Accuracy and speed over time"}
+              ? "Accuracy and speed across sessions by date"
+              : "Daily accuracy and speed aggregates"}
           </p>
         </div>
         <ChevronDown

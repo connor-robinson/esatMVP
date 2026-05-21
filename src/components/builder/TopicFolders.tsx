@@ -133,8 +133,9 @@ export function TopicFolders({
                   onClick={() => onSelectTopic(topic.id)}
                   className={cn(
                     'group relative w-full overflow-hidden rounded-organic-lg p-4 text-left transition-all',
+                    'outline-none focus:outline-none focus-visible:outline-none',
                     isSelected
-                      ? 'bg-folder-card-selected shadow-sm ring-1 ring-inset ring-primary/30'
+                      ? 'bg-folder-card-selected shadow-sm'
                       : 'bg-folder-card hover:bg-surface-neutral',
                   )}
                 >

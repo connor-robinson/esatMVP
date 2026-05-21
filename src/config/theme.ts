@@ -247,6 +247,14 @@ export const difficultyTokens = {
 
 export type DifficultyKey = keyof typeof difficultyTokens;
 
+/** Primary (green) button label — light UI: pale type + highlight shadow; dark UI: white + depth shadow. */
+export const primaryButtonLabelClasses =
+  "text-background [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)] dark:hover:text-white";
+
+/** Remove control on cards / lists — opposite pairing for light vs dark. */
+export const removeButtonLabelClasses =
+  "text-text [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)] dark:hover:text-white";
+
 /** Map numeric difficulty (1-5) → easy | medium | hard (no separate “extra” pill). */
 export function getDifficultyKey(difficulty: number): DifficultyKey {
   if (difficulty <= 2) return "easy";

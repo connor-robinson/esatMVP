@@ -17,14 +17,11 @@ import {
 import { getTopic } from "@/config/topics";
 import type { SessionLengthMode, TopicVariantSelection } from "@/types/core";
 import { cn } from "@/lib/utils";
+import { primaryButtonLabelClasses, removeButtonLabelClasses } from "@/config/theme";
 import { SessionLengthControl } from "@/components/ui/SessionLengthControl";
 
 /** Session length + “questions” — session green in light, inverted text in dark. */
 const FIGMA_SESSION_LABEL = "text-session-green dark:text-text";
-
-/** White label + light depth on primary buttons (dark theme). */
-const PRIMARY_CTA_LABEL_DARK =
-  "dark:text-white dark:[text-shadow:0_0.5px_1px_rgba(0,0,0,0.55),0_1px_2px_rgba(0,0,0,0.35)] dark:hover:text-white";
 
 export interface SessionSelectionBarProps {
   /** Ignored when `density="compact"` and `compactVariant="figma"`. */
@@ -251,7 +248,11 @@ export function SessionSelectionBar({
                             <button
                               type="button"
                               onClick={() => onRemoveDrill?.(id)}
-                              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150 ease-out hover:bg-surface-mid hover:text-text active:scale-[0.94] active:bg-surface-neutral/90 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral"
+                              className={cn(
+                                "flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-organic-lg transition-all duration-150 ease-out",
+                                "hover:bg-surface-mid active:scale-[0.94] active:bg-surface-neutral/90 dark:hover:bg-surface-neutral dark:active:bg-surface-neutral",
+                                removeButtonLabelClasses,
+                              )}
                               aria-label={`Remove ${title}`}
                             >
                               <X className="h-5 w-5" strokeWidth={2.5} />
@@ -371,8 +372,8 @@ export function SessionSelectionBar({
                   "disabled:cursor-not-allowed",
                   canStartSession
                     ? cn(
-                        "bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
-                        PRIMARY_CTA_LABEL_DARK,
+                        "bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]",
+                        primaryButtonLabelClasses,
                       )
                     : "bg-surface-mid text-text-disabled dark:bg-surface-neutral [&_svg]:opacity-40",
                 )}
@@ -445,8 +446,8 @@ export function SessionSelectionBar({
                   "disabled:cursor-not-allowed",
                   canStartSession
                     ? cn(
-                        "bg-primary text-background shadow-sm shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]",
-                        PRIMARY_CTA_LABEL_DARK,
+                        "bg-primary shadow-sm shadow-primary/25 hover:bg-primary-hover active:scale-[0.98]",
+                        primaryButtonLabelClasses,
                       )
                     : "bg-surface-elevated text-text/50 [&_svg]:opacity-30",
                 )}
@@ -524,8 +525,8 @@ export function SessionSelectionBar({
                 "disabled:cursor-not-allowed",
                 canStartSession
                   ? cn(
-                      "bg-primary text-background shadow-md shadow-primary/30 hover:bg-primary-hover hover:text-background active:scale-[0.98]",
-                      PRIMARY_CTA_LABEL_DARK,
+                      "bg-primary shadow-md shadow-primary/30 hover:bg-primary-hover active:scale-[0.98]",
+                      primaryButtonLabelClasses,
                     )
                   : "bg-surface-elevated text-text/50 [&_svg]:opacity-30",
               )}

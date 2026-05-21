@@ -6,6 +6,7 @@ import { ArrowRight, X } from 'lucide-react';
 import { getTopic } from '@/config/topics';
 import type { SessionLengthMode, TopicVariantSelection } from '@/types/core';
 import { cn } from '@/lib/utils';
+import { primaryButtonLabelClasses, removeButtonLabelClasses } from '@/config/theme';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
 import {
   SessionLengthControl,
@@ -168,9 +169,10 @@ export function DrillsSelectedModal({
                           type='button'
                           onClick={() => onRemoveVariant(id)}
                           className={cn(
-                            'flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-lg text-text-muted transition-all duration-150',
-                            'hover:bg-surface-mid/80 hover:text-text active:scale-[0.94] dark:hover:bg-surface-neutral',
+                            'flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-lg transition-all duration-150',
+                            'hover:bg-surface-mid/80 active:scale-[0.94] dark:hover:bg-surface-neutral',
                             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35',
+                            removeButtonLabelClasses,
                           )}
                           aria-label={`Remove ${title}`}
                         >
@@ -214,8 +216,8 @@ export function DrillsSelectedModal({
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45',
                 canStart
                   ? cn(
-                      'bg-primary text-background shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]',
-                      'dark:text-white dark:[text-shadow:0_0.5px_1px_rgba(0,0,0,0.55),0_1px_2px_rgba(0,0,0,0.35)] dark:hover:text-white',
+                      'bg-primary shadow-md shadow-primary/20 hover:bg-primary-hover active:scale-[0.97]',
+                      primaryButtonLabelClasses,
                     )
                   : 'cursor-not-allowed bg-surface-mid text-text-disabled opacity-60',
               )}
