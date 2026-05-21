@@ -724,20 +724,25 @@ export function PaperSessionSummary({
         )}
       </div>
 
-      {/* Start button — outside card, on page background */}
       <button
         type="button"
         onClick={onStartSession}
         disabled={!canStart}
+        aria-disabled={!canStart}
         className={cn(
-          "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 text-sm font-semibold transition-colors duration-fast focus-visible:outline-none disabled:cursor-not-allowed",
+          "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
           canStart
-            ? "bg-accent text-background hover:bg-accent/85"
-            : "bg-accent/30 text-background/60"
+            ? "cursor-pointer bg-accent text-background hover:bg-accent/85 dark:text-white"
+            : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
+          "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
         )}
       >
         Start Practice Session
-        <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+        <ArrowRight
+          className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
+          strokeWidth={2.5}
+          aria-hidden
+        />
       </button>
     </div>
   );
