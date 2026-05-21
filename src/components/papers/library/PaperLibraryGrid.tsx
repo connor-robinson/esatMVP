@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
-import { getExamAccentBadgeClass, getExamAccentTextClass } from "@/config/colors";
+import { getExamAccentTextClass } from "@/config/colors";
 import { cn } from "@/lib/utils";
 
 interface PaperLibraryGridProps {
@@ -125,28 +125,25 @@ export function PaperLibraryGrid({
           No papers match the current filters.
         </div>
       ) : (
-        <div className="rounded-organic-lg bg-surface px-2 py-2 sm:px-3">
-          {papersByExam.sortedExams.map((examName, examIndex) => {
+        <div className="space-y-3">
+          {papersByExam.sortedExams.map((examName) => {
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
 
             const accentClass = getExamAccentTextClass(examName);
-            const countBadgeClass = getExamAccentBadgeClass(examName);
             const isExpanded = isExamExpanded(examName);
 
             return (
               <div
                 key={examName}
-                className={cn(
-                  examIndex > 0 && "border-t border-border-subtle/50",
-                )}
+                className="overflow-hidden rounded-organic-lg bg-surface"
               >
                 <button
                   type="button"
                   onClick={() => toggleExam(examName)}
-                  className="group flex w-full items-center justify-between gap-3 rounded-organic-md px-3 py-3 transition-colors hover:bg-surface-mid/60"
+                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid"
                 >
-                  <div className="flex min-w-0 items-center gap-2.5">
+                  <div className="flex items-center gap-2.5">
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 shrink-0 transition-transform duration-200",
@@ -158,20 +155,15 @@ export function PaperLibraryGrid({
                     />
                     <span
                       className={cn(
-                        "truncate text-sm font-semibold uppercase tracking-wide",
+                        "text-sm font-semibold uppercase tracking-wide",
                         accentClass,
                       )}
                     >
-                      {examName}
+                      {examName} Papers
                     </span>
                   </div>
-                  <span
-                    className={cn(
-                      "shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold tabular-nums",
-                      countBadgeClass,
-                    )}
-                  >
-                    {examPapers.length}
+                  <span className="text-xs text-text-muted">
+                    {examPapers.length} paper{examPapers.length === 1 ? "" : "s"} available
                   </span>
                 </button>
 
@@ -181,10 +173,10 @@ export function PaperLibraryGrid({
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
+                      transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="space-y-1 px-2 pb-2 pt-0.5">
+                      <div className="space-y-1.5 p-3">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}

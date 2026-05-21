@@ -475,8 +475,8 @@ export default function PapersLibraryPage() {
         </p>
       </header>
 
-      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,28rem)] lg:items-start xl:grid-cols-[minmax(0,52%)_minmax(22rem,1fr)]'>
-        <div className='min-w-0'>
+      <div className='grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start'>
+        <div>
           <PaperLibraryGrid
             filterSourcePapers={papers}
             papers={filteredPapers}
@@ -497,7 +497,7 @@ export default function PapersLibraryPage() {
           />
         </div>
 
-        <div className='min-w-0 lg:sticky lg:top-6 lg:self-start'>
+        <div>
           <PaperSessionSummary
             selectedPapers={selectedPapers}
             onRemovePaper={handleRemovePaper}

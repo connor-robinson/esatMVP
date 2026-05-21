@@ -8,7 +8,7 @@ import { useState, useEffect, useMemo } from "react";
 import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { getExamLibraryAccent } from "@/config/colors";
+import { getPaperTypeColor } from "@/config/colors";
 import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts, mapPartToSection } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -191,7 +191,7 @@ export function PaperColumn({
   const [loadingCompletion, setLoadingCompletion] = useState(false);
 
   const session = useSupabaseSession();
-  const examAccent = getExamLibraryAccent(paper.examName);
+  const paperColor = getPaperTypeColor(paper.examName);
   const paperType = examNameToPaperType(paper.examName as any) || "NSAA";
 
   // Load sections and questions from both Section 1 and Section 2 if they exist
@@ -312,33 +312,25 @@ export function PaperColumn({
       <div
         className={cn(
           "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
-          isSelected
-            ? examAccent.selectedRow
-            : cn("bg-surface-elevated", examAccent.rowHover),
+          isSelected ? "bg-surface-neutral" : "bg-surface-elevated hover:bg-surface-neutral"
         )}
       >
         {/* Expand toggle */}
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className={cn(
-            "flex h-6 w-6 shrink-0 items-center justify-center transition-colors hover:opacity-80",
-            examAccent.text,
-          )}
+          className="flex h-6 w-6 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
           aria-label={isExpanded ? "Collapse sections" : "Expand sections"}
         >
           <ChevronDown
-            className={cn(
-              "h-4 w-4 transition-transform duration-200",
-              isExpanded ? "rotate-0" : "-rotate-90",
-            )}
+            className={cn("h-4 w-4 transition-transform duration-200", isExpanded ? "rotate-0" : "-rotate-90")}
             strokeWidth={2.5}
           />
         </button>
 
         {/* Title */}
         <div className="flex flex-1 min-w-0 items-center gap-2">
-          <span className={cn("truncate text-sm font-semibold", examAccent.text)}>
+          <span className="truncate text-sm font-semibold text-text">
             {paper.examName} {paper.examYear}
           </span>
           {paperCompletionStatus !== "none" && (
@@ -358,12 +350,7 @@ export function PaperColumn({
 
         {/* Exam type badge */}
         {paper.examType && (
-          <span
-            className={cn(
-              "inline-flex h-8 shrink-0 items-center rounded-[6px] px-3 text-[10px] font-medium uppercase tracking-wide",
-              examAccent.softBadge,
-            )}
-          >
+          <span className="inline-flex h-8 shrink-0 items-center rounded-[6px] bg-surface-neutral px-3 text-[10px] uppercase tracking-wide text-text-muted">
             {paper.examType}
           </span>
         )}
@@ -372,11 +359,7 @@ export function PaperColumn({
         <button
           type="button"
           onClick={handleAddPaperClick}
-          className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-mid transition-colors",
-            examAccent.text,
-            examAccent.iconHover,
-          )}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
           aria-label="Add paper to session"
         >
           <Plus className="h-4 w-4" strokeWidth={2} />
@@ -413,18 +396,13 @@ export function PaperColumn({
                   return (
                     <div
                       key={mainSection.name}
-                      className={cn(
-                        "flex h-11 items-center gap-2.5 rounded-lg bg-surface-elevated px-3 transition-colors",
-                        examAccent.rowHover,
-                      )}
+                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface-elevated px-3 transition-colors hover:bg-surface-mid"
                     >
                       {/* Section number badge */}
                       {sectionNum ? (
                         <div
-                          className={cn(
-                            "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold",
-                            examAccent.solid,
-                          )}
+                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold text-text"
+                          style={{ backgroundColor: paperColor }}
                         >
                           {sectionNum}
                         </div>
@@ -432,12 +410,7 @@ export function PaperColumn({
                         <div className="h-6 w-6 shrink-0" />
                       )}
 
-                      <span
-                        className={cn(
-                          "flex-1 min-w-0 truncate text-sm font-medium",
-                          examAccent.text,
-                        )}
-                      >
+                      <span className="flex-1 min-w-0 truncate text-sm text-text-muted">
                         {mainSection.name}
                       </span>
 
@@ -451,11 +424,7 @@ export function PaperColumn({
                       <button
                         type="button"
                         onClick={() => handleAddSectionClick(mainSection.name, mainSection.subjectParts)}
-                        className={cn(
-                          "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors",
-                          examAccent.text,
-                          examAccent.iconHover,
-                        )}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
                         aria-label={`Add ${mainSection.name}`}
                       >
                         <Plus className="h-4 w-4" strokeWidth={2} />
