@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
@@ -474,13 +475,74 @@ def fetch_graph_candidates_missing_embedded_svg(
 
     Non-deleted only. Paginates until ``limit`` matches or the table is exhausted.
     """
+    return fetch_graph_candidates_for_diagram_backfill(
+        client,
+        limit=limit,
+        page_size=page_size,
+        require_operator_queue=require_operator_queue,
+        diagram_kind="svg",
+        replace_existing=False,
+    )
+
+
+def _stem_has_image_diagram(stem: str) -> bool:
+    s = stem or ""
+    low = s.lower()
+    if "<img" in low and "qg-diagram" in low:
+        return True
+    return bool(
+        re.search(
+            r'<figure\b[^>]*class\s*=\s*["\'][^"\']*qg-diagram[^"\']*["\'][^>]*>\s*<img\b',
+            s,
+            flags=re.I,
+        )
+    )
+
+
+def _stem_has_existing_diagram(stem: str) -> bool:
+    s = stem or ""
+    low = s.lower()
+    if "<svg" in low:
+        return True
+    if "<img" in low:
+        return True
+    return bool(
+        re.search(
+            r'<figure\b[^>]*class\s*=\s*["\'][^"\']*qg-diagram',
+            s,
+            flags=re.I,
+        )
+    )
+
+
+def fetch_graph_candidates_for_diagram_backfill(
+    client: Any,
+    *,
+    limit: int,
+    page_size: int = 40,
+    require_operator_queue: bool = False,
+    diagram_kind: str = "svg",
+    replace_existing: bool = False,
+) -> List[Dict[str, Any]]:
+    """
+    Graph-flagged rows eligible for diagram backfill.
+
+    ``diagram_kind``:
+    - ``svg``: stem has no ``<svg>`` (legacy SVG backfill)
+    - ``image``: stem has no image inside ``qg-diagram`` figure (unless ``replace_existing``)
+
+    When ``require_operator_queue`` is True, only ``svg_operator_backfill_choice=queue``.
+    """
     out: List[Dict[str, Any]] = []
     offset = 0
     lim = max(1, min(limit, 50_000))
     ps = max(10, min(page_size, 500))
+    kind = (diagram_kind or "svg").strip().lower()
     select_cols = (
         "id, media_upload_code, question_stem, quality_gate_graph_notes, quality_gate_payload, "
-        "quality_gate_verdict, quality_gate_graph_candidate, svg_operator_backfill_choice, updated_at"
+        "quality_gate_verdict, quality_gate_graph_candidate, quality_gate_graph_mode, "
+        "svg_operator_backfill_choice, subjects, difficulty, question_stem_before_auto_diagram, "
+        "updated_at"
     )
     while len(out) < lim:
         q = (
@@ -497,8 +559,17 @@ def fetch_graph_candidates_missing_embedded_svg(
             break
         for row in batch:
             stem = str(row.get("question_stem") or "")
-            if "<svg" in stem.lower():
+            if not replace_existing and _stem_has_existing_diagram(stem):
                 continue
+            if kind == "svg":
+                if "<svg" in stem.lower():
+                    continue
+            elif kind == "image":
+                if _stem_has_image_diagram(stem):
+                    continue
+            else:
+                if _stem_has_existing_diagram(stem):
+                    continue
             out.append(row)
             if len(out) >= lim:
                 break

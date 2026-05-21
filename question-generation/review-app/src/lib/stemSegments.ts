@@ -43,13 +43,13 @@ function mergeNonOverlapping(embeds: RawEmbed[]): RawEmbed[] {
 }
 
 /**
- * Replace ``<figure>…<svg>…</svg></figure>`` with placeholders so ``renderMathContent`` does not
- * HTML-escape the opening ``<figure>`` (which breaks preview). Matches qg-diagram, auto-diagram,
- * or any class — previously only ``qg-diagram`` was masked, so other figures looked "wrong" vs SQL.
+ * Replace ``<figure>…(<svg>|</img>)…</figure>`` with placeholders so ``renderMathContent`` does not
+ * HTML-escape the opening ``<figure>`` (which breaks preview).
  */
 export function maskQgDiagramFigures(raw: string): { masked: string; blocks: string[] } {
   const blocks: string[] = [];
-  const re = /<figure\b[^>]*>\s*<svg\b[\s\S]*?<\/\s*svg\s*>\s*<\/\s*figure\s*>/gi;
+  const re =
+    /<figure\b[^>]*>\s*(?:<svg\b[\s\S]*?<\/\s*svg\s*>|<img\b[^>]*\/?>)\s*<\/\s*figure\s*>/gi;
   const masked = raw.replace(re, (full) => {
     blocks.push(full);
     return `\n__STEM_QG_FIG_${blocks.length - 1}__\n`;

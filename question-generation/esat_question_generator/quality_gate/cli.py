@@ -121,7 +121,7 @@ def cmd_generate_missing_svgs(ns: argparse.Namespace) -> int:
     stats = run_missing_svg_backfill(
         limit=max(1, int(ns.limit)),
         diagram_model=(getattr(ns, "diagram_model", None) or "").strip(),
-        dry_run=bool(ns.dry_run),
+        dry_run=bool(getattr(ns, "diagram_dry_run", False) or ns.dry_run),
         page_size=max(10, int(ns.page_size)),
         log_lines=log,
         require_operator_queue=bool(getattr(ns, "operator_queue_only", False)),
@@ -131,9 +131,59 @@ def cmd_generate_missing_svgs(ns: argparse.Namespace) -> int:
     if log:
         print("\n--- backfill log ---")
         print("\n".join(log))
-    if bool(ns.dry_run):
+    if bool(getattr(ns, "diagram_dry_run", False) or ns.dry_run):
         return 0
     return 0 if stats.get("errors", 0) == 0 else 1
+
+
+def cmd_generate_missing_images(ns: argparse.Namespace) -> int:
+    from quality_gate.image_backfill import run_missing_image_backfill
+    from quality_gate.runner import init_env
+
+    init_env()
+    log: list[str] = []
+    stats = run_missing_image_backfill(
+        limit=max(1, int(ns.limit)),
+        image_model=(getattr(ns, "image_model", None) or "").strip(),
+        brief_model=(getattr(ns, "image_brief_model", None) or "").strip(),
+        verify_model=(getattr(ns, "image_verify_model", None) or "").strip(),
+        integrate_model=(getattr(ns, "image_integrate_model", None) or "").strip(),
+        dry_run=bool(getattr(ns, "diagram_dry_run", False) or ns.dry_run),
+        page_size=max(10, int(ns.page_size)),
+        log_lines=log,
+        require_operator_queue=bool(getattr(ns, "operator_queue_only", False)),
+        max_retries=max(0, int(getattr(ns, "max_image_retries", 1))),
+        allow_high_precision_image=bool(getattr(ns, "allow_high_precision_image", False)),
+        replace_existing_diagram=bool(getattr(ns, "replace_existing_diagram", False)),
+        diagram_mode=(getattr(ns, "diagram_mode", None) or "image").strip().lower(),
+    )
+    # Trim row_audits for stdout
+    out_stats = {k: v for k, v in stats.items() if k != "row_audits"}
+    print(json.dumps(out_stats, indent=2))
+    audits = stats.get("row_audits") or []
+    if audits:
+        print("\n--- row audits (summary) ---")
+        for a in audits[:20]:
+            print(
+                json.dumps(
+                    {
+                        "question_id": a.get("question_id"),
+                        "final_status": a.get("final_status"),
+                        "reason": a.get("reason"),
+                        "verification_verdict": a.get("verification_verdict"),
+                        "diagram_need": a.get("diagram_need"),
+                        "spoiler_risk": a.get("spoiler_risk"),
+                        "precision_risk": a.get("precision_risk"),
+                    },
+                    ensure_ascii=False,
+                )
+            )
+    if log:
+        print("\n--- backfill log ---")
+        print("\n".join(log))
+    if bool(getattr(ns, "diagram_dry_run", False) or ns.dry_run):
+        return 0
+    return 0 if stats.get("failed", 0) == 0 else 1
 
 
 def cmd_reset_graph_gate(ns: argparse.Namespace) -> int:
@@ -332,6 +382,80 @@ def main() -> int:
         help="After each row, append truncated raw LLM debug concat to stdout log (large).",
     )
     m.set_defaults(func=cmd_generate_missing_svgs)
+
+    def _add_backfill_shared_flags(parser: argparse.ArgumentParser) -> None:
+        parser.add_argument("--limit", type=int, default=25, help="Max questions to process")
+        parser.add_argument(
+            "--page-size",
+            type=int,
+            default=40,
+            help="DB page size when scanning graph-candidate rows",
+        )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Practice mode: run pipeline but do not write stems / uploads to DB",
+        )
+        parser.add_argument(
+            "--diagram-dry-run",
+            action="store_true",
+            help="Alias for --dry-run on diagram backfill commands",
+        )
+        parser.add_argument(
+            "--operator-queue-only",
+            action="store_true",
+            help="Only process rows with svg_operator_backfill_choice=queue",
+        )
+        parser.add_argument(
+            "--replace-existing-diagram",
+            action="store_true",
+            help="Replace an existing qg-diagram / svg / img in the stem",
+        )
+
+    img = sub.add_parser(
+        "generate-missing-images",
+        help="Generate Imagen PNG diagrams for graph-flagged questions (brief → generate → verify → merge)",
+        epilog="Models from MODEL_QUALITY_GATE_IMAGE*, brief/verify/integrate from MODEL_QUALITY_GATE_IMAGE_* env vars.",
+    )
+    _add_backfill_shared_flags(img)
+    img.add_argument(
+        "--diagram-mode",
+        choices=("image", "svg", "auto"),
+        default="image",
+        help="auto: route physical schematics to image, precise graphs to skip (use SVG path)",
+    )
+    img.add_argument(
+        "--image-model",
+        default="",
+        help="Imagen model (default MODEL_QUALITY_GATE_IMAGE or imagen-4.0-ultra-generate-001)",
+    )
+    img.add_argument(
+        "--image-brief-model",
+        default="",
+        help="Gemini model for image brief (default MODEL_QUALITY_GATE_IMAGE_BRIEF)",
+    )
+    img.add_argument(
+        "--image-verify-model",
+        default="",
+        help="Gemini vision model for verification (default MODEL_QUALITY_GATE_IMAGE_VERIFY)",
+    )
+    img.add_argument(
+        "--image-integrate-model",
+        default="",
+        help="Gemini model for stem merge (default MODEL_QUALITY_GATE_IMAGE_INTEGRATE)",
+    )
+    img.add_argument(
+        "--max-image-retries",
+        type=int,
+        default=1,
+        help="Regenerate once with prompt_image_retry.md if verification fails",
+    )
+    img.add_argument(
+        "--allow-high-precision-image",
+        action="store_true",
+        help="Allow image generation when precision_risk=high (default: skip)",
+    )
+    img.set_defaults(func=cmd_generate_missing_images)
 
     ns = p.parse_args()
     return int(ns.func(ns))

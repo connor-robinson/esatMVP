@@ -18,6 +18,16 @@ DEFAULT_QUALITY_GATE_BATCH_MODEL = "gemini-2.5-flash"
 # SVG diagram generation (Vertex Gemini only — uses ``LLMClient``; separate from sync Claude scorer).
 DEFAULT_QUALITY_GATE_DIAGRAM_MODEL = "gemini-2.5-pro"
 
+# Image diagram backfill (Imagen + Gemini brief/verify/integrate).
+DEFAULT_QUALITY_GATE_IMAGE_MODEL = "imagen-4.0-ultra-generate-001"
+DEFAULT_QUALITY_GATE_IMAGE_FALLBACK = "imagen-4.0-generate-001"
+DEFAULT_QUALITY_GATE_IMAGE_FAST = "imagen-4.0-fast-generate-001"
+DEFAULT_QUALITY_GATE_IMAGE_BRIEF_MODEL = "gemini-2.5-pro"
+DEFAULT_QUALITY_GATE_IMAGE_VERIFY_MODEL = "gemini-2.5-pro"
+DEFAULT_QUALITY_GATE_IMAGE_INTEGRATE_MODEL = "gemini-2.5-pro"
+
+IMAGE_BACKFILL_BUCKET = "quality-gate-diagrams"
+
 
 def default_diagram_model() -> str:
     """Model for graph-candidate SVG + stem merge (override with ``MODEL_QUALITY_GATE_SVG``)."""
@@ -25,6 +35,35 @@ def default_diagram_model() -> str:
     if override:
         return override
     return DEFAULT_QUALITY_GATE_DIAGRAM_MODEL
+
+
+def _env_model(name: str, default: str) -> str:
+    override = (os.environ.get(name) or "").strip()
+    return override or default
+
+
+def default_image_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE", DEFAULT_QUALITY_GATE_IMAGE_MODEL)
+
+
+def default_image_fallback_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE_FALLBACK", DEFAULT_QUALITY_GATE_IMAGE_FALLBACK)
+
+
+def default_image_fast_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE_FAST", DEFAULT_QUALITY_GATE_IMAGE_FAST)
+
+
+def default_image_brief_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE_BRIEF", DEFAULT_QUALITY_GATE_IMAGE_BRIEF_MODEL)
+
+
+def default_image_verify_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE_VERIFY", DEFAULT_QUALITY_GATE_IMAGE_VERIFY_MODEL)
+
+
+def default_image_integrate_model() -> str:
+    return _env_model("MODEL_QUALITY_GATE_IMAGE_INTEGRATE", DEFAULT_QUALITY_GATE_IMAGE_INTEGRATE_MODEL)
 
 
 def default_llm_provider() -> str:

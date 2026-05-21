@@ -30,6 +30,13 @@ function ensureSvgViewport(html: string): string {
   });
 }
 
+function renderQgFigureBlock(rawFig: string): string {
+  if (/<img\b/i.test(rawFig)) {
+    return `<div class="stem-diagram my-4 flex justify-center max-w-full"><div class="stem-diagram-inner inline-block w-full max-w-[640px]">${rawFig}</div></div>`;
+  }
+  return `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner inline-block max-w-full">${ensureSvgViewport(rawFig)}</div></div>`;
+}
+
 /** ``renderMathContent`` escapes ``<`` in prose; qg-diagram figures must bypass that. */
 function renderTextWithQgFigurePlaceholders(text: string, blocks: string[]): string {
   const pieces = text.split(/(__STEM_QG_FIG_\d+__)/);
@@ -42,7 +49,7 @@ function renderTextWithQgFigurePlaceholders(text: string, blocks: string[]): str
       const rawFig = blocks[idx];
       if (rawFig == null) continue;
       if (rawFig.trim()) {
-        out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner inline-block max-w-full">${ensureSvgViewport(rawFig)}</div></div>`;
+        out += renderQgFigureBlock(rawFig);
       } else if (rawFig) {
         out += `<p class="text-amber-200/90 text-sm border border-amber-600/35 rounded-md px-3 py-2 my-2">A &lt;figure class=&quot;qg-diagram&quot;&gt; block is in this stem but the preview removed it (safety filter).</p>`;
       }

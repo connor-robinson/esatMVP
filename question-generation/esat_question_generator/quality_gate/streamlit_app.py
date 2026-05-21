@@ -668,11 +668,10 @@ with tab_after:
             st.exception(e)
 
     st.divider()
-    st.markdown("### SVG diagram backfill (queue, choices, history)")
+    st.markdown("### Diagram backfill (SVG + image, queue, history)")
     st.caption(
-        "Graph-flagged rows whose stem still has **no** ``<svg``. Set each row to **Queue** or **Skip**, "
-        "save to Supabase, then run backfill — by default only **Queue** rows are processed. "
-        "Requires migration ``add_svg_operator_backfill_choice.sql`` and **Vertex / ADC** for Gemini."
+        "Graph-flagged rows missing a diagram. Set **Queue** / **Skip**, save, then run **SVG** (inline `<svg>`) "
+        "or **Image** (Imagen PNG + vision verify + `<img>` merge). Requires operator queue migration and Vertex ADC."
     )
 
     if _qg_client is not None:
@@ -811,11 +810,18 @@ with tab_after:
 
     st.markdown("#### 2. Run backfill")
     st.caption(
-        "Default: only rows with **SVG operator choice = Queue** (and still no ``<svg``). "
-        "Enable legacy mode to process every missing-svg graph candidate (old behaviour)."
+        "Default: only rows with **SVG operator choice = Queue**. "
+        "Choose **SVG** for precise graphs; **Image** for physical schematics (Imagen Ultra + vision verify)."
+    )
+    bf_mode = st.radio(
+        "Diagram backfill mode",
+        options=["svg", "image", "auto"],
+        format_func=lambda x: {"svg": "SVG (Gemini)", "image": "Image (Imagen)", "auto": "Auto (route per row)"}[x],
+        horizontal=True,
+        key="diagram_bf_mode",
     )
     bf_legacy = st.checkbox(
-        "Legacy: ignore operator column — process all graph-flagged rows missing SVG",
+        "Legacy: ignore operator column — process all graph-flagged rows missing a diagram",
         value=False,
         key="svg_bf_legacy_all",
     )
@@ -828,23 +834,62 @@ with tab_after:
         key="svg_bf_limit",
         help="Stops after this many successful inserts or when the pool is empty.",
     )
-    bf_model = st.text_input(
-        "Diagram Gemini model (optional)",
-        value="",
-        key="svg_bf_model",
-        placeholder="Default from MODEL_QUALITY_GATE_SVG or gemini-2.5-pro",
-    )
     bf_dry = st.checkbox(
-        "Dry run (log ids only; no LLM, no stem updates)",
+        "Dry run (brief/verify/generate as configured; no DB stem updates; image dry-run skips upload)",
         value=False,
         key="svg_bf_dry",
     )
-    bf_verbose_llm = st.checkbox(
-        "Verbose: append raw LLM debug tail per row to the backfill log (large; for diagnosis)",
+    bf_allow_prec = st.checkbox(
+        "Allow high-precision image (override precision_risk=high skip)",
         value=False,
-        key="svg_bf_verbose_llm",
+        key="img_bf_allow_prec",
     )
-    if st.button("Run SVG backfill now", disabled=_qg_client is None, key="svg_bf_run_btn"):
+    bf_replace = st.checkbox(
+        "Replace existing diagram in stem",
+        value=False,
+        key="img_bf_replace",
+    )
+    bf_max_retry = st.number_input(
+        "Max image retries on verify fail",
+        min_value=0,
+        max_value=3,
+        value=1,
+        step=1,
+        key="img_bf_max_retry",
+    )
+    col_svg, col_img = st.columns(2)
+    with col_svg:
+        bf_model = st.text_input(
+            "SVG Gemini model (optional)",
+            value="",
+            key="svg_bf_model",
+            placeholder="Default: MODEL_QUALITY_GATE_SVG or gemini-2.5-pro",
+        )
+        bf_verbose_llm = st.checkbox(
+            "Verbose SVG: append raw LLM debug tail per row",
+            value=False,
+            key="svg_bf_verbose_llm",
+        )
+    with col_img:
+        img_bf_model = st.text_input(
+            "Imagen model (optional)",
+            value="",
+            key="img_bf_model",
+            placeholder="Default: MODEL_QUALITY_GATE_IMAGE",
+        )
+        img_brief_model = st.text_input(
+            "Image brief / verify / integrate overrides (optional)",
+            value="",
+            key="img_bf_brief_model",
+            placeholder="Brief: MODEL_QUALITY_GATE_IMAGE_BRIEF; same family for verify/integrate",
+        )
+    run_col1, run_col2 = st.columns(2)
+    with run_col1:
+        run_svg = st.button("Run SVG backfill", disabled=_qg_client is None, key="svg_bf_run_btn")
+    with run_col2:
+        run_img = st.button("Run image backfill", disabled=_qg_client is None, key="img_bf_run_btn")
+
+    if run_svg:
         try:
             from quality_gate.svg_backfill import run_missing_svg_backfill
 
@@ -900,31 +945,99 @@ with tab_after:
         except Exception as e:
             st.exception(e)
 
+    if run_img:
+        try:
+            from quality_gate.image_backfill import run_missing_image_backfill
+
+            log_img: list[str] = []
+            with st.status("Image backfill: running…", expanded=True) as img_status:
+
+                def _img_progress(msg: str) -> None:
+                    img_status.write(msg)
+
+                stats = run_missing_image_backfill(
+                    limit=int(bf_limit),
+                    image_model=(img_bf_model or "").strip(),
+                    brief_model=(img_brief_model or "").strip(),
+                    verify_model=(img_brief_model or "").strip(),
+                    integrate_model=(img_brief_model or "").strip(),
+                    dry_run=bool(bf_dry),
+                    page_size=40,
+                    log_lines=log_img,
+                    require_operator_queue=not bool(bf_legacy),
+                    progress_callback=_img_progress,
+                    max_retries=int(bf_max_retry),
+                    allow_high_precision_image=bool(bf_allow_prec),
+                    replace_existing_diagram=bool(bf_replace),
+                    diagram_mode=str(bf_mode),
+                )
+                merged = int(stats.get("merged") or 0)
+                skipped = int(stats.get("skipped") or 0)
+                failed = int(stats.get("failed") or 0)
+                img_status.update(
+                    label=f"Image backfill done — merged {merged}, skipped {skipped}, failed {failed}",
+                    state="complete" if failed == 0 else "error",
+                    expanded=failed > 0,
+                )
+
+            st.json({k: v for k, v in stats.items() if k != "row_audits"})
+            audits = stats.get("row_audits") or []
+            if audits:
+                st.markdown("**Per-row results**")
+                adf = pd.DataFrame(
+                    [
+                        {
+                            "question_id": a.get("question_id"),
+                            "status": a.get("final_status"),
+                            "diagram_need": a.get("diagram_need"),
+                            "spoiler_risk": a.get("spoiler_risk"),
+                            "precision_risk": a.get("precision_risk"),
+                            "verify": a.get("verification_verdict"),
+                            "issues": ", ".join(a.get("verification_issues") or [])[:120],
+                            "url": a.get("uploaded_url"),
+                            "reason": a.get("reason"),
+                        }
+                        for a in audits
+                    ]
+                )
+                st.dataframe(adf, use_container_width=True, hide_index=True)
+                for a in audits[:5]:
+                    url = a.get("uploaded_url")
+                    if url and a.get("final_status") == "merged":
+                        st.image(url, caption=f"Generated diagram — {a.get('question_id')}", width=400)
+            st.text_area("Image backfill log", "\n".join(log_img[-120:]), height=220)
+        except Exception as e:
+            st.exception(e)
+
     st.markdown("#### 3. Backfill run history (local log)")
     st.caption(
-        "Each run appends one line to ``quality_gate/svg_backfill_history.jsonl`` (this machine). "
-        "Useful to see what was processed, when, and with which model."
+        "SVG: ``svg_backfill_history.jsonl`` · Image: ``image_backfill_history.jsonl`` (this machine)."
     )
-    try:
-        from quality_gate.svg_backfill import read_svg_backfill_history
+    hist_tab1, hist_tab2 = st.tabs(["SVG history", "Image history"])
+    with hist_tab1:
+        try:
+            from quality_gate.svg_backfill import read_svg_backfill_history
 
-        hist = read_svg_backfill_history(max_lines=60)
-        if not hist:
-            st.caption("No history yet — run a backfill above.")
-        else:
-            hdf = pd.DataFrame(hist)
-            # Flatten for display
-            disp_cols = [c for c in hdf.columns if c != "processed_ids"]
-            st.dataframe(
-                hdf[disp_cols] if disp_cols else hdf,
-                use_container_width=True,
-                hide_index=True,
-            )
-            with st.expander("Processed question ids (latest run)", expanded=False):
-                ids = hist[0].get("processed_ids") if hist else []
-                st.write(ids[:80] if isinstance(ids, list) else ids)
-    except Exception as e:
-        st.caption(f"Could not read history file: {e}")
+            hist = read_svg_backfill_history(max_lines=60)
+            if not hist:
+                st.caption("No SVG history yet.")
+            else:
+                hdf = pd.DataFrame(hist)
+                disp_cols = [c for c in hdf.columns if c != "processed_ids"]
+                st.dataframe(hdf[disp_cols] if disp_cols else hdf, use_container_width=True, hide_index=True)
+        except Exception as e:
+            st.caption(f"Could not read SVG history: {e}")
+    with hist_tab2:
+        try:
+            from quality_gate.image_backfill import read_image_backfill_history
+
+            ihist = read_image_backfill_history(max_lines=80)
+            if not ihist:
+                st.caption("No image history yet.")
+            else:
+                st.dataframe(pd.DataFrame(ihist), use_container_width=True, hide_index=True)
+        except Exception as e:
+            st.caption(f"Could not read image history: {e}")
 
     st.divider()
     if st.button("Show summary for this run"):
@@ -1091,6 +1204,11 @@ python quality_gate/cli.py generate-missing-svgs --limit 20 --dry-run
 python quality_gate/cli.py generate-missing-svgs --limit 20 --diagram-model gemini-2.5-pro
 # Same as Streamlit “Queue” only (needs svg_operator_backfill_choice column):
 python quality_gate/cli.py generate-missing-svgs --limit 20 --operator-queue-only
+
+# Image backfill (Imagen Ultra + vision verify + <img> merge)
+python quality_gate/cli.py generate-missing-images --limit 1 --operator-queue-only --diagram-dry-run
+python quality_gate/cli.py generate-missing-images --limit 20 --operator-queue-only --diagram-mode auto
+python quality_gate/cli.py generate-missing-images --limit 20 --image-model imagen-4.0-ultra-generate-001
 ```
 """
     )
@@ -1098,6 +1216,8 @@ python quality_gate/cli.py generate-missing-svgs --limit 20 --operator-queue-onl
         "**Database setup:** run `migrations/add_quality_gate.sql`, then "
         "`migrations/add_quality_gate_calibration_graph.sql` in Supabase if you use calibration/graph columns. "
         "For the SVG backfill **operator queue** UI: `migrations/add_svg_operator_backfill_choice.sql`. "
+        "Optional image metadata: `migrations/add_quality_gate_diagram_image.sql`. "
+        "Create Supabase Storage bucket **`quality-gate-diagrams`** (public). "
         "Optional stem snapshot: `migrations/add_question_stem_before_auto_diagram.sql`.\n\n"
         "**Review links in Streamlit:** set `REVIEW_APP_URL` (default: `https://questions-reviewer.vercel.app`) so the results table "
         "“Open” links point at your Next.js review app. **After a run** needs `pandas` (see `requirements_quality_gate.txt`).\n\n"
@@ -1105,6 +1225,8 @@ python quality_gate/cli.py generate-missing-svgs --limit 20 --operator-queue-onl
         "**archetype library** (`quality_gate/svg_archetypes.md`). Set env `QUALITY_GATE_SVG_PIPELINE=0` (or use "
         "**Advanced → Single-shot SVG for this run only** when Auto-SVG is on) for legacy single-shot "
         "(`prompt_svg_diagram.md` only).\n\n"
+        "**Image backfill:** `prompt_image_*.md` + env `MODEL_QUALITY_GATE_IMAGE*` (Imagen Ultra default) + "
+        "`MODEL_QUALITY_GATE_IMAGE_BRIEF/VERIFY/INTEGRATE` (Gemini 2.5 Pro). Prompts in `quality_gate/`.\n\n"
         "**Normal scoring (Vertex, default):** `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`, ADC; "
         "default model `gemini-2.5-flash`. If `GOOGLE_CLOUD_LOCATION` is `global`, the GenAI client remaps to "
         "`us-central1` unless you set `VERTEX_GENAI_NO_GLOBAL_REMAP=1`.\n\n"
