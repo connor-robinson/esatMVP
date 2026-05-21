@@ -97,16 +97,16 @@ export function PaperLibraryGrid({
 
   return (
     <section className="flex h-full flex-col rounded-organic-xl bg-surface px-5 py-5 sm:px-6 sm:py-6">
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-[1.35rem]">
-          Paper Library
-        </h2>
-        <span className="shrink-0 font-heading text-xs font-medium tabular-nums text-text-muted">
-          {papers.length} result{papers.length === 1 ? "" : "s"}
-        </span>
-      </div>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-heading text-xl font-bold leading-none tracking-tight text-text sm:text-[1.35rem]">
+            Paper Library
+          </h2>
+          <span className="shrink-0 font-heading text-xs font-medium leading-none tabular-nums text-text-muted">
+            {papers.length} result{papers.length === 1 ? "" : "s"}
+          </span>
+        </div>
 
-      <div className="mt-4">
         <PaperLibraryFilters
           embedded
           papers={filterSourcePapers}

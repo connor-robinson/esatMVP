@@ -214,7 +214,7 @@ export function PaperLibraryFilters({
   };
 
   const toolbar = (
-    <div className="flex items-center gap-2.5">
+    <div className="flex w-full items-center gap-3">
       <div className="relative min-w-0 flex-1">
         <Search
           className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
@@ -326,7 +326,7 @@ export function PaperLibraryFilters({
 
   if (embedded) {
     return (
-      <div className="rounded-organic-md bg-surface-mid/35 px-3.5 py-3.5 sm:px-4 sm:py-4">
+      <div className="flex w-full flex-col gap-3">
         {toolbar}
         {filterRow}
       </div>
