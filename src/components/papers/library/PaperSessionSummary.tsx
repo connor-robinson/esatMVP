@@ -626,7 +626,7 @@ export function PaperSessionSummary({
 
   return (
     <aside
-      className="flex flex-col overflow-hidden rounded-organic-xl bg-surface shadow-sm"
+      className="flex min-h-[28rem] flex-col overflow-hidden rounded-organic-xl bg-surface shadow-sm sm:min-h-[30rem] lg:min-h-[32rem]"
       aria-label="Practice session basket"
     >
       <header className="flex items-start justify-between gap-3 border-b border-border-subtle/50 px-5 py-4 sm:px-6">
@@ -654,11 +654,13 @@ export function PaperSessionSummary({
         <div
           className={cn(
             "space-y-2 overflow-y-auto rounded-organic-md bg-surface-mid/45 p-3",
-            totalItems === 0 ? "min-h-[12.5rem]" : "min-h-[11rem] max-h-[min(42vh,20rem)]",
+            totalItems === 0
+              ? "min-h-[16rem] flex-1 sm:min-h-[18rem]"
+              : "min-h-[14rem] max-h-[min(52vh,26rem)] flex-1 sm:min-h-[16rem] sm:max-h-[min(58vh,28rem)]",
           )}
         >
           {selectedPapers.length === 0 ? (
-            <div className="flex min-h-[11rem] flex-col items-center justify-center gap-2.5 px-3 py-6 text-center">
+            <div className="flex min-h-[14rem] flex-1 flex-col items-center justify-center gap-2.5 px-3 py-6 text-center sm:min-h-[16rem]">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-elevated text-text-muted">
                 <BookOpen className="h-5 w-5" strokeWidth={1.75} aria-hidden />
               </div>
