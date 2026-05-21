@@ -116,8 +116,9 @@ class V4RunConfig:
     difficulty_weights: Optional[Dict[str, float]] = None
     seed: Optional[int] = None
     # Dev/testing knobs (V5 defaults visuals to ``none``). See ``cli --prefer-visual``.
-    prefer_visual: bool = False  # router ``none`` → ``concept_image_prompt``
+    prefer_visual: bool = False  # router ``none`` → ``concept_image_prompt`` (off for V5.2)
     visual_route_override: Optional[str] = None  # force route, skip router verdict
+    splice_concept_image_into_stem: bool = False  # V5.2: concept PNGs are metadata-only
 
     @classmethod
     def from_env(cls) -> "V4RunConfig":
@@ -151,6 +152,9 @@ class V4RunConfig:
                 os.environ.get("V4_VISUAL_ROUTE_OVERRIDE") or ""
             )
             or None,
+            splice_concept_image_into_stem=_bool(
+                "V4_SPLICE_CONCEPT_IMAGE_INTO_STEM", False
+            ),
         )
 
 

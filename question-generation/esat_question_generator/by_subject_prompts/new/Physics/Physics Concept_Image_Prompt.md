@@ -72,6 +72,16 @@ Match the style visible in classic admissions-test diagrams:
 - no cartoon styling,
 - no bright colours.
 
+### Style-token ban (mandatory)
+
+The image must **not** render prompt metadata as visible labels. In the main prompt and `negative_prompt`, explicitly forbid:
+
+- `#FFFFFF`, `#fff`, or any hex colour codes as drawn text,
+- the words “pure white”, “monochrome”, “exam style”, “TMUA”, “ENGAA”,
+- style instructions, negative-prompt fragments, or JSON field names.
+
+Say *pure white background* in instructions only — never as text to paint on the diagram.
+
 ---
 
 ## Spatial / Semantic Logic Requirements
@@ -302,7 +312,7 @@ Return raw JSON only.
   "answer_depends_on_image": false,
   "recommended_model": "MODEL_IMAGE_FAST | MODEL_IMAGE_HIGH_QUALITY",
   "prompt": "...",
-  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No medium label pointing at objects inside the medium. No fluid label terminating on a sphere, wall, or meniscus. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
+  "negative_prompt": "Pure white background only; no grey paper, gradient, or texture. Do not render #FFFFFF, hex colour codes, style instructions, prompt metadata, or words like pure white, monochrome, exam style as visible text. No extra labels. No overlap. No sans-serif fonts. No decorative shading. No photorealism. No colour unless explicitly requested. No exact answer-bearing measurements. No clutter. No malformed symbols. Do not place objects in the wrong support/location relationship. No medium label pointing at objects inside the medium. No fluid label terminating on a sphere, wall, or meniscus. No unrequested arrows, force labels, field symbols, construction arcs, or explanatory overlays.",
   "required_labels": [],
   "forbidden_labels": [],
   "label_anchors": [

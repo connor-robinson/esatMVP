@@ -797,21 +797,29 @@ def run_once_v4(
                     else ("delete" if _verdict(qc) == "DELETE" else "regenerate")
                 )
 
-                # Step 3: If we have a final image and QC passed, splice it into the stem.
-                if generated_image_path and final_qc_status == "pass":
+                # V5.2: concept images are supportive metadata only — not inline exam diagrams.
+                if (
+                    cfg.splice_concept_image_into_stem
+                    and generated_image_path
+                    and final_qc_status == "pass"
+                ):
                     try:
                         stem = implemented.get("question", {}).get("stem", "")
                         new_stem, replaced = splice_concept_image_into_stem(
                             stem,
                             image_url=generated_image_url or None,
-                            image_path=generated_image_path if not generated_image_url else None,
+                            image_path=generated_image_path
+                            if not generated_image_url
+                            else None,
                             placeholder_id="img1",
                             alt=cip_result.payload.get("alt_text", "")
                             or cip_result.payload.get("caption", "")
                             or "concept image",
                         )
                         if replaced:
-                            implemented.setdefault("question", {})["stem_before_visual"] = stem
+                            implemented.setdefault("question", {})[
+                                "stem_before_visual"
+                            ] = stem
                             implemented["question"]["stem"] = new_stem
                     except Exception as splice_err:
                         _emit(

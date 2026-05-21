@@ -196,6 +196,33 @@ Any **fail** on `medium_label_anchor_rule` or **fail** on `label_target_accuracy
 
 ---
 
+## Style-token leakage (mandatory)
+
+**DELETE** or **REGENERATE** if visible text includes any of:
+
+- `#FFFFFF`, `#fff`, other hex colour codes,
+- “pure white”, “monochrome”, “exam style”, “TMUA”, “ENGAA”,
+- fragments of the image prompt, negative prompt, or JSON metadata.
+
+These are pipeline/style instructions, not exam labels.
+
+---
+
+## Decorative / redundant visuals (V5.2)
+
+Compare the image to `implemented_question_json` and `concept_image_prompt_json`.
+
+**DELETE** (or **REGENERATE** once with “do not generate”) if the image is only decorative:
+
+- two generic beakers labelled X and Y when the stem already defines the liquids and heating,
+- two wires labelled X and Y when length/diameter ratios are fully stated in text,
+- a generic block in liquid when the stem already describes the thermal setup,
+- generic spheres in fluid when no visual reasoning is required.
+
+Score `decorative_redundant_visual` as **fail** in these cases. Prefer **DELETE** when the stem is already clear without the image.
+
+---
+
 ## Regeneration Feedback Style
 
 If you output REGENERATE, give short, concrete feedback that can be appended to the next image prompt.
@@ -248,7 +275,9 @@ Return raw JSON only.
     "pure_white_background": "pass | minor_issue | fail",
     "label_target_accuracy": "pass | minor_issue | fail",
     "medium_label_anchor_rule": "pass | minor_issue | fail",
-    "label_ambiguity": "pass | minor_issue | fail"
+    "label_ambiguity": "pass | minor_issue | fail",
+    "style_token_leakage": "pass | minor_issue | fail",
+    "decorative_redundant_visual": "pass | minor_issue | fail"
   },
   "label_audit": [
     {
