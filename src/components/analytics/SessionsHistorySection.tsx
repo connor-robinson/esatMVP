@@ -202,7 +202,7 @@ export function SessionsHistorySection({
               </p>
             ) : (
               <div className="relative">
-                <div className="overflow-x-auto rounded-organic-lg border border-border-subtle">
+                <div className="overflow-x-auto rounded-organic-lg bg-surface-mid/40">
                   <table className="w-full min-w-[720px] border-collapse text-left text-sm">
                     <thead>
                       <tr className="border-b border-border-subtle bg-surface-mid/80 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-muted">
