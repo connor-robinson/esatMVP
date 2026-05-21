@@ -84,6 +84,24 @@ For these cases, choose `none` if the text is clear, or `unsupported_visual_depe
 
 ---
 
+## Decorative setups → `none` (V5.2)
+
+Route to **`none`** when the visual only repeats objects already fully described in the stem and does not give information the candidate must interpret.
+
+Typical `none` cases:
+
+- two liquids **X** and **Y** heated by identical heaters (heat-capacity / mixing comparison),
+- a hot solid block placed into cold liquid in an insulated container (thermal transfer),
+- two wires **X** and **Y** of the same metal where length and diameter ratios are already stated in text,
+- two spheres of equal volume falling through a fluid when all quantities are given in text,
+- generic beakers, wires, blocks, or spheres labelled X/Y when the text already defines the setup.
+
+Do **not** route these to `concept_image_prompt` just to make the page look nicer.
+
+If the candidate must read values, slopes, areas, or circuit topology from the figure, use **`accurate_graph_json`** or **`accurate_schematic_json`**, not image generation.
+
+---
+
 ## Routing Philosophy
 
 Use JSON for accuracy.
