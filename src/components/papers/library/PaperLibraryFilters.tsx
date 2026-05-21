@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
+
+/** Shared chrome for search, Filters toggle, and dropdown triggers. */
+const filterControlSurface =
+  "bg-surface-neutral text-text hover:bg-surface-neutral/90 focus-visible:outline-none";
 
 interface PaperLibraryFiltersProps {
   /** When true, search and filters share one inset panel inside Paper Library. */
@@ -25,40 +30,73 @@ function Dropdown({
   onChange,
   options,
   placeholder,
-  embedded,
 }: {
   value: string | number | "ALL";
   onChange: (value: string | number | "ALL") => void;
   options: Array<{ value: string | number | "ALL"; label: string }>;
   placeholder: string;
-  embedded?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [menuRect, setMenuRect] = useState<DOMRect | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
+
+  const updateMenuRect = () => {
+    if (triggerRef.current) {
+      setMenuRect(triggerRef.current.getBoundingClientRect());
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+    updateMenuRect();
+    window.addEventListener("resize", updateMenuRect);
+    window.addEventListener("scroll", updateMenuRect, true);
+    return () => {
+      window.removeEventListener("resize", updateMenuRect);
+      window.removeEventListener("scroll", updateMenuRect, true);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
+    if (!isOpen) return;
+    const handlePointerDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setIsOpen(false);
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
 
   const selected = options.find((o) => o.value === value)?.label ?? placeholder;
 
   return (
-    <div className="relative min-w-0 flex-1 sm:max-w-[11rem]" ref={ref}>
+    <div className="relative min-w-0 flex-1 sm:max-w-[11rem]" ref={rootRef}>
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setIsOpen((v) => !v)}
+        onClick={() => {
+          setIsOpen((v) => {
+            const next = !v;
+            if (next) queueMicrotask(updateMenuRect);
+            return next;
+          });
+        }}
         aria-expanded={isOpen}
+        aria-haspopup="listbox"
         className={cn(
-          "flex h-9 w-full items-center justify-between gap-2 rounded-organic-md px-3 font-heading text-sm font-medium text-text transition-colors focus-visible:outline-none",
-          embedded
-            ? "bg-surface-elevated/80 hover:bg-surface-elevated"
-            : "bg-surface-mid hover:bg-surface-neutral",
+          "flex h-9 w-full items-center justify-between gap-2 rounded-organic-md px-3 font-heading text-sm font-medium transition-colors",
+          filterControlSurface,
         )}
       >
         <span className="truncate">{selected}</span>
@@ -68,45 +106,65 @@ function Dropdown({
             isOpen && "rotate-180",
           )}
           strokeWidth={2.5}
+          aria-hidden
         />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-[9998]"
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.97 }}
-              transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
-              className="absolute left-0 top-full z-[9999] mt-1.5 min-w-[160px] overflow-hidden rounded-organic-md bg-surface-elevated shadow-lg"
-            >
-              {options.map((opt) => (
-                <button
-                  key={String(opt.value)}
-                  type="button"
-                  onClick={() => {
-                    onChange(opt.value);
-                    setIsOpen(false);
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {isOpen && menuRect ? (
+              <>
+                <div
+                  key="backdrop"
+                  className="fixed inset-0 z-[9998]"
+                  aria-hidden
+                  onClick={() => setIsOpen(false)}
+                />
+                <motion.ul
+                  key="menu"
+                  ref={menuRef}
+                  role="listbox"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
+                  className="fixed z-[9999] max-h-60 overflow-y-auto rounded-organic-md bg-surface-neutral py-1 shadow-lg"
+                  style={{
+                    top: menuRect.bottom + 6,
+                    left: menuRect.left,
+                    minWidth: Math.max(menuRect.width, 160),
                   }}
-                  className={cn(
-                    "flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors",
-                    value === opt.value
-                      ? "bg-accent/10 font-medium text-text"
-                      : "text-text-muted hover:bg-surface-subtle hover:text-text",
-                  )}
                 >
-                  {opt.label}
-                </button>
-              ))}
-            </motion.div>
-          </>
+                  {options.map((opt) => (
+                    <li
+                      key={String(opt.value)}
+                      role="option"
+                      aria-selected={value === opt.value}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onChange(opt.value);
+                          setIsOpen(false);
+                        }}
+                        className={cn(
+                          "flex w-full items-center px-4 py-2.5 text-left font-heading text-sm transition-colors",
+                          value === opt.value
+                            ? "bg-accent/15 font-semibold text-text"
+                            : "text-text-muted hover:bg-surface-mid hover:text-text",
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    </li>
+                  ))}
+                </motion.ul>
+              </>
+            ) : null}
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -169,11 +227,11 @@ export function PaperLibraryFilters({
           placeholder="Search exam, paper, or year…"
           className={cn(
             "h-9 w-full rounded-organic-md pl-10 pr-3 font-heading text-sm text-text placeholder:text-text-muted",
-            "border-0 outline-none shadow-none ring-0",
+            "border-0 outline-none shadow-none ring-0 appearance-none",
             "focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
-            embedded
-              ? "bg-surface-elevated/80 focus:bg-surface-elevated"
-              : "bg-surface-mid",
+            filterControlSurface,
+            "[&:-webkit-autofill]:[-webkit-text-fill-color:var(--color-text)]",
+            "[&:-webkit-autofill]:[box-shadow:0_0_0_1000px_var(--color-surface-neutral)_inset]",
           )}
         />
       </div>
@@ -184,14 +242,8 @@ export function PaperLibraryFilters({
         aria-expanded={filtersOpen}
         className={cn(
           "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-organic-md px-3 font-heading text-xs font-semibold transition-colors sm:text-sm",
-          "focus-visible:outline-none",
-          filtersOpen || activeFilterCount > 0
-            ? embedded
-              ? "bg-surface-elevated text-text"
-              : "bg-surface-neutral text-text"
-            : embedded
-              ? "bg-surface-elevated/80 text-text-muted hover:bg-surface-elevated hover:text-text"
-              : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+          filterControlSurface,
+          !(filtersOpen || activeFilterCount > 0) && "text-text-muted",
         )}
       >
           <SlidersHorizontal className="h-4 w-4 shrink-0" strokeWidth={2} />
@@ -220,16 +272,15 @@ export function PaperLibraryFilters({
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
-          className="overflow-hidden"
+          className={filtersOpen ? "overflow-visible" : "overflow-hidden"}
         >
           <div
             className={cn(
-              "flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center",
+              "flex flex-col gap-3 overflow-visible sm:flex-row sm:flex-wrap sm:items-center",
               embedded ? "pt-3" : "pt-2",
             )}
           >
             <Dropdown
-              embedded={embedded}
               value={examFilter}
               onChange={(v) => onExamFilterChange(v as string | "ALL")}
               options={[
@@ -239,7 +290,6 @@ export function PaperLibraryFilters({
               placeholder="All exams"
             />
             <Dropdown
-              embedded={embedded}
               value={yearFilter}
               onChange={(v) =>
                 onYearFilterChange(v === "ALL" ? "ALL" : (v as number))
@@ -251,7 +301,6 @@ export function PaperLibraryFilters({
               placeholder="All years"
             />
             <Dropdown
-              embedded={embedded}
               value={typeFilter}
               onChange={(v) => onTypeFilterChange(v as string | "ALL")}
               options={[
