@@ -3,6 +3,7 @@
 import { MathContent } from "./shared/MathContent";
 import { cn } from "@/lib/utils";
 import { Pencil } from "lucide-react";
+import { coerceFieldText } from "@/lib/utils";
 import type { ReviewQuestion } from "@/types/review";
 
 interface SolutionPanelProps {
@@ -22,12 +23,12 @@ export function SolutionPanel({
   onStartEditingField,
   onStopEditingField,
 }: SolutionPanelProps) {
-  const keyInsight = (question.solution_key_insight ?? "").trim();
-  const reasoning = (question.solution_reasoning ?? "").trim();
-  const letter = question.correct_option?.trim() || "";
+  const keyInsight = coerceFieldText(question.solution_key_insight).trim();
+  const reasoning = coerceFieldText(question.solution_reasoning).trim();
+  const letter = coerceFieldText(question.correct_option).trim();
   const correctLabel =
     letter && question.options && typeof question.options === "object"
-      ? (question.options[letter] ?? "").trim()
+      ? coerceFieldText(question.options[letter]).trim()
       : "";
 
   return (

@@ -218,7 +218,7 @@ export function StemContent({ content, className }: StemContentProps) {
           }
           if (safe) {
             out += `<div class="stem-diagram my-4 flex justify-center max-w-full overflow-x-auto"><div class="stem-diagram-inner inline-block max-w-full">${safe}</div></div>`;
-          } else if (p.value.trim()) {
+          } else if (String(p.value).trim()) {
             out += `<p class="text-amber-200/90 text-sm border border-amber-600/35 rounded-md px-3 py-2 my-2">A diagram (&lt;svg&gt;) is in this stem but the preview removed it (safety filter). Use <strong>Edit question</strong> to inspect raw HTML or simplify the SVG.</p>`;
           }
         } else {

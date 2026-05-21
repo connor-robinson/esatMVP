@@ -400,7 +400,7 @@ export function renderMathContent(text: string): string {
       } else {
         const paragraphs = contentStr
           .split(/\n\n+/)
-          .map((p) => p.replace(/\n/g, " ").trim())
+          .map((p) => String(p).replace(/\n/g, " ").trim())
           .filter(Boolean);
         if (paragraphs.length <= 1) {
           htmlParts.push(

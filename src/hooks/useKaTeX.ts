@@ -281,7 +281,10 @@ export function renderMathContent(text: string): string {
   for (const segment of segments) {
     if (segment.type === "text") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      const paragraphs = contentStr.split(/\n\n+/).map((p) => p.replace(/\n/g, " ").trim()).filter(Boolean);
+      const paragraphs = contentStr
+        .split(/\n\n+/)
+        .map((p) => String(p).replace(/\n/g, " ").trim())
+        .filter(Boolean);
       if (paragraphs.length <= 1) {
         htmlParts.push(renderMathTextSegment(paragraphs[0] ?? contentStr.replace(/\n/g, " ")));
       } else {

@@ -89,6 +89,38 @@ function rowLooksTmua(data: {
   return sid.startsWith("M_") || sid.startsWith("R_");
 }
 
+/** Coerce DB/JSON field values to a string safe for `.trim()` and KaTeX display. */
+export function coerceFieldText(value: unknown, fallback = ""): string {
+  if (value == null) return fallback;
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    const o = value as Record<string, unknown>;
+    const t = o.text ?? o.value ?? o.body ?? o.content ?? o.label;
+    if (t != null && (typeof t === "string" || typeof t === "number" || typeof t === "boolean")) {
+      return String(t);
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return fallback;
+    }
+  }
+  return String(value);
+}
+
+/** Normalize option/distractor JSON objects so every value is a string. */
+export function coerceStringRecord(
+  raw: Record<string, unknown> | null | undefined
+): Record<string, string> {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    out[k] = coerceFieldText(v);
+  }
+  return out;
+}
+
 /** Single-letter A–H for `correct_option`; avoids `|| 'A'` turning valid lowercase into wrong defaults. */
 export function normalizeCorrectOptionLetter(raw: unknown): string {
   if (raw == null) return "A";
@@ -121,24 +153,39 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     }
   }
   
-  // Ensure options is always an object, never null
-  if (!options || typeof options !== 'object') {
+  // Ensure options is always an object, never null; coerce values to strings
+  if (!options || typeof options !== "object" || Array.isArray(options)) {
     options = {};
+  } else {
+    options = coerceStringRecord(options as Record<string, unknown>);
   }
 
   let distractor_map: Record<string, string> | null = null;
   if (data.distractor_map) {
     if (typeof data.distractor_map === 'string') {
       try {
-        distractor_map = JSON.parse(data.distractor_map);
+        const parsed = JSON.parse(data.distractor_map);
+        distractor_map =
+          parsed && typeof parsed === "object" && !Array.isArray(parsed)
+            ? coerceStringRecord(parsed as Record<string, unknown>)
+            : null;
       } catch (e) {
         console.warn('[normalizeReviewQuestion] Failed to parse distractor_map:', e);
         distractor_map = null;
       }
-    } else if (typeof data.distractor_map === 'object' && data.distractor_map !== null) {
-      distractor_map = data.distractor_map;
+    } else if (typeof data.distractor_map === 'object' && data.distractor_map !== null && !Array.isArray(data.distractor_map)) {
+      distractor_map = coerceStringRecord(data.distractor_map as Record<string, unknown>);
     }
   }
+
+  const solution_reasoning =
+    data.solution_reasoning != null && coerceFieldText(data.solution_reasoning).trim()
+      ? coerceFieldText(data.solution_reasoning)
+      : null;
+  const solution_key_insight =
+    data.solution_key_insight != null && coerceFieldText(data.solution_key_insight).trim()
+      ? coerceFieldText(data.solution_key_insight)
+      : null;
 
   let primary_tag: string | null =
     typeof data.primary_tag === "string" && data.primary_tag.trim() ? data.primary_tag.trim() : null;
@@ -168,8 +215,8 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
         : null,
     options: options,
     correct_option: normalizeCorrectOptionLetter(data.correct_option),
-    solution_reasoning: data.solution_reasoning || null,
-    solution_key_insight: data.solution_key_insight || null,
+    solution_reasoning,
+    solution_key_insight,
     distractor_map: distractor_map,
     subjects: data.subjects || null, // Renamed from 'paper'
     primary_tag,

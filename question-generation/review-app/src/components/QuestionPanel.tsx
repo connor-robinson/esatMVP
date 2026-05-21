@@ -6,7 +6,7 @@ import { StemContent } from "./shared/StemContent";
 import { DiagramInsertToolbar } from "./DiagramInsertToolbar";
 import { DiagramRegenPanel } from "./DiagramRegenPanel";
 import { WalkthroughVideoPlayer } from "./WalkthroughVideoPlayer";
-import { cn, hasDiagram } from "@/lib/utils";
+import { cn, coerceFieldText, hasDiagram } from "@/lib/utils";
 import { Eye, Pencil, X, Plus, ChevronDown, ChevronUp, Video } from "lucide-react";
 import { getQuestionTagText, formatTagDisplay, getPaperType, getTopicsForPaper, type TopicOption } from "@/lib/curriculum";
 import type { ReviewQuestion } from "@/types/review";
@@ -707,9 +707,11 @@ export function QuestionPanel({
           {optionLetters.map((letter) => {
             const canRemove = optionLetters.length > 2 && letter !== question.correct_option;
             const isCorrect = letter === question.correct_option;
-            const distractorText = question.distractor_map && typeof question.distractor_map === 'object' 
-              ? question.distractor_map[letter] 
-              : null;
+            const distractorRaw =
+              question.distractor_map && typeof question.distractor_map === "object"
+                ? question.distractor_map[letter]
+                : null;
+            const distractorText = coerceFieldText(distractorRaw, "");
             const isEditingOption = editingField === `option_${letter}`;
             const isEditingDistractor = editingField === `distractor_${letter}`;
             const optIdx = optionLetters.indexOf(letter);
@@ -843,7 +845,7 @@ export function QuestionPanel({
                           <div className="p-3 rounded-organic-md bg-white/5 border border-white/10 text-sm text-white/70 leading-relaxed font-serif">
                             {isEditingDistractor ? (
                               <textarea
-                                value={distractorText ?? ""}
+                                value={distractorText}
                                 onChange={(e) => onDistractorChange(letter, e.target.value)}
                                 onBlur={() => onStopEditingField?.()}
                                 autoFocus
@@ -854,7 +856,7 @@ export function QuestionPanel({
                             ) : (
                               <div className="flex items-start gap-2">
                                 <div className="flex-1 min-h-[2rem]">
-                                  {distractorText?.trim() ? (
+                                  {distractorText.trim() ? (
                                     <MathContent content={distractorText} />
                                   ) : (
                                     <span className="text-white/35 italic text-sm font-serif">
@@ -879,7 +881,7 @@ export function QuestionPanel({
                                         : "bg-white/5 hover:bg-white/10 text-white/60 hover:text-white/80"
                                     )}
                                     title={
-                                      distractorText?.trim()
+                                      distractorText.trim()
                                         ? "Edit why this could be incorrect"
                                         : "Add why this could be incorrect"
                                     }
