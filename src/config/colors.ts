@@ -76,16 +76,77 @@ export function getPaperTypeColor(paperType: string): string {
   return PAPER_TYPE_COLORS[paperType as keyof typeof PAPER_TYPE_COLORS] || PAPER_COLORS.mathematics;
 }
 
+/** Single source of truth for past-papers library exam chrome (headers + paper rows). */
+export type ExamLibraryAccent = {
+  text: string;
+  solid: string;
+  softBadge: string;
+  selectedRow: string;
+  rowHover: string;
+  iconHover: string;
+};
+
+const EXAM_LIBRARY_ACCENTS: Record<string, ExamLibraryAccent> = {
+  ENGAA: {
+    text: "text-accent",
+    solid: "bg-accent text-background dark:text-white",
+    softBadge: "bg-accent/15 text-accent",
+    selectedRow: "bg-accent/12",
+    rowHover: "hover:bg-accent/10",
+    iconHover: "hover:bg-accent/15 hover:text-accent",
+  },
+  NSAA: {
+    text: "text-biology",
+    solid: "bg-biology text-background dark:text-white",
+    softBadge: "bg-biology/15 text-biology",
+    selectedRow: "bg-biology/12",
+    rowHover: "hover:bg-biology/10",
+    iconHover: "hover:bg-biology/15 hover:text-biology",
+  },
+  TMUA: {
+    text: "text-tmua-accent",
+    solid: "bg-tmua-accent text-background dark:text-white",
+    softBadge: "bg-tmua-accent/15 text-tmua-accent",
+    selectedRow: "bg-tmua-accent/12",
+    rowHover: "hover:bg-tmua-accent/10",
+    iconHover: "hover:bg-tmua-accent/15 hover:text-tmua-accent",
+  },
+  ESAT: {
+    text: "text-maths",
+    solid: "bg-maths text-background dark:text-white",
+    softBadge: "bg-maths/15 text-maths",
+    selectedRow: "bg-maths/12",
+    rowHover: "hover:bg-maths/10",
+    iconHover: "hover:bg-maths/15 hover:text-maths",
+  },
+  PAT: {
+    text: "text-chemistry",
+    solid: "bg-chemistry text-background dark:text-white",
+    softBadge: "bg-chemistry/15 text-chemistry",
+    selectedRow: "bg-chemistry/12",
+    rowHover: "hover:bg-chemistry/10",
+    iconHover: "hover:bg-chemistry/15 hover:text-chemistry",
+  },
+  MAT: {
+    text: "text-maths",
+    solid: "bg-maths text-background dark:text-white",
+    softBadge: "bg-maths/15 text-maths",
+    selectedRow: "bg-maths/12",
+    rowHover: "hover:bg-maths/10",
+    iconHover: "hover:bg-maths/15 hover:text-maths",
+  },
+};
+
+const DEFAULT_EXAM_LIBRARY_ACCENT = EXAM_LIBRARY_ACCENTS.ESAT;
+
+export function getExamLibraryAccent(examName: string): ExamLibraryAccent {
+  const key = examName.trim().toUpperCase();
+  return EXAM_LIBRARY_ACCENTS[key] ?? DEFAULT_EXAM_LIBRARY_ACCENT;
+}
+
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
-  const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-accent";
-  if (key === "NSAA") return "text-biology";
-  if (key === "TMUA") return "text-tmua-accent";     // #CA7BB3
-  if (key === "ESAT") return "text-maths";           // #4B6B64 blueDark
-  if (key === "PAT") return "text-chemistry";
-  if (key === "MAT") return "text-maths";
-  return "text-maths";
+  return getExamLibraryAccent(examName).text;
 }
 
 /**
@@ -161,40 +222,14 @@ export const cssVar = {
   maths: "var(--color-maths)",
 } as const;
 
-/** Badge / tile accents for roadmap headers (surface + border + text). */
-/** Solid fill for section 1 / 2 number chips — matches exam paper color. */
+/** Solid fill for section 1 / 2 number chips — same exam accent as library header. */
 export function getExamSectionNumberBadgeClass(examName: string): string {
-  const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology text-background dark:text-white";
-  if (key === "NSAA") return "bg-advanced text-background dark:text-white";
-  if (key === "TMUA") return "bg-tmua-accent text-background dark:text-white";
-  if (key === "ESAT") return "bg-maths text-background dark:text-white";
-  if (key === "PAT") return "bg-chemistry text-background dark:text-white";
-  if (key === "MAT") return "bg-maths text-background dark:text-white";
-  return "bg-maths text-background dark:text-white";
+  return getExamLibraryAccent(examName).solid;
 }
 
+/** Count pill on exam group headers. */
 export function getExamAccentBadgeClass(examName: string): string {
-  const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") {
-    return "bg-biology/15 text-biology";
-  }
-  if (key === "NSAA") {
-    return "bg-advanced/15 text-advanced";
-  }
-  if (key === "TMUA") {
-    return "bg-physics/15 text-physics";
-  }
-  if (key === "ESAT") {
-    return "bg-maths/15 text-maths";
-  }
-  if (key === "PAT") {
-    return "bg-chemistry/15 text-chemistry";
-  }
-  if (key === "MAT") {
-    return "bg-maths/15 text-maths";
-  }
-  return "bg-accent/15 text-accent";
+  return getExamLibraryAccent(examName).softBadge;
 }
 
 /**

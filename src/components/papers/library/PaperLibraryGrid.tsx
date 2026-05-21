@@ -8,14 +8,19 @@ import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
 import { getExamAccentBadgeClass, getExamAccentTextClass } from "@/config/colors";
 import { cn } from "@/lib/utils";
-import type { PaperLibraryFiltersProps } from "./PaperLibraryFilters";
 
-interface PaperLibraryGridProps
-  extends Omit<PaperLibraryFiltersProps, "papers"> {
-  /** Full catalog for filter dropdown options. */
+interface PaperLibraryGridProps {
+  /** Full catalog for filter dropdown options and sibling paper loads. */
   filterSourcePapers: Paper[];
-  /** Filtered list shown in the grid. */
   papers: Paper[];
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  examFilter: string | "ALL";
+  onExamFilterChange: (value: string | "ALL") => void;
+  yearFilter: number | "ALL";
+  onYearFilterChange: (value: number | "ALL") => void;
+  typeFilter: string | "ALL";
+  onTypeFilterChange: (value: string | "ALL") => void;
   selectedPaperIds: Set<number>;
   selectedSectionsByPaper: Map<number, Set<PaperSection>>;
   onToggleSection: (paperId: number, section: PaperSection) => void;
@@ -91,39 +96,36 @@ export function PaperLibraryGrid({
   }, [papers]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 rounded-organic-xl bg-surface px-4 py-4 sm:px-5 sm:py-5">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h2 className="font-heading text-xl font-bold tracking-tight text-text">
-            Paper Library
-          </h2>
-          <p className="mt-1 text-sm leading-snug text-text-muted">
-            Find official past papers, then add them to your session on the right.
-          </p>
+    <div className="flex h-full flex-col gap-3">
+      <div className="space-y-2">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="text-xl font-bold text-text">Paper Library</h2>
+          <span className="shrink-0 text-xs tabular-nums text-text-muted">
+            {papers.length} result{papers.length === 1 ? "" : "s"}
+          </span>
         </div>
-        <span className="shrink-0 rounded-full bg-surface-mid px-2.5 py-1 text-[11px] font-semibold tabular-nums text-text-muted">
-          {papers.length} shown
-        </span>
+        <p className="text-xs leading-snug text-text-muted sm:text-sm">
+          Search and filter papers by exam, year, and type to find what you need.
+        </p>
+        <PaperLibraryFilters
+          papers={filterSourcePapers}
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          examFilter={examFilter}
+          onExamFilterChange={onExamFilterChange}
+          yearFilter={yearFilter}
+          onYearFilterChange={onYearFilterChange}
+          typeFilter={typeFilter}
+          onTypeFilterChange={onTypeFilterChange}
+        />
       </div>
 
-      <PaperLibraryFilters
-        papers={filterSourcePapers}
-        searchQuery={searchQuery}
-        onSearchChange={onSearchChange}
-        examFilter={examFilter}
-        onExamFilterChange={onExamFilterChange}
-        yearFilter={yearFilter}
-        onYearFilterChange={onYearFilterChange}
-        typeFilter={typeFilter}
-        onTypeFilterChange={onTypeFilterChange}
-      />
-
       {papers.length === 0 ? (
-        <div className="flex min-h-[12rem] flex-1 items-center justify-center rounded-organic-md bg-surface-mid/40 text-sm text-text-muted">
+        <div className="flex min-h-[220px] flex-1 items-center justify-center rounded-organic-lg bg-surface text-sm text-text-muted">
           No papers match the current filters.
         </div>
       ) : (
-        <div className="rounded-organic-md bg-surface-mid/30 px-1 py-1 sm:px-2">
+        <div className="rounded-organic-lg bg-surface px-2 py-2 sm:px-3">
           {papersByExam.sortedExams.map((examName, examIndex) => {
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
@@ -195,7 +197,7 @@ export function PaperLibraryGrid({
                             onAddFullPaper={onAddFullPaper}
                             onAddPaper={onAddPaper}
                             onAddSection={onAddSection}
-                            allPapers={papers}
+                            allPapers={filterSourcePapers}
                           />
                         ))}
                       </div>

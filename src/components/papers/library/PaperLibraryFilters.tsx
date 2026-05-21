@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
 
-export interface PaperLibraryFiltersProps {
+interface PaperLibraryFiltersProps {
   papers: Paper[];
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -50,7 +50,7 @@ function Dropdown({
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        className="flex h-9 w-full items-center justify-between gap-2 rounded-organic-md bg-surface-mid px-3 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
+        className="flex h-8 w-full items-center justify-between gap-2 rounded-organic-md bg-surface-mid px-3 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
       >
         <span className="truncate">{selected}</span>
         <ChevronDown
@@ -146,7 +146,7 @@ export function PaperLibraryFilters({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="space-y-2">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <Search
@@ -159,7 +159,7 @@ export function PaperLibraryFilters({
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search exam, paper, or year…"
             className={cn(
-              "h-9 w-full rounded-organic-md bg-surface-mid pl-9 pr-3 text-sm text-text placeholder:text-text-muted",
+              "h-8 w-full rounded-organic-md bg-surface-mid pl-9 pr-3 text-sm text-text placeholder:text-text-muted",
               "border-0 outline-none shadow-none ring-0",
               "focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
             )}
@@ -171,7 +171,7 @@ export function PaperLibraryFilters({
           onClick={() => setFiltersOpen((o) => !o)}
           aria-expanded={filtersOpen}
           className={cn(
-            "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-organic-md px-3 text-sm font-semibold transition-colors",
+            "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-organic-md px-2.5 text-xs font-semibold transition-colors sm:px-3 sm:text-sm",
             "focus-visible:outline-none",
             filtersOpen || activeFilterCount > 0
               ? "bg-surface-neutral text-text"
@@ -204,7 +204,7 @@ export function PaperLibraryFilters({
             transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
             className="overflow-hidden"
           >
-            <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
               <Dropdown
                 value={examFilter}
                 onChange={(v) => onExamFilterChange(v as string | "ALL")}
