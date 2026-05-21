@@ -4,7 +4,53 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { normalizeReviewQuestion, reviewQuestionsGetUrl } from "@/lib/utils";
 import type { ReviewQuestion } from "@/types/review";
 
-export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplete?: (updated: ReviewQuestion) => void) {
+export type SaveCompleteMeta = {
+  /** When false, do not show the “Changes saved” toast (e.g. diagram regen poll). */
+  showToast?: boolean;
+  reason?: string;
+};
+
+/** Keep in-memory edits for fields not included in a partial PATCH (avoids server row clobbering the draft). */
+function mergePartialSaveWithLocalDraft(
+  serverRow: ReviewQuestion,
+  localDraft: ReviewQuestion | null,
+  payload: Record<string, unknown>
+): ReviewQuestion {
+  if (!localDraft || localDraft.id !== serverRow.id) return serverRow;
+  return {
+    ...serverRow,
+    question_stem:
+      "question_stem" in payload ? serverRow.question_stem : localDraft.question_stem,
+    question_stem_before_auto_diagram:
+      "question_stem_before_auto_diagram" in payload
+        ? serverRow.question_stem_before_auto_diagram
+        : localDraft.question_stem_before_auto_diagram,
+    options: "options" in payload ? serverRow.options : localDraft.options,
+    correct_option:
+      "correct_option" in payload ? serverRow.correct_option : localDraft.correct_option,
+    solution_reasoning:
+      "solution_reasoning" in payload
+        ? serverRow.solution_reasoning
+        : localDraft.solution_reasoning,
+    solution_key_insight:
+      "solution_key_insight" in payload
+        ? serverRow.solution_key_insight
+        : localDraft.solution_key_insight,
+    distractor_map:
+      "distractor_map" in payload ? serverRow.distractor_map : localDraft.distractor_map,
+    difficulty: "difficulty" in payload ? serverRow.difficulty : localDraft.difficulty,
+    subjects: "subjects" in payload ? serverRow.subjects : localDraft.subjects,
+    primary_tag: "primary_tag" in payload ? serverRow.primary_tag : localDraft.primary_tag,
+    secondary_tags:
+      "secondary_tags" in payload ? serverRow.secondary_tags : localDraft.secondary_tags,
+  };
+}
+
+export function useQuestionEditor(
+  question: ReviewQuestion | null,
+  onSaveComplete?: (updated: ReviewQuestion, meta?: SaveCompleteMeta) => void,
+  onSaveError?: (message: string) => void
+) {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,22 +94,36 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
           throw new Error(data?.error || data?.details || `Failed partial save (${reason})`);
         }
         const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
-        lastPersistedUpdatedAtRef.current = normalizedSavedQuestion.updated_at || "";
-        commitLocal(normalizedSavedQuestion);
-        onSaveComplete?.(normalizedSavedQuestion);
+        const localDraft = editedQuestionRef.current;
+        const merged = mergePartialSaveWithLocalDraft(
+          normalizedSavedQuestion,
+          localDraft,
+          payload
+        );
+        lastPersistedUpdatedAtRef.current = merged.updated_at || "";
+        commitLocal(merged);
+        onSaveComplete?.(merged, { showToast: true, reason });
         console.log("[review-persist] partial PATCH applied", {
           reason,
-          id: normalizedSavedQuestion.id,
-          updated_at: normalizedSavedQuestion.updated_at,
-          correct_option: normalizedSavedQuestion.correct_option,
-          has_backup: !!normalizedSavedQuestion.question_stem_before_auto_diagram,
+          id: merged.id,
+          updated_at: merged.updated_at,
+          correct_option: merged.correct_option,
+          payloadKeys: Object.keys(payload),
+          has_backup: !!merged.question_stem_before_auto_diagram,
         });
-        return normalizedSavedQuestion;
+        return merged;
       });
-      saveChainRef.current = mine.catch(() => null);
+      saveChainRef.current = mine
+        .catch((err: unknown) => {
+          const msg =
+            err instanceof Error ? err.message : "Failed to save partial changes";
+          onSaveError?.(msg);
+          throw err;
+        })
+        .then(() => null);
       return mine;
     },
-    [commitLocal, onSaveComplete]
+    [commitLocal, onSaveComplete, onSaveError]
   );
 
   // Save function - defined first so other functions can use it
@@ -195,9 +255,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
 
         commitLocal(normalizedSavedQuestion);
 
-        if (onSaveComplete) {
-          onSaveComplete(normalizedSavedQuestion);
-        }
+        onSaveComplete?.(normalizedSavedQuestion, { showToast: true, reason: "full_save" });
 
         console.log("[review-persist] commitLocal + onSaveComplete from PATCH body", {
           saveOp,
@@ -257,7 +315,9 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
 
         return normalizedSavedQuestion;
       } catch (err: any) {
+        const msg = err?.message || "Failed to save changes";
         console.error("[useQuestionEditor] Error saving:", err);
+        onSaveError?.(msg);
         throw err;
       } finally {
         setIsSaving(false);
@@ -266,7 +326,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
 
     saveChainRef.current = mine.catch(() => null);
     return mine;
-  }, [commitLocal, onSaveComplete]);
+  }, [commitLocal, onSaveComplete, onSaveError]);
 
   // Reset local state when navigating to another question, or when the server row is newer
   // (e.g. walkthrough upload, refresh) — but never clobber local edits by diffing JSON while
@@ -546,19 +606,20 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
       const L = letter.trim().toUpperCase();
       if (!L || !(editedQuestion.options && L in editedQuestion.options)) return;
       const updated = { ...editedQuestion, correct_option: L };
-      console.log("[review-persist] updateCorrectOption", {
+      console.log("[review-persist] updateCorrectOption (full save)", {
         id: editedQuestion.id,
         from: editedQuestion.correct_option,
         to: L,
-        refAfterCommitWillMatch: true,
+        editingField,
       });
       commitLocal(updated);
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      patchPartial({ correct_option: L }, "correct_option").catch((err) => {
+      // Full row save so stem/options/distractors still being edited are not dropped by a partial PATCH response.
+      saveChanges().catch((err) => {
         console.error("[useQuestionEditor] Save correct option failed:", err);
       });
     },
-    [editedQuestion, commitLocal, patchPartial]
+    [editedQuestion, commitLocal, saveChanges, editingField]
   );
 
   const reorderOption = useCallback(
@@ -702,7 +763,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
         const normalized = normalizeReviewQuestion(data.question);
         lastPersistedUpdatedAtRef.current = normalized.updated_at || "";
         commitLocal(normalized);
-        onSaveComplete?.(normalized);
+        onSaveComplete?.(normalized, { showToast: true, reason: "diagram_regen" });
         return normalized;
       });
 
@@ -729,7 +790,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
       /** Don't clobber live edits with a stale poll: only apply when server is newer. */
       if (newTs >= refTs) {
         commitLocal(normalized);
-        onSaveComplete?.(normalized);
+        onSaveComplete?.(normalized, { showToast: false, reason: "diagram_regen_poll" });
       }
     } catch {
       /* ignore poll errors; the next tick will retry */
@@ -775,7 +836,7 @@ export function useQuestionEditor(question: ReviewQuestion | null, onSaveComplet
         const normalizedSavedQuestion = normalizeReviewQuestion(data.question);
         lastPersistedUpdatedAtRef.current = normalizedSavedQuestion.updated_at || "";
         commitLocal(normalizedSavedQuestion);
-        onSaveComplete?.(normalizedSavedQuestion);
+        onSaveComplete?.(normalizedSavedQuestion, { showToast: true, reason: "auto_diagram" });
         console.log("[review-persist] resolveAutoDiagramStemChoice applied", {
           id: normalizedSavedQuestion.id,
           choice,

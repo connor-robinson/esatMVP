@@ -68,10 +68,21 @@ export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspacePro
     resolveAutoDiagramStemChoice,
     requestDiagramRegen,
     refreshDiagramRegenStatus,
-  } = useQuestionEditor(currentQuestion, (updated) => {
-    setCurrentQuestion(updated);
-    setNotification({ type: "success", message: "Changes saved" });
-  });
+  } = useQuestionEditor(
+    currentQuestion,
+    (updated, meta) => {
+      setCurrentQuestion(updated);
+      if (meta?.showToast !== false) {
+        setNotification({ type: "success", message: "Changes saved" });
+      }
+    },
+    (message) => {
+      setNotification({
+        type: "error",
+        message: message.includes("Failed") ? message : `Save failed: ${message}`,
+      });
+    }
+  );
 
   /**
    * `/review` (queue) uses a random shuffle; a full reload without `?id=` loads a different question.
