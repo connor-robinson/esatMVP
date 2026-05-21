@@ -141,173 +141,153 @@ function PaperItemComponent({
   const loading = !paperData || paperData.loading;
   const mainSections = paperData?.mainSections || [];
 
+  const visibleSections = mainSections.filter((mainSection) => {
+    const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
+    return mainSection.subjectParts.some((part) => sectionSubjects.has(part));
+  });
+
   return (
-    <div className="space-y-2">
-      {/* Main paper row */}
-      <div className="flex items-center gap-3 p-3 rounded-lg transition-all h-14 bg-surface-mid hover:bg-surface">
-        {/* Exam Name and Year */}
-        <div className="flex-1 min-w-0">
-          <div className="text-base font-mono font-bold text-text">
+    <div className="overflow-hidden rounded-organic-md bg-surface-mid/70">
+      {/* Paper level */}
+      <div className="flex h-14 items-center gap-3 bg-surface-mid px-3 transition-colors hover:bg-surface-mid/90">
+        <div className="min-w-0 flex-1">
+          <div className="font-heading text-base font-bold text-text">
             {paper.examName} {paper.examYear}
           </div>
         </div>
 
-        {/* Right: Official/Specimen Tag */}
-        {paper.examType && (
-          <div className="px-2 py-1 rounded-md bg-surface-elevated text-[10px] uppercase font-mono tracking-wider text-text-subtle mr-2 border border-border">
+        {paper.examType ? (
+          <span className="mr-1 shrink-0 rounded-md border border-border-subtle/60 bg-surface-elevated px-2 py-1 font-heading text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
             {paper.examType}
-          </div>
-        )}
+          </span>
+        ) : null}
 
-        {/* Right: Remove button (Plus icon rotated) */}
         <button
+          type="button"
           onClick={() => onRemovePaper(paper.id)}
-          className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-            "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
-          )}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-elevated text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
           aria-label="Remove paper"
         >
-          <Plus className="w-3.5 h-3.5 stroke-[2.5] rotate-45" />
+          <Plus className="h-3.5 w-3.5 rotate-45 stroke-[2.5]" />
         </button>
       </div>
 
-      {/* Expanded sections */}
       {loading ? (
-        <SectionsLoadingState className="pl-11" />
-      ) : mainSections.length === 0 ? (
-        <div className="text-xs text-text-disabled py-2 pl-11">No sections available</div>
+        <div className="border-t border-border-subtle/40 bg-surface-elevated/60 px-3 py-2">
+          <SectionsLoadingState />
+        </div>
+      ) : visibleSections.length === 0 ? (
+        <div className="border-t border-border-subtle/40 bg-surface-elevated/60 px-3 py-3 font-heading text-xs text-text-muted">
+          No sections available
+        </div>
       ) : (
-        <div className="space-y-2 pl-11">
-          {mainSections
-            .filter((mainSection) => {
-              // Only show sections that have at least one selected subject in this main section
-              const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
-              return mainSection.subjectParts.some((part) => sectionSubjects.has(part));
-            })
-            .map((mainSection) => {
-            const isExpanded = paperExpandedSections.has(mainSection.name);
-            const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
-            const selectedCount = mainSection.subjectParts.filter(
-              (part) => sectionSubjects.has(part)
-            ).length;
+        visibleSections.map((mainSection) => {
+          const isExpanded = paperExpandedSections.has(mainSection.name);
+          const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
+          const selectedCount = mainSection.subjectParts.filter((part) =>
+            sectionSubjects.has(part),
+          ).length;
 
-            return (
-              <div key={mainSection.name} className="space-y-2">
-                <div
-                  className={cn(
-                    "flex items-center gap-3 p-3 rounded-lg transition-all h-14",
-                    "bg-surface-elevated hover:bg-surface-subtle"
-                  )}
+          return (
+            <div
+              key={mainSection.name}
+              className="border-t border-border-subtle/40"
+            >
+              {/* Section level */}
+              <div className="flex h-14 items-center gap-3 bg-surface-elevated px-3 transition-colors hover:bg-surface-elevated/90">
+                <button
+                  type="button"
+                  onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
+                  aria-expanded={isExpanded}
+                  aria-label={isExpanded ? `Collapse ${mainSection.name}` : `Expand ${mainSection.name}`}
                 >
-                  {/* Left: Chevron for expand/collapse */}
-                  <button
-                    onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
-                    className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-text-muted hover:text-text transition-colors"
-                  >
-                    <ChevronDown
-                      className={cn(
-                        "w-4 h-4 transition-transform duration-200",
-                        isExpanded ? "rotate-0" : "-rotate-90"
-                      )}
-                      strokeWidth={3}
-                    />
-                  </button>
-
-                  {/* Section name */}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-mono font-semibold text-text-muted">
-                      {mainSection.name}
-                    </div>
-                    {selectedCount > 0 && (
-                      <div className="text-xs text-text-subtle mt-0.5">
-                        {selectedCount}/{mainSection.subjectParts.length} selected
-                      </div>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 transition-transform duration-200",
+                      isExpanded ? "rotate-0" : "-rotate-90",
                     )}
-                  </div>
+                    strokeWidth={3}
+                  />
+                </button>
 
-                  {/* Right: Cancel button to deselect all subjects in this section */}
-                  {selectedCount > 0 && (
-                    <button
-                      onClick={() => {
-                        // Deselect all subjects in this section
-                        const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
-                        mainSection.subjectParts.forEach((subject) => {
-                          if (sectionSubjects.has(subject)) {
-                            onToggleSection(paper.id, subject, mainSection.name);
-                          }
-                        });
-                      }}
-                      className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all",
-                        "bg-surface-elevated hover:bg-surface text-text-muted hover:text-text"
-                      )}
-                      aria-label="Deselect all subjects in this section"
-                    >
-                      <X className="w-3.5 h-3.5 stroke-[2.5]" />
-                    </button>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <div className="font-heading text-sm font-semibold text-text">
+                    {mainSection.name}
+                  </div>
+                  {selectedCount > 0 ? (
+                    <div className="mt-0.5 font-heading text-xs text-text-subtle">
+                      {selectedCount}/{mainSection.subjectParts.length} selected
+                    </div>
+                  ) : null}
                 </div>
 
-                {/* Subject dropdown - shown when expanded */}
-                {isExpanded && mainSection.subjectParts.length > 0 && (
-                  <div className="pl-11 space-y-1.5">
-                    {mainSection.subjectParts.map((subject) => {
-                      // Check if this specific subject in this specific main section is selected
-                      const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
-                      const isSelected = sectionSubjects.has(subject);
-                      const subjectColor = getSectionColor(subject);
+                {selectedCount > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      mainSection.subjectParts.forEach((subject) => {
+                        if (sectionSubjects.has(subject)) {
+                          onToggleSection(paper.id, subject, mainSection.name);
+                        }
+                      });
+                    }}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+                    aria-label={`Deselect all subjects in ${mainSection.name}`}
+                  >
+                    <X className="h-3.5 w-3.5 stroke-[2.5]" />
+                  </button>
+                ) : null}
+              </div>
 
-                      return (
-                        <button
-                          key={subject}
-                          onClick={() => {
-                            // Toggle this specific subject in this specific main section
-                            onToggleSection(paper.id, subject, mainSection.name);
-                          }}
+              {/* Subject level */}
+              {isExpanded && mainSection.subjectParts.length > 0 ? (
+                <div className="space-y-px bg-surface px-2 py-2">
+                  {mainSection.subjectParts.map((subject) => {
+                    const isSelected = sectionSubjects.has(subject);
+                    const subjectColor = getSectionColor(subject);
+
+                    return (
+                      <button
+                        key={subject}
+                        type="button"
+                        onClick={() => onToggleSection(paper.id, subject, mainSection.name)}
+                        className={cn(
+                          "flex w-full items-center gap-3 rounded-organic-sm px-3 py-2.5 text-left font-heading transition-colors",
+                          isSelected
+                            ? "bg-surface-neutral"
+                            : "bg-surface-subtle/80 hover:bg-surface-neutral/70",
+                        )}
+                      >
+                        <div
                           className={cn(
-                            "w-full flex items-center gap-3 p-2 rounded-lg transition-all text-left",
-                            isSelected
-                              ? "bg-surface-mid"
-                              : "hover:bg-surface-subtle"
+                            "flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all",
+                            isSelected ? "border-2" : "border-2 border-border bg-surface-elevated",
+                          )}
+                          style={{
+                            backgroundColor: isSelected ? subjectColor : undefined,
+                            borderColor: isSelected ? subjectColor : undefined,
+                          }}
+                        >
+                          {isSelected ? <Check className="h-3 w-3 text-background" /> : null}
+                        </div>
+
+                        <span
+                          className={cn(
+                            "flex-1 text-sm font-medium",
+                            isSelected ? "text-text" : "text-text-muted",
                           )}
                         >
-                          {/* Color-coded Checkbox */}
-                          <div
-                            className={cn(
-                              "w-4 h-4 rounded flex items-center justify-center flex-shrink-0 transition-all",
-                              isSelected
-                                ? "border-2"
-                                : "bg-surface-elevated border-2 border-border"
-                            )}
-                            style={{
-                              backgroundColor: isSelected ? subjectColor : undefined,
-                              borderColor: isSelected ? subjectColor : undefined,
-                            }}
-                          >
-                            {isSelected && (
-                              <Check className="w-3 h-3 text-text" />
-                            )}
-                          </div>
-
-                          {/* Subject name */}
-                          <span
-                            className={cn(
-                              "text-sm font-medium flex-1",
-                              isSelected ? "text-text" : "text-text-muted"
-                            )}
-                          >
-                            {subject}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                          {subject}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+          );
+        })
       )}
     </div>
   );
@@ -650,7 +630,7 @@ export function PaperSessionSummary({
         </span>
       </header>
 
-      <div className="flex flex-col gap-0 px-4 py-4 sm:px-5 sm:py-5">
+      <div className="flex min-h-0 flex-1 flex-col gap-0 px-4 py-4 sm:px-5 sm:py-5">
         <div
           className={cn(
             "space-y-2 overflow-y-auto rounded-organic-md bg-surface-mid/45 p-3",
