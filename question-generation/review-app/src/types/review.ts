@@ -59,6 +59,9 @@ export interface ReviewQuestion {
   quality_gate_calibration_notes?: string | null;
   quality_gate_graph_candidate?: boolean;
   quality_gate_graph_notes?: string | null;
+  /** After QG image/SVG backfill merge — needs human review (see add_quality_gate_diagram_backfill_review.sql). */
+  quality_gate_diagram_backfill_kind?: 'image' | 'svg' | null;
+  quality_gate_diagram_backfill_at?: string | null;
 
   /** V4 visual pipeline metadata (see ``20260517190000_add_v4_visual_fields.sql``). */
   pipeline?: string | null;

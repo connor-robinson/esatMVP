@@ -517,6 +517,27 @@ export function QuestionPanel({
         storagePath={question.screen_video_storage_path}
       />
 
+      {question.quality_gate_diagram_backfill_kind ? (
+        <div className="mx-4 mb-2 rounded-lg border border-violet-400/40 bg-violet-500/[0.12] px-3 py-2.5 text-xs text-violet-50/95">
+          <div className="font-mono font-semibold text-violet-100 mb-1">
+            Backgenerated diagram — human review required
+          </div>
+          <p className="text-white/80 leading-relaxed">
+            Quality Gate auto-inserted a{" "}
+            {question.quality_gate_diagram_backfill_kind === "image"
+              ? "generated image (Imagen)"
+              : "generated inline SVG"}{" "}
+            into this stem. Check that the figure matches the setup, does not spoil the answer,
+            and that labels and layout are exam-appropriate.
+          </p>
+          {question.quality_gate_diagram_backfill_at ? (
+            <p className="mt-1.5 text-[10px] font-mono text-white/45">
+              Backfill applied: {question.quality_gate_diagram_backfill_at}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {(question.quality_gate_assessed_at ||
         question.quality_gate_verdict ||
         question.quality_gate_reason) && (

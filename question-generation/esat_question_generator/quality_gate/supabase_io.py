@@ -128,7 +128,7 @@ def fetch_all_assessed_rows_for_overview(
             .select(
                 "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
                 "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode, "
-                "quality_gate_assessed_at, quality_gate_job_id"
+                "quality_gate_diagram_backfill_kind, quality_gate_assessed_at, quality_gate_job_id"
             )
             .neq("status", "deleted")
             .not_.is_("quality_gate_assessed_at", "null")
@@ -264,7 +264,8 @@ def fetch_quality_gate_job_result_rows(
             client.table(TABLE)
             .select(
                 "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
-                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode"
+                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode, "
+                "quality_gate_diagram_backfill_kind"
             )
             .eq("quality_gate_job_id", job_id)
             .neq("status", "deleted")
@@ -540,8 +541,9 @@ def fetch_graph_candidates_for_diagram_backfill(
     kind = (diagram_kind or "svg").strip().lower()
     select_cols = (
         "id, media_upload_code, question_stem, quality_gate_graph_notes, quality_gate_payload, "
-        "quality_gate_verdict, quality_gate_graph_candidate, quality_gate_graph_mode, "
-        "svg_operator_backfill_choice, subjects, difficulty, question_stem_before_auto_diagram, "
+        "quality_gate_verdict, quality_gate_action, quality_gate_reason, "
+        "quality_gate_graph_candidate, quality_gate_graph_mode, quality_gate_diagram_backfill_kind, "
+        "svg_operator_backfill_choice, subjects, difficulty, question_stem_before_auto_diagram, status, "
         "updated_at"
     )
     while len(out) < lim:

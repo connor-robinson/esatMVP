@@ -14,6 +14,7 @@ from .supabase_io import (
     get_supabase,
     update_question_assessment,
 )
+from .diagram_backfill_review import BACKFILL_KIND_SVG, build_backfill_human_review_patch
 from .svg_diagram import run_auto_diagram_for_row
 
 _DIR = Path(__file__).resolve().parent
@@ -179,6 +180,7 @@ def run_missing_svg_backfill(
                         "question_stem_before_auto_diagram": prev_stem
                         if prev_stem != new_stem
                         else None,
+                        **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_SVG),
                     },
                 )
                 try:

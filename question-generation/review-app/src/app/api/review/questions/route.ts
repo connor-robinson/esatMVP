@@ -44,7 +44,7 @@ const NO_STORE_HEADERS = {
  * Detail fetches use `*` and receive those fields when the columns exist.
  */
 const SLIM_QUESTION_COLUMNS =
-  'id, generation_id, schema_id, difficulty, status, question_stem, question_stem_before_auto_diagram, options, correct_option, solution_reasoning, solution_key_insight, distractor_map, subjects, primary_tag, secondary_tags, test_type, created_at, updated_at, schema_reclass_review_tier, schema_reclass_old_id, schema_reclass_new_id, media_upload_code, screen_video_storage_path, quality_gate_assessed_at, quality_gate_verdict, quality_gate_action, quality_gate_reason, quality_gate_job_id, quality_gate_model, pipeline, has_visual, visual_type, visual_renderer, visual_qc_status, diagram_regen_status, diagram_regen_completed_at';
+  'id, generation_id, schema_id, difficulty, status, question_stem, question_stem_before_auto_diagram, options, correct_option, solution_reasoning, solution_key_insight, distractor_map, subjects, primary_tag, secondary_tags, test_type, created_at, updated_at, schema_reclass_review_tier, schema_reclass_old_id, schema_reclass_new_id, media_upload_code, screen_video_storage_path, quality_gate_assessed_at, quality_gate_verdict, quality_gate_action, quality_gate_reason, quality_gate_job_id, quality_gate_model, quality_gate_diagram_backfill_kind, quality_gate_diagram_backfill_at, pipeline, has_visual, visual_type, visual_renderer, visual_qc_status, diagram_regen_status, diagram_regen_completed_at';
 
 /**
  * Fisher-Yates shuffle algorithm for randomizing array

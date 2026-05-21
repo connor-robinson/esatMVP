@@ -88,20 +88,29 @@ def _graph_mode_label(row: dict[str, Any]) -> str:
     return "—"
 
 
+def _backfill_review_label(row: dict[str, Any]) -> str:
+    from quality_gate.diagram_backfill_review import backfill_review_label
+
+    return backfill_review_label(row.get("quality_gate_diagram_backfill_kind")) or "—"
+
+
 def _sort_rows_for_results_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Review workload first: Major → Minor → Pass with graph candidate → rest; then by AI action urgency."""
+    """Review workload first: backgenerated diagram → Major → Minor → Pass+graph → rest."""
 
     def key(r: dict[str, Any]) -> tuple:
+        bf = (r.get("quality_gate_diagram_backfill_kind") or "").strip().lower()
         v = (r.get("quality_gate_verdict") or "").strip().lower()
         gc = r.get("quality_gate_graph_candidate") is True
-        if v == "major":
+        if bf:
             tier = 0
-        elif v == "minor":
+        elif v == "major":
             tier = 1
-        elif v == "pass" and gc:
+        elif v == "minor":
             tier = 2
-        else:
+        elif v == "pass" and gc:
             tier = 3
+        else:
+            tier = 4
         action = (r.get("quality_gate_action") or "").strip().lower()
         action_rank = {"delete": 0, "regenerate": 1, "human_review": 2, "approve": 3}.get(action, 4)
         qid = str(r.get("id") or "")
@@ -124,11 +133,13 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
         verdict = (r.get("quality_gate_verdict") or "—").strip() or "—"
         action = r.get("quality_gate_action")
         wf = (r.get("status") or "—").strip() or "—"
+        backfill = _backfill_review_label(r)
         records.append(
             {
                 "Code or id": code,
                 "Verdict": verdict,
                 "AI suggestion": _quality_gate_action_label(action),
+                "Backfill review": backfill,
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -156,11 +167,13 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
         last_job = (lj[:40] + "…") if len(lj) > 40 else (lj if lj else "—")
         at = r.get("quality_gate_assessed_at")
         assessed_s = str(at)[:22] if at else "—"
+        backfill = _backfill_review_label(r)
         records.append(
             {
                 "Code or id": code,
                 "Verdict": verdict,
                 "AI suggestion": _quality_gate_action_label(action),
+                "Backfill review": backfill,
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -729,6 +742,7 @@ with tab_after:
                         "Walkthrough code": code,
                         "Review": f"{review_base}/review?id={qid}",
                         "Verdict": (r.get("quality_gate_verdict") or "—"),
+                        "Backfill review": _backfill_review_label(r),
                         "Graph notes (preview)": prev or "—",
                         "SVG operator choice": _svg_operator_db_to_label(r.get("svg_operator_backfill_choice")),
                     }
@@ -989,6 +1003,9 @@ with tab_after:
                         {
                             "question_id": a.get("question_id"),
                             "status": a.get("final_status"),
+                            "backfill_review": "Backgen · image"
+                            if a.get("final_status") == "merged"
+                            else "—",
                             "diagram_need": a.get("diagram_need"),
                             "spoiler_risk": a.get("spoiler_risk"),
                             "precision_risk": a.get("precision_risk"),

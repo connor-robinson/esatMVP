@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { ReviewQuestion, PaperType } from "@/types/review";
-import { stripHtml, cn, hasDiagram } from "@/lib/utils";
+import { stripHtml, cn, hasDiagram, backfillReviewLabel } from "@/lib/utils";
 import { resolveReviewQuestionInput } from "@/lib/reviewLookup";
 import { ChevronLeft, ChevronRight, ImageIcon, ListVideo, RefreshCw, Video } from "lucide-react";
 import {
@@ -403,6 +403,7 @@ export function ReviewDashboard() {
                 walkCodes[q.id] ||
                 null;
               const hasDiag = hasDiagram(q);
+              const backfillTag = backfillReviewLabel(q.quality_gate_diagram_backfill_kind);
               const regenStatus = q.diagram_regen_status ?? null;
               const regenPending =
                 regenStatus === "queued" || regenStatus === "in_progress";
@@ -413,9 +414,11 @@ export function ReviewDashboard() {
                     <article
                       className={cn(
                         "rounded-organic-lg p-4",
-                        hasDiag
-                          ? "bg-sky-500/[0.08] hover:bg-sky-500/[0.13] ring-1 ring-sky-400/35 hover:ring-sky-300/50"
-                          : "bg-white/[0.03] hover:bg-white/[0.06] ring-1 ring-white/10 hover:ring-primary/35",
+                        backfillTag
+                          ? "bg-violet-500/[0.1] hover:bg-violet-500/[0.15] ring-1 ring-violet-400/45 hover:ring-violet-300/55"
+                          : hasDiag
+                            ? "bg-sky-500/[0.08] hover:bg-sky-500/[0.13] ring-1 ring-sky-400/35 hover:ring-sky-300/50"
+                            : "bg-white/[0.03] hover:bg-white/[0.06] ring-1 ring-white/10 hover:ring-primary/35",
                         "transition-colors"
                       )}
                     >
@@ -498,6 +501,15 @@ export function ReviewDashboard() {
                             title="Stored schema_id is pre-rename; canonical id is schema_reclass_new_id — keep or delete"
                           >
                             Reclass · review
+                          </span>
+                        ) : null}
+                        {backfillTag ? (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-violet-500/30 text-violet-100 ring-1 ring-violet-400/55"
+                            title="Quality Gate auto-inserted this diagram — human review required"
+                          >
+                            <ImageIcon className="w-3 h-3 shrink-0" aria-hidden />
+                            {backfillTag}
                           </span>
                         ) : null}
                         {hasDiag ? (

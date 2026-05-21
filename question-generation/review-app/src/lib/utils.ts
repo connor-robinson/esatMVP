@@ -297,6 +297,16 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       typeof data.quality_gate_graph_notes === "string" && data.quality_gate_graph_notes.trim()
         ? data.quality_gate_graph_notes.trim()
         : null,
+    quality_gate_diagram_backfill_kind:
+      data.quality_gate_diagram_backfill_kind === "image" ||
+      data.quality_gate_diagram_backfill_kind === "svg"
+        ? data.quality_gate_diagram_backfill_kind
+        : null,
+    quality_gate_diagram_backfill_at:
+      typeof data.quality_gate_diagram_backfill_at === "string" &&
+      data.quality_gate_diagram_backfill_at.trim()
+        ? data.quality_gate_diagram_backfill_at.trim()
+        : null,
     pipeline:
       typeof data.pipeline === "string" && data.pipeline.trim()
         ? data.pipeline.trim()
@@ -400,6 +410,15 @@ export function hasDiagram(q: Pick<ReviewQuestion, "has_visual" | "visual_type" 
   if (stem.includes("<svg")) return true;
   if (stem.includes("<img")) return true;
   return false;
+}
+
+/** Display label for Quality Gate backfilled diagrams (image or inline SVG). */
+export function backfillReviewLabel(
+  kind: ReviewQuestion["quality_gate_diagram_backfill_kind"]
+): string | null {
+  if (kind === "image") return "Backgen · image";
+  if (kind === "svg") return "Backgen · SVG";
+  return null;
 }
 
 /**

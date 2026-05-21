@@ -12,6 +12,7 @@ from .defaults import (
     default_image_verify_model,
 )
 from .image_diagram import build_image_brief, resolve_auto_diagram_mode, run_auto_image_diagram_for_row
+from .diagram_backfill_review import BACKFILL_KIND_IMAGE, build_backfill_human_review_patch
 from .supabase_io import (
     fetch_graph_candidates_for_diagram_backfill,
     fetch_question_stem_fields,
@@ -234,6 +235,7 @@ def run_missing_image_backfill(
                         "brief": audit.get("brief_payload"),
                         "verification": audit.get("verification_payload"),
                     },
+                    **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_IMAGE),
                 }
                 try:
                     update_question_assessment(client, qid, patch)

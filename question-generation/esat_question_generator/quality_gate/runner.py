@@ -456,6 +456,11 @@ def run_quality_gate_job(
                                 f"[svg] about to PATCH {qid} new_stem_chars={len(new_stem)} "
                                 f"new_has_<svg={'<svg' in new_stem.lower()} same_as_prev={new_stem == prev_stem}",
                             )
+                            from .diagram_backfill_review import (
+                                BACKFILL_KIND_SVG,
+                                build_backfill_human_review_patch,
+                            )
+
                             update_question_assessment(
                                 client,
                                 qid,
@@ -464,6 +469,9 @@ def run_quality_gate_job(
                                     "question_stem_before_auto_diagram": prev_stem
                                     if prev_stem != new_stem
                                     else None,
+                                    **build_backfill_human_review_patch(
+                                        row, kind=BACKFILL_KIND_SVG
+                                    ),
                                 },
                             )
                             try:
