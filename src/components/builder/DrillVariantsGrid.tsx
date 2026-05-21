@@ -7,6 +7,14 @@
 import { Check, Plus, Home } from 'lucide-react';
 import { getTopic } from '@/config/topics';
 import { getArithmeticDisplayFolder } from '@/config/arithmeticFolders';
+import {
+  getArithmeticFolderSymbol,
+  getArithmeticVariantPreview,
+} from '@/config/arithmeticDrillPreviews';
+import {
+  ArithmeticDrillPreview,
+  ArithmeticVariantExample,
+} from '@/components/builder/ArithmeticDrillPreview';
 import { cn } from '@/lib/utils';
 import { primaryButtonLabelClasses } from '@/config/theme';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
@@ -42,11 +50,12 @@ function ArithmeticDrillCard({
   onRemove: () => void;
 }) {
   const diff = getDifficultyLabel(difficulty);
+  const preview = getArithmeticVariantPreview(topicId, variantId);
 
   return (
     <div
       className={cn(
-        'relative flex min-h-[5.5rem] flex-col rounded-organic-md p-3.5 transition-all',
+        'relative flex min-h-[8.5rem] flex-col rounded-organic-md p-3.5 transition-all',
         isSelected
           ? 'bg-folder-card-selected shadow-sm'
           : 'bg-surface-elevated hover:bg-surface-neutral',
@@ -65,9 +74,16 @@ function ArithmeticDrillCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <h4 className='mb-3 flex-1 text-sm font-bold leading-snug text-text'>
-        {name}
-      </h4>
+      <h4 className='mb-2 text-sm font-bold leading-snug text-text'>{name}</h4>
+      {preview ? (
+        <ArithmeticVariantExample
+          preview={preview}
+          selected={isSelected}
+          className='mb-3'
+        />
+      ) : (
+        <div className='mb-3 min-h-[2.75rem]' aria-hidden />
+      )}
       <div className='mt-auto flex justify-end'>
         {isSelected ? (
           <button
@@ -165,17 +181,17 @@ export function DrillVariantsGrid({
       );
     }
 
-    const FolderIcon = arithmeticFolder.icon;
+    const folderSymbol = getArithmeticFolderSymbol(arithmeticFolder.id);
 
     return (
       <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl bg-surface'>
         <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
           <div className='mb-6 flex items-center gap-4'>
             <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-lg bg-primary/12'>
-              <FolderIcon
-                className='h-6 w-6 text-primary'
-                strokeWidth={1.75}
-                aria-hidden
+              <ArithmeticDrillPreview
+                preview={folderSymbol}
+                size='folder'
+                selected
               />
             </div>
             <h2 className='font-heading text-2xl font-bold tracking-tight text-text'>

@@ -6,6 +6,8 @@ import {
   folderHasAccessibleModule,
   type ArithmeticDisplayFolder,
 } from '@/config/arithmeticFolders';
+import { getArithmeticFolderSymbol } from '@/config/arithmeticDrillPreviews';
+import { ArithmeticDrillPreview } from '@/components/builder/ArithmeticDrillPreview';
 import { cn } from '@/lib/utils';
 
 interface ArithmeticFolderGridProps {
@@ -44,7 +46,7 @@ export function ArithmeticFolderGrid({
           );
           const isSelected = selectedFolderId === folder.id;
           const selectedCount = selectedCountInFolder(folder, selectedTopicIds);
-          const Icon = folder.icon;
+          const symbol = getArithmeticFolderSymbol(folder.id);
 
           if (!unlocked) {
             return (
@@ -54,7 +56,11 @@ export function ArithmeticFolderGrid({
                 aria-disabled
               >
                 <div className='flex h-14 w-14 items-center justify-center rounded-organic-xl bg-surface-mid'>
-                  <Icon className='h-7 w-7 text-text-muted/50' strokeWidth={1.75} />
+                  <ArithmeticDrillPreview
+                    preview={symbol}
+                    size='folder'
+                    className='opacity-50'
+                  />
                 </div>
                 <span className='text-center text-sm font-bold text-text-muted'>
                   {folder.name}
@@ -86,12 +92,10 @@ export function ArithmeticFolderGrid({
                   isSelected ? 'bg-primary/18' : 'bg-primary/10',
                 )}
               >
-                <Icon
-                  className={cn(
-                    'h-8 w-8',
-                    isSelected ? 'text-primary' : 'text-primary/85',
-                  )}
-                  strokeWidth={1.75}
+                <ArithmeticDrillPreview
+                  preview={symbol}
+                  size='folder'
+                  selected={isSelected}
                 />
               </div>
               <span className='text-center text-sm font-bold text-text'>
