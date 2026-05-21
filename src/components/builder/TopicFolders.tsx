@@ -6,6 +6,8 @@
 
 import { Crown, Folder, FolderOpen, Lock } from 'lucide-react';
 import { Topic, TopicCategory } from '@/types/core';
+import { buildArithmeticDisplayFolders } from '@/config/arithmeticFolders';
+import { ArithmeticFolderGrid } from '@/components/builder/ArithmeticFolderGrid';
 import { cn } from '@/lib/utils';
 
 export type HighLevelCategory =
@@ -81,6 +83,11 @@ export function TopicFolders({
     (t) => !accessibleTopicIds.has(t.id),
   );
 
+  const useArithmeticLayout = selectedCategory === 'arithmetic';
+  const arithmeticFolderCount = useArithmeticLayout
+    ? buildArithmeticDisplayFolders().length
+    : 0;
+
   // Count selected variants per topic
   const getSelectedCount = (topic: Topic) => {
     if (!topic.variants) return 0;
@@ -90,7 +97,14 @@ export function TopicFolders({
   };
 
   return (
-    <div className='flex h-full min-h-0 w-[clamp(15rem,28vw,24rem)] shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface'>
+    <div
+      className={cn(
+        'flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface',
+        useArithmeticLayout
+          ? 'w-[clamp(16rem,30vw,26rem)]'
+          : 'w-[clamp(15rem,28vw,24rem)]',
+      )}
+    >
       <div className='flex shrink-0 items-center justify-between px-6 pb-4 pt-5'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory
@@ -98,11 +112,21 @@ export function TopicFolders({
             : 'Operations'}
         </h2>
         <span className='rounded-organic-sm bg-primary/12 px-2 py-1 text-xs font-bold text-primary'>
-          {categoryTopics.length} Total
+          {useArithmeticLayout ? arithmeticFolderCount : categoryTopics.length}{' '}
+          {useArithmeticLayout ? 'Folders' : 'Total'}
         </span>
       </div>
 
       <div className='flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-6 pt-4'>
+      {useArithmeticLayout ? (
+        <ArithmeticFolderGrid
+          accessibleTopicIds={accessibleTopicIds}
+          selectedFolderId={selectedTopicId}
+          onSelectFolder={onSelectTopic}
+          selectedTopicIds={selectedTopicIds}
+          showUpgradeCard={showUpgradeCard}
+        />
+      ) : (
       <div className='space-y-3'>
         {categoryTopics.length === 0 ? (
           selectedCategory ? (
@@ -207,8 +231,9 @@ export function TopicFolders({
           </>
         )}
       </div>
+      )}
 
-      {showUpgradeCard && (
+      {!useArithmeticLayout && showUpgradeCard && (
         <div className='mt-6 flex flex-col gap-3 rounded-organic-xl bg-surface-elevated p-4 text-center shadow-md'>
           <div className='flex justify-center'>
             <Crown className='h-8 w-8 text-amber-400/90' aria-hidden />

@@ -4,8 +4,9 @@
 
 'use client';
 
-import { Check, Plus, ListOrdered, Clock, Home } from 'lucide-react';
+import { Check, Plus, Home } from 'lucide-react';
 import { getTopic } from '@/config/topics';
+import { getArithmeticDisplayFolder } from '@/config/arithmeticFolders';
 import { cn } from '@/lib/utils';
 import { primaryButtonLabelClasses } from '@/config/theme';
 import { getDifficultyLabel } from '@/lib/drill-difficulty';
@@ -13,6 +14,8 @@ import { getDifficultyLabel } from '@/lib/drill-difficulty';
 interface DrillVariantsGridProps {
   topicId: string | null;
   selectedTopicIds: string[];
+  /** Arithmetic homepage experiment: compact drill cards, merged folders. */
+  isArithmeticCategory?: boolean;
   onAddVariant: (
     topicVariantId: string,
     topicId: string,
@@ -21,13 +24,89 @@ interface DrillVariantsGridProps {
   onRemoveVariant: (topicVariantId: string) => void;
 }
 
+function ArithmeticDrillCard({
+  topicId,
+  variantId,
+  name,
+  difficulty,
+  isSelected,
+  onAdd,
+  onRemove,
+}: {
+  topicId: string;
+  variantId: string;
+  name: string;
+  difficulty: number;
+  isSelected: boolean;
+  onAdd: () => void;
+  onRemove: () => void;
+}) {
+  const diff = getDifficultyLabel(difficulty);
+
+  return (
+    <div
+      className={cn(
+        'relative flex min-h-[5.5rem] flex-col rounded-organic-md p-3.5 transition-all',
+        isSelected
+          ? 'bg-folder-card-selected shadow-sm'
+          : 'bg-surface-elevated hover:bg-surface-neutral',
+      )}
+    >
+      <div className='mb-2 flex items-start justify-between gap-2'>
+        <span
+          className={cn(
+            'text-[10px] font-bold uppercase tracking-wide',
+            diff.color,
+          )}
+        >
+          {diff.label}
+        </span>
+        {isSelected ? (
+          <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
+        ) : null}
+      </div>
+      <h4 className='mb-3 flex-1 text-sm font-bold leading-snug text-text'>
+        {name}
+      </h4>
+      <div className='mt-auto flex justify-end'>
+        {isSelected ? (
+          <button
+            type='button'
+            onClick={onRemove}
+            className={cn(
+              'rounded-organic-sm bg-primary px-3 py-2 text-xs font-bold shadow-sm shadow-primary/20 transition-colors hover:bg-primary-hover',
+              primaryButtonLabelClasses,
+            )}
+          >
+            Remove
+          </button>
+        ) : (
+          <button
+            type='button'
+            onClick={onAdd}
+            className='flex items-center gap-1 rounded-organic-sm bg-surface-dark px-3 py-2 text-xs font-bold text-[#9a939f] transition-colors hover:bg-surface-mid hover:text-text dark:text-[#c4bec9]'
+          >
+            <Plus className='h-3.5 w-3.5 shrink-0' />
+            Add
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function DrillVariantsGrid({
   topicId,
   selectedTopicIds,
+  isArithmeticCategory = false,
   onAddVariant,
   onRemoveVariant,
 }: DrillVariantsGridProps) {
-  const topic = topicId ? getTopic(topicId) : null;
+  const arithmeticFolder =
+    isArithmeticCategory && topicId
+      ? getArithmeticDisplayFolder(topicId)
+      : undefined;
+  const topic = topicId && !arithmeticFolder ? getTopic(topicId) : null;
 
   if (!topicId) {
     return (
@@ -69,6 +148,60 @@ export function DrillVariantsGrid({
                 </li>
               ))}
             </ol>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (arithmeticFolder) {
+    if (arithmeticFolder.modules.length === 0) {
+      return (
+        <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl bg-surface'>
+          <div className='flex flex-1 items-center justify-center p-8 text-sm text-text-muted'>
+            No drills in this folder
+          </div>
+        </div>
+      );
+    }
+
+    const FolderIcon = arithmeticFolder.icon;
+
+    return (
+      <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl bg-surface'>
+        <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-6'>
+          <div className='mb-6 flex items-center gap-4'>
+            <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-lg bg-primary/12'>
+              <FolderIcon
+                className='h-6 w-6 text-primary'
+                strokeWidth={1.75}
+                aria-hidden
+              />
+            </div>
+            <h2 className='font-heading text-2xl font-bold tracking-tight text-text'>
+              {arithmeticFolder.name}
+            </h2>
+          </div>
+
+          <div className='grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-4'>
+            {arithmeticFolder.modules.map((mod) => {
+              const compositeId = `${mod.topicId}-${mod.variantId}`;
+              const isSelected = selectedTopicIds.includes(compositeId);
+              return (
+                <ArithmeticDrillCard
+                  key={compositeId}
+                  topicId={mod.topicId}
+                  variantId={mod.variantId}
+                  name={mod.name}
+                  difficulty={mod.difficulty}
+                  isSelected={isSelected}
+                  onAdd={() =>
+                    onAddVariant(compositeId, mod.topicId, mod.variantId)
+                  }
+                  onRemove={() => onRemoveVariant(compositeId)}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
@@ -140,17 +273,7 @@ export function DrillVariantsGrid({
                   <p className='mb-4 flex-1 text-sm text-text-muted'>
                     {variant.description || `${topic.name}: ${variant.name}`}
                   </p>
-                  <div className='mt-auto flex items-center justify-between'>
-                    <div className='flex items-center gap-3 text-xs font-medium text-text-muted'>
-                      <span className='flex items-center gap-1'>
-                        <ListOrdered className='h-3 w-3' />
-                        10 Qs
-                      </span>
-                      <span className='flex items-center gap-1'>
-                        <Clock className='h-3 w-3' />
-                        5m
-                      </span>
-                    </div>
+                  <div className='mt-auto flex items-center justify-end'>
                     {isSelected ? (
                       <button
                         type='button'

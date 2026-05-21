@@ -917,8 +917,16 @@ export const TOPICS: Record<string, Topic> = {
     subjectId: "maths",
     category: "transform",
     description: "Convert between friendly fractions and decimals",
-    levels: 1,
     icon: "Divide",
+    variants: [
+      {
+        id: "level-1",
+        name: "Friendly conversions",
+        description: "Common fraction ↔ decimal pairs",
+        difficulty: 1,
+        config: { level: 1 },
+      },
+    ],
   },
   common_frac_to_dec_2dp: {
     id: "common_frac_to_dec_2dp",
@@ -926,8 +934,16 @@ export const TOPICS: Record<string, Topic> = {
     subjectId: "maths",
     category: "transform",
     description: "Convert fractions to decimals (2 d.p.) or vice versa",
-    levels: 1,
     icon: "Divide",
+    variants: [
+      {
+        id: "level-1",
+        name: "To 2 decimal places",
+        description: "Fraction ↔ decimal (2 d.p.)",
+        difficulty: 2,
+        config: { level: 1 },
+      },
+    ],
   },
   simplify_fraction: {
     id: "simplify_fraction",
