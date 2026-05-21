@@ -9,6 +9,7 @@ import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getExamSectionNumberBadgeClass } from "@/config/colors";
+import { SectionsLoadingState } from "./SectionsLoadingState";
 import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts, mapPartToSection } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -378,7 +379,7 @@ export function PaperColumn({
           >
             <div className="space-y-1 pb-1 pt-0.5">
               {loadingSections ? (
-                <div className="py-2 text-xs text-text-muted">Loading sections…</div>
+                <SectionsLoadingState />
               ) : mainSections.length === 0 ? (
                 <div className="py-2 text-xs text-text-muted">No sections available</div>
               ) : (

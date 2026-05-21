@@ -23,6 +23,7 @@ import { getQuestions } from "@/lib/supabase/questions";
 import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
+import { SectionsLoadingState } from "./SectionsLoadingState";
 
 const panelClass = "rounded-2xl bg-surface px-5 py-5";
 
@@ -173,7 +174,7 @@ function PaperItemComponent({
 
       {/* Expanded sections */}
       {loading ? (
-        <div className="text-xs text-text-disabled py-2 pl-11">Loading sections...</div>
+        <SectionsLoadingState className="pl-11" />
       ) : mainSections.length === 0 ? (
         <div className="text-xs text-text-disabled py-2 pl-11">No sections available</div>
       ) : (
