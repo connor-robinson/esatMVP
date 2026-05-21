@@ -109,7 +109,7 @@ function PaperTrendTooltip({
 }
 
 export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartProps) {
-  const [xAxisMode, setXAxisMode] = useState<PaperTrendXAxisMode>('time');
+  const [xAxisMode, setXAxisMode] = useState<PaperTrendXAxisMode>('session');
 
   const chartData = useMemo((): ChartRow[] => {
     const list = sessions
@@ -121,7 +121,7 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
     const { accuracyTrend: scoreTrend, speedTrend: percentileTrend } =
       buildSmoothedTrendSeries(scorePct, percentile);
 
-    const showSmoothedTrend = xAxisMode === 'time' && list.length >= 3;
+    const showSmoothedTrend = list.length >= 3;
 
     return list.map((s, index) => {
       const sessionNumber = index + 1;
@@ -144,12 +144,10 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
   }, [sessions, xAxisMode]);
 
   const percentileDomain = useMemo((): [number, number] => {
-    const keys =
-      xAxisMode === 'time'
-        ? (['percentileTrend', 'percentile'] as const)
-        : (['percentile'] as const);
     const values = chartData.flatMap((d) =>
-      keys.map((k) => d[k]).filter((v): v is number => v != null),
+      [d.percentileTrend, d.percentile].filter(
+        (v): v is number => v != null,
+      ),
     );
     if (values.length === 0) return [0, 100];
     const min = Math.min(...values);
@@ -159,10 +157,9 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
       Math.max(0, Math.floor(min - padding)),
       Math.min(100, Math.ceil(max + padding)),
     ];
-  }, [chartData, xAxisMode]);
+  }, [chartData]);
 
-  const useSmoothedTrend =
-    xAxisMode === 'time' && chartData.length >= 3;
+  const useSmoothedTrend = chartData.length >= 3;
 
   if (chartData.length === 0) {
     return (
@@ -191,7 +188,7 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
         </div>
         {useSmoothedTrend && (
           <p className="text-xs text-text-muted sm:ml-auto">
-            Smoothed trend vs your own sessions; outliers de-emphasised.
+            Dots are session scores; lines show smoothed trend.
           </p>
         )}
       </div>
@@ -280,9 +277,10 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
                 stroke="var(--color-maths)"
                 strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4 }}
+                activeDot={false}
                 connectNulls
                 name="Score trend"
+                legendType="line"
               />
               <Line
                 yAxisId="percentile"
@@ -291,9 +289,34 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
                 stroke="var(--color-accent)"
                 strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4 }}
+                activeDot={false}
                 connectNulls
                 name="Percentile trend"
+                legendType="line"
+              />
+              <Line
+                yAxisId="score"
+                type="monotone"
+                dataKey="scorePct"
+                stroke="var(--color-maths)"
+                strokeWidth={0}
+                dot={{ r: 3, fill: 'var(--color-maths)' }}
+                activeDot={{ r: 5, fill: 'var(--color-maths)' }}
+                connectNulls
+                name="Score %"
+                legendType="circle"
+              />
+              <Line
+                yAxisId="percentile"
+                type="monotone"
+                dataKey="percentile"
+                stroke="var(--color-accent)"
+                strokeWidth={0}
+                dot={{ r: 3, fill: 'var(--color-accent)' }}
+                activeDot={{ r: 5, fill: 'var(--color-accent)' }}
+                connectNulls
+                name="Percentile"
+                legendType="circle"
               />
             </>
           ) : (
