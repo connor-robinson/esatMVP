@@ -78,7 +78,11 @@ function ArithmeticDrillCard({
         {name}
       </h4>
       {samples ? (
-        <ArithmeticVariantExample samples={samples} selected={isSelected} />
+        <ArithmeticVariantExample
+          samples={samples}
+          cycleSeed={`${topicId}-${variantId}`}
+          selected={isSelected}
+        />
       ) : (
         <div className='flex-1' aria-hidden />
       )}

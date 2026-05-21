@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   Plus,
   Minus,
@@ -25,7 +25,20 @@ const LUCIDE_MAP: Record<string, LucideIcon> = {
 const katexInherit =
   '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit]';
 
-const SAMPLE_CYCLE_MS = 3200;
+/** Per-card interval (7–11s) and start offset so tiles drift out of sync. */
+function getSampleCycleTiming(seed: string): {
+  intervalMs: number;
+  initialDelayMs: number;
+} {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) {
+    h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return {
+    intervalMs: 7000 + (h % 4000),
+    initialDelayMs: ((h >>> 8) % 5000) + 800,
+  };
+}
 
 type ArithmeticDrillPreviewProps = {
   preview: DrillPreview | { kind: 'lucide'; iconKey: string };
@@ -37,15 +50,22 @@ type ArithmeticDrillPreviewProps = {
 function KatexGlyph({
   latex,
   className,
+  nowrap = false,
 }: {
   latex: string;
   className?: string;
+  nowrap?: boolean;
 }) {
   const html = useMemo(() => renderMath(latex, false), [latex]);
   if (!html) return null;
   return (
     <span
-      className={cn('inline-flex items-center justify-center', katexInherit, className)}
+      className={cn(
+        'inline-flex items-center justify-center',
+        nowrap && 'whitespace-nowrap',
+        katexInherit,
+        className,
+      )}
       dangerouslySetInnerHTML={{ __html: html }}
       aria-hidden
     />
@@ -82,7 +102,7 @@ export function ArithmeticDrillPreview({
     const textClass =
       size === 'folder'
         ? cn(
-            'text-[1.35rem] font-normal leading-none',
+            'max-w-full text-[1.2rem] font-normal leading-none',
             selected ? 'text-primary' : 'text-primary/90',
           )
         : cn(
@@ -91,14 +111,18 @@ export function ArithmeticDrillPreview({
           );
 
     return (
-      <KatexGlyph latex={preview.latex} className={cn(textClass, className)} />
+      <KatexGlyph
+        latex={preview.latex}
+        nowrap={size === 'folder'}
+        className={cn(textClass, className)}
+      />
     );
   }
 
   const plainClass =
     size === 'folder'
       ? cn(
-          'font-mono text-xl font-semibold tabular-nums tracking-tight',
+          'whitespace-nowrap font-mono text-xl font-semibold tabular-nums tracking-tight',
           selected ? 'text-primary' : 'text-text',
         )
       : cn(
@@ -113,34 +137,51 @@ export function ArithmeticDrillPreview({
   );
 }
 
-/** Centered samples that gently cycle — implies illustrative, not a fixed question. */
+const CROSSFADE = { duration: 1.35, ease: [0.4, 0, 0.2, 1] as const };
+
+/** Centered samples with slow, staggered crossfade between examples. */
 export function ArithmeticVariantExample({
   samples,
+  cycleSeed,
   selected = false,
   className,
 }: {
   samples: readonly DrillPreview[];
+  /** Stable id (e.g. topic-variant) for out-of-sync timing. */
+  cycleSeed: string;
   selected?: boolean;
   className?: string;
 }) {
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const canCycle = samples.length > 1 && !reduceMotion;
+  const { intervalMs, initialDelayMs } = useMemo(
+    () => getSampleCycleTiming(cycleSeed),
+    [cycleSeed],
+  );
 
   useEffect(() => {
     setIndex(0);
-  }, [samples]);
+  }, [samples, cycleSeed]);
 
   useEffect(() => {
     if (!canCycle) return;
-    const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % samples.length);
-    }, SAMPLE_CYCLE_MS);
-    return () => window.clearInterval(id);
-  }, [canCycle, samples.length]);
 
-  const active = samples[index] ?? samples[0];
-  if (!active) return null;
+    let intervalId: ReturnType<typeof setInterval> | undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      intervalId = window.setInterval(() => {
+        setIndex((i) => (i + 1) % samples.length);
+      }, intervalMs);
+    }, initialDelayMs);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      if (intervalId) window.clearInterval(intervalId);
+    };
+  }, [canCycle, samples.length, intervalMs, initialDelayMs]);
+
+  if (samples.length === 0) return null;
 
   return (
     <div
@@ -152,22 +193,22 @@ export function ArithmeticVariantExample({
       aria-live={canCycle ? 'polite' : undefined}
     >
       <div className='relative flex h-9 w-full items-center justify-center'>
-        <AnimatePresence mode='wait' initial={false}>
+        {samples.map((sample, i) => (
           <motion.div
-            key={sampleKey(active, index)}
+            key={sampleKey(sample, i)}
             className='absolute inset-0 flex items-center justify-center'
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
+            initial={false}
+            animate={{ opacity: i === index ? 1 : 0 }}
+            transition={CROSSFADE}
+            style={{ pointerEvents: 'none' }}
           >
             <ArithmeticDrillPreview
-              preview={active}
+              preview={sample}
               size='card'
               selected={selected}
             />
           </motion.div>
-        </AnimatePresence>
+        ))}
       </div>
       {samples.length > 1 ? (
         <div
@@ -175,14 +216,14 @@ export function ArithmeticVariantExample({
           aria-hidden
         >
           {samples.map((_, i) => (
-            <span
+            <motion.span
               key={i}
-              className={cn(
-                'h-1 rounded-full transition-all duration-300',
-                i === index
-                  ? 'w-3 bg-text-muted/70'
-                  : 'w-1 bg-text-subtle/35',
-              )}
+              className='h-1 rounded-full bg-text-subtle/35'
+              animate={{
+                width: i === index ? 12 : 4,
+                opacity: i === index ? 0.75 : 0.35,
+              }}
+              transition={{ duration: 1.35, ease: [0.4, 0, 0.2, 1] }}
             />
           ))}
         </div>

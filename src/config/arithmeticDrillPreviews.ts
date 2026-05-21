@@ -24,8 +24,8 @@ const FRACTION_FOLDER_LATEX = [
   String.raw`\frac{5}{8}`,
 ] as const;
 
-/** Folder tile — single-line numeric product. */
-const COMMON_MULTIPLES_FOLDER_LATEX = String.raw`8 \times 17`;
+/** Folder tile — single-line abstract product (fits one row). */
+const COMMON_MULTIPLES_FOLDER_LATEX = String.raw`a \times b`;
 
 export function getArithmeticFolderSymbol(
   folderId: string,
