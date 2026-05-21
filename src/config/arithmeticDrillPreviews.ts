@@ -1,5 +1,5 @@
 /**
- * Example prompts for arithmetic drill cards (folder symbols + variant previews).
+ * Symbols for arithmetic drill folders + abstract example glyphs on module cards.
  */
 
 export type DrillPreview =
@@ -24,13 +24,8 @@ const FRACTION_FOLDER_LATEX = [
   String.raw`\frac{5}{8}`,
 ] as const;
 
-const COMMON_MULTIPLES_FOLDER_LATEX = [
-  String.raw`7 \times 16`,
-  String.raw`9 \times 14`,
-  String.raw`11 \times 18`,
-  String.raw`6 \times 15`,
-  String.raw`8 \times 17`,
-] as const;
+/** Folder tile only — single-line abstract product. */
+const COMMON_MULTIPLES_FOLDER_LATEX = String.raw`a \times b`;
 
 export function getArithmeticFolderSymbol(
   folderId: string,
@@ -42,10 +37,7 @@ export function getArithmeticFolderSymbol(
     };
   }
   if (folderId === 'common_multiples') {
-    return {
-      kind: 'latex',
-      latex: pickFromPool(COMMON_MULTIPLES_FOLDER_LATEX, folderId),
-    };
+    return { kind: 'latex', latex: COMMON_MULTIPLES_FOLDER_LATEX };
   }
   const iconByFolder: Record<string, string> = {
     addition: 'Plus',
@@ -56,71 +48,72 @@ export function getArithmeticFolderSymbol(
   return { kind: 'lucide', iconKey: iconByFolder[folderId] ?? 'Hash' };
 }
 
+/** Abstract glyphs — not real questions; shown with an “e.g.” label on cards. */
 const VARIANT_PREVIEWS: Record<string, DrillPreview> = {
   // Addition
-  'addition-single-digit': { kind: 'plain', text: '9 + 7 = ?' },
-  'addition-double-no-carry': { kind: 'plain', text: '34 + 52 = ?' },
-  'addition-double-with-carry': { kind: 'plain', text: '47 + 38 = ?' },
-  'addition-mental-add-5': { kind: 'plain', text: '23 + 15 = ?' },
-  'addition-three-numbers': { kind: 'plain', text: '12 + 8 + 5 = ?' },
+  'addition-single-digit': { kind: 'latex', latex: String.raw`a + b` },
+  'addition-double-no-carry': { kind: 'latex', latex: String.raw`a + b` },
+  'addition-double-with-carry': { kind: 'latex', latex: String.raw`a + b` },
+  'addition-mental-add-5': { kind: 'latex', latex: String.raw`a + n` },
+  'addition-three-numbers': { kind: 'latex', latex: String.raw`a + b + c` },
 
   // Subtraction
-  'subtraction-single-digit': { kind: 'plain', text: '9 − 4 = ?' },
-  'subtraction-two-digit-no-borrow': { kind: 'plain', text: '47 − 3 = ?' },
-  'subtraction-two-digit-with-borrow': { kind: 'plain', text: '52 − 7 = ?' },
-  'subtraction-two-digit-two-digit': { kind: 'plain', text: '63 − 28 = ?' },
-  'subtraction-three-digit': { kind: 'plain', text: '502 − 187 = ?' },
+  'subtraction-single-digit': { kind: 'latex', latex: String.raw`a - b` },
+  'subtraction-two-digit-no-borrow': { kind: 'latex', latex: String.raw`a - b` },
+  'subtraction-two-digit-with-borrow': { kind: 'latex', latex: String.raw`a - b` },
+  'subtraction-two-digit-two-digit': { kind: 'latex', latex: String.raw`a - b` },
+  'subtraction-three-digit': { kind: 'latex', latex: String.raw`a - b` },
 
   // Multiplication
-  'multiplication-single-digit': { kind: 'plain', text: '7 × 8 = ?' },
-  'multiplication-tables-up-to-10': { kind: 'plain', text: '6 × 9 = ?' },
-  'multiplication-double-single': { kind: 'plain', text: '24 × 7 = ?' },
-  'multiplication-double-double': { kind: 'plain', text: '23 × 14 = ?' },
-  'multiplication-decimal': { kind: 'plain', text: '2.5 × 4 = ?' },
+  'multiplication-single-digit': { kind: 'latex', latex: String.raw`a \times b` },
+  'multiplication-tables-up-to-10': { kind: 'latex', latex: String.raw`a \times b` },
+  'multiplication-double-single': { kind: 'latex', latex: String.raw`a \times b` },
+  'multiplication-double-double': { kind: 'latex', latex: String.raw`a \times b` },
+  'multiplication-decimal': { kind: 'latex', latex: String.raw`a \times b` },
 
   // Division
-  'division-small-divisors': { kind: 'plain', text: '56 ÷ 7 = ?' },
-  'division-larger-dividends': { kind: 'plain', text: '144 ÷ 12 = ?' },
-  'division-two-digit-by-single': { kind: 'plain', text: '84 ÷ 6 = ?' },
-  'division-with-remainders': { kind: 'plain', text: '47 ÷ 6 = ?' },
-  'division-long-division': { kind: 'plain', text: '372 ÷ 4 = ?' },
+  'division-small-divisors': { kind: 'latex', latex: String.raw`a \div b` },
+  'division-larger-dividends': { kind: 'latex', latex: String.raw`a \div b` },
+  'division-two-digit-by-single': { kind: 'latex', latex: String.raw`a \div b` },
+  'division-with-remainders': { kind: 'latex', latex: String.raw`a \div b` },
+  'division-long-division': { kind: 'latex', latex: String.raw`a \div b` },
 
-  // Fractions (grouped topic)
+  // Fractions
   'fractions-same-denominator': {
     kind: 'latex',
-    latex: String.raw`\frac{2}{7} + \frac{3}{7} = ?`,
+    latex: String.raw`\frac{a}{b} + \frac{c}{b}`,
   },
   'fractions-different-denominators': {
     kind: 'latex',
-    latex: String.raw`\frac{1}{3} + \frac{1}{4} = ?`,
+    latex: String.raw`\frac{a}{b} + \frac{c}{d}`,
   },
   'fractions-multiplication': {
     kind: 'latex',
-    latex: String.raw`\frac{2}{3} \times \frac{5}{7} = ?`,
+    latex: String.raw`\frac{a}{b} \times \frac{c}{d}`,
   },
   'friendly_frac_decimals-level-1': {
     kind: 'latex',
-    latex: String.raw`\frac{3}{8} \rightarrow ?`,
+    latex: String.raw`\frac{a}{b}`,
   },
   'common_frac_to_dec_2dp-level-1': {
     kind: 'latex',
-    latex: String.raw`\frac{5}{16} = ?`,
+    latex: String.raw`\frac{a}{b}`,
   },
   'simplify_fraction-nested-fractions': {
     kind: 'latex',
-    latex: String.raw`\frac{\frac{3}{4}}{5} = ?`,
+    latex: String.raw`\frac{\frac{a}{b}}{c}`,
   },
   'simplify_fraction-complex-expressions': {
     kind: 'latex',
-    latex: String.raw`\frac{2 + 3}{5} = ?`,
+    latex: String.raw`\frac{a + b}{c}`,
   },
   'simplify_fraction-sum-of-fractions': {
     kind: 'latex',
-    latex: String.raw`\frac{1}{2} + \frac{1}{3} = ?`,
+    latex: String.raw`\frac{a}{b} + \frac{c}{d}`,
   },
 
   // Common multiples
-  'common_multiples-basic': { kind: 'latex', latex: String.raw`8 \times 17 = ?` },
+  'common_multiples-basic': { kind: 'latex', latex: String.raw`a \times b` },
 };
 
 export function getArithmeticVariantPreview(

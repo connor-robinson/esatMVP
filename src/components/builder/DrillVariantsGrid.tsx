@@ -55,13 +55,13 @@ function ArithmeticDrillCard({
   return (
     <div
       className={cn(
-        'relative flex min-h-[8.5rem] flex-col rounded-organic-md p-3.5 transition-all',
+        'relative flex min-h-[6.75rem] flex-col rounded-organic-md p-3.5 transition-all',
         isSelected
           ? 'bg-folder-card-selected shadow-sm'
           : 'bg-surface-elevated hover:bg-surface-neutral',
       )}
     >
-      <div className='mb-2 flex items-start justify-between gap-2'>
+      <div className='mb-2.5 flex items-start justify-between gap-2'>
         <span
           className={cn(
             'text-[10px] font-bold uppercase tracking-wide',
@@ -74,17 +74,13 @@ function ArithmeticDrillCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <h4 className='mb-2 text-sm font-bold leading-snug text-text'>{name}</h4>
-      {preview ? (
-        <ArithmeticVariantExample
-          preview={preview}
-          selected={isSelected}
-          className='mb-3'
-        />
-      ) : (
-        <div className='mb-3 min-h-[2.75rem]' aria-hidden />
-      )}
-      <div className='mt-auto flex justify-end'>
+      <div className='flex min-h-0 flex-1 flex-col gap-2'>
+        <h4 className='text-sm font-bold leading-snug text-text'>{name}</h4>
+        {preview ? (
+          <ArithmeticVariantExample preview={preview} selected={isSelected} />
+        ) : null}
+      </div>
+      <div className='mt-3 flex justify-end'>
         {isSelected ? (
           <button
             type='button'

@@ -26,7 +26,7 @@ const katexInherit =
 
 type ArithmeticDrillPreviewProps = {
   preview: DrillPreview | { kind: 'lucide'; iconKey: string };
-  /** Folder tile (large) vs module card (compact). */
+  /** Folder tile (large) vs module card (compact glyph). */
   size?: 'folder' | 'card';
   className?: string;
   selected?: boolean;
@@ -79,7 +79,7 @@ export function ArithmeticDrillPreview({
             selected ? 'text-primary' : 'text-primary/90',
           )
         : cn(
-            'text-[0.95rem]',
+            'text-[1.125rem] font-normal leading-tight',
             selected ? 'text-text' : 'text-text-muted',
           );
 
@@ -95,7 +95,7 @@ export function ArithmeticDrillPreview({
           selected ? 'text-primary' : 'text-text',
         )
       : cn(
-          'font-mono text-[0.95rem] font-medium tabular-nums tracking-tight',
+          'font-mono text-[1.125rem] font-medium tabular-nums tracking-tight',
           selected ? 'text-text' : 'text-text-muted',
         );
 
@@ -106,7 +106,7 @@ export function ArithmeticDrillPreview({
   );
 }
 
-/** Example strip below variant title on drill cards. */
+/** Abstract example glyph on drill cards — not a real question. */
 export function ArithmeticVariantExample({
   preview,
   selected = false,
@@ -118,12 +118,12 @@ export function ArithmeticVariantExample({
 }) {
   return (
     <div
-      className={cn(
-        'flex min-h-[2.75rem] items-center justify-center rounded-organic-sm px-2.5 py-2',
-        selected ? 'bg-primary/10' : 'bg-surface-mid/70',
-        className,
-      )}
+      className={cn('space-y-1', className)}
+      aria-label='Example question format'
     >
+      <span className='block text-[9px] font-semibold uppercase tracking-[0.14em] text-text-subtle'>
+        e.g.
+      </span>
       <ArithmeticDrillPreview
         preview={preview}
         size='card'
