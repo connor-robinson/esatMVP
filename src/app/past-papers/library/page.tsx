@@ -473,7 +473,7 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-7 sm:py-9'>
-      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,28rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_28.5rem]'>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]'>
         <div>
           <PaperLibraryGrid
             filterSourcePapers={papers}
