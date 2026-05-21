@@ -152,6 +152,8 @@ function PaperItemComponent({
 }: PaperItemProps) {
   const loading = !paperData || paperData.loading;
   const mainSections = paperData?.mainSections || [];
+  const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
+  const isTmuaPaper = paperType === "TMUA";
 
   const visibleSections = mainSections.filter((mainSection) => {
     const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
@@ -194,11 +196,14 @@ function PaperItemComponent({
         </div>
       ) : visibleSections.length === 0 ? null : (
         visibleSections.map((mainSection) => {
-          const isExpanded = paperExpandedSections.has(mainSection.name);
+          const isExpanded =
+            !isTmuaPaper && paperExpandedSections.has(mainSection.name);
           const sectionSubjects = selectedSections.get(mainSection.name) || new Set<PaperSection>();
           const selectedCount = mainSection.subjectParts.filter((part) =>
             sectionSubjects.has(part),
           ).length;
+          const showSubjectRows =
+            !isTmuaPaper && isExpanded && mainSection.subjectParts.length > 0;
 
           return (
             <div
@@ -206,27 +211,35 @@ function PaperItemComponent({
               className="border-t border-border-subtle/40 bg-surface-elevated"
             >
               <div className="flex h-14 items-center gap-3 px-3">
-                <button
-                  type="button"
-                  onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
-                  aria-expanded={isExpanded}
-                  aria-label={isExpanded ? `Collapse ${mainSection.name}` : `Expand ${mainSection.name}`}
-                >
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 transition-transform duration-200",
-                      isExpanded ? "rotate-0" : "-rotate-90",
-                    )}
-                    strokeWidth={3}
-                  />
-                </button>
+                {isTmuaPaper ? (
+                  <div className="h-8 w-8 shrink-0" aria-hidden />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center text-text-muted transition-colors hover:text-text"
+                    aria-expanded={isExpanded}
+                    aria-label={
+                      isExpanded
+                        ? `Collapse ${mainSection.name}`
+                        : `Expand ${mainSection.name}`
+                    }
+                  >
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 transition-transform duration-200",
+                        isExpanded ? "rotate-0" : "-rotate-90",
+                      )}
+                      strokeWidth={3}
+                    />
+                  </button>
+                )}
 
                 <div className="min-w-0 flex-1">
                   <div className="font-heading text-sm font-semibold text-text">
                     {mainSection.name}
                   </div>
-                  {selectedCount > 0 ? (
+                  {!isTmuaPaper && selectedCount > 0 ? (
                     <div className="mt-0.5 font-heading text-xs text-text-subtle">
                       {selectedCount}/{mainSection.subjectParts.length} selected
                     </div>
@@ -245,7 +258,7 @@ function PaperItemComponent({
                 ) : null}
               </div>
 
-              {isExpanded && mainSection.subjectParts.length > 0
+              {showSubjectRows
                 ? mainSection.subjectParts.map((subject, subjectIndex) => {
                     const isSelected = sectionSubjects.has(subject);
                     const subjectColor = getSectionColor(subject);
