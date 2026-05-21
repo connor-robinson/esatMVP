@@ -4,7 +4,7 @@
 
 'use client';
 
-import { Check, Plus, ListOrdered, Clock, LayoutGrid } from 'lucide-react';
+import { Check, Plus, ListOrdered, Clock, Home } from 'lucide-react';
 import { getTopic } from '@/config/topics';
 import { cn } from '@/lib/utils';
 import { primaryButtonLabelClasses } from '@/config/theme';
@@ -32,14 +32,43 @@ export function DrillVariantsGrid({
   if (!topicId) {
     return (
       <div className='flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl bg-background'>
-        <div className='flex min-h-0 flex-1 items-center justify-center p-6'>
-          <div className='max-w-[300px] text-center'>
-            <div className='mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-organic-md text-text-muted'>
-              <LayoutGrid className='h-4 w-4' />
+        <div className='flex min-h-0 flex-1 items-center justify-center p-8 sm:p-12'>
+          <div className='flex max-w-md flex-col items-center text-center'>
+            <div
+              className='relative mb-8 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-organic-xl bg-surface-elevated shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]'
+              aria-hidden
+            >
+              <span className='absolute inset-0 rounded-organic-xl bg-primary/8 dark:bg-primary/12' />
+              <Home
+                className='relative h-9 w-9 text-primary'
+                strokeWidth={1.75}
+              />
             </div>
-            <p className='text-sm leading-relaxed text-text-muted'>
-              Select a topic from the left panel to view drill variants.
+
+            <h2 className='font-heading text-2xl font-bold tracking-tight text-text sm:text-[1.65rem]'>
+              Mental Maths
+            </h2>
+            <p className='mt-2 max-w-[18rem] text-sm leading-relaxed text-text-muted'>
+              Build a custom practice session from the drills in the library.
             </p>
+
+            <ol className='mt-10 w-full max-w-[15rem] space-y-2.5 text-left'>
+              {[
+                'Choose a category',
+                'Pick a topic folder',
+                'Add drills to your session',
+              ].map((step, i) => (
+                <li
+                  key={step}
+                  className='flex items-center gap-3 text-xs text-text-subtle'
+                >
+                  <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-mid font-mono text-[10px] font-semibold tabular-nums text-text-muted'>
+                    {i + 1}
+                  </span>
+                  {step}
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </div>

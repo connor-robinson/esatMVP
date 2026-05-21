@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
@@ -45,18 +45,18 @@ function Dropdown({
   const selected = options.find((o) => o.value === value)?.label ?? placeholder;
 
   return (
-    <div className="relative shrink-0" ref={ref}>
+    <div className="relative min-w-0 flex-1 sm:max-w-[11rem]" ref={ref}>
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        className="flex h-10 items-center gap-2 rounded-lg bg-surface-mid px-4 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
+        className="flex h-9 w-full items-center justify-between gap-2 rounded-organic-md bg-surface-mid px-3 text-sm font-medium text-text transition-colors hover:bg-surface-neutral focus-visible:outline-none"
       >
-        <span>{selected}</span>
+        <span className="truncate">{selected}</span>
         <ChevronDown
           className={cn(
-            "h-[14px] w-[14px] shrink-0 text-text-muted transition-transform duration-200",
-            isOpen && "rotate-180"
+            "h-3.5 w-3.5 shrink-0 text-text-muted transition-transform duration-200",
+            isOpen && "rotate-180",
           )}
           strokeWidth={2.5}
         />
@@ -65,24 +65,30 @@ function Dropdown({
       <AnimatePresence>
         {isOpen && (
           <>
-            <div className="fixed inset-0 z-[9998]" onClick={() => setIsOpen(false)} />
+            <div
+              className="fixed inset-0 z-[9998]"
+              onClick={() => setIsOpen(false)}
+            />
             <motion.div
               initial={{ opacity: 0, y: -6, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
-              className="absolute left-0 top-full z-[9999] mt-1.5 min-w-[160px] overflow-hidden rounded-lg border border-border bg-surface-elevated shadow-lg"
+              className="absolute left-0 top-full z-[9999] mt-1.5 min-w-[160px] overflow-hidden rounded-organic-md bg-surface-elevated shadow-lg"
             >
               {options.map((opt) => (
                 <button
                   key={String(opt.value)}
                   type="button"
-                  onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setIsOpen(false);
+                  }}
                   className={cn(
                     "flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors",
                     value === opt.value
                       ? "bg-accent/10 font-medium text-text"
-                      : "text-text-muted hover:bg-surface-subtle hover:text-text"
+                      : "text-text-muted hover:bg-surface-subtle hover:text-text",
                   )}
                 >
                   {opt.label}
@@ -107,6 +113,8 @@ export function PaperLibraryFilters({
   typeFilter,
   onTypeFilterChange,
 }: PaperLibraryFiltersProps) {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   const { exams, years, types } = useMemo(() => {
     const examSet = new Set<string>();
     const yearSet = new Set<number>();
@@ -125,53 +133,124 @@ export function PaperLibraryFilters({
     };
   }, [papers]);
 
-  return (
-    <div className="rounded-organic-lg bg-surface px-5 py-5">
-      {/* Header row */}
-      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-        <h2 className="text-base font-semibold text-text">Filters</h2>
-        <p className="max-w-md text-sm text-text-muted sm:text-right">
-          Search and filter papers by exam, year, and type to find what you need.
-        </p>
-      </div>
+  const activeFilterCount = [
+    examFilter !== "ALL",
+    yearFilter !== "ALL",
+    typeFilter !== "ALL",
+  ].filter(Boolean).length;
 
-      {/* Inputs row */}
-      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:flex-wrap">
-        {/* Search */}
-        <div className="relative min-w-0 flex-1 sm:min-w-[220px]">
+  const clearFilters = () => {
+    onExamFilterChange("ALL");
+    onYearFilterChange("ALL");
+    onTypeFilterChange("ALL");
+  };
+
+  return (
+    <div className="rounded-organic-lg bg-surface px-4 py-3 sm:px-5">
+      <p className="mb-2.5 text-xs leading-snug text-text-muted sm:text-sm">
+        Search and filter papers by exam, year, and type to find what you need.
+      </p>
+
+      <div className="flex items-center gap-2">
+        <div className="relative min-w-0 flex-1">
           <Search
-            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted"
             strokeWidth={2}
           />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search by exam, paper, or year..."
-            className="h-10 w-full rounded-lg bg-surface-elevated pl-9 pr-4 text-sm text-text placeholder:text-text-muted transition-colors focus-visible:outline-none"
+            placeholder="Search exam, paper, or year…"
+            className={cn(
+              "h-9 w-full rounded-organic-md bg-surface-mid pl-9 pr-3 text-sm text-text placeholder:text-text-muted",
+              "border-0 outline-none shadow-none ring-0",
+              "focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0",
+            )}
           />
         </div>
 
-        {/* Dropdowns */}
-        <Dropdown
-          value={examFilter}
-          onChange={(v) => onExamFilterChange(v as string | "ALL")}
-          options={[{ value: "ALL", label: "All exams" }, ...exams.map((e) => ({ value: e, label: e }))]}
-          placeholder="All exams"
-        />
-        <Dropdown
-          value={yearFilter}
-          onChange={(v) => onYearFilterChange(v === "ALL" ? "ALL" : (v as number))}
-          options={[{ value: "ALL", label: "All years" }, ...years.map((y) => ({ value: y, label: String(y) }))]}
-          placeholder="All years"
-        />
-        <Dropdown
-          value={typeFilter}
-          onChange={(v) => onTypeFilterChange(v as string | "ALL")}
-          options={[{ value: "ALL", label: "All types" }, ...types.map((t) => ({ value: t, label: t }))]}
-          placeholder="All types"
-        />
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((o) => !o)}
+          aria-expanded={filtersOpen}
+          className={cn(
+            "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-organic-md px-3 text-sm font-semibold transition-colors",
+            "focus-visible:outline-none",
+            filtersOpen || activeFilterCount > 0
+              ? "bg-surface-neutral text-text"
+              : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+          )}
+        >
+          <SlidersHorizontal className="h-4 w-4 shrink-0" strokeWidth={2} />
+          <span className="hidden sm:inline">Filters</span>
+          {activeFilterCount > 0 ? (
+            <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold tabular-nums text-background">
+              {activeFilterCount}
+            </span>
+          ) : null}
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+              filtersOpen && "rotate-180",
+            )}
+            strokeWidth={2.5}
+          />
+        </button>
       </div>
+
+      <AnimatePresence initial={false}>
+        {filtersOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: [0.32, 0.72, 0, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Dropdown
+                value={examFilter}
+                onChange={(v) => onExamFilterChange(v as string | "ALL")}
+                options={[
+                  { value: "ALL", label: "All exams" },
+                  ...exams.map((e) => ({ value: e, label: e })),
+                ]}
+                placeholder="All exams"
+              />
+              <Dropdown
+                value={yearFilter}
+                onChange={(v) =>
+                  onYearFilterChange(v === "ALL" ? "ALL" : (v as number))
+                }
+                options={[
+                  { value: "ALL", label: "All years" },
+                  ...years.map((y) => ({ value: y, label: String(y) })),
+                ]}
+                placeholder="All years"
+              />
+              <Dropdown
+                value={typeFilter}
+                onChange={(v) => onTypeFilterChange(v as string | "ALL")}
+                options={[
+                  { value: "ALL", label: "All types" },
+                  ...types.map((t) => ({ value: t, label: t })),
+                ]}
+                placeholder="All types"
+              />
+              {activeFilterCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="h-9 shrink-0 px-2 text-xs font-medium text-text-muted transition-colors hover:text-text"
+                >
+                  Clear filters
+                </button>
+              ) : null}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
