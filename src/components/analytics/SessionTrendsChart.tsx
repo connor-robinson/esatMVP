@@ -114,7 +114,7 @@ function SessionTrendTooltip({
 
 export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
   const [topicFilter, setTopicFilter] = useState<string>("all");
-  const [xAxisMode, setXAxisMode] = useState<SessionTrendXAxisMode>("time");
+  const [xAxisMode, setXAxisMode] = useState<SessionTrendXAxisMode>("session");
 
   const topicIds = useMemo(() => {
     const ids = new Set<string>();
@@ -138,7 +138,7 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
       speed,
     );
 
-    const showSmoothedTrend = xAxisMode === "time" && list.length >= 3;
+    const showSmoothedTrend = list.length >= 3;
 
     return list.map((s, index) => {
       const sessionNumber = index + 1;
@@ -164,12 +164,9 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
   }, [sessions, topicFilter, xAxisMode]);
 
   const speedDomain = useMemo((): [number, number] => {
-    const keys =
-      xAxisMode === "time"
-        ? (["speedTrend", "speed"] as const)
-        : (["speed"] as const);
     const values = chartData.flatMap((d) =>
-      keys.map((k) => d[k]).filter((v): v is number => v != null && v > 0),
+      [d.speedTrend, d.speed]
+        .filter((v): v is number => v != null && v > 0),
     );
     if (values.length === 0) return [0, 12];
     const min = Math.min(...values);
@@ -179,9 +176,9 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
       Math.max(0, Math.floor((min - padding) * 10) / 10),
       Math.ceil((max + padding) * 10) / 10,
     ];
-  }, [chartData, xAxisMode]);
+  }, [chartData]);
 
-  const useSmoothedTrend = xAxisMode === "time" && chartData.length >= 3;
+  const useSmoothedTrend = chartData.length >= 3;
 
   if (chartData.length === 0) {
     return (
@@ -313,9 +310,10 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
                 stroke="var(--color-maths)"
                 strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4 }}
+                activeDot={false}
                 connectNulls
                 name="Accuracy trend"
+                legendType="line"
               />
               <Line
                 yAxisId="speed"
@@ -324,9 +322,34 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
                 stroke="var(--color-warning)"
                 strokeWidth={2.5}
                 dot={false}
-                activeDot={{ r: 4 }}
+                activeDot={false}
                 connectNulls
                 name="Speed trend"
+                legendType="line"
+              />
+              <Line
+                yAxisId="accuracy"
+                type="monotone"
+                dataKey="accuracy"
+                stroke="var(--color-maths)"
+                strokeWidth={0}
+                dot={{ r: 3, fill: "var(--color-maths)" }}
+                activeDot={{ r: 5, fill: "var(--color-maths)" }}
+                connectNulls
+                name="Accuracy"
+                legendType="circle"
+              />
+              <Line
+                yAxisId="speed"
+                type="monotone"
+                dataKey="speed"
+                stroke="var(--color-warning)"
+                strokeWidth={0}
+                dot={{ r: 3, fill: "var(--color-warning)" }}
+                activeDot={{ r: 5, fill: "var(--color-warning)" }}
+                connectNulls
+                name="Speed"
+                legendType="circle"
               />
             </>
           ) : (
