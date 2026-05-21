@@ -43,7 +43,7 @@ export function PerformanceChartsSection({
           </h2>
           <p className="mt-1 text-left text-sm text-text-muted">
             {sessions?.length
-              ? "Accuracy and speed across sessions by date"
+              ? "Accuracy and speed by session — switch X-axis between time and session number"
               : "Daily accuracy and speed aggregates"}
           </p>
         </div>
