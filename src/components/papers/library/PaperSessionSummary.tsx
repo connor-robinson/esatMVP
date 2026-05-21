@@ -191,10 +191,9 @@ function PaperItemComponent({
           return (
             <div
               key={mainSection.name}
-              className="border-t border-border-subtle/40"
+              className="border-t border-border-subtle/40 bg-surface-elevated"
             >
-              {/* Section level */}
-              <div className="flex h-14 items-center gap-3 bg-surface-elevated px-3 transition-colors hover:bg-surface-elevated/90">
+              <div className="flex h-14 items-center gap-3 px-3">
                 <button
                   type="button"
                   onClick={() => onToggleSectionExpanded(paper.id, mainSection.name)}
@@ -232,7 +231,7 @@ function PaperItemComponent({
                         }
                       });
                     }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-mid/80 text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
                     aria-label={`Deselect all subjects in ${mainSection.name}`}
                   >
                     <X className="h-3.5 w-3.5 stroke-[2.5]" />
@@ -240,10 +239,8 @@ function PaperItemComponent({
                 ) : null}
               </div>
 
-              {/* Subject level */}
-              {isExpanded && mainSection.subjectParts.length > 0 ? (
-                <div className="space-y-px bg-surface px-2 py-2">
-                  {mainSection.subjectParts.map((subject) => {
+              {isExpanded && mainSection.subjectParts.length > 0
+                ? mainSection.subjectParts.map((subject, subjectIndex) => {
                     const isSelected = sectionSubjects.has(subject);
                     const subjectColor = getSectionColor(subject);
 
@@ -253,16 +250,14 @@ function PaperItemComponent({
                         type="button"
                         onClick={() => onToggleSection(paper.id, subject, mainSection.name)}
                         className={cn(
-                          "flex w-full items-center gap-3 rounded-organic-sm px-3 py-2.5 text-left font-heading transition-colors",
-                          isSelected
-                            ? "bg-surface-neutral"
-                            : "bg-surface-subtle/80 hover:bg-surface-neutral/70",
+                          "flex w-full items-center gap-3 border-t border-border-subtle/35 px-3 py-2.5 text-left font-heading transition-colors hover:bg-surface-mid/50",
+                          subjectIndex === mainSection.subjectParts.length - 1 && "pb-3",
                         )}
                       >
                         <div
                           className={cn(
                             "flex h-4 w-4 shrink-0 items-center justify-center rounded transition-all",
-                            isSelected ? "border-2" : "border-2 border-border bg-surface-elevated",
+                            isSelected ? "border-2" : "border-2 border-border bg-surface-mid",
                           )}
                           style={{
                             backgroundColor: isSelected ? subjectColor : undefined,
@@ -282,9 +277,8 @@ function PaperItemComponent({
                         </span>
                       </button>
                     );
-                  })}
-                </div>
-              ) : null}
+                  })
+                : null}
             </div>
           );
         })
