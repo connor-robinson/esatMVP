@@ -78,7 +78,10 @@ export function ArithmeticDrillPreview({
             'text-[1.35rem] font-normal leading-none',
             selected ? 'text-primary' : 'text-primary/90',
           )
-        : 'text-[0.95rem] text-text-muted';
+        : cn(
+            'text-[0.95rem]',
+            selected ? 'text-text' : 'text-text-muted',
+          );
 
     return (
       <KatexGlyph latex={preview.latex} className={cn(textClass, className)} />
@@ -91,7 +94,10 @@ export function ArithmeticDrillPreview({
           'font-mono text-xl font-semibold tabular-nums tracking-tight',
           selected ? 'text-primary' : 'text-text',
         )
-      : 'font-mono text-[0.95rem] font-medium tabular-nums tracking-tight text-text-muted';
+      : cn(
+          'font-mono text-[0.95rem] font-medium tabular-nums tracking-tight',
+          selected ? 'text-text' : 'text-text-muted',
+        );
 
   return (
     <span className={cn(plainClass, className)} aria-hidden>
