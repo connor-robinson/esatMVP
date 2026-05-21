@@ -619,3 +619,120 @@ export function calculateTimeManagementInsights(
   return results.sort((a, b) => a.section.localeCompare(b.section));
 }
 
+export type EnrichedPaperSession = PaperSession & {
+  scorePercentage: number | null;
+  percentile: number | null;
+};
+
+export function topicToPaperSections(topic: string): PaperSection[] {
+  switch (topic) {
+    case 'Math 1':
+      return ['Mathematics', 'Math'];
+    case 'Math 2':
+      return ['Advanced Math', 'Advanced Mathematics and Advanced Physics'];
+    case 'All maths':
+      return [
+        'Mathematics',
+        'Math',
+        'Advanced Math',
+        'Advanced Mathematics and Advanced Physics',
+      ];
+    case 'Physics':
+      return ['Physics'];
+    case 'Chemistry':
+      return ['Chemistry'];
+    case 'Biology':
+      return ['Biology'];
+    default:
+      return [];
+  }
+}
+
+export function enrichPaperSessionsWithPercentiles(
+  sessions: PaperSession[],
+): EnrichedPaperSession[] {
+  const scoresByPaper = new Map<PaperType, number[]>();
+  sessions
+    .filter((s) => s.score)
+    .forEach((session) => {
+      const paperType = session.paperName;
+      const scorePercentage = session.score
+        ? (session.score.correct / session.score.total) * 100
+        : 0;
+      if (!scoresByPaper.has(paperType)) {
+        scoresByPaper.set(paperType, []);
+      }
+      scoresByPaper.get(paperType)!.push(scorePercentage);
+    });
+
+  return sessions.map((session) => {
+    const scorePercentage = session.score
+      ? (session.score.correct / session.score.total) * 100
+      : null;
+    const allScoresForPaper = scoresByPaper.get(session.paperName) || [];
+    const percentile =
+      scorePercentage !== null
+        ? calculatePercentileFromPaperDistribution(
+            scorePercentage,
+            allScoresForPaper,
+          )
+        : null;
+    return { ...session, scorePercentage, percentile };
+  });
+}
+
+export function filterPaperSessionsByTopicAndType(
+  sessions: PaperSession[],
+  selectedTopics: string[],
+  selectedPaperTypes: PaperType[],
+): PaperSession[] {
+  let filtered = sessions;
+  if (selectedTopics.length > 0) {
+    const topicSections = new Set<PaperSection>();
+    selectedTopics.forEach((topic) => {
+      topicToPaperSections(topic).forEach((sec) => topicSections.add(sec));
+    });
+    filtered = filtered.filter((s) => {
+      if (!s.selectedSections || s.selectedSections.length === 0) return false;
+      return s.selectedSections.some((sec) => topicSections.has(sec));
+    });
+  }
+  if (selectedPaperTypes.length > 0) {
+    filtered = filtered.filter((s) => selectedPaperTypes.includes(s.paperName));
+  }
+  return filtered;
+}
+
+export type MistakeTagCount = { label: string; count: number };
+
+export function aggregateMistakeTagCounts(
+  sessions: PaperSession[],
+): { entries: MistakeTagCount[]; total: number } {
+  const counts: Record<string, number> = {};
+  const add = (label: string) => {
+    const key = label.trim();
+    if (!key || /^none$/i.test(key)) return;
+    counts[key] = (counts[key] ?? 0) + 1;
+  };
+
+  sessions.forEach((session) => {
+    session.mistakeTags?.forEach((tag) => {
+      if (Array.isArray(tag)) {
+        (tag as unknown[]).forEach((t) => {
+          if (typeof t === 'string') t.split(',').forEach(add);
+        });
+      } else if (typeof tag === 'string') {
+        tag.split(',').forEach(add);
+      }
+    });
+  });
+
+  const entries = Object.entries(counts)
+    .map(([label, count]) => ({ label, count }))
+    .filter((e) => e.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const total = entries.reduce((sum, e) => sum + e.count, 0);
+  return { entries, total };
+}
+
