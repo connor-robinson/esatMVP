@@ -1,9 +1,8 @@
 "use client";
 
 import { MathContent } from "./shared/MathContent";
-import { cn } from "@/lib/utils";
+import { cn, coerceFieldText } from "@/lib/utils";
 import { Pencil } from "lucide-react";
-import { coerceFieldText } from "@/lib/utils";
 import type { ReviewQuestion } from "@/types/review";
 
 interface SolutionPanelProps {
