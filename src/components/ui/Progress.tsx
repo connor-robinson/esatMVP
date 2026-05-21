@@ -10,6 +10,8 @@ interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   max?: number;
   showLabel?: boolean;
   variant?: "default" | "success" | "warning" | "neutral";
+  /** Session header track: no border; one step from page background. */
+  trackTone?: "default" | "session";
 }
 
 export function Progress({
@@ -17,6 +19,7 @@ export function Progress({
   max = 100,
   showLabel = false,
   variant = "default",
+  trackTone = "default",
   className,
   ...props
 }: ProgressProps) {
@@ -28,10 +31,20 @@ export function Progress({
     warning: "bg-warning shadow-[0_0_8px_0_rgba(245,158,11,0.3)]",
     neutral: "bg-text-muted/60 shadow-none",
   };
+
+  const trackClasses =
+    trackTone === "session"
+      ? "border-0 bg-surface-subtle dark:bg-surface"
+      : "bg-surface-mid/90 border border-border-subtle";
   
   return (
     <div className={cn("relative", className)} {...props}>
-      <div className="h-3 w-full overflow-hidden rounded-organic-sm bg-surface-mid/90 border border-border-subtle">
+      <div
+        className={cn(
+          "h-3 w-full overflow-hidden rounded-organic-sm",
+          trackClasses,
+        )}
+      >
         <div
           className={cn(
             "h-full transition-all duration-500 ease-signature rounded-organic-sm",

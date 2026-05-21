@@ -160,15 +160,16 @@ export function MentalMathSession({
   const displayTopicName = variantName ? topicName + ": " + variantName : topicName;
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
-      {/* Header with progress bar and exit button */}
-      <div className="flex-shrink-0 pt-16 pb-3">
+    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">
+      {/* Header with progress bar and end session — keep above question layer */}
+      <div className="relative z-30 flex-shrink-0 px-1 pb-3 pt-6 sm:pt-8">
         <Container size="xl">
           <div className="space-y-2">
             <div className="flex items-center gap-4">
               {!isUnlimitedSession ? (
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <Progress
+                    trackTone="session"
                     value={questionNumber}
                     max={
                       remainingSeconds != null
@@ -182,8 +183,11 @@ export function MentalMathSession({
               )}
               <button
                 type="button"
-                onClick={onEndSession}
-                className="flex shrink-0 items-center gap-2 rounded-organic-lg bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral active:scale-[0.98] dark:bg-surface-neutral dark:hover:bg-surface-mid"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEndSession();
+                }}
+                className="relative z-30 flex shrink-0 items-center gap-2 rounded-organic-lg bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral active:scale-[0.98] dark:bg-surface-neutral dark:hover:bg-surface-mid"
               >
                 <LogOut className="h-4 w-4" strokeWidth={2} aria-hidden />
                 End session
@@ -211,8 +215,8 @@ export function MentalMathSession({
         </Container>
       </div>
 
-      {/* Question area */}
-      <div className="flex-1 flex items-center justify-center overflow-hidden -mt-32">
+      {/* Question area — no negative margin (was blocking header clicks) */}
+      <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center overflow-hidden">
         <Container size="md" className="w-full flex items-center justify-center">
           <div className="w-full max-w-2xl flex flex-col items-center gap-12">
             {/* Topic badge */}
