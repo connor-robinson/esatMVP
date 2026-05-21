@@ -34,8 +34,8 @@ export const PAPER_COLORS = {
 export const PAPER_TYPE_COLORS = {
   ESAT: PAPER_COLORS.mathematics,
   TMUA: PAPER_COLORS.physics,
-  NSAA: PAPER_COLORS.biology,
-  ENGAA: PAPER_COLORS.advanced,
+  NSAA: PAPER_COLORS.advanced,
+  ENGAA: PAPER_COLORS.biology,
   PAT: PAPER_COLORS.chemistry,
   MAT: PAPER_COLORS.mathematics,
   OTHER: PAPER_COLORS.mathematics
@@ -79,8 +79,8 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-biology";       // #EAAF40 yellowLight
-  if (key === "NSAA") return "text-accent";          // #91B4A4 blueLight
+  if (key === "ENGAA") return "text-accent";
+  if (key === "NSAA") return "text-biology";
   if (key === "TMUA") return "text-tmua-accent";     // #CA7BB3
   if (key === "ESAT") return "text-maths";           // #4B6B64 blueDark
   if (key === "PAT") return "text-chemistry";
@@ -162,27 +162,39 @@ export const cssVar = {
 } as const;
 
 /** Badge / tile accents for roadmap headers (surface + border + text). */
+/** Solid fill for section 1 / 2 number chips — matches exam paper color. */
+export function getExamSectionNumberBadgeClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology text-background dark:text-white";
+  if (key === "NSAA") return "bg-advanced text-background dark:text-white";
+  if (key === "TMUA") return "bg-tmua-accent text-background dark:text-white";
+  if (key === "ESAT") return "bg-maths text-background dark:text-white";
+  if (key === "PAT") return "bg-chemistry text-background dark:text-white";
+  if (key === "MAT") return "bg-maths text-background dark:text-white";
+  return "bg-maths text-background dark:text-white";
+}
+
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
   if (key === "ENGAA") {
-    return "border border-advanced/25 bg-advanced/15 text-advanced";
+    return "bg-biology/15 text-biology";
   }
   if (key === "NSAA") {
-    return "border border-biology/25 bg-biology/15 text-biology";
+    return "bg-advanced/15 text-advanced";
   }
   if (key === "TMUA") {
-    return "border border-physics/25 bg-physics/15 text-physics";
+    return "bg-physics/15 text-physics";
   }
   if (key === "ESAT") {
-    return "border border-maths/20 bg-maths/15 text-maths";
+    return "bg-maths/15 text-maths";
   }
   if (key === "PAT") {
-    return "border border-chemistry/25 bg-chemistry/15 text-chemistry";
+    return "bg-chemistry/15 text-chemistry";
   }
   if (key === "MAT") {
-    return "border border-maths/20 bg-maths/15 text-maths";
+    return "bg-maths/15 text-maths";
   }
-  return "border border-accent/25 bg-accent/15 text-accent";
+  return "bg-accent/15 text-accent";
 }
 
 /**

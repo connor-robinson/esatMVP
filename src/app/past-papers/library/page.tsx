@@ -17,7 +17,6 @@ import {
   deriveTmuaSectionFromQuestion,
 } from '@/lib/papers/sectionMapping';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
-import { PaperLibraryFilters } from '@/components/papers/library/PaperLibraryFilters';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
@@ -466,27 +465,29 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-6 sm:py-8'>
-      {/* Filters */}
-      <div className='mb-4'>
-        <PaperLibraryFilters
-          papers={papers}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          examFilter={examFilter}
-          onExamFilterChange={setExamFilter}
-          yearFilter={yearFilter}
-          onYearFilterChange={setYearFilter}
-          typeFilter={typeFilter}
-          onTypeFilterChange={setTypeFilter}
-        />
-      </div>
+      <header className='mb-6 max-w-2xl'>
+        <h1 className='font-heading text-2xl font-bold tracking-tight text-text sm:text-3xl'>
+          Past Papers
+        </h1>
+        <p className='mt-2 text-sm leading-relaxed text-text-muted sm:text-base'>
+          Build a custom practice session from real exam papers — filter by exam,
+          year, and type, then start when you are ready.
+        </p>
+      </header>
 
-      {/* Two-column layout */}
-      <div className='grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start'>
-        {/* Left: Paper library */}
-        <div>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,28rem)] lg:items-start xl:grid-cols-[minmax(0,52%)_minmax(22rem,1fr)]'>
+        <div className='min-w-0'>
           <PaperLibraryGrid
+            filterSourcePapers={papers}
             papers={filteredPapers}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            examFilter={examFilter}
+            onExamFilterChange={setExamFilter}
+            yearFilter={yearFilter}
+            onYearFilterChange={setYearFilter}
+            typeFilter={typeFilter}
+            onTypeFilterChange={setTypeFilter}
             selectedPaperIds={selectedPaperIds}
             selectedSectionsByPaper={selectedSectionsByPaper}
             onToggleSection={handleToggleSection}
@@ -496,8 +497,7 @@ export default function PapersLibraryPage() {
           />
         </div>
 
-        {/* Right: Session summary */}
-        <div>
+        <div className='min-w-0 lg:sticky lg:top-6 lg:self-start'>
           <PaperSessionSummary
             selectedPapers={selectedPapers}
             onRemovePaper={handleRemovePaper}

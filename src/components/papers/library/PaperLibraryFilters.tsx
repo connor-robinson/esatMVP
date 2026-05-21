@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
 
-interface PaperLibraryFiltersProps {
+export interface PaperLibraryFiltersProps {
   papers: Paper[];
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -146,11 +146,7 @@ export function PaperLibraryFilters({
   };
 
   return (
-    <div className="rounded-organic-lg bg-surface px-4 py-3 sm:px-5">
-      <p className="mb-2.5 text-xs leading-snug text-text-muted sm:text-sm">
-        Search and filter papers by exam, year, and type to find what you need.
-      </p>
-
+    <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <Search

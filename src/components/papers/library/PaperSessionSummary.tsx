@@ -7,7 +7,6 @@
 import { useState, useMemo, useEffect, memo, useRef } from "react";
 import {
   X,
-  Clock,
   ChevronDown,
   Check,
   Edit3,
@@ -617,39 +616,52 @@ export function PaperSessionSummary({
   }, [selectedPapers, paperData]);
 
   const totalItems = selectedPapers.length;
+  const timeLabel =
+    sessionStats.totalTimeMinutes > 0
+      ? `${sessionStats.totalTimeMinutes} min`
+      : "—";
+  const questionsLabel =
+    sessionStats.totalQuestions > 0
+      ? String(sessionStats.totalQuestions)
+      : "—";
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Header — on page background, matching left column header height */}
-      <div className="flex items-start justify-between gap-4 pb-1">
+      <div className="flex flex-col gap-4 rounded-organic-xl bg-surface px-4 py-4 sm:px-5 sm:py-5">
         <div>
-          <h2 className="text-xl font-bold text-text">Practice Session</h2>
-          <p className="mt-1 text-sm text-text-muted">Select subjects for each section.</p>
+          <h2 className="font-heading text-xl font-bold tracking-tight text-text">
+            Your Session
+          </h2>
+          <p className="mt-1 text-sm text-text-muted">
+            {totalItems} paper{totalItems === 1 ? "" : "s"} selected
+          </p>
+          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt className="text-text-subtle">Estimated time</dt>
+            <dd className="text-right font-medium tabular-nums text-text">
+              {timeLabel}
+            </dd>
+            <dt className="text-text-subtle">Questions</dt>
+            <dd className="text-right font-medium tabular-nums text-text">
+              {questionsLabel}
+            </dd>
+          </dl>
         </div>
-        <span className="shrink-0 pt-1 text-xs text-text-muted">
-          {totalItems} {totalItems === 1 ? "paper" : "papers"}
-        </span>
-      </div>
 
-      {/* Content card */}
-      <div className="rounded-lg bg-surface px-5 py-5 flex flex-col gap-5">
-        {/* Selected papers */}
         <div
-          className="min-h-[220px] space-y-2 overflow-y-auto rounded-lg bg-surface-elevated p-3"
-          // eslint-disable-next-line react/forbid-dom-props
-          style={{ outline: "none" }}
+          className={cn(
+            "space-y-2 overflow-y-auto rounded-organic-md bg-surface-mid/50 p-2.5",
+            totalItems === 0 ? "min-h-[8.5rem]" : "min-h-[10rem] max-h-[min(50vh,22rem)]",
+          )}
         >
           {selectedPapers.length === 0 ? (
-            <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-3 py-10">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
-                <BookOpen className="h-7 w-7 text-background" strokeWidth={1.5} />
+            <div className="flex min-h-[7.5rem] flex-col items-center justify-center gap-2 px-3 py-4 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 text-accent">
+                <BookOpen className="h-5 w-5" strokeWidth={1.75} aria-hidden />
               </div>
-              <div className="space-y-1 text-center">
-                <div className="text-sm font-medium text-text">No papers selected yet</div>
-                <div className="max-w-xs text-xs text-text-muted">
-                  Browse the library to add papers to your practice session
-                </div>
-              </div>
+              <p className="text-sm font-medium text-text">Add a paper to begin</p>
+              <p className="max-w-[14rem] text-xs leading-relaxed text-text-muted">
+                Choose papers from the library to build a custom practice session.
+              </p>
             </div>
           ) : (
             selectedPapers.map(({ paper, selectedSections }) => (
@@ -667,61 +679,46 @@ export function PaperSessionSummary({
           )}
         </div>
 
-        {/* Session Name & Stats */}
-        {totalItems > 0 && (
-          <div className="space-y-4 rounded-organic-md bg-surface-mid p-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
-                <FileText className="w-3.5 h-3.5" />
-                Session Name
-              </div>
-              <div className="flex items-center gap-2">
-                {isEditingName ? (
-                  <Input
-                    value={sessionName}
-                    onChange={(e) => setSessionName(e.target.value)}
-                    onBlur={() => setIsEditingName(false)}
-                    onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
-                    className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-surface-elevated text-text text-sm font-mono"
-                    autoFocus
-                  />
-                ) : (
-                  <>
-                    <span className="font-mono font-medium text-text flex-1 text-sm">{sessionName}</span>
-                    <button
-                      onClick={() => setIsEditingName(true)}
-                      className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                  </>
-                )}
-              </div>
+        {totalItems > 0 ? (
+          <div className="space-y-2 border-t border-border-subtle/60 pt-3">
+            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
+              <FileText className="h-3.5 w-3.5" aria-hidden />
+              Session name
             </div>
-            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border">
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Subjects</div>
-                <div className="text-lg font-mono font-semibold text-text">{sessionStats.totalSections}</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Questions</div>
-                <div className="text-lg font-mono font-semibold text-text">
-                  {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Time</div>
-                <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-text">
-                  <Clock className="w-4 h-4" />
-                  {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              {isEditingName ? (
+                <Input
+                  value={sessionName}
+                  onChange={(e) => setSessionName(e.target.value)}
+                  onBlur={() => setIsEditingName(false)}
+                  onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
+                  className="flex-1 border-0 bg-surface-elevated text-sm text-text ring-0 outline-none focus:outline-none focus:ring-0"
+                  autoFocus
+                />
+              ) : (
+                <>
+                  <span className="flex-1 truncate text-sm font-medium text-text">
+                    {sessionName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingName(true)}
+                    className="rounded-organic-sm p-1.5 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text"
+                    aria-label="Edit session name"
+                  >
+                    <Edit3 className="h-3.5 w-3.5" />
+                  </button>
+                </>
+              )}
             </div>
+            <p className="text-xs text-text-subtle">
+              {sessionStats.totalSections} subject
+              {sessionStats.totalSections === 1 ? "" : "s"} in basket
+            </p>
           </div>
-        )}
+        ) : null}
       </div>
 
-      {/* Start button — outside card, on page background */}
       <button
         type="button"
         onClick={onStartSession}
@@ -733,7 +730,7 @@ export function PaperSessionSummary({
             : "bg-accent/30 text-background/60"
         )}
       >
-        Start Practice Session
+        Start session
         <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
       </button>
     </div>
