@@ -9,7 +9,7 @@ import { getTopic } from '@/config/topics';
 import { getArithmeticDisplayFolder } from '@/config/arithmeticFolders';
 import {
   getArithmeticFolderSymbol,
-  getArithmeticVariantPreview,
+  getArithmeticVariantSamples,
 } from '@/config/arithmeticDrillPreviews';
 import {
   ArithmeticDrillPreview,
@@ -50,12 +50,12 @@ function ArithmeticDrillCard({
   onRemove: () => void;
 }) {
   const diff = getDifficultyLabel(difficulty);
-  const preview = getArithmeticVariantPreview(topicId, variantId);
+  const samples = getArithmeticVariantSamples(topicId, variantId);
 
   return (
     <div
       className={cn(
-        'relative flex min-h-[6.75rem] flex-col rounded-organic-md p-3.5 transition-all',
+        'relative flex min-h-[7.5rem] flex-col rounded-organic-md p-3.5 transition-all',
         isSelected
           ? 'bg-folder-card-selected shadow-sm'
           : 'bg-surface-elevated hover:bg-surface-neutral',
@@ -74,12 +74,14 @@ function ArithmeticDrillCard({
           <Check className='h-4 w-4 shrink-0 text-primary' strokeWidth={2.5} />
         ) : null}
       </div>
-      <div className='flex min-h-0 flex-1 flex-col gap-2'>
-        <h4 className='text-sm font-bold leading-snug text-text'>{name}</h4>
-        {preview ? (
-          <ArithmeticVariantExample preview={preview} selected={isSelected} />
-        ) : null}
-      </div>
+      <h4 className='mb-1 text-center text-sm font-bold leading-snug text-text'>
+        {name}
+      </h4>
+      {samples ? (
+        <ArithmeticVariantExample samples={samples} selected={isSelected} />
+      ) : (
+        <div className='flex-1' aria-hidden />
+      )}
       <div className='mt-3 flex justify-end'>
         {isSelected ? (
           <button
