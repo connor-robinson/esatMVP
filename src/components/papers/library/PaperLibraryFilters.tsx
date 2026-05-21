@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
 import { cn } from "@/lib/utils";
 import type { Paper } from "@/types/papers";
 
@@ -195,7 +196,7 @@ export function PaperLibraryFilters({
     });
 
     return {
-      exams: Array.from(examSet).sort(),
+      exams: Array.from(examSet).sort(compareLibraryExamGroupNames),
       years: Array.from(yearSet).sort((a, b) => b - a),
       types: Array.from(typeSet).sort(),
     };

@@ -7,6 +7,7 @@ import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
 import { getExamAccentTextClass } from "@/config/colors";
+import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
 import { cn } from "@/lib/utils";
 
 interface PaperLibraryGridProps {
@@ -91,7 +92,7 @@ export function PaperLibraryGrid({
       });
     });
 
-    const sortedExams = Object.keys(grouped).sort();
+    const sortedExams = Object.keys(grouped).sort(compareLibraryExamGroupNames);
     return { grouped, sortedExams };
   }, [papers]);
 

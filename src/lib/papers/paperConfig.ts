@@ -259,6 +259,25 @@ export function examNameToPaperType(examName: ExamName): PaperType {
   return PAPER_TYPE_MAPPING[examName];
 }
 
+/** Past-papers library: exam group blocks top → bottom. */
+const LIBRARY_EXAM_GROUP_ORDER: readonly string[] = [
+  "NSAA",
+  "ENGAA",
+  "ESAT",
+  "TMUA",
+  "PAT",
+  "MAT",
+];
+
+export function compareLibraryExamGroupNames(a: string, b: string): number {
+  const rank = (name: string) => {
+    const i = LIBRARY_EXAM_GROUP_ORDER.indexOf(name);
+    return i === -1 ? LIBRARY_EXAM_GROUP_ORDER.length : i;
+  };
+  const diff = rank(a) - rank(b);
+  return diff !== 0 ? diff : a.localeCompare(b);
+}
+
 // Helper function to convert paper type to database exam name
 export function paperTypeToExamName(paperType: PaperType): ExamName | null {
   return EXAM_NAME_MAPPING[paperType];
