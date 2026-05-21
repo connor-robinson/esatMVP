@@ -465,7 +465,7 @@ export default function PapersLibraryPage() {
 
   return (
     <Container size='lg' className='py-7 sm:py-9'>
-      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-6'>
+      <div className='grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,26.25rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_420px]'>
         <div>
           <PaperLibraryGrid
             filterSourcePapers={papers}
@@ -487,7 +487,7 @@ export default function PapersLibraryPage() {
           />
         </div>
 
-        <div>
+        <div className='min-w-0 lg:sticky lg:top-7 lg:self-start'>
           <PaperSessionSummary
             selectedPapers={selectedPapers}
             onRemovePaper={handleRemovePaper}

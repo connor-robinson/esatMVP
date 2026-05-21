@@ -618,41 +618,53 @@ export function PaperSessionSummary({
 
   const totalItems = selectedPapers.length;
 
+  const itemCountLabel =
+    totalItems === 0
+      ? "Empty"
+      : `${totalItems} ${totalItems === 1 ? "paper" : "papers"}`;
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start justify-between gap-4 pb-0.5">
-        <div>
+    <aside
+      className="flex flex-col overflow-hidden rounded-organic-xl bg-surface shadow-sm"
+      aria-label="Practice session basket"
+    >
+      <header className="flex items-start justify-between gap-3 border-b border-border-subtle/50 px-5 py-4 sm:px-6">
+        <div className="min-w-0">
           <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-[1.35rem]">
-            Practice Session
+            Session basket
           </h2>
-          <p className="mt-1.5 font-heading text-sm text-text-muted">
-            Select subjects for each section.
+          <p className="mt-1 font-heading text-sm text-text-muted">
+            Papers you add appear here.
           </p>
         </div>
-        <span className="shrink-0 pt-1 font-heading text-xs text-text-muted">
-          {totalItems} {totalItems === 1 ? "paper" : "papers"}
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold tabular-nums",
+            totalItems > 0
+              ? "bg-accent/15 text-accent"
+              : "bg-surface-mid text-text-muted",
+          )}
+        >
+          {itemCountLabel}
         </span>
-      </div>
+      </header>
 
-      {/* Content card */}
-      <div className="flex flex-col gap-5 rounded-organic-xl bg-surface px-5 py-5 sm:px-6 sm:py-6">
-        {/* Selected papers */}
+      <div className="flex flex-col gap-0 px-4 py-4 sm:px-5 sm:py-5">
         <div
-          className="min-h-[220px] space-y-2 overflow-y-auto rounded-lg bg-surface-elevated p-3"
-          // eslint-disable-next-line react/forbid-dom-props
-          style={{ outline: "none" }}
+          className={cn(
+            "space-y-2 overflow-y-auto rounded-organic-md bg-surface-mid/45 p-3",
+            totalItems === 0 ? "min-h-[12.5rem]" : "min-h-[11rem] max-h-[min(42vh,20rem)]",
+          )}
         >
           {selectedPapers.length === 0 ? (
-            <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-3 py-10">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
-                <BookOpen className="h-7 w-7 text-background" strokeWidth={1.5} />
+            <div className="flex min-h-[11rem] flex-col items-center justify-center gap-2.5 px-3 py-6 text-center">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-surface-elevated text-text-muted">
+                <BookOpen className="h-5 w-5" strokeWidth={1.75} aria-hidden />
               </div>
-              <div className="space-y-1 text-center">
-                <div className="text-sm font-medium text-text">No papers selected yet</div>
-                <div className="max-w-xs text-xs text-text-muted">
-                  Browse the library to add papers to your practice session
-                </div>
-              </div>
+              <p className="font-heading text-sm font-medium text-text">Basket is empty</p>
+              <p className="max-w-[13rem] text-xs leading-relaxed text-text-muted">
+                Add papers from the library to build your session.
+              </p>
             </div>
           ) : (
             selectedPapers.map(({ paper, selectedSections }) => (
@@ -669,14 +681,15 @@ export function PaperSessionSummary({
             ))
           )}
         </div>
+      </div>
 
-        {/* Session Name & Stats */}
-        {totalItems > 0 && (
-          <div className="space-y-4 rounded-organic-md bg-surface-mid p-4">
+      <footer className="mt-auto space-y-4 border-t border-border-subtle/50 bg-surface-mid/30 px-5 py-4 sm:px-6">
+        {totalItems > 0 ? (
+          <>
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono text-text-subtle uppercase tracking-wider">
-                <FileText className="w-3.5 h-3.5" />
-                Session Name
+              <div className="flex items-center gap-2 font-heading text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
+                <FileText className="h-3.5 w-3.5" aria-hidden />
+                Session name
               </div>
               <div className="flex items-center gap-2">
                 {isEditingName ? (
@@ -685,66 +698,82 @@ export function PaperSessionSummary({
                     onChange={(e) => setSessionName(e.target.value)}
                     onBlur={() => setIsEditingName(false)}
                     onKeyDown={(e) => e.key === "Enter" && setIsEditingName(false)}
-                    className="flex-1 border-0 ring-0 outline-none focus:outline-none focus:ring-0 bg-surface-elevated text-text text-sm font-mono"
+                    className="flex-1 border-0 bg-surface-elevated font-heading text-sm text-text ring-0 outline-none focus:outline-none focus:ring-0"
                     autoFocus
                   />
                 ) : (
                   <>
-                    <span className="font-mono font-medium text-text flex-1 text-sm">{sessionName}</span>
+                    <span className="flex-1 truncate font-heading text-sm font-medium text-text">
+                      {sessionName}
+                    </span>
                     <button
+                      type="button"
                       onClick={() => setIsEditingName(true)}
-                      className="p-1.5 rounded-lg hover:bg-surface-elevated text-text-muted hover:text-text transition-colors"
+                      className="rounded-organic-sm p-1.5 text-text-muted transition-colors hover:bg-surface-elevated hover:text-text"
+                      aria-label="Edit session name"
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
+                      <Edit3 className="h-3.5 w-3.5" />
                     </button>
                   </>
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border">
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Subjects</div>
-                <div className="text-lg font-mono font-semibold text-text">{sessionStats.totalSections}</div>
+            <dl className="grid grid-cols-3 gap-3 border-t border-border-subtle/40 pt-3">
+              <div>
+                <dt className="font-heading text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
+                  Subjects
+                </dt>
+                <dd className="mt-0.5 font-heading text-lg font-semibold tabular-nums text-text">
+                  {sessionStats.totalSections}
+                </dd>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Questions</div>
-                <div className="text-lg font-mono font-semibold text-text">
+              <div>
+                <dt className="font-heading text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
+                  Questions
+                </dt>
+                <dd className="mt-0.5 font-heading text-lg font-semibold tabular-nums text-text">
                   {sessionStats.totalQuestions > 0 ? sessionStats.totalQuestions : "—"}
-                </div>
+                </dd>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono text-text-subtle uppercase tracking-wider">Time</div>
-                <div className="flex items-center gap-1.5 text-lg font-mono font-semibold text-text">
-                  <Clock className="w-4 h-4" />
+              <div>
+                <dt className="font-heading text-[10px] font-semibold uppercase tracking-wider text-text-subtle">
+                  Time
+                </dt>
+                <dd className="mt-0.5 flex items-center gap-1 font-heading text-lg font-semibold tabular-nums text-text">
+                  <Clock className="h-3.5 w-3.5 shrink-0 text-text-muted" aria-hidden />
                   {sessionStats.totalTimeMinutes > 0 ? `${sessionStats.totalTimeMinutes}m` : "—"}
-                </div>
+                </dd>
               </div>
-            </div>
-          </div>
+            </dl>
+          </>
+        ) : (
+          <p className="font-heading text-center text-xs text-text-muted">
+            Add at least one paper and subject to start.
+          </p>
         )}
-      </div>
 
-      <button
-        type="button"
-        onClick={onStartSession}
-        disabled={!canStart}
-        aria-disabled={!canStart}
-        className={cn(
-          "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
-          canStart
-            ? "cursor-pointer bg-accent text-background hover:bg-accent/85 dark:text-white"
-            : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
-          "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
-        )}
-      >
-        Start Practice Session
-        <ArrowRight
-          className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
-          strokeWidth={2.5}
-          aria-hidden
-        />
-      </button>
-    </div>
+        <button
+          type="button"
+          onClick={onStartSession}
+          disabled={!canStart}
+          aria-disabled={!canStart}
+          className={cn(
+            "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
+            canStart
+              ? "cursor-pointer bg-accent text-background hover:bg-accent/85 dark:text-white"
+              : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
+            "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
+          )}
+        >
+          Start Practice Session
+          <ArrowRight
+            className={cn("h-4 w-4 shrink-0", !canStart && "opacity-70")}
+            strokeWidth={2.5}
+            aria-hidden
+          />
+        </button>
+      </footer>
+    </aside>
   );
 }
 
