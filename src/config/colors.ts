@@ -161,6 +161,20 @@ export const cssVar = {
   maths: "var(--color-maths)",
 } as const;
 
+/**
+ * Solid fill for section 1 / 2 chips — matches `getExamAccentTextClass` on the parent exam group.
+ */
+export function getExamSectionNumberBadgeClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology text-background dark:text-white";
+  if (key === "NSAA") return "bg-accent text-background dark:text-white";
+  if (key === "TMUA") return "bg-tmua-accent text-background dark:text-white";
+  if (key === "ESAT") return "bg-maths text-background dark:text-white";
+  if (key === "PAT") return "bg-chemistry text-background dark:text-white";
+  if (key === "MAT") return "bg-maths text-background dark:text-white";
+  return "bg-maths text-background dark:text-white";
+}
+
 /** Badge / tile accents for roadmap headers (surface + border + text). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();

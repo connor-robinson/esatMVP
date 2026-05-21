@@ -8,7 +8,7 @@ import { useState, useEffect, useMemo } from "react";
 import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { getPaperTypeColor } from "@/config/colors";
+import { getExamSectionNumberBadgeClass } from "@/config/colors";
 import { getQuestions } from "@/lib/supabase/questions";
 import { getAvailableSectionsFromParts, mapPartToSection } from "@/lib/papers/sectionMapping";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
@@ -191,7 +191,7 @@ export function PaperColumn({
   const [loadingCompletion, setLoadingCompletion] = useState(false);
 
   const session = useSupabaseSession();
-  const paperColor = getPaperTypeColor(paper.examName);
+  const sectionNumberBadgeClass = getExamSectionNumberBadgeClass(paper.examName);
   const paperType = examNameToPaperType(paper.examName as any) || "NSAA";
 
   // Load sections and questions from both Section 1 and Section 2 if they exist
@@ -401,8 +401,10 @@ export function PaperColumn({
                       {/* Section number badge */}
                       {sectionNum ? (
                         <div
-                          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold text-text"
-                          style={{ backgroundColor: paperColor }}
+                          className={cn(
+                            "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold",
+                            sectionNumberBadgeClass,
+                          )}
                         >
                           {sectionNum}
                         </div>
