@@ -3,13 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ClipboardList,
-  Clock,
-  ChevronDown,
-  Search,
-  Loader2,
-} from "lucide-react";
+import { ChevronDown, Search, Loader2 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
@@ -94,10 +88,20 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
   },
 ];
 
-function progressUrlSubjects(subjects: readonly string[]): string {
+function progressUrlSubjects(
+  subjects: readonly string[],
+  opts?: { perSubject?: boolean },
+): string {
   const q = encodeURIComponent(subjects.join(","));
-  return `/api/question-bank/progress?subjects=${q}`;
+  const per = opts?.perSubject ? "&perSubject=1" : "";
+  return `/api/question-bank/progress?subjects=${q}${per}`;
 }
+
+type ProgressApiResponse = {
+  attempted?: number;
+  total?: number;
+  bySubject?: Record<string, { attempted: number; total: number }>;
+};
 
 export function QuestionBankHomeScreen() {
   const router = useRouter();
@@ -121,36 +125,28 @@ export function QuestionBankHomeScreen() {
 
   const loadStats = useCallback(async () => {
     setIsLoadingProgress(true);
-    const aggRes = fetch(`${progressUrlSubjects(ALL_SUBJECT_KEYS)}`, {
-      credentials: "include",
-    }).then((r) => (r.ok ? r.json() : { attempted: 0, total: 0 }));
-
-    const tileFetches = SUBJECT_TILES.map(async (tile) => {
-      const prog = await fetch(
-        `${progressUrlSubjects([tile.key])}&testType=${tile.testType}`,
-        { credentials: "include" },
-      ).then((r) => (r.ok ? r.json() : { attempted: 0, total: 0 }));
-
-      return {
-        key: tile.key,
-        attempted: prog.attempted ?? 0,
-        total: typeof prog.total === "number" ? prog.total : 0,
-      };
-    });
-
     try {
-      const [aggJson, resolvedTiles] = await Promise.all([
-        aggRes,
-        Promise.all(tileFetches),
-      ]);
+      const res = await fetch(
+        progressUrlSubjects(ALL_SUBJECT_KEYS, { perSubject: true }),
+        { credentials: "include" },
+      );
+      const json: ProgressApiResponse = res.ok
+        ? await res.json()
+        : { attempted: 0, total: 0, bySubject: {} };
+
       setAggregate({
-        attempted: aggJson.attempted ?? 0,
-        total: aggJson.total ?? 0,
+        attempted: json.attempted ?? 0,
+        total: json.total ?? 0,
       });
       setTiles((prev) => {
         const next = { ...prev };
-        resolvedTiles.forEach(({ key, attempted, total }) => {
-          next[key] = { attempted, total, loading: false };
+        ALL_SUBJECT_KEYS.forEach((k) => {
+          const row = json.bySubject?.[k];
+          next[k] = {
+            attempted: row?.attempted ?? 0,
+            total: row?.total ?? 0,
+            loading: false,
+          };
         });
         return next;
       });
@@ -227,25 +223,25 @@ export function QuestionBankHomeScreen() {
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 pt-8 sm:pt-10">
       <Container size="xl" className="space-y-10">
         {/* Progress */}
-        <section className="rounded-organic-xl bg-surface px-5 py-4 sm:px-7 sm:py-5">
+        <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-7 sm:py-8">
           <div>
             <h1 className="text-base font-semibold text-text sm:text-lg">
               Question Bank Progress
             </h1>
-            <p className="mt-0.5 text-xs text-text-muted">
+            <p className="mt-1 text-xs text-text-muted">
               Number of questions attempted
             </p>
           </div>
 
-          <div className="mt-3">
+          <div className="mt-6">
             {isLoadingProgress ? (
-              <div className="flex h-7 items-center gap-2 text-xs text-text-muted">
+              <div className="flex h-9 items-center gap-2 text-xs text-text-muted">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 Loading progress…
               </div>
             ) : (
               <>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
                   <div
                     className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
                     style={{
@@ -253,9 +249,11 @@ export function QuestionBankHomeScreen() {
                     }}
                   />
                 </div>
-                <div className="mt-1 flex justify-between text-[11px] text-text-muted">
+                <div className="mt-2.5 flex justify-between text-xs text-text-muted">
                   <span>0%</span>
-                  <span>100%</span>
+                  <span className="tabular-nums">
+                    {aggregateTotal > 0 ? `${aggregatePct}%` : "100%"}
+                  </span>
                 </div>
               </>
             )}
@@ -357,18 +355,19 @@ export function QuestionBankHomeScreen() {
                           tile.statClass,
                         )}
                       >
-                        <span className="flex items-center gap-1.5 tabular-nums">
-                          <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        <span className="tabular-nums">
                           {stats.loading ? "…" : `${stats.total} Qs`}
                         </span>
-                        <span className="flex items-center gap-1.5 tabular-nums">
-                          <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                          {stats.loading ? "…" : stats.total === 0 ? "—" : `${mins} Min`}
+                        <span className="tabular-nums">
+                          {stats.loading
+                            ? "…"
+                            : stats.total === 0
+                              ? "—"
+                              : `${mins} Min`}
                         </span>
                       </div>
                       <button
                         type="button"
-                        disabled={stats.loading || stats.total === 0}
                         onClick={() => openSessionModal(tile)}
                         className={cn(
                           "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
