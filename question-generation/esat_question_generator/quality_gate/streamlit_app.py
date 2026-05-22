@@ -868,7 +868,8 @@ with tab_after:
 
     st.markdown("#### 2. Run image backfill")
     st.caption(
-        f"Default: only rows with **{_IMAGE_QUEUE_LABEL}**. Uses Imagen Ultra + Gemini vision verify."
+        f"Default: only rows with **{_IMAGE_QUEUE_LABEL}**. "
+        "**Graphs/plots** → inline SVG (Gemini). **Apparatus diagrams** (rays, forces, containers, …) → Imagen + vision verify."
     )
     bf_legacy = st.checkbox(
         "Legacy: ignore queue column — process all graph-flagged rows missing an image diagram",
@@ -950,8 +951,14 @@ with tab_after:
                 merged = int(stats.get("merged") or 0)
                 skipped = int(stats.get("skipped") or 0)
                 failed = int(stats.get("failed") or 0)
+                merged_svg = int(stats.get("merged_svg") or 0)
+                merged_img = int(stats.get("merged_imagen") or 0)
                 img_status.update(
-                    label=f"Image backfill done — merged {merged}, skipped {skipped}, failed {failed}",
+                    label=(
+                        f"Backfill done — merged {merged} "
+                        f"(SVG graphs {merged_svg}, Imagen {merged_img}), "
+                        f"skipped {skipped}, failed {failed}"
+                    ),
                     state="complete" if failed == 0 else "error",
                     expanded=failed > 0,
                 )

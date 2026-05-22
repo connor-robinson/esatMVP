@@ -13,19 +13,37 @@ from project import LLMClient
 
 from .defaults import (
     IMAGE_BACKFILL_BUCKET,
+    default_diagram_model,
     default_image_brief_model,
     default_image_fallback_model,
     default_image_integrate_model,
     default_image_model,
     default_image_verify_model,
 )
-from .svg_diagram import extract_json_object, parse_merged_html_delimited
+from .diagram_backfill_review import BACKFILL_KIND_SVG, build_backfill_human_review_patch
+from .svg_diagram import extract_json_object, parse_merged_html_delimited, run_auto_diagram_for_row
 
 TraceFn = Optional[Callable[[str], None]]
 _DIR = Path(__file__).resolve().parent
 
 _FIGURE_QG_RE = re.compile(
     r'<figure\b[^>]*class\s*=\s*["\'][^"\']*qg-diagram[^"\']*["\'][^>]*>',
+    re.IGNORECASE,
+)
+
+# Imagen is for apparatus / spatial diagrams only — plots go to inline SVG (Gemini).
+GRAPH_DIAGRAM_NEEDS = frozenset(
+    {"qualitative_graph", "graph", "plot", "chart", "axes", "coordinate_graph"}
+)
+IMAGEN_DIAGRAM_NEEDS = frozenset(
+    {"schematic", "forces", "circuit", "container", "ray", "geometry", "other"}
+)
+_STEM_GRAPH_HINT_RE = re.compile(
+    r"\b("
+    r"graph of|sketch the graph|plot of|axes|axis|coordinate|gradient|intercept|"
+    r"y-intercept|x-intercept|1/v|wavelength|λ|lambda\s*[AB]|versus|vs\.|"
+    r"straight[- ]line graph|curve shows"
+    r")\b",
     re.IGNORECASE,
 )
 
@@ -122,15 +140,152 @@ def build_image_brief(
     return extract_json_object(raw), raw
 
 
+def classify_visual_kind(
+    brief: Dict[str, Any],
+    row: Optional[Dict[str, Any]] = None,
+) -> str:
+    """
+    ``graph`` | ``diagram`` | ``none`` — whether to use SVG (our pipeline) vs Imagen.
+
+    Uses brief ``visual_kind`` / ``diagram_need`` when present, plus stem heuristics.
+    """
+    if not brief.get("should_generate"):
+        return "none"
+    vk = str(brief.get("visual_kind") or "").strip().lower()
+    if vk in ("graph", "diagram", "none"):
+        if vk != "none":
+            return vk
+    need = str(brief.get("diagram_need") or "none").strip().lower()
+    if need in GRAPH_DIAGRAM_NEEDS or need == "qualitative_graph":
+        return "graph"
+    if need in IMAGEN_DIAGRAM_NEEDS and need != "geometry":
+        return "diagram"
+    stem = str((row or {}).get("question_stem") or "")
+    if need == "geometry" and stem and not _STEM_GRAPH_HINT_RE.search(stem):
+        return "diagram"
+    if row and stem and _STEM_GRAPH_HINT_RE.search(stem):
+        if need not in ("ray", "forces", "container", "circuit", "schematic"):
+            return "graph"
+    if need in IMAGEN_DIAGRAM_NEEDS:
+        return "diagram"
+    prec = str(brief.get("precision_risk") or "low").lower()
+    if prec in ("medium", "high"):
+        return "graph"
+    return "diagram"
+
+
+def _svg_brief_parts_from_row_and_brief(
+    row: Dict[str, Any],
+    brief: Dict[str, Any],
+) -> Tuple[str, List[str], Optional[List[str]]]:
+    """Combine image brief JSON with quality-gate graph_enrichment notes."""
+    from .svg_backfill import diagram_context_from_row
+
+    ge_brief, ge_reqs, ge_opt = diagram_context_from_row(row)
+    parts = [str(brief.get("image_brief") or "").strip(), ge_brief.strip()]
+    combined = "\n\n".join(p for p in parts if p)
+    if not combined:
+        combined = "Produce a minimal monochrome exam-style graph or diagram implied by the stem."
+    reqs_raw = brief.get("required_elements") or ge_reqs
+    reqs = [str(x).strip() for x in (reqs_raw or []) if str(x).strip()]
+    if not reqs:
+        reqs = ["Figure consistent with the stem and brief"]
+    opt_raw = brief.get("optional_elements")
+    optional_list: Optional[List[str]] = None
+    if isinstance(opt_raw, list):
+        optional_list = [str(x).strip() for x in opt_raw if str(x).strip()]
+    elif isinstance(opt_raw, str) and opt_raw.strip():
+        optional_list = [opt_raw.strip()]
+    elif ge_opt:
+        optional_list = ge_opt
+    return combined, reqs, optional_list
+
+
+def run_svg_graph_for_row(
+    row: Dict[str, Any],
+    brief: Dict[str, Any],
+    *,
+    diagram_model: str = "",
+    dry_run: bool = False,
+    replace_existing_diagram: bool = False,
+    trace: TraceFn = None,
+) -> Dict[str, Any]:
+    """Generate an inline SVG for graph/plot items (no Imagen)."""
+    def _t(msg: str) -> None:
+        if trace:
+            try:
+                trace(msg)
+            except Exception:
+                pass
+
+    qid = str(row.get("id") or "")
+    stem = str(row.get("question_stem") or "")
+    dm = (diagram_model or "").strip() or default_diagram_model()
+    audit: Dict[str, Any] = {
+        "question_id": qid,
+        "renderer": "svg",
+        "diagram_need": brief.get("diagram_need"),
+        "visual_kind": "graph",
+        "should_generate": brief.get("should_generate"),
+        "final_status": "failed",
+        "reason": "",
+        "svg_model": dm,
+    }
+
+    if dry_run:
+        audit["final_status"] = "dry_run_pass"
+        audit["reason"] = "graph_svg_dry_run"
+        _t(f"[image→svg] dry_run ok {qid} (would generate inline SVG, no DB write)")
+        return audit
+
+    diagram_brief, reqs, optional_elements = _svg_brief_parts_from_row_and_brief(row, brief)
+    _t(f"[image→svg] graph detected for {qid} — generating inline SVG (model={dm!r})")
+
+    llm = LLMClient()
+    new_stem, how, _raw = run_auto_diagram_for_row(
+        llm,
+        diagram_model=dm,
+        question_stem=stem,
+        diagram_brief=diagram_brief,
+        required_elements=reqs,
+        optional_elements=optional_elements,
+        trace=trace,
+    )
+    if not new_stem or "<svg" not in new_stem.lower():
+        audit["reason"] = f"svg_merge_failed: {how}"
+        _t(f"[image→svg] no <svg> in merged stem for {qid} ({how})")
+        return audit
+
+    audit["merged_stem"] = new_stem
+    audit["merged_stem_chars"] = len(new_stem)
+    audit["merge_how"] = how
+    audit["final_status"] = "merged"
+    audit["reason"] = "graph_svg_ok"
+    audit["human_review_patch"] = build_backfill_human_review_patch(row, kind=BACKFILL_KIND_SVG)
+    _t(f"[image→svg] ok {qid} merge={how} stem_chars={len(new_stem)}")
+    return audit
+
+
 def skip_reason_from_brief(
     brief: Dict[str, Any],
     *,
     stem: str,
     allow_high_precision_image: bool,
     replace_existing_diagram: bool,
+    row: Optional[Dict[str, Any]] = None,
+    route_graphs_to_svg: bool = True,
 ) -> Optional[str]:
     if not brief.get("should_generate"):
         return "should_generate=false"
+    vk = classify_visual_kind(brief, row)
+    if vk == "graph":
+        if route_graphs_to_svg:
+            if str(brief.get("spoiler_risk") or "").lower() == "high":
+                return "spoiler_risk=high"
+            if stem_has_existing_diagram(stem) and not replace_existing_diagram:
+                return "existing_diagram_present"
+            return None
+        return "graph_use_svg_not_imagen"
     if str(brief.get("spoiler_risk") or "").lower() == "high":
         return "spoiler_risk=high"
     prec = str(brief.get("precision_risk") or "").lower()
@@ -141,21 +296,22 @@ def skip_reason_from_brief(
     return None
 
 
-def resolve_auto_diagram_mode(brief: Dict[str, Any]) -> str:
-    """Return ``image`` or ``svg`` for auto mode."""
-    need = str(brief.get("diagram_need") or "none").lower()
-    prec = str(brief.get("precision_risk") or "low").lower()
-    if need in ("qualitative_graph", "geometry") and prec in ("medium", "high"):
+def resolve_auto_diagram_mode(brief: Dict[str, Any], row: Optional[Dict[str, Any]] = None) -> str:
+    """Return ``image`` | ``svg`` | ``skip`` for auto routing."""
+    if not brief.get("should_generate"):
+        return "skip"
+    if classify_visual_kind(brief, row) == "graph":
         return "svg"
+    if classify_visual_kind(brief, row) == "none":
+        return "skip"
+    need = str(brief.get("diagram_need") or "none").lower()
     if need in ("forces", "container", "ray", "schematic", "circuit"):
         return "image"
-    if need == "geometry" and prec == "low":
+    if need == "geometry" and str(brief.get("precision_risk") or "low").lower() == "low":
         return "image"
-    if need == "other" and prec in ("low", "medium"):
+    if need == "other":
         return "image"
-    if need == "none":
-        return "skip"
-    return "svg" if prec in ("medium", "high") else "image"
+    return "image"
 
 
 def render_generate_prompt(brief: Dict[str, Any]) -> str:
@@ -472,6 +628,8 @@ def run_auto_image_diagram_for_row(
     max_retries: int = 1,
     allow_high_precision_image: bool = False,
     replace_existing_diagram: bool = False,
+    route_graphs_to_svg: bool = True,
+    svg_diagram_model: str = "",
     trace: TraceFn = None,
     supabase_client: Any = None,
 ) -> Dict[str, Any]:
@@ -523,10 +681,12 @@ def run_auto_image_diagram_for_row(
         audit["final_status"] = "failed"
         return audit
 
+    vk = classify_visual_kind(brief, row)
     audit.update(
         {
             "should_generate": brief.get("should_generate"),
             "diagram_need": brief.get("diagram_need"),
+            "visual_kind": vk,
             "spoiler_risk": brief.get("spoiler_risk"),
             "precision_risk": brief.get("precision_risk"),
             "image_brief": brief.get("image_brief"),
@@ -538,12 +698,26 @@ def run_auto_image_diagram_for_row(
         stem=stem,
         allow_high_precision_image=allow_high_precision_image,
         replace_existing_diagram=replace_existing_diagram,
+        row=row,
+        route_graphs_to_svg=route_graphs_to_svg,
     )
     if skip:
         audit["final_status"] = "skipped"
         audit["reason"] = skip
         _t(f"[image] skip {qid}: {skip}")
         return audit
+
+    if vk == "graph" and route_graphs_to_svg:
+        svg_audit = run_svg_graph_for_row(
+            row,
+            brief,
+            diagram_model=svg_diagram_model,
+            dry_run=dry_run,
+            replace_existing_diagram=replace_existing_diagram,
+            trace=trace,
+        )
+        svg_audit["brief_payload"] = brief
+        return svg_audit
 
     aspect = _aspect_ratio_from_brief(brief)
     gen_prompt = build_imagen_api_prompt(brief)
@@ -653,6 +827,7 @@ def run_auto_image_diagram_for_row(
         audit["merged_stem_chars"] = len(merged)
         audit["final_status"] = "merged"
         audit["reason"] = "ok"
+        audit["renderer"] = "imagen"
         audit["verification_payload"] = verification
         audit["brief_payload"] = brief
         audit["verified_at"] = datetime.now(timezone.utc).isoformat()

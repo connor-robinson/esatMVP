@@ -25,6 +25,7 @@ OUTPUT JSON SCHEMA
 {
   "should_generate": true,
   "diagram_need": "schematic|geometry|forces|circuit|container|ray|qualitative_graph|other|none",
+  "visual_kind": "graph|diagram|none",
   "spoiler_risk": "low|medium|high",
   "precision_risk": "low|medium|high",
   "reason_to_generate": "one sentence",
@@ -43,6 +44,13 @@ OUTPUT JSON SCHEMA
 ==================================================
 DECISION RULES
 ==================================================
+
+Set visual_kind:
+- "graph" — axes, plots, function sketches, 1/V vs depth, wavelength curves, any coordinate/graph readout (use SVG generation, not Imagen).
+- "diagram" — physical setups, rays, forces, containers, circuits, apparatus (Imagen-suitable).
+- "none" — when should_generate=false.
+
+When diagram_need is qualitative_graph, always set visual_kind="graph".
 
 Set should_generate=false if:
 - the diagram would not materially improve clarity
@@ -85,7 +93,7 @@ Good candidates:
 - qualitative spatial relationships
 - simple apparatus/setup diagrams
 
-Bad candidates:
+Bad candidates for Imagen (set visual_kind="graph" and diagram_need=qualitative_graph when a plot is still needed):
 - exact graphs of functions
 - exact coordinates/intersections
 - root/intersection-count questions

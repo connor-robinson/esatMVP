@@ -6,13 +6,18 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from .defaults import (
+    default_diagram_model,
     default_image_brief_model,
     default_image_integrate_model,
     default_image_model,
     default_image_verify_model,
 )
-from .image_diagram import build_image_brief, resolve_auto_diagram_mode, run_auto_image_diagram_for_row
-from .diagram_backfill_review import BACKFILL_KIND_IMAGE, build_backfill_human_review_patch
+from .diagram_backfill_review import (
+    BACKFILL_KIND_IMAGE,
+    BACKFILL_KIND_SVG,
+    build_backfill_human_review_patch,
+)
+from .image_diagram import run_auto_image_diagram_for_row
 from .supabase_io import (
     fetch_graph_candidates_for_diagram_backfill,
     fetch_question_stem_fields,
@@ -105,6 +110,9 @@ def _history_record(audit: Dict[str, Any]) -> Dict[str, Any]:
             "graph_mode",
             "should_generate",
             "diagram_need",
+            "visual_kind",
+            "renderer",
+            "svg_model",
             "spoiler_risk",
             "precision_risk",
             "image_model",
@@ -141,6 +149,8 @@ def run_missing_image_backfill(
     allow_high_precision_image: bool = False,
     replace_existing_diagram: bool = False,
     diagram_mode: str = "image",
+    route_graphs_to_svg: bool = True,
+    svg_diagram_model: str = "",
 ) -> Dict[str, Any]:
     """
     Image backfill for graph-flagged rows.
@@ -163,13 +173,19 @@ def run_missing_image_backfill(
         replace_existing=replace_existing_diagram,
     )
 
+    svg_dm = (svg_diagram_model or "").strip() or default_diagram_model()
+
     stats = {
         "candidates": len(rows),
         "merged": 0,
+        "merged_imagen": 0,
+        "merged_svg": 0,
         "skipped": 0,
         "failed": 0,
         "svg_recommended": 0,
         "dry_run": dry_run,
+        "route_graphs_to_svg": route_graphs_to_svg,
+        "svg_diagram_model": svg_dm,
         "diagram_mode": dm,
         "image_model": im,
         "brief_model": bm,
@@ -203,54 +219,11 @@ def run_missing_image_backfill(
         f"model={im!r}, dry_run={dry_run})."
     )
 
-    from project import LLMClient
-
-    llm = LLMClient()
-
     for row in rows:
         qid = str(row.get("id") or "")
         if not qid:
             continue
         processed_ids.append(qid)
-
-        if dm == "auto":
-            try:
-                brief, _ = build_image_brief(llm, model=bm, row=row, trace=_log)
-                auto = resolve_auto_diagram_mode(brief)
-                if auto == "svg":
-                    stats["svg_recommended"] += 1
-                    audit = {
-                        "question_id": qid,
-                        "final_status": "skipped",
-                        "reason": "auto_mode_recommends_svg",
-                        "diagram_need": brief.get("diagram_need"),
-                        "should_generate": brief.get("should_generate"),
-                        "spoiler_risk": brief.get("spoiler_risk"),
-                        "precision_risk": brief.get("precision_risk"),
-                    }
-                    row_audits.append(audit)
-                    _log(f"[image-backfill] auto skip {qid} → use SVG path")
-                    if write_history:
-                        append_image_backfill_history(_history_record(audit))
-                    continue
-                if auto == "skip":
-                    stats["skipped"] += 1
-                    audit = {
-                        "question_id": qid,
-                        "final_status": "skipped",
-                        "reason": "auto_mode_skip",
-                    }
-                    row_audits.append(audit)
-                    if write_history:
-                        append_image_backfill_history(_history_record(audit))
-                    continue
-            except Exception as ex:
-                stats["failed"] += 1
-                audit = {"question_id": qid, "final_status": "failed", "reason": f"auto_brief: {ex}"}
-                row_audits.append(audit)
-                if write_history:
-                    append_image_backfill_history(_history_record(audit))
-                continue
 
         audit = run_auto_image_diagram_for_row(
             row,
@@ -262,6 +235,8 @@ def run_missing_image_backfill(
             max_retries=max_retries,
             allow_high_precision_image=allow_high_precision_image,
             replace_existing_diagram=replace_existing_diagram,
+            route_graphs_to_svg=route_graphs_to_svg and dm in ("image", "auto"),
+            svg_diagram_model=svg_dm,
             trace=_log,
             supabase_client=None if dry_run else client,
         )
@@ -272,27 +247,42 @@ def run_missing_image_backfill(
             merged = audit.get("merged_stem")
             if merged:
                 prev_stem = str(row.get("question_stem") or "")
-                patch: Dict[str, Any] = {
-                    "question_stem": merged,
-                    "question_stem_before_auto_diagram": prev_stem
+                stem_backup = (
+                    prev_stem
                     if prev_stem != merged and not row.get("question_stem_before_auto_diagram")
-                    else row.get("question_stem_before_auto_diagram"),
-                    "quality_gate_diagram_image_url": audit.get("uploaded_url"),
-                    "quality_gate_diagram_image_model": audit.get("image_model_used") or im,
-                    "quality_gate_diagram_image_verified_at": audit.get("verified_at"),
-                    "quality_gate_diagram_image_payload": {
-                        "brief": audit.get("brief_payload"),
-                        "verification": audit.get("verification_payload"),
-                    },
-                    **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_IMAGE),
-                }
+                    else row.get("question_stem_before_auto_diagram")
+                )
+                is_svg = audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok"
+                if is_svg:
+                    patch = {
+                        "question_stem": merged,
+                        "question_stem_before_auto_diagram": stem_backup,
+                        **(
+                            audit.get("human_review_patch")
+                            or build_backfill_human_review_patch(row, kind=BACKFILL_KIND_SVG)
+                        ),
+                    }
+                else:
+                    patch = {
+                        "question_stem": merged,
+                        "question_stem_before_auto_diagram": stem_backup,
+                        "quality_gate_diagram_image_url": audit.get("uploaded_url"),
+                        "quality_gate_diagram_image_model": audit.get("image_model_used") or im,
+                        "quality_gate_diagram_image_verified_at": audit.get("verified_at"),
+                        "quality_gate_diagram_image_payload": {
+                            "brief": audit.get("brief_payload"),
+                            "verification": audit.get("verification_payload"),
+                        },
+                        **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_IMAGE),
+                    }
                 try:
                     _apply_merged_image_patch(client, qid, patch, log=_log)
                     snap = fetch_question_stem_fields(client, qid)
                     st = snap.get("question_stem") or ""
                     _log(
                         f"[image-backfill] read-after-write id={qid} stem_len={len(st)} "
-                        f"has_<img={'<img' in st.lower()}"
+                        f"has_<img={'<img' in st.lower()} has_<svg={'<svg' in st.lower()} "
+                        f"renderer={audit.get('renderer') or ('svg' if is_svg else 'imagen')}"
                     )
                 except Exception as ex2:
                     _log(f"[image-backfill] DB patch failed {qid}: {ex2}")
@@ -302,6 +292,10 @@ def run_missing_image_backfill(
 
         if status == "merged":
             stats["merged"] += 1
+            if audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok":
+                stats["merged_svg"] += 1
+            else:
+                stats["merged_imagen"] += 1
         elif status in ("skipped", "dry_run_pass"):
             stats["skipped"] += 1
         else:
@@ -316,7 +310,8 @@ def run_missing_image_backfill(
     stats["processed_ids"] = processed_ids[:500]
     stats["row_audits"] = row_audits
     _log(
-        f"[image-backfill] Done: merged={stats['merged']}, skipped={stats['skipped']}, "
-        f"failed={stats['failed']}, svg_recommended={stats['svg_recommended']}"
+        f"[image-backfill] Done: merged={stats['merged']} "
+        f"(imagen={stats['merged_imagen']}, svg={stats['merged_svg']}), "
+        f"skipped={stats['skipped']}, failed={stats['failed']}"
     )
     return stats

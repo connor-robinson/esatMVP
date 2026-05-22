@@ -414,7 +414,7 @@ def main() -> int:
 
     img = sub.add_parser(
         "generate-missing-images",
-        help="Generate Imagen PNG diagrams for graph-flagged questions (brief → generate → verify → merge)",
+        help="Backfill diagrams: graphs → inline SVG (Gemini), apparatus → Imagen PNG (brief → verify → merge)",
         epilog="Models from MODEL_QUALITY_GATE_IMAGE*, brief/verify/integrate from MODEL_QUALITY_GATE_IMAGE_* env vars.",
     )
     _add_backfill_shared_flags(img)
