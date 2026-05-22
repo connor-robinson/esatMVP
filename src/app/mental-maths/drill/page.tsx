@@ -59,13 +59,15 @@ const QuizLoadingSkeleton = () => (
 
 export default function BuilderPage() {
   const allTopics = useMemo(() => getAllTopics(), []);
-  const { hasFullAccess } = useSubscription();
+  const { hasFullAccess, isLoading: subscriptionLoading } = useSubscription();
+  /** Avoid lock flash while subscription status is still loading (or cached). */
+  const treatAsFullAccess = subscriptionLoading || hasFullAccess;
   const accessibleTopicIds = useMemo(
     () =>
       new Set(
-        hasFullAccess ? allTopics.map((t) => t.id) : ["addition"],
+        treatAsFullAccess ? allTopics.map((t) => t.id) : ["addition"],
       ),
-    [hasFullAccess, allTopics],
+    [treatAsFullAccess, allTopics],
   );
   const builder = useBuilderSession();
   const [selectedCategory, setSelectedCategory] = useState<HighLevelCategory | null>("arithmetic");
@@ -108,7 +110,7 @@ export default function BuilderPage() {
               <TopicFolders
                 categoryTopics={categoryTopics}
                 accessibleTopicIds={accessibleTopicIds}
-                showUpgradeCard={!hasFullAccess}
+                showUpgradeCard={!subscriptionLoading && !hasFullAccess}
                 selectedCategory={selectedCategory}
                 selectedTopicId={selectedTopicId}
                 onSelectTopic={setSelectedTopicId}
