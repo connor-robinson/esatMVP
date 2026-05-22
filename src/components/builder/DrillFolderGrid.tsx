@@ -41,7 +41,7 @@ export function DrillFolderGrid({
 
   return (
     <>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid grid-cols-2 gap-2.5'>
         {folders.map((folder) => {
           const unlocked = folderHasAccessibleModule(
             folder,
@@ -55,17 +55,17 @@ export function DrillFolderGrid({
             return (
               <div
                 key={folder.id}
-                className='relative flex min-h-[5.25rem] flex-col items-center justify-center gap-1 rounded-organic-md bg-surface-elevated/50 p-2.5 opacity-70'
+                className='relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg bg-surface-elevated/50 p-3 opacity-70'
                 aria-disabled
               >
-                <div className='flex h-10 w-10 items-center justify-center rounded-organic-lg bg-surface-mid'>
+                <div className='flex h-12 w-12 items-center justify-center rounded-organic-xl bg-surface-mid'>
                   <ArithmeticDrillPreview
                     preview={symbol}
                     size='folder'
                     className='opacity-50'
                   />
                 </div>
-                <span className='text-center text-xs font-bold text-text-muted'>
+                <span className='text-center text-[13px] font-bold text-text-muted'>
                   {folder.name}
                 </span>
                 <Lock
@@ -82,7 +82,7 @@ export function DrillFolderGrid({
               type='button'
               onClick={() => onSelectFolder(folder.id)}
               className={cn(
-                'relative flex min-h-[5.25rem] flex-col items-center justify-center gap-1 rounded-organic-md p-2.5 transition-all',
+                'relative flex min-h-[6.5rem] flex-col items-center justify-center gap-1.5 rounded-organic-lg p-3 transition-all',
                 'outline-none focus-visible:ring-2 focus-visible:ring-primary/35',
                 isSelected
                   ? 'bg-folder-card-selected shadow-sm'
@@ -91,7 +91,7 @@ export function DrillFolderGrid({
             >
               <div
                 className={cn(
-                  'flex h-10 w-10 items-center justify-center rounded-organic-lg transition-colors',
+                  'flex h-12 w-12 items-center justify-center rounded-organic-xl transition-colors',
                   isSelected ? 'bg-primary/18' : 'bg-primary/10',
                 )}
               >
@@ -101,7 +101,7 @@ export function DrillFolderGrid({
                   selected={isSelected}
                 />
               </div>
-              <span className='text-center text-xs font-bold leading-tight text-text'>
+              <span className='text-center text-[13px] font-bold leading-tight text-text'>
                 {folder.name}
               </span>
               {selectedCount > 0 && (

@@ -89,7 +89,7 @@ export function TopicFolders({
       className={cn(
         'flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface',
         useFolderGrid
-          ? 'w-[clamp(11rem,18vw,16.5rem)]'
+          ? 'w-[clamp(13.5rem,24vw,21.25rem)]'
           : 'w-[clamp(15rem,28vw,24rem)]',
       )}
     >
@@ -104,7 +104,7 @@ export function TopicFolders({
         </span>
       </div>
 
-      <div className='flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3 pt-2'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 pt-3'>
         {useFolderGrid && selectedCategory ? (
           categoryTopics.length === 0 ? (
             <div className='py-8 text-center text-sm text-text-subtle'>

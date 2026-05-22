@@ -272,7 +272,7 @@ export function SessionSelectionBar({
               <div className="relative shrink-0">
                 {drillSessionCount > 0 ? (
                   <span
-                    className="pointer-events-none absolute -left-1 -top-1 z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold tabular-nums leading-none text-background shadow-sm"
+                    className="pointer-events-none absolute -left-1 -top-1 z-10 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold tabular-nums leading-none text-neutral-950 dark:text-white shadow-sm"
                     aria-hidden
                   >
                     {drillSessionCount > 99 ? "99+" : drillSessionCount}

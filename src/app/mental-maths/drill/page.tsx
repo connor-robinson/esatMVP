@@ -102,7 +102,7 @@ export default function BuilderPage() {
             {/* Column 2: Topic Folders (Operations-style) */}
             <Suspense
               fallback={
-                <div className="h-full min-h-0 w-[clamp(11rem,18vw,16.5rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
+                <div className="h-full min-h-0 w-[clamp(13.5rem,24vw,21.25rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
               }
             >
               <TopicFolders

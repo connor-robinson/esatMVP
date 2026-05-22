@@ -1,30 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { LUCIDE_ICON_MAP } from '@/config/drillDisplayFolders';
 import { renderMath } from '@/hooks/useKaTeX';
 import type { DrillPreview } from '@/config/drillPreviews';
 import type { FolderSymbol } from '@/config/drillDisplayFolders';
+import {
+  removeGlobalSampleCycleSubscriber,
+  setGlobalSampleCycleSubscriber,
+} from '@/lib/globalSampleCycle';
 import { cn } from '@/lib/utils';
 
 const katexInherit =
   '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit]';
-
-/** ~5s per example; staggered start so cards do not flip in sync. */
-function getSampleCycleTiming(seed: string): {
-  intervalMs: number;
-  initialDelayMs: number;
-} {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) {
-    h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  return {
-    intervalMs: 4800 + (h % 400),
-    initialDelayMs: (h >>> 8) % 4800,
-  };
-}
 
 type ArithmeticDrillPreviewProps = {
   preview: DrillPreview | FolderSymbol;
@@ -128,7 +117,7 @@ const SAMPLE_TRANSITION = {
   ease: [0.22, 1, 0.36, 1] as const,
 };
 
-/** One sample at a time; ~5s cycle with vertical slide (staggered per card). */
+/** One sample at a time; global coordinator advances one card every ~5s. */
 export function ArithmeticVariantExample({
   samples,
   cycleSeed,
@@ -136,7 +125,7 @@ export function ArithmeticVariantExample({
   className,
 }: {
   samples: readonly DrillPreview[];
-  /** Stable id (e.g. topic-variant) for out-of-sync timing. */
+  /** Stable id (e.g. topic-variant) registered with the global cycle. */
   cycleSeed: string;
   selected?: boolean;
   className?: string;
@@ -144,33 +133,24 @@ export function ArithmeticVariantExample({
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const canCycle = samples.length > 1 && !reduceMotion;
-  const { intervalMs, initialDelayMs } = useMemo(
-    () => getSampleCycleTiming(cycleSeed),
-    [cycleSeed],
-  );
+
+  const advance = useCallback(() => {
+    setIndex((i) => (i + 1) % samples.length);
+  }, [samples.length]);
 
   useEffect(() => {
     setIndex(0);
   }, [samples, cycleSeed]);
 
   useEffect(() => {
-    if (!canCycle) return;
+    if (!canCycle) {
+      removeGlobalSampleCycleSubscriber(cycleSeed);
+      return;
+    }
 
-    let intervalId: ReturnType<typeof setInterval> | undefined;
-
-    const timeoutId = setTimeout(() => {
-      intervalId = setInterval(() => {
-        setIndex((i) => (i + 1) % samples.length);
-      }, intervalMs);
-    }, initialDelayMs);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId !== undefined) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [canCycle, samples.length, intervalMs, initialDelayMs]);
+    setGlobalSampleCycleSubscriber(cycleSeed, advance, true);
+    return () => removeGlobalSampleCycleSubscriber(cycleSeed);
+  }, [canCycle, cycleSeed, advance]);
 
   if (samples.length === 0) return null;
 
