@@ -403,10 +403,10 @@ export function QuestionCard({
           ) : null}
         </div>
 
-        <div className={stemTypography}>
+        <div className={cn(stemTypography, "inline-block w-full")}>
           {questionNumber != null ? (
-            <span className="mr-1 font-semibold tabular-nums text-text">
-              {questionNumber}.
+            <span className="mr-0.5 font-semibold tabular-nums text-text">
+              {questionNumber}.{" "}
             </span>
           ) : null}
           {question.graph_spec || question.graph_specs ? (

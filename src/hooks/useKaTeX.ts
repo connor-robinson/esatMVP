@@ -83,19 +83,31 @@ function addSpacingAroundInlineMath(text: string): string {
       ? textWithPlaceholders[match.index + match[0].length] 
       : '';
     
-    // Check if we need to add space before
-    if (beforeChar && beforeChar !== ' ' && beforeChar !== '\n' && beforeChar !== '\t') {
-      result += ' ';
+    const openPunctuation = /[(\[{]/;
+    const closePunctuation = /[.,!?;:)\]}]/;
+
+    // Add space before when touching a word character (not open punctuation)
+    if (
+      beforeChar &&
+      beforeChar !== " " &&
+      beforeChar !== "\n" &&
+      beforeChar !== "\t" &&
+      !openPunctuation.test(beforeChar)
+    ) {
+      result += " ";
     }
-    
-    // Add the math expression
+
     result += match[0];
-    
-    // Check if we need to add space after
-    // Punctuation characters that don't need spacing after math
-    const punctuation = /[.,!?;:)\]}]/;
-    if (afterChar && afterChar !== ' ' && afterChar !== '\n' && afterChar !== '\t' && !punctuation.test(afterChar)) {
-      result += ' ';
+
+    // Add space after when touching a word character (not closing punctuation)
+    if (
+      afterChar &&
+      afterChar !== " " &&
+      afterChar !== "\n" &&
+      afterChar !== "\t" &&
+      !closePunctuation.test(afterChar)
+    ) {
+      result += " ";
     }
     
     lastIndex = match.index + match[0].length;
@@ -268,54 +280,92 @@ function renderMathTextSegment(contentStr: string): string {
   return escaped;
 }
 
+type RenderedPart = { kind: "text" | "inline" | "display"; html: string };
+
+function renderTextSegmentHtml(contentStr: string): string {
+  if (!contentStr) return "";
+
+  const paragraphs = contentStr
+    .split(/\n\n+/)
+    .map((p) => String(p).replace(/\n/g, " "))
+    .filter((p) => p.trim().length > 0);
+
+  if (paragraphs.length === 0) return "";
+  if (paragraphs.length === 1) {
+    return renderMathTextSegment(paragraphs[0]);
+  }
+  return paragraphs
+    .map(
+      (para) =>
+        `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`,
+    )
+    .join("");
+}
+
+/** Insert a space between adjacent text/math HTML when the source had no whitespace. */
+function needsGlueSpace(prev: RenderedPart, next: RenderedPart): boolean {
+  if (prev.kind === "text" && next.kind === "inline") {
+    return prev.html.length > 0 && !/\s$/.test(prev.html);
+  }
+  if (prev.kind === "inline" && next.kind === "text") {
+    return next.html.length > 0 && !/^\s/.test(next.html);
+  }
+  if (prev.kind === "inline" && next.kind === "inline") {
+    return true;
+  }
+  return false;
+}
+
+function joinRenderedParts(parts: RenderedPart[]): string {
+  let out = "";
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (i > 0 && needsGlueSpace(parts[i - 1], part)) {
+      out += " ";
+    }
+    out += part.html;
+  }
+  return out;
+}
+
 export function renderMathContent(text: string): string {
-  // Ensure text is a string
   if (text == null) return "";
   const textStr = normalizeStemWhitespace(String(text));
-
-  // Add spacing around inline math expressions before parsing
   const textWithSpacing = addSpacingAroundInlineMath(textStr);
   const segments = parseMathContent(textWithSpacing);
-  const htmlParts: string[] = [];
+  const parts: RenderedPart[] = [];
 
   for (const segment of segments) {
     if (segment.type === "text") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      const paragraphs = contentStr
-        .split(/\n\n+/)
-        .map((p) => String(p).replace(/\n/g, " ").trim())
-        .filter(Boolean);
-      if (paragraphs.length <= 1) {
-        htmlParts.push(renderMathTextSegment(paragraphs[0] ?? contentStr.replace(/\n/g, " ")));
-      } else {
-        for (const para of paragraphs) {
-          htmlParts.push(
-            `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`
-          );
-        }
-      }
+      const html = renderTextSegmentHtml(contentStr);
+      if (html) parts.push({ kind: "text", html });
     } else if (segment.type === "inline") {
       const contentStr = segment.content != null ? String(segment.content) : "";
       const rendered = renderMath(contentStr, false);
       if (rendered) {
-        htmlParts.push(rendered);
+        parts.push({
+          kind: "inline",
+          html: `<span class="math-inline-wrap">${rendered}</span>`,
+        });
       } else {
-        // Fallback: show raw math with delimiters
-        htmlParts.push(`$${contentStr}$`);
+        parts.push({ kind: "inline", html: `$${contentStr}$` });
       }
     } else if (segment.type === "display") {
       const contentStr = segment.content != null ? String(segment.content) : "";
       const rendered = renderMath(contentStr, true);
       if (rendered) {
-        htmlParts.push(rendered);
+        parts.push({
+          kind: "display",
+          html: `<div class="math-display-wrap">${rendered}</div>`,
+        });
       } else {
-        // Fallback: show raw math with delimiters
-        htmlParts.push(`$$${contentStr}$$`);
+        parts.push({ kind: "display", html: `$$${contentStr}$$` });
       }
     }
   }
 
-  return htmlParts.join("");
+  return joinRenderedParts(parts);
 }
 
 

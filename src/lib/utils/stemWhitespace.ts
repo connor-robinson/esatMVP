@@ -5,33 +5,44 @@
 const FINAL_Q_RE =
   /((?:What|Which|How|Find|Calculate|Determine|State|Explain|Deduce)\b[^?]*\?)/i;
 
-const PROTECTED: Array<{ re: RegExp; kind: string }> = [
+/** Block-level regions: placeholders get blank lines around them when masked. */
+const PROTECTED_BLOCK: Array<{ re: RegExp }> = [
   {
     re: /<figure\b[^>]*class="[^"]*qg-diagram[^"]*"[^>]*>[\s\S]*?<\/figure>/gi,
-    kind: "FIGURE",
   },
-  { re: /\$\$[\s\S]*?\$\$/g, kind: "DISPLAY_MATH" },
-  { re: /<GRAPH\s+id\s*=\s*"[^"]+"\s*\/?>/gi, kind: "GRAPH" },
-  { re: /<DIAGRAM\s+id\s*=\s*"[^"]+"\s*\/?>/gi, kind: "DIAGRAM" },
+  { re: /\$\$[\s\S]*?\$\$/g },
+  { re: /<GRAPH\s+id\s*=\s*"[^"]+"\s*\/?>/gi },
+  { re: /<DIAGRAM\s+id\s*=\s*"[^"]+"\s*\/?>/gi },
 ];
+
+/** Inline $...$ — masked in place (no extra paragraph breaks). */
+const INLINE_MATH_RE = /\$(?!\$)[^\$\n]+?\$/g;
 
 function shield(text: string): { masked: string; blocks: string[] } {
   const blocks: string[] = [];
   let masked = text;
-  for (const { re } of PROTECTED) {
+
+  for (const { re } of PROTECTED_BLOCK) {
     const r = new RegExp(re.source, re.flags);
     masked = masked.replace(r, (full) => {
       blocks.push(full);
-      return `\n__STEM_WS_${blocks.length - 1}__\n`;
+      return `\n__STEM_BLOCK_${blocks.length - 1}__\n`;
     });
   }
+
+  masked = masked.replace(INLINE_MATH_RE, (full) => {
+    blocks.push(full);
+    return `__STEM_INLINE_${blocks.length - 1}__`;
+  });
+
   return { masked, blocks };
 }
 
 function unshield(text: string, blocks: string[]): string {
   let out = text;
   blocks.forEach((block, i) => {
-    out = out.split(`__STEM_WS_${i}__`).join(block);
+    out = out.split(`__STEM_BLOCK_${i}__`).join(block);
+    out = out.split(`__STEM_INLINE_${i}__`).join(block);
   });
   return out;
 }
@@ -44,7 +55,7 @@ function collapseProseParagraph(para: string): string {
   if (lines.length <= 1) return lines[0] ?? "";
   if (lines.length >= 3 && lines.every((ln) => ln.length < 100)) {
     const givens = lines.slice(0, -1).filter((ln) =>
-      /\d|°C|kg|min|s\b|N\b|V\b|A\b/.test(ln)
+      /\d|°C|kg|min|s\b|N\b|V\b|A\b/.test(ln),
     ).length;
     if (givens >= 2) return lines.join("\n");
   }
@@ -52,7 +63,7 @@ function collapseProseParagraph(para: string): string {
 }
 
 function finalizeTextOnlyStem(text: string): string {
-  if (/\$\$|<GRAPH\b|<DIAGRAM\b|<figure\b/i.test(text)) return text;
+  if (/\$\$|\$(?!\$)|<GRAPH\b|<DIAGRAM\b|<figure\b/i.test(text)) return text;
   const flat = text.replace(/\s*\n\s*/g, " ").replace(/  +/g, " ").trim();
   const m = FINAL_Q_RE.exec(flat);
   if (m && m.index > 0) {
@@ -76,13 +87,14 @@ export function normalizeStemWhitespace(stem: string): string {
   const parts = masked.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
   const collapsed: string[] = [];
   for (const part of parts) {
-    if (/^__STEM_WS_\d+__$/.test(part)) collapsed.push(part);
+    if (/^__STEM_(BLOCK|INLINE)_\d+__$/.test(part)) collapsed.push(part);
     else collapsed.push(collapseProseParagraph(part));
   }
 
   let out = collapsed.join("\n\n");
-  out = out.replace(/([^\n])\n(__STEM_WS_\d+__)/g, "$1\n\n$2");
-  out = out.replace(/(__STEM_WS_\d+__)\n([^\n])/g, "$1\n\n$2");
+  // Only block-level placeholders get extra vertical breathing room
+  out = out.replace(/([^\n])\n(__STEM_BLOCK_\d+__)/g, "$1\n\n$2");
+  out = out.replace(/(__STEM_BLOCK_\d+__)\n([^\n])/g, "$1\n\n$2");
   out = out.replace(/\n{3,}/g, "\n\n");
   out = unshield(out, blocks);
   out = out.replace(/\n{3,}/g, "\n\n");

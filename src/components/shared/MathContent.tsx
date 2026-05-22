@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { cn } from "@/lib/utils";
 import { renderMathContent } from "@/hooks/useKaTeX";
 
@@ -14,7 +14,7 @@ interface MathContentProps {
 }
 
 export function MathContent({ content, className }: MathContentProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | HTMLSpanElement>(null);
   const [renderedHtml, setRenderedHtml] = useState<string>("");
 
   useEffect(() => {
@@ -44,14 +44,22 @@ export function MathContent({ content, className }: MathContentProps) {
     }
   }, [content]);
 
-  if (!content) {
+  if (content == null || String(content).length === 0) {
     return null;
   }
 
+  const isInlineFlow = className?.includes("inline");
+
+  const Tag = isInlineFlow ? "span" : "div";
+
   return (
-    <div
-      ref={containerRef}
-      className={cn("math-content", className)}
+    <Tag
+      ref={containerRef as RefObject<HTMLDivElement & HTMLSpanElement>}
+      className={cn(
+        "math-content",
+        isInlineFlow && "math-content--inline",
+        className,
+      )}
       style={{ whiteSpace: "normal" }}
       dangerouslySetInnerHTML={{ __html: renderedHtml }}
     />
