@@ -1,133 +1,153 @@
 /**
- * Loading page component shown during compilation and initial load
+ * Full-screen loading overlay — spinner, status message, and a random study hint.
  */
 
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { pickRandomSessionLoadingHint } from "@/lib/questionBank/sessionLoadingHints";
+
+export type LoadingPageVariant = "app" | "session";
 
 interface LoadingPageProps {
   message?: string;
   showProgress?: boolean;
   progress?: number;
+  /** Fixed hint; if omitted, a random tip is chosen once on mount. */
+  hint?: string;
+  variant?: LoadingPageVariant;
 }
 
-export function LoadingPage({ 
-  message = "Compiling your math training experience...", 
+const APP_LOADING_STEPS = [
+  "Initializing math engines...",
+  "Loading practice sessions...",
+  "Optimizing algorithms...",
+  "Preparing analytics...",
+  "Almost ready...",
+];
+
+export function LoadingPage({
+  message,
   showProgress = false,
-  progress = 0 
+  progress = 0,
+  hint: hintProp,
+  variant = "app",
 }: LoadingPageProps) {
   const [dots, setDots] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
 
-  const loadingSteps = [
-    "Initializing math engines...",
-    "Loading practice sessions...",
-    "Optimizing algorithms...",
-    "Preparing analytics...",
-    "Almost ready...",
-  ];
+  const hint = useMemo(
+    () => hintProp ?? pickRandomSessionLoadingHint(),
+    [hintProp],
+  );
 
-  // Animate dots
+  const isSession = variant === "session";
+  const statusMessage =
+    message ??
+    (isSession
+      ? "Preparing your session"
+      : "Compiling your math training experience");
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? "" : prev + ".");
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
     }, 500);
     return () => clearInterval(interval);
   }, []);
 
-  // Animate loading steps
   useEffect(() => {
+    if (isSession) return;
     const interval = setInterval(() => {
-      setLoadingStep(prev => (prev + 1) % loadingSteps.length);
+      setLoadingStep((prev) => (prev + 1) % APP_LOADING_STEPS.length);
     }, 2000);
     return () => clearInterval(interval);
-  }, [loadingSteps.length]);
+  }, [isSession]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
-      <div className="text-center space-y-8 max-w-md mx-auto px-6">
-        {/* Logo/Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-4"
-        >
-          <div className="text-4xl font-bold text-white">
-            No-Calc Trainer
-          </div>
-          <div className="text-white/60 text-sm uppercase tracking-wider">
-            Master Mental Math
-          </div>
-        </motion.div>
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-background">
+      <div className="mx-auto max-w-md space-y-8 px-6 text-center">
+        {!isSession ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-4"
+          >
+            <div className="text-4xl font-bold text-text">No-Calc Trainer</div>
+            <div className="text-sm uppercase tracking-wider text-text-muted">
+              Master Mental Math
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="font-heading text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+              Question Bank
+            </div>
+          </motion.div>
+        )}
 
-        {/* Loading Animation */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: isSession ? 0 : 0.15 }}
           className="space-y-6"
         >
-          {/* Spinner */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-white/20 rounded-full"></div>
+              <div className="h-16 w-16 rounded-full border-4 border-border-subtle" />
               <motion.div
-                className="absolute top-0 left-0 w-16 h-16 border-4 border-primary border-r-transparent rounded-full"
+                className="absolute left-0 top-0 h-16 w-16 rounded-full border-4 border-primary border-r-transparent"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
             </div>
           </div>
 
-          {/* Progress Bar */}
-          {showProgress && (
-            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+          {showProgress ? (
+            <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
               <motion.div
-                className="h-full bg-primary rounded-full"
+                className="h-full rounded-full bg-primary"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3 }}
               />
             </div>
-          )}
+          ) : null}
 
-          {/* Loading Message */}
-          <motion.div
-            key={loadingStep}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5 }}
-            className="text-white/80 text-sm font-medium min-h-[20px]"
-          >
-            {loadingSteps[loadingStep]}
-          </motion.div>
+          {!isSession ? (
+            <motion.div
+              key={loadingStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
+              className="min-h-[20px] text-sm font-medium text-text-muted"
+            >
+              {APP_LOADING_STEPS[loadingStep]}
+            </motion.div>
+          ) : null}
 
-          {/* Main Message */}
-          <div className="text-white/60 text-sm">
-            {message}
+          <div className="text-sm text-text-muted">
+            {statusMessage}
             <span className="text-primary">{dots}</span>
           </div>
         </motion.div>
 
-        {/* Fun Math Facts */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-white/40 text-xs space-y-2"
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="space-y-2 text-xs text-text-subtle"
         >
           <div>💡 Did you know?</div>
-          <div className="italic">
-            &quot;The fastest mental calculators can perform calculations 10x faster than typing on a calculator!&quot;
-          </div>
+          <p className="text-sm italic leading-relaxed text-text-muted">{hint}</p>
         </motion.div>
       </div>
     </div>
   );
 }
-
-

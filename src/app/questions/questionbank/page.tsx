@@ -14,6 +14,7 @@ import { QuestionCard } from '@/components/questionBank/QuestionCard';
 import { FilterPopup } from '@/components/questionBank/FilterPopup';
 import { EditModal } from '@/components/questionBank/EditModal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { LoadingPage } from '@/components/shared/LoadingPage';
 import { MathContent } from '@/components/shared/MathContent';
 import {
   HintModal,
@@ -116,6 +117,7 @@ export default function QuestionBankPage() {
     QuestionBankQuestion[]
   >([]);
   const [sessionCurrentIndex, setSessionCurrentIndex] = useState(0);
+  const [sessionStarting, setSessionStarting] = useState(false);
 
   // Timer states - countdown for sessions, count-up for regular practice
   const [timerStartTime, setTimerStartTime] = useState<number | null>(null);
@@ -810,6 +812,7 @@ export default function QuestionBankPage() {
       params.append('limit', (config.count * 2).toString());
       params.append('random', 'true');
 
+      setSessionStarting(true);
       try {
         const response = await fetch(
           `/api/question-bank/questions?${params.toString()}`,
@@ -857,6 +860,8 @@ export default function QuestionBankPage() {
       } catch (err) {
         console.error('Failed to start session:', err);
         alert('Failed to start session. Please try again.');
+      } finally {
+        setSessionStarting(false);
       }
     },
     [filters.subject, filters.testType, updateCurrentQuestion],
@@ -867,6 +872,8 @@ export default function QuestionBankPage() {
 
     const raw = sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY);
     if (!raw) return;
+
+    setSessionStarting(true);
 
     let data: QuestionBankHomeLaunchPayload;
     try {
@@ -931,6 +938,7 @@ export default function QuestionBankPage() {
 
   return (
     <Fragment>
+      {sessionStarting ? <LoadingPage variant="session" /> : null}
       <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-36 sm:py-8 sm:pb-40'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
