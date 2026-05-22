@@ -45,49 +45,49 @@ export interface SubjectTileConfig {
 const SUBJECT_TILES: SubjectTileConfig[] = [
   {
     key: "Math 1",
-    headline: "ESAT — Math 1",
+    headline: "ESAT · Math 1",
     topicCaps: "Algebra & functions",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES["Math 1"],
   },
   {
     key: "Math 2",
-    headline: "ESAT — Math 2",
+    headline: "ESAT · Math 2",
     topicCaps: "Sequences & calculus",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES["Math 2"],
   },
   {
     key: "Physics",
-    headline: "ESAT — Physics",
+    headline: "ESAT · Physics",
     topicCaps: "Mechanics & waves",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Physics,
   },
   {
     key: "Chemistry",
-    headline: "ESAT — Chemistry",
+    headline: "ESAT · Chemistry",
     topicCaps: "Structure & reactivity",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Chemistry,
   },
   {
     key: "Biology",
-    headline: "ESAT — Biology",
+    headline: "ESAT · Biology",
     topicCaps: "Cell & molecular biology",
     testType: "ESAT",
     ...SUBJECT_TILE_STYLES.Biology,
   },
   {
     key: "Paper 1",
-    headline: "TMUA — Paper 1",
+    headline: "TMUA · Paper 1",
     topicCaps: "Mathematical thinking",
     testType: "TMUA",
     ...SUBJECT_TILE_STYLES["Paper 1"],
   },
   {
     key: "Paper 2",
-    headline: "TMUA — Paper 2",
+    headline: "TMUA · Paper 2",
     topicCaps: "Mathematical reasoning",
     testType: "TMUA",
     ...SUBJECT_TILE_STYLES["Paper 2"],
@@ -303,27 +303,14 @@ export function QuestionBankHomeScreen() {
                 <div
                   key={tile.key}
                   className={cn(
-                    "relative flex min-h-[270px] flex-col rounded-[18px] bg-surface-elevated px-6 pb-6 pt-10",
+                    "flex min-h-[270px] flex-col rounded-[18px] bg-surface-elevated px-6 pb-6 pt-10",
                     "transition-colors hover:bg-surface-mid/50",
                   )}
                 >
-                  <button
-                    type="button"
-                    disabled={stats.loading || stats.total === 0}
-                    onClick={() => openSessionModal(tile)}
-                    className={cn(
-                      "absolute right-6 top-10 shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
-                      "disabled:cursor-not-allowed disabled:opacity-40",
-                      tile.startBtnClass,
-                    )}
-                  >
-                    Start
-                  </button>
-
-                  <div className="min-h-[5rem] pr-24">
+                  <div className="min-h-[4.5rem]">
                     <p
                       className={cn(
-                        "text-lg font-semibold leading-snug",
+                        "whitespace-nowrap text-base font-semibold leading-snug",
                         tile.titleClass,
                       )}
                     >
@@ -340,20 +327,34 @@ export function QuestionBankHomeScreen() {
                   </div>
 
                   <div className="mt-auto pt-5">
-                    <div
-                      className={cn(
-                        "flex flex-wrap items-center gap-3 text-xs",
-                        tile.statClass,
-                      )}
-                    >
-                      <span className="flex items-center gap-1.5 tabular-nums">
-                        <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {stats.loading ? "…" : `${stats.total} Qs`}
-                      </span>
-                      <span className="flex items-center gap-1.5 tabular-nums">
-                        <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {stats.loading ? "…" : stats.total === 0 ? "—" : `${mins} Min`}
-                      </span>
+                    <div className="flex items-center justify-between gap-3">
+                      <div
+                        className={cn(
+                          "flex min-w-0 flex-wrap items-center gap-3 text-xs",
+                          tile.statClass,
+                        )}
+                      >
+                        <span className="flex items-center gap-1.5 tabular-nums">
+                          <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          {stats.loading ? "…" : `${stats.total} Qs`}
+                        </span>
+                        <span className="flex items-center gap-1.5 tabular-nums">
+                          <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          {stats.loading ? "…" : stats.total === 0 ? "—" : `${mins} Min`}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={stats.loading || stats.total === 0}
+                        onClick={() => openSessionModal(tile)}
+                        className={cn(
+                          "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
+                          "disabled:cursor-not-allowed disabled:opacity-40",
+                          tile.startBtnClass,
+                        )}
+                      >
+                        Start
+                      </button>
                     </div>
 
                     <div
