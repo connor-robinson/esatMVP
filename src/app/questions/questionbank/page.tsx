@@ -12,7 +12,6 @@ import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { QuestionCard } from '@/components/questionBank/QuestionCard';
 import { EditModal } from '@/components/questionBank/EditModal';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { LoadingPage } from '@/components/shared/LoadingPage';
 import { MathContent } from '@/components/shared/MathContent';
 import {
@@ -30,12 +29,9 @@ import {
   RotateCw,
   BookOpen,
   X,
-  Settings,
   Eye,
   AlertCircle,
   Lightbulb,
-  Check,
-  ClipboardList,
 } from 'lucide-react';
 import type {
   QuestionBankQuestion,
@@ -47,8 +43,15 @@ import {
   QUESTION_BANK_HOME_LAUNCH_KEY,
   type QuestionBankHomeLaunchPayload,
 } from '@/lib/questionBank/homeLaunch';
-import { SUBJECT_PILL_CLASS } from '@/lib/questionBank/subjectColors';
 import { cn, formatTime } from '@/lib/utils';
+
+function hasSessionBootPayload(): boolean {
+  if (typeof window === 'undefined') return false;
+  return (
+    !!sessionStorage.getItem(QUESTION_BANK_HOME_LAUNCH_KEY) ||
+    !!sessionStorage.getItem('questionBankSession')
+  );
+}
 
 const FREE_QUESTION_LIMIT = 10;
 const STORAGE_KEY = 'qb_free_attempts';
@@ -97,14 +100,10 @@ export default function QuestionBankPage() {
     isAnswered,
     selectedAnswer,
     isCorrect,
-    questionCount,
-    hasBeenAttempted,
     setFilters,
     submitAnswer,
-    nextQuestion,
-    viewSolution,
     updateCurrentQuestion,
-  } = useQuestionBank();
+  } = useQuestionBank({ browseMode: false });
 
   const [curriculum, setCurriculum] = useState<any>(null);
   const [sessionMode, setSessionMode] = useState(false);
@@ -130,22 +129,15 @@ export default function QuestionBankPage() {
     new Set(),
   );
 
-  // Progress tracking state - synced with active filters for accurate "X out of Y" counts
-  const [progressSubjects, setProgressSubjects] = useState<SubjectFilter[]>([
-    'Math 1',
-  ]);
-  const [showProgressFilter, setShowProgressFilter] = useState(false);
-
   const [communityStatsByQuestionId, setCommunityStatsByQuestionId] = useState<
     Record<string, QuestionBankCommunityStats>
   >({});
   const [communityStatsLoading, setCommunityStatsLoading] = useState(false);
 
-  const [progressStats, setProgressStats] = useState<{
-    attempted: number;
-    total: number;
-  } | null>(null);
-  const progressBootDeferredRef = useRef(false);
+  const activeSession = sessionMode && sessionQuestions.length > 0;
+  const sessionBootPending =
+    isSessionMode ||
+    (typeof window !== 'undefined' && hasSessionBootPayload());
 
   // Load session data from sessionStorage if in session mode
   useEffect(() => {
@@ -187,91 +179,17 @@ export default function QuestionBankPage() {
     }
   }, [isSessionMode, updateCurrentQuestion]);
 
-  // Sync progressSubjects with active filters so "X out of Y" matches the question pool
+  // Session-only: redirect to home when there is no launch payload or active session
   useEffect(() => {
-    const subj = filters.subject;
-    let subjects: SubjectFilter[];
-    if (Array.isArray(subj) && subj.length > 0) {
-      subjects = subj;
-    } else if (subj && subj !== 'All') {
-      subjects = Array.isArray(subj) ? subj : [subj];
-    } else {
-      subjects =
-        filters.testType === 'TMUA'
-          ? ['Paper 1', 'Paper 2']
-          : filters.testType === 'ESAT'
-            ? ['Math 1', 'Math 2', 'Physics', 'Chemistry', 'Biology']
-            : [
-                'Math 1',
-                'Math 2',
-                'Physics',
-                'Chemistry',
-                'Biology',
-                'Paper 1',
-                'Paper 2',
-              ];
-    }
-    setProgressSubjects(subjects);
-  }, [filters.subject, filters.testType]);
-
-  // Fetch progress stats (debounced on isAnswered to avoid rapid refetches)
-  useEffect(() => {
-    if (progressSubjects.length === 0) {
-      setProgressStats(null);
-      return;
-    }
-
-    const params = new URLSearchParams();
-    params.append('subjects', progressSubjects.join(','));
-    if (filters.testType && filters.testType !== 'All') {
-      params.append('testType', filters.testType);
-    }
-
-    const fetchProgressStats = async () => {
-      try {
-        const response = await fetch(
-          `/api/question-bank/progress?${params.toString()}`,
-          { credentials: 'include' },
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setProgressStats({
-            attempted: data.attempted || 0,
-            total: data.total || 0,
-          });
-        } else {
-          const totalParams = new URLSearchParams();
-          totalParams.append('subject', progressSubjects.join(','));
-          totalParams.append('limit', '1');
-          if (filters.testType && filters.testType !== 'All') {
-            totalParams.append('testType', filters.testType);
-          }
-          const totalRes = await fetch(
-            `/api/question-bank/questions?${totalParams.toString()}`,
-          );
-          if (totalRes.ok) {
-            const totalData = await totalRes.json();
-            setProgressStats({
-              attempted: 0,
-              total: totalData.totalCount ?? totalData.count ?? 0,
-            });
-          }
-        }
-      } catch (error) {
-        console.error('[Progress] Error fetching stats:', error);
-      }
-    };
-
-    const baseDelay = progressBootDeferredRef.current ? 300 : 900;
-    progressBootDeferredRef.current = true;
-    const timeoutId = setTimeout(fetchProgressStats, baseDelay);
-    const delayedId = setTimeout(fetchProgressStats, baseDelay + 1500);
-    return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(delayedId);
-    };
-  }, [progressSubjects, isAnswered, filters.testType, currentQuestion?.id]);
+    if (typeof window === 'undefined') return;
+    if (sessionStarting || sessionBootPending || activeSession) return;
+    router.replace('/questions');
+  }, [
+    activeSession,
+    router,
+    sessionBootPending,
+    sessionStarting,
+  ]);
 
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -374,15 +292,6 @@ export default function QuestionBankPage() {
       setTimerStartTime(newStartTime);
     }
   }, [currentQuestion?.id, sessionMode]);
-
-  // Reset timer function (for count-up mode)
-  const resetTimer = () => {
-    if (!sessionMode) {
-      const newStartTime = Date.now();
-      setTimerStartTime(newStartTime);
-      setElapsedTime(0);
-    }
-  };
 
   // Get remaining time in seconds for countdown
   const getRemainingTime = (): number => {
@@ -661,23 +570,19 @@ export default function QuestionBankPage() {
               setRemainingTime(Math.ceil(timeLimitMs / 1000));
             }
           } else {
-            alert(
-              'No questions found matching your criteria. Please try different filters.',
-            );
+            router.replace('/questions');
           }
         } else {
-          alert(
-            'No questions found matching your criteria. Please try different filters.',
-          );
+          router.replace('/questions');
         }
       } catch (err) {
         console.error('Failed to start session:', err);
-        alert('Failed to start session. Please try again.');
+        router.replace('/questions');
       } finally {
         setSessionStarting(false);
       }
     },
-    [filters.subject, filters.testType, updateCurrentQuestion],
+    [filters.subject, filters.testType, router, updateCurrentQuestion],
   );
 
   useEffect(() => {
@@ -728,61 +633,57 @@ export default function QuestionBankPage() {
 
   const handleNextQuestionInSession = async () => {
     if (isFreeLimitReached) return;
-    if (sessionMode && sessionQuestions.length > 0) {
-      const nextIndex = sessionCurrentIndex + 1;
-      if (nextIndex < sessionQuestions.length) {
-        setSessionCurrentIndex(nextIndex);
-        updateCurrentQuestion(sessionQuestions[nextIndex]);
-      } else {
-        incrementFreeAttempts();
-        setSessionMode(false);
-        setIsDrillSession(false);
-        setSessionQuestions([]);
-        setSessionCurrentIndex(0);
-        setDeadline(null);
-        setRemainingTime(null);
-        await nextQuestion();
-      }
-    } else {
-      incrementFreeAttempts();
-      await nextQuestion();
+    const nextIndex = sessionCurrentIndex + 1;
+    if (nextIndex < sessionQuestions.length) {
+      setSessionCurrentIndex(nextIndex);
+      updateCurrentQuestion(sessionQuestions[nextIndex]);
+      setAnswerRevealed(false);
+      setCurrentSelection(null);
+      setIncorrectAnswers(new Set());
+      return;
     }
+    incrementFreeAttempts();
+    router.push('/questions');
   };
+
+  const showSessionLoading =
+    sessionStarting || (!activeSession && sessionBootPending);
+
+  if (!activeSession && !showSessionLoading) {
+    return <LoadingPage variant="session" />;
+  }
 
   return (
     <Fragment>
-      {sessionStarting ? <LoadingPage variant="session" /> : null}
+      {showSessionLoading ? <LoadingPage variant="session" /> : null}
       <div className='min-h-[calc(100vh-3.5rem)] py-6 pb-36 sm:py-8 sm:pb-40'>
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
             {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
 
-            {/* Loading State */}
-            {isLoading && (
-              <div className='flex items-center justify-center py-20'>
-                <LoadingSpinner size='lg' />
-              </div>
-            )}
-
             {/* Error State */}
-            {error && !isLoading && (
+            {error && activeSession && (
               <div className='rounded-organic-xl border border-error/30 bg-error/10 p-6 text-center ring-1 ring-white/[0.06]'>
                 <div className='mb-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-center'>
                   <AlertCircle className='h-5 w-5 shrink-0 text-error' />
                   <p className='text-sm text-text'>{error}</p>
                 </div>
-                <Button onClick={nextQuestion} variant='secondary'>
+                <Button
+                  onClick={() => router.push('/questions')}
+                  variant='secondary'
+                >
                   <RotateCw className='mr-2 h-4 w-4' />
-                  Try again
+                  Back to Question Bank
                 </Button>
               </div>
             )}
 
             {/* Question Display */}
-            {currentQuestion && !isLoading && (
+            {activeSession && currentQuestion && (
               <div className='space-y-6'>
                 <QuestionCard
                   question={currentQuestion}
+                  questionNumber={sessionCurrentIndex + 1}
                   onAnswerSubmit={submitAnswer}
                   isAnswered={isAnswered}
                   selectedAnswer={selectedAnswer}
@@ -797,17 +698,6 @@ export default function QuestionBankPage() {
                   isAuthenticated={!!session?.user}
                   headerTrailing={
                     <div className='flex items-center gap-2 rounded-organic-lg bg-surface-mid px-3 py-2 sm:gap-3 sm:px-4'>
-                      {!sessionMode && (
-                        <button
-                          type='button'
-                          onClick={resetTimer}
-                          className='flex h-9 w-9 items-center justify-center rounded-organic-md text-text-muted transition-colors hover:bg-surface-mid hover:text-text'
-                          title='Reset timer'
-                          aria-label='Reset timer'
-                        >
-                          <RotateCw className='h-4 w-4' />
-                        </button>
-                      )}
                       <span
                         className={cn(
                           'tabular-nums text-lg font-semibold tracking-tight',
@@ -879,90 +769,33 @@ export default function QuestionBankPage() {
           </div>
         </Container>
 
-        {/* Fixed bottom bar — Figma: progress + secondary actions + secondary CTA */}
-        {currentQuestion && !isLoading && (
+        {/* Fixed bottom bar — session progress + actions */}
+        {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
             <Container size='lg' className='py-3 sm:py-4'>
               <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
                 <div className='min-w-0 flex-1 space-y-2'>
-                  {sessionMode && sessionQuestions.length > 0 ? (
-                    <>
-                      <p className='text-xs text-text-muted sm:text-sm'>
-                        Questions remaining{' '}
-                        <span className='font-semibold tabular-nums text-text'>
-                          {Math.max(
-                            0,
-                            sessionQuestions.length - sessionCurrentIndex,
-                          )}
-                        </span>
-                        <span className='text-text-subtle'> / </span>
-                        <span className='tabular-nums text-text-muted'>
-                          {sessionQuestions.length}
-                        </span>
-                      </p>
-                      <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
-                        <div
-                          className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
-                          style={{
-                            width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </>
-                  ) : progressStats && progressStats.total > 0 ? (
-                    <>
-                      <p className='text-xs text-text-muted sm:text-sm'>
-                        <span className='font-semibold tabular-nums text-text'>
-                          {progressStats.attempted}
-                        </span>{' '}
-                        <span className='text-text-subtle'>/</span>{' '}
-                        <span className='tabular-nums text-text-muted'>
-                          {progressStats.total}
-                        </span>{' '}
-                        attempted
-                        {progressSubjects.length === 1 && (
-                          <>
-                            {' '}
-                            <button
-                              type='button'
-                              onClick={() =>
-                                setShowProgressFilter(!showProgressFilter)
-                              }
-                              className='text-secondary underline-offset-2 hover:underline'
-                            >
-                              ({progressSubjects[0]})
-                            </button>
-                          </>
-                        )}
-                        {progressSubjects.length > 1 && (
-                          <>
-                            {' '}
-                            <button
-                              type='button'
-                              onClick={() =>
-                                setShowProgressFilter(!showProgressFilter)
-                              }
-                              className='text-secondary underline-offset-2 hover:underline'
-                            >
-                              ({progressSubjects.length} subjects)
-                            </button>
-                          </>
-                        )}
-                      </p>
-                      <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
-                        <div
-                          className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
-                          style={{
-                            width: `${Math.min(100, (progressStats.attempted / progressStats.total) * 100)}%`,
-                          }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <p className='text-xs text-text-muted sm:text-sm'>
-                      Free practice — open filters to narrow your bank.
-                    </p>
-                  )}
+                  <p className='text-xs text-text-muted sm:text-sm'>
+                    Questions remaining{' '}
+                    <span className='font-semibold tabular-nums text-text'>
+                      {Math.max(
+                        0,
+                        sessionQuestions.length - sessionCurrentIndex,
+                      )}
+                    </span>
+                    <span className='text-text-subtle'> / </span>
+                    <span className='tabular-nums text-text-muted'>
+                      {sessionQuestions.length}
+                    </span>
+                  </p>
+                  <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
+                    <div
+                      className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
+                      style={{
+                        width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div className='flex flex-wrap items-center gap-2 sm:justify-end'>
@@ -1025,12 +858,9 @@ export default function QuestionBankPage() {
                       <span>
                         {isFreeLimitReached
                           ? 'Upgrade to continue'
-                          : sessionMode &&
-                              sessionCurrentIndex < sessionQuestions.length - 1
+                          : sessionCurrentIndex < sessionQuestions.length - 1
                             ? 'Next question'
-                            : sessionMode
-                              ? 'Finish session'
-                              : 'Next question'}
+                            : 'Finish session'}
                       </span>
                       <ArrowRight className='h-4 w-4 shrink-0' strokeWidth={2.5} />
                     </button>
@@ -1084,74 +914,6 @@ export default function QuestionBankPage() {
         )}
       </div>
 
-      {/* Progress Filter Speech Bubble */}
-      {showProgressFilter && progressStats && (
-        <Fragment>
-          {/* Backdrop to close on click outside */}
-          <div
-            className='fixed inset-0 z-40'
-            onClick={() => setShowProgressFilter(false)}
-          />
-          <div className='fixed bottom-20 left-4 z-50'>
-            <div className='bg-background border border-white/10 rounded-organic-lg p-4 shadow-xl min-w-[280px] relative'>
-              {/* Speech bubble tail */}
-              <div className='absolute -bottom-2 left-8 w-4 h-4 bg-background border-b border-r border-white/10 transform rotate-45'></div>
-
-              <div className='space-y-2'>
-                {(
-                  [
-                    'Math 1',
-                    'Math 2',
-                    'Physics',
-                    'Chemistry',
-                    'Biology',
-                    'Paper 1',
-                    'Paper 2',
-                  ] as SubjectFilter[]
-                ).map((subject) => {
-                  const isSelected = progressSubjects.includes(subject);
-                  const selectedPillClass = SUBJECT_PILL_CLASS[subject];
-
-                  return (
-                    <button
-                      key={subject}
-                      onClick={() => {
-                        if (isSelected) {
-                          setProgressSubjects((prev) =>
-                            prev.filter((s) => s !== subject),
-                          );
-                        } else {
-                          setProgressSubjects((prev) => [...prev, subject]);
-                        }
-                      }}
-                      className={cn(
-                        'w-full flex items-center gap-3 px-3 py-2 rounded-organic-md transition-all duration-fast ease-signature text-left border',
-                        isSelected
-                          ? `${selectedPillClass} border-2`
-                          : 'bg-white/5 text-white/60 border-white/10 hover:bg-white/10',
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0',
-                          isSelected
-                            ? `${selectedPillClass}`
-                            : 'border-white/30 bg-white/5',
-                        )}
-                      >
-                        {isSelected && (
-                          <Check className='w-3 h-3' strokeWidth={2.5} />
-                        )}
-                      </div>
-                      <span className='font-mono text-xs'>{subject}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </Fragment>
-      )}
     </Fragment>
   );
 }

@@ -42,13 +42,21 @@ interface UseQuestionBankReturn {
   updateCurrentQuestion: (question: QuestionBankQuestion) => void;
 }
 
-export function useQuestionBank(): UseQuestionBankReturn {
+export interface UseQuestionBankOptions {
+  /** When false, skip browse-mode fetch/restore (session-only pages). */
+  browseMode?: boolean;
+}
+
+export function useQuestionBank(
+  options?: UseQuestionBankOptions,
+): UseQuestionBankReturn {
   const session = useSupabaseSession();
+  const browseMode = options?.browseMode !== false;
 
   // State
   const [currentQuestion, setCurrentQuestion] =
     useState<QuestionBankQuestion | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(browseMode);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<QuestionBankFilters>({
     testType: 'All', // Default to All (show both ESAT and TMUA)
@@ -72,7 +80,7 @@ export function useQuestionBank(): UseQuestionBankReturn {
   const lastFiltersHash = useRef<string>('');
   const filtersInitialized = useRef(false);
   const hasInitialFetched = useRef(false);
-  const [filtersReady, setFiltersReady] = useState(false);
+  const [filtersReady, setFiltersReady] = useState(!browseMode);
 
   // localStorage key for persisting unanswered questions
   const STORAGE_KEY = 'questionBank:currentUnansweredQuestion';
@@ -138,6 +146,11 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Restore filters once per user (prevents preference fetch loop from session re-renders)
   useEffect(() => {
+    if (!browseMode) {
+      filtersInitialized.current = true;
+      return;
+    }
+
     const userKey = sessionUserId ?? '__anonymous__';
     if (filtersInitRanForUser.current === userKey) return;
     filtersInitRanForUser.current = userKey;
@@ -224,10 +237,12 @@ export function useQuestionBank(): UseQuestionBankReturn {
     };
 
     initializeFilters();
-  }, [getDefaultFiltersFromPreferences]);
+  }, [browseMode, getDefaultFiltersFromPreferences]);
 
   // Restore unanswered question from localStorage on mount
   useEffect(() => {
+    if (!browseMode) return;
+
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -267,10 +282,12 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
     // If no valid stored question, fetch a new one (but only after fetchQuestion is defined)
     // We'll handle this in the filter change effect
-  }, []); // Only run on mount
+  }, [browseMode]); // Only run on mount
 
   // Handle visibility changes to prevent unwanted refetches
   useEffect(() => {
+    if (!browseMode) return;
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         // Page became visible - restore state if we lost it
@@ -307,10 +324,12 @@ export function useQuestionBank(): UseQuestionBankReturn {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () =>
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [currentQuestion]);
+  }, [browseMode, currentQuestion]);
 
   // Save unanswered question to localStorage whenever it changes
   useEffect(() => {
+    if (!browseMode) return;
+
     if (currentQuestion && !isAnswered) {
       try {
         const toStore = {
@@ -869,6 +888,8 @@ export function useQuestionBank(): UseQuestionBankReturn {
 
   // Wait for filters to be initialized before fetching questions
   useEffect(() => {
+    if (!browseMode) return;
+
     if (!filtersReady && !filtersInitialized.current) {
       return; // Wait for filters to be initialized
     }
@@ -906,6 +927,7 @@ export function useQuestionBank(): UseQuestionBankReturn {
       fetchQuestion(false);
     }
   }, [
+    browseMode,
     filters,
     filtersReady,
     currentQuestion,

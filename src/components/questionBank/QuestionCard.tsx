@@ -8,11 +8,13 @@ import type { QuestionBankQuestion } from "@/types/questionBank";
 import { cn } from "@/lib/utils";
 import {
   ArrowRight,
+  BadgeCheck,
   Eye,
   HelpCircle,
   Star,
   ThumbsDown,
 } from "lucide-react";
+import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
 import type {
   QuestionRatingResponse,
   QuestionFeedbackResponse,
@@ -36,6 +38,8 @@ interface QuestionCardProps {
   isAuthenticated?: boolean;
   /** Timer + rotate (e.g.) aligned top-right of question panel */
   headerTrailing?: ReactNode;
+  /** Session index shown before the stem, e.g. 1 → "1." */
+  questionNumber?: number;
   /** Centered pill under MCQ rows (e.g. Community stats) */
   belowOptionsSlot?: ReactNode;
 }
@@ -98,8 +102,10 @@ export function QuestionCard({
   onIncorrectAnswersChange,
   isAuthenticated = false,
   headerTrailing,
+  questionNumber,
   belowOptionsSlot,
 }: QuestionCardProps) {
+  const verified = isQualityGateVerified(question);
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
   const [localSelectedAnswer, setLocalSelectedAnswer] = useState<string | null>(
     null,
@@ -323,6 +329,19 @@ export function QuestionCard({
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 gap-y-2">
+            {verified && (
+              <span
+                className={cn(
+                  PILL_BASE,
+                  "inline-flex items-center gap-1",
+                  PILL_SURFACE,
+                  "text-primary",
+                )}
+              >
+                <BadgeCheck className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+                Verified
+              </span>
+            )}
             <span
               className={cn(
                 PILL_BASE,
@@ -385,15 +404,20 @@ export function QuestionCard({
         </div>
 
         <div className={stemTypography}>
+          {questionNumber != null ? (
+            <span className="mr-1 font-semibold tabular-nums text-text">
+              {questionNumber}.
+            </span>
+          ) : null}
           {question.graph_spec || question.graph_specs ? (
             <QuestionWithGraph
               questionText={question.question_stem}
               graphSpec={question.graph_spec}
               graphSpecs={question.graph_specs}
-              className="text-text"
+              className="text-text inline"
             />
           ) : (
-            <MathContent content={question.question_stem} className="text-inherit" />
+            <MathContent content={question.question_stem} className="text-inherit inline" />
           )}
         </div>
       </div>

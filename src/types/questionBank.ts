@@ -27,6 +27,8 @@ export interface QuestionBankQuestion {
   primary_tag: string | null;
   secondary_tags: string[] | null;
   status: 'pending' | 'approved' | 'deleted';
+  quality_gate_verdict?: 'Pass' | 'Minor' | 'Major' | null;
+  quality_gate_assessed_at?: string | null;
   created_at: string;
   graph_spec?: TMUAGraphSpec | null; // Optional graph specification for questions with graphs (deprecated, use graph_specs)
   graph_specs?: Record<string, TMUAGraphSpec> | null; // Map of graph ID to graph spec for questions/solutions with multiple graphs
