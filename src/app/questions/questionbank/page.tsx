@@ -785,9 +785,9 @@ export default function QuestionBankPage() {
         {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
             <Container size='lg' className='py-3 sm:py-4'>
-              <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8'>
-                <div className='min-w-0 w-full flex-1 space-y-2.5 sm:pr-2'>
-                  <p className='text-xs text-text-muted sm:text-sm'>
+              <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6 lg:gap-8'>
+                <div className='flex min-h-[2.75rem] min-w-0 w-full flex-1 flex-col justify-center gap-2.5 sm:flex-row sm:items-center sm:gap-4 sm:pr-2'>
+                  <p className='shrink-0 text-xs text-text-muted sm:text-sm'>
                     Questions remaining{' '}
                     <span className='font-semibold tabular-nums text-text'>
                       {Math.max(
@@ -800,7 +800,7 @@ export default function QuestionBankPage() {
                       {sessionQuestions.length}
                     </span>
                   </p>
-                  <div className='h-2 w-full overflow-hidden rounded-organic-sm bg-surface-elevated'>
+                  <div className='h-2 min-w-0 flex-1 overflow-hidden rounded-organic-sm bg-surface-elevated'>
                     <div
                       className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
                       style={{
@@ -810,7 +810,7 @@ export default function QuestionBankPage() {
                   </div>
                 </div>
 
-                <div className='flex shrink-0 flex-wrap items-stretch gap-2 sm:justify-end'>
+                <div className='flex shrink-0 flex-wrap items-center gap-2 sm:justify-end'>
                   {currentQuestion.solution_key_insight && (
                     <button
                       type='button'
