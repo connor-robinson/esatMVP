@@ -227,25 +227,25 @@ export function QuestionBankHomeScreen() {
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 pt-8 sm:pt-10">
       <Container size="xl" className="space-y-10">
         {/* Progress */}
-        <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-8 sm:py-8">
+        <section className="rounded-organic-xl bg-surface px-5 py-4 sm:px-7 sm:py-5">
           <div>
-            <h1 className="text-lg font-semibold text-text sm:text-xl">
+            <h1 className="text-base font-semibold text-text sm:text-lg">
               Question Bank Progress
             </h1>
-            <p className="mt-1 text-sm text-text-muted">
+            <p className="mt-0.5 text-xs text-text-muted">
               Number of questions attempted
             </p>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-3">
             {isLoadingProgress ? (
-              <div className="flex h-10 items-center gap-2 text-sm text-text-muted">
-                <Loader2 className="h-4 w-4 animate-spin" />
+              <div className="flex h-7 items-center gap-2 text-xs text-text-muted">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 Loading progress…
               </div>
             ) : (
               <>
-                <div className="h-3 w-full overflow-hidden rounded-full bg-surface-elevated">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
                   <div
                     className="h-full rounded-full bg-secondary transition-[width] duration-500 ease-out"
                     style={{
@@ -253,7 +253,7 @@ export function QuestionBankHomeScreen() {
                     }}
                   />
                 </div>
-                <div className="mt-2 flex justify-between text-xs text-text-muted">
+                <div className="mt-1 flex justify-between text-[11px] text-text-muted">
                   <span>0%</span>
                   <span>100%</span>
                 </div>
@@ -303,11 +303,11 @@ export function QuestionBankHomeScreen() {
                 <div
                   key={tile.key}
                   className={cn(
-                    "flex min-h-[270px] flex-col rounded-[18px] bg-surface-elevated px-6 pb-6 pt-10",
+                    "flex min-h-[220px] flex-col rounded-[18px] bg-surface-elevated px-6 pb-5 pt-7",
                     "transition-colors hover:bg-surface-mid/50",
                   )}
                 >
-                  <div className="min-h-[4.5rem]">
+                  <div>
                     <p
                       className={cn(
                         "whitespace-nowrap text-base font-semibold leading-snug",
@@ -318,15 +318,15 @@ export function QuestionBankHomeScreen() {
                     </p>
                     <p
                       className={cn(
-                        "mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em]",
+                        "mt-2 text-center text-[10px] font-semibold uppercase tracking-[0.18em]",
                         tile.topicClass,
                       )}
                     >
-                      {tile.topicCaps}
+                      {tile.testType}
                     </p>
                   </div>
 
-                  <div className="mt-auto pt-5">
+                  <div className="mt-auto pt-3">
                     <div className="flex items-center justify-between gap-3">
                       <div
                         className={cn(
@@ -359,7 +359,7 @@ export function QuestionBankHomeScreen() {
 
                     <div
                       className={cn(
-                        "mt-8 h-1 w-full overflow-hidden rounded-full",
+                        "mt-5 h-1 w-full overflow-hidden rounded-full",
                         tile.progressTrackClass,
                       )}
                     >
@@ -376,7 +376,7 @@ export function QuestionBankHomeScreen() {
               );
             })}
 
-            <div className="flex min-h-[270px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
+            <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
