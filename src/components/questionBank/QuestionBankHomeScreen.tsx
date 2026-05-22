@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
@@ -33,8 +33,12 @@ export interface SubjectTileConfig {
   headline: string;
   topicCaps: string;
   testType: "ESAT" | "TMUA";
+  cardClass: string;
   titleClass: string;
-  accentBarClass: string;
+  topicClass: string;
+  statClass: string;
+  progressTrackClass: string;
+  progressFillClass: string;
   startBtnClass: string;
 }
 
@@ -44,63 +48,91 @@ const SUBJECT_TILES: SubjectTileConfig[] = [
     headline: "ESAT — Math 1",
     topicCaps: "Algebra & functions",
     testType: "ESAT",
-    titleClass: "text-accent",
-    accentBarClass: "bg-accent",
-    startBtnClass: "bg-accent text-background hover:opacity-90",
+    cardClass: "bg-accent",
+    titleClass: "text-background",
+    topicClass: "text-background/65",
+    statClass: "text-background/70",
+    progressTrackClass: "bg-background/20",
+    progressFillClass: "bg-background",
+    startBtnClass: "bg-background text-accent hover:opacity-90",
   },
   {
     key: "Math 2",
     headline: "ESAT — Math 2",
     topicCaps: "Sequences & calculus",
     testType: "ESAT",
-    titleClass: "text-warning",
-    accentBarClass: "bg-warning",
-    startBtnClass: "bg-warning text-background hover:opacity-90",
+    cardClass: "bg-warning",
+    titleClass: "text-background",
+    topicClass: "text-background/65",
+    statClass: "text-background/70",
+    progressTrackClass: "bg-background/20",
+    progressFillClass: "bg-background",
+    startBtnClass: "bg-background text-warning hover:opacity-90",
   },
   {
     key: "Physics",
     headline: "ESAT — Physics",
     topicCaps: "Mechanics & waves",
     testType: "ESAT",
-    titleClass: "text-secondary",
-    accentBarClass: "bg-secondary",
-    startBtnClass: "bg-secondary text-background hover:opacity-90",
+    cardClass: "bg-secondary",
+    titleClass: "text-background",
+    topicClass: "text-background/65",
+    statClass: "text-background/70",
+    progressTrackClass: "bg-background/20",
+    progressFillClass: "bg-background",
+    startBtnClass: "bg-background text-secondary hover:opacity-90",
   },
   {
     key: "Chemistry",
     headline: "ESAT — Chemistry",
     topicCaps: "Structure & reactivity",
     testType: "ESAT",
-    titleClass: "text-error",
-    accentBarClass: "bg-error",
-    startBtnClass: "bg-error text-background hover:opacity-90",
+    cardClass: "bg-error",
+    titleClass: "text-background",
+    topicClass: "text-background/65",
+    statClass: "text-background/70",
+    progressTrackClass: "bg-background/20",
+    progressFillClass: "bg-background",
+    startBtnClass: "bg-background text-error hover:opacity-90",
   },
   {
     key: "Biology",
     headline: "ESAT — Biology",
     topicCaps: "Cell & molecular biology",
     testType: "ESAT",
-    titleClass: "text-primary",
-    accentBarClass: "bg-primary",
-    startBtnClass: "bg-primary text-background hover:opacity-90",
+    cardClass: "bg-primary",
+    titleClass: "text-background",
+    topicClass: "text-background/65",
+    statClass: "text-background/70",
+    progressTrackClass: "bg-background/20",
+    progressFillClass: "bg-background",
+    startBtnClass: "bg-background text-primary hover:opacity-90",
   },
   {
     key: "Paper 1",
     headline: "TMUA — Paper 1",
     topicCaps: "Mathematical thinking",
     testType: "TMUA",
+    cardClass: "bg-surface-neutral",
     titleClass: "text-text",
-    accentBarClass: "bg-text-muted",
-    startBtnClass: "bg-surface-neutral text-text hover:bg-surface-mid",
+    topicClass: "text-text-muted",
+    statClass: "text-text-muted",
+    progressTrackClass: "bg-background/15",
+    progressFillClass: "bg-text",
+    startBtnClass: "bg-text text-background hover:opacity-90",
   },
   {
     key: "Paper 2",
     headline: "TMUA — Paper 2",
     topicCaps: "Mathematical reasoning",
     testType: "TMUA",
+    cardClass: "bg-surface-neutral",
     titleClass: "text-text",
-    accentBarClass: "bg-text-muted",
-    startBtnClass: "bg-surface-neutral text-text hover:bg-surface-mid",
+    topicClass: "text-text-muted",
+    statClass: "text-text-muted",
+    progressTrackClass: "bg-background/15",
+    progressFillClass: "bg-text",
+    startBtnClass: "bg-text text-background hover:opacity-90",
   },
 ];
 
@@ -224,10 +256,6 @@ export function QuestionBankHomeScreen() {
     router.push("/questions/questionbank");
   };
 
-  const startMixed = () => {
-    setMixedModalOpen(true);
-  };
-
   const handleMixedConfirm = (payload: QuestionBankHomeLaunchPayload) => {
     try {
       sessionStorage.setItem(QUESTION_BANK_HOME_LAUNCH_KEY, JSON.stringify(payload));
@@ -241,21 +269,14 @@ export function QuestionBankHomeScreen() {
     <div className="min-h-[calc(100vh-4rem)] bg-background pb-16 pt-8 sm:pt-10">
       <Container size="xl" className="space-y-10">
         {/* Progress */}
-        <section className="rounded-organic-xl border border-border-subtle bg-surface px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="text-lg font-semibold text-text sm:text-xl">
-                Question Bank Progress
-              </h1>
-              <p className="mt-1 text-sm text-text-muted">
-                Number of questions attempted across your subjects
-              </p>
-            </div>
-            {aggregate && aggregate.total > 0 && (
-              <p className="text-sm font-medium tabular-nums text-secondary">
-                {aggregate.attempted} / {aggregate.total}
-              </p>
-            )}
+        <section className="rounded-organic-xl bg-surface px-5 py-6 sm:px-8 sm:py-8">
+          <div>
+            <h1 className="text-lg font-semibold text-text sm:text-xl">
+              Question Bank Progress
+            </h1>
+            <p className="mt-1 text-sm text-text-muted">
+              Number of questions attempted
+            </p>
           </div>
 
           <div className="mt-6">
@@ -281,19 +302,17 @@ export function QuestionBankHomeScreen() {
               </>
             )}
           </div>
-
-          <p className="mt-4 text-center text-xs text-text-muted sm:text-sm">
-            Represents questions you have attempted for ESAT and TMUA subjects above
-          </p>
         </section>
 
-        {/* Start a session */}
+        {/* Browse by subjects */}
         <section className="space-y-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-text">Start a session</h2>
+              <h2 className="text-lg font-semibold text-text sm:text-xl">
+                Browse By Subjects
+              </h2>
               <p className="mt-1 text-sm text-text-muted">
-                Choose a subject to practice or open the full bank with mixed filters
+                Target specific modules for focused exam preparation.
               </p>
             </div>
             <div className="relative w-full sm:max-w-md">
@@ -304,9 +323,9 @@ export function QuestionBankHomeScreen() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className={cn(
-                  "h-11 w-full rounded-organic-lg border border-border-subtle bg-surface-elevated py-2 pl-10 pr-4",
+                  "h-11 w-full rounded-organic-lg bg-surface-elevated py-2 pl-10 pr-4",
                   "text-sm text-text placeholder:text-text-muted",
-                  "outline-none ring-0 focus:border-secondary/40 focus:outline-none focus:ring-1 focus:ring-secondary/25",
+                  "outline-none ring-0 focus:outline-none focus:ring-1 focus:ring-secondary/25",
                 )}
                 aria-label="Search subjects"
               />
@@ -326,12 +345,24 @@ export function QuestionBankHomeScreen() {
                 <div
                   key={tile.key}
                   className={cn(
-                    "flex min-h-[270px] flex-col rounded-[18px] border border-border-subtle bg-surface-elevated px-6 pb-6 pt-10 transition-colors",
-                    "hover:border-border",
+                    "relative flex min-h-[270px] flex-col rounded-[18px] px-6 pb-6 pt-10",
+                    tile.cardClass,
                   )}
                 >
-                  {/* Title block */}
-                  <div className="min-h-[5rem]">
+                  <button
+                    type="button"
+                    disabled={stats.loading || stats.total === 0}
+                    onClick={() => openSessionModal(tile)}
+                    className={cn(
+                      "absolute right-6 top-10 shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
+                      "disabled:cursor-not-allowed disabled:opacity-40",
+                      tile.startBtnClass,
+                    )}
+                  >
+                    Start
+                  </button>
+
+                  <div className="min-h-[5rem] pr-24">
                     <p
                       className={cn(
                         "text-lg font-semibold leading-snug",
@@ -340,49 +371,53 @@ export function QuestionBankHomeScreen() {
                     >
                       {tile.headline}
                     </p>
-                    <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    <p
+                      className={cn(
+                        "mt-1.5 text-[11px] font-semibold uppercase tracking-[0.12em]",
+                        tile.topicClass,
+                      )}
+                    >
                       {tile.topicCaps}
                     </p>
                   </div>
 
-                  {/* Stats + Start button on same row */}
-                  <div className="mt-auto flex shrink-0 items-center justify-between pt-5">
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted">
+                  <div className="mt-auto pt-5">
+                    <div
+                      className={cn(
+                        "flex flex-wrap items-center gap-3 text-xs",
+                        tile.statClass,
+                      )}
+                    >
                       <span className="flex items-center gap-1.5 tabular-nums">
                         <ClipboardList className="h-3.5 w-3.5 shrink-0" aria-hidden />
                         {stats.loading ? "…" : `${stats.total} Qs`}
                       </span>
                       <span className="flex items-center gap-1.5 tabular-nums">
                         <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                        {stats.loading ? "…" : stats.total === 0 ? "—" : `~${mins} min`}
+                        {stats.loading ? "…" : stats.total === 0 ? "—" : `${mins} Min`}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      disabled={stats.loading || stats.total === 0}
-                      onClick={() => openSessionModal(tile)}
+
+                    <div
                       className={cn(
-                        "shrink-0 rounded px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-opacity",
-                        "disabled:cursor-not-allowed disabled:opacity-40",
-                        tile.startBtnClass,
+                        "mt-8 h-1 w-full overflow-hidden rounded-full",
+                        tile.progressTrackClass,
                       )}
                     >
-                      Start
-                    </button>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="mt-8 h-1 w-full overflow-hidden rounded-full bg-surface-neutral">
-                    <div
-                      className={cn("h-full rounded-full transition-[width]", tile.accentBarClass)}
-                      style={{ width: `${stats.loading ? 0 : pct}%`, opacity: 0.85 }}
-                    />
+                      <div
+                        className={cn(
+                          "h-full rounded-full transition-[width]",
+                          tile.progressFillClass,
+                        )}
+                        style={{ width: `${stats.loading ? 0 : pct}%`, opacity: 0.9 }}
+                      />
+                    </div>
                   </div>
                 </div>
               );
             })}
 
-            <div className="flex min-h-[270px] flex-col items-center justify-center rounded-[18px] border border-dashed border-border bg-surface-elevated/30 px-4 text-center">
+            <div className="flex min-h-[270px] flex-col items-center justify-center rounded-[18px] bg-surface-elevated/30 px-4 text-center">
               <span className="text-2xl text-text-muted" aria-hidden>
                 …
               </span>
@@ -397,7 +432,7 @@ export function QuestionBankHomeScreen() {
         <div className="flex justify-center pb-8">
           <button
             type="button"
-            onClick={startMixed}
+            onClick={() => setMixedModalOpen(true)}
             className={cn(
               "inline-flex items-center gap-2 rounded-full px-10 py-3.5 text-sm font-semibold",
               "bg-secondary text-background shadow-glow transition-all duration-fast",
