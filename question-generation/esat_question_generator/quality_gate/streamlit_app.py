@@ -113,6 +113,33 @@ def _backfill_review_label(row: dict[str, Any]) -> str:
     return backfill_review_label(row.get("quality_gate_diagram_backfill_kind")) or "—"
 
 
+def _audit_route_label(audit: dict[str, Any]) -> str:
+    """How this row was (or would be) generated: SVG graph vs Imagen diagram."""
+    if audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok":
+        return "SVG · graph"
+    if audit.get("renderer") == "imagen":
+        return "Imagen · diagram"
+    vk = str(audit.get("visual_kind") or "").lower()
+    if vk == "graph":
+        return "SVG · graph"
+    if vk == "diagram":
+        return "Imagen · diagram"
+    need = str(audit.get("diagram_need") or "").lower()
+    if need in ("qualitative_graph", "graph", "plot", "chart", "axes"):
+        return "SVG · graph (expected)"
+    if need in ("ray", "forces", "container", "circuit", "schematic", "geometry", "other"):
+        return "Imagen · diagram (expected)"
+    return "—"
+
+
+def _audit_backfill_review_label(audit: dict[str, Any]) -> str:
+    if str(audit.get("final_status") or "") != "merged":
+        return "—"
+    if audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok":
+        return "Backgen · SVG"
+    return "Backgen · image"
+
+
 def _sort_rows_for_results_table(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Review workload first: backgenerated diagram → Major → Minor → Pass+graph → rest."""
 
@@ -869,7 +896,8 @@ with tab_after:
     st.markdown("#### 2. Run image backfill")
     st.caption(
         f"Default: only rows with **{_IMAGE_QUEUE_LABEL}**. "
-        "**Graphs/plots** → inline SVG (Gemini). **Apparatus diagrams** (rays, forces, containers, …) → Imagen + vision verify."
+        "**Graphs/plots** → inline SVG (Gemini). **Apparatus diagrams** (rays, forces, containers, …) → Imagen + vision verify. "
+        "After a code change, restart Streamlit (Ctrl+C in the terminal, then run ``run_quality_gate_ui.bat`` again)."
     )
     bf_legacy = st.checkbox(
         "Legacy: ignore queue column — process all graph-flagged rows missing an image diagram",
@@ -972,15 +1000,16 @@ with tab_after:
                         {
                             "question_id": a.get("question_id"),
                             "status": a.get("final_status"),
-                            "backfill_review": "Backgen · image"
-                            if a.get("final_status") == "merged"
-                            else "—",
+                            "route": _audit_route_label(a),
+                            "backfill_review": _audit_backfill_review_label(a),
                             "diagram_need": a.get("diagram_need"),
+                            "visual_kind": a.get("visual_kind") or "—",
+                            "renderer": a.get("renderer") or "—",
                             "spoiler_risk": a.get("spoiler_risk"),
                             "precision_risk": a.get("precision_risk"),
-                            "verify": a.get("verification_verdict"),
+                            "verify": a.get("verification_verdict") or "—",
                             "issues": ", ".join(a.get("verification_issues") or [])[:120],
-                            "url": a.get("uploaded_url"),
+                            "url": a.get("uploaded_url") or "—",
                             "reason": a.get("reason"),
                         }
                         for a in audits
@@ -989,8 +1018,14 @@ with tab_after:
                 st.dataframe(adf, use_container_width=True, hide_index=True)
                 for a in audits[:5]:
                     url = a.get("uploaded_url")
-                    if url and a.get("final_status") == "merged":
-                        st.image(url, caption=f"Generated diagram — {a.get('question_id')}", width=400)
+                    if url and a.get("final_status") == "merged" and a.get("renderer") == "imagen":
+                        st.image(url, caption=f"Imagen diagram — {a.get('question_id')}", width=400)
+                    elif a.get("final_status") == "merged" and (
+                        a.get("renderer") == "svg" or a.get("reason") == "graph_svg_ok"
+                    ):
+                        st.caption(
+                            f"**{a.get('question_id')}** — merged inline **SVG** (graph); open Review to preview."
+                        )
             st.text_area("Image backfill log", "\n".join(log_img[-120:]), height=220)
         except Exception as e:
             st.exception(e)
