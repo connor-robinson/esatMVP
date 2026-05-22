@@ -307,7 +307,7 @@ export function QuestionBankHomeScreen() {
                     "transition-colors hover:bg-surface-mid/50",
                   )}
                 >
-                  <div>
+                  <div className="text-center">
                     <p
                       className={cn(
                         "whitespace-nowrap text-base font-semibold leading-snug",
@@ -316,21 +316,13 @@ export function QuestionBankHomeScreen() {
                     >
                       {tile.headline}
                     </p>
-                    <p
-                      className={cn(
-                        "mt-2 text-center text-[10px] font-semibold uppercase tracking-[0.18em]",
-                        tile.topicClass,
-                      )}
-                    >
-                      {tile.testType}
-                    </p>
                   </div>
 
                   <div className="mt-auto pt-3">
                     <div className="flex items-center justify-between gap-3">
                       <div
                         className={cn(
-                          "flex min-w-0 flex-wrap items-center gap-3 text-xs",
+                          "flex min-w-0 flex-nowrap items-center gap-3 text-xs whitespace-nowrap",
                           tile.statClass,
                         )}
                       >
