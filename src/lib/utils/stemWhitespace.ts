@@ -5,17 +5,19 @@
 const FINAL_Q_RE =
   /((?:What|Which|How|Find|Calculate|Determine|State|Explain|Deduce)\b[^?]*\?)/i;
 
-/** Block-level regions: placeholders get blank lines around them when masked. */
+/** Figures / placeholders — may get paragraph spacing when masked. */
 const PROTECTED_BLOCK: Array<{ re: RegExp }> = [
   {
     re: /<figure\b[^>]*class="[^"]*qg-diagram[^"]*"[^>]*>[\s\S]*?<\/figure>/gi,
   },
-  { re: /\$\$[\s\S]*?\$\$/g },
   { re: /<GRAPH\s+id\s*=\s*"[^"]+"\s*\/?>/gi },
   { re: /<DIAGRAM\s+id\s*=\s*"[^"]+"\s*\/?>/gi },
 ];
 
-/** Inline $...$ — masked in place (no extra paragraph breaks). */
+/** Display $$...$$ — masked in place so prose does not split around each equation. */
+const DISPLAY_MATH_RE = /\$\$[\s\S]*?\$\$/g;
+
+/** Inline $...$ — masked in place. */
 const INLINE_MATH_RE = /\$(?!\$)[^\$\n]+?\$/g;
 
 function shield(text: string): { masked: string; blocks: string[] } {
@@ -30,6 +32,11 @@ function shield(text: string): { masked: string; blocks: string[] } {
     });
   }
 
+  masked = masked.replace(DISPLAY_MATH_RE, (full) => {
+    blocks.push(full);
+    return `__STEM_DISPLAY_${blocks.length - 1}__`;
+  });
+
   masked = masked.replace(INLINE_MATH_RE, (full) => {
     blocks.push(full);
     return `__STEM_INLINE_${blocks.length - 1}__`;
@@ -42,6 +49,7 @@ function unshield(text: string, blocks: string[]): string {
   let out = text;
   blocks.forEach((block, i) => {
     out = out.split(`__STEM_BLOCK_${i}__`).join(block);
+    out = out.split(`__STEM_DISPLAY_${i}__`).join(block);
     out = out.split(`__STEM_INLINE_${i}__`).join(block);
   });
   return out;
@@ -87,12 +95,12 @@ export function normalizeStemWhitespace(stem: string): string {
   const parts = masked.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
   const collapsed: string[] = [];
   for (const part of parts) {
-    if (/^__STEM_(BLOCK|INLINE)_\d+__$/.test(part)) collapsed.push(part);
+    if (/^__STEM_(BLOCK|DISPLAY|INLINE)_\d+__$/.test(part)) collapsed.push(part);
     else collapsed.push(collapseProseParagraph(part));
   }
 
   let out = collapsed.join("\n\n");
-  // Only block-level placeholders get extra vertical breathing room
+  // Only structural blocks (figures/graphs) get extra vertical spacing
   out = out.replace(/([^\n])\n(__STEM_BLOCK_\d+__)/g, "$1\n\n$2");
   out = out.replace(/(__STEM_BLOCK_\d+__)\n([^\n])/g, "$1\n\n$2");
   out = out.replace(/\n{3,}/g, "\n\n");

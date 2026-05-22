@@ -316,6 +316,13 @@ function needsGlueSpace(prev: RenderedPart, next: RenderedPart): boolean {
   return false;
 }
 
+/** Single-line $$...$$ should flow with prose, not as a block paragraph. */
+function isInlineFriendlyDisplayMath(content: string): boolean {
+  const t = content.trim();
+  if (!t) return true;
+  return !t.includes("\n");
+}
+
 function joinRenderedParts(parts: RenderedPart[]): string {
   let out = "";
   for (let i = 0; i < parts.length; i++) {
@@ -353,12 +360,20 @@ export function renderMathContent(text: string): string {
       }
     } else if (segment.type === "display") {
       const contentStr = segment.content != null ? String(segment.content) : "";
-      const rendered = renderMath(contentStr, true);
+      const flowInline = isInlineFriendlyDisplayMath(contentStr);
+      const rendered = renderMath(contentStr, !flowInline);
       if (rendered) {
-        parts.push({
-          kind: "display",
-          html: `<div class="math-display-wrap">${rendered}</div>`,
-        });
+        if (flowInline) {
+          parts.push({
+            kind: "inline",
+            html: `<span class="math-inline-wrap">${rendered}</span>`,
+          });
+        } else {
+          parts.push({
+            kind: "display",
+            html: `<div class="math-display-wrap">${rendered}</div>`,
+          });
+        }
       } else {
         parts.push({ kind: "display", html: `$$${contentStr}$$` });
       }

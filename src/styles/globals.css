@@ -129,6 +129,10 @@
     text-indent: 0;
   }
 
+  .math-content .katex:not(.katex-display) {
+    display: inline;
+  }
+
   .math-content .math-display-wrap {
     display: block;
     margin: 0.65em 0;
