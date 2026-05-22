@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { X, Check, ChevronDown, ArrowRight, Minus, Plus } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { X, Check, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
@@ -12,10 +11,11 @@ import {
   SUBJECT_PILL_INACTIVE,
 } from "@/lib/questionBank/subjectColors";
 
-const TIME_PRESETS_MIN = [5, 10, 15, 20, 25, 30, 45, 60, 90];
-const QUESTION_STEP = 1;
+const STEP = 1;
 const QUESTION_MIN = 1;
 const QUESTION_MAX = 120;
+const TIME_MIN = 1;
+const TIME_MAX = 180;
 
 export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
 
@@ -67,6 +67,97 @@ function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
   }
 }
 
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n));
+}
+
+function autoTimeLimitMinutes(questionCount: number): number {
+  return clamp(Math.round(questionCount * 1.5), TIME_MIN, TIME_MAX);
+}
+
+interface NumericStepperProps {
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  suffix: string;
+  ariaLabel: string;
+}
+
+function NumericStepper({
+  value,
+  onChange,
+  min,
+  max,
+  suffix,
+  ariaLabel,
+}: NumericStepperProps) {
+  const [draft, setDraft] = useState(String(value));
+
+  useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const commitDraft = () => {
+    const parsed = parseInt(draft, 10);
+    if (Number.isNaN(parsed)) {
+      setDraft(String(value));
+      return;
+    }
+    onChange(clamp(parsed, min, max));
+  };
+
+  const bump = (delta: number) => {
+    onChange(clamp(value + delta, min, max));
+  };
+
+  return (
+    <div className="flex h-12 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
+      <button
+        type="button"
+        onClick={() => bump(-STEP)}
+        disabled={value <= min}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
+        aria-label={`Decrease ${ariaLabel}`}
+      >
+        <Minus className="h-4 w-4" />
+      </button>
+      <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5 px-1">
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value.replace(/\D/g, ""))}
+          onBlur={commitDraft}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commitDraft();
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          className={cn(
+            "w-14 bg-transparent text-center text-sm font-semibold tabular-nums text-text",
+            "outline-none focus:outline-none",
+          )}
+          aria-label={ariaLabel}
+        />
+        <span className="shrink-0 text-sm font-medium text-text-muted">{suffix}</span>
+      </div>
+      <button
+        type="button"
+        onClick={() => bump(STEP)}
+        disabled={value >= max}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
+        aria-label={`Increase ${ariaLabel}`}
+      >
+        <Plus className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 export function QuestionBankSessionSettingsModal({
   open,
   originTile,
@@ -79,18 +170,6 @@ export function QuestionBankSessionSettingsModal({
   const [questionCount, setQuestionCount] = useState(30);
   const [subjectKeys, setSubjectKeys] = useState<SubjectFilter[]>([]);
   const [difficultiesUi, setDifficultiesUi] = useState<UiDifficultyLabel[]>([]);
-  const [timeLimitOpen, setTimeLimitOpen] = useState(false);
-  const timeLimitRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (timeLimitRef.current && !timeLimitRef.current.contains(e.target as Node)) {
-        setTimeLimitOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     if (!open || !originTile) return;
@@ -102,7 +181,6 @@ export function QuestionBankSessionSettingsModal({
     setMinutes(20);
     setQuestionCount(30);
     setDifficultiesUi([]);
-    setTimeLimitOpen(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, originTile?.key, isMixed]);
 
@@ -128,10 +206,8 @@ export function QuestionBankSessionSettingsModal({
     if (originTile) setSubjectKeys([originTile.key as SubjectFilter]);
   };
 
-  const bumpQuestions = (delta: number) => {
-    setQuestionCount((c) =>
-      Math.min(QUESTION_MAX, Math.max(QUESTION_MIN, c + delta)),
-    );
+  const applyAutoTimeLimit = () => {
+    setMinutes(autoTimeLimitMinutes(questionCount));
   };
 
   const handleStart = () => {
@@ -160,6 +236,7 @@ export function QuestionBankSessionSettingsModal({
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
   const allDifficultiesSelected = difficultiesUi.length === 0;
   const showSubjectToggles = siblingTiles.length > 1;
+  const autoMinutes = autoTimeLimitMinutes(questionCount);
 
   return (
     <div
@@ -239,70 +316,31 @@ export function QuestionBankSessionSettingsModal({
         <div className="mt-8 grid flex-1 gap-8 overflow-y-auto sm:grid-cols-3">
           {/* Time Limit */}
           <div className="space-y-3">
-            <label className="block text-xs font-medium uppercase tracking-wide text-text-muted">
-              Time Limit
-            </label>
-            <div className="relative" ref={timeLimitRef}>
+            <div className="flex items-center justify-between gap-2">
+              <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                Time Limit
+              </label>
               <button
                 type="button"
-                onClick={() => setTimeLimitOpen((v) => !v)}
+                onClick={applyAutoTimeLimit}
                 className={cn(
-                  "flex h-12 w-full items-center justify-between rounded-organic-lg bg-surface-elevated px-4 text-sm text-text",
-                  "transition-colors hover:bg-surface-mid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/25",
-                  timeLimitOpen && "bg-surface-mid",
+                  "rounded-organic-md px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                  minutes === autoMinutes
+                    ? "bg-secondary/20 text-secondary"
+                    : "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
                 )}
               >
-                <span>{minutes} mins</span>
-                <ChevronDown
-                  className={cn(
-                    "h-4 w-4 text-text-muted transition-transform duration-200",
-                    timeLimitOpen && "rotate-180",
-                  )}
-                />
+                Auto ({autoMinutes} min)
               </button>
-
-              <AnimatePresence>
-                {timeLimitOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setTimeLimitOpen(false)}
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
-                      className="absolute top-full z-50 mt-2 w-full overflow-hidden rounded-organic-md bg-surface-mid shadow-modal-card"
-                    >
-                      <div className="py-1.5">
-                        {TIME_PRESETS_MIN.map((m) => (
-                          <button
-                            key={m}
-                            type="button"
-                            onClick={() => {
-                              setMinutes(m);
-                              setTimeLimitOpen(false);
-                            }}
-                            className={cn(
-                              "flex w-full items-center justify-between px-4 py-3 text-sm transition-colors",
-                              m === minutes
-                                ? "bg-surface-neutral font-medium text-text"
-                                : "text-text-muted hover:bg-surface-neutral hover:text-text",
-                            )}
-                          >
-                            {m} mins
-                            {m === minutes && (
-                              <Check className="h-3.5 w-3.5 text-secondary" strokeWidth={2.5} />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
             </div>
+            <NumericStepper
+              value={minutes}
+              onChange={setMinutes}
+              min={TIME_MIN}
+              max={TIME_MAX}
+              suffix="min"
+              ariaLabel="Time limit in minutes"
+            />
           </div>
 
           {/* Number of Questions */}
@@ -310,27 +348,14 @@ export function QuestionBankSessionSettingsModal({
             <label className="block text-xs font-medium uppercase tracking-wide text-text-muted">
               Number Of Questions
             </label>
-            <div className="flex h-12 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
-              <button
-                type="button"
-                onClick={() => bumpQuestions(-QUESTION_STEP)}
-                disabled={questionCount <= QUESTION_MIN}
-                className="flex h-9 w-9 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-              <span className="min-w-[5rem] text-center text-sm font-semibold tabular-nums text-text">
-                {questionCount} Qs
-              </span>
-              <button
-                type="button"
-                onClick={() => bumpQuestions(QUESTION_STEP)}
-                disabled={questionCount >= QUESTION_MAX}
-                className="flex h-9 w-9 items-center justify-center rounded-organic-md text-text-muted hover:bg-surface-neutral hover:text-text disabled:opacity-35"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
+            <NumericStepper
+              value={questionCount}
+              onChange={setQuestionCount}
+              min={QUESTION_MIN}
+              max={QUESTION_MAX}
+              suffix="Qs"
+              ariaLabel="Number of questions"
+            />
           </div>
 
           {/* Difficulty — multi-select up to 4 */}
