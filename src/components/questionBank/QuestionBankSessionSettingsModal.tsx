@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
-import type { SubjectTileConfig } from "./QuestionBankHomeScreen";
+import type { SubjectTileConfig } from "@/lib/questionBank/subjectTiles";
 
 const TIME_PRESETS_MIN = [5, 10, 15, 20, 25, 30, 45, 60, 90];
 const QUESTION_STEP = 1;
