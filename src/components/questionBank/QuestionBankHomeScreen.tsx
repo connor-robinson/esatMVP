@@ -307,15 +307,46 @@ export function QuestionBankHomeScreen() {
                     "transition-colors hover:bg-surface-mid/50",
                   )}
                 >
-                  <div className="flex flex-1 items-center justify-center text-center">
-                    <p
-                      className={cn(
-                        "whitespace-nowrap text-base font-semibold leading-snug",
-                        tile.titleClass,
-                      )}
-                    >
-                      {tile.headline}
-                    </p>
+                  <div className="flex flex-1 flex-col items-center justify-center gap-2 px-1 text-center">
+                    {!stats.loading && stats.total > 0 ? (
+                      <p
+                        className={cn(
+                          "font-heading text-3xl font-bold tabular-nums leading-none tracking-tight",
+                          tile.titleClass,
+                        )}
+                        aria-label={`${pct} percent complete`}
+                      >
+                        {pct}%
+                      </p>
+                    ) : null}
+                    <div className="space-y-1">
+                      <p
+                        className={cn(
+                          "whitespace-nowrap text-base font-semibold leading-snug",
+                          tile.titleClass,
+                        )}
+                      >
+                        {tile.headline}
+                      </p>
+                      <p
+                        className={cn(
+                          "mx-auto max-w-[14rem] truncate text-xs leading-snug",
+                          tile.topicClass,
+                        )}
+                      >
+                        {tile.topicCaps}
+                      </p>
+                    </div>
+                    {!stats.loading && stats.total > 0 ? (
+                      <p
+                        className={cn(
+                          "text-[11px] tabular-nums leading-none",
+                          tile.statClass,
+                        )}
+                      >
+                        {stats.attempted} of {stats.total} attempted
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="pt-3">
