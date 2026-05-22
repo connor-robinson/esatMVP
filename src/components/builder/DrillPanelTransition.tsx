@@ -3,8 +3,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-const PANEL_EASE = [0.32, 0.72, 0, 1] as const;
-
 type DrillPanelTransitionProps = {
   /** Change to trigger a crossfade (e.g. category or folder id). */
   panelKey: string;
@@ -12,7 +10,7 @@ type DrillPanelTransitionProps = {
   className?: string;
 };
 
-/** Very subtle fade + slide when drill builder panels swap. */
+/** Quick opacity crossfade when drill builder panels swap (no slide). */
 export function DrillPanelTransition({
   panelKey,
   children,
@@ -25,13 +23,13 @@ export function DrillPanelTransition({
   }
 
   return (
-    <AnimatePresence mode='wait' initial={false}>
+    <AnimatePresence initial={false}>
       <motion.div
         key={panelKey}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -4 }}
-        transition={{ duration: 0.22, ease: PANEL_EASE }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.1, ease: 'easeOut' }}
         className={cn('min-h-0', className)}
       >
         {children}

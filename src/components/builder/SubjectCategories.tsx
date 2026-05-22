@@ -89,10 +89,10 @@ export function SubjectCategories({
               >
                 <div
                   className={cn(
-                    'flex h-12 w-12 items-center justify-center rounded-organic-lg transition-all duration-300 ease-out xl:h-14 xl:w-14',
+                    'flex h-12 w-12 items-center justify-center rounded-organic-lg transition-colors duration-150 ease-out xl:h-14 xl:w-14',
                     isSelected
-                      ? cn(categorySelectedPillBg[category], 'scale-100')
-                      : 'scale-[0.94] bg-surface-mid text-text-muted',
+                      ? categorySelectedPillBg[category]
+                      : 'bg-surface-mid text-text-muted',
                   )}
                 >
                   <Icon
