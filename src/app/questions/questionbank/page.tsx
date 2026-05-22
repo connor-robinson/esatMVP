@@ -28,6 +28,7 @@ import {
   ArrowRight,
   RotateCw,
   BookOpen,
+  ClipboardList,
   X,
   Eye,
   AlertCircle,
