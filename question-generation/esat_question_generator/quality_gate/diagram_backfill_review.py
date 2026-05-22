@@ -24,8 +24,8 @@ _REASON_PREFIX = {
 }
 
 _DISPLAY_LABEL = {
-    BACKFILL_KIND_IMAGE: "Backgen · image",
-    BACKFILL_KIND_SVG: "Backgen · SVG",
+    BACKFILL_KIND_IMAGE: "Diagram generated",
+    BACKFILL_KIND_SVG: "Diagram generated (SVG)",
 }
 
 

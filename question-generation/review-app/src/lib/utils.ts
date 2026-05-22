@@ -297,11 +297,7 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       typeof data.quality_gate_graph_notes === "string" && data.quality_gate_graph_notes.trim()
         ? data.quality_gate_graph_notes.trim()
         : null,
-    quality_gate_diagram_backfill_kind:
-      data.quality_gate_diagram_backfill_kind === "image" ||
-      data.quality_gate_diagram_backfill_kind === "svg"
-        ? data.quality_gate_diagram_backfill_kind
-        : null,
+    quality_gate_diagram_backfill_kind: inferDiagramBackfillKind(data),
     quality_gate_diagram_backfill_at:
       typeof data.quality_gate_diagram_backfill_at === "string" &&
       data.quality_gate_diagram_backfill_at.trim()
@@ -412,13 +408,43 @@ export function hasDiagram(q: Pick<ReviewQuestion, "has_visual" | "visual_type" 
   return false;
 }
 
+const BACKFILL_REASON_RE = /\[BACKGENERATED_DIAGRAM:(image|svg)\]/i;
+
+/** Kind from DB column, or from ``quality_gate_reason`` when stem merged but column write failed. */
+export function inferDiagramBackfillKind(data: {
+  quality_gate_diagram_backfill_kind?: unknown;
+  quality_gate_reason?: unknown;
+}): ReviewQuestion["quality_gate_diagram_backfill_kind"] {
+  const raw = data.quality_gate_diagram_backfill_kind;
+  if (raw === "image" || raw === "svg") return raw;
+  const reason =
+    typeof data.quality_gate_reason === "string" ? data.quality_gate_reason : "";
+  const m = reason.match(BACKFILL_REASON_RE);
+  if (!m) return null;
+  const kind = m[1].toLowerCase();
+  return kind === "image" || kind === "svg" ? kind : null;
+}
+
 /** Display label for Quality Gate backfilled diagrams (image or inline SVG). */
 export function backfillReviewLabel(
   kind: ReviewQuestion["quality_gate_diagram_backfill_kind"]
 ): string | null {
-  if (kind === "image") return "Backgen · image";
-  if (kind === "svg") return "Backgen · SVG";
+  if (kind === "image") return "Diagram generated";
+  if (kind === "svg") return "Diagram generated (SVG)";
   return null;
+}
+
+/** Tooltip detail for backfill badge on the review dashboard. */
+export function backfillReviewTitle(
+  kind: ReviewQuestion["quality_gate_diagram_backfill_kind"]
+): string {
+  if (kind === "image") {
+    return "Quality Gate inserted an Imagen diagram into the stem — human review required";
+  }
+  if (kind === "svg") {
+    return "Quality Gate inserted an inline SVG into the stem — human review required";
+  }
+  return "Quality Gate auto-inserted a diagram — human review required";
 }
 
 /**

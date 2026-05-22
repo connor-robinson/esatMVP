@@ -23,6 +23,55 @@ from .supabase_io import (
 _DIR = Path(__file__).resolve().parent
 IMAGE_BACKFILL_HISTORY = _DIR / "image_backfill_history.jsonl"
 
+_STEM_PATCH_KEYS = ("question_stem", "question_stem_before_auto_diagram")
+_REVIEW_PATCH_KEYS = (
+    "quality_gate_diagram_backfill_kind",
+    "quality_gate_diagram_backfill_at",
+    "quality_gate_action",
+    "quality_gate_reason",
+    "status",
+)
+_IMAGE_META_KEYS = (
+    "quality_gate_diagram_image_url",
+    "quality_gate_diagram_image_model",
+    "quality_gate_diagram_image_verified_at",
+    "quality_gate_diagram_image_payload",
+)
+
+
+def _patch_subset(patch: Dict[str, Any], keys: tuple[str, ...]) -> Dict[str, Any]:
+    return {k: patch[k] for k in keys if k in patch}
+
+
+def _apply_merged_image_patch(
+    client: Any,
+    qid: str,
+    patch: Dict[str, Any],
+    *,
+    log: Callable[[str], None],
+) -> None:
+    """Persist stem + review flags; optional image metadata may fail on older DBs."""
+    try:
+        update_question_assessment(client, qid, patch)
+        return
+    except Exception as ex:
+        log(f"[image-backfill] full patch failed {qid}: {ex}")
+
+    stem_review = {
+        **_patch_subset(patch, _STEM_PATCH_KEYS),
+        **_patch_subset(patch, _REVIEW_PATCH_KEYS),
+    }
+    try:
+        update_question_assessment(client, qid, stem_review)
+        log(f"[image-backfill] saved stem + review flags for {qid} (image metadata skipped)")
+        return
+    except Exception as ex2:
+        log(f"[image-backfill] stem+review patch failed {qid}: {ex2}")
+
+    minimal = _patch_subset(patch, _STEM_PATCH_KEYS)
+    update_question_assessment(client, qid, minimal)
+    log(f"[image-backfill] WARNING: saved stem only for {qid} — review tag may be missing")
+
 
 def append_image_backfill_history(record: Dict[str, Any]) -> None:
     rec = {**record, "ts": record.get("ts") or datetime.now(timezone.utc).isoformat()}
@@ -238,27 +287,18 @@ def run_missing_image_backfill(
                     **build_backfill_human_review_patch(row, kind=BACKFILL_KIND_IMAGE),
                 }
                 try:
-                    update_question_assessment(client, qid, patch)
+                    _apply_merged_image_patch(client, qid, patch, log=_log)
                     snap = fetch_question_stem_fields(client, qid)
                     st = snap.get("question_stem") or ""
                     _log(
                         f"[image-backfill] read-after-write id={qid} stem_len={len(st)} "
                         f"has_<img={'<img' in st.lower()}"
                     )
-                except Exception as ex:
-                    _log(f"[image-backfill] full patch failed {qid}, retry stem-only: {ex}")
-                    try:
-                        minimal = {
-                            k: patch[k]
-                            for k in ("question_stem", "question_stem_before_auto_diagram")
-                            if k in patch
-                        }
-                        update_question_assessment(client, qid, minimal)
-                    except Exception as ex2:
-                        _log(f"[image-backfill] DB patch failed {qid}: {ex2}")
-                        audit["final_status"] = "failed"
-                        audit["reason"] = f"db_patch_failed: {ex2}"
-                        status = "failed"
+                except Exception as ex2:
+                    _log(f"[image-backfill] DB patch failed {qid}: {ex2}")
+                    audit["final_status"] = "failed"
+                    audit["reason"] = f"db_patch_failed: {ex2}"
+                    status = "failed"
 
         if status == "merged":
             stats["merged"] += 1

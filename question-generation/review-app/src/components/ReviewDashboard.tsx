@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { ReviewQuestion, PaperType } from "@/types/review";
-import { stripHtml, cn, hasDiagram, backfillReviewLabel } from "@/lib/utils";
+import {
+  stripHtml,
+  cn,
+  hasDiagram,
+  backfillReviewLabel,
+  backfillReviewTitle,
+} from "@/lib/utils";
 import { resolveReviewQuestionInput } from "@/lib/reviewLookup";
 import { ChevronLeft, ChevronRight, ImageIcon, ListVideo, RefreshCw, Video } from "lucide-react";
 import {
@@ -415,7 +421,7 @@ export function ReviewDashboard() {
                       className={cn(
                         "rounded-organic-lg p-4",
                         backfillTag
-                          ? "bg-violet-500/[0.1] hover:bg-violet-500/[0.15] ring-1 ring-violet-400/45 hover:ring-violet-300/55"
+                          ? "bg-amber-400/[0.12] hover:bg-amber-400/[0.18] ring-1 ring-amber-400/55 hover:ring-amber-300/65"
                           : hasDiag
                             ? "bg-sky-500/[0.08] hover:bg-sky-500/[0.13] ring-1 ring-sky-400/35 hover:ring-sky-300/50"
                             : "bg-white/[0.03] hover:bg-white/[0.06] ring-1 ring-white/10 hover:ring-primary/35",
@@ -505,8 +511,8 @@ export function ReviewDashboard() {
                         ) : null}
                         {backfillTag ? (
                           <span
-                            className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-violet-500/30 text-violet-100 ring-1 ring-violet-400/55"
-                            title="Quality Gate auto-inserted this diagram — human review required"
+                            className="inline-flex items-center gap-1 text-xs font-mono font-semibold px-2.5 py-0.5 rounded-organic-sm bg-amber-300/25 text-amber-50 ring-1 ring-amber-400/70"
+                            title={backfillReviewTitle(q.quality_gate_diagram_backfill_kind)}
                           >
                             <ImageIcon className="w-3 h-3 shrink-0" aria-hidden />
                             {backfillTag}
