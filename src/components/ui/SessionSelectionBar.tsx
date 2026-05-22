@@ -286,20 +286,20 @@ export function SessionSelectionBar({
                     aria-controls="session-drill-popover"
                     className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-organic-md transition-all duration-200 ease-signature",
-                      "text-primary hover:bg-primary/12",
-                      drillListOpen && "scale-[1.02] bg-primary/14 text-primary",
+                      "bg-primary text-white hover:bg-primary-hover",
+                      drillListOpen && "scale-[1.02] ring-2 ring-primary/40 ring-offset-2 ring-offset-surface-elevated",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                     )}
                     aria-label={`View or remove drills in session${drillSessionCount > 0 ? `, ${drillSessionCount} selected` : ""}`}
                   >
-                    <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                    <ListOrdered className="h-5 w-5 text-white" strokeWidth={2} />
                   </button>
                 ) : (
                   <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/12 text-primary"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary text-white"
                     aria-hidden
                   >
-                    <ListOrdered className="h-5 w-5" strokeWidth={2} />
+                    <ListOrdered className="h-5 w-5 text-white" strokeWidth={2} />
                   </div>
                 )}
               </div>
