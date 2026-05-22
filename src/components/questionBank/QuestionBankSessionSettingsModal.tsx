@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
 import type { SubjectTileConfig } from "./QuestionBankHomeScreen";
+import {
+  getSubjectPillActiveClass,
+  SUBJECT_PILL_INACTIVE,
+} from "@/lib/questionBank/subjectColors";
 
 const TIME_PRESETS_MIN = [5, 10, 15, 20, 25, 30, 45, 60, 90];
 const QUESTION_STEP = 1;
@@ -14,6 +18,13 @@ const QUESTION_MIN = 1;
 const QUESTION_MAX = 120;
 
 export type UiDifficultyLabel = "Easy" | "Medium" | "Hard" | "Extreme";
+
+const ALL_UI_DIFFICULTIES: UiDifficultyLabel[] = [
+  "Easy",
+  "Medium",
+  "Hard",
+  "Extreme",
+];
 
 interface QuestionBankSessionSettingsModalProps {
   open: boolean;
@@ -29,6 +40,33 @@ function uiDifficultyToApiDifficulty(d: UiDifficultyLabel): string {
   return d;
 }
 
+function resolveDifficultiesForApi(
+  selected: UiDifficultyLabel[],
+): string[] {
+  const effective =
+    selected.length === 0 ||
+    selected.length === ALL_UI_DIFFICULTIES.length
+      ? ALL_UI_DIFFICULTIES
+      : selected;
+  return [...new Set(effective.map(uiDifficultyToApiDifficulty))];
+}
+
+function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
+  if (!active) return SUBJECT_PILL_INACTIVE;
+  switch (d) {
+    case "Easy":
+      return "bg-difficulty-pill-easy text-background";
+    case "Medium":
+      return "bg-difficulty-pill-medium text-background";
+    case "Hard":
+      return "bg-difficulty-pill-hard text-background";
+    case "Extreme":
+      return "bg-advanced text-background";
+    default:
+      return "bg-surface-mid text-text";
+  }
+}
+
 export function QuestionBankSessionSettingsModal({
   open,
   originTile,
@@ -40,7 +78,7 @@ export function QuestionBankSessionSettingsModal({
   const [minutes, setMinutes] = useState(20);
   const [questionCount, setQuestionCount] = useState(30);
   const [subjectKeys, setSubjectKeys] = useState<SubjectFilter[]>([]);
-  const [difficultyUi, setDifficultyUi] = useState<UiDifficultyLabel>("Easy");
+  const [difficultiesUi, setDifficultiesUi] = useState<UiDifficultyLabel[]>([]);
   const [timeLimitOpen, setTimeLimitOpen] = useState(false);
   const timeLimitRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +101,7 @@ export function QuestionBankSessionSettingsModal({
     }
     setMinutes(20);
     setQuestionCount(30);
-    setDifficultyUi("Easy");
+    setDifficultiesUi([]);
     setTimeLimitOpen(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, originTile?.key, isMixed]);
@@ -75,6 +113,14 @@ export function QuestionBankSessionSettingsModal({
         return prev.filter((k) => k !== key);
       }
       return [...prev, key];
+    });
+  };
+
+  const toggleDifficulty = (d: UiDifficultyLabel) => {
+    setDifficultiesUi((prev) => {
+      if (prev.length === 0) return [d];
+      if (prev.includes(d)) return prev.filter((x) => x !== d);
+      return [...prev, d];
     });
   };
 
@@ -95,7 +141,7 @@ export function QuestionBankSessionSettingsModal({
       subjects: subjectKeys,
       timeLimitMinutes: minutes,
       questionCount,
-      difficulties: [uiDifficultyToApiDifficulty(difficultyUi)],
+      difficulties: resolveDifficultiesForApi(difficultiesUi),
     });
     onClose();
   };
@@ -111,33 +157,13 @@ export function QuestionBankSessionSettingsModal({
 
   if (!open || !originTile) return null;
 
-  const difficulties: UiDifficultyLabel[] = ["Easy", "Medium", "Hard", "Extreme"];
-
-  const difficultyActiveClass = (d: UiDifficultyLabel): string => {
-    switch (d) {
-      case "Easy":
-        return "border-difficulty-easy/35 bg-difficulty-easy/15 text-difficulty-easy";
-      case "Medium":
-        return "border-warning/35 bg-warning/15 text-warning";
-      case "Hard":
-        return "border-error/35 bg-error/15 text-error";
-      case "Extreme":
-        return "border-accent/35 bg-accent/15 text-accent";
-      default:
-        return "border-secondary/30 bg-secondary/20 text-secondary";
-    }
-  };
-
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
-  const subjectLabel = isMixed
-    ? `${subjectKeys.length} subject${subjectKeys.length !== 1 ? "s" : ""} selected`
-    : subjectKeys.length === 1
-      ? `${originTile.testType} — ${subjectKeys[0]}`
-      : `${originTile.testType} — ${subjectKeys.length} subjects`;
+  const allDifficultiesSelected = difficultiesUi.length === 0;
+  const showSubjectToggles = siblingTiles.length > 1;
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="session-settings-title"
@@ -150,55 +176,70 @@ export function QuestionBankSessionSettingsModal({
       />
       <div
         className={cn(
-          "relative z-[101] w-full max-w-[920px] overflow-hidden rounded-organic-xl",
-          "border border-border-subtle bg-surface p-6 shadow-modal-card",
+          "relative z-[101] flex max-h-[min(92vh,880px)] w-full max-w-[960px] flex-col overflow-hidden rounded-organic-xl",
+          "bg-surface p-8 shadow-modal-card sm:p-10",
         )}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <h2 id="session-settings-title" className="text-lg font-semibold text-text">
-            {modalTitle}
-          </h2>
+        <div className="flex items-start justify-between gap-6">
+          <div className="space-y-2">
+            <h2 id="session-settings-title" className="text-lg font-semibold text-text sm:text-xl">
+              {modalTitle}
+            </h2>
+            <p className="text-sm text-text-muted">
+              {isMixed
+                ? "Choose subjects and session options for mixed practice."
+                : "Configure your practice session before you start."}
+            </p>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors hover:bg-surface-elevated hover:text-text"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-text-muted transition-colors hover:bg-surface-elevated hover:text-text"
             aria-label="Close session settings"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
         </div>
 
-        <p className="mt-3 inline-flex max-w-full rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-1.5 text-xs font-medium text-text-muted">
-          {subjectLabel}
-        </p>
-
-        {/* Subject toggles */}
-        {siblingTiles.length > 1 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {siblingTiles.map((t) => (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => toggleSubject(t.key as SubjectFilter)}
-                className={cn(
-                  "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide transition-colors",
-                  subjectKeys.includes(t.key as SubjectFilter)
-                    ? "border-secondary/35 bg-secondary/15 text-secondary"
-                    : "border-border-subtle bg-surface-elevated text-text-muted hover:border-border hover:text-text",
-                )}
-              >
-                {t.key}
-              </button>
-            ))}
+        {/* Subjects */}
+        {showSubjectToggles && (
+          <div className="mt-8 space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                Subjects
+              </span>
+              <span className="text-xs text-text-muted">
+                {subjectKeys.length} selected
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2.5">
+              {siblingTiles.map((t) => {
+                const key = t.key as SubjectFilter;
+                const active = subjectKeys.includes(key);
+                return (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => toggleSubject(key)}
+                    className={cn(
+                      "rounded-organic-md px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                      active ? getSubjectPillActiveClass(key) : SUBJECT_PILL_INACTIVE,
+                    )}
+                  >
+                    {t.key}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* Settings row */}
-        <div className="mt-6 grid gap-5 md:grid-cols-3">
-          {/* Time Limit — custom styled dropdown */}
-          <div className="space-y-2">
-            <label className="block text-xs font-medium text-text-muted">
+        {/* Settings */}
+        <div className="mt-8 grid flex-1 gap-8 overflow-y-auto sm:grid-cols-3">
+          {/* Time Limit */}
+          <div className="space-y-3">
+            <label className="block text-xs font-medium uppercase tracking-wide text-text-muted">
               Time Limit
             </label>
             <div className="relative" ref={timeLimitRef}>
@@ -206,9 +247,9 @@ export function QuestionBankSessionSettingsModal({
                 type="button"
                 onClick={() => setTimeLimitOpen((v) => !v)}
                 className={cn(
-                  "flex h-11 w-full items-center justify-between rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 text-sm text-text",
+                  "flex h-12 w-full items-center justify-between rounded-organic-lg bg-surface-elevated px-4 text-sm text-text",
                   "transition-colors hover:bg-surface-mid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/25",
-                  timeLimitOpen && "border-secondary/30 bg-surface-mid",
+                  timeLimitOpen && "bg-surface-mid",
                 )}
               >
                 <span>{minutes} mins</span>
@@ -232,9 +273,9 @@ export function QuestionBankSessionSettingsModal({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.15, ease: [0.32, 0.72, 0, 1] }}
-                      className="absolute top-full z-50 mt-1.5 w-full overflow-hidden rounded-organic-md border border-border-subtle bg-surface-mid shadow-modal-card"
+                      className="absolute top-full z-50 mt-2 w-full overflow-hidden rounded-organic-md bg-surface-mid shadow-modal-card"
                     >
-                      <div className="py-1">
+                      <div className="py-1.5">
                         {TIME_PRESETS_MIN.map((m) => (
                           <button
                             key={m}
@@ -244,7 +285,7 @@ export function QuestionBankSessionSettingsModal({
                               setTimeLimitOpen(false);
                             }}
                             className={cn(
-                              "flex w-full items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                              "flex w-full items-center justify-between px-4 py-3 text-sm transition-colors",
                               m === minutes
                                 ? "bg-surface-neutral font-medium text-text"
                                 : "text-text-muted hover:bg-surface-neutral hover:text-text",
@@ -264,12 +305,12 @@ export function QuestionBankSessionSettingsModal({
             </div>
           </div>
 
-          {/* Number of Questions — continuous stepper */}
-          <div className="space-y-2">
-            <label className="block text-xs font-medium text-text-muted">
+          {/* Number of Questions */}
+          <div className="space-y-3">
+            <label className="block text-xs font-medium uppercase tracking-wide text-text-muted">
               Number Of Questions
             </label>
-            <div className="flex h-11 items-center justify-between rounded-organic-lg border border-border-subtle bg-surface-elevated px-1">
+            <div className="flex h-12 items-center justify-between rounded-organic-lg bg-surface-elevated px-1.5">
               <button
                 type="button"
                 onClick={() => bumpQuestions(-QUESTION_STEP)}
@@ -292,43 +333,51 @@ export function QuestionBankSessionSettingsModal({
             </div>
           </div>
 
-          {/* Difficulty */}
-          <div className="space-y-2">
-            <span className="block text-xs font-medium text-text-muted">
-              Difficulty Limit
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {difficulties.map((d) => {
-                const active = difficultyUi === d;
+          {/* Difficulty — multi-select up to 4 */}
+          <div className="space-y-3 sm:col-span-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                Difficulty
+              </span>
+              <span className="text-[11px] text-text-muted">
+                {allDifficultiesSelected ? "All levels" : `${difficultiesUi.length} selected`}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2.5">
+              {ALL_UI_DIFFICULTIES.map((d) => {
+                const active = allDifficultiesSelected || difficultiesUi.includes(d);
                 return (
                   <button
                     key={d}
                     type="button"
-                    onClick={() => setDifficultyUi(d)}
+                    onClick={() => toggleDifficulty(d)}
                     className={cn(
-                      "flex items-center gap-1 rounded-organic-md border px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide transition-colors",
-                      active
-                        ? difficultyActiveClass(d)
-                        : "border-border-subtle bg-surface-elevated text-text-muted hover:border-border hover:text-text",
+                      "flex items-center gap-1.5 rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                      difficultyPillClass(d, active),
                     )}
                   >
-                    {active && <Check className="h-3 w-3" strokeWidth={3} />}
+                    {active && (
+                      <Check className="h-3 w-3 shrink-0" strokeWidth={3} />
+                    )}
                     {d}
                   </button>
                 );
               })}
             </div>
+            <p className="text-[11px] leading-relaxed text-text-muted">
+              Tap to filter levels. None selected includes all four.
+            </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-8 flex flex-col gap-4 border-t border-border-subtle pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-5 pt-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm text-text">
             <span className="font-medium">
               {subjectKeys.length}{" "}
-              {subjectKeys.length === 1 ? "subject" : "subjects"} selected
+              {subjectKeys.length === 1 ? "subject" : "subjects"}
             </span>
-            {(siblingTiles.length > 1 || isMixed) && (
+            {showSubjectToggles && (
               <>
                 {" · "}
                 <button
@@ -336,7 +385,7 @@ export function QuestionBankSessionSettingsModal({
                   onClick={clearAllSubjectsKeepOrigin}
                   className="font-medium text-text-muted underline-offset-4 hover:text-secondary hover:underline"
                 >
-                  Reset
+                  Reset subjects
                 </button>
               </>
             )}

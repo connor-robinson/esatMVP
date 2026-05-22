@@ -11,6 +11,25 @@ export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
   "Paper 2": "border border-physics/30 bg-physics/20 text-physics",
 };
 
+/** Borderless pill fills for session settings (active = full subject color). */
+export const SUBJECT_PILL_ACTIVE: Record<SubjectFilter, string> = {
+  All: "bg-surface-mid text-text",
+  "Math 1": "bg-maths text-background",
+  "Math 2": "bg-maths text-background",
+  Physics: "bg-physics text-background",
+  Chemistry: "bg-chemistry text-background",
+  Biology: "bg-biology text-background",
+  "Paper 1": "bg-maths text-background",
+  "Paper 2": "bg-physics text-background",
+};
+
+export const SUBJECT_PILL_INACTIVE =
+  "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text";
+
+export function getSubjectPillActiveClass(subject: SubjectFilter): string {
+  return SUBJECT_PILL_ACTIVE[subject] ?? SUBJECT_PILL_ACTIVE.All;
+}
+
 export function getSubjectPillClass(subject?: string | null): string {
   if (!subject) return SUBJECT_PILL_CLASS.All;
 
