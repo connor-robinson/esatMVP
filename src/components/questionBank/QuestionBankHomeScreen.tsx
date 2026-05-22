@@ -295,8 +295,6 @@ export function QuestionBankHomeScreen() {
                 stats.total > 0
                   ? Math.min(100, Math.round((stats.attempted / stats.total) * 100))
                   : 0;
-              const mins = stats.total > 0 ? Math.max(1, Math.ceil(stats.total * 1.5)) : 0;
-
               return (
                 <div
                   key={tile.key}
@@ -308,7 +306,7 @@ export function QuestionBankHomeScreen() {
                   <div className="flex flex-1 items-center justify-center px-1 text-center">
                     <p
                       className={cn(
-                        "whitespace-nowrap text-lg font-semibold leading-snug sm:text-xl",
+                        "whitespace-nowrap text-base font-semibold leading-snug sm:text-lg",
                         tile.titleClass,
                       )}
                     >
@@ -318,23 +316,16 @@ export function QuestionBankHomeScreen() {
 
                   <div className="pt-3">
                     <div className="flex items-center justify-between gap-3">
-                      <div
+                      <p
                         className={cn(
-                          "flex min-w-0 flex-nowrap items-center gap-3 text-xs whitespace-nowrap",
+                          "min-w-0 truncate text-xs tabular-nums whitespace-nowrap",
                           tile.statClass,
                         )}
                       >
-                        <span className="tabular-nums">
-                          {stats.loading ? "…" : `${stats.total} Qs`}
-                        </span>
-                        <span className="tabular-nums">
-                          {stats.loading
-                            ? "…"
-                            : stats.total === 0
-                              ? "—"
-                              : `${mins} Min`}
-                        </span>
-                      </div>
+                        {stats.loading
+                          ? "…"
+                          : `${stats.attempted} / ${stats.total} questions done`}
+                      </p>
                       <button
                         type="button"
                         onClick={() => openSessionModal(tile)}
