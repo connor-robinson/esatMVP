@@ -56,6 +56,18 @@ function hasSessionBootPayload(): boolean {
 const FREE_QUESTION_LIMIT = 10;
 const STORAGE_KEY = 'qb_free_attempts';
 
+/** Matches site `Button` / session bar: organic-md, ~2.75rem tall */
+const SESSION_BAR_BTN =
+  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+const SESSION_BAR_BTN_SECONDARY = cn(
+  SESSION_BAR_BTN,
+  'bg-surface-elevated px-4 text-text-muted hover:bg-surface-mid hover:text-text',
+);
+const SESSION_BAR_BTN_PRIMARY = cn(
+  SESSION_BAR_BTN,
+  'px-5 font-semibold',
+);
+
 function getFreeAttemptsKey(userId: string | undefined): string {
   return userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
 }
@@ -773,8 +785,8 @@ export default function QuestionBankPage() {
         {activeSession && currentQuestion && (
           <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
             <Container size='lg' className='py-3 sm:py-4'>
-              <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
-                <div className='min-w-0 flex-1 space-y-2'>
+              <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8'>
+                <div className='min-w-0 w-full flex-1 space-y-2.5 sm:pr-2'>
                   <p className='text-xs text-text-muted sm:text-sm'>
                     Questions remaining{' '}
                     <span className='font-semibold tabular-nums text-text'>
@@ -788,9 +800,9 @@ export default function QuestionBankPage() {
                       {sessionQuestions.length}
                     </span>
                   </p>
-                  <div className='h-1.5 max-w-xl overflow-hidden rounded-full bg-surface-elevated'>
+                  <div className='h-2 w-full overflow-hidden rounded-organic-sm bg-surface-elevated'>
                     <div
-                      className='h-full rounded-full bg-secondary transition-all duration-300 ease-signature'
+                      className='h-full rounded-organic-sm bg-secondary transition-all duration-300 ease-signature'
                       style={{
                         width: `${((sessionCurrentIndex + 1) / sessionQuestions.length) * 100}%`,
                       }}
@@ -798,12 +810,12 @@ export default function QuestionBankPage() {
                   </div>
                 </div>
 
-                <div className='flex flex-wrap items-center gap-2 sm:justify-end'>
+                <div className='flex shrink-0 flex-wrap items-stretch gap-2 sm:justify-end'>
                   {currentQuestion.solution_key_insight && (
                     <button
                       type='button'
                       onClick={() => setShowHint(true)}
-                      className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
+                      className={SESSION_BAR_BTN_SECONDARY}
                     >
                       <Lightbulb className='h-4 w-4 shrink-0' />
                       Hint
@@ -815,7 +827,7 @@ export default function QuestionBankPage() {
                       <button
                         type='button'
                         onClick={() => setShowDetailedExplanation(true)}
-                        className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
+                        className={SESSION_BAR_BTN_SECONDARY}
                       >
                         <ClipboardList className='h-4 w-4 shrink-0' />
                         Detailed explanation
@@ -825,7 +837,7 @@ export default function QuestionBankPage() {
                         <button
                           type='button'
                           onClick={() => setAnswerRevealed(true)}
-                          className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
+                          className={SESSION_BAR_BTN_SECONDARY}
                         >
                           <Eye className='h-4 w-4 shrink-0' />
                           Reveal answer
@@ -836,7 +848,10 @@ export default function QuestionBankPage() {
                     (answerRevealed || isAnswered) && (
                       <Link
                         href='/pricing'
-                        className='inline-flex items-center gap-2 rounded-organic-lg border border-primary/30 bg-primary/15 px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/25'
+                        className={cn(
+                          SESSION_BAR_BTN,
+                          'border border-primary/30 bg-primary/15 px-4 text-primary hover:bg-primary/25',
+                        )}
                       >
                         <BookOpen className='h-4 w-4 shrink-0' />
                         Upgrade for solutions
@@ -850,7 +865,7 @@ export default function QuestionBankPage() {
                       onClick={handleNextQuestionInSession}
                       disabled={isFreeLimitReached}
                       className={cn(
-                        'inline-flex items-center gap-2 rounded-organic-lg px-6 py-2.5 text-sm font-semibold transition-all duration-fast ease-signature',
+                        SESSION_BAR_BTN_PRIMARY,
                         'bg-secondary text-background shadow-glow hover:brightness-110',
                         'disabled:cursor-not-allowed disabled:opacity-45',
                       )}
@@ -896,7 +911,7 @@ export default function QuestionBankPage() {
                         incorrectAnswers.has(currentSelection)
                       }
                       className={cn(
-                        'inline-flex items-center gap-2 rounded-organic-lg px-6 py-2.5 text-sm font-semibold transition-all duration-fast ease-signature',
+                        SESSION_BAR_BTN_PRIMARY,
                         currentSelection &&
                           !incorrectAnswers.has(currentSelection)
                           ? 'bg-secondary text-background shadow-glow hover:brightness-110'
