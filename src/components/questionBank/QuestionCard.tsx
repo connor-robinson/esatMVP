@@ -41,28 +41,32 @@ interface QuestionCardProps {
   belowOptionsSlot?: ReactNode;
 }
 
-const PANEL_SHELL =
-  "rounded-organic-xl border border-border bg-surface ring-1 ring-white/[0.06]";
+const PANEL_SHELL = "rounded-organic-xl bg-surface-elevated";
+
+/** One step from panel: darker in light mode, lighter in dark mode. */
+const PILL_SURFACE = "bg-surface-mid dark:bg-surface-mid";
+
+const PILL_BASE =
+  "rounded-organic-md px-2.5 py-1 text-[11px] font-semibold tracking-wide";
 
 function difficultyBadgeClass(d: string): string {
   switch (d) {
     case "Easy":
-      return "bg-difficulty-easy text-background border border-transparent";
+      return cn(PILL_SURFACE, "text-difficulty-pill-easy");
     case "Medium":
-      return "bg-warning text-text border border-transparent";
+      return cn(PILL_SURFACE, "text-difficulty-pill-medium");
     case "Hard":
-      return "bg-error text-text border border-transparent";
+      return cn(PILL_SURFACE, "text-difficulty-pill-hard");
     default:
-      return "bg-surface-mid text-text-muted border border-border-subtle";
+      return cn(PILL_SURFACE, "text-text-muted");
   }
 }
 
-/** Theme-backed subject badges (DESIGN.md — no raw hex). */
 function subjectBadgeClass(subjects: string | null | undefined): string {
-  if (!subjects) return "bg-surface-mid text-text-muted border-border-subtle";
+  if (!subjects) return cn(PILL_SURFACE, "text-text-muted");
   const s = subjects.toLowerCase().trim();
   if (s === "math 1" || s === "math1" || s === "paper 1" || s === "paper1") {
-    return "bg-maths/15 text-maths border border-maths/20";
+    return cn(PILL_SURFACE, "text-maths");
   }
   if (
     s === "math 2" ||
@@ -71,14 +75,12 @@ function subjectBadgeClass(subjects: string | null | undefined): string {
     s === "paper 2" ||
     s === "paper2"
   ) {
-    return "bg-accent/15 text-accent border border-accent/20";
+    return cn(PILL_SURFACE, "text-accent");
   }
-  if (s === "physics") return "bg-physics/15 text-physics border border-physics/20";
-  if (s === "chemistry") {
-    return "bg-chemistry/15 text-chemistry border border-chemistry/20";
-  }
-  if (s === "biology") return "bg-primary/15 text-primary border border-primary/25";
-  return "bg-surface-mid text-text-muted border-border-subtle";
+  if (s === "physics") return cn(PILL_SURFACE, "text-physics");
+  if (s === "chemistry") return cn(PILL_SURFACE, "text-chemistry");
+  if (s === "biology") return cn(PILL_SURFACE, "text-primary");
+  return cn(PILL_SURFACE, "text-text-muted");
 }
 
 export function QuestionCard({
@@ -264,56 +266,52 @@ export function QuestionCard({
 
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "cursor-default border border-primary/35 bg-primary/10";
+      return "cursor-default bg-primary/12";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "cursor-default border border-primary/35 bg-primary/10";
+      return "cursor-default bg-primary/12";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "cursor-default border border-error/35 bg-error/10";
+      return "cursor-default bg-error/10";
     }
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
         if (localSelectedAnswer === letter) {
-          return cn(
-            "cursor-pointer border border-border bg-surface-mid hover:bg-surface-neutral transition-colors duration-fast ease-signature",
-          );
+          return "cursor-pointer bg-surface-neutral dark:bg-surface-mid";
         }
         return cn(
-          "cursor-pointer border border-border-subtle bg-surface-elevated hover:bg-surface-mid transition-colors duration-fast ease-signature",
-          hoveredOption === letter && "border-border bg-surface-mid",
+          "cursor-pointer bg-transparent hover:bg-surface-mid transition-colors duration-fast ease-signature",
+          hoveredOption === letter && "bg-surface-mid",
         );
       }
-      return "cursor-default border border-border-subtle bg-surface-elevated opacity-70";
+      return "cursor-default opacity-70";
     }
     if (localSelectedAnswer === letter) {
-      return cn(
-        "cursor-pointer border border-secondary/35 bg-secondary/10 hover:bg-secondary/15 transition-colors duration-fast ease-signature",
-      );
+      return "cursor-pointer bg-surface-neutral dark:bg-surface-mid";
     }
     return cn(
-      "cursor-pointer border border-border-subtle bg-surface-elevated hover:bg-surface-mid transition-colors duration-fast ease-signature",
-      hoveredOption === letter && "border-border bg-surface-mid",
+      "cursor-pointer bg-transparent hover:bg-surface-mid transition-colors duration-fast ease-signature",
+      hoveredOption === letter && "bg-surface-mid",
     );
   };
 
   const letterBadgeClass = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "border border-primary/40 bg-primary/20 text-primary";
+      return "bg-primary/20 text-primary";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "border border-primary/40 bg-primary/20 text-primary";
+      return "bg-primary/20 text-primary";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "border border-error/40 bg-error/20 text-error";
+      return "bg-error/15 text-error";
     }
     if (
       localSelectedAnswer === letter &&
       (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
     ) {
-      return "border border-secondary/40 bg-surface-neutral text-text";
+      return "bg-surface-neutral text-text dark:bg-surface-neutral";
     }
-    return "border border-border-subtle bg-surface-mid text-text-muted";
+    return "bg-surface-mid text-text-muted dark:bg-surface-neutral/80";
   };
 
   const stemTypography = cn(
@@ -339,19 +337,15 @@ export function QuestionCard({
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 gap-y-2">
             <span
               className={cn(
-                "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide",
+                PILL_BASE,
+                "uppercase tracking-wide",
                 difficultyBadgeClass(question.difficulty),
               )}
             >
               {question.difficulty}
             </span>
             {question.subjects?.trim() && (
-              <span
-                className={cn(
-                  "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold tracking-wide",
-                  subjectBadgeClass(question.subjects),
-                )}
-              >
+              <span className={cn(PILL_BASE, subjectBadgeClass(question.subjects))}>
                 {question.subjects}
               </span>
             )}
@@ -361,12 +355,14 @@ export function QuestionCard({
               question.idea_plan?.variation_mode && (
                 <span
                   className={cn(
-                    "rounded-organic-md border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide",
+                    PILL_BASE,
+                    "uppercase tracking-wide",
+                    PILL_SURFACE,
                     question.idea_plan.variation_mode === "FAR"
-                      ? "border-accent/30 bg-accent/15 text-accent"
+                      ? "text-accent"
                       : question.idea_plan.variation_mode === "SIBLINGS"
-                        ? "border-secondary/30 bg-secondary/15 text-secondary"
-                        : "border-border-subtle bg-surface-mid text-text-muted",
+                        ? "text-secondary"
+                        : "text-text-muted",
                   )}
                 >
                   {question.idea_plan.variation_mode}
@@ -378,18 +374,14 @@ export function QuestionCard({
               getTopicTitle && (
                 <div className="flex max-w-full flex-wrap items-center gap-1">
                   {question.primary_tag && (
-                    <span
-                      className={cn(
-                        "rounded-organic-md border border-secondary/25 bg-secondary/12 px-2.5 py-1 text-xs font-medium text-secondary",
-                      )}
-                    >
+                    <span className={cn(PILL_BASE, PILL_SURFACE, "text-xs text-secondary")}>
                       {getTopicTitle(question.primary_tag)}
                     </span>
                   )}
                   {question.secondary_tags?.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-organic-md border border-secondary/15 bg-secondary/8 px-2.5 py-1 text-xs text-text-muted"
+                      className={cn(PILL_BASE, PILL_SURFACE, "text-xs text-text-muted")}
                     >
                       {getTopicTitle(tag)}
                     </span>
@@ -463,7 +455,7 @@ export function QuestionCard({
                                   new Set(prev).add(letter),
                                 );
                               }}
-                              className="flex h-10 shrink-0 items-center gap-2 rounded-organic-md border border-border-subtle bg-surface-elevated px-3 text-sm text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                              className="flex h-10 shrink-0 items-center gap-2 rounded-organic-md bg-surface-mid px-3 text-sm text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
                             >
                               <HelpCircle className="h-4 w-4" strokeWidth={2.5} />
                               <span className="hidden sm:inline">Reveal why wrong</span>

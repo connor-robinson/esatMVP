@@ -8,7 +8,7 @@ import { X, Pencil, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const bodyPanelClass =
-  "rounded-organic-lg border border-border-subtle bg-surface-mid px-4 py-4 text-sm leading-relaxed text-text sm:text-base [&_.katex]:text-text";
+  "rounded-organic-lg bg-surface-mid px-4 py-4 text-sm leading-relaxed text-text sm:text-base [&_.katex]:text-text";
 
 interface SolutionModalProps {
   isOpen: boolean;
@@ -65,12 +65,12 @@ export function SolutionModal({
       />
 
       <div
-        className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-organic-xl border border-border bg-surface-elevated shadow-modal-card ring-1 ring-white/[0.06]"
+        className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
         role="dialog"
         aria-modal="true"
         aria-labelledby="detailed-explanation-title"
       >
-        <div className="flex items-center justify-between border-b border-border-subtle px-5 py-4 sm:px-6">
+        <div className="flex items-center justify-between px-5 py-4 sm:px-6">
           <h2
             id="detailed-explanation-title"
             className="text-lg font-semibold tracking-tight text-text"
@@ -80,7 +80,7 @@ export function SolutionModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-organic-md border border-border-subtle bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
+            className="flex h-9 w-9 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -261,15 +261,15 @@ export function HintModal({ isOpen, onClose, content }: HintModalProps) {
       />
 
       <div
-        className="relative w-full max-w-2xl overflow-hidden rounded-organic-xl border border-border bg-surface-elevated shadow-modal-card ring-1 ring-white/[0.06]"
+        className="relative w-full max-w-2xl overflow-hidden rounded-organic-xl bg-surface-elevated shadow-modal-card"
         role="dialog"
         aria-modal="true"
         aria-labelledby="hint-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-border-subtle px-5 py-4 sm:px-6">
+        <div className="flex items-center justify-between px-5 py-4 sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-primary/15 text-primary ring-1 ring-primary/25">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-primary">
               <Lightbulb className="h-5 w-5" aria-hidden />
             </div>
             <h2
@@ -282,7 +282,7 @@ export function HintModal({ isOpen, onClose, content }: HintModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md border border-border-subtle bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md bg-surface-mid text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-neutral hover:text-text"
             aria-label="Close"
           >
             <X className="h-4 w-4" />

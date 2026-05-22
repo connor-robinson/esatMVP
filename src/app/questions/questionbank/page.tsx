@@ -37,7 +37,6 @@ import {
   Filter,
   Lightbulb,
   Check,
-  StopCircle,
   ClipboardList,
 } from 'lucide-react';
 import type {
@@ -907,18 +906,6 @@ export default function QuestionBankPage() {
     );
   }, [handleStartSession, setFilters]);
 
-  // Handle next question in session mode
-  const handleEndSession = async () => {
-    if (!sessionMode) return;
-    setSessionMode(false);
-    setIsDrillSession(false);
-    setSessionQuestions([]);
-    setSessionCurrentIndex(0);
-    setDeadline(null);
-    setRemainingTime(null);
-    await nextQuestion();
-  };
-
   const handleNextQuestionInSession = async () => {
     if (isFreeLimitReached) return;
     if (sessionMode && sessionQuestions.length > 0) {
@@ -965,33 +952,8 @@ export default function QuestionBankPage() {
                   </Link>
                 </div>
               )}
-            {sessionMode && sessionQuestions.length > 0 && (
-              <div className='rounded-organic-xl border border-border-subtle bg-surface-elevated p-4 ring-1 ring-white/[0.06]'>
-                <div className='mb-3 flex flex-wrap items-center justify-between gap-2'>
-                  <span className='text-xs font-semibold uppercase tracking-wider text-secondary'>
-                    {isDrillSession ? 'Drill session' : 'Practice session'}
-                  </span>
-                  <span className='text-xs tabular-nums text-text-muted'>
-                    Question {sessionCurrentIndex + 1} of{' '}
-                    {sessionQuestions.length}
-                  </span>
-                </div>
-                <div className='h-2 w-full overflow-hidden rounded-full bg-surface-mid'>
-                  <div
-                    className='h-full bg-secondary transition-all duration-300 ease-signature'
-                    style={{
-                      width: `${
-                        ((sessionCurrentIndex + 1) /
-                          sessionQuestions.length) *
-                        100
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className='flex flex-wrap items-stretch justify-between gap-3 rounded-organic-xl border border-border bg-surface px-4 py-3 ring-1 ring-white/[0.06]'>
+            {!sessionMode && (
+            <div className='flex flex-wrap items-stretch justify-between gap-3 rounded-organic-xl bg-surface px-4 py-3'>
               <div className='flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-2'>
                 <span className='shrink-0 text-[11px] font-semibold uppercase tracking-wider text-text-muted'>
                   Filters
@@ -1047,7 +1009,7 @@ export default function QuestionBankPage() {
               <button
                 type='button'
                 onClick={() => setShowFilterPopup(true)}
-                className='flex shrink-0 items-center justify-center gap-2 self-center rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-2 text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                className='flex shrink-0 items-center justify-center gap-2 self-center rounded-organic-md bg-surface-elevated px-3 py-2 text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
                 title='Filters and session settings'
               >
                 <Filter className='h-4 w-4' />
@@ -1056,6 +1018,7 @@ export default function QuestionBankPage() {
                 </span>
               </button>
             </div>
+            )}
 
             {/* Loading State */}
             {isLoading && (
@@ -1098,7 +1061,7 @@ export default function QuestionBankPage() {
                   onIncorrectAnswersChange={setIncorrectAnswers}
                   isAuthenticated={!!session?.user}
                   headerTrailing={
-                    <div className='flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2 sm:gap-3 sm:px-4'>
+                    <div className='flex items-center gap-2 rounded-organic-lg bg-surface-mid px-3 py-2 sm:gap-3 sm:px-4'>
                       {!sessionMode && (
                         <button
                           type='button'
@@ -1191,7 +1154,7 @@ export default function QuestionBankPage() {
 
         {/* Fixed bottom bar — Figma: progress + secondary actions + secondary CTA */}
         {currentQuestion && !isLoading && (
-          <div className='fixed bottom-0 left-0 right-0 z-40 border-t border-border-subtle bg-background/98 shadow-bar-floating backdrop-blur-md'>
+          <div className='fixed bottom-0 left-0 right-0 z-40 bg-background/98 shadow-bar-floating backdrop-blur-md'>
             <Container size='lg' className='py-3 sm:py-4'>
               <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6'>
                 <div className='min-w-0 flex-1 space-y-2'>
@@ -1276,22 +1239,11 @@ export default function QuestionBankPage() {
                 </div>
 
                 <div className='flex flex-wrap items-center gap-2 sm:justify-end'>
-                  {sessionMode && (
-                    <button
-                      type='button'
-                      onClick={() => void handleEndSession()}
-                      className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
-                    >
-                      <StopCircle className='h-4 w-4 shrink-0' />
-                      End session
-                    </button>
-                  )}
-
                   {currentQuestion.solution_key_insight && (
                     <button
                       type='button'
                       onClick={() => setShowHint(true)}
-                      className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                      className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
                     >
                       <Lightbulb className='h-4 w-4 shrink-0' />
                       Hint
@@ -1303,7 +1255,7 @@ export default function QuestionBankPage() {
                       <button
                         type='button'
                         onClick={() => setShowDetailedExplanation(true)}
-                        className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                        className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
                       >
                         <ClipboardList className='h-4 w-4 shrink-0' />
                         Detailed explanation
@@ -1313,7 +1265,7 @@ export default function QuestionBankPage() {
                         <button
                           type='button'
                           onClick={() => setAnswerRevealed(true)}
-                          className='inline-flex items-center gap-2 rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-mid hover:text-text'
+                          className='inline-flex items-center gap-2 rounded-organic-md bg-surface-elevated px-3 py-2.5 text-sm font-medium text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
                         >
                           <Eye className='h-4 w-4 shrink-0' />
                           Reveal answer
@@ -1338,7 +1290,7 @@ export default function QuestionBankPage() {
                       onClick={handleNextQuestionInSession}
                       disabled={isFreeLimitReached}
                       className={cn(
-                        'inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast ease-signature',
+                        'inline-flex items-center gap-2 rounded-organic-lg px-6 py-2.5 text-sm font-semibold transition-all duration-fast ease-signature',
                         'bg-secondary text-background shadow-glow hover:brightness-110',
                         'disabled:cursor-not-allowed disabled:opacity-45',
                       )}
@@ -1387,11 +1339,11 @@ export default function QuestionBankPage() {
                         incorrectAnswers.has(currentSelection)
                       }
                       className={cn(
-                        'inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-fast ease-signature',
+                        'inline-flex items-center gap-2 rounded-organic-lg px-6 py-2.5 text-sm font-semibold transition-all duration-fast ease-signature',
                         currentSelection &&
                           !incorrectAnswers.has(currentSelection)
                           ? 'bg-secondary text-background shadow-glow hover:brightness-110'
-                          : 'cursor-not-allowed border border-border-subtle bg-surface-elevated text-text-disabled opacity-70',
+                          : 'cursor-not-allowed bg-surface-elevated text-text-disabled opacity-70',
                       )}
                     >
                       <span>Submit answer</span>

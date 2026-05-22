@@ -8,8 +8,7 @@ import type {
 import { Star } from "lucide-react";
 import { cn, formatTime } from "@/lib/utils";
 
-const SHELL =
-  "rounded-organic-xl border border-border bg-surface ring-1 ring-white/[0.06]";
+const SHELL = "rounded-organic-xl bg-surface-elevated";
 
 interface CommunityStatsPanelProps {
   questionId: string | undefined;
@@ -110,7 +109,7 @@ export function CommunityStatsPanel({
               <p className="mb-4 text-xs font-medium uppercase tracking-wide text-text-subtle">
                 Average distribution
               </p>
-              <div className="rounded-organic-lg border border-border-subtle bg-surface-elevated px-3 pb-2 pt-3 ring-1 ring-white/[0.04] sm:px-4">
+              <div className="rounded-organic-lg bg-surface-mid px-3 pb-2 pt-3 sm:px-4">
                 <div className="flex gap-1.5 sm:gap-2">
                 {letters.map((letter) => {
                   const pct = stats.optionPercentages[letter] ?? 0;
@@ -136,7 +135,7 @@ export function CommunityStatsPanel({
                               "mx-auto w-full max-w-[52px] rounded-t-organic-md transition-all duration-fast ease-signature sm:max-w-14",
                               isCorrect
                                 ? "bg-secondary"
-                                : "border border-border-subtle bg-surface-mid",
+                                : "bg-surface-elevated",
                             )}
                             style={{ height: barHeightPx }}
                           />
@@ -165,7 +164,7 @@ export function CommunityStatsPanel({
               </p>
               <div
                 className={cn(
-                  "flex flex-1 flex-col justify-center rounded-organic-lg border border-border-subtle bg-surface-elevated px-6 py-6 lg:py-8",
+                  "flex flex-1 flex-col justify-center rounded-organic-lg bg-surface-mid px-6 py-6 lg:py-8",
                 )}
               >
                 {correctU && stats.avgCorrectTimeSeconds > 0 ? (
