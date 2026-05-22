@@ -89,11 +89,11 @@ export function TopicFolders({
       className={cn(
         'flex h-full min-h-0 shrink-0 flex-col overflow-hidden rounded-organic-xl bg-surface',
         useFolderGrid
-          ? 'w-[clamp(16rem,30vw,26rem)]'
+          ? 'w-[clamp(11rem,18vw,16.5rem)]'
           : 'w-[clamp(15rem,28vw,24rem)]',
       )}
     >
-      <div className='flex shrink-0 items-center justify-between px-6 pb-4 pt-5'>
+      <div className='flex shrink-0 items-center justify-between px-4 pb-2 pt-3'>
         <h2 className='text-sm font-bold uppercase tracking-widest text-text-muted'>
           {selectedCategory
             ? categoryLabels[selectedCategory] || 'Operations'
@@ -104,7 +104,7 @@ export function TopicFolders({
         </span>
       </div>
 
-      <div className='flex min-h-0 flex-1 flex-col overflow-hidden px-6 pb-6 pt-4'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3 pt-2'>
         {useFolderGrid && selectedCategory ? (
           categoryTopics.length === 0 ? (
             <div className='py-8 text-center text-sm text-text-subtle'>
@@ -113,7 +113,7 @@ export function TopicFolders({
           ) : (
             <DrillPanelTransition
               panelKey={selectedCategory}
-              className='min-h-0 flex-1 overflow-y-auto'
+              className='min-h-0 flex-1 overflow-hidden'
             >
               <DrillFolderGrid
                 category={selectedCategory}

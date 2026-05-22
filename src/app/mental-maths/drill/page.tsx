@@ -87,7 +87,7 @@ export default function BuilderPage() {
   if (builder.view === "builder") {
     return (
       <div className="relative h-[calc(100vh-65px)] max-h-[calc(100vh-65px)] overflow-hidden bg-background">
-        <div className="flex h-full min-h-0 w-full items-stretch gap-4 overflow-hidden px-4 py-6 sm:gap-6 sm:px-6 lg:gap-8">
+        <div className="flex h-full min-h-0 w-full items-stretch gap-3 overflow-hidden px-4 py-4 sm:gap-5 sm:px-5 lg:gap-6">
           {/* Column 1: Subject Categories */}
           <SubjectCategories
             selectedCategory={selectedCategory}
@@ -102,7 +102,7 @@ export default function BuilderPage() {
             {/* Column 2: Topic Folders (Operations-style) */}
             <Suspense
               fallback={
-                <div className="h-full min-h-0 w-[clamp(15rem,28vw,24rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
+                <div className="h-full min-h-0 w-[clamp(11rem,18vw,16.5rem)] shrink-0 animate-pulse rounded-organic-xl bg-surface" />
               }
             >
               <TopicFolders

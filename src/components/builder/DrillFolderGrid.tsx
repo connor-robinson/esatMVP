@@ -41,7 +41,7 @@ export function DrillFolderGrid({
 
   return (
     <>
-      <div className='grid grid-cols-2 gap-3'>
+      <div className='grid grid-cols-2 gap-2'>
         {folders.map((folder) => {
           const unlocked = folderHasAccessibleModule(
             folder,
@@ -55,17 +55,17 @@ export function DrillFolderGrid({
             return (
               <div
                 key={folder.id}
-                className='relative flex min-h-[7.5rem] flex-col items-center justify-center gap-2 rounded-organic-lg bg-surface-elevated/50 p-4 opacity-70'
+                className='relative flex min-h-[5.25rem] flex-col items-center justify-center gap-1 rounded-organic-md bg-surface-elevated/50 p-2.5 opacity-70'
                 aria-disabled
               >
-                <div className='flex h-14 w-14 items-center justify-center rounded-organic-xl bg-surface-mid'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-organic-lg bg-surface-mid'>
                   <ArithmeticDrillPreview
                     preview={symbol}
                     size='folder'
                     className='opacity-50'
                   />
                 </div>
-                <span className='text-center text-sm font-bold text-text-muted'>
+                <span className='text-center text-xs font-bold text-text-muted'>
                   {folder.name}
                 </span>
                 <Lock
@@ -82,7 +82,7 @@ export function DrillFolderGrid({
               type='button'
               onClick={() => onSelectFolder(folder.id)}
               className={cn(
-                'relative flex min-h-[7.5rem] flex-col items-center justify-center gap-2 rounded-organic-lg p-4 transition-all',
+                'relative flex min-h-[5.25rem] flex-col items-center justify-center gap-1 rounded-organic-md p-2.5 transition-all',
                 'outline-none focus-visible:ring-2 focus-visible:ring-primary/35',
                 isSelected
                   ? 'bg-folder-card-selected shadow-sm'
@@ -91,7 +91,7 @@ export function DrillFolderGrid({
             >
               <div
                 className={cn(
-                  'flex h-14 w-14 items-center justify-center rounded-organic-xl transition-colors',
+                  'flex h-10 w-10 items-center justify-center rounded-organic-lg transition-colors',
                   isSelected ? 'bg-primary/18' : 'bg-primary/10',
                 )}
               >
@@ -101,7 +101,7 @@ export function DrillFolderGrid({
                   selected={isSelected}
                 />
               </div>
-              <span className='text-center text-sm font-bold text-text'>
+              <span className='text-center text-xs font-bold leading-tight text-text'>
                 {folder.name}
               </span>
               {selectedCount > 0 && (
@@ -115,7 +115,7 @@ export function DrillFolderGrid({
       </div>
 
       {showUpgradeCard && (
-        <div className='mt-6 flex flex-col gap-3 rounded-organic-xl bg-surface-elevated p-4 text-center shadow-md'>
+        <div className='mt-3 flex flex-col gap-2 rounded-organic-lg bg-surface-elevated p-3 text-center shadow-md'>
           <p className='text-xs font-medium leading-snug text-text'>
             Upgrade for full access to all drills in this category
           </p>

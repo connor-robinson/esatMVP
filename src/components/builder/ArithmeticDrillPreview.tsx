@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { LUCIDE_ICON_MAP } from '@/config/drillDisplayFolders';
 import { renderMath } from '@/hooks/useKaTeX';
 import type { DrillPreview } from '@/config/drillPreviews';
@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 const katexInherit =
   '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit]';
 
-/** Per-card interval (7–11s) and start offset so tiles drift out of sync. */
+/** ~5s per example; staggered start so cards do not flip in sync. */
 function getSampleCycleTiming(seed: string): {
   intervalMs: number;
   initialDelayMs: number;
@@ -21,8 +21,8 @@ function getSampleCycleTiming(seed: string): {
     h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   }
   return {
-    intervalMs: 7000 + (h % 4000),
-    initialDelayMs: ((h >>> 8) % 5000) + 800,
+    intervalMs: 4800 + (h % 400),
+    initialDelayMs: (h >>> 8) % 4800,
   };
 }
 
@@ -123,9 +123,12 @@ export function ArithmeticDrillPreview({
   );
 }
 
-const CROSSFADE = { duration: 1.35, ease: [0.4, 0, 0.2, 1] as const };
+const SAMPLE_TRANSITION = {
+  duration: 0.32,
+  ease: [0.22, 1, 0.36, 1] as const,
+};
 
-/** Centered samples with slow, staggered crossfade between examples. */
+/** One sample at a time; ~5s cycle with vertical slide (staggered per card). */
 export function ArithmeticVariantExample({
   samples,
   cycleSeed,
@@ -171,47 +174,55 @@ export function ArithmeticVariantExample({
 
   if (samples.length === 0) return null;
 
+  const activeSample = samples[index];
+
   return (
     <div
       className={cn(
-        'flex flex-1 flex-col items-center justify-center py-1',
+        'flex flex-1 flex-col items-center justify-center py-0.5',
         className,
       )}
       aria-label='Sample question formats'
       aria-live={canCycle ? 'polite' : undefined}
     >
-      <div className='relative flex h-9 w-full items-center justify-center'>
-        {samples.map((sample, i) => (
-          <motion.div
-            key={sampleKey(sample, i)}
-            className='absolute inset-0 flex items-center justify-center'
-            initial={false}
-            animate={{ opacity: i === index ? 1 : 0 }}
-            transition={CROSSFADE}
-            style={{ pointerEvents: 'none' }}
-          >
-            <ArithmeticDrillPreview
-              preview={sample}
-              size='card'
-              selected={selected}
-            />
-          </motion.div>
-        ))}
+      <div className='relative flex h-8 w-full items-center justify-center overflow-hidden'>
+        {canCycle ? (
+          <AnimatePresence mode='wait' initial={false}>
+            <motion.div
+              key={sampleKey(activeSample, index)}
+              className='flex items-center justify-center'
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={SAMPLE_TRANSITION}
+            >
+              <ArithmeticDrillPreview
+                preview={activeSample}
+                size='card'
+                selected={selected}
+              />
+            </motion.div>
+          </AnimatePresence>
+        ) : (
+          <ArithmeticDrillPreview
+            preview={activeSample}
+            size='card'
+            selected={selected}
+          />
+        )}
       </div>
       {samples.length > 1 ? (
         <div
-          className='mt-2 flex items-center justify-center gap-1'
+          className='mt-1.5 flex items-center justify-center gap-1'
           aria-hidden
         >
           {samples.map((_, i) => (
-            <motion.span
+            <span
               key={i}
-              className='h-1 rounded-full bg-text-subtle/35'
-              animate={{
-                width: i === index ? 12 : 4,
-                opacity: i === index ? 0.75 : 0.35,
-              }}
-              transition={{ duration: 1.35, ease: [0.4, 0, 0.2, 1] }}
+              className={cn(
+                'h-1 rounded-full bg-text-subtle/35 transition-all duration-300',
+                i === index ? 'w-2.5 opacity-80' : 'w-1 opacity-35',
+              )}
             />
           ))}
         </div>

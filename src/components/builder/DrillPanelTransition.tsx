@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 type DrillPanelTransitionProps = {
@@ -10,7 +10,7 @@ type DrillPanelTransitionProps = {
   className?: string;
 };
 
-/** Quick opacity crossfade when drill builder panels swap (no slide). */
+/** Fade-in on panel swap (no exit animation — avoids scroll/layout flicker). */
 export function DrillPanelTransition({
   panelKey,
   children,
@@ -23,17 +23,14 @@ export function DrillPanelTransition({
   }
 
   return (
-    <AnimatePresence initial={false}>
-      <motion.div
-        key={panelKey}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.1, ease: 'easeOut' }}
-        className={cn('min-h-0', className)}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={panelKey}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15, ease: 'easeOut' }}
+      className={cn('min-h-0', className)}
+    >
+      {children}
+    </motion.div>
   );
 }
