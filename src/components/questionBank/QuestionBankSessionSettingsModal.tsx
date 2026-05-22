@@ -55,15 +55,15 @@ function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
   if (!active) return SUBJECT_PILL_INACTIVE;
   switch (d) {
     case "Easy":
-      return "bg-difficulty-pill-easy/20 text-difficulty-pill-easy";
+      return "bg-surface-mid text-difficulty-pill-easy dark:bg-surface-neutral";
     case "Medium":
-      return "bg-difficulty-pill-medium/20 text-difficulty-pill-medium";
+      return "bg-surface-mid text-difficulty-pill-medium dark:bg-surface-neutral";
     case "Hard":
-      return "bg-difficulty-pill-hard/20 text-difficulty-pill-hard";
+      return "bg-surface-mid text-difficulty-pill-hard dark:bg-surface-neutral";
     case "Extreme":
-      return "bg-accent/20 text-accent";
+      return "bg-surface-mid text-accent dark:bg-surface-neutral";
     default:
-      return "bg-surface-mid text-text";
+      return "bg-surface-mid text-text dark:bg-surface-neutral";
   }
 }
 
@@ -234,7 +234,7 @@ export function QuestionBankSessionSettingsModal({
   if (!open || !originTile) return null;
 
   const modalTitle = isMixed ? "Mixed Practice" : "Session Settings";
-  const allDifficultiesSelected = difficultiesUi.length === 0;
+  const noneDifficultySelected = difficultiesUi.length === 0;
   const showSubjectToggles = siblingTiles.length > 1;
   const autoMinutes = autoTimeLimitMinutes(questionCount);
 
@@ -279,41 +279,79 @@ export function QuestionBankSessionSettingsModal({
           </button>
         </div>
 
-        {/* Subjects */}
-        {showSubjectToggles && (
-          <div className="mt-8 space-y-3">
-            <div className="flex items-center justify-between gap-4">
+        {/* Subjects + difficulty */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-8">
+          {showSubjectToggles ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                  Subjects
+                </span>
+                <span className="text-xs text-text-muted">
+                  {subjectKeys.length} selected
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                {siblingTiles.map((t) => {
+                  const key = t.key as SubjectFilter;
+                  const active = subjectKeys.includes(key);
+                  return (
+                    <button
+                      key={t.key}
+                      type="button"
+                      onClick={() => toggleSubject(key)}
+                      className={cn(
+                        "rounded-organic-md px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                        active ? getSubjectPillActiveClass(key) : SUBJECT_PILL_INACTIVE,
+                      )}
+                    >
+                      {t.key}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          <div className={cn("space-y-3", !showSubjectToggles && "lg:col-span-2")}>
+            <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                Subjects
+                Difficulty
               </span>
               <span className="text-xs text-text-muted">
-                {subjectKeys.length} selected
+                {noneDifficultySelected
+                  ? "None selected"
+                  : `${difficultiesUi.length} selected`}
               </span>
             </div>
             <div className="flex flex-wrap gap-2.5">
-              {siblingTiles.map((t) => {
-                const key = t.key as SubjectFilter;
-                const active = subjectKeys.includes(key);
+              {ALL_UI_DIFFICULTIES.map((d) => {
+                const active = difficultiesUi.includes(d);
                 return (
                   <button
-                    key={t.key}
+                    key={d}
                     type="button"
-                    onClick={() => toggleSubject(key)}
+                    onClick={() => toggleDifficulty(d)}
                     className={cn(
-                      "rounded-organic-md px-4 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                      active ? getSubjectPillActiveClass(key) : SUBJECT_PILL_INACTIVE,
+                      "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                      difficultyPillClass(d, active),
                     )}
                   >
-                    {t.key}
+                    {d}
                   </button>
                 );
               })}
             </div>
+            {noneDifficultySelected ? (
+              <p className="text-[11px] leading-relaxed text-text-muted">
+                All four levels included.
+              </p>
+            ) : null}
           </div>
-        )}
+        </div>
 
-        {/* Settings */}
-        <div className="mt-8 flex-1 space-y-8 overflow-y-auto">
+        {/* Time + questions */}
+        <div className="mt-8">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
               Time Limit
@@ -350,39 +388,6 @@ export function QuestionBankSessionSettingsModal({
               Auto time limit ({autoMinutes} min)
             </button>
             <div className="hidden sm:block" aria-hidden />
-          </div>
-
-          {/* Difficulty — multi-select up to 4 */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                Difficulty
-              </span>
-              <span className="text-[11px] text-text-muted">
-                {allDifficultiesSelected ? "All levels" : `${difficultiesUi.length} selected`}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2.5">
-              {ALL_UI_DIFFICULTIES.map((d) => {
-                const active = allDifficultiesSelected || difficultiesUi.includes(d);
-                return (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => toggleDifficulty(d)}
-                    className={cn(
-                      "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
-                      difficultyPillClass(d, active),
-                    )}
-                  >
-                    {d}
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-[11px] leading-relaxed text-text-muted">
-              Tap to filter levels. None selected includes all four.
-            </p>
           </div>
         </div>
 

@@ -11,20 +11,20 @@ export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
   "Paper 2": "border border-physics/30 bg-physics/20 text-physics",
 };
 
-/** Borderless session pills — tinted fill, subject text color (theme-aware via tokens). */
+/** Borderless session pills — lifted surface + subject text color. */
 export const SUBJECT_PILL_ACTIVE: Record<SubjectFilter, string> = {
-  All: "bg-surface-mid text-text",
-  "Math 1": "bg-accent/20 text-accent",
-  "Math 2": "bg-warning/20 text-warning",
-  Physics: "bg-physics/20 text-physics",
-  Chemistry: "bg-chemistry/20 text-chemistry",
-  Biology: "bg-primary/20 text-primary",
-  "Paper 1": "bg-surface-neutral/50 text-text",
-  "Paper 2": "bg-surface-neutral/50 text-text",
+  All: "bg-surface-mid text-text dark:bg-surface-neutral",
+  "Math 1": "bg-surface-mid text-accent dark:bg-surface-neutral",
+  "Math 2": "bg-surface-mid text-warning dark:bg-surface-neutral",
+  Physics: "bg-surface-mid text-physics dark:bg-surface-neutral",
+  Chemistry: "bg-surface-mid text-chemistry dark:bg-surface-neutral",
+  Biology: "bg-surface-mid text-primary dark:bg-surface-neutral",
+  "Paper 1": "bg-surface-mid text-text dark:bg-surface-neutral",
+  "Paper 2": "bg-surface-mid text-text dark:bg-surface-neutral",
 };
 
 export const SUBJECT_PILL_INACTIVE =
-  "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text";
+  "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text dark:hover:bg-surface-neutral";
 
 export function getSubjectPillActiveClass(subject: SubjectFilter): string {
   return SUBJECT_PILL_ACTIVE[subject] ?? SUBJECT_PILL_ACTIVE.All;
