@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Check, ArrowRight, Minus, Plus } from "lucide-react";
+import { X, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
@@ -55,13 +55,13 @@ function difficultyPillClass(d: UiDifficultyLabel, active: boolean): string {
   if (!active) return SUBJECT_PILL_INACTIVE;
   switch (d) {
     case "Easy":
-      return "bg-difficulty-pill-easy text-background";
+      return "bg-difficulty-pill-easy/20 text-difficulty-pill-easy";
     case "Medium":
-      return "bg-difficulty-pill-medium text-background";
+      return "bg-difficulty-pill-medium/20 text-difficulty-pill-medium";
     case "Hard":
-      return "bg-difficulty-pill-hard text-background";
+      return "bg-difficulty-pill-hard/20 text-difficulty-pill-hard";
     case "Extreme":
-      return "bg-advanced text-background";
+      return "bg-accent/20 text-accent";
     default:
       return "bg-surface-mid text-text";
   }
@@ -138,8 +138,8 @@ function NumericStepper({
             }
           }}
           className={cn(
-            "w-14 bg-transparent text-center text-sm font-semibold tabular-nums text-text",
-            "outline-none focus:outline-none",
+            "w-14 border-0 bg-transparent text-center text-sm font-semibold tabular-nums text-text",
+            "outline-none shadow-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
           )}
           aria-label={ariaLabel}
         />
@@ -313,26 +313,14 @@ export function QuestionBankSessionSettingsModal({
         )}
 
         {/* Settings */}
-        <div className="mt-8 grid flex-1 gap-8 overflow-y-auto sm:grid-cols-3">
-          {/* Time Limit */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                Time Limit
-              </label>
-              <button
-                type="button"
-                onClick={applyAutoTimeLimit}
-                className={cn(
-                  "rounded-organic-md px-3 py-1.5 text-[11px] font-semibold transition-colors",
-                  minutes === autoMinutes
-                    ? "bg-secondary/20 text-secondary"
-                    : "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
-                )}
-              >
-                Auto ({autoMinutes} min)
-              </button>
-            </div>
+        <div className="mt-8 flex-1 space-y-8 overflow-y-auto">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+              Time Limit
+            </label>
+            <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+              Number Of Questions
+            </label>
             <NumericStepper
               value={minutes}
               onChange={setMinutes}
@@ -341,13 +329,6 @@ export function QuestionBankSessionSettingsModal({
               suffix="min"
               ariaLabel="Time limit in minutes"
             />
-          </div>
-
-          {/* Number of Questions */}
-          <div className="space-y-3">
-            <label className="block text-xs font-medium uppercase tracking-wide text-text-muted">
-              Number Of Questions
-            </label>
             <NumericStepper
               value={questionCount}
               onChange={setQuestionCount}
@@ -356,10 +337,23 @@ export function QuestionBankSessionSettingsModal({
               suffix="Qs"
               ariaLabel="Number of questions"
             />
+            <button
+              type="button"
+              onClick={applyAutoTimeLimit}
+              className={cn(
+                "justify-self-start rounded-organic-md px-3 py-1.5 text-[11px] font-semibold transition-colors",
+                minutes === autoMinutes
+                  ? "bg-secondary/20 text-secondary"
+                  : "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
+              )}
+            >
+              Auto time limit ({autoMinutes} min)
+            </button>
+            <div className="hidden sm:block" aria-hidden />
           </div>
 
           {/* Difficulty — multi-select up to 4 */}
-          <div className="space-y-3 sm:col-span-1">
+          <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
                 Difficulty
@@ -377,13 +371,10 @@ export function QuestionBankSessionSettingsModal({
                     type="button"
                     onClick={() => toggleDifficulty(d)}
                     className={cn(
-                      "flex items-center gap-1.5 rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
+                      "rounded-organic-md px-3.5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors",
                       difficultyPillClass(d, active),
                     )}
                   >
-                    {active && (
-                      <Check className="h-3 w-3 shrink-0" strokeWidth={3} />
-                    )}
                     {d}
                   </button>
                 );

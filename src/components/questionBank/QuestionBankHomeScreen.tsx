@@ -15,6 +15,7 @@ import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
 import { QuestionBankSessionSettingsModal } from "@/components/questionBank/QuestionBankSessionSettingsModal";
 import { cn } from "@/lib/utils";
+import { SUBJECT_TILE_STYLES } from "@/lib/questionBank/subjectTileTheme";
 
 const ALL_SUBJECT_KEYS = [
   "Math 1",
@@ -41,107 +42,55 @@ export interface SubjectTileConfig {
   startBtnClass: string;
 }
 
-/** Subject-colored text on neutral cards; subtext/track use muted theme-aware shades. */
-const SUBJECT_COLOR_STYLES = {
-  accent: {
-    titleClass: "text-accent",
-    topicClass: "text-accent/55 dark:text-accent/40",
-    statClass: "text-accent/45 dark:text-accent/30",
-    progressFillClass: "bg-accent",
-    progressTrackClass: "bg-accent/30 dark:bg-accent/20",
-    startBtnClass: "bg-accent text-background hover:opacity-90",
-  },
-  warning: {
-    titleClass: "text-warning",
-    topicClass: "text-warning/55 dark:text-warning/40",
-    statClass: "text-warning/45 dark:text-warning/30",
-    progressFillClass: "bg-warning",
-    progressTrackClass: "bg-warning/30 dark:bg-warning/20",
-    startBtnClass: "bg-warning text-background hover:opacity-90",
-  },
-  secondary: {
-    titleClass: "text-secondary",
-    topicClass: "text-secondary/55 dark:text-secondary/40",
-    statClass: "text-secondary/45 dark:text-secondary/30",
-    progressFillClass: "bg-secondary",
-    progressTrackClass: "bg-secondary/30 dark:bg-secondary/20",
-    startBtnClass: "bg-secondary text-background hover:opacity-90",
-  },
-  error: {
-    titleClass: "text-error",
-    topicClass: "text-error/55 dark:text-error/40",
-    statClass: "text-error/45 dark:text-error/30",
-    progressFillClass: "bg-error",
-    progressTrackClass: "bg-error/30 dark:bg-error/20",
-    startBtnClass: "bg-error text-background hover:opacity-90",
-  },
-  primary: {
-    titleClass: "text-primary",
-    topicClass: "text-primary/55 dark:text-primary/40",
-    statClass: "text-primary/45 dark:text-primary/30",
-    progressFillClass: "bg-primary",
-    progressTrackClass: "bg-primary/30 dark:bg-primary/20",
-    startBtnClass: "bg-primary text-background hover:opacity-90",
-  },
-  text: {
-    titleClass: "text-text",
-    topicClass: "text-text/55 dark:text-text/40",
-    statClass: "text-text/45 dark:text-text/35",
-    progressFillClass: "bg-text",
-    progressTrackClass: "bg-text/30 dark:bg-text/20",
-    startBtnClass: "bg-text text-background hover:opacity-90",
-  },
-} as const;
-
 const SUBJECT_TILES: SubjectTileConfig[] = [
   {
     key: "Math 1",
     headline: "ESAT — Math 1",
     topicCaps: "Algebra & functions",
     testType: "ESAT",
-    ...SUBJECT_COLOR_STYLES.accent,
+    ...SUBJECT_TILE_STYLES["Math 1"],
   },
   {
     key: "Math 2",
     headline: "ESAT — Math 2",
     topicCaps: "Sequences & calculus",
     testType: "ESAT",
-    ...SUBJECT_COLOR_STYLES.warning,
+    ...SUBJECT_TILE_STYLES["Math 2"],
   },
   {
     key: "Physics",
     headline: "ESAT — Physics",
     topicCaps: "Mechanics & waves",
     testType: "ESAT",
-    ...SUBJECT_COLOR_STYLES.secondary,
+    ...SUBJECT_TILE_STYLES.Physics,
   },
   {
     key: "Chemistry",
     headline: "ESAT — Chemistry",
     topicCaps: "Structure & reactivity",
     testType: "ESAT",
-    ...SUBJECT_COLOR_STYLES.error,
+    ...SUBJECT_TILE_STYLES.Chemistry,
   },
   {
     key: "Biology",
     headline: "ESAT — Biology",
     topicCaps: "Cell & molecular biology",
     testType: "ESAT",
-    ...SUBJECT_COLOR_STYLES.primary,
+    ...SUBJECT_TILE_STYLES.Biology,
   },
   {
     key: "Paper 1",
     headline: "TMUA — Paper 1",
     topicCaps: "Mathematical thinking",
     testType: "TMUA",
-    ...SUBJECT_COLOR_STYLES.text,
+    ...SUBJECT_TILE_STYLES["Paper 1"],
   },
   {
     key: "Paper 2",
     headline: "TMUA — Paper 2",
     topicCaps: "Mathematical reasoning",
     testType: "TMUA",
-    ...SUBJECT_COLOR_STYLES.text,
+    ...SUBJECT_TILE_STYLES["Paper 2"],
   },
 ];
 

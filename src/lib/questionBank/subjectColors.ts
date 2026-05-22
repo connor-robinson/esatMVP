@@ -11,16 +11,16 @@ export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
   "Paper 2": "border border-physics/30 bg-physics/20 text-physics",
 };
 
-/** Borderless pill fills for session settings (active = full subject color). */
+/** Borderless session pills — tinted fill, subject text color (theme-aware via tokens). */
 export const SUBJECT_PILL_ACTIVE: Record<SubjectFilter, string> = {
   All: "bg-surface-mid text-text",
-  "Math 1": "bg-maths text-background",
-  "Math 2": "bg-maths text-background",
-  Physics: "bg-physics text-background",
-  Chemistry: "bg-chemistry text-background",
-  Biology: "bg-biology text-background",
-  "Paper 1": "bg-maths text-background",
-  "Paper 2": "bg-physics text-background",
+  "Math 1": "bg-accent/20 text-accent",
+  "Math 2": "bg-warning/20 text-warning",
+  Physics: "bg-physics/20 text-physics",
+  Chemistry: "bg-chemistry/20 text-chemistry",
+  Biology: "bg-primary/20 text-primary",
+  "Paper 1": "bg-surface-neutral/50 text-text",
+  "Paper 2": "bg-surface-neutral/50 text-text",
 };
 
 export const SUBJECT_PILL_INACTIVE =
