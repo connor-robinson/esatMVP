@@ -56,17 +56,16 @@ function hasSessionBootPayload(): boolean {
 const FREE_QUESTION_LIMIT = 10;
 const STORAGE_KEY = 'qb_free_attempts';
 
-/** Matches site `Button` / session bar: organic-md, ~2.75rem tall */
+/** Session bar controls — organic-md, shared height/padding */
 const SESSION_BAR_BTN =
-  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+  'inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-organic-md px-4 text-sm font-medium transition-all duration-fast ease-signature focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+/** One step darker than bar bg (light) / one step lighter (dark) */
 const SESSION_BAR_BTN_SECONDARY = cn(
   SESSION_BAR_BTN,
-  'bg-surface-elevated px-4 text-text-muted hover:bg-surface-mid hover:text-text',
+  'bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text',
+  'dark:bg-surface dark:hover:bg-surface-elevated',
 );
-const SESSION_BAR_BTN_PRIMARY = cn(
-  SESSION_BAR_BTN,
-  'px-5 font-semibold',
-);
+const SESSION_BAR_BTN_PRIMARY = cn(SESSION_BAR_BTN, 'font-semibold');
 
 function getFreeAttemptsKey(userId: string | undefined): string {
   return userId ? `${STORAGE_KEY}_${userId}` : STORAGE_KEY;
@@ -915,7 +914,7 @@ export default function QuestionBankPage() {
                         currentSelection &&
                           !incorrectAnswers.has(currentSelection)
                           ? 'bg-secondary text-background shadow-glow hover:brightness-110'
-                          : 'cursor-not-allowed bg-surface-elevated text-text-disabled opacity-70',
+                          : 'cursor-not-allowed bg-surface-mid text-text-disabled opacity-70 dark:bg-surface',
                       )}
                     >
                       <span>Submit answer</span>
