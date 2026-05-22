@@ -12,6 +12,7 @@ import { useReviewQuestions } from "@/hooks/useReviewQuestions";
 import { useQuestionEditor } from "@/hooks/useQuestionEditor";
 import type { ReviewFilters } from "@/types/review";
 import { cn } from "@/lib/utils";
+import { dashboardHomeHref } from "@/lib/dashboardFilterPersistence";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 
 type ReviewWorkspaceProps = {
@@ -210,7 +211,7 @@ export function ReviewWorkspace({ initialQuestionId = null }: ReviewWorkspacePro
       <div className="flex flex-1 min-w-0 flex-col gap-3 p-4 pb-10 relative">
         <div className="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 pr-28">
           <Link
-            href="/"
+            href={dashboardHomeHref()}
             className="inline-flex items-center gap-2 rounded-organic-md border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-mono text-white/85 hover:bg-white/[0.08] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />

@@ -29,6 +29,7 @@ const SORT_OPTIONS: { value: string; label: string }[] = [
   { value: "updated_desc", label: "Updated · newest" },
   { value: "created_desc", label: "Created · newest" },
   { value: "created_asc", label: "Created · oldest" },
+  { value: "diagrams_first", label: "Diagrams first" },
 ];
 
 export type DashboardFilterState = {

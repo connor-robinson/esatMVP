@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { ReviewQuestion, PaperType } from "@/types/review";
 import {
@@ -10,7 +10,14 @@ import {
   hasDiagram,
   backfillReviewLabel,
   backfillReviewTitle,
+  compareQuestionsDiagramsFirst,
 } from "@/lib/utils";
+import {
+  clearPersistedDashboardQuery,
+  hasMeaningfulDashboardFilters,
+  loadPersistedDashboardQuery,
+  persistDashboardQuery,
+} from "@/lib/dashboardFilterPersistence";
 import { resolveReviewQuestionInput } from "@/lib/reviewLookup";
 import { ChevronLeft, ChevronRight, ImageIcon, ListVideo, RefreshCw, Video } from "lucide-react";
 import {
@@ -86,6 +93,7 @@ export function ReviewDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryKey = searchParams.toString();
+  const restoredFiltersRef = useRef(false);
 
   const filterState = useMemo(
     () => parseFilterState(searchParams),
@@ -109,10 +117,25 @@ export function ReviewDashboard() {
       const p = new URLSearchParams(searchParams.toString());
       mutate(p);
       if (resetPage) p.set("page", "1");
+      persistDashboardQuery(p);
       router.replace(`/?${p.toString()}`, { scroll: false });
     },
     [router, searchParams]
   );
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (hasMeaningfulDashboardFilters(params)) {
+      persistDashboardQuery(params);
+      return;
+    }
+    if (restoredFiltersRef.current) return;
+    const stored = loadPersistedDashboardQuery();
+    if (stored) {
+      restoredFiltersRef.current = true;
+      router.replace(`/?${stored}`, { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const onPaperType = useCallback(
     (type: PaperType) => {
@@ -203,6 +226,7 @@ export function ReviewDashboard() {
   }, [commitParams]);
 
   const onClear = useCallback(() => {
+    clearPersistedDashboardQuery();
     router.replace("/", { scroll: false });
   }, [router]);
 
@@ -214,9 +238,10 @@ export function ReviewDashboard() {
         setLookupError(res.message);
         return;
       }
+      persistDashboardQuery(new URLSearchParams(searchParams.toString()));
       router.push(`/review?id=${encodeURIComponent(res.id)}`);
     },
-    [router]
+    [router, searchParams]
   );
 
   const hrefForPage = useCallback(
@@ -272,7 +297,11 @@ export function ReviewDashboard() {
       })
       .then((data: { questions?: ReviewQuestion[]; total?: number }) => {
         if (cancelled) return;
-        setQuestions(data.questions ?? []);
+        let list = data.questions ?? [];
+        if (filterState.sort === "diagrams_first") {
+          list = [...list].sort(compareQuestionsDiagramsFirst);
+        }
+        setQuestions(list);
         setTotal(typeof data.total === "number" ? data.total : 0);
       })
       .catch((e: unknown) => {
@@ -285,7 +314,7 @@ export function ReviewDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [queryKey]);
+  }, [queryKey, filterState.sort]);
 
   useEffect(() => {
     if (questions.length === 0) return;
@@ -337,7 +366,9 @@ export function ReviewDashboard() {
       ? "Created · newest first"
       : filterState.sort === "created_asc"
         ? "Created · oldest first"
-        : "Updated · newest first";
+        : filterState.sort === "diagrams_first"
+          ? "Diagrams first"
+          : "Updated · newest first";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -374,7 +405,7 @@ export function ReviewDashboard() {
         />
 
         <section className="mb-8" aria-label="Question bank statistics">
-          <ReviewStatsBreakdown variant="dashboard" defaultOpen liveRefreshMs={90_000} />
+          <ReviewStatsBreakdown variant="dashboard" liveRefreshMs={90_000} />
         </section>
 
         {loading ? (
@@ -416,7 +447,13 @@ export function ReviewDashboard() {
 
               return (
                 <li key={q.id}>
-                  <Link href={`/review/${encodeURIComponent(q.id)}`} className="block group">
+                  <Link
+                    href={`/review/${encodeURIComponent(q.id)}`}
+                    className="block group"
+                    onClick={() =>
+                      persistDashboardQuery(new URLSearchParams(searchParams.toString()))
+                    }
+                  >
                     <article
                       className={cn(
                         "rounded-organic-lg p-4",

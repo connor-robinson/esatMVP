@@ -313,6 +313,10 @@ export async function GET(request: NextRequest) {
         query = query.order('created_at', { ascending: true, nullsFirst: false });
       } else if (sortMode === 'created_desc') {
         query = query.order('created_at', { ascending: false, nullsFirst: false });
+      } else if (sortMode === 'diagrams_first') {
+        query = query
+          .order('has_visual', { ascending: false, nullsFirst: false })
+          .order('updated_at', { ascending: false, nullsFirst: false });
       } else {
         // updated_desc (default) — catches rows just inserted with stale pipeline created_at
         query = query.order('updated_at', { ascending: false, nullsFirst: false });

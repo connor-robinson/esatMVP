@@ -395,6 +395,27 @@ function parseJsonArray(value: unknown): Array<Record<string, unknown>> | null {
  * older / quality-gate / hand-authored rows may embed SVG or ``<figure>``
  * directly in the stem. We treat any of those signals as "has diagram".
  */
+/** Lower = higher priority when sorting with diagrams first. */
+export function diagramSortPriority(
+  q: Pick<
+    ReviewQuestion,
+    "has_visual" | "visual_type" | "question_stem" | "quality_gate_diagram_backfill_kind"
+  >
+): number {
+  if (q.quality_gate_diagram_backfill_kind) return 0;
+  if (hasDiagram(q)) return 1;
+  return 2;
+}
+
+export function compareQuestionsDiagramsFirst(a: ReviewQuestion, b: ReviewQuestion): number {
+  const pa = diagramSortPriority(a);
+  const pb = diagramSortPriority(b);
+  if (pa !== pb) return pa - pb;
+  const ta = Date.parse(a.updated_at || "") || 0;
+  const tb = Date.parse(b.updated_at || "") || 0;
+  return tb - ta;
+}
+
 export function hasDiagram(q: Pick<ReviewQuestion, "has_visual" | "visual_type" | "question_stem">): boolean {
   if (q.has_visual === true) {
     if (q.visual_type && q.visual_type === "none") return false;
