@@ -11,8 +11,8 @@ import {
   BadgeCheck,
   Eye,
   HelpCircle,
+  Flag,
   Star,
-  ThumbsDown,
 } from "lucide-react";
 import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
 import type {
@@ -269,34 +269,41 @@ export function QuestionCard({
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
+  /** Option row fill: one step darker (light) / lighter (dark) than the MCQ panel. */
+  const OPTION_ROW_BASE =
+    "bg-surface-mid hover:bg-surface-neutral dark:hover:bg-surface-elevated";
+
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "cursor-default border-primary/25 bg-primary/10";
+      return "cursor-default bg-primary/12";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "cursor-default border-primary/25 bg-primary/10";
+      return "cursor-default bg-primary/12";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "cursor-default border-error/25 bg-error/8";
+      return "cursor-default bg-error/10";
     }
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
         if (localSelectedAnswer === letter) {
-          return "cursor-pointer border-border bg-surface-mid dark:bg-surface-neutral";
+          return "cursor-pointer bg-surface-neutral dark:bg-surface-elevated";
         }
         return cn(
-          "cursor-pointer border-border-subtle bg-surface-elevated/40 hover:bg-surface-mid dark:bg-surface-elevated/30",
-          hoveredOption === letter && "bg-surface-mid",
+          "cursor-pointer",
+          OPTION_ROW_BASE,
+          hoveredOption === letter &&
+            "bg-surface-neutral dark:bg-surface-elevated",
         );
       }
-      return "cursor-default border-border-subtle/60 opacity-70";
+      return cn("cursor-default opacity-70", OPTION_ROW_BASE);
     }
     if (localSelectedAnswer === letter) {
-      return "cursor-pointer border-border bg-surface-mid dark:bg-surface-neutral";
+      return "cursor-pointer bg-surface-neutral dark:bg-surface-elevated";
     }
     return cn(
-      "cursor-pointer border-border-subtle bg-surface-elevated/40 hover:bg-surface-mid dark:bg-surface-elevated/30",
-      hoveredOption === letter && "bg-surface-mid",
+      "cursor-pointer",
+      OPTION_ROW_BASE,
+      hoveredOption === letter && "bg-surface-neutral dark:bg-surface-elevated",
     );
   };
 
@@ -331,15 +338,15 @@ export function QuestionCard({
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 gap-y-2.5 sm:gap-3">
             {verified && (
               <span
-                className={cn(
-                  PILL_BASE,
-                  "inline-flex items-center gap-1.5",
-                  PILL_SURFACE,
-                  "text-primary",
-                )}
+                className="inline-flex items-center gap-1.5 pr-1 text-sm font-medium"
+                title="Verified by ESAT quality gate"
               >
-                <BadgeCheck className="h-4 w-4 shrink-0 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.25} />
-                Verified
+                <BadgeCheck
+                  className="h-5 w-5 shrink-0 text-secondary sm:h-[1.35rem] sm:w-[1.35rem]"
+                  strokeWidth={2.25}
+                  aria-hidden
+                />
+                <span className="text-secondary">Verified</span>
               </span>
             )}
             <span
@@ -435,18 +442,18 @@ export function QuestionCard({
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
                 className={cn(
-                  "relative w-full rounded-organic-md border px-4 py-3.5 text-left transition-all duration-fast ease-signature sm:py-4",
+                  "relative w-full rounded-organic-md px-4 py-3.5 text-left transition-all duration-fast ease-signature sm:py-4",
                   getOptionStyle(letter),
                 )}
               >
-                <div className="flex items-start gap-3 sm:items-center">
+                <div className="flex items-start gap-4 sm:items-center">
                   <span
                     className={cn(
-                      "w-6 shrink-0 pt-0.5 text-sm font-semibold tabular-nums sm:pt-0",
+                      "w-7 shrink-0 text-base font-bold tabular-nums leading-none sm:text-[1.05rem]",
                       letterLabelClass(letter),
                     )}
                   >
-                    {letter}.
+                    {letter}
                   </span>
 
                   <div className={cn("flex min-w-0 flex-1 items-center gap-3", stemTypography)}>
@@ -482,7 +489,7 @@ export function QuestionCard({
                       )}
                   </div>
 
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center sm:h-12 sm:w-12">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center sm:h-10 sm:w-10">
                     {((!isAnswered || (isAnswered && allowRetry)) &&
                       localSelectedAnswer === letter &&
                       !incorrectAnswers.has(letter)) && (
@@ -493,17 +500,17 @@ export function QuestionCard({
                           handleSubmit();
                         }}
                         className={cn(
-                          "flex h-11 w-11 items-center justify-center rounded-organic-lg sm:h-12 sm:w-12",
+                          "flex h-9 w-9 items-center justify-center rounded-organic-md sm:h-10 sm:w-10",
                           "bg-secondary text-background",
-                          "shadow-[0_5px_0_0_#623e56] dark:shadow-[0_5px_0_0_#8a5a7a]",
+                          "shadow-[0_4px_0_0_#623e56] dark:shadow-[0_4px_0_0_#8a5a7a]",
                           "transition-all duration-150 ease-out",
                           "hover:brightness-110",
-                          "active:translate-y-1 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
+                          "active:translate-y-0.5 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
                         )}
                         title="Submit answer"
                         aria-label="Submit answer"
                       >
-                        <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
+                        <ArrowRight className="h-4 w-4 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.5} />
                       </button>
                     )}
                     {isAnswered && (
@@ -550,7 +557,7 @@ export function QuestionCard({
           ))}
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-organic-lg border border-border-subtle bg-surface-elevated/80 px-4 py-3 sm:px-5">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 px-1 py-1 sm:px-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wide text-text-muted">
               Rate the difficulty
@@ -624,37 +631,28 @@ export function QuestionCard({
             )}
             {feedbackLoading ? (
               <span className="text-xs text-text-muted">…</span>
-            ) : (
-              <>
-                <span className="text-xs text-text-muted">
-                  {feedback?.dislikeCount ?? 0} unhelpful
-                </span>
-                {isAuthenticated ? (
-                  <button
-                    type="button"
-                    onClick={handleDislikeToggle}
-                    disabled={dislikeSubmitting}
-                    className={cn(
-                      "flex items-center gap-1 rounded-organic-md px-2 py-1 text-xs transition-colors",
-                      feedback?.userDisliked
-                        ? "bg-error/15 text-error"
-                        : "text-text-muted hover:bg-surface-elevated hover:text-text",
-                    )}
-                  >
-                    <ThumbsDown
-                      className={cn(
-                        "h-3.5 w-3.5",
-                        feedback?.userDisliked && "fill-current",
-                      )}
-                    />
-                    <span>Unhelpful</span>
-                  </button>
-                ) : (
-                  <span className="text-xs text-text-muted">
-                    Sign in to mark unhelpful
-                  </span>
+            ) : isAuthenticated ? (
+              <button
+                type="button"
+                onClick={handleDislikeToggle}
+                disabled={dislikeSubmitting}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-organic-md px-2.5 py-1.5 text-xs font-medium transition-colors",
+                  feedback?.userDisliked
+                    ? "bg-error/15 text-error"
+                    : "text-text-muted hover:bg-surface-mid hover:text-text dark:hover:bg-surface-neutral",
                 )}
-              </>
+              >
+                <Flag
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    feedback?.userDisliked && "fill-current",
+                  )}
+                />
+                <span>Report</span>
+              </button>
+            ) : (
+              <span className="text-xs text-text-muted">Sign in to report</span>
             )}
           </div>
         </div>
