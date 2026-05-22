@@ -590,6 +590,56 @@ def count_graph_candidates_missing_embedded_svg(client: Any, *, max_scan: int = 
     )
 
 
+def count_graph_candidates_missing_image_diagram(
+    client: Any, *, max_scan: int = 2000, require_operator_queue: bool = False
+) -> int:
+    """Graph-flagged rows with no ``<img>`` in a ``qg-diagram`` figure (image backfill pool)."""
+    return len(
+        fetch_graph_candidates_for_diagram_backfill(
+            client,
+            limit=max(1, min(max_scan, 20_000)),
+            page_size=80,
+            require_operator_queue=require_operator_queue,
+            diagram_kind="image",
+        )
+    )
+
+
+def bulk_set_image_backfill_queue(
+    client: Any,
+    *,
+    limit: int,
+    choice: str = "queue",
+    page_size: int = 80,
+) -> int:
+    """
+    Set ``svg_operator_backfill_choice`` on up to ``limit`` image-backfill-eligible rows.
+
+    ``choice``: ``queue``, ``skip``, or clear with ``""`` / ``null`` for undecided.
+    """
+    rows = fetch_graph_candidates_for_diagram_backfill(
+        client,
+        limit=max(1, min(limit, 50_000)),
+        page_size=page_size,
+        diagram_kind="image",
+    )
+    db_val: Any
+    if choice == "queue":
+        db_val = "queue"
+    elif choice == "skip":
+        db_val = "skip"
+    else:
+        db_val = None
+    n = 0
+    for row in rows:
+        qid = str(row.get("id") or "")
+        if not qid:
+            continue
+        update_question_assessment(client, qid, {"svg_operator_backfill_choice": db_val})
+        n += 1
+    return n
+
+
 def clear_quality_gate_for_graph_flagged_rows(client: Any) -> int:
     """
     Clear quality-gate columns **only** for rows graph-flagged (candidate or missing_expected),

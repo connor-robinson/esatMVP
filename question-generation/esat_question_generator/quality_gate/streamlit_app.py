@@ -40,23 +40,42 @@ def _load_state() -> dict | None:
         return None
 
 
-_SVG_OPERATOR_LABELS = ("Undecided", "Queue for SVG generation", "Skip (no diagram)")
+_IMAGE_QUEUE_LABEL = "Queue for image generation"
+_SKIP_QUEUE_LABEL = "Skip (no diagram)"
+_DIAGRAM_QUEUE_LABELS = ("Undecided", _IMAGE_QUEUE_LABEL, _SKIP_QUEUE_LABEL)
+_DIAGRAM_QUEUE_COLUMN = "Image generation"
 
 
-def _svg_operator_db_to_label(raw: Any) -> str:
+def _diagram_queue_db_to_label(raw: Any) -> str:
     if raw == "queue":
-        return "Queue for SVG generation"
+        return _IMAGE_QUEUE_LABEL
     if raw == "skip":
-        return "Skip (no diagram)"
+        return _SKIP_QUEUE_LABEL
     return "Undecided"
 
 
-def _svg_operator_label_to_db(label: str) -> Any:
-    if label == "Queue for SVG generation":
+def _diagram_queue_label_to_db(label: str) -> Any:
+    if label == _IMAGE_QUEUE_LABEL:
         return "queue"
-    if label == "Skip (no diagram)":
+    if label == _SKIP_QUEUE_LABEL:
         return "skip"
     return None
+
+
+def _build_diagram_queue_row(r: dict[str, Any], review_base: str) -> dict[str, Any]:
+    qid = str(r.get("id") or "")
+    notes = str(r.get("quality_gate_graph_notes") or "")
+    prev = notes[:160] + ("…" if len(notes) > 160 else "")
+    code = (r.get("media_upload_code") or "").strip() or "—"
+    return {
+        "question_id": qid,
+        "Walkthrough code": code,
+        "Review": f"{review_base.rstrip('/')}/review?id={qid}",
+        "Verdict": (r.get("quality_gate_verdict") or "—"),
+        "Backfill review": _backfill_review_label(r),
+        "Graph notes (preview)": prev or "—",
+        _DIAGRAM_QUEUE_COLUMN: _diagram_queue_db_to_label(r.get("svg_operator_backfill_choice")),
+    }
 
 
 def _review_base_url() -> str:
@@ -344,21 +363,6 @@ with tab_score:
         value=False,
         help="Normally already-scored questions are skipped. Turn on to run the AI again on them.",
     )
-    auto_svg = st.checkbox(
-        "Auto-generate exam-style SVG for graph-candidate questions",
-        value=False,
-        help="After scoring, uses Vertex Gemini (ADC) to draw an SVG from the gate’s graph notes and "
-        "merges it into the question stem (extra cost). Works even if scoring runs on Claude. "
-        "Not used in “Practice only” runs (no database writes).",
-        disabled=dry_run,
-    )
-    diagram_model_in = st.text_input(
-        "Diagram model (optional)",
-        value="",
-        placeholder="Default: gemini-2.5-pro — try gemini-3.1-pro-preview if your project has access",
-        disabled=dry_run or not auto_svg,
-        help="Gemini model id for SVG + stem merge. Override with MODEL_QUALITY_GATE_SVG in .env.",
-    )
     with st.expander("Advanced (rarely needed)", expanded=False):
         include_deleted = st.checkbox(
             "Include deleted questions in the pool",
@@ -379,15 +383,6 @@ with tab_score:
             step=5.0,
             disabled=not use_batch_api,
         )
-        svg_single_shot_pipeline = st.checkbox(
-            "Single-shot SVG for this run only (QUALITY_GATE_SVG_PIPELINE=0)",
-            value=False,
-            key="qg_svg_single_shot_pipeline",
-            help="Only applies when Auto-SVG is on. Subprocess gets QUALITY_GATE_SVG_PIPELINE=0 → "
-            "single prompt (prompt_svg_diagram.md) instead of scene→layout→collision→render. "
-            "For A/B comparison; default pipeline is usually better on complex figures.",
-        )
-
     st.markdown("---")
     st.markdown("### 5. Start or stop")
     c1, c2, c3 = st.columns(3)
@@ -430,15 +425,7 @@ with tab_score:
                 cmd.append("--force-reassess")
             if include_deleted:
                 cmd.append("--include-deleted")
-            if auto_svg and not dry_run:
-                cmd.append("--auto-svg")
-                if diagram_model_in.strip():
-                    cmd += ["--diagram-model", diagram_model_in.strip()]
             cmd += ["--state-file", str(STATE_PATH)]
-
-            run_env = os.environ.copy()
-            if auto_svg and not dry_run and svg_single_shot_pipeline:
-                run_env["QUALITY_GATE_SVG_PIPELINE"] = "0"
 
             lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
             proc = subprocess.Popen(
@@ -446,7 +433,7 @@ with tab_score:
                 cwd=str(ROOT),
                 stdout=lf,
                 stderr=subprocess.STDOUT,
-                env=run_env,
+                env=os.environ.copy(),
             )
             st.session_state.subproc = proc
             st.session_state.last_cmd = " ".join(cmd)
@@ -513,7 +500,6 @@ with tab_after:
             count_graph_flagged_rows,
             count_questions_gate_overview,
             fetch_all_assessed_rows_for_overview,
-            fetch_graph_candidates_missing_embedded_svg,
             get_supabase,
             list_quality_gate_run_choices,
         )
@@ -681,39 +667,37 @@ with tab_after:
             st.exception(e)
 
     st.divider()
-    st.markdown("### Diagram backfill (SVG + image, queue, history)")
+    st.markdown("### Image diagram backfill (queue, run, history)")
     st.caption(
-        "Graph-flagged rows missing a diagram. Set **Queue** / **Skip**, save, then run **SVG** (inline `<svg>`) "
-        "or **Image** (Imagen PNG + vision verify + `<img>` merge). Requires operator queue migration and Vertex ADC."
+        "Graph-flagged rows missing an **image** diagram. Queue rows for **Imagen** generation "
+        "(brief → generate → verify → merge). SVG backfill is hidden for now."
     )
 
     if _qg_client is not None:
         try:
-            _n_all_miss = len(
-                fetch_graph_candidates_missing_embedded_svg(
-                    _qg_client, limit=500, page_size=80, require_operator_queue=False
-                )
+            from quality_gate.supabase_io import count_graph_candidates_missing_image_diagram
+
+            _n_all_miss = count_graph_candidates_missing_image_diagram(
+                _qg_client, max_scan=500, require_operator_queue=False
             )
-            _n_queued = len(
-                fetch_graph_candidates_missing_embedded_svg(
-                    _qg_client, limit=500, page_size=80, require_operator_queue=True
-                )
+            _n_queued = count_graph_candidates_missing_image_diagram(
+                _qg_client, max_scan=500, require_operator_queue=True
             )
             st.info(
-                f"Missing embedded SVG (sample up to 500): **{_n_all_miss}** total · "
-                f"**{_n_queued}** currently marked **Queue for SVG generation**."
+                f"Missing image diagram (sample up to 500): **{_n_all_miss}** total · "
+                f"**{_n_queued}** marked **{_IMAGE_QUEUE_LABEL}**."
             )
         except Exception as _e:
             st.warning(
-                f"Could not load SVG queue counts (did you run ``add_svg_operator_backfill_choice.sql``?). {_e}"
+                f"Could not load image queue counts (run ``add_svg_operator_backfill_choice.sql``?). {_e}"
             )
 
     review_base = _review_base_url()
 
-    st.markdown("#### 1. Operator queue — who needs a diagram?")
+    st.markdown("#### 1. Operator queue — who needs an image diagram?")
     st.caption(
-        "Load rows, set the **SVG operator choice** column, then **Save choices to Supabase**. "
-        "Use **Queue** only when you want the next backfill run to generate an SVG for that question."
+        f"Load rows, set **{_DIAGRAM_QUEUE_COLUMN}** to **{_IMAGE_QUEUE_LABEL}** or **{_SKIP_QUEUE_LABEL}**, "
+        "then save. Use the bulk buttons to queue many rows at once."
     )
     q_cap = st.number_input(
         "Max rows to load into the table",
@@ -723,42 +707,101 @@ with tab_after:
         step=20,
         key="svg_queue_load_cap",
     )
-    if st.button("Load / refresh queue table", disabled=_qg_client is None, key="svg_queue_load_btn"):
-        try:
-            from quality_gate.supabase_io import fetch_graph_candidates_missing_embedded_svg as _fetch_miss
+    bulk_col1, bulk_col2, bulk_col3 = st.columns(3)
+    with bulk_col1:
+        if st.button(
+            f"Queue ALL (up to {int(q_cap)}) → save to DB",
+            disabled=_qg_client is None,
+            key="img_queue_all_save_btn",
+            help=f"Sets **{_IMAGE_QUEUE_LABEL}** on every image-eligible row in the load window, without opening the table.",
+        ):
+            try:
+                from quality_gate.supabase_io import bulk_set_image_backfill_queue
 
-            rows = _fetch_miss(_qg_client, limit=int(q_cap), page_size=80, require_operator_queue=False)
-            df_rows = []
-            for r in rows:
-                qid = str(r.get("id") or "")
-                if not qid:
-                    continue
-                notes = str(r.get("quality_gate_graph_notes") or "")
-                prev = notes[:160] + ("…" if len(notes) > 160 else "")
-                code = (r.get("media_upload_code") or "").strip() or "—"
-                df_rows.append(
-                    {
-                        "question_id": qid,
-                        "Walkthrough code": code,
-                        "Review": f"{review_base}/review?id={qid}",
-                        "Verdict": (r.get("quality_gate_verdict") or "—"),
-                        "Backfill review": _backfill_review_label(r),
-                        "Graph notes (preview)": prev or "—",
-                        "SVG operator choice": _svg_operator_db_to_label(r.get("svg_operator_backfill_choice")),
-                    }
+                n = bulk_set_image_backfill_queue(_qg_client, limit=int(q_cap), choice="queue")
+                st.success(f"Queued **{n}** row(s) for image generation in the database.")
+                st.session_state.pop("svg_queue_df", None)
+                st.session_state.pop("svg_queue_baseline", None)
+            except Exception as e:
+                st.exception(e)
+    with bulk_col2:
+        if st.button("Load / refresh queue table", disabled=_qg_client is None, key="svg_queue_load_btn"):
+            try:
+                from quality_gate.supabase_io import fetch_graph_candidates_for_diagram_backfill
+
+                rows = fetch_graph_candidates_for_diagram_backfill(
+                    _qg_client,
+                    limit=int(q_cap),
+                    page_size=80,
+                    diagram_kind="image",
                 )
-            st.session_state["svg_queue_df"] = pd.DataFrame(df_rows)
-            st.session_state["svg_queue_baseline"] = {
-                str(r["question_id"]): r["SVG operator choice"] for r in df_rows
-            }
-            st.session_state["svg_queue_v"] = int(st.session_state.get("svg_queue_v", 0)) + 1
-            st.success(f"Loaded **{len(df_rows)}** row(s). Edit choices below, then save.")
-        except Exception as e:
-            st.session_state.pop("svg_queue_df", None)
-            st.session_state.pop("svg_queue_baseline", None)
-            st.exception(e)
+                df_rows = [_build_diagram_queue_row(r, review_base) for r in rows if r.get("id")]
+                st.session_state["svg_queue_df"] = pd.DataFrame(df_rows)
+                st.session_state["svg_queue_baseline"] = {
+                    str(r["question_id"]): r[_DIAGRAM_QUEUE_COLUMN] for r in df_rows
+                }
+                st.session_state["svg_queue_v"] = int(st.session_state.get("svg_queue_v", 0)) + 1
+                st.success(f"Loaded **{len(df_rows)}** row(s). Edit choices below, then save.")
+            except Exception as e:
+                st.session_state.pop("svg_queue_df", None)
+                st.session_state.pop("svg_queue_baseline", None)
+                st.exception(e)
 
     if st.session_state.get("svg_queue_df") is not None and not st.session_state["svg_queue_df"].empty:
+        tbl_tool1, tbl_tool2, tbl_tool3 = st.columns(3)
+        with tbl_tool1:
+            if st.button(
+                f"Set all in table → {_IMAGE_QUEUE_LABEL}",
+                key="img_queue_table_all_btn",
+            ):
+                df = st.session_state["svg_queue_df"].copy()
+                df[_DIAGRAM_QUEUE_COLUMN] = _IMAGE_QUEUE_LABEL
+                st.session_state["svg_queue_df"] = df
+                st.session_state["svg_queue_v"] = int(st.session_state.get("svg_queue_v", 0)) + 1
+                st.rerun()
+        with tbl_tool2:
+            if st.button(
+                f"Set all in table → {_SKIP_QUEUE_LABEL}",
+                key="img_queue_table_skip_btn",
+            ):
+                df = st.session_state["svg_queue_df"].copy()
+                df[_DIAGRAM_QUEUE_COLUMN] = _SKIP_QUEUE_LABEL
+                st.session_state["svg_queue_df"] = df
+                st.session_state["svg_queue_v"] = int(st.session_state.get("svg_queue_v", 0)) + 1
+                st.rerun()
+        with tbl_tool3:
+            if st.button(
+                f"Save table as ALL {_IMAGE_QUEUE_LABEL} → DB",
+                disabled=_qg_client is None,
+                key="img_queue_table_save_all_queue_btn",
+                help="Writes Queue for image generation for every row currently in the table.",
+            ):
+                try:
+                    from quality_gate.supabase_io import update_question_assessment
+
+                    df = st.session_state["svg_queue_df"]
+                    n_up = 0
+                    for _, row in df.iterrows():
+                        qid = str(row.get("question_id") or "")
+                        if not qid:
+                            continue
+                        update_question_assessment(
+                            _qg_client,
+                            qid,
+                            {"svg_operator_backfill_choice": "queue"},
+                        )
+                        n_up += 1
+                    st.session_state["svg_queue_baseline"] = {
+                        str(r["question_id"]): _IMAGE_QUEUE_LABEL
+                        for _, r in df.iterrows()
+                        if r.get("question_id")
+                    }
+                    df[_DIAGRAM_QUEUE_COLUMN] = _IMAGE_QUEUE_LABEL
+                    st.session_state["svg_queue_df"] = df
+                    st.success(f"Saved **{n_up}** row(s) as queued for image generation.")
+                except Exception as e:
+                    st.exception(e)
+
         edited = st.data_editor(
             st.session_state["svg_queue_df"],
             column_config={
@@ -767,11 +810,12 @@ with tab_after:
                 "Review": st.column_config.LinkColumn("Review", display_text="Open"),
                 "Verdict": st.column_config.TextColumn("Verdict", disabled=True, width="small"),
                 "Graph notes (preview)": st.column_config.TextColumn("Graph notes", disabled=True, width="large"),
-                "SVG operator choice": st.column_config.SelectboxColumn(
-                    "SVG operator choice",
-                    options=list(_SVG_OPERATOR_LABELS),
+                "Backfill review": st.column_config.TextColumn("Backfill review", disabled=True, width="small"),
+                _DIAGRAM_QUEUE_COLUMN: st.column_config.SelectboxColumn(
+                    _DIAGRAM_QUEUE_COLUMN,
+                    options=list(_DIAGRAM_QUEUE_LABELS),
                     required=True,
-                    help="Queue = include in backfill · Skip = no diagram · Undecided = not queued",
+                    help=f"{_IMAGE_QUEUE_LABEL} = run Imagen backfill on next run",
                 ),
             },
             hide_index=True,
@@ -789,7 +833,7 @@ with tab_after:
                     n_up = 0
                     for _, row in edited.iterrows():
                         qid = str(row.get("question_id") or "")
-                        new_l = row.get("SVG operator choice")
+                        new_l = row.get(_DIAGRAM_QUEUE_COLUMN)
                         if pd.isna(new_l) or not qid:
                             continue
                         new_s = str(new_l).strip()
@@ -799,11 +843,11 @@ with tab_after:
                         update_question_assessment(
                             _qg_client,
                             qid,
-                            {"svg_operator_backfill_choice": _svg_operator_label_to_db(new_s)},
+                            {"svg_operator_backfill_choice": _diagram_queue_label_to_db(new_s)},
                         )
                         n_up += 1
                     st.session_state["svg_queue_baseline"] = {
-                        str(row.get("question_id")): row.get("SVG operator choice")
+                        str(row.get("question_id")): row.get(_DIAGRAM_QUEUE_COLUMN)
                         for _, row in edited.iterrows()
                         if row.get("question_id")
                     }
@@ -815,27 +859,19 @@ with tab_after:
             st.download_button(
                 label="Download queue as CSV",
                 data=edited.to_csv(index=False).encode("utf-8"),
-                file_name="svg_backfill_queue.csv",
+                file_name="image_backfill_queue.csv",
                 mime="text/csv",
                 key="svg_queue_csv_dl",
             )
     elif st.session_state.get("svg_queue_df") is not None:
-        st.caption("Queue is empty — no graph-flagged rows missing ``<svg`` in the loaded window.")
+        st.caption("Queue is empty — no graph-flagged rows missing an image diagram in the loaded window.")
 
-    st.markdown("#### 2. Run backfill")
+    st.markdown("#### 2. Run image backfill")
     st.caption(
-        "Default: only rows with **SVG operator choice = Queue**. "
-        "Choose **SVG** for precise graphs; **Image** for physical schematics (Imagen Ultra + vision verify)."
-    )
-    bf_mode = st.radio(
-        "Diagram backfill mode",
-        options=["svg", "image", "auto"],
-        format_func=lambda x: {"svg": "SVG (Gemini)", "image": "Image (Imagen)", "auto": "Auto (route per row)"}[x],
-        horizontal=True,
-        key="diagram_bf_mode",
+        f"Default: only rows with **{_IMAGE_QUEUE_LABEL}**. Uses Imagen Ultra + Gemini vision verify."
     )
     bf_legacy = st.checkbox(
-        "Legacy: ignore operator column — process all graph-flagged rows missing a diagram",
+        "Legacy: ignore queue column — process all graph-flagged rows missing an image diagram",
         value=False,
         key="svg_bf_legacy_all",
     )
@@ -871,93 +907,19 @@ with tab_after:
         step=1,
         key="img_bf_max_retry",
     )
-    col_svg, col_img = st.columns(2)
-    with col_svg:
-        bf_model = st.text_input(
-            "SVG Gemini model (optional)",
-            value="",
-            key="svg_bf_model",
-            placeholder="Default: MODEL_QUALITY_GATE_SVG or gemini-2.5-pro",
-        )
-        bf_verbose_llm = st.checkbox(
-            "Verbose SVG: append raw LLM debug tail per row",
-            value=False,
-            key="svg_bf_verbose_llm",
-        )
-    with col_img:
-        img_bf_model = st.text_input(
-            "Imagen model (optional)",
-            value="",
-            key="img_bf_model",
-            placeholder="Default: MODEL_QUALITY_GATE_IMAGE",
-        )
-        img_brief_model = st.text_input(
-            "Image brief / verify / integrate overrides (optional)",
-            value="",
-            key="img_bf_brief_model",
-            placeholder="Brief: MODEL_QUALITY_GATE_IMAGE_BRIEF; same family for verify/integrate",
-        )
-    run_col1, run_col2 = st.columns(2)
-    with run_col1:
-        run_svg = st.button("Run SVG backfill", disabled=_qg_client is None, key="svg_bf_run_btn")
-    with run_col2:
-        run_img = st.button("Run image backfill", disabled=_qg_client is None, key="img_bf_run_btn")
-
-    if run_svg:
-        try:
-            from quality_gate.svg_backfill import run_missing_svg_backfill
-
-            log_bf: list[str] = []
-            with st.status("SVG backfill: running…", expanded=True) as bf_status:
-
-                def _bf_progress(msg: str) -> None:
-                    bf_status.write(msg)
-
-                try:
-                    stats = run_missing_svg_backfill(
-                        limit=int(bf_limit),
-                        diagram_model=(bf_model or "").strip(),
-                        dry_run=bool(bf_dry),
-                        page_size=40,
-                        log_lines=log_bf,
-                        require_operator_queue=not bool(bf_legacy),
-                        progress_callback=_bf_progress,
-                        verbose_llm_trace=bool(bf_verbose_llm),
-                    )
-                except Exception:
-                    bf_status.update(
-                        label="SVG backfill failed — see traceback below",
-                        state="error",
-                        expanded=True,
-                    )
-                    raise
-
-                n_cand = int(stats.get("candidates_missing_svg") or 0)
-                ins = int(stats.get("inserted") or 0)
-                err_n = int(stats.get("errors") or 0)
-                if n_cand == 0:
-                    done_label = "SVG backfill finished — no rows to process"
-                elif err_n and not ins:
-                    done_label = f"SVG backfill finished — {err_n} error(s), no inserts"
-                elif err_n:
-                    done_label = f"SVG backfill finished — inserted {ins}, {err_n} error(s)"
-                else:
-                    done_label = f"SVG backfill finished — inserted {ins} stem(s)"
-
-                bf_status.update(label=done_label, state="complete", expanded=False)
-
-            if err_n and not bool(bf_dry):
-                st.warning(
-                    f"Backfill completed with **{err_n}** error(s). "
-                    "Expand the status box above for the live log, or use the full log below."
-                )
-            else:
-                st.success(done_label)
-
-            st.json(stats)
-            st.text_area("Backfill log", "\n".join(log_bf[-120:]), height=220, label_visibility="visible")
-        except Exception as e:
-            st.exception(e)
+    img_bf_model = st.text_input(
+        "Imagen model (optional)",
+        value="",
+        key="img_bf_model",
+        placeholder="Default: MODEL_QUALITY_GATE_IMAGE",
+    )
+    img_brief_model = st.text_input(
+        "Image brief / verify / integrate overrides (optional)",
+        value="",
+        key="img_bf_brief_model",
+        placeholder="Brief: MODEL_QUALITY_GATE_IMAGE_BRIEF; same family for verify/integrate",
+    )
+    run_img = st.button("Run image backfill", disabled=_qg_client is None, key="img_bf_run_btn", type="primary")
 
     if run_img:
         try:
@@ -983,7 +945,7 @@ with tab_after:
                     max_retries=int(bf_max_retry),
                     allow_high_precision_image=bool(bf_allow_prec),
                     replace_existing_diagram=bool(bf_replace),
-                    diagram_mode=str(bf_mode),
+                    diagram_mode="image",
                 )
                 merged = int(stats.get("merged") or 0)
                 skipped = int(stats.get("skipped") or 0)
@@ -1026,35 +988,18 @@ with tab_after:
         except Exception as e:
             st.exception(e)
 
-    st.markdown("#### 3. Backfill run history (local log)")
-    st.caption(
-        "SVG: ``svg_backfill_history.jsonl`` · Image: ``image_backfill_history.jsonl`` (this machine)."
-    )
-    hist_tab1, hist_tab2 = st.tabs(["SVG history", "Image history"])
-    with hist_tab1:
-        try:
-            from quality_gate.svg_backfill import read_svg_backfill_history
+    st.markdown("#### 3. Image backfill run history (local log)")
+    st.caption("``quality_gate/image_backfill_history.jsonl`` on this machine.")
+    try:
+        from quality_gate.image_backfill import read_image_backfill_history
 
-            hist = read_svg_backfill_history(max_lines=60)
-            if not hist:
-                st.caption("No SVG history yet.")
-            else:
-                hdf = pd.DataFrame(hist)
-                disp_cols = [c for c in hdf.columns if c != "processed_ids"]
-                st.dataframe(hdf[disp_cols] if disp_cols else hdf, use_container_width=True, hide_index=True)
-        except Exception as e:
-            st.caption(f"Could not read SVG history: {e}")
-    with hist_tab2:
-        try:
-            from quality_gate.image_backfill import read_image_backfill_history
-
-            ihist = read_image_backfill_history(max_lines=80)
-            if not ihist:
-                st.caption("No image history yet.")
-            else:
-                st.dataframe(pd.DataFrame(ihist), use_container_width=True, hide_index=True)
-        except Exception as e:
-            st.caption(f"Could not read image history: {e}")
+        ihist = read_image_backfill_history(max_lines=80)
+        if not ihist:
+            st.caption("No image history yet.")
+        else:
+            st.dataframe(pd.DataFrame(ihist), use_container_width=True, hide_index=True)
+    except Exception as e:
+        st.caption(f"Could not read image history: {e}")
 
     st.divider()
     if st.button("Show summary for this run"):
@@ -1216,15 +1161,9 @@ python quality_gate/cli.py run --limit 20 --auto-svg --diagram-model gemini-3.1-
 python quality_gate/cli.py reset-graph-gate --dry-run
 python quality_gate/cli.py reset-graph-gate
 
-# Graph-flagged but stem still has no <svg>: backfill diagrams only (no gate re-score)
-python quality_gate/cli.py generate-missing-svgs --limit 20 --dry-run
-python quality_gate/cli.py generate-missing-svgs --limit 20 --diagram-model gemini-2.5-pro
-# Same as Streamlit “Queue” only (needs svg_operator_backfill_choice column):
-python quality_gate/cli.py generate-missing-svgs --limit 20 --operator-queue-only
-
-# Image backfill (Imagen Ultra + vision verify + <img> merge)
+# Image backfill (Imagen Ultra + vision verify + <img> merge) — queue column in Streamlit
 python quality_gate/cli.py generate-missing-images --limit 1 --operator-queue-only --diagram-dry-run
-python quality_gate/cli.py generate-missing-images --limit 20 --operator-queue-only --diagram-mode auto
+python quality_gate/cli.py generate-missing-images --limit 20 --operator-queue-only
 python quality_gate/cli.py generate-missing-images --limit 20 --image-model imagen-4.0-ultra-generate-001
 ```
 """
@@ -1232,17 +1171,13 @@ python quality_gate/cli.py generate-missing-images --limit 20 --image-model imag
     st.markdown(
         "**Database setup:** run `migrations/add_quality_gate.sql`, then "
         "`migrations/add_quality_gate_calibration_graph.sql` in Supabase if you use calibration/graph columns. "
-        "For the SVG backfill **operator queue** UI: `migrations/add_svg_operator_backfill_choice.sql`. "
+        "For the image backfill **operator queue** UI: `migrations/add_svg_operator_backfill_choice.sql`. "
         "Optional image metadata: `migrations/add_quality_gate_diagram_image.sql`. "
         "Create Supabase Storage bucket **`quality-gate-diagrams`** (public). "
         "Optional stem snapshot: `migrations/add_question_stem_before_auto_diagram.sql`.\n\n"
         "**Review links in Streamlit:** set `REVIEW_APP_URL` (default: `https://questions-reviewer.vercel.app`) so the results table "
         "“Open” links point at your Next.js review app. **After a run** needs `pandas` (see `requirements_quality_gate.txt`).\n\n"
-        "**Auto-SVG:** diagram generation uses a **4-phase pipeline** (scene → layout → collision → render) plus an "
-        "**archetype library** (`quality_gate/svg_archetypes.md`). Set env `QUALITY_GATE_SVG_PIPELINE=0` (or use "
-        "**Advanced → Single-shot SVG for this run only** when Auto-SVG is on) for legacy single-shot "
-        "(`prompt_svg_diagram.md` only).\n\n"
-        "**Image backfill:** `prompt_image_*.md` + env `MODEL_QUALITY_GATE_IMAGE*` (Imagen Ultra default) + "
+        "**Image backfill (default in UI):** `prompt_image_*.md` + env `MODEL_QUALITY_GATE_IMAGE*` (Imagen Ultra default) + "
         "`MODEL_QUALITY_GATE_IMAGE_BRIEF/VERIFY/INTEGRATE` (Gemini 2.5 Pro). Prompts in `quality_gate/`.\n\n"
         "**Normal scoring (Vertex, default):** `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`, ADC; "
         "default model `gemini-2.5-flash`. If `GOOGLE_CLOUD_LOCATION` is `global`, the GenAI client remaps to "
