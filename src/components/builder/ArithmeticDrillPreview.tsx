@@ -153,17 +153,19 @@ export function ArithmeticVariantExample({
   useEffect(() => {
     if (!canCycle) return;
 
-    let intervalId: number | undefined;
+    let intervalId: ReturnType<typeof setInterval> | undefined;
 
-    const timeoutId = window.setTimeout(() => {
-      intervalId = window.setInterval(() => {
+    const timeoutId = setTimeout(() => {
+      intervalId = setInterval(() => {
         setIndex((i) => (i + 1) % samples.length);
       }, intervalMs);
     }, initialDelayMs);
 
     return () => {
-      window.clearTimeout(timeoutId);
-      if (intervalId !== undefined) window.clearInterval(intervalId);
+      clearTimeout(timeoutId);
+      if (intervalId !== undefined) {
+        clearInterval(intervalId);
+      }
     };
   }, [canCycle, samples.length, intervalMs, initialDelayMs]);
 
