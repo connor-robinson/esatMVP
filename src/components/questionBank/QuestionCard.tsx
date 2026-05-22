@@ -10,7 +10,6 @@ import {
   ArrowRight,
   Eye,
   HelpCircle,
-  Pencil,
   Star,
   ThumbsDown,
 } from "lucide-react";
@@ -321,18 +320,7 @@ export function QuestionCard({
 
   return (
     <div className="space-y-5">
-      <div className={cn(PANEL_SHELL, "relative px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10 group")}>
-        {onEditQuestionStem && (
-          <button
-            type="button"
-            onClick={onEditQuestionStem}
-            className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center rounded-organic-md bg-surface-elevated opacity-0 transition-opacity hover:bg-surface-mid group-hover:opacity-100 sm:right-8 sm:top-6"
-            title="Edit question"
-          >
-            <Pencil className="h-4 w-4 text-text-muted" />
-          </button>
-        )}
-
+      <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 gap-y-2">
             <span
@@ -413,7 +401,7 @@ export function QuestionCard({
       <div className={cn(PANEL_SHELL, "p-5 sm:p-6")}>
         <div className="space-y-2">
           {optionLetters.map((letter) => (
-            <div key={letter} className="group relative">
+            <div key={letter} className="relative">
               <button
                 type="button"
                 onClick={() => handleOptionClick(letter)}
@@ -470,7 +458,7 @@ export function QuestionCard({
                       )}
                   </div>
 
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center sm:h-12 sm:w-12">
                     {((!isAnswered || (isAnswered && allowRetry)) &&
                       localSelectedAnswer === letter &&
                       !incorrectAnswers.has(letter)) && (
@@ -480,10 +468,18 @@ export function QuestionCard({
                           e.stopPropagation();
                           handleSubmit();
                         }}
-                        className="flex h-10 w-10 items-center justify-center rounded-organic-md border border-secondary/35 bg-secondary/15 text-secondary transition-colors hover:bg-secondary/25"
+                        className={cn(
+                          "flex h-11 w-11 items-center justify-center rounded-organic-lg sm:h-12 sm:w-12",
+                          "bg-secondary text-background",
+                          "shadow-[0_5px_0_0_#623e56] dark:shadow-[0_5px_0_0_#8a5a7a]",
+                          "transition-all duration-150 ease-out",
+                          "hover:brightness-110",
+                          "active:translate-y-1 active:shadow-[0_2px_0_0_#623e56] dark:active:shadow-[0_2px_0_0_#8a5a7a]",
+                        )}
                         title="Submit answer"
+                        aria-label="Submit answer"
                       >
-                        <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
+                        <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.5} />
                       </button>
                     )}
                     {isAnswered && (
@@ -525,22 +521,6 @@ export function QuestionCard({
                   </div>
                 </div>
 
-                {onEditOption && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEditOption(letter);
-                    }}
-                    className="absolute left-12 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-organic-md bg-surface-elevated opacity-0 transition-opacity hover:bg-surface-mid group-hover:opacity-100"
-                    title={`Edit option ${letter}`}
-                  >
-                    <Pencil
-                      className="h-3.5 w-3.5 scale-x-[-1] text-text-muted"
-                      strokeWidth={2}
-                    />
-                  </button>
-                )}
               </button>
             </div>
           ))}

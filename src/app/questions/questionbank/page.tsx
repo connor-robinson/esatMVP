@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
 import { QuestionCard } from '@/components/questionBank/QuestionCard';
-import { FilterPopup } from '@/components/questionBank/FilterPopup';
 import { EditModal } from '@/components/questionBank/EditModal';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { LoadingPage } from '@/components/shared/LoadingPage';
@@ -32,10 +31,8 @@ import {
   BookOpen,
   X,
   Settings,
-  Pencil,
   Eye,
   AlertCircle,
-  Filter,
   Lightbulb,
   Check,
   ClipboardList,
@@ -109,7 +106,6 @@ export default function QuestionBankPage() {
     updateCurrentQuestion,
   } = useQuestionBank();
 
-  const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [curriculum, setCurriculum] = useState<any>(null);
   const [sessionMode, setSessionMode] = useState(false);
   const [isDrillSession, setIsDrillSession] = useState(false);
@@ -149,7 +145,6 @@ export default function QuestionBankPage() {
     attempted: number;
     total: number;
   } | null>(null);
-  const [drillWrongCount, setDrillWrongCount] = useState<number | null>(null);
   const progressBootDeferredRef = useRef(false);
 
   // Load session data from sessionStorage if in session mode
@@ -191,36 +186,6 @@ export default function QuestionBankPage() {
       }
     }
   }, [isSessionMode, updateCurrentQuestion]);
-
-  // Fetch drill wrong count after idle so first question load isn’t contested
-  useEffect(() => {
-    if (!session?.user || sessionMode) {
-      setDrillWrongCount(null);
-      return;
-    }
-    let cancelled = false;
-    const run = () => {
-      if (cancelled) return;
-      fetch('/api/question-bank/drill-questions', { credentials: 'include' })
-        .then((res) => (res.ok ? res.json() : { count: 0 }))
-        .then((data) => {
-          if (!cancelled) setDrillWrongCount(data.count ?? 0);
-        })
-        .catch(() => {
-          if (!cancelled) setDrillWrongCount(0);
-        });
-    };
-    const ric =
-      typeof requestIdleCallback !== 'undefined'
-        ? requestIdleCallback(run, { timeout: 2500 })
-        : null;
-    const t = ric == null ? setTimeout(run, 1200) : null;
-    return () => {
-      cancelled = true;
-      if (ric != null) cancelIdleCallback(ric);
-      if (t != null) clearTimeout(t);
-    };
-  }, [session?.user, sessionMode]);
 
   // Sync progressSubjects with active filters so "X out of Y" matches the question pool
   useEffect(() => {
@@ -451,25 +416,6 @@ export default function QuestionBankPage() {
     return 'text-text';
   };
 
-  // Edit handlers
-  const handleEditQuestionStem = () => {
-    if (!currentQuestion) return;
-    setEditModalTitle('Edit Question');
-    setEditModalContent(currentQuestion.question_stem);
-    setEditModalField('question_stem');
-    setEditModalOptionLetter(null);
-    setEditModalOpen(true);
-  };
-
-  const handleEditOption = (optionLetter: string) => {
-    if (!currentQuestion) return;
-    setEditModalTitle(`Edit Option ${optionLetter}`);
-    setEditModalContent(currentQuestion.options[optionLetter]);
-    setEditModalField('options');
-    setEditModalOptionLetter(optionLetter);
-    setEditModalOpen(true);
-  };
-
   const handleEditKeyInsight = () => {
     if (!currentQuestion) return;
     setEditModalTitle('Edit Key Insight');
@@ -631,139 +577,6 @@ export default function QuestionBankPage() {
     }
 
     return topic ? topic.title : tagCode;
-  };
-
-  // Helper to get active filters as display items
-  const getActiveFilters = () => {
-    const activeFilters: Array<{
-      label: string;
-      value: string;
-      type: string;
-      onRemove: () => void;
-    }> = [];
-
-    // Handle subject (can be array or single value)
-    const subjects = Array.isArray(filters.subject)
-      ? filters.subject
-      : filters.subject !== 'All'
-        ? [filters.subject]
-        : [];
-    subjects.forEach((subject) => {
-      activeFilters.push({
-        label: subject,
-        value: subject,
-        type: 'subject',
-        onRemove: () => {
-          const newSubjects = subjects.filter((s) => s !== subject);
-          setFilters({
-            ...filters,
-            subject: newSubjects.length > 0 ? newSubjects : 'All',
-          });
-        },
-      });
-    });
-
-    // Handle difficulty (can be array or single value)
-    const difficulties = Array.isArray(filters.difficulty)
-      ? filters.difficulty
-      : filters.difficulty !== 'All'
-        ? [filters.difficulty]
-        : [];
-    difficulties.forEach((difficulty) => {
-      activeFilters.push({
-        label: difficulty,
-        value: difficulty,
-        type: 'difficulty',
-        onRemove: () => {
-          const newDifficulties = difficulties.filter((d) => d !== difficulty);
-          setFilters({
-            ...filters,
-            difficulty: newDifficulties.length > 0 ? newDifficulties : 'All',
-          });
-        },
-      });
-    });
-
-    if (filters.attemptedStatus !== 'Mix') {
-      activeFilters.push({
-        label: filters.attemptedStatus,
-        value: filters.attemptedStatus,
-        type: 'attemptedStatus',
-        onRemove: () => setFilters({ ...filters, attemptedStatus: 'Mix' }),
-      });
-    }
-
-    // Handle attempt result (can be array or single value)
-    const attemptResults = Array.isArray(filters.attemptResult)
-      ? filters.attemptResult
-      : filters.attemptResult
-        ? [filters.attemptResult]
-        : [];
-    attemptResults.forEach((result) => {
-      activeFilters.push({
-        label: result,
-        value: result,
-        type: 'attemptResult',
-        onRemove: () => {
-          const newResults = attemptResults.filter((r) => r !== result);
-          setFilters({
-            ...filters,
-            attemptResult: newResults.length > 0 ? newResults : [],
-          });
-        },
-      });
-    });
-
-    if (filters.searchTag) {
-      activeFilters.push({
-        label: filters.searchTag,
-        value: filters.searchTag,
-        type: 'topic',
-        onRemove: () => setFilters({ ...filters, searchTag: '' }),
-      });
-    }
-
-    return activeFilters;
-  };
-
-  // Get filter color based on type
-  const getFilterColor = (type: string, value: string) => {
-    if (type === 'subject') {
-      const subjectColors: Record<string, string> = {
-        'Math 1': 'border border-maths/20 bg-maths/15 text-maths',
-        'Math 2': 'border border-accent/20 bg-accent/15 text-accent',
-        Physics: 'border border-physics/20 bg-physics/15 text-physics',
-        Chemistry:
-          'border border-chemistry/20 bg-chemistry/15 text-chemistry',
-        Biology: 'border border-primary/25 bg-primary/15 text-primary',
-        'Paper 1': 'border border-maths/20 bg-maths/15 text-maths',
-        'Paper 2': 'border border-physics/20 bg-physics/15 text-physics',
-      };
-      return subjectColors[value] || 'border border-border-subtle bg-surface-mid text-text-muted';
-    }
-    if (type === 'difficulty') {
-      if (value === 'Easy')
-        return 'border border-transparent bg-difficulty-easy text-background';
-      if (value === 'Medium')
-        return 'border border-transparent bg-warning text-text';
-      if (value === 'Hard')
-        return 'border border-transparent bg-error text-text';
-      return 'border border-border-subtle bg-surface-mid text-text-muted';
-    }
-    if (type === 'attemptedStatus') {
-      if (value === 'New' || value === 'Attempted')
-        return 'border border-border-subtle bg-surface-neutral text-text';
-      if (value === 'Mix')
-        return 'border border-border-subtle bg-surface-elevated text-text-muted';
-      return 'border border-border-subtle bg-surface-mid text-text-muted';
-    }
-    if (type === 'attemptResult') {
-      return 'border border-secondary/25 bg-secondary/12 text-secondary';
-    }
-    if (type === 'topic') {
-      return 'border border-border-subtle bg-surface-mid text-text-muted';
-    }
-    return 'border border-border-subtle bg-surface-mid text-text-muted';
   };
 
   const handleStartSession = useCallback(
@@ -943,90 +756,6 @@ export default function QuestionBankPage() {
         <Container size='lg' className='py-2'>
           <div className='space-y-6'>
             {isFreeLimitReached && <UpgradeCTA feature='unlimited questions' />}
-            {!sessionMode &&
-              drillWrongCount !== null &&
-              drillWrongCount > 0 && (
-                <div className='flex flex-wrap items-center justify-between gap-3 rounded-organic-xl border border-border-subtle bg-surface p-4 ring-1 ring-white/[0.06]'>
-                  <span className='text-sm text-text-muted'>
-                    You have{' '}
-                    <strong className='text-text'>{drillWrongCount}</strong>{' '}
-                    question{drillWrongCount === 1 ? '' : 's'} marked wrong.
-                  </span>
-                  <Link
-                    href='/questions/questionbank/drill'
-                    className='text-sm font-semibold text-primary transition-colors hover:text-primary/85'
-                  >
-                    Start drill
-                  </Link>
-                </div>
-              )}
-            {!sessionMode && (
-            <div className='flex flex-wrap items-stretch justify-between gap-3 rounded-organic-xl bg-surface px-4 py-3'>
-              <div className='flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-2'>
-                <span className='shrink-0 text-[11px] font-semibold uppercase tracking-wider text-text-muted'>
-                  Filters
-                </span>
-                <div className='flex min-w-0 flex-1 flex-wrap items-center gap-2'>
-                  {(() => {
-                    const activeFilters = getActiveFilters();
-                    if (activeFilters.length === 0) {
-                      return (
-                        <span className='text-xs text-text-subtle'>
-                          All questions
-                        </span>
-                      );
-                    }
-                    const groupedFilters: Record<
-                      string,
-                      typeof activeFilters
-                    > = {};
-                    activeFilters.forEach((filter) => {
-                      if (!groupedFilters[filter.type])
-                        groupedFilters[filter.type] = [];
-                      groupedFilters[filter.type].push(filter);
-                    });
-                    return (
-                      <div className='flex flex-wrap items-center gap-2'>
-                        {Object.entries(groupedFilters).map(([type, flist]) => (
-                          <div key={type} className='flex flex-wrap items-center gap-1'>
-                            {flist.map((filter, index) => (
-                              <span key={`${filter.type}-${filter.value}`} className='flex items-center'>
-                                <button
-                                  type='button'
-                                  onClick={filter.onRemove}
-                                  className={cn(
-                                    'rounded-organic-md px-2.5 py-1 text-xs font-medium transition-colors duration-fast ease-signature hover:opacity-80',
-                                    getFilterColor(filter.type, filter.value),
-                                  )}
-                                  aria-label={`Remove ${filter.label} filter`}
-                                >
-                                  {filter.label}
-                                </button>
-                                {index < flist.length - 1 && (
-                                  <span className='px-1 text-text-subtle'>/</span>
-                                )}
-                              </span>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-              <button
-                type='button'
-                onClick={() => setShowFilterPopup(true)}
-                className='flex shrink-0 items-center justify-center gap-2 self-center rounded-organic-md bg-surface-elevated px-3 py-2 text-text-muted transition-colors duration-fast ease-signature hover:bg-surface-mid hover:text-text'
-                title='Filters and session settings'
-              >
-                <Filter className='h-4 w-4' />
-                <span className='hidden text-xs font-semibold uppercase tracking-wider sm:inline'>
-                  Edit
-                </span>
-              </button>
-            </div>
-            )}
 
             {/* Loading State */}
             {isLoading && (
@@ -1059,8 +788,6 @@ export default function QuestionBankPage() {
                   selectedAnswer={selectedAnswer}
                   correctAnswer={currentQuestion.correct_option}
                   isCorrect={isCorrect}
-                  onEditQuestionStem={handleEditQuestionStem}
-                  onEditOption={handleEditOption}
                   answerRevealed={answerRevealed}
                   onRevealAnswer={() => setAnswerRevealed(true)}
                   allowRetry={isAnswered && !isCorrect && !answerRevealed}
@@ -1149,14 +876,6 @@ export default function QuestionBankPage() {
               </div>
             )}
 
-            {/* Filter Popup */}
-            <FilterPopup
-              isOpen={showFilterPopup}
-              onClose={() => setShowFilterPopup(false)}
-              filters={filters}
-              onFilterChange={setFilters}
-              onStartSession={handleStartSession}
-            />
           </div>
         </Container>
 
