@@ -50,7 +50,7 @@ const PANEL_SHELL = "rounded-organic-xl bg-surface-elevated";
 const PILL_SURFACE = "bg-surface-mid dark:bg-surface-mid";
 
 const PILL_BASE =
-  "rounded-organic-md px-2.5 py-1 text-[11px] font-semibold tracking-wide";
+  "rounded-organic-md px-3.5 py-1.5 text-xs font-semibold tracking-wide sm:px-4 sm:py-2 sm:text-sm";
 
 function difficultyBadgeClass(d: string): string {
   switch (d) {
@@ -328,17 +328,17 @@ export function QuestionCard({
     <div className="space-y-5">
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 gap-y-2">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 gap-y-2.5 sm:gap-3">
             {verified && (
               <span
                 className={cn(
                   PILL_BASE,
-                  "inline-flex items-center gap-1",
+                  "inline-flex items-center gap-1.5",
                   PILL_SURFACE,
                   "text-primary",
                 )}
               >
-                <BadgeCheck className="h-3.5 w-3.5 shrink-0" strokeWidth={2.25} />
+                <BadgeCheck className="h-4 w-4 shrink-0 sm:h-[1.125rem] sm:w-[1.125rem]" strokeWidth={2.25} />
                 Verified
               </span>
             )}
@@ -379,16 +379,16 @@ export function QuestionCard({
               (question.secondary_tags &&
                 question.secondary_tags.length > 0)) &&
               getTopicTitle && (
-                <div className="flex max-w-full flex-wrap items-center gap-1">
+                <div className="flex max-w-full flex-wrap items-center gap-2">
                   {question.primary_tag && (
-                    <span className={cn(PILL_BASE, PILL_SURFACE, "text-xs text-secondary")}>
+                    <span className={cn(PILL_BASE, PILL_SURFACE, "text-secondary")}>
                       {getTopicTitle(question.primary_tag)}
                     </span>
                   )}
                   {question.secondary_tags?.map((tag) => (
                     <span
                       key={tag}
-                      className={cn(PILL_BASE, PILL_SURFACE, "text-xs text-text-muted")}
+                      className={cn(PILL_BASE, PILL_SURFACE, "text-text-muted")}
                     >
                       {getTopicTitle(tag)}
                     </span>
