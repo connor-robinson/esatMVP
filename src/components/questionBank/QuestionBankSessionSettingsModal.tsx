@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, ArrowRight, Minus, Plus } from "lucide-react";
+import { X, ArrowRight, Minus, Plus, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SubjectFilter } from "@/types/questionBank";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
@@ -202,10 +202,6 @@ export function QuestionBankSessionSettingsModal({
     });
   };
 
-  const clearAllSubjectsKeepOrigin = () => {
-    if (originTile) setSubjectKeys([originTile.key as SubjectFilter]);
-  };
-
   const applyAutoTimeLimit = () => {
     setMinutes(autoTimeLimitMinutes(questionCount));
   };
@@ -342,86 +338,75 @@ export function QuestionBankSessionSettingsModal({
                 );
               })}
             </div>
-            {noneDifficultySelected ? (
-              <p className="text-[11px] leading-relaxed text-text-muted">
-                All four levels included.
-              </p>
-            ) : null}
           </div>
         </div>
 
         {/* Time + questions */}
         <div className="mt-8">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
-              Time Limit
-            </label>
-            <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
-              Number Of Questions
-            </label>
-            <NumericStepper
-              value={minutes}
-              onChange={setMinutes}
-              min={TIME_MIN}
-              max={TIME_MAX}
-              suffix="min"
-              ariaLabel="Time limit in minutes"
-            />
-            <NumericStepper
-              value={questionCount}
-              onChange={setQuestionCount}
-              min={QUESTION_MIN}
-              max={QUESTION_MAX}
-              suffix="Qs"
-              ariaLabel="Number of questions"
-            />
-            <button
-              type="button"
-              onClick={applyAutoTimeLimit}
-              className={cn(
-                "justify-self-start rounded-organic-md px-3 py-1.5 text-[11px] font-semibold transition-colors",
-                minutes === autoMinutes
-                  ? "bg-secondary/20 text-secondary"
-                  : "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
-              )}
-            >
-              Auto time limit ({autoMinutes} min)
-            </button>
-            <div className="hidden sm:block" aria-hidden />
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+            <div className="space-y-3">
+              <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                Time Limit
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <NumericStepper
+                    value={minutes}
+                    onChange={setMinutes}
+                    min={TIME_MIN}
+                    max={TIME_MAX}
+                    suffix="min"
+                    ariaLabel="Time limit in minutes"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={applyAutoTimeLimit}
+                  disabled={minutes === autoMinutes}
+                  title={`Reset to ${autoMinutes} min (1.5× questions)`}
+                  className={cn(
+                    "flex h-12 shrink-0 items-center gap-1.5 rounded-organic-lg px-3 text-xs font-semibold transition-colors",
+                    "bg-surface-elevated text-text-muted hover:bg-surface-mid hover:text-text",
+                    "disabled:cursor-default disabled:opacity-45 disabled:hover:bg-surface-elevated disabled:hover:text-text-muted",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
+                  )}
+                  aria-label={`Reset time limit to ${autoMinutes} minutes`}
+                >
+                  <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <label className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                Number Of Questions
+              </label>
+              <NumericStepper
+                value={questionCount}
+                onChange={setQuestionCount}
+                min={QUESTION_MIN}
+                max={QUESTION_MAX}
+                suffix="Qs"
+                ariaLabel="Number of questions"
+              />
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="mt-10 flex flex-col gap-5 pt-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-text">
-            <span className="font-medium">
-              {subjectKeys.length}{" "}
-              {subjectKeys.length === 1 ? "subject" : "subjects"}
-            </span>
-            {showSubjectToggles && (
-              <>
-                {" · "}
-                <button
-                  type="button"
-                  onClick={clearAllSubjectsKeepOrigin}
-                  className="font-medium text-text-muted underline-offset-4 hover:text-secondary hover:underline"
-                >
-                  Reset subjects
-                </button>
-              </>
-            )}
-          </div>
+        <div className="mt-10 flex justify-end pt-2">
           <button
             type="button"
             onClick={handleStart}
             className={cn(
-              "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full px-10 py-3.5 sm:w-auto",
-              "bg-secondary text-background text-sm font-semibold shadow-glow transition-all hover:brightness-110",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35",
+              "inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-organic-lg px-8 sm:w-auto",
+              "bg-secondary text-background text-sm font-semibold shadow-glow transition-all duration-fast",
+              "hover:brightness-110 active:scale-[0.98]",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
             )}
           >
             Start your session
-            <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
+            <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
           </button>
         </div>
       </div>
