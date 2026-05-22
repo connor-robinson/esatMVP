@@ -4,7 +4,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple  # Callable used by _styled_system
 
 TraceFn = Optional[Callable[[str], None]]
 
@@ -120,8 +120,16 @@ def _ensure_svg_root_attrs(svg: str) -> str:
     return out
 
 
+def _use_theme_colors() -> bool:
+    """Literal #111/#222 for print fidelity by default; set QUALITY_GATE_SVG_THEME_COLORS=1 for currentColor."""
+    v = (os.environ.get("QUALITY_GATE_SVG_THEME_COLORS") or "").strip().lower()
+    return v in ("1", "true", "yes", "on")
+
+
 def _normalize_dark_svg_colors(svg: str) -> str:
-    # Keep transparent fill semantics; map hard dark colors to currentColor for theme-safe render.
+    if not _use_theme_colors():
+        return svg
+    # Optional: map hard dark colors to currentColor for theme-safe render in the review app.
     out = svg
     out = re.sub(r'(\b(?:stroke|fill)\s*=\s*["\'])#(?:000|000000|111|111111|222|222222|333|333333)(["\'])',
                  r"\1currentColor\2", out, flags=re.I)
@@ -135,14 +143,32 @@ def _has_drawable_elements(svg: str) -> bool:
     return re.search(r"<(?:line|circle|rect|path|polyline|polygon|ellipse|text|image)\b", svg, flags=re.I) is not None
 
 
-def normalize_generated_svg(svg: str) -> Optional[str]:
+def normalize_generated_svg(svg: str, *, trace: TraceFn = None) -> Optional[str]:
     if not svg or "<svg" not in svg.lower():
         return None
     out = _ensure_svg_root_attrs(svg)
     out = _normalize_dark_svg_colors(out)
     if not _has_drawable_elements(out):
         return None
-    return out.strip()
+    out = out.strip()
+    try:
+        from .svg_style import lint_svg_exam_style
+
+        for issue in lint_svg_exam_style(out):
+            if trace:
+                try:
+                    trace(f"[svg:lint] {issue}")
+                except Exception:
+                    pass
+    except ImportError:
+        pass
+    return out
+
+
+def _styled_system(loader: Callable[[], str]) -> str:
+    from .svg_style import append_exam_style_to_system
+
+    return append_exam_style_to_system(loader())
 
 
 def parse_merged_html_delimited(text: str) -> Optional[str]:
@@ -191,7 +217,7 @@ def build_diagram_request_payload(
         "diagram_brief": (diagram_brief or "").strip(),
         "required_elements": list(required_elements or []),
         "optional_elements": list(optional_elements or []),
-        "style_target": "TMUA-style monochrome exam diagram",
+        "style_target": "TMUA/Cambridge printed exam diagram (Times serif, thin #111 strokes, sparse labels)",
         "output_size": output_size,
         "notes": (notes or "").strip(),
     }
@@ -254,7 +280,11 @@ def generate_svg_via_pipeline(
         f"brief_chars={len(diagram_brief or '')} payload_json_chars={len(payload_str)}"
     )
     archetypes = load_svg_archetypes()
-    scene_sys = load_svg_scene_prompt() + "\n\n---\n\nARCHETYPE_LIBRARY\n\n" + archetypes
+    scene_sys = (
+        _styled_system(load_svg_scene_prompt)
+        + "\n\n---\n\nARCHETYPE_LIBRARY\n\n"
+        + archetypes
+    )
     scene = _json_llm(
         llm,
         model,
@@ -276,7 +306,7 @@ def generate_svg_via_pipeline(
     layout = _json_llm(
         llm,
         model,
-        system=load_svg_layout_prompt(),
+        system=_styled_system(load_svg_layout_prompt),
         user=layout_user,
         trace_label="quality_gate_svg_layout",
         temperature=0.2,
@@ -297,7 +327,7 @@ def generate_svg_via_pipeline(
     col = _json_llm(
         llm,
         model,
-        system=load_svg_collision_prompt(),
+        system=_styled_system(load_svg_collision_prompt),
         user=collision_user,
         trace_label="quality_gate_svg_collision",
         temperature=0.1,
@@ -322,13 +352,13 @@ def generate_svg_via_pipeline(
     )
     raw_svg = llm.generate(
         model,
-        load_svg_render_prompt(),
+        _styled_system(load_svg_render_prompt),
         render_user,
         temperature=0.15,
         trace_label="quality_gate_svg_render",
     )
     chunks.append("[render_raw]\n" + raw_svg[:2500])
-    svg = normalize_generated_svg(extract_raw_svg(raw_svg) or "")
+    svg = normalize_generated_svg(extract_raw_svg(raw_svg) or "", trace=trace)
     _t(
         f"[diagram:pipeline] 4/5 render — raw_chars={len(raw_svg or '')} "
         f"extracted_svg={'yes' if svg else 'no'} svg_chars={len(svg or '')}"
@@ -359,7 +389,7 @@ def generate_svg_for_graph_candidate(
             except Exception:
                 pass
 
-    system = load_svg_generator_instructions()
+    system = _styled_system(load_svg_generator_instructions)
     user = (
         "Generate the SVG for this request JSON:\n\n"
         + build_diagram_request_payload(
@@ -377,7 +407,7 @@ def generate_svg_for_graph_candidate(
         temperature=temperature,
         trace_label="quality_gate_svg_diagram",
     )
-    svg = normalize_generated_svg(extract_raw_svg(raw) or "")
+    svg = normalize_generated_svg(extract_raw_svg(raw) or "", trace=trace)
     _t(
         f"[diagram:single_shot] output raw_chars={len(raw or '')} extracted_svg={'yes' if svg else 'no'} "
         f"svg_chars={len(svg or '')}"

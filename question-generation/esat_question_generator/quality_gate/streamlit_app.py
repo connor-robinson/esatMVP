@@ -721,7 +721,12 @@ with tab_after:
 
     review_base = _review_base_url()
 
-    st.markdown("#### 1. Operator queue — who needs an image diagram?")
+    st.markdown("#### 1. Operator queue — who needs a diagram?")
+    st.caption(
+        "The queue only marks **which rows to process**. When you run backfill (section 2), each row is "
+        "**classified at run time** (Gemini brief): **graphs/plots → inline SVG**, **apparatus diagrams → Imagen**. "
+        "The table does not pre-show SVG vs Imagen until after a run (see **route** in per-row results)."
+    )
     st.caption(
         f"Load rows, set **{_DIAGRAM_QUEUE_COLUMN}** to **{_IMAGE_QUEUE_LABEL}** or **{_SKIP_QUEUE_LABEL}**, "
         "then save. Use the bulk buttons to queue many rows at once."
