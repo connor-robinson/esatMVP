@@ -271,52 +271,52 @@ export function QuestionCard({
 
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "cursor-default bg-primary/12";
+      return "cursor-default border-primary/25 bg-primary/10";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "cursor-default bg-primary/12";
+      return "cursor-default border-primary/25 bg-primary/10";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "cursor-default bg-error/10";
+      return "cursor-default border-error/25 bg-error/8";
     }
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
         if (localSelectedAnswer === letter) {
-          return "cursor-pointer bg-surface-neutral dark:bg-surface-mid";
+          return "cursor-pointer border-border bg-surface-mid dark:bg-surface-neutral";
         }
         return cn(
-          "cursor-pointer bg-transparent hover:bg-surface-mid transition-colors duration-fast ease-signature",
+          "cursor-pointer border-border-subtle bg-surface-elevated/40 hover:bg-surface-mid dark:bg-surface-elevated/30",
           hoveredOption === letter && "bg-surface-mid",
         );
       }
-      return "cursor-default opacity-70";
+      return "cursor-default border-border-subtle/60 opacity-70";
     }
     if (localSelectedAnswer === letter) {
-      return "cursor-pointer bg-surface-neutral dark:bg-surface-mid";
+      return "cursor-pointer border-border bg-surface-mid dark:bg-surface-neutral";
     }
     return cn(
-      "cursor-pointer bg-transparent hover:bg-surface-mid transition-colors duration-fast ease-signature",
+      "cursor-pointer border-border-subtle bg-surface-elevated/40 hover:bg-surface-mid dark:bg-surface-elevated/30",
       hoveredOption === letter && "bg-surface-mid",
     );
   };
 
-  const letterBadgeClass = (letter: string) => {
+  const letterLabelClass = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "bg-primary/20 text-primary";
+      return "text-primary";
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "bg-primary/20 text-primary";
+      return "text-primary";
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
-      return "bg-error/15 text-error";
+      return "text-error";
     }
     if (
       localSelectedAnswer === letter &&
       (!isAnswered || (isAnswered && allowRetry && !incorrectAnswers.has(letter)))
     ) {
-      return "bg-surface-neutral text-text dark:bg-surface-neutral";
+      return "text-text";
     }
-    return "bg-surface-mid text-text-muted dark:bg-surface-neutral/80";
+    return "text-text-muted";
   };
 
   const stemTypography = cn(
@@ -423,7 +423,7 @@ export function QuestionCard({
       </div>
 
       <div className={cn(PANEL_SHELL, "p-5 sm:p-6")}>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-3">
           {optionLetters.map((letter) => (
             <div key={letter} className="relative">
               <button
@@ -435,21 +435,21 @@ export function QuestionCard({
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
                 className={cn(
-                  "relative w-full rounded-organic-lg py-3 pl-4 pr-3 text-left transition-all duration-fast ease-signature sm:py-3.5",
+                  "relative w-full rounded-organic-md border px-4 py-3.5 text-left transition-all duration-fast ease-signature sm:py-4",
                   getOptionStyle(letter),
                 )}
               >
-                <div className="flex items-center gap-3">
-                  <div
+                <div className="flex items-start gap-3 sm:items-center">
+                  <span
                     className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-sm font-bold transition-colors duration-fast ease-signature",
-                      letterBadgeClass(letter),
+                      "w-6 shrink-0 pt-0.5 text-sm font-semibold tabular-nums sm:pt-0",
+                      letterLabelClass(letter),
                     )}
                   >
-                    {letter}
-                  </div>
+                    {letter}.
+                  </span>
 
-                  <div className={cn("flex flex-1 items-center gap-3", stemTypography)}>
+                  <div className={cn("flex min-w-0 flex-1 items-center gap-3", stemTypography)}>
                     <MathContent
                       content={question.options[letter]}
                       className="text-inherit"
