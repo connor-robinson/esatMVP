@@ -2,25 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import {
-  Plus,
-  Minus,
-  X,
-  Divide,
-  Hash,
-  type LucideIcon,
-} from 'lucide-react';
+import { LUCIDE_ICON_MAP } from '@/config/drillDisplayFolders';
 import { renderMath } from '@/hooks/useKaTeX';
-import type { DrillPreview } from '@/config/arithmeticDrillPreviews';
+import type { DrillPreview } from '@/config/drillPreviews';
+import type { FolderSymbol } from '@/config/drillDisplayFolders';
 import { cn } from '@/lib/utils';
-
-const LUCIDE_MAP: Record<string, LucideIcon> = {
-  Plus,
-  Minus,
-  X,
-  Divide,
-  Hash,
-};
 
 const katexInherit =
   '[&_.katex]:!text-[inherit] [&_.katex-html]:!text-[inherit]';
@@ -41,7 +27,7 @@ function getSampleCycleTiming(seed: string): {
 }
 
 type ArithmeticDrillPreviewProps = {
-  preview: DrillPreview | { kind: 'lucide'; iconKey: string };
+  preview: DrillPreview | FolderSymbol;
   size?: 'folder' | 'card';
   className?: string;
   selected?: boolean;
@@ -84,7 +70,7 @@ export function ArithmeticDrillPreview({
   selected = false,
 }: ArithmeticDrillPreviewProps) {
   if (preview.kind === 'lucide') {
-    const Icon = LUCIDE_MAP[preview.iconKey] ?? Hash;
+    const Icon = LUCIDE_ICON_MAP[preview.iconKey] ?? LUCIDE_ICON_MAP.Hash;
     const iconClass =
       size === 'folder'
         ? cn('h-8 w-8', selected ? 'text-primary' : 'text-primary/85')
@@ -167,7 +153,7 @@ export function ArithmeticVariantExample({
   useEffect(() => {
     if (!canCycle) return;
 
-    let intervalId: ReturnType<typeof setInterval> | undefined;
+    let intervalId: number | undefined;
 
     const timeoutId = window.setTimeout(() => {
       intervalId = window.setInterval(() => {
@@ -177,7 +163,7 @@ export function ArithmeticVariantExample({
 
     return () => {
       window.clearTimeout(timeoutId);
-      if (intervalId) window.clearInterval(intervalId);
+      if (intervalId !== undefined) window.clearInterval(intervalId);
     };
   }, [canCycle, samples.length, intervalMs, initialDelayMs]);
 

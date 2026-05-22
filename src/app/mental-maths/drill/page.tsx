@@ -124,7 +124,7 @@ export default function BuilderPage() {
             >
               <DrillVariantsGrid
                 topicId={selectedTopicId}
-                isArithmeticCategory={selectedCategory === 'arithmetic'}
+                drillCategory={selectedCategory}
                 selectedTopicIds={builder.selectedTopicVariants.map((tv) => `${tv.topicId}-${tv.variantId}`)}
                 onAddVariant={builder.addTopic}
                 onRemoveVariant={builder.removeTopicVariant}
