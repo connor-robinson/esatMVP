@@ -10,6 +10,7 @@ import {
   usesCompactFolderGrid,
 } from '@/config/drillDisplayFolders';
 import { DrillFolderGrid } from '@/components/builder/DrillFolderGrid';
+import { DrillPanelTransition } from '@/components/builder/DrillPanelTransition';
 import { cn } from '@/lib/utils';
 
 export type HighLevelCategory =
@@ -103,21 +104,26 @@ export function TopicFolders({
         </span>
       </div>
 
-      <div className='flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-6 pt-4'>
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden px-6 pb-6 pt-4'>
         {useFolderGrid && selectedCategory ? (
           categoryTopics.length === 0 ? (
             <div className='py-8 text-center text-sm text-text-subtle'>
               Select a category
             </div>
           ) : (
-            <DrillFolderGrid
-              category={selectedCategory}
-              accessibleTopicIds={accessibleTopicIds}
-              selectedFolderId={selectedTopicId}
-              onSelectFolder={onSelectTopic}
-              selectedTopicIds={selectedTopicIds}
-              showUpgradeCard={showUpgradeCard}
-            />
+            <DrillPanelTransition
+              panelKey={selectedCategory}
+              className='min-h-0 flex-1 overflow-y-auto'
+            >
+              <DrillFolderGrid
+                category={selectedCategory}
+                accessibleTopicIds={accessibleTopicIds}
+                selectedFolderId={selectedTopicId}
+                onSelectFolder={onSelectTopic}
+                selectedTopicIds={selectedTopicIds}
+                showUpgradeCard={showUpgradeCard}
+              />
+            </DrillPanelTransition>
           )
         ) : (
           <div className='py-8 text-center text-sm text-text-subtle'>
