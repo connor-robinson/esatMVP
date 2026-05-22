@@ -262,14 +262,14 @@ export function QuestionBankHomeScreen() {
           </div>
         </section>
 
-        {/* Browse by subjects */}
-        <section className="space-y-5">
+        {/* Browse by subjects + cards */}
+        <section className="rounded-organic-xl bg-surface px-5 py-5 sm:px-7 sm:py-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-text sm:text-xl">
+              <h2 className="text-base font-semibold text-text sm:text-lg">
                 Browse By Subjects
               </h2>
-              <p className="mt-1 text-sm text-text-muted">
+              <p className="mt-0.5 text-xs text-text-muted">
                 Target specific modules for focused exam preparation.
               </p>
             </div>
@@ -281,16 +281,16 @@ export function QuestionBankHomeScreen() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className={cn(
-                  "h-11 w-full rounded-organic-lg bg-surface-elevated py-2 pl-10 pr-4",
-                  "text-sm text-text placeholder:text-text-muted",
-                  "outline-none ring-0 focus:outline-none focus:ring-1 focus:ring-secondary/25",
+                  "h-10 w-full rounded-organic-lg border-0 bg-surface-elevated py-2 pl-10 pr-4",
+                  "text-sm text-text placeholder:text-text-muted shadow-none",
+                  "outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0",
                 )}
                 aria-label="Search subjects"
               />
             </div>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {filteredTiles.map((tile) => {
               const stats = tiles[tile.key];
               const pct =
