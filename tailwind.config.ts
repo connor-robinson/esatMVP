@@ -151,6 +151,7 @@ const config: Config = {
         "glow-in": "glowIn 200ms cubic-bezier(0.32, 0.72, 0, 1)",
         "soft-scale": "softScale 120ms cubic-bezier(0.32, 0.72, 0, 1)",
         "gentle-slide": "gentleSlide 200ms cubic-bezier(0.32, 0.72, 0, 1)",
+        "loading-dot": "loadingDot 1.1s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -185,6 +186,10 @@ const config: Config = {
         gentleSlide: {
           "0%": { transform: "translateY(8px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        loadingDot: {
+          "0%, 100%": { opacity: "0.15" },
+          "50%": { opacity: "1" },
         },
       },
       boxShadow: {

@@ -3,8 +3,9 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Search, Loader2 } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { Container } from "@/components/layout/Container";
+import { LoadingEllipsis } from "@/components/shared/LoadingEllipsis";
 import { QUESTION_BANK_HOME_LAUNCH_KEY } from "@/lib/questionBank/homeLaunch";
 import type { QuestionBankHomeLaunchPayload } from "@/lib/questionBank/homeLaunch";
 import { QuestionBankSessionSettingsModal } from "@/components/questionBank/QuestionBankSessionSettingsModal";
@@ -235,9 +236,8 @@ export function QuestionBankHomeScreen() {
 
           <div className="mt-6">
             {isLoadingProgress ? (
-              <div className="flex h-9 items-center gap-2 text-xs text-text-muted">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Loading progress…
+              <div className="flex h-9 items-center text-xs text-text-muted">
+                <LoadingEllipsis />
               </div>
             ) : (
               <>
@@ -322,9 +322,11 @@ export function QuestionBankHomeScreen() {
                           tile.statClass,
                         )}
                       >
-                        {stats.loading
-                          ? "…"
-                          : `${stats.attempted} / ${stats.total} questions done`}
+                        {stats.loading ? (
+                          <LoadingEllipsis className={tile.statClass} />
+                        ) : (
+                          `${stats.attempted} / ${stats.total} Qs done`
+                        )}
                       </p>
                       <button
                         type="button"
