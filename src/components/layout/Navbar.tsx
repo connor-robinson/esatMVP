@@ -35,7 +35,6 @@ const papersNavItems = [
 
 const questionsNavItems = [
   { href: '/questions', label: 'Home' },
-  { href: '/questions/questionbank', label: 'Practice' },
   { href: '/questions/library', label: 'Library' },
   { href: '/questions/questionbank/drill', label: 'Drill' },
 ];
