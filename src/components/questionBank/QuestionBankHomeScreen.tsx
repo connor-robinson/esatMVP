@@ -303,11 +303,11 @@ export function QuestionBankHomeScreen() {
                 <div
                   key={tile.key}
                   className={cn(
-                    "flex min-h-[220px] flex-col rounded-[18px] bg-surface-elevated px-6 pb-5 pt-7",
+                    "flex min-h-[220px] flex-col rounded-[18px] bg-surface-elevated px-6 py-5",
                     "transition-colors hover:bg-surface-mid/50",
                   )}
                 >
-                  <div className="text-center">
+                  <div className="flex flex-1 items-center justify-center text-center">
                     <p
                       className={cn(
                         "whitespace-nowrap text-base font-semibold leading-snug",
@@ -318,7 +318,7 @@ export function QuestionBankHomeScreen() {
                     </p>
                   </div>
 
-                  <div className="mt-auto pt-3">
+                  <div className="pt-3">
                     <div className="flex items-center justify-between gap-3">
                       <div
                         className={cn(
