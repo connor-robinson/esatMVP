@@ -271,7 +271,10 @@ export function QuestionCard({
 
   /** Option row fill: one step darker (light) / lighter (dark) than the MCQ panel. */
   const OPTION_ROW_BASE =
-    "bg-surface-mid hover:bg-surface-neutral dark:hover:bg-surface-elevated";
+    "bg-surface-mid hover:bg-surface-neutral/80 dark:hover:bg-surface-elevated/90";
+  /** Selected: darker than row base (light), lighter than row base (dark). */
+  const OPTION_ROW_SELECTED =
+    "bg-surface-dark/20 dark:bg-surface-elevated";
 
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
@@ -286,24 +289,25 @@ export function QuestionCard({
     if (isAnswered && !isCorrect && !answerRevealed) {
       if (allowRetry) {
         if (localSelectedAnswer === letter) {
-          return "cursor-pointer bg-surface-neutral dark:bg-surface-elevated";
+          return cn("cursor-pointer", OPTION_ROW_SELECTED);
         }
         return cn(
           "cursor-pointer",
           OPTION_ROW_BASE,
           hoveredOption === letter &&
-            "bg-surface-neutral dark:bg-surface-elevated",
+            "bg-surface-neutral/80 dark:bg-surface-elevated/90",
         );
       }
       return cn("cursor-default opacity-70", OPTION_ROW_BASE);
     }
     if (localSelectedAnswer === letter) {
-      return "cursor-pointer bg-surface-neutral dark:bg-surface-elevated";
+      return cn("cursor-pointer", OPTION_ROW_SELECTED);
     }
     return cn(
       "cursor-pointer",
       OPTION_ROW_BASE,
-      hoveredOption === letter && "bg-surface-neutral dark:bg-surface-elevated",
+      hoveredOption === letter &&
+        "bg-surface-neutral/80 dark:bg-surface-elevated/90",
     );
   };
 
@@ -412,7 +416,7 @@ export function QuestionCard({
 
         <div className={cn(stemTypography, "inline-block w-full")}>
           {questionNumber != null ? (
-            <span className="mr-0.5 font-semibold tabular-nums text-text">
+            <span className="mr-0.5 font-normal tabular-nums text-text">
               {questionNumber}.{" "}
             </span>
           ) : null}
@@ -429,8 +433,8 @@ export function QuestionCard({
         </div>
       </div>
 
-      <div className={cn(PANEL_SHELL, "p-5 sm:p-6")}>
-        <div className="flex flex-col gap-3">
+      <div className={cn(PANEL_SHELL, "p-4 sm:p-5")}>
+        <div className="flex flex-col gap-2.5">
           {optionLetters.map((letter) => (
             <div key={letter} className="relative">
               <button
@@ -442,21 +446,26 @@ export function QuestionCard({
                 onMouseLeave={() => setHoveredOption(null)}
                 disabled={isAnswered && !allowRetry && !answerRevealed}
                 className={cn(
-                  "relative w-full rounded-organic-md px-4 py-3.5 text-left transition-all duration-fast ease-signature sm:py-4",
+                  "relative w-full rounded-organic-md px-3.5 py-2.5 text-left transition-all duration-fast ease-signature sm:px-4 sm:py-3",
                   getOptionStyle(letter),
                 )}
               >
-                <div className="flex items-start gap-4 sm:items-center">
+                <div className="flex items-start gap-3 sm:items-center">
                   <span
                     className={cn(
-                      "w-7 shrink-0 text-base font-bold tabular-nums leading-none sm:text-[1.05rem]",
+                      "w-6 shrink-0 text-sm font-semibold tabular-nums leading-none",
                       letterLabelClass(letter),
                     )}
                   >
                     {letter}
                   </span>
 
-                  <div className={cn("flex min-w-0 flex-1 items-center gap-3", stemTypography)}>
+                  <div
+                    className={cn(
+                      "flex min-w-0 flex-1 items-center gap-2.5 text-[0.98rem] leading-relaxed tracking-tight sm:text-[1.02rem]",
+                      "font-sans text-text",
+                    )}
+                  >
                     <MathContent
                       content={question.options[letter]}
                       className="text-inherit"
