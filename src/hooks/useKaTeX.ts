@@ -287,17 +287,18 @@ function renderTextSegmentHtml(contentStr: string): string {
 
   const paragraphs = contentStr
     .split(/\n\n+/)
-    .map((p) => String(p).replace(/\n/g, " "))
-    .filter((p) => p.trim().length > 0);
+    .map((p) => String(p).replace(/\n/g, " ").trim())
+    .filter((p) => p.length > 0);
 
   if (paragraphs.length === 0) return "";
   if (paragraphs.length === 1) {
     return renderMathTextSegment(paragraphs[0]);
   }
   return paragraphs
-    .map(
-      (para) =>
-        `<p class="stem-para" style="margin:0 0 0.75em 0">${renderMathTextSegment(para)}</p>`,
+    .map((para, index) =>
+      index === 0
+        ? renderMathTextSegment(para)
+        : `<br /><br />${renderMathTextSegment(para)}`,
     )
     .join("");
 }
@@ -316,11 +317,9 @@ function needsGlueSpace(prev: RenderedPart, next: RenderedPart): boolean {
   return false;
 }
 
-/** Single-line $$...$$ should flow with prose, not as a block paragraph. */
+/** Only true multi-line display math should break onto its own block. */
 function isInlineFriendlyDisplayMath(content: string): boolean {
-  const t = content.trim();
-  if (!t) return true;
-  return !t.includes("\n");
+  return !content.includes("\n");
 }
 
 function joinRenderedParts(parts: RenderedPart[]): string {

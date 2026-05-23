@@ -118,9 +118,8 @@
 
   .math-content .math-inline-wrap {
     display: inline;
-    margin: 0 0.12em;
+    margin: 0 0.08em;
     vertical-align: baseline;
-    white-space: nowrap;
   }
 
   .math-content .math-inline-wrap > .katex {
@@ -129,7 +128,24 @@
     text-indent: 0;
   }
 
+  .math-content .math-inline-wrap > .katex .katex-html {
+    display: inline;
+  }
+
   .math-content .katex:not(.katex-display) {
+    display: inline;
+  }
+
+  .math-content .katex:not(.katex-display) .katex-html {
+    display: inline;
+  }
+
+  .math-content .math-inline-wrap > .katex.katex-display {
+    display: inline;
+    margin: 0;
+  }
+
+  .math-content .math-inline-wrap > .katex.katex-display > .katex-html {
     display: inline;
   }
 

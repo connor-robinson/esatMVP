@@ -19,6 +19,7 @@ import {
   SolutionModal,
 } from '@/components/questionBank/SolutionModal';
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
+import { QuestionRawDebugModal } from '@/components/questionBank/QuestionRawDebugModal';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { useQuestionEditor } from '@/hooks/useQuestionEditor';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -33,6 +34,7 @@ import {
   Eye,
   AlertCircle,
   Lightbulb,
+  Code2,
 } from 'lucide-react';
 import type {
   QuestionBankQuestion,
@@ -136,6 +138,7 @@ export default function QuestionBankPage() {
   const [answerRevealed, setAnswerRevealed] = useState(false);
   const [showDetailedExplanation, setShowDetailedExplanation] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [showRawDebug, setShowRawDebug] = useState(false);
   const [currentSelection, setCurrentSelection] = useState<string | null>(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState<Set<string>>(
     new Set(),
@@ -811,6 +814,16 @@ export default function QuestionBankPage() {
                 </div>
 
                 <div className='flex shrink-0 flex-wrap items-center gap-2 sm:justify-end'>
+                  <button
+                    type='button'
+                    onClick={() => setShowRawDebug(true)}
+                    className={SESSION_BAR_BTN_SECONDARY}
+                    title='View raw question text'
+                  >
+                    <Code2 className='h-4 w-4 shrink-0' />
+                    Raw
+                  </button>
+
                   {currentQuestion.solution_key_insight && (
                     <button
                       type='button'
@@ -926,6 +939,14 @@ export default function QuestionBankPage() {
               </div>
             </Container>
           </div>
+        )}
+
+        {activeSession && currentQuestion && (
+          <QuestionRawDebugModal
+            isOpen={showRawDebug}
+            onClose={() => setShowRawDebug(false)}
+            question={currentQuestion}
+          />
         )}
       </div>
 

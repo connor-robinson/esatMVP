@@ -269,12 +269,13 @@ export function QuestionCard({
     onAnswerSubmit(localSelectedAnswer, correct);
   };
 
-  /** Option row fill: one step darker (light) / lighter (dark) than the MCQ panel. */
+  /** Option rows: subtle fill in light, mid in dark; selected one step darker/lighter. */
   const OPTION_ROW_BASE =
-    "bg-surface-mid hover:bg-surface-neutral/80 dark:hover:bg-surface-elevated/90";
-  /** Selected: darker than row base (light), lighter than row base (dark). */
+    "bg-surface-subtle dark:bg-surface-mid";
   const OPTION_ROW_SELECTED =
-    "bg-surface-dark/20 dark:bg-surface-elevated";
+    "bg-surface-mid dark:bg-folder-card-selected";
+  const OPTION_ROW_HOVER =
+    "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
@@ -294,8 +295,8 @@ export function QuestionCard({
         return cn(
           "cursor-pointer",
           OPTION_ROW_BASE,
-          hoveredOption === letter &&
-            "bg-surface-neutral/80 dark:bg-surface-elevated/90",
+          OPTION_ROW_HOVER,
+          hoveredOption === letter && "bg-surface-mid/70 dark:bg-surface-neutral",
         );
       }
       return cn("cursor-default opacity-70", OPTION_ROW_BASE);
@@ -306,8 +307,8 @@ export function QuestionCard({
     return cn(
       "cursor-pointer",
       OPTION_ROW_BASE,
-      hoveredOption === letter &&
-        "bg-surface-neutral/80 dark:bg-surface-elevated/90",
+      OPTION_ROW_HOVER,
+      hoveredOption === letter && "bg-surface-mid/70 dark:bg-surface-neutral",
     );
   };
 
@@ -468,7 +469,7 @@ export function QuestionCard({
                   >
                     <MathContent
                       content={question.options[letter]}
-                      className="text-inherit"
+                      className="text-inherit inline"
                     />
                     {incorrectAnswers.has(letter) &&
                       letter !== correctAnswer &&
