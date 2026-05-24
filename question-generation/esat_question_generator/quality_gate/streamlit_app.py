@@ -688,6 +688,49 @@ def _combined_log_text(state: dict | None, *, n: int = 120) -> str:
     return "(no log output yet — check Live progress above; scoring may still be running)"
 
 
+def _mark_run_state_stopped() -> None:
+    """Clear ``running`` so a dead subprocess does not block the next Start click."""
+    from datetime import datetime, timezone
+
+    state = _load_state()
+    if not state:
+        return
+    state["running"] = False
+    state["last_update"] = datetime.now(timezone.utc).isoformat()
+    STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _subprocess_creationflags() -> int:
+    if sys.platform != "win32":
+        return 0
+    return int(subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS)  # type: ignore[attr-defined]
+
+
+def _heal_zombie_run_state(proc: Any) -> None:
+    """
+    Streamlit reruns can orphan/kill the child on Windows while ``run_state.json`` still says running.
+  """
+    state = _load_state()
+    if not state or not state.get("running"):
+        return
+    if proc is not None and proc.poll() is None:
+        return
+    updated = _parse_state_timestamp(state.get("last_update"))
+    if not updated:
+        _mark_run_state_stopped()
+        return
+    from datetime import datetime, timezone
+
+    age_s = (datetime.now(timezone.utc) - updated).total_seconds()
+    stats = state.get("stats") if isinstance(state.get("stats"), dict) else {}
+    proc_n = int(stats.get("processed") or 0)
+    if proc_n == 0 and age_s > 30:
+        _mark_run_state_stopped()
+        return
+    if age_s > 120:
+        _mark_run_state_stopped()
+
+
 def _parse_state_timestamp(raw: Any) -> Optional["datetime"]:
     from datetime import datetime, timezone
 
@@ -729,10 +772,14 @@ def _scoring_status(proc: Any, state: dict | None) -> dict[str, Any]:
         updated = _parse_state_timestamp(state.get("last_update"))
         if updated:
             age_s = (datetime.now(timezone.utc) - updated).total_seconds()
-            if age_s > 180:
+            stats = state.get("stats") if isinstance(state.get("stats"), dict) else {}
+            proc_n = int(stats.get("processed") or 0)
+            if proc_n == 0 and age_s > 30:
+                out["stale"] = True
+            elif age_s > 180:
                 out["stale"] = True
 
-    alive = out["subprocess_alive"] or out["state_running"]
+    alive = out["subprocess_alive"] or (out["state_running"] and not out["stale"])
     if alive and not out["stale"]:
         stats = state.get("stats") if state else {}
         proc_n = stats.get("processed", 0) if isinstance(stats, dict) else 0
@@ -940,16 +987,47 @@ def _launch_scoring_subprocess(
 
     child_env = os.environ.copy()
     child_env["PYTHONUNBUFFERED"] = "1"
-    lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LOG_PATH.write_text("", encoding="utf-8")
+    # Detach on Windows so Streamlit reruns do not kill the scorer; logs live in run_state.json.
     proc = subprocess.Popen(
         cmd,
         cwd=str(ROOT),
-        stdout=lf,
-        stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
         env=child_env,
+        creationflags=_subprocess_creationflags(),
+        start_new_session=sys.platform != "win32",
     )
     st.session_state.subproc = proc
     st.session_state.last_cmd = " ".join(cmd)
+    _mark_run_state_stopped()
+    from datetime import datetime, timezone
+
+    bootstrap = {
+        "job_id": "",
+        "running": True,
+        "last_update": datetime.now(timezone.utc).isoformat(),
+        "stats": {
+            "processed": 0,
+            "errors": 0,
+            "auto_approved": 0,
+            "pending_operator": 0,
+            "skipped_deleted": 0,
+            "calibration_gold": 0,
+            "graph_candidates": 0,
+            "graph_missing_expected": 0,
+            "batch_api_jobs": 0,
+            "diagrams_inserted": 0,
+            "diagram_errors": 0,
+            "formatting_fixed": 0,
+            "tags_relabeled": 0,
+        },
+        "last_error": "",
+        "log_tail": ["Subprocess launched — waiting for first question…"],
+    }
+    STATE_PATH.write_text(json.dumps(bootstrap, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 SCORE_ALL_LIMIT = 50_000
@@ -965,6 +1043,7 @@ def _terminate_if_running() -> None:
         except subprocess.TimeoutExpired:
             proc.kill()
     st.session_state.subproc = None
+    _mark_run_state_stopped()
 
 
 st.set_page_config(page_title="ESAT Quality Gate", layout="wide")
@@ -981,6 +1060,7 @@ tab_score, tab_review, tab_diagrams, tab_cli = st.tabs(
 
 with tab_score:
     review_base = _review_base_url()
+    _heal_zombie_run_state(st.session_state.get("subproc"))
     pool_unassessed = None
     if _qg_client is not None:
         try:
@@ -1005,7 +1085,7 @@ with tab_score:
     with c_start:
         if st.button("Start processing", type="primary", use_container_width=True):
             existing = _load_state()
-            ex_stat = _scoring_status(None, existing)
+            ex_stat = _scoring_status(st.session_state.get("subproc"), existing)
             if ex_stat["display"] == "running" and not ex_stat["stale"]:
                 st.error("A job is already running. Stop it first or wait for it to finish.")
             else:

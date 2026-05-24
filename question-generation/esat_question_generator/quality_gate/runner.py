@@ -370,12 +370,12 @@ def run_quality_gate_job(
     }
     last_error = ""
 
-    write_run_state(sp, job_id=job_id, running=True, stats=stats, log_tail=log_lines or [], last_error="")
     _append_log(
         log_lines,
         f"Job {job_id} started (dry_run={dry_run}, record_only={record_only}, batch_api={use_batch_api}, "
         f"auto_svg={auto_svg_diagrams}, llm={provider if not use_batch_api else 'gemini-batch'}, model={model})",
     )
+    write_run_state(sp, job_id=job_id, running=True, stats=stats, log_tail=log_lines or [], last_error="")
 
     offset = 0
     total_done = 0
@@ -403,6 +403,14 @@ def run_quality_gate_job(
 
             if not rows:
                 _append_log(log_lines, "No more rows in cohort.")
+                write_run_state(
+                    sp,
+                    job_id=job_id,
+                    running=True,
+                    stats=dict(stats),
+                    log_tail=log_lines or [],
+                    last_error=last_error,
+                )
                 break
 
             pending: List[Dict[str, Any]] = []
@@ -420,6 +428,19 @@ def run_quality_gate_job(
                 if not dry_run and row.get("quality_gate_assessed_at") and cohort.only_unassessed:
                     continue
                 pending.append(row)
+
+            _append_log(
+                log_lines,
+                f"Page offset={offset}: fetched {len(rows)} row(s), scoring {len(pending)}…",
+            )
+            write_run_state(
+                sp,
+                job_id=job_id,
+                running=True,
+                stats=dict(stats),
+                log_tail=log_lines or [],
+                last_error=last_error,
+            )
 
             outcomes_by_id: Dict[str, BatchAssessOutcome] = {}
             if use_batch_api and pending:
