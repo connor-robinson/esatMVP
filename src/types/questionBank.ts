@@ -77,6 +77,7 @@ export interface QuestionRatingResponse {
 export interface QuestionFeedbackResponse {
   dislikeCount: number;
   userDisliked?: boolean;
+  userReportReason?: string | null;
 }
 
 /** Response from GET /api/question-bank/questions/[id]/community-stats */

@@ -520,12 +520,14 @@ export type QuestionBankDislikeRow = {
   id: string;
   question_id: string;
   user_id: string;
+  reason: string | null;
   created_at: string;
 };
 export type QuestionBankDislikeInsert = {
   id?: string;
   question_id: string;
   user_id: string;
+  reason?: string | null;
   created_at?: string;
 };
 export type QuestionBankDislikeUpdate = Partial<QuestionBankDislikeRow>;

@@ -11,10 +11,10 @@ import {
   BadgeCheck,
   Eye,
   HelpCircle,
-  Flag,
   Star,
 } from "lucide-react";
 import { isQualityGateVerified } from "@/lib/questionBank/qualityGate";
+import { QuestionReportPopover } from "@/components/questionBank/QuestionReportPopover";
 import type {
   QuestionRatingResponse,
   QuestionFeedbackResponse,
@@ -124,7 +124,6 @@ export function QuestionCard({
   );
   const [feedbackLoading, setFeedbackLoading] = useState(true);
   const [ratingSubmitting, setRatingSubmitting] = useState(false);
-  const [dislikeSubmitting, setDislikeSubmitting] = useState(false);
   const [hoverStar, setHoverStar] = useState<number | null>(null);
 
   const optionLetters = Object.keys(question.options).sort();
@@ -222,23 +221,6 @@ export function QuestionCard({
       setRating(prev);
     } finally {
       setRatingSubmitting(false);
-    }
-  };
-
-  const handleDislikeToggle = async () => {
-    if (!isAuthenticated || dislikeSubmitting) return;
-    setDislikeSubmitting(true);
-    try {
-      const res = await fetch(
-        `/api/question-bank/questions/${questionId}/dislike`,
-        { method: "POST" },
-      );
-      if (res.ok) {
-        const data: QuestionFeedbackResponse = await res.json();
-        setFeedback(data);
-      }
-    } finally {
-      setDislikeSubmitting(false);
     }
   };
 
@@ -659,31 +641,13 @@ export function QuestionCard({
                 Sign in to rate
               </button>
             )}
-            {feedbackLoading ? (
-              <span className="text-xs text-text-muted">…</span>
-            ) : isAuthenticated ? (
-              <button
-                type="button"
-                onClick={handleDislikeToggle}
-                disabled={dislikeSubmitting}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-organic-md px-2.5 py-1.5 text-xs font-medium transition-colors",
-                  feedback?.userDisliked
-                    ? "bg-error/15 text-error"
-                    : "text-text-muted hover:bg-surface-mid hover:text-text dark:hover:bg-surface-neutral",
-                )}
-              >
-                <Flag
-                  className={cn(
-                    "h-3.5 w-3.5",
-                    feedback?.userDisliked && "fill-current",
-                  )}
-                />
-                <span>Report</span>
-              </button>
-            ) : (
-              <span className="text-xs text-text-muted">Sign in to report</span>
-            )}
+            <QuestionReportPopover
+              questionId={questionId}
+              isAuthenticated={isAuthenticated}
+              feedback={feedback}
+              feedbackLoading={feedbackLoading}
+              onFeedbackChange={setFeedback}
+            />
           </div>
         </div>
 

@@ -32,19 +32,22 @@ export async function GET(
     const dislikeCount = count ?? 0;
     const { data: { session } } = await supabase.auth.getSession();
     let userDisliked: boolean | undefined;
+    let userReportReason: string | null | undefined;
     if (session?.user?.id) {
       const { data: userRow } = await (supabase as any)
         .from('question_bank_dislikes')
-        .select('id')
+        .select('id, reason')
         .eq('question_id', questionId)
         .eq('user_id', session.user.id)
         .maybeSingle();
       userDisliked = !!userRow;
+      userReportReason = userRow?.reason ?? null;
     }
 
     const body: QuestionFeedbackResponse = {
       dislikeCount,
       ...(userDisliked !== undefined && { userDisliked }),
+      ...(userReportReason !== undefined && { userReportReason }),
     };
     return NextResponse.json(body);
   } catch (error) {
