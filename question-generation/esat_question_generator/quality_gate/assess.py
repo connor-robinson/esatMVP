@@ -8,6 +8,7 @@ from project import _gemini_console
 
 from .answer_key import build_answer_key_precheck
 from .curriculum import get_curriculum_for_row, normalize_subject
+from .curriculum_flags import detect_curriculum_flags
 from .formatting import build_formatting_report, detect_formatting_issues
 from .defaults import quality_gate_model_try_order
 from .schemas import CurriculumFlag, QualityGateResult, parse_quality_gate_json
