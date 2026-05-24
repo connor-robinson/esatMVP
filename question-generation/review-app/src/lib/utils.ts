@@ -41,6 +41,42 @@ function parseStringArray(value: unknown): string[] | null {
   return null;
 }
 
+/** Null if empty after trim; coerces numbers/booleans from legacy DB rows. */
+export function coerceOptionalString(raw: unknown): string | null {
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    const t = raw.trim();
+    return t || null;
+  }
+  if (typeof raw === "number" || typeof raw === "boolean") {
+    const t = String(raw).trim();
+    return t || null;
+  }
+  return null;
+}
+
+function normalizeSecondaryTags(raw: unknown): string[] | null {
+  if (raw == null) return null;
+  if (Array.isArray(raw)) {
+    const out: string[] = [];
+    for (const item of raw) {
+      if (typeof item === "string") {
+        const t = item.trim();
+        if (t) out.push(t);
+      } else if (item && typeof item === "object" && !Array.isArray(item)) {
+        const code = (item as { code?: unknown }).code;
+        const t = coerceOptionalString(code);
+        if (t) out.push(t);
+      } else {
+        const t = coerceOptionalString(item);
+        if (t) out.push(t);
+      }
+    }
+    return out.length ? out : null;
+  }
+  return parseStringArray(raw);
+}
+
 /**
  * TMUA pipeline stores designer topic codes on idea_plan (section1_* / section2_*).
  * DB columns primary_tag / secondary_tags are only filled when the Tag Labeler station
@@ -187,9 +223,8 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       ? coerceFieldText(data.solution_key_insight)
       : null;
 
-  let primary_tag: string | null =
-    typeof data.primary_tag === "string" && data.primary_tag.trim() ? data.primary_tag.trim() : null;
-  let secondary_tags: string[] | null = parseStringArray(data.secondary_tags);
+  let primary_tag: string | null = coerceOptionalString(data.primary_tag);
+  let secondary_tags: string[] | null = normalizeSecondaryTags(data.secondary_tags);
 
   if (rowLooksTmua(data)) {
     const missingPrimary = !primary_tag;
@@ -208,30 +243,26 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
     schema_id: data.schema_id || '',
     difficulty: data.difficulty || 'Medium',
     question_stem: data.question_stem || '',
-    question_stem_before_auto_diagram:
-      typeof data.question_stem_before_auto_diagram === "string" &&
-      data.question_stem_before_auto_diagram.trim()
-        ? data.question_stem_before_auto_diagram
-        : null,
+    question_stem_before_auto_diagram: coerceOptionalString(data.question_stem_before_auto_diagram),
     options: options,
     correct_option: normalizeCorrectOptionLetter(data.correct_option),
     solution_reasoning,
     solution_key_insight,
     distractor_map: distractor_map,
-    subjects: data.subjects || null, // Renamed from 'paper'
+    subjects: coerceOptionalString(data.subjects),
     primary_tag,
     secondary_tags,
-    test_type: data.test_type || null, // ESAT, TMUA, or NULL
+    test_type: (() => {
+      const t = coerceOptionalString(data.test_type);
+      return t === "ESAT" || t === "TMUA" ? t : null;
+    })(),
     is_good_question: data.is_good_question === true, // Default to false
-    status: data.status || 'pending', // Updated default status
-    created_at: data.created_at || new Date().toISOString(),
-    updated_at: data.updated_at || new Date().toISOString(),
-    media_upload_code: data.media_upload_code ?? null,
-    screen_video_storage_path: data.screen_video_storage_path ?? null,
-    schema_block_snapshot:
-      typeof data.schema_block_snapshot === "string" && data.schema_block_snapshot.trim()
-        ? data.schema_block_snapshot.trim()
-        : null,
+    status: (coerceOptionalString(data.status) as ReviewQuestion["status"]) || "pending",
+    created_at: coerceOptionalString(data.created_at) || new Date().toISOString(),
+    updated_at: coerceOptionalString(data.updated_at) || new Date().toISOString(),
+    media_upload_code: coerceOptionalString(data.media_upload_code),
+    screen_video_storage_path: coerceOptionalString(data.screen_video_storage_path),
+    schema_block_snapshot: coerceOptionalString(data.schema_block_snapshot),
     idea_plan: parseJsonObject(data.idea_plan) as Record<string, unknown> | null,
     verifier_report: parseJsonObject(data.verifier_report) as Record<string, unknown> | null,
     style_report: parseJsonObject(data.style_report) as Record<string, unknown> | null,
@@ -241,25 +272,16 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       typeof data.generation_attempts === "number" && Number.isFinite(data.generation_attempts)
         ? data.generation_attempts
         : null,
-    run_id: typeof data.run_id === "string" && data.run_id.trim() ? data.run_id.trim() : null,
+    run_id: coerceOptionalString(data.run_id),
     schema_reclass_review_tier:
       data.schema_reclass_review_tier === "urgent" ||
       data.schema_reclass_review_tier === "secondary" ||
       data.schema_reclass_review_tier === "review_needed"
         ? data.schema_reclass_review_tier
         : null,
-    schema_reclass_old_id:
-      typeof data.schema_reclass_old_id === "string" && data.schema_reclass_old_id.trim()
-        ? data.schema_reclass_old_id.trim()
-        : null,
-    schema_reclass_new_id:
-      typeof data.schema_reclass_new_id === "string" && data.schema_reclass_new_id.trim()
-        ? data.schema_reclass_new_id.trim()
-        : null,
-    quality_gate_assessed_at:
-      typeof data.quality_gate_assessed_at === "string" && data.quality_gate_assessed_at.trim()
-        ? data.quality_gate_assessed_at.trim()
-        : null,
+    schema_reclass_old_id: coerceOptionalString(data.schema_reclass_old_id),
+    schema_reclass_new_id: coerceOptionalString(data.schema_reclass_new_id),
+    quality_gate_assessed_at: coerceOptionalString(data.quality_gate_assessed_at),
     quality_gate_verdict:
       data.quality_gate_verdict === "Pass" ||
       data.quality_gate_verdict === "Minor" ||
@@ -273,82 +295,35 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       data.quality_gate_action === "delete"
         ? data.quality_gate_action
         : null,
-    quality_gate_reason:
-      typeof data.quality_gate_reason === "string" && data.quality_gate_reason.trim()
-        ? data.quality_gate_reason.trim()
-        : null,
-    quality_gate_job_id:
-      typeof data.quality_gate_job_id === "string" && data.quality_gate_job_id.trim()
-        ? data.quality_gate_job_id.trim()
-        : null,
-    quality_gate_model:
-      typeof data.quality_gate_model === "string" && data.quality_gate_model.trim()
-        ? data.quality_gate_model.trim()
-        : null,
+    quality_gate_reason: coerceOptionalString(data.quality_gate_reason),
+    quality_gate_job_id: coerceOptionalString(data.quality_gate_job_id),
+    quality_gate_model: coerceOptionalString(data.quality_gate_model),
     quality_gate_calibration_tier:
       data.quality_gate_calibration_tier === "gold" ? "gold" : null,
-    quality_gate_calibration_notes:
-      typeof data.quality_gate_calibration_notes === "string" &&
-      data.quality_gate_calibration_notes.trim()
-        ? data.quality_gate_calibration_notes.trim()
-        : null,
+    quality_gate_calibration_notes: coerceOptionalString(data.quality_gate_calibration_notes),
     quality_gate_graph_candidate: data.quality_gate_graph_candidate === true,
-    quality_gate_graph_notes:
-      typeof data.quality_gate_graph_notes === "string" && data.quality_gate_graph_notes.trim()
-        ? data.quality_gate_graph_notes.trim()
-        : null,
+    quality_gate_graph_notes: coerceOptionalString(data.quality_gate_graph_notes),
     quality_gate_diagram_backfill_kind: inferDiagramBackfillKind(data),
-    quality_gate_diagram_backfill_at:
-      typeof data.quality_gate_diagram_backfill_at === "string" &&
-      data.quality_gate_diagram_backfill_at.trim()
-        ? data.quality_gate_diagram_backfill_at.trim()
-        : null,
-    pipeline:
-      typeof data.pipeline === "string" && data.pipeline.trim()
-        ? data.pipeline.trim()
-        : null,
+    quality_gate_diagram_backfill_at: coerceOptionalString(data.quality_gate_diagram_backfill_at),
+    pipeline: coerceOptionalString(data.pipeline),
     has_visual: data.has_visual === true,
     visual_type: normalizeVisualType(data.visual_type),
     answer_depends_on_visual: data.answer_depends_on_visual === true,
-    visual_renderer:
-      typeof data.visual_renderer === "string" && data.visual_renderer.trim()
-        ? data.visual_renderer.trim()
-        : null,
-    visual_qc_status:
-      typeof data.visual_qc_status === "string" && data.visual_qc_status.trim()
-        ? data.visual_qc_status.trim()
-        : null,
+    visual_renderer: coerceOptionalString(data.visual_renderer),
+    visual_qc_status: coerceOptionalString(data.visual_qc_status),
     visual_assets: parseJsonArray(data.visual_assets),
     diagram_regen_status: normalizeDiagramRegenStatus(data.diagram_regen_status),
-    diagram_regen_user_note:
-      typeof data.diagram_regen_user_note === "string" && data.diagram_regen_user_note.trim()
-        ? data.diagram_regen_user_note
-        : null,
-    diagram_regen_reason:
-      typeof data.diagram_regen_reason === "string" && data.diagram_regen_reason.trim()
-        ? data.diagram_regen_reason
-        : null,
-    diagram_regen_new_prompt:
-      typeof data.diagram_regen_new_prompt === "string" && data.diagram_regen_new_prompt.trim()
-        ? data.diagram_regen_new_prompt
-        : null,
-    diagram_regen_requested_at:
-      typeof data.diagram_regen_requested_at === "string" && data.diagram_regen_requested_at.trim()
-        ? data.diagram_regen_requested_at
-        : null,
-    diagram_regen_completed_at:
-      typeof data.diagram_regen_completed_at === "string" && data.diagram_regen_completed_at.trim()
-        ? data.diagram_regen_completed_at
-        : null,
+    diagram_regen_user_note: coerceOptionalString(data.diagram_regen_user_note),
+    diagram_regen_reason: coerceOptionalString(data.diagram_regen_reason),
+    diagram_regen_new_prompt: coerceOptionalString(data.diagram_regen_new_prompt),
+    diagram_regen_requested_at: coerceOptionalString(data.diagram_regen_requested_at),
+    diagram_regen_completed_at: coerceOptionalString(data.diagram_regen_completed_at),
     diagram_regen_attempts:
       typeof data.diagram_regen_attempts === "number" &&
       Number.isFinite(data.diagram_regen_attempts)
         ? data.diagram_regen_attempts
         : null,
-    diagram_regen_last_error:
-      typeof data.diagram_regen_last_error === "string" && data.diagram_regen_last_error.trim()
-        ? data.diagram_regen_last_error
-        : null,
+    diagram_regen_last_error: coerceOptionalString(data.diagram_regen_last_error),
   };
 }
 

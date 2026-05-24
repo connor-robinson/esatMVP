@@ -6,7 +6,7 @@ import { StemContent } from "./shared/StemContent";
 import { DiagramInsertToolbar } from "./DiagramInsertToolbar";
 import { DiagramRegenPanel } from "./DiagramRegenPanel";
 import { WalkthroughVideoPlayer } from "./WalkthroughVideoPlayer";
-import { cn, coerceFieldText, hasDiagram } from "@/lib/utils";
+import { cn, coerceFieldText, coerceOptionalString, hasDiagram } from "@/lib/utils";
 import { Eye, Pencil, X, Plus, ChevronDown, ChevronUp, Video } from "lucide-react";
 import { getQuestionTagText, formatTagDisplay, getPaperType, getTopicsForPaper, type TopicOption } from "@/lib/curriculum";
 import type { ReviewQuestion } from "@/types/review";
@@ -19,13 +19,16 @@ function WalkthroughUploadBanner({
   initialCode?: string | null;
 }) {
   const [code, setCode] = useState<string | null>(() => {
-    const c = initialCode?.trim();
+    const c = coerceOptionalString(initialCode);
     return c ? c.toUpperCase() : null;
   });
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    const fromProp = initialCode?.trim() ? initialCode.trim().toUpperCase() : null;
+    const fromProp = (() => {
+      const c = coerceOptionalString(initialCode);
+      return c ? c.toUpperCase() : null;
+    })();
     if (fromProp) {
       setCode(fromProp);
       setErr(null);
@@ -45,7 +48,8 @@ function WalkthroughUploadBanner({
           throw new Error(j.error || "Failed to get upload code");
         }
         if (!cancel) {
-          setCode(j.media_upload_code ?? null);
+          const c = coerceOptionalString(j.media_upload_code);
+          setCode(c ? c.toUpperCase() : null);
           setErr(null);
         }
       } catch (e: unknown) {
@@ -267,7 +271,7 @@ export function QuestionPanel({
           </span>
         )}
 
-        {question.screen_video_storage_path?.trim() ? (
+        {coerceOptionalString(question.screen_video_storage_path) ? (
           <span
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-organic-md text-xs font-mono bg-emerald-500/20 text-emerald-200 border border-emerald-400/45"
             title="Walkthrough video is linked to this question"
@@ -346,7 +350,7 @@ export function QuestionPanel({
             ))}
           </select>
         ) : (
-          question.subjects && question.subjects.trim() && (
+          coerceOptionalString(question.subjects) && (
             <button
               onClick={() => setEditingPill('subjects')}
               className={cn(

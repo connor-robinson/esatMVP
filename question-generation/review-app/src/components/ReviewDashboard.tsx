@@ -11,6 +11,7 @@ import {
   backfillReviewLabel,
   backfillReviewTitle,
   compareQuestionsDiagramsFirst,
+  coerceOptionalString,
 } from "@/lib/utils";
 import {
   clearPersistedDashboardQuery,
@@ -336,8 +337,8 @@ export function ReviewDashboard() {
           body: JSON.stringify({ questionId: id }),
         })
           .then((r) => r.json())
-          .then((j: { media_upload_code?: string }) => {
-            const c = j.media_upload_code?.trim();
+          .then((j: { media_upload_code?: unknown }) => {
+            const c = coerceOptionalString(j.media_upload_code);
             return c ? ([id, c] as const) : null;
           })
       )
@@ -435,10 +436,10 @@ export function ReviewDashboard() {
               const exam = q.test_type ?? "—";
               const subject = q.subjects ?? "—";
               const walkCode =
-                (q.media_upload_code?.trim() &&
-                  q.media_upload_code.trim().toUpperCase()) ||
-                walkCodes[q.id] ||
-                null;
+                (() => {
+                  const c = coerceOptionalString(q.media_upload_code);
+                  return c ? c.toUpperCase() : walkCodes[q.id] || null;
+                })();
               const hasDiag = hasDiagram(q);
               const backfillTag = backfillReviewLabel(q.quality_gate_diagram_backfill_kind);
               const regenStatus = q.diagram_regen_status ?? null;
@@ -515,7 +516,7 @@ export function ReviewDashboard() {
                         <span className="text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-white/5 text-white/55 border border-white/10">
                           {q.status}
                         </span>
-                        {q.screen_video_storage_path?.trim() ? (
+                        {coerceOptionalString(q.screen_video_storage_path) ? (
                           <span
                             className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-organic-sm bg-emerald-500/25 text-emerald-200 border border-emerald-400/45"
                             title="Walkthrough video uploaded"
