@@ -9,7 +9,7 @@ import { Info, ArrowDown } from "lucide-react";
 import { motion } from "framer-motion";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
 import { cn } from "@/lib/utils";
-import { getExamAccentBadgeClass, getExamAccentTextClass } from "@/config/colors";
+import { getExamAccentFillClass, getExamAccentTextClass } from "@/config/colors";
 
 interface RoadmapAnalyticsProps {
   stages: RoadmapStage[];
@@ -21,7 +21,7 @@ interface RoadmapAnalyticsProps {
 }
 
 const SUMMARY_CARD =
-  "rounded-organic-xl border border-border-subtle bg-surface-elevated p-5 ring-1 ring-white/[0.06]";
+  "rounded-organic-xl bg-surface-elevated p-5";
 
 export function RoadmapAnalytics({
   stages,
@@ -127,7 +127,7 @@ export function RoadmapAnalytics({
     nextStage.parts.every((p) => p.examType === "Official");
 
   return (
-    <div className="mb-8">
+    <div className="mb-8 font-sans">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-5">
         <div className={cn(SUMMARY_CARD, "md:col-span-4 lg:col-span-3")}>
           <div className="mb-2 text-xs font-medium uppercase tracking-wide text-text-subtle">
@@ -151,7 +151,7 @@ export function RoadmapAnalytics({
                 className="h-3.5 w-3.5 shrink-0 cursor-help text-text-disabled"
                 aria-hidden
               />
-              <div className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-64 scale-95 rounded-organic-lg border border-border bg-surface-elevated p-3 text-left opacity-0 shadow-modal-card ring-1 ring-white/[0.06] transition-all duration-fast ease-signature group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100">
+              <div className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-64 scale-95 rounded-organic-lg bg-surface-mid p-3 text-left opacity-0 shadow-modal-card transition-all duration-fast ease-signature group-hover:pointer-events-auto group-hover:scale-100 group-hover:opacity-100">
                 <p className="text-xs leading-relaxed text-text-muted">
                   Expected time for the questions only. Real practice is longer
                   because marking and review matter most.
@@ -183,7 +183,7 @@ export function RoadmapAnalytics({
             </div>
             <motion.button
               type="button"
-              className="relative w-full overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-mid text-left ring-1 ring-white/[0.04] transition-colors duration-fast ease-signature hover:border-border hover:bg-surface-neutral"
+              className="relative w-full overflow-hidden rounded-organic-lg bg-surface-mid text-left transition-colors duration-fast ease-signature hover:bg-surface-neutral"
               onClick={handleScrollToStage}
               whileHover={{ scale: 1.005 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
@@ -191,8 +191,8 @@ export function RoadmapAnalytics({
               <div className="flex items-center gap-4 p-4 sm:p-5">
                 <div
                   className={cn(
-                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md font-mono text-lg font-bold tabular-nums text-text",
-                    getExamAccentBadgeClass(nextStage.examName),
+                    "flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums",
+                    getExamAccentFillClass(nextStage.examName),
                   )}
                 >
                   {currentStageIndex !== null ? currentStageIndex + 1 : 1}
@@ -202,28 +202,28 @@ export function RoadmapAnalytics({
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <span
                       className={cn(
-                        "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                        "text-lg font-semibold tracking-wide sm:text-xl",
                         getExamAccentTextClass(nextStage.examName),
                       )}
                     >
                       {nextStage.examName}
                     </span>
                     {nextStage.id === "specimen-papers" ? (
-                      <span className="font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
+                      <span className="text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
                         Specimen
                       </span>
                     ) : (
-                      <span className="font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
+                      <span className="text-lg font-semibold tracking-wide text-text-muted sm:text-xl">
                         {nextStage.year}
                       </span>
                     )}
                     {allSpecimen && (
-                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         Specimen
                       </span>
                     )}
                     {allOfficial && (
-                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         Official
                       </span>
                     )}

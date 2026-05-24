@@ -6,7 +6,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { getExamAccentTextClass } from "@/config/colors";
+import { getExamAccentTextClass, getExamAccentFillClass } from "@/config/colors";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
 
 interface TimelineMarker {
@@ -288,7 +288,7 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
   // White for completed sections, grey for remaining
   return (
-    <div className="relative w-full h-full min-h-screen">
+    <div className="relative h-full min-h-screen w-full font-sans">
       {/* Main timeline branch - curved sine wave line - centered container */}
       <div className="absolute left-1/2 top-0 -translate-x-1/2" style={{ bottom: 0, width: "200px" }}>
         {/* Curved connector line using SVG path - split into completed and remaining */}
@@ -385,10 +385,10 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
             >
               <motion.div
                 className={cn(
-                  "h-2.5 w-2.5 rounded-full border-2",
+                  "h-2.5 w-2.5 rounded-full",
                   isCompleted
-                    ? "border-text bg-text"
-                    : "border-text-muted bg-surface-elevated",
+                    ? getExamAccentFillClass(stage.examName)
+                    : "bg-surface-neutral",
                 )}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -425,7 +425,9 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
                 <motion.div
                   className={cn(
                     "relative h-2 w-2 rounded-full",
-                    markerPast ? "bg-text" : "bg-text-muted",
+                    markerPast
+                      ? getExamAccentFillClass(marker.examName)
+                      : "bg-surface-neutral",
                   )}
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -458,8 +460,10 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
                 <span
                   className={cn(
-                    "mt-1 block h-0 w-8 border-t border-current opacity-40",
-                    getExamAccentTextClass(marker.examName),
+                    "mt-1 block h-0.5 w-8 rounded-full opacity-50",
+                    markerPast
+                      ? getExamAccentFillClass(marker.examName)
+                      : "bg-surface-neutral",
                   )}
                   aria-hidden
                 />

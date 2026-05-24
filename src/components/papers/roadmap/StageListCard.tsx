@@ -16,8 +16,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  getExamAccentBadgeClass,
   getExamAccentTextClass,
+  getExamAccentFillClass,
+  getExamAccentSurfaceClass,
+  getExamAccentSurfaceStrongClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 
@@ -111,7 +113,7 @@ export function StageListCard({
   };
 
   return (
-    <div className="relative overflow-visible">
+    <div className="relative overflow-visible font-sans">
       {timelineNodeY !== undefined && (
         <div
           className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
@@ -127,27 +129,23 @@ export function StageListCard({
       <motion.div
         layout
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-organic-xl border bg-surface-elevated ring-1 ring-white/[0.06] transition-colors duration-fast ease-signature",
+          "relative flex flex-col overflow-hidden rounded-organic-xl transition-colors duration-fast ease-signature",
           isUnlocked
             ? cn(
-                "cursor-pointer border-border",
-                isCurrent && "border-primary/30 ring-primary/20",
+                "cursor-pointer bg-surface-elevated",
+                isCurrent && getExamAccentSurfaceStrongClass(stage.examName),
               )
-            : "cursor-not-allowed border-border-subtle opacity-75",
+            : "cursor-not-allowed bg-surface-mid opacity-75",
         )}
         onClick={handleCardClick}
       >
         <div className="flex items-center gap-4 p-5 sm:p-6">
           <div
             className={cn(
-              "relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md font-mono text-lg font-bold transition-colors tabular-nums",
+              "relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums transition-colors",
               isUnlocked
-                ? cn(
-                    isCompleted || isCurrent
-                      ? getExamAccentBadgeClass(stage.examName)
-                      : "border border-border-subtle bg-surface-mid text-text",
-                  )
-                : "border border-border-subtle bg-surface-mid text-text-disabled",
+                ? getExamAccentFillClass(stage.examName)
+                : "bg-surface-neutral text-text-disabled",
             )}
           >
             {isUnlocked ? (
@@ -166,7 +164,7 @@ export function StageListCard({
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <span
                   className={cn(
-                    "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                    "text-lg font-semibold tracking-wide sm:text-xl",
                     isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
                   )}
                 >
@@ -175,7 +173,7 @@ export function StageListCard({
                 {stage.id === "specimen-papers" ? (
                   <span
                     className={cn(
-                      "font-mono text-lg font-semibold tracking-wide sm:text-xl",
+                      "text-lg font-semibold tracking-wide sm:text-xl",
                       isUnlocked ? "text-text-muted" : "text-text-disabled",
                     )}
                   >
@@ -184,7 +182,7 @@ export function StageListCard({
                 ) : (
                   <span
                     className={cn(
-                      "font-mono text-lg font-semibold tracking-wide text-text-muted sm:text-xl",
+                      "text-lg font-semibold tracking-wide sm:text-xl",
                       isUnlocked ? "text-text-muted" : "text-text-disabled",
                     )}
                   >
@@ -200,14 +198,14 @@ export function StageListCard({
                     stage.parts.every((p) => p.examType === "Official");
                   if (allSpecimen) {
                     return (
-                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         Specimen
                       </span>
                     );
                   }
                   if (allOfficial) {
                     return (
-                      <span className="rounded-organic-sm border border-border-subtle bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
                         Official
                       </span>
                     );
@@ -219,7 +217,7 @@ export function StageListCard({
               {totalCount > 0 ? (
                 <div
                   className={cn(
-                    "flex-shrink-0 whitespace-nowrap font-mono text-[0.85rem]",
+                    "flex-shrink-0 whitespace-nowrap text-[0.85rem]",
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
@@ -253,10 +251,15 @@ export function StageListCard({
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.28, ease: "easeInOut" }}
-              className="overflow-hidden border-t border-border-subtle"
+              className="overflow-hidden bg-surface-mid"
             >
               <div className="p-5 pt-4 sm:p-6 sm:pt-5">
-                <div className="space-y-3 rounded-organic-lg border border-border-subtle bg-surface-mid p-4 ring-1 ring-white/[0.04]">
+                <div
+                  className={cn(
+                    "space-y-3 rounded-organic-lg p-4",
+                    getExamAccentSurfaceClass(stage.examName),
+                  )}
+                >
                   <div className="mb-1 flex items-center justify-between gap-2">
                     <span className="text-xs font-medium text-text-muted">
                       Select parts to practice
@@ -354,15 +357,15 @@ export function StageListCard({
                                           } as React.MouseEvent);
                                         }
                                       }}
-                                      className="flex cursor-pointer items-center gap-3 rounded-organic-md border border-transparent bg-surface-elevated p-3 text-sm transition-colors duration-fast ease-signature hover:border-border-subtle hover:bg-surface"
+                                      className="flex cursor-pointer items-center gap-3 rounded-organic-md bg-surface-elevated p-3 text-sm transition-colors duration-fast ease-signature hover:bg-surface"
                                       onClick={(e) => handlePartToggle(partKey, e)}
                                     >
                                       <div
                                         className={cn(
-                                          "flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors duration-fast ease-signature",
+                                          "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors duration-fast ease-signature",
                                           isSelected
-                                            ? "border-accent/35 bg-accent text-background"
-                                            : "border-border-subtle bg-surface-mid",
+                                            ? getExamAccentFillClass(stage.examName)
+                                            : "bg-surface-mid",
                                         )}
                                       >
                                         {isSelected ? (
@@ -381,7 +384,12 @@ export function StageListCard({
                                         </div>
                                       </div>
                                       {isPartCompleted ? (
-                                        <div className="flex shrink-0 items-center gap-1.5 text-primary">
+                                        <div
+                                          className={cn(
+                                            "flex shrink-0 items-center gap-1.5",
+                                            getExamAccentTextClass(stage.examName),
+                                          )}
+                                        >
                                           <CheckCircle2
                                             className="h-5 w-5 shrink-0"
                                             strokeWidth={2.25}
@@ -413,10 +421,13 @@ export function StageListCard({
                     onClick={handleStartSession}
                     disabled={selectedParts.size === 0}
                     className={cn(
-                      "flex w-full items-center justify-center gap-3 rounded-organic-lg border px-6 py-3.5 text-sm font-semibold transition-all duration-fast ease-signature",
+                      "flex w-full items-center justify-center gap-3 rounded-organic-lg px-6 py-3.5 text-sm font-semibold transition-all duration-fast ease-signature",
                       selectedParts.size === 0
-                        ? "cursor-not-allowed border-border-subtle bg-surface-mid text-text-disabled"
-                        : "border-border-subtle bg-surface-mid text-text hover:border-border hover:bg-surface-neutral",
+                        ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
+                        : cn(
+                            getExamAccentFillClass(stage.examName),
+                            "hover:brightness-110",
+                          ),
                     )}
                   >
                     <span>Start Practice Session</span>

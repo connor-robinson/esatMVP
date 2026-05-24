@@ -641,12 +641,7 @@ export default function PapersRoadmapPage() {
 
   if (loading) {
     return (
-      <Container size="lg" className="bg-background py-10">
-        <div className="py-4">
-          <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
-            Practice Roadmap
-          </h1>
-        </div>
+      <Container size="lg" className="bg-background py-10 font-sans">
         <div className="py-16 text-center text-sm text-text-muted">Loading…</div>
       </Container>
     );
@@ -684,13 +679,7 @@ export default function PapersRoadmapPage() {
   });
 
   return (
-    <Container size="lg" className="bg-background pb-16 pt-8 sm:pb-20 sm:pt-10">
-      <div className="pb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">
-          Practice Roadmap
-        </h1>
-      </div>
-
+    <Container size="lg" className="bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
       <RoadmapAnalytics
         stages={visibleStages}
         completionData={completionData}

@@ -187,28 +187,52 @@ export function getPaperSessionIconClass(examName: string): string {
   return "bg-maths/15 text-maths";
 }
 
-/** Badge / tile accents for roadmap headers (surface + border + text). */
+/** Badge / tile accents for roadmap (borderless — matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") {
-    return "border border-advanced/25 bg-advanced/15 text-advanced";
-  }
-  if (key === "NSAA") {
-    return "border border-biology/25 bg-biology/15 text-biology";
-  }
-  if (key === "TMUA") {
-    return "border border-physics/25 bg-physics/15 text-physics";
-  }
-  if (key === "ESAT") {
-    return "border border-maths/20 bg-maths/15 text-maths";
-  }
-  if (key === "PAT") {
-    return "border border-chemistry/25 bg-chemistry/15 text-chemistry";
-  }
-  if (key === "MAT") {
-    return "border border-maths/20 bg-maths/15 text-maths";
-  }
-  return "border border-accent/25 bg-accent/15 text-accent";
+  if (key === "ENGAA") return "bg-biology/15 text-biology";
+  if (key === "NSAA") return "bg-accent/15 text-accent";
+  if (key === "TMUA") return "bg-tmua-accent/15 text-tmua-accent";
+  if (key === "ESAT") return "bg-maths/15 text-maths";
+  if (key === "PAT") return "bg-chemistry/15 text-chemistry";
+  if (key === "MAT") return "bg-maths/15 text-maths";
+  return "bg-accent/15 text-accent";
+}
+
+/** Solid fill for stage numbers, timeline nodes, primary actions. */
+export function getExamAccentFillClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology text-background";
+  if (key === "NSAA") return "bg-accent text-background";
+  if (key === "TMUA") return "bg-tmua-accent text-background";
+  if (key === "ESAT") return "bg-maths text-background";
+  if (key === "PAT") return "bg-chemistry text-background";
+  if (key === "MAT") return "bg-maths text-background";
+  return "bg-accent text-background";
+}
+
+/** Tinted panel background (cards, expanded sections). */
+export function getExamAccentSurfaceClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology/10";
+  if (key === "NSAA") return "bg-accent/10";
+  if (key === "TMUA") return "bg-tmua-accent/10";
+  if (key === "ESAT") return "bg-maths/10";
+  if (key === "PAT") return "bg-chemistry/10";
+  if (key === "MAT") return "bg-maths/10";
+  return "bg-accent/10";
+}
+
+/** Stronger tint for current / highlighted stage row. */
+export function getExamAccentSurfaceStrongClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology/18";
+  if (key === "NSAA") return "bg-accent/18";
+  if (key === "TMUA") return "bg-tmua-accent/18";
+  if (key === "ESAT") return "bg-maths/18";
+  if (key === "PAT") return "bg-chemistry/18";
+  if (key === "MAT") return "bg-maths/18";
+  return "bg-accent/18";
 }
 
 /**
