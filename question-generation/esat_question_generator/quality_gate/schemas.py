@@ -61,6 +61,45 @@ def normalize_recommended_action(raw: Any) -> Optional[RecommendedAction]:
     return None
 
 
+_VERDICT_CANON = {"pass": "Pass", "minor": "Minor", "major": "Major"}
+# LLM sometimes puts review_disposition.outcome (edit/keep/…) in verdict by mistake.
+_VERDICT_FROM_DISPOSITION = {
+    "edit": "Minor",
+    "keep": "Pass",
+    "disregard": "Major",
+    "regenerate": "Major",
+    "move_paper": "Major",
+}
+
+
+def normalize_verdict(
+    raw: Any,
+    *,
+    disposition_outcome: Optional[str] = None,
+    recommended_action: Optional[Any] = None,
+) -> Optional[Verdict]:
+    s = str(raw or "").strip()
+    if not s:
+        return None
+    key = re.sub(r"[^\w]+", "_", s.lower())
+    key = re.sub(r"_+", "_", key).strip("_")
+    if key in _VERDICT_CANON:
+        return _VERDICT_CANON[key]  # type: ignore[return-value]
+    if key in _VERDICT_FROM_DISPOSITION:
+        return _VERDICT_FROM_DISPOSITION[key]  # type: ignore[return-value]
+    act = normalize_recommended_action(recommended_action)
+    if act == "approve":
+        return "Pass"
+    if act == "human_review":
+        return "Minor"
+    if act in ("delete", "regenerate", "move_to_math2"):
+        return "Major"
+    disp = str(disposition_outcome or "").strip().lower()
+    if disp in _VERDICT_FROM_DISPOSITION:
+        return _VERDICT_FROM_DISPOSITION[disp]  # type: ignore[return-value]
+    return None
+
+
 @dataclass
 class CurriculumFlag:
     severity: CurriculumSeverity
@@ -253,9 +292,16 @@ def parse_quality_gate_json(
             "notes_for_human": "",
         }
 
-    verdict = data.get("verdict")
-    if verdict not in ("Pass", "Minor", "Major"):
-        raise ValueError(f"invalid verdict: {verdict!r}")
+    rd_early = data.get("review_disposition") if isinstance(data.get("review_disposition"), dict) else {}
+    disp_out_early = str(rd_early.get("outcome") or "").strip().lower()
+
+    verdict = normalize_verdict(
+        data.get("verdict"),
+        disposition_outcome=disp_out_early or None,
+        recommended_action=data.get("recommended_action"),
+    )
+    if verdict is None:
+        raise ValueError(f"invalid verdict: {data.get('verdict')!r}")
 
     scores_in = data.get("scores") or {}
     scores: Dict[str, int] = {}

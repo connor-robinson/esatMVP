@@ -67,6 +67,10 @@ def _base_payload(**overrides):
 
 
 class TestAutoFixTriage(unittest.TestCase):
+    def test_verdict_edit_alias_maps_to_minor(self) -> None:
+        result = parse_quality_gate_json(_base_payload(verdict="edit"))
+        self.assertEqual(result.verdict, "Minor")
+
     def test_parse_auto_fix_triage(self) -> None:
         result = parse_quality_gate_json(_base_payload())
         self.assertEqual(result.action_after_auto_fix, "approve")

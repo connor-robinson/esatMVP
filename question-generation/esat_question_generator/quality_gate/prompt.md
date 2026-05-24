@@ -222,6 +222,8 @@ If `formatting_score` ≤ 2, do not recommend `approve` without `human_review`.
 
 ## Verdict bands
 
+`verdict` must be exactly **`Pass`**, **`Minor`**, or **`Major`** — not `edit`, `keep`, or other `review_disposition.outcome` values (those go in `review_disposition.outcome` only).
+
 - **Pass** — Plausible ESAT item; stem and options readable at a glance; realistic step count; difficulty appropriate; solvable within normal per-question timing; not merely routine GCSE recall/procedure unless intentionally kept as an Easy warm-up; and no unresolved curriculum / key / deterministic concerns.
 
 - **Minor** — Slightly too wordy, slightly too easy, slightly too long or time-heavy, slightly fiddly, or borderline but salvageable. For `too_easy`, usually `human_review` unless the item is deliberately useful as a clean low-difficulty/warm-up question.
