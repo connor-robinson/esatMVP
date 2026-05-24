@@ -36,29 +36,31 @@ def _strip_json_fences(text: str) -> str:
 
 def extract_json_object(text: str) -> Dict[str, Any]:
     s = _strip_json_fences(text)
-    for candidate in (s,):
-        try:
-            parsed = json.loads(candidate)
-            if isinstance(parsed, dict):
-                return parsed
-        except json.JSONDecodeError:
-            pass
+
+    def _try_parse(candidate: str) -> Optional[Dict[str, Any]]:
+        chunk = candidate.strip()
+        if not chunk:
+            return None
+        for parser in (json.loads, ast.literal_eval):
+            try:
+                parsed = parser(chunk)
+                if isinstance(parsed, dict):
+                    return parsed
+            except (json.JSONDecodeError, SyntaxError, ValueError, TypeError):
+                continue
+        return None
+
+    hit = _try_parse(s)
+    if hit is not None:
+        return hit
+
     start = s.find("{")
     end = s.rfind("}")
     if start >= 0 and end > start:
-        chunk = s[start : end + 1]
-        try:
-            parsed = json.loads(chunk)
-            if isinstance(parsed, dict):
-                return parsed
-        except json.JSONDecodeError:
-            pass
-        try:
-            parsed = ast.literal_eval(chunk)
-            if isinstance(parsed, dict):
-                return parsed
-        except (SyntaxError, ValueError):
-            pass
+        hit = _try_parse(s[start : end + 1])
+        if hit is not None:
+            return hit
+
     raise ValueError("no JSON object found in model output")
 
 

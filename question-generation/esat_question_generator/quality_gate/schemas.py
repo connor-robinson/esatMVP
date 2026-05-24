@@ -48,9 +48,25 @@ _ACTION_ALIASES = {
     "human review": "human_review",
 }
 
+_DISPOSITION_TO_ACTION: dict[str, RecommendedAction] = {
+    "keep": "approve",
+    "edit": "human_review",
+    "disregard": "delete",
+    "regenerate": "regenerate",
+    "move_paper": "move_to_math2",
+}
+
 
 def normalize_recommended_action(raw: Any) -> Optional[RecommendedAction]:
-    s = str(raw or "").strip().lower()
+    if isinstance(raw, dict):
+        for key in ("recommended_action", "action", "value"):
+            if key in raw:
+                return normalize_recommended_action(raw[key])
+        return None
+    s = str(raw or "").strip().strip("'\"`")
+    if not s:
+        return None
+    s = s.lower()
     s = re.sub(r"[^\w]+", "_", s)
     s = re.sub(r"_+", "_", s).strip("_")
     s = _ACTION_ALIASES.get(s, s)
@@ -294,12 +310,33 @@ def parse_quality_gate_json(
 
     rd_early = data.get("review_disposition") if isinstance(data.get("review_disposition"), dict) else {}
     disp_out_early = str(rd_early.get("outcome") or "").strip().lower()
+    if disp_out_early not in _DISPOSITION_TO_ACTION:
+        disp_out_early = ""
+
+    action = normalize_recommended_action(data.get("recommended_action"))
+    if action is None and disp_out_early:
+        action = normalize_recommended_action(_DISPOSITION_TO_ACTION.get(disp_out_early))
+    if action is None:
+        raise ValueError(f"invalid recommended_action: {data.get('recommended_action')!r}")
 
     verdict = normalize_verdict(
         data.get("verdict"),
         disposition_outcome=disp_out_early or None,
-        recommended_action=data.get("recommended_action"),
+        recommended_action=action,
     )
+    if verdict is None:
+        if action == "approve":
+            verdict = "Pass"
+        elif action == "human_review":
+            verdict = "Minor"
+        elif action in ("delete", "regenerate", "move_to_math2"):
+            verdict = "Major"
+        elif disp_out_early:
+            verdict = normalize_verdict(
+                disp_out_early,
+                disposition_outcome=disp_out_early,
+                recommended_action=action,
+            )
     if verdict is None:
         raise ValueError(f"invalid verdict: {data.get('verdict')!r}")
 
@@ -322,10 +359,6 @@ def parse_quality_gate_json(
     curriculum_match = cv.get("curriculum_match") or data.get("curriculum_match") or "in_syllabus"
     if curriculum_match not in ("in_syllabus", "borderline", "off_syllabus"):
         curriculum_match = "borderline"
-
-    action = normalize_recommended_action(data.get("recommended_action"))
-    if action is None:
-        raise ValueError(f"invalid recommended_action: {data.get('recommended_action')!r}")
 
     reasoning = (data.get("reasoning") or "").strip()
     if not reasoning:
