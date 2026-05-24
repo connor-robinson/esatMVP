@@ -86,3 +86,29 @@ export function getSubjectPillClass(subject?: string | null): string {
 
   return SUBJECT_PILL_CLASS.All;
 }
+
+/** Library group title — matches past-papers `getExamAccentTextClass` pattern (borderless). */
+export function getSubjectAccentTextClass(subject?: string | null): string {
+  if (!subject) return "text-text-muted";
+  const normalized = subject.toLowerCase().trim();
+  if (normalized === "math 1" || normalized === "math 2" || normalized.startsWith("m"))
+    return "text-maths";
+  if (normalized === "physics" || normalized.startsWith("p")) return "text-physics";
+  if (normalized === "chemistry" || normalized.startsWith("c")) return "text-chemistry";
+  if (normalized === "biology" || normalized.startsWith("b")) return "text-secondary";
+  return "text-text-muted";
+}
+
+/** Library pill in tips / badges — borderless tint. */
+export function getSubjectAccentBadgeClass(subject?: string | null): string {
+  if (!subject) return "bg-surface-mid text-text-muted";
+  const normalized = subject.toLowerCase().trim();
+  if (normalized === "math 1" || normalized === "math 2" || normalized.startsWith("m"))
+    return "bg-maths/15 text-maths";
+  if (normalized === "physics" || normalized.startsWith("p")) return "bg-physics/15 text-physics";
+  if (normalized === "chemistry" || normalized.startsWith("c"))
+    return "bg-chemistry/15 text-chemistry";
+  if (normalized === "biology" || normalized.startsWith("b"))
+    return "bg-secondary/15 text-secondary";
+  return "bg-surface-mid text-text-muted";
+}

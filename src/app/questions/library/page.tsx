@@ -9,7 +9,6 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/layout/Container";
 import type { QuestionBankQuestion, SubjectFilter, DifficultyFilter, AttemptedFilter, AttemptResultFilter } from "@/types/questionBank";
-import { QuestionLibraryFilters } from "@/components/questionBank/library/QuestionLibraryFilters";
 import { QuestionLibraryGrid } from "@/components/questionBank/library/QuestionLibraryGrid";
 import { QuestionSessionSummary } from "@/components/questionBank/library/QuestionSessionSummary";
 
@@ -220,8 +219,10 @@ export default function QuestionsLibraryPage() {
 
   if (loading) {
     return (
-      <Container size="lg">
-        <div className="py-16 text-center text-sm text-text-muted">Loading questions…</div>
+      <Container size="lg" className="py-7 sm:py-9">
+        <div className="py-16 text-center font-heading text-sm text-text-muted">
+          Loading questions…
+        </div>
       </Container>
     );
   }
@@ -235,36 +236,27 @@ export default function QuestionsLibraryPage() {
   }
 
   return (
-    <Container size="lg" className="py-6 sm:py-8">
-      {/* Filters */}
-      <div className="mb-4">
-        <QuestionLibraryFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          subjectFilter={subjectFilter}
-          onSubjectFilterChange={setSubjectFilter}
-          difficultyFilter={difficultyFilter}
-          onDifficultyFilterChange={setDifficultyFilter}
-          attemptedStatusFilter={attemptedStatusFilter}
-          onAttemptedStatusFilterChange={setAttemptedStatusFilter}
-          attemptResultFilter={attemptResultFilter}
-          onAttemptResultFilterChange={setAttemptResultFilter}
-        />
-      </div>
-
-      {/* Two-column layout */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
-        {/* Left: Question library */}
+    <Container size="lg" className="py-7 sm:py-9">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_min(100%,30rem)] lg:items-start lg:gap-6 xl:grid-cols-[minmax(0,1fr)_31rem]">
         <div>
           <QuestionLibraryGrid
             questions={questions}
             selectedQuestionIds={selectedQuestionIds}
             onToggleQuestion={handleToggleQuestion}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            subjectFilter={subjectFilter}
+            onSubjectFilterChange={setSubjectFilter}
+            difficultyFilter={difficultyFilter}
+            onDifficultyFilterChange={setDifficultyFilter}
+            attemptedStatusFilter={attemptedStatusFilter}
+            onAttemptedStatusFilterChange={setAttemptedStatusFilter}
+            attemptResultFilter={attemptResultFilter}
+            onAttemptResultFilterChange={setAttemptResultFilter}
           />
         </div>
 
-        {/* Right: Session summary */}
-        <div>
+        <div className="min-w-0 lg:sticky lg:top-7 lg:self-start">
           <QuestionSessionSummary
             selectedQuestions={selectedQuestions}
             onRemoveQuestion={handleRemoveQuestion}
@@ -276,12 +268,14 @@ export default function QuestionsLibraryPage() {
         </div>
       </div>
 
-      {/* Error banner */}
-      {error && (
-        <div role="alert" className="mt-4 rounded-xl border border-error/30 bg-error/10 p-4 text-sm text-error">
+      {error ? (
+        <div
+          role="alert"
+          className="mt-4 rounded-organic-md bg-error/10 px-4 py-3 font-heading text-sm text-error"
+        >
           {error}
         </div>
-      )}
+      ) : null}
     </Container>
   );
 }
