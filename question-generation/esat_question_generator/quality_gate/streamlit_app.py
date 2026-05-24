@@ -671,9 +671,92 @@ def _render_diagram_generation_tab(client: Any, review_base: str) -> None:
 
 def _tail_log(path: Path, n: int = 120) -> str:
     if not path.is_file():
-        return "(no log file yet)"
+        return ""
     lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     return "\n".join(lines[-n:])
+
+
+def _combined_log_text(state: dict | None, *, n: int = 120) -> str:
+    """Prefer subprocess log file; fall back to run_state log_tail (always updated)."""
+    file_log = _tail_log(LOG_PATH, n=n)
+    if file_log.strip():
+        return file_log
+    if state:
+        tail = state.get("log_tail")
+        if isinstance(tail, list) and tail:
+            return "\n".join(str(x) for x in tail[-n:])
+    return "(no log output yet — check Live progress above; scoring may still be running)"
+
+
+def _parse_state_timestamp(raw: Any) -> Optional["datetime"]:
+    from datetime import datetime, timezone
+
+    if not raw:
+        return None
+    try:
+        s = str(raw).replace("Z", "+00:00")
+        dt = datetime.fromisoformat(s)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
+    except Exception:
+        return None
+
+
+def _scoring_status(proc: Any, state: dict | None) -> dict[str, Any]:
+    """
+    Unified status for UI: subprocess handle may be lost after refresh while CLI still runs.
+    """
+    from datetime import datetime, timezone
+
+    out: dict[str, Any] = {
+        "subprocess_alive": False,
+        "subprocess_exit": None,
+        "state_running": False,
+        "stale": False,
+        "display": "idle",
+        "message": "No scoring job detected. Click **Start scoring** above.",
+    }
+    if proc is not None:
+        code = proc.poll()
+        if code is None:
+            out["subprocess_alive"] = True
+        else:
+            out["subprocess_exit"] = code
+
+    if state and state.get("running"):
+        out["state_running"] = True
+        updated = _parse_state_timestamp(state.get("last_update"))
+        if updated:
+            age_s = (datetime.now(timezone.utc) - updated).total_seconds()
+            if age_s > 180:
+                out["stale"] = True
+
+    alive = out["subprocess_alive"] or out["state_running"]
+    if alive and not out["stale"]:
+        stats = state.get("stats") if state else {}
+        proc_n = stats.get("processed", 0) if isinstance(stats, dict) else 0
+        out["display"] = "running"
+        out["message"] = (
+            f"Scoring **in progress** — **{proc_n}** question(s) processed so far. "
+            "Use **Refresh progress** below to update (or enable auto-refresh)."
+        )
+    elif alive and out["stale"]:
+        out["display"] = "stale"
+        out["message"] = (
+            "Progress file still says **running**, but nothing has updated in **3+ minutes**. "
+            "The job may be stuck (slow LLM / tag relabel) or crashed. Check log below; use **Stop scoring** "
+            "and start again if needed."
+        )
+    elif out["subprocess_exit"] is not None:
+        out["display"] = "finished"
+        out["message"] = f"Background process exited (code **{out['subprocess_exit']}**)."
+    elif state and not state.get("running"):
+        stats = state.get("stats") if state else {}
+        proc_n = stats.get("processed", 0) if isinstance(stats, dict) else 0
+        out["display"] = "finished"
+        out["message"] = f"Last job finished — **{proc_n}** question(s) processed."
+    return out
 
 
 def _terminate_if_running() -> None:
@@ -853,60 +936,71 @@ with tab_score:
     c1, c2, c3 = st.columns(3)
     with c1:
         if st.button("Start scoring", type="primary"):
-            _terminate_if_running()
-            LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-            LOG_PATH.write_text("", encoding="utf-8")
-            cmd = [
-                sys.executable,
-                str(CLI),
-                "run",
-                "--limit",
-                str(int(how_many)),
-                "--page-size",
-                str(int(chunk_size)),
-                "--test-type",
-                test_type,
-                "--llm",
-                llm_backend,
-            ]
-            if model.strip():
-                cmd += ["--model", model.strip()]
-            if use_batch_api:
-                cmd.append("--batch-api")
-                cmd += ["--batch-poll-interval", str(float(batch_poll))]
-            if subjects.strip():
-                cmd += ["--subjects", subjects.strip()]
-            if difficulties.strip():
-                cmd += ["--difficulties", difficulties.strip()]
-            if schema_prefix.strip():
-                cmd += ["--schema-prefix", schema_prefix.strip()]
-            if job_id.strip():
-                cmd += ["--job-id", job_id.strip()]
-            if dry_run:
-                cmd.append("--dry-run")
-            if record_only:
-                cmd.append("--record-only")
-            if rescore:
-                cmd.append("--force-reassess")
-            if not auto_fix_formatting:
-                cmd.append("--no-fix-formatting")
-            if apply_tag_fixes:
-                cmd.append("--apply-tag-fixes")
-            if include_deleted:
-                cmd.append("--include-deleted")
-            cmd += ["--state-file", str(STATE_PATH)]
+            existing = _load_state()
+            ex_stat = _scoring_status(None, existing)
+            if ex_stat["display"] == "running" and not ex_stat["stale"]:
+                st.error(
+                    "A scoring job is already running (see Live progress). "
+                    "Wait for it to finish, use **Stop scoring**, or refresh — do not start a second copy."
+                )
+            else:
+                _terminate_if_running()
+                LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+                LOG_PATH.write_text("", encoding="utf-8")
+                cmd = [
+                    sys.executable,
+                    "-u",
+                    str(CLI),
+                    "run",
+                    "--limit",
+                    str(int(how_many)),
+                    "--page-size",
+                    str(int(chunk_size)),
+                    "--test-type",
+                    test_type,
+                    "--llm",
+                    llm_backend,
+                ]
+                if model.strip():
+                    cmd += ["--model", model.strip()]
+                if use_batch_api:
+                    cmd.append("--batch-api")
+                    cmd += ["--batch-poll-interval", str(float(batch_poll))]
+                if subjects.strip():
+                    cmd += ["--subjects", subjects.strip()]
+                if difficulties.strip():
+                    cmd += ["--difficulties", difficulties.strip()]
+                if schema_prefix.strip():
+                    cmd += ["--schema-prefix", schema_prefix.strip()]
+                if job_id.strip():
+                    cmd += ["--job-id", job_id.strip()]
+                if dry_run:
+                    cmd.append("--dry-run")
+                if record_only:
+                    cmd.append("--record-only")
+                if rescore:
+                    cmd.append("--force-reassess")
+                if not auto_fix_formatting:
+                    cmd.append("--no-fix-formatting")
+                if apply_tag_fixes:
+                    cmd.append("--apply-tag-fixes")
+                if include_deleted:
+                    cmd.append("--include-deleted")
+                cmd += ["--state-file", str(STATE_PATH)]
 
-            lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
-            proc = subprocess.Popen(
-                cmd,
-                cwd=str(ROOT),
-                stdout=lf,
-                stderr=subprocess.STDOUT,
-                env=os.environ.copy(),
-            )
-            st.session_state.subproc = proc
-            st.session_state.last_cmd = " ".join(cmd)
-            st.success("Scoring started in the background.")
+                child_env = os.environ.copy()
+                child_env["PYTHONUNBUFFERED"] = "1"
+                lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
+                proc = subprocess.Popen(
+                    cmd,
+                    cwd=str(ROOT),
+                    stdout=lf,
+                    stderr=subprocess.STDOUT,
+                    env=child_env,
+                )
+                st.session_state.subproc = proc
+                st.session_state.last_cmd = " ".join(cmd)
+                st.success("Scoring started in the background.")
     with c2:
         if st.button("Stop scoring"):
             _terminate_if_running()
@@ -920,40 +1014,63 @@ with tab_score:
             st.code(st.session_state.last_cmd, language="bash")
 
     state = _load_state()
+    proc = st.session_state.get("subproc")
+    status = _scoring_status(proc, state)
+
     st.subheader("Live progress")
-    if state:
-        st.json(state)
+    if status["display"] == "running":
+        st.success(status["message"])
+    elif status["display"] == "stale":
+        st.warning(status["message"])
+    elif status["display"] == "finished":
+        st.info(status["message"])
     else:
-        st.info("No progress file yet — start a run above, or run the checker from the command line once.")
+        st.info(status["message"])
+
+    if state:
+        stats = state.get("stats") if isinstance(state.get("stats"), dict) else {}
+        m1, m2, m3, m4 = st.columns(4)
+        with m1:
+            st.metric("Processed", stats.get("processed", 0))
+        with m2:
+            st.metric("Auto-approved", stats.get("auto_approved", 0))
+        with m3:
+            st.metric("Needs review", stats.get("pending_operator", 0))
+        with m4:
+            st.metric("Errors", stats.get("errors", 0))
+        st.caption(
+            f"Job `{state.get('job_id', '—')}` · last update `{state.get('last_update', '—')}` · "
+            f"running={state.get('running')}"
+        )
+        with st.expander("Raw progress JSON", expanded=False):
+            st.json(state)
+    else:
+        st.info("No progress file yet — start a run above.")
 
     st.subheader("Log output")
-    st.text_area("log_output", _tail_log(LOG_PATH), height=260, label_visibility="collapsed")
+    st.text_area(
+        "log_output",
+        _combined_log_text(state),
+        height=260,
+        label_visibility="collapsed",
+    )
 
-    proc = st.session_state.get("subproc")
-    if proc is not None:
-        code = proc.poll()
-        if code is not None:
-            st.success(f"Background scoring finished (exit code **{code}**).")
-            st.session_state.subproc = None
-        else:
-            st.info(
-                "Scoring is **still running** in the background. "
-                "Use **Refresh screen** (above) or **Refresh progress** below to update the log and state — "
-                "no automatic reloads by default (avoids page flicker)."
-            )
-            ar1, ar2 = st.columns([1, 1])
-            with ar1:
-                if st.button("Refresh progress", key="qg_refresh_subproc_progress"):
-                    st.rerun()
-            with ar2:
-                auto_refresh = st.checkbox(
-                    "Auto-refresh while running (whole app every 3s — may flicker)",
-                    value=False,
-                    key="qg_subproc_autorefresh",
-                )
-            if auto_refresh:
-                time.sleep(3.0)
+    if status["display"] in ("running", "stale"):
+        ar1, ar2 = st.columns([1, 1])
+        with ar1:
+            if st.button("Refresh progress", key="qg_refresh_subproc_progress"):
                 st.rerun()
+        with ar2:
+            auto_refresh = st.checkbox(
+                "Auto-refresh while running (every 5s)",
+                value=False,
+                key="qg_subproc_autorefresh",
+            )
+        if auto_refresh:
+            time.sleep(5.0)
+            st.rerun()
+    elif proc is not None and proc.poll() is not None:
+        st.session_state.subproc = None
 
 with tab_review:
     st.markdown(
