@@ -113,6 +113,35 @@ def _backfill_review_label(row: dict[str, Any]) -> str:
     return backfill_review_label(row.get("quality_gate_diagram_backfill_kind")) or "—"
 
 
+def _parse_quality_gate_payload(row: dict[str, Any]) -> dict[str, Any]:
+    p = row.get("quality_gate_payload")
+    if isinstance(p, dict):
+        return p
+    if isinstance(p, str) and p.strip():
+        try:
+            parsed = json.loads(p)
+            return parsed if isinstance(parsed, dict) else {}
+        except Exception:
+            return {}
+    return {}
+
+
+def _ai_why_from_row(row: dict[str, Any]) -> str:
+    """Full AI reasoning for tables — do not truncate (Streamlit may wrap in-cell)."""
+    payload = _parse_quality_gate_payload(row)
+    rd = payload.get("review_disposition") if isinstance(payload.get("review_disposition"), dict) else {}
+    parts: list[str] = []
+    for val in (
+        row.get("quality_gate_reason"),
+        payload.get("reasoning"),
+        rd.get("notes") if isinstance(rd, dict) else None,
+    ):
+        s = str(val or "").strip()
+        if s and s not in parts:
+            parts.append(s)
+    return " — ".join(parts) if parts else ""
+
+
 def _curriculum_cols(row: dict[str, Any]) -> dict[str, Any]:
     from quality_gate.schemas import curriculum_fields_from_payload
 
@@ -253,7 +282,8 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
         "Format issues": cur["Format issues"],
         "Disposition": cur.get("disposition") or "—",
         "Labels": cur.get("disposition_labels") or "—",
-        "Gold": gold,
+                "Why": _ai_why_from_row(r) or "—",
+                "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
                 "Open": f"{base}/review?id={qid}" if qid else "",
@@ -298,7 +328,8 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
         "Format issues": cur["Format issues"],
         "Disposition": cur.get("disposition") or "—",
         "Labels": cur.get("disposition_labels") or "—",
-        "Gold": gold,
+                "Why": _ai_why_from_row(r) or "—",
+                "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
                 "Last job": last_job,
@@ -307,6 +338,13 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
             }
         )
     return pd.DataFrame.from_records(records)
+
+
+def _wide_text_column(label: str, *, help_text: str = "") -> Any:
+    kwargs: dict[str, Any] = {"width": "large"}
+    if help_text:
+        kwargs["help"] = help_text
+    return st.column_config.TextColumn(label, **kwargs)
 
 
 def _format_qg_run_row(r: dict[str, Any]) -> str:
@@ -700,10 +738,20 @@ def _mark_run_state_stopped() -> None:
     STATE_PATH.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def _subprocess_creationflags() -> int:
+def _subprocess_popen_kwargs() -> dict[str, Any]:
+    """
+    Background scorer on Windows must not use DETACHED_PROCESS — that spawns a visible
+    System32 cmd flash. CREATE_NO_WINDOW keeps the child hidden while Streamlit reruns.
+    """
     if sys.platform != "win32":
-        return 0
-    return int(subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS)  # type: ignore[attr-defined]
+        return {"start_new_session": True}
+    flags = int(getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000))
+    if hasattr(subprocess, "CREATE_NEW_PROCESS_GROUP"):
+        flags |= int(subprocess.CREATE_NEW_PROCESS_GROUP)  # type: ignore[attr-defined]
+    si = subprocess.STARTUPINFO()
+    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # type: ignore[attr-defined]
+    si.wShowWindow = 0
+    return {"creationflags": flags, "startupinfo": si}
 
 
 def _heal_zombie_run_state(proc: Any) -> None:
@@ -846,18 +894,12 @@ def _build_live_results_dataframe(
         qid = str(r.get("id") or "")
         code_raw = (r.get("media_upload_code") or "").strip().upper()
         code = code_raw if code_raw else (qid[:8] + "…" if qid else "—")
-        payload = r.get("quality_gate_payload")
-        if isinstance(payload, str):
-            try:
-                payload = json.loads(payload)
-            except Exception:
-                payload = {}
+        payload = _parse_quality_gate_payload(r)
         cur = _curriculum_cols(r)
-        rd = (payload or {}).get("review_disposition") if isinstance(payload, dict) else {}
+        rd = payload.get("review_disposition") if isinstance(payload.get("review_disposition"), dict) else {}
         labels = rd.get("labels") if isinstance(rd, dict) else []
-        label_s = ", ".join(str(x) for x in labels[:4]) if isinstance(labels, list) and labels else "—"
-        disp_notes = (rd.get("notes") or "") if isinstance(rd, dict) else ""
-        reason = (r.get("quality_gate_reason") or disp_notes or "")[:160]
+        label_s = ", ".join(str(x) for x in labels) if isinstance(labels, list) and labels else "—"
+        reason = _ai_why_from_row(r)
         eff = r.get("quality_gate_action")
         auto = (r.get("status") or "").lower() == "approved" and eff == "approve"
         records.append(
@@ -997,16 +1039,15 @@ def _launch_scoring_subprocess(
     child_env["PYTHONUNBUFFERED"] = "1"
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     LOG_PATH.write_text("", encoding="utf-8")
-    # Detach on Windows so Streamlit reruns do not kill the scorer; logs live in run_state.json.
+    log_handle = open(LOG_PATH, "w", encoding="utf-8")
     proc = subprocess.Popen(
         cmd,
         cwd=str(ROOT),
         stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=log_handle,
+        stderr=subprocess.STDOUT,
         env=child_env,
-        creationflags=_subprocess_creationflags(),
-        start_new_session=sys.platform != "win32",
+        **_subprocess_popen_kwargs(),
     )
     st.session_state.subproc = proc
     st.session_state.last_cmd = " ".join(cmd)
@@ -1148,13 +1189,18 @@ with tab_score:
 
     if live_rows:
         df_live = _build_live_results_dataframe(live_rows, review_base)
+        st.caption("**Why** shows the full AI reasoning (not truncated). Click a cell to read long text.")
         st.dataframe(
             df_live,
             use_container_width=True,
             hide_index=True,
             column_config={
                 "Open": st.column_config.LinkColumn("Review", display_text="Open"),
-                "Why": st.column_config.TextColumn("Why", width="large"),
+                "Why": _wide_text_column(
+                    "Why",
+                    help_text="Full quality-gate reasoning from the latest assessment",
+                ),
+                "Labels": _wide_text_column("Labels"),
             },
         )
     elif job_id_live:
@@ -1321,7 +1367,9 @@ with tab_review:
                             "Review",
                             display_text="Open",
                             help="Opens the Next.js review queue for this question",
-                        )
+                        ),
+                        "Why": _wide_text_column("Why"),
+                        "Curriculum reason": _wide_text_column("Curriculum reason"),
                     },
                 )
                 st.download_button(
@@ -1595,14 +1643,18 @@ with tab_review:
                         df,
                         use_container_width=True,
                         hide_index=True,
-                        column_config={
-                            "Open": st.column_config.LinkColumn(
-                                "Review",
-                                display_text="Open",
-                                help="Opens the Next.js review queue for this question",
-                            )
-                        },
-                    )
+                    column_config={
+                        "Open": st.column_config.LinkColumn(
+                            "Review",
+                            display_text="Open",
+                            help="Opens the Next.js review queue for this question",
+                        ),
+                        "Why": _wide_text_column("Why"),
+                        "Curriculum reason": _wide_text_column("Curriculum reason"),
+                        "Curriculum flags": _wide_text_column("Curriculum flags"),
+                        "Format issues": _wide_text_column("Format issues"),
+                    },
+                )
                     safe_slug = "".join(c if c.isalnum() else "_" for c in jid)[:48] or "run"
                     st.download_button(
                         label="Download results as CSV",
