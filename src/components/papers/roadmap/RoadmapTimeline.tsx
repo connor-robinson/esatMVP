@@ -4,19 +4,13 @@
 
 "use client";
 
-import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
   getExamAccentFillClass,
-  getExamAccentBadgeClass,
   getExamAccentTextClass,
 } from "@/config/colors";
 import type { RoadmapStage } from "@/lib/papers/roadmapConfig";
-import {
-  buildRoadmapTimelineMarkers,
-  type TimelineMarker,
-} from "./roadmapTimelineMarkers";
 
 interface RoadmapTimelineProps {
   stages: RoadmapStage[];
@@ -61,62 +55,12 @@ function generateSpinePath(startY: number, endY: number): string {
   return path;
 }
 
-function TimelineTip({
-  marker,
-  top,
-  nodeX,
-  isPast,
-}: {
-  marker: TimelineMarker;
-  top: number;
-  nodeX: number;
-  isPast: boolean;
-}) {
-  return (
-    <div
-      className="pointer-events-none absolute z-20 w-[10.5rem]"
-      style={{
-        top: `${top}px`,
-        left: `${nodeX}px`,
-        transform: "translate(12px, -50%)",
-      }}
-    >
-      <div
-        className={cn(
-          "rounded-organic-md px-3 py-2.5",
-          isPast ? "bg-surface-mid/80" : "bg-surface-elevated",
-        )}
-      >
-        <div className="mb-1.5 flex items-center gap-2">
-          <span
-            className={cn(
-              "rounded-organic-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-              getExamAccentBadgeClass(marker.examName),
-            )}
-          >
-            {marker.examName}
-          </span>
-          <span className="text-[10px] font-medium text-text-subtle">
-            {marker.title}
-          </span>
-        </div>
-        <p className="text-xs leading-relaxed text-text-muted">{marker.text}</p>
-      </div>
-    </div>
-  );
-}
-
 export function RoadmapTimeline({
   stages,
   nodePositions,
   currentStageIndex,
 }: RoadmapTimelineProps) {
   const effectiveCurrentIndex = currentStageIndex ?? 0;
-
-  const markers = useMemo(
-    () => buildRoadmapTimelineMarkers(stages),
-    [stages],
-  );
 
   const defaultHeight = 100;
   const getCenterPosition = (index: number): number => {
@@ -204,22 +148,6 @@ export function RoadmapTimeline({
                     : "h-2.5 w-2.5 bg-surface-neutral",
               )}
               style={{ left: nodeX, top: centerY }}
-            />
-          );
-        })}
-
-        {markers.map((marker, idx) => {
-          const top = getCenterPosition(marker.stageIndex);
-          const nodeX = getNodeX(top);
-          const isPast = marker.stageIndex < effectiveCurrentIndex;
-
-          return (
-            <TimelineTip
-              key={`${marker.stageIndex}-${marker.title}-${idx}`}
-              marker={marker}
-              top={top}
-              nodeX={nodeX}
-              isPast={isPast}
             />
           );
         })}

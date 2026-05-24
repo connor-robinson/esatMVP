@@ -688,9 +688,9 @@ export default function PapersRoadmapPage() {
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="pb-10 pt-2">
-        <div className="flex gap-8 lg:gap-12">
-          <div className="hidden w-[22%] shrink-0 lg:block">
-            <div className='sticky top-8'>
+        <div className="flex gap-6 lg:gap-8">
+          <div className="hidden w-14 shrink-0 lg:block">
+            <div className="sticky top-8">
               <RoadmapTimeline
                 stages={visibleStages}
                 nodePositions={nodePositions}
@@ -699,7 +699,7 @@ export default function PapersRoadmapPage() {
             </div>
           </div>
 
-          <div className="min-w-0 flex-1 lg:w-[78%]">
+          <div className="min-w-0 flex-1">
             <RoadmapList
               nodes={timelineNodes}
               completionData={completionData}

@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { StageListCard } from "./StageListCard";
+import { RoadmapTipsOverlay } from "./RoadmapTipsOverlay";
 
 interface TimelineNode {
   stage: RoadmapStage;
@@ -237,11 +238,19 @@ export function RoadmapList({
     setExpandedStageId((prev) => (prev == null ? current.stage.id : prev));
   }, [nodes.length]);
 
+  const currentStageIndex = nodes.findIndex((n) => n.isCurrent);
+  const stages = nodes.map((n) => n.stage);
+
   return (
     <div
       ref={containerRef}
       className="relative w-full space-y-3 overflow-visible"
     >
+      <RoadmapTipsOverlay
+        stages={stages}
+        nodePositions={timelineNodePositions}
+        currentStageIndex={currentStageIndex >= 0 ? currentStageIndex : 0}
+      />
       {nodes.map((node, index) => {
         const stageCompletionData =
           completionData.get(node.stage.id)?.parts || new Map();
