@@ -828,6 +828,82 @@ def _build_live_results_dataframe(
     return pd.DataFrame.from_records(records)
 
 
+def _render_export_panel(
+    client: Any,
+    review_base: str,
+    *,
+    key_prefix: str,
+    job_id: Optional[str] = None,
+    test_type: Optional[str] = "ESAT",
+    title: str = "Export full report",
+) -> None:
+    """Download stems + tags + AI reasoning / flags for assessed questions."""
+    from quality_gate.export_report import export_csv_bytes, export_jsonl_bytes
+    from quality_gate.supabase_io import fetch_assessed_questions_for_export
+
+    st.subheader(title)
+    scope = "this run only" if (job_id or "").strip() else f"all assessed ({test_type or 'any'})"
+    st.caption(
+        f"Includes question stem (plain text in CSV), subject, difficulty, tags, verdict, "
+        f"AI reasoning, scores, curriculum/formatting flags, disposition labels, and review link. "
+        f"Scope: **{scope}**."
+    )
+    export_cap = st.number_input(
+        "Max questions to export",
+        min_value=50,
+        max_value=50_000,
+        value=5_000 if not (job_id or "").strip() else 2_000,
+        step=50,
+        key=f"{key_prefix}_export_cap",
+    )
+    cache_key = f"{key_prefix}_export_rows"
+    prep_key = f"{key_prefix}_export_prep"
+
+    if st.button("Load export data", key=prep_key, type="secondary"):
+        try:
+            with st.spinner("Fetching assessed questions from database…"):
+                rows = fetch_assessed_questions_for_export(
+                    client,
+                    job_id=(job_id or "").strip() or None,
+                    test_type=test_type,
+                    max_rows=int(export_cap),
+                    page_size=80,
+                )
+            st.session_state[cache_key] = rows
+            if rows:
+                st.success(f"Loaded **{len(rows):,}** question(s). Use the download buttons below.")
+            else:
+                st.warning("No assessed questions matched this scope.")
+        except Exception as e:
+            st.exception(e)
+
+    rows = st.session_state.get(cache_key)
+    if not rows:
+        return
+
+    st.caption(
+        f"**{len(rows):,}** question(s) ready. CSV uses plain-text stems; JSONL includes full HTML stems."
+    )
+    slug = "".join(c if c.isalnum() else "_" for c in (job_id or test_type or "export"))[:40]
+    c_csv, c_jsonl = st.columns(2)
+    with c_csv:
+        st.download_button(
+            label="Download CSV",
+            data=export_csv_bytes(rows, review_base=review_base),
+            file_name=f"quality_gate_export_{slug}.csv",
+            mime="text/csv",
+            key=f"{key_prefix}_dl_csv",
+        )
+    with c_jsonl:
+        st.download_button(
+            label="Download JSONL",
+            data=export_jsonl_bytes(rows, review_base=review_base),
+            file_name=f"quality_gate_export_{slug}.jsonl",
+            mime="application/jsonl",
+            key=f"{key_prefix}_dl_jsonl",
+        )
+
+
 def _launch_scoring_subprocess(
     *,
     limit: int,
@@ -1023,6 +1099,17 @@ with tab_score:
     elif proc is not None and proc.poll() is not None:
         st.session_state.subproc = None
 
+    if _qg_client is not None and job_id_live:
+        st.divider()
+        _render_export_panel(
+            _qg_client,
+            review_base,
+            key_prefix="score_tab",
+            job_id=job_id_live,
+            test_type="ESAT",
+            title="Export this run (stems + AI notes)",
+        )
+
 with tab_review:
     st.markdown(
         "Browse scored questions and open them in the **review app**. "
@@ -1156,6 +1243,15 @@ with tab_review:
                     mime="text/csv",
                     key="qg_download_overview_csv",
                 )
+            st.divider()
+            _render_export_panel(
+                _qg_client,
+                review_base,
+                key_prefix="review_all",
+                job_id=None,
+                test_type=tt_param,
+                title="Export all assessed questions (full stems + AI notes)",
+            )
         except Exception as e:
             st.exception(e)
 
@@ -1426,6 +1522,15 @@ with tab_review:
                         file_name=f"quality_gate_{safe_slug}.csv",
                         mime="text/csv",
                         key=f"qg_csv_{safe_slug}",
+                    )
+                    st.divider()
+                    _render_export_panel(
+                        client,
+                        review_base,
+                        key_prefix=f"run_{safe_slug}",
+                        job_id=jid,
+                        test_type=None,
+                        title="Export this run (full stems + AI notes)",
                     )
             except Exception as e:
                 st.exception(e)

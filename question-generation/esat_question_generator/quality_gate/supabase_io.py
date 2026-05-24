@@ -147,6 +147,58 @@ def fetch_all_assessed_rows_for_overview(
     return out
 
 
+EXPORT_SELECT = (
+    "id, subjects, difficulty, primary_tag, secondary_tags, test_type, status, "
+    "question_stem, media_upload_code, "
+    "quality_gate_assessed_at, quality_gate_job_id, quality_gate_verdict, "
+    "quality_gate_action, quality_gate_reason, quality_gate_model, quality_gate_payload, "
+    "quality_gate_calibration_tier, quality_gate_calibration_notes, "
+    "quality_gate_graph_candidate, quality_gate_graph_mode, quality_gate_graph_notes, "
+    "quality_gate_diagram_backfill_kind"
+)
+
+
+def fetch_assessed_questions_for_export(
+    client: Any,
+    *,
+    job_id: Optional[str] = None,
+    test_type: Optional[str] = "ESAT",
+    max_rows: int = 50_000,
+    page_size: int = 100,
+) -> List[Dict[str, Any]]:
+    """
+    Assessed questions with stems and full quality_gate_payload for CSV/JSONL export.
+
+    When ``job_id`` is set, only rows from that run are returned. Otherwise all assessed
+    rows in the pool (subject to ``test_type`` filter).
+    """
+    out: List[Dict[str, Any]] = []
+    offset = 0
+    ps = max(25, min(int(page_size), 250))
+    cap = max(1, min(int(max_rows), 200_000))
+    jid = (job_id or "").strip()
+    while len(out) < cap:
+        q = (
+            client.table(TABLE)
+            .select(EXPORT_SELECT)
+            .neq("status", "deleted")
+            .not_.is_("quality_gate_assessed_at", "null")
+        )
+        if jid:
+            q = q.eq("quality_gate_job_id", jid)
+        q = _apply_test_type_filter(q, test_type)
+        q = q.order("quality_gate_assessed_at", desc=True).range(offset, offset + ps - 1)
+        resp = q.execute()
+        batch = list(resp.data or [])
+        if not batch:
+            break
+        out.extend(batch)
+        if len(batch) < ps:
+            break
+        offset += ps
+    return out[:cap]
+
+
 SELECT_ASSESS = (
     "id, schema_id, subjects, difficulty, primary_tag, secondary_tags, test_type, status, "
     "question_stem, options, correct_option, solution_reasoning, solution_key_insight, "
