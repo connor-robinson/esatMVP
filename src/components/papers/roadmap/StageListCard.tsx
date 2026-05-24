@@ -19,7 +19,7 @@ import {
   getExamAccentTextClass,
   getExamAccentFillClass,
   getExamAccentSurfaceClass,
-  PAST_PAPERS_PROGRESS_FILL,
+  getExamProgressFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 
@@ -238,7 +238,7 @@ export function StageListCard({
                     <div
                       className={cn(
                         "h-full rounded-full transition-all duration-500 ease-signature",
-                        PAST_PAPERS_PROGRESS_FILL,
+                        getExamProgressFillClass(stage.examName),
                       )}
                       style={{ width: `${completionPct}%` }}
                     />

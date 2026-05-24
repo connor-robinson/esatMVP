@@ -76,71 +76,16 @@ export function getPaperTypeColor(paperType: string): string {
   return PAPER_TYPE_COLORS[paperType as keyof typeof PAPER_TYPE_COLORS] || PAPER_COLORS.mathematics;
 }
 
-/** Exam accent token aligned with `PAPER_TYPE_COLORS`. */
-type ExamAccentToken = "maths" | "physics" | "chemistry" | "biology" | "advanced";
-
-const EXAM_ACCENT_TEXT: Record<ExamAccentToken, string> = {
-  maths: "text-maths",
-  physics: "text-physics",
-  chemistry: "text-chemistry",
-  biology: "text-biology",
-  advanced: "text-advanced",
-};
-
-const EXAM_ACCENT_FILL: Record<ExamAccentToken, string> = {
-  maths: "bg-maths text-background",
-  physics: "bg-physics text-background",
-  chemistry: "bg-chemistry text-background",
-  biology: "bg-biology text-background",
-  advanced: "bg-advanced text-background",
-};
-
-const EXAM_ACCENT_BADGE: Record<ExamAccentToken, string> = {
-  maths: "bg-maths/15 text-maths",
-  physics: "bg-physics/15 text-physics",
-  chemistry: "bg-chemistry/15 text-chemistry",
-  biology: "bg-biology/15 text-biology",
-  advanced: "bg-advanced/15 text-advanced",
-};
-
-const EXAM_ACCENT_SURFACE: Record<ExamAccentToken, string> = {
-  maths: "bg-maths/10",
-  physics: "bg-physics/10",
-  chemistry: "bg-chemistry/10",
-  biology: "bg-biology/10",
-  advanced: "bg-advanced/10",
-};
-
-const EXAM_ACCENT_SURFACE_STRONG: Record<ExamAccentToken, string> = {
-  maths: "bg-maths/18",
-  physics: "bg-physics/18",
-  chemistry: "bg-chemistry/18",
-  biology: "bg-biology/18",
-  advanced: "bg-advanced/18",
-};
-
-const EXAM_SECTION_NUMBER_BADGE: Record<ExamAccentToken, string> = {
-  maths: "bg-maths text-background dark:text-white",
-  physics: "bg-physics text-background dark:text-white",
-  chemistry: "bg-chemistry text-background dark:text-white",
-  biology: "bg-biology text-background dark:text-white",
-  advanced: "bg-advanced text-background dark:text-white",
-};
-
-function getExamAccentToken(examName: string): ExamAccentToken {
-  const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "advanced";
-  if (key === "NSAA") return "biology";
-  if (key === "TMUA") return "physics";
-  if (key === "ESAT") return "maths";
-  if (key === "PAT") return "chemistry";
-  if (key === "MAT") return "maths";
-  return "maths";
-}
-
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
-  return EXAM_ACCENT_TEXT[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "text-biology";
+  if (key === "NSAA") return "text-accent";
+  if (key === "TMUA") return "text-tmua-accent";
+  if (key === "ESAT") return "text-maths";
+  if (key === "PAT") return "text-chemistry";
+  if (key === "MAT") return "text-maths";
+  return "text-maths";
 }
 
 /**
@@ -220,36 +165,90 @@ export const cssVar = {
  * Solid fill for section 1 / 2 chips — matches `getExamAccentTextClass` on the parent exam group.
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
-  return EXAM_SECTION_NUMBER_BADGE[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology text-background dark:text-white";
+  if (key === "NSAA") return "bg-accent text-background dark:text-white";
+  if (key === "TMUA") return "bg-tmua-accent text-background dark:text-white";
+  if (key === "ESAT") return "bg-maths text-background dark:text-white";
+  if (key === "PAT") return "bg-chemistry text-background dark:text-white";
+  if (key === "MAT") return "bg-maths text-background dark:text-white";
+  return "bg-maths text-background dark:text-white";
 }
 
 /** Borderless icon tile for session history rows (theme tokens only). */
 export function getPaperSessionIconClass(examName: string): string {
-  return EXAM_ACCENT_BADGE[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-advanced/15 text-advanced";
+  if (key === "NSAA") return "bg-biology/15 text-biology";
+  if (key === "TMUA") return "bg-physics/15 text-physics";
+  if (key === "ESAT") return "bg-maths/15 text-maths";
+  if (key === "PAT") return "bg-chemistry/15 text-chemistry";
+  if (key === "MAT") return "bg-maths/15 text-maths";
+  return "bg-maths/15 text-maths";
 }
 
-/** Badge / tile accents for roadmap (borderless). */
+/** Badge / tile accents for roadmap (borderless — matches getExamAccentTextClass). */
 export function getExamAccentBadgeClass(examName: string): string {
-  return EXAM_ACCENT_BADGE[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology/15 text-biology";
+  if (key === "NSAA") return "bg-accent/15 text-accent";
+  if (key === "TMUA") return "bg-tmua-accent/15 text-tmua-accent";
+  if (key === "ESAT") return "bg-maths/15 text-maths";
+  if (key === "PAT") return "bg-chemistry/15 text-chemistry";
+  if (key === "MAT") return "bg-maths/15 text-maths";
+  return "bg-accent/15 text-accent";
 }
 
 /** Solid fill for stage numbers, timeline nodes, primary actions. */
 export function getExamAccentFillClass(examName: string): string {
-  return EXAM_ACCENT_FILL[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology text-background";
+  if (key === "NSAA") return "bg-accent text-background";
+  if (key === "TMUA") return "bg-tmua-accent text-background";
+  if (key === "ESAT") return "bg-maths text-background";
+  if (key === "PAT") return "bg-chemistry text-background";
+  if (key === "MAT") return "bg-maths text-background";
+  return "bg-accent text-background";
+}
+
+/** Progress bar fill only (no text color). */
+export function getExamProgressFillClass(examName: string): string {
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology";
+  if (key === "NSAA") return "bg-accent";
+  if (key === "TMUA") return "bg-tmua-accent";
+  if (key === "ESAT") return "bg-maths";
+  if (key === "PAT") return "bg-chemistry";
+  if (key === "MAT") return "bg-maths";
+  return "bg-accent";
 }
 
 /** Tinted panel background (cards, expanded sections). */
 export function getExamAccentSurfaceClass(examName: string): string {
-  return EXAM_ACCENT_SURFACE[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology/10";
+  if (key === "NSAA") return "bg-accent/10";
+  if (key === "TMUA") return "bg-tmua-accent/10";
+  if (key === "ESAT") return "bg-maths/10";
+  if (key === "PAT") return "bg-chemistry/10";
+  if (key === "MAT") return "bg-maths/10";
+  return "bg-accent/10";
 }
 
 /** Stronger tint for current / highlighted stage row. */
 export function getExamAccentSurfaceStrongClass(examName: string): string {
-  return EXAM_ACCENT_SURFACE_STRONG[getExamAccentToken(examName)];
+  const key = examName.trim().toUpperCase();
+  if (key === "ENGAA") return "bg-biology/18";
+  if (key === "NSAA") return "bg-accent/18";
+  if (key === "TMUA") return "bg-tmua-accent/18";
+  if (key === "ESAT") return "bg-maths/18";
+  if (key === "PAT") return "bg-chemistry/18";
+  if (key === "MAT") return "bg-maths/18";
+  return "bg-accent/18";
 }
 
-/** Past papers progress bars and primary chrome — blue (`maths`), not question-bank pink. */
-export const PAST_PAPERS_PROGRESS_FILL = "bg-maths";
+/** Overall roadmap progress bar — NSAA blue. */
+export const PAST_PAPERS_PROGRESS_FILL = "bg-accent";
 
 /**
  * Helper function to desaturate a color (convert to rgba with reduced opacity)

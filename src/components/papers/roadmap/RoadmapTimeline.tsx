@@ -334,12 +334,12 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
 
           {/* Completed section - Clean White Line */}
           {completedPath && (
-            <g className="text-maths opacity-85">
+            <g className="text-text opacity-90">
               <motion.path
                 d={completedPath}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2.5"
+                strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 initial={{ pathLength: 0 }}
@@ -350,12 +350,12 @@ export function RoadmapTimeline({ stages, nodePositions, currentStageIndex }: Ro
           )}
 
           {remainingPath && (
-            <g className="text-text-muted opacity-40">
+            <g className="text-text-muted opacity-[0.5]">
               <motion.path
                 d={remainingPath}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2.5"
+                strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 initial={{ pathLength: 0 }}
