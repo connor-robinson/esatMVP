@@ -336,12 +336,40 @@ export function QuestionCard({
     "font-sans",
   );
 
+  const showSessionNotation = questionNumber != null;
+
   return (
     <div className="space-y-5">
       <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
+        <div className="flex gap-4 sm:gap-6">
+          {showSessionNotation && (
+            <aside
+              className="flex w-12 shrink-0 flex-col items-start gap-2 sm:w-14"
+              aria-label={`Question ${questionNumber}`}
+            >
+              <span className="text-[2.5rem] font-semibold leading-none tabular-nums tracking-tight text-text sm:text-5xl">
+                {questionNumber}
+              </span>
+              {verified && (
+                <span
+                  className="inline-flex -rotate-6 origin-top-left items-center gap-1 rounded-organic-md border border-secondary/40 bg-secondary/15 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-secondary shadow-sm"
+                  title="Verified by ESAT quality gate"
+                >
+                  <BadgeCheck
+                    className="h-3.5 w-3.5 shrink-0"
+                    strokeWidth={2.5}
+                    aria-hidden
+                  />
+                  Verified
+                </span>
+              )}
+            </aside>
+          )}
+
+          <div className="min-w-0 flex-1">
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 gap-y-2.5 sm:gap-3">
-            {verified && (
+            {verified && !showSessionNotation && (
               <span
                 className="inline-flex items-center gap-1.5 pr-1 text-sm font-medium"
                 title="Verified by ESAT quality gate"
@@ -416,11 +444,6 @@ export function QuestionCard({
         </div>
 
         <div className={cn(stemTypography, "inline-block w-full")}>
-          {questionNumber != null ? (
-            <span className="mr-0.5 font-normal tabular-nums text-text">
-              {questionNumber}.{" "}
-            </span>
-          ) : null}
           {question.graph_spec || question.graph_specs ? (
             <QuestionWithGraph
               questionText={question.question_stem}
@@ -431,6 +454,8 @@ export function QuestionCard({
           ) : (
             <MathContent content={question.question_stem} className="text-inherit inline" />
           )}
+        </div>
+          </div>
         </div>
       </div>
 
