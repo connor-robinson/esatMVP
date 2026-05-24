@@ -961,10 +961,12 @@ with tab_review:
         st.stop()
     from quality_gate.supabase_io import (
         clear_quality_gate_for_graph_flagged_rows,
+        count_approved_questions,
         count_graph_flagged_rows,
         count_questions_gate_overview,
         fetch_all_assessed_rows_for_overview,
         list_quality_gate_run_choices,
+        reset_approved_to_pending,
     )
 
     review_base = st.text_input(
@@ -1122,6 +1124,68 @@ with tab_review:
         key="qg_single_run_table_limit",
         help="Large runs are capped here so the page stays responsive. Full-job counts above the table still include every row.",
     )
+
+    st.divider()
+    st.markdown("### Reset human verification (approved → pending)")
+    st.caption(
+        "Sets **Status** back to **pending** for every question currently **approved** (review-app or auto-approve). "
+        "**Does not** change AI quality-gate scores, flags, or delete recommendations. **Deleted** rows are untouched."
+    )
+    if _qg_client is not None:
+        try:
+            _n_approved = count_approved_questions(_qg_client)
+        except Exception:
+            _n_approved = None
+        if _n_approved is not None:
+            st.caption(f"Rows currently approved: **{_n_approved}**.")
+    confirm_unverify = st.checkbox(
+        "I understand: all approved questions go back to pending for re-review.",
+        key="confirm_unverify",
+    )
+    clear_run_state_on_reset = st.checkbox(
+        "Also clear Streamlit run progress (auto_approved counters in run_state.json)",
+        value=True,
+        key="clear_run_state_on_reset",
+    )
+    if st.button(
+        "Reset all verified questions to pending",
+        disabled=not confirm_unverify or _qg_client is None,
+        key="btn_reset_verified",
+    ):
+        try:
+            n_reset = reset_approved_to_pending(_qg_client)
+            if clear_run_state_on_reset and STATE_PATH.is_file():
+                from datetime import datetime, timezone
+
+                payload = {
+                    "job_id": "",
+                    "running": False,
+                    "last_update": datetime.now(timezone.utc).isoformat(),
+                    "stats": {
+                        "processed": 0,
+                        "errors": 0,
+                        "auto_approved": 0,
+                        "pending_operator": 0,
+                        "skipped_deleted": 0,
+                        "calibration_gold": 0,
+                        "graph_candidates": 0,
+                        "graph_missing_expected": 0,
+                        "batch_api_jobs": 0,
+                        "diagrams_inserted": 0,
+                        "diagram_errors": 0,
+                    },
+                    "last_error": None,
+                    "log_tail": [],
+                    "verification_reset": True,
+                }
+                STATE_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            st.success(
+                f"Reset **{n_reset}** approved question(s) to **pending**. "
+                "AI quality-gate data unchanged. Refresh this page to update the overview table."
+            )
+            st.rerun()
+        except Exception as e:
+            st.exception(e)
 
     st.divider()
     st.markdown("### Reset graph-flagged rows for re-scoring")

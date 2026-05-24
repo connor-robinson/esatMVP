@@ -642,6 +642,30 @@ def bulk_set_image_backfill_queue(
     return n
 
 
+def count_approved_questions(client: Any) -> int:
+    """Rows with ``status`` = approved (human or auto-verified)."""
+    resp = (
+        client.table(TABLE)
+        .select("id", count="exact", head=True)
+        .eq("status", "approved")
+        .execute()
+    )
+    return int(resp.count or 0)
+
+
+def reset_approved_to_pending(client: Any) -> int:
+    """
+    Set ``status`` from approved → pending for re-review.
+
+    Does **not** touch deleted rows or any ``quality_gate_*`` fields (AI flags/scores stay).
+    """
+    before = count_approved_questions(client)
+    if before == 0:
+        return 0
+    client.table(TABLE).update({"status": "pending"}).eq("status", "approved").execute()
+    return before
+
+
 def clear_quality_gate_for_graph_flagged_rows(client: Any) -> int:
     """
     Clear quality-gate columns **only** for rows graph-flagged (candidate or missing_expected),
