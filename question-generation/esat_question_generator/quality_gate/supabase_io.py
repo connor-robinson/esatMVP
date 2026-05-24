@@ -283,6 +283,31 @@ def fetch_quality_gate_job_result_rows(
     return out
 
 
+def fetch_live_job_results(
+    client: Any,
+    job_id: str,
+    *,
+    limit: int = 50,
+) -> List[Dict[str, Any]]:
+    """Most recently assessed rows for a job (newest first), for live Streamlit table."""
+    if not (job_id or "").strip():
+        return []
+    resp = (
+        client.table(TABLE)
+        .select(
+            "id, status, subjects, media_upload_code, quality_gate_verdict, "
+            "quality_gate_action, quality_gate_reason, quality_gate_payload, "
+            "quality_gate_assessed_at"
+        )
+        .eq("quality_gate_job_id", job_id.strip())
+        .neq("status", "deleted")
+        .order("quality_gate_assessed_at", desc=True)
+        .limit(max(1, min(int(limit), 200)))
+        .execute()
+    )
+    return list(resp.data or [])
+
+
 def summarize_quality_gate_job(client: Any, job_id: str) -> Dict[str, Any]:
     """Histogram of actions plus calibration and graph-mode counts (paginated)."""
     page = 500

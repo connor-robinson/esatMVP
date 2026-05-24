@@ -759,6 +759,127 @@ def _scoring_status(proc: Any, state: dict | None) -> dict[str, Any]:
     return out
 
 
+def _errors_from_state(state: dict | None) -> list[str]:
+    if not state:
+        return []
+    out: list[str] = []
+    tail = state.get("log_tail")
+    if isinstance(tail, list):
+        for line in tail:
+            s = str(line)
+            if s.startswith("[error]"):
+                out.append(s)
+    le = (state.get("last_error") or "").strip()
+    if le and le not in out:
+        out.append(le)
+    return out
+
+
+def _outcome_label(eff: str | None, *, auto_applied: bool, status: str | None) -> str:
+    if auto_applied or (status or "").lower() == "approved":
+        return "Approved"
+    if eff == "delete":
+        return "Delete"
+    if eff == "regenerate":
+        return "Regenerate"
+    if eff == "human_review":
+        return "Human review"
+    if eff == "approve":
+        return "Keep"
+    return eff or "—"
+
+
+def _build_live_results_dataframe(
+    rows: list[dict[str, Any]],
+    review_base: str,
+) -> pd.DataFrame:
+    base = review_base.rstrip("/")
+    records: list[dict[str, Any]] = []
+    for r in rows:
+        qid = str(r.get("id") or "")
+        code_raw = (r.get("media_upload_code") or "").strip().upper()
+        code = code_raw if code_raw else (qid[:8] + "…" if qid else "—")
+        payload = r.get("quality_gate_payload")
+        if isinstance(payload, str):
+            try:
+                payload = json.loads(payload)
+            except Exception:
+                payload = {}
+        cur = _curriculum_cols(r)
+        rd = (payload or {}).get("review_disposition") if isinstance(payload, dict) else {}
+        labels = rd.get("labels") if isinstance(rd, dict) else []
+        label_s = ", ".join(str(x) for x in labels[:4]) if isinstance(labels, list) and labels else "—"
+        disp_notes = (rd.get("notes") or "") if isinstance(rd, dict) else ""
+        reason = (r.get("quality_gate_reason") or disp_notes or "")[:160]
+        eff = r.get("quality_gate_action")
+        auto = (r.get("status") or "").lower() == "approved" and eff == "approve"
+        records.append(
+            {
+                "Code": code,
+                "Verdict": r.get("quality_gate_verdict") or "—",
+                "Outcome": _outcome_label(eff, auto_applied=auto, status=r.get("status")),
+                "Labels": label_s,
+                "Why": reason or "—",
+                "Subject": r.get("subjects") or "—",
+                "Status": r.get("status") or "—",
+                "Open": f"{base}/review?id={qid}" if qid else "",
+            }
+        )
+    return pd.DataFrame.from_records(records)
+
+
+def _launch_scoring_subprocess(
+    *,
+    limit: int,
+    page_size: int,
+    test_type: str,
+    llm_backend: str,
+    model: str,
+    job_id: str,
+) -> None:
+    """Start background CLI scorer with project defaults (save all, fix formatting, relabel tags, skip assessed)."""
+    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LOG_PATH.write_text("", encoding="utf-8")
+    cmd = [
+        sys.executable,
+        "-u",
+        str(CLI),
+        "run",
+        "--limit",
+        str(int(limit)),
+        "--page-size",
+        str(int(page_size)),
+        "--test-type",
+        test_type,
+        "--llm",
+        llm_backend,
+        "--apply-tag-fixes",
+        "--state-file",
+        str(STATE_PATH),
+    ]
+    if model.strip():
+        cmd += ["--model", model.strip()]
+    if job_id.strip():
+        cmd += ["--job-id", job_id.strip()]
+
+    child_env = os.environ.copy()
+    child_env["PYTHONUNBUFFERED"] = "1"
+    lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
+    proc = subprocess.Popen(
+        cmd,
+        cwd=str(ROOT),
+        stdout=lf,
+        stderr=subprocess.STDOUT,
+        env=child_env,
+    )
+    st.session_state.subproc = proc
+    st.session_state.last_cmd = " ".join(cmd)
+
+
+SCORE_ALL_LIMIT = 50_000
+SCORE_PAGE_SIZE = 25
+
+
 def _terminate_if_running() -> None:
     proc = st.session_state.get("subproc")
     if proc is not None and proc.poll() is None:
@@ -783,289 +904,119 @@ tab_score, tab_review, tab_diagrams, tab_cli = st.tabs(
 )
 
 with tab_score:
-    st.markdown(
-        "### How it works\n"
-        "1. Optionally narrow **which** questions to score (subject, difficulty, etc.).\n"
-        "2. Choose **how many** to process and what to **save** to the database.\n"
-        "3. Click **Start scoring**. Watch **Live progress** and the log below."
-    )
-
-    st.markdown("---")
-    st.markdown("### 1. Which questions? (all optional)")
-    st.caption(
-        "Leave filters empty to include **all** matching questions (within your limit). "
-        "Subject names must match your database exactly, e.g. `Math 1`, `Physics`."
-    )
-    col_f1, col_f2 = st.columns(2)
-    with col_f1:
-        test_type = st.selectbox(
-            "Exam",
-            ["ESAT", "TMUA", "any"],
-            index=0,
-            help="'any' = do not filter by exam type.",
-        )
-        subjects = st.text_input(
-            "Subject filter",
-            value="",
-            placeholder="Example: Math 1, Chemistry",
-            help="Comma-separated. Leave empty for every subject.",
-        )
-    with col_f2:
-        difficulties = st.text_input(
-            "Difficulty filter",
-            value="",
-            placeholder="Example: Medium, Hard",
-            help="Comma-separated: Easy, Medium, Hard, Extreme. Leave empty for every difficulty.",
-        )
-        schema_prefix = st.text_input(
-            "Question-type code prefix",
-            value="",
-            placeholder="Example: M_ for math codes",
-            help="Matches the start of each row's schema id. Leave empty for all types.",
-        )
-
-    st.markdown("---")
-    st.markdown("### 2. How many & AI model")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        how_many = st.number_input(
-            "How many questions to score (maximum)",
-            min_value=1,
-            max_value=50_000,
-            value=50,
-            step=1,
-            help="Stops after this many questions have been processed (or when no more match your filters).",
-        )
-        chunk_size = st.number_input(
-            "Questions loaded per round from the database",
-            min_value=1,
-            max_value=500,
-            value=25,
-            step=1,
-            help="Technical: how many rows are fetched at once. Leave at 25 unless support told you otherwise.",
-        )
-    with col_b:
-        llm_backend = st.radio(
-            "AI backend",
-            ("vertex", "anthropic"),
-            format_func=lambda x: (
-                "Gemini (Vertex AI — default)" if x == "vertex" else "Claude (Anthropic)"
-            ),
-            index=0,
-            horizontal=True,
-            help="Vertex needs GOOGLE_CLOUD_PROJECT, GOOGLE_CLOUD_LOCATION, and ADC login. "
-            "Claude needs ANTHROPIC_API_KEY. The **Advanced → batch API** option always uses Gemini (AI Studio key).",
-        )
+    review_base = _review_base_url()
+    pool_unassessed = None
+    if _qg_client is not None:
         try:
-            _model_hint = default_sync_model()
-        except ValueError:
-            _model_hint = "set QUALITY_GATE_LLM and MODEL_QUALITY_GATE in .env"
-        model = st.text_input(
-            "Model id (optional)",
-            value="",
-            placeholder=f"Leave empty — default here: {_model_hint}",
-            help="Claude example: claude-3-5-haiku-20241022. Gemini example: gemini-2.5-flash. "
-            "Leave empty unless support asked you to pin a version.",
-        )
+            from quality_gate.supabase_io import count_questions_gate_overview
 
-    st.markdown("---")
-    st.markdown("### 3. What to save to the database")
-    save_mode = st.radio(
-        "After the AI scores each question…",
-        [
-            "recommended_save",
-            "scores_only",
-            "practice",
-        ],
-        format_func=lambda x: {
-            "recommended_save": "Save everything — including auto-approving questions the AI marks as clearly good (recommended)",
-            "scores_only": "Save AI scores only — do not auto-approve; you decide later in the review app",
-            "practice": "Practice only — run the AI but do not change the database (safest for first try)",
-        }[x],
-        index=0,
-        help="“Auto-approve” means setting status to approved when the AI gives a strong Pass.",
-    )
-    dry_run = save_mode == "practice"
-    record_only = save_mode == "scores_only"
-
-    st.markdown("---")
-    st.markdown("### 4. Extra options")
-    job_id = st.text_input(
-        "Run name (optional)",
-        value="",
-        placeholder="Leave empty — one will be created for you",
-        help="Stored on each scored question so you can find them later. Empty = auto-generated id.",
-    )
-    rescore = st.checkbox(
-        "Re-score questions that were already scored",
-        value=False,
-        help="Normally already-scored questions are skipped. Turn on to run the AI again on them.",
-    )
-    auto_fix_formatting = st.checkbox(
-        "Auto-fix line breaks / spacing when safe",
-        value=True,
-        help="Normalizes awkward stem/option whitespace using the same rules as the generation pipeline.",
-    )
-    apply_tag_fixes = st.checkbox(
-        "Re-label wrong or missing curriculum tags (classifier)",
-        value=False,
-        help="When primary_tag is missing or invalid, re-run the tag classifier and write new tags. Off by default.",
-    )
-    with st.expander("Advanced (rarely needed)", expanded=False):
-        include_deleted = st.checkbox(
-            "Include deleted questions in the pool",
-            value=False,
-            help="Normally deleted questions are ignored.",
-        )
-        use_batch_api = st.checkbox(
-            "Use cheaper batch API (needs a Google AI Studio API key)",
-            value=False,
-            help="Requires GEMINI_API_KEY or GOOGLE_API_KEY in the environment. Not the same as Vertex. "
-            "One batch job per “loaded per round” chunk above.",
-        )
-        batch_poll = st.number_input(
-            "How often to check batch job status (seconds)",
-            min_value=5.0,
-            max_value=300.0,
-            value=15.0,
-            step=5.0,
-            disabled=not use_batch_api,
-        )
-    st.markdown("---")
-    st.markdown("### 5. Start or stop")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        if st.button("Start scoring", type="primary"):
-            existing = _load_state()
-            ex_stat = _scoring_status(None, existing)
-            if ex_stat["display"] == "running" and not ex_stat["stale"]:
-                st.error(
-                    "A scoring job is already running (see Live progress). "
-                    "Wait for it to finish, use **Stop scoring**, or refresh — do not start a second copy."
-                )
-            else:
-                _terminate_if_running()
-                LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-                LOG_PATH.write_text("", encoding="utf-8")
-                cmd = [
-                    sys.executable,
-                    "-u",
-                    str(CLI),
-                    "run",
-                    "--limit",
-                    str(int(how_many)),
-                    "--page-size",
-                    str(int(chunk_size)),
-                    "--test-type",
-                    test_type,
-                    "--llm",
-                    llm_backend,
-                ]
-                if model.strip():
-                    cmd += ["--model", model.strip()]
-                if use_batch_api:
-                    cmd.append("--batch-api")
-                    cmd += ["--batch-poll-interval", str(float(batch_poll))]
-                if subjects.strip():
-                    cmd += ["--subjects", subjects.strip()]
-                if difficulties.strip():
-                    cmd += ["--difficulties", difficulties.strip()]
-                if schema_prefix.strip():
-                    cmd += ["--schema-prefix", schema_prefix.strip()]
-                if job_id.strip():
-                    cmd += ["--job-id", job_id.strip()]
-                if dry_run:
-                    cmd.append("--dry-run")
-                if record_only:
-                    cmd.append("--record-only")
-                if rescore:
-                    cmd.append("--force-reassess")
-                if not auto_fix_formatting:
-                    cmd.append("--no-fix-formatting")
-                if apply_tag_fixes:
-                    cmd.append("--apply-tag-fixes")
-                if include_deleted:
-                    cmd.append("--include-deleted")
-                cmd += ["--state-file", str(STATE_PATH)]
-
-                child_env = os.environ.copy()
-                child_env["PYTHONUNBUFFERED"] = "1"
-                lf = open(LOG_PATH, "w", encoding="utf-8", buffering=1)
-                proc = subprocess.Popen(
-                    cmd,
-                    cwd=str(ROOT),
-                    stdout=lf,
-                    stderr=subprocess.STDOUT,
-                    env=child_env,
-                )
-                st.session_state.subproc = proc
-                st.session_state.last_cmd = " ".join(cmd)
-                st.success("Scoring started in the background.")
-    with c2:
-        if st.button("Stop scoring"):
-            _terminate_if_running()
-            st.warning("Stop requested. If a run was active, it should end shortly.")
-    with c3:
-        if st.button("Refresh screen"):
-            st.rerun()
-
-    if st.session_state.get("last_cmd"):
-        with st.expander("Technical: exact command that was run", expanded=False):
-            st.code(st.session_state.last_cmd, language="bash")
+            pool_unassessed = count_questions_gate_overview(_qg_client, test_type="ESAT").get("unassessed")
+        except Exception:
+            pool_unassessed = None
 
     state = _load_state()
     proc = st.session_state.get("subproc")
     status = _scoring_status(proc, state)
+    stats = state.get("stats") if isinstance(state, dict) and isinstance(state.get("stats"), dict) else {}
+    job_id_live = (state.get("job_id") or "").strip() if state else ""
 
-    st.subheader("Live progress")
+    st.markdown(
+        "Process **all un-scored ESAT questions** — saves scores, auto-approves strong passes, "
+        "fixes line breaks, and re-labels bad tags. Already-scored rows are skipped."
+    )
+
+    c_start, c_stop, c_refresh = st.columns([2, 1, 1])
+    with c_start:
+        if st.button("Start processing", type="primary", use_container_width=True):
+            existing = _load_state()
+            ex_stat = _scoring_status(None, existing)
+            if ex_stat["display"] == "running" and not ex_stat["stale"]:
+                st.error("A job is already running. Stop it first or wait for it to finish.")
+            else:
+                _terminate_if_running()
+                _launch_scoring_subprocess(
+                    limit=SCORE_ALL_LIMIT,
+                    page_size=SCORE_PAGE_SIZE,
+                    test_type="ESAT",
+                    llm_backend="vertex",
+                    model="",
+                    job_id="",
+                )
+                st.success("Processing started.")
+                st.rerun()
+    with c_stop:
+        if st.button("Stop", use_container_width=True):
+            _terminate_if_running()
+            st.warning("Stop requested.")
+            st.rerun()
+    with c_refresh:
+        if st.button("Refresh", use_container_width=True):
+            st.rerun()
+
     if status["display"] == "running":
         st.success(status["message"])
     elif status["display"] == "stale":
         st.warning(status["message"])
     elif status["display"] == "finished":
         st.info(status["message"])
-    else:
-        st.info(status["message"])
 
-    if state:
-        stats = state.get("stats") if isinstance(state.get("stats"), dict) else {}
-        m1, m2, m3, m4 = st.columns(4)
-        with m1:
-            st.metric("Processed", stats.get("processed", 0))
-        with m2:
-            st.metric("Auto-approved", stats.get("auto_approved", 0))
-        with m3:
-            st.metric("Needs review", stats.get("pending_operator", 0))
-        with m4:
-            st.metric("Errors", stats.get("errors", 0))
-        st.caption(
-            f"Job `{state.get('job_id', '—')}` · last update `{state.get('last_update', '—')}` · "
-            f"running={state.get('running')}"
+    m0, m1, m2, m3, m4 = st.columns(5)
+    with m0:
+        st.metric("Left in pool", f"{pool_unassessed:,}" if pool_unassessed is not None else "—")
+    with m1:
+        st.metric("Processed (this run)", stats.get("processed", 0))
+    with m2:
+        st.metric("Auto-approved", stats.get("auto_approved", 0))
+    with m3:
+        st.metric("Needs review", stats.get("pending_operator", 0))
+    with m4:
+        st.metric("Errors", stats.get("errors", 0))
+
+    st.subheader("Latest results")
+    live_rows: list[dict[str, Any]] = []
+    if _qg_client is not None and job_id_live:
+        try:
+            from quality_gate.supabase_io import fetch_live_job_results
+
+            live_rows = fetch_live_job_results(_qg_client, job_id_live, limit=40)
+        except Exception as e:
+            st.caption(f"Could not load live results: {e}")
+
+    if live_rows:
+        df_live = _build_live_results_dataframe(live_rows, review_base)
+        st.dataframe(
+            df_live,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Open": st.column_config.LinkColumn("Review", display_text="Open"),
+                "Why": st.column_config.TextColumn("Why", width="large"),
+            },
         )
-        with st.expander("Raw progress JSON", expanded=False):
-            st.json(state)
+    elif job_id_live:
+        st.info("No rows written for this job yet — they appear here as each question completes.")
     else:
-        st.info("No progress file yet — start a run above.")
+        st.info("Click **Start processing** to begin. Results will stream in here.")
 
-    st.subheader("Log output")
-    st.text_area(
-        "log_output",
-        _combined_log_text(state),
-        height=260,
-        label_visibility="collapsed",
-    )
+    err_lines = _errors_from_state(state)
+    if err_lines or (stats.get("errors", 0) or 0) > 0:
+        st.subheader("Errors")
+        if err_lines:
+            st.code("\n".join(err_lines[-50:]), language="text")
+        else:
+            st.caption(f"{stats.get('errors', 0)} error(s) recorded in stats — see log below.")
+
+    with st.expander("Technical log", expanded=False):
+        st.text_area("log_output", _combined_log_text(state), height=200, label_visibility="collapsed")
+        if st.session_state.get("last_cmd"):
+            st.code(st.session_state.last_cmd, language="bash")
 
     if status["display"] in ("running", "stale"):
-        ar1, ar2 = st.columns([1, 1])
-        with ar1:
-            if st.button("Refresh progress", key="qg_refresh_subproc_progress"):
-                st.rerun()
-        with ar2:
-            auto_refresh = st.checkbox(
-                "Auto-refresh while running (every 5s)",
-                value=False,
-                key="qg_subproc_autorefresh",
-            )
+        auto_refresh = st.checkbox(
+            "Auto-refresh every 5s while running",
+            value=True,
+            key="qg_subproc_autorefresh",
+        )
         if auto_refresh:
             time.sleep(5.0)
             st.rerun()
