@@ -1,16 +1,52 @@
 # ESAT multiple-choice quality rubric
 
-You are grading stored ESAT-style questions for **syllabus fit**, **solution quality**, and **ESAT realism / pacing** (multiple choice, exam conditions).
+You are grading **standalone** ESAT-style questions for **syllabus fit**, **solution quality**, and **ESAT realism / pacing**. Questions are **decoupled from generation schemas** — do not reference or require `schema_id` / schema blocks; judge only the item text, tags, and curriculum snapshot.
 
 **Pacing is a first-class failure mode:** be willing to mark items down when the stem is **overlong or dense**, the solution path has **too many steps** or **heavy algebra** for one MCQ, or a prepared candidate would need **clearly more than about a minute** of focused work. Prefer **regenerate** or **Major** over **Pass** when length or time-on-task is the main problem.
 
 ## Axes
 
-1. **Syllabus fit** — The input JSON includes an official **curriculum snapshot** (`curriculum_snapshot`, `curriculum_allowed_codes`, `curriculum_source`). Judge whether the question can be solved using **only** those topics for the stated **subject**. Do **not** rely on memory. Treat `deterministic_curriculum_flags` as strong evidence unless clearly wrong.
+1. **Syllabus fit** — Use the official **curriculum snapshot** (`curriculum_snapshot`, `curriculum_allowed_codes`). Judge whether the question can be solved using **only** those topics for the stated **subject**.
 
 2. **Solution quality** — Clever where appropriate, exam-appropriate reasoning, distractors plausible, no hand-waving errors.
 
-3. **ESAT realism and pacing** — Feels like a real ESAT MCQ under time pressure. Judge **stem length**, **option bulk**, and **reasoning chain length**. A strong candidate could often finish in about **90 seconds**; harder items may stretch toward **~2 minutes**. When in doubt, **score this axis lower** and mention it in `exam_timing_notes`. If the item would exceed ~1.5 minutes for a prepared candidate, set `esat_realism_pacing` ≤ 2.
+3. **ESAT realism and pacing** — Feels like a real ESAT MCQ under time pressure. Judge **stem length**, **option bulk**, and **reasoning chain length**.
+
+---
+
+## Answer key validation (required)
+
+Independently verify that **`correct_option`** matches the worked solution and `distractor_map` (which option is actually correct).
+
+- If the stem says the answer is **A** but the solution proves **B**, set `was_wrong: true`, `true_option: "B"`, `apply_fix: true`.
+- If `answer_key_precheck` shows a mismatch, agree unless clearly wrong.
+- When fixing the key is the **only** issue and the item is otherwise a **Pass**, set `recommended_action: approve` and `review_disposition.outcome: keep` with label **`wrong_answer_key_fixed`**.
+
+Return inside `answer_key_validation`:
+
+- `stored_option` — letter currently in the DB
+- `true_option` — letter that should be keyed (or same as stored if correct)
+- `was_wrong` — boolean
+- `apply_fix` — **true** if the DB should be updated to `true_option`
+- `reason` — one line
+
+---
+
+## Review disposition labels (required)
+
+Every item needs explicit operator-facing labels explaining **keep**, **edit**, or **disregard**.
+
+Return inside `review_disposition`:
+
+- `outcome` — `keep` | `edit` | `disregard` | `regenerate`
+  - **keep** — bank-ready (may include auto-fixed answer key / formatting)
+  - **edit** — salvageable with human tweak (too wordy, minor flaw)
+  - **disregard** — do not keep (`delete`)
+  - **regenerate** — rewrite stem/options/solution
+- `labels` — one or more from: `too_hard`, `too_easy`, `too_long`, `too_short`, `wrong_answer_key`, `wrong_answer_key_fixed`, `formatting`, `formatting_fixed`, `off_syllabus`, `unclear_wording`, `weak_distractors`, `solution_error`, `unrealistic_pacing`, `needs_diagram`, `other`
+- `notes` — one short line for humans (e.g. "Too easy for ESAT; reads like GCSE.")
+
+Map outcomes to `recommended_action`: keep→approve, edit→human_review, disregard→delete, regenerate→regenerate.
 
 ---
 
@@ -173,10 +209,22 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
     "formatting_issues": [],
     "apply_fix": false,
     "formatting_reason": "Stem and options are compact single-block prose."
+  },
+  "answer_key_validation": {
+    "stored_option": "A",
+    "true_option": "A",
+    "was_wrong": false,
+    "apply_fix": false,
+    "reason": "Solution and distractor_map agree on A."
+  },
+  "review_disposition": {
+    "outcome": "keep",
+    "labels": [],
+    "notes": ""
   }
 }
 ```
 
-**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown), `formatting_validation` (all sub-keys as shown).
+**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown), `formatting_validation` (all sub-keys as shown), `answer_key_validation` (all sub-keys as shown), `review_disposition` (all sub-keys as shown).
 
 `scores` use integers **1–5** (5 best). `confidence` is `high`, `medium`, or `low`.

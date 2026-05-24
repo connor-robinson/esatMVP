@@ -250,8 +250,10 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
                 "Formatting": cur["Formatting"],
-                "Format issues": cur["Format issues"],
-                "Gold": gold,
+        "Format issues": cur["Format issues"],
+        "Disposition": cur.get("disposition") or "—",
+        "Labels": cur.get("disposition_labels") or "—",
+        "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
                 "Open": f"{base}/review?id={qid}" if qid else "",
@@ -293,8 +295,10 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
                 "Formatting": cur["Formatting"],
-                "Format issues": cur["Format issues"],
-                "Gold": gold,
+        "Format issues": cur["Format issues"],
+        "Disposition": cur.get("disposition") or "—",
+        "Labels": cur.get("disposition_labels") or "—",
+        "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
                 "Last job": last_job,
@@ -960,8 +964,10 @@ with tab_review:
         st.error(_qg_err or "Supabase not connected.")
         st.stop()
     from quality_gate.supabase_io import (
+        clear_all_quality_gate_assessments,
         clear_quality_gate_for_graph_flagged_rows,
         count_approved_questions,
+        count_assessed_questions,
         count_graph_flagged_rows,
         count_questions_gate_overview,
         fetch_all_assessed_rows_for_overview,
@@ -1126,7 +1132,71 @@ with tab_review:
     )
 
     st.divider()
-    st.markdown("### Reset human verification (approved → pending)")
+    st.markdown("### Full reset — clear all checker data")
+    st.caption(
+        "Wipes **every** quality-gate field on non-deleted questions (verdicts, scores, graph flags, diagram backfill metadata). "
+        "Sets **approved** → **pending**. **Deleted** rows and their status are unchanged."
+    )
+    if _qg_client is not None:
+        try:
+            _n_assessed = count_assessed_questions(_qg_client)
+            _n_approved = count_approved_questions(_qg_client)
+        except Exception:
+            _n_assessed = _n_approved = None
+        if _n_assessed is not None:
+            st.caption(f"Currently assessed: **{_n_assessed}** · approved: **{_n_approved}**.")
+    confirm_full_reset = st.checkbox(
+        "I understand: all quality-gate assessments will be removed and approved questions return to pending.",
+        key="confirm_full_qg_reset",
+    )
+    clear_run_on_full = st.checkbox(
+        "Also clear Streamlit run progress (run_state.json)",
+        value=True,
+        key="clear_run_on_full_reset",
+    )
+    if st.button(
+        "Clear ALL quality gate data",
+        disabled=not confirm_full_reset or _qg_client is None,
+        key="btn_clear_all_qg",
+    ):
+        try:
+            stats = clear_all_quality_gate_assessments(_qg_client, reset_status_to_pending=True)
+            if clear_run_on_full and STATE_PATH.is_file():
+                from datetime import datetime, timezone
+
+                payload = {
+                    "job_id": "",
+                    "running": False,
+                    "last_update": datetime.now(timezone.utc).isoformat(),
+                    "stats": {
+                        "processed": 0,
+                        "errors": 0,
+                        "auto_approved": 0,
+                        "pending_operator": 0,
+                        "skipped_deleted": 0,
+                        "calibration_gold": 0,
+                        "graph_candidates": 0,
+                        "graph_missing_expected": 0,
+                        "batch_api_jobs": 0,
+                        "diagrams_inserted": 0,
+                        "diagram_errors": 0,
+                        "answer_key_fixed": 0,
+                    },
+                    "last_error": None,
+                    "log_tail": [],
+                    "full_reset": True,
+                }
+                STATE_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            st.success(
+                f"Cleared **{stats.get('assessed_cleared', 0)}** assessed row(s); "
+                f"reset **{stats.get('approved_reset', 0)}** approved → pending. Refresh this page."
+            )
+            st.rerun()
+        except Exception as e:
+            st.exception(e)
+
+    st.divider()
+    st.markdown("### Reset human verification only (approved → pending)")
     st.caption(
         "Sets **Status** back to **pending** for every question currently **approved** (review-app or auto-approve). "
         "**Does not** change AI quality-gate scores, flags, or delete recommendations. **Deleted** rows are untouched."

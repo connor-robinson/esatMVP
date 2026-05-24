@@ -11,6 +11,7 @@ from typing import Any, Callable, Dict, List, Optional
 from project import LLMClient, safe_load_dotenv
 
 from .assess import assess_question
+from .answer_key import apply_llm_answer_key_patch, build_answer_key_patch
 from .defaults import default_llm_provider
 from .batch_api import BatchAssessOutcome, default_batch_model, run_inline_batch_assessments
 from .schemas import (
@@ -83,6 +84,7 @@ def _commit_gate_row(
     llm: Optional[Any] = None,
     auto_fix_formatting: bool = True,
     apply_tag_fixes: bool = False,
+    answer_key_pre_patch: Optional[Dict[str, Any]] = None,
 ) -> tuple[str, str]:
     """Apply sanitization, DB patch, counters, logs. Returns ``(last_error, effective_action)``."""
     last_error = ""
@@ -101,6 +103,43 @@ def _commit_gate_row(
     elif result.verdict == "Major":
         result = replace(result, calibration_tier=None, calibration_notes=None)
 
+    content_patch: Dict[str, Any] = {}
+    if answer_key_pre_patch:
+        content_patch.update(answer_key_pre_patch)
+        result = replace(
+            result,
+            answer_key_fix_applied=True,
+            answer_key_was_wrong=True,
+            answer_key_stored=result.answer_key_stored
+            or (row.get("correct_option") or "").strip().upper()[:1],
+            answer_key_true=answer_key_pre_patch.get("correct_option")
+            or result.answer_key_true,
+            disposition_labels=list(
+                dict.fromkeys(
+                    list(result.disposition_labels) + ["wrong_answer_key_fixed"]
+                )
+            ),
+        )
+        stats["answer_key_fixed"] = stats.get("answer_key_fixed", 0) + 1
+
+    akv = result.raw.get("answer_key_validation") if isinstance(result.raw.get("answer_key_validation"), dict) else {}
+    if akv.get("apply_fix") and akv.get("true_option"):
+        llm_ak = apply_llm_answer_key_patch(row, true_option=str(akv.get("true_option")))
+        if llm_ak:
+            content_patch.update(llm_ak)
+            result = replace(
+                result,
+                answer_key_fix_applied=True,
+                answer_key_was_wrong=True,
+                answer_key_true=llm_ak.get("correct_option"),
+                disposition_labels=list(
+                    dict.fromkeys(
+                        list(result.disposition_labels) + ["wrong_answer_key_fixed"]
+                    )
+                ),
+            )
+            stats["answer_key_fixed"] = stats.get("answer_key_fixed", 0) + 1
+
     base_eff = effective_action(result, row=row, downgrade_low_confidence_pass=True)
     eff = effective_action_with_graph_queue(result, base_eff)
     payload = result.to_payload()
@@ -110,7 +149,8 @@ def _commit_gate_row(
     from .formatting import build_formatting_patch, detect_formatting_issues, should_apply_formatting_fix
 
     fmt_issues = detect_formatting_issues(row)
-    content_patch: Dict[str, Any] = {}
+    if answer_key_pre_patch:
+        row = {**row, **answer_key_pre_patch}
 
     auto_applied = False
     if not dry_run and client is not None:
@@ -388,6 +428,8 @@ def run_quality_gate_job(
                 result: Optional[QualityGateResult] = None
                 raw_text = ""
                 db_model = record_model
+                row_orig = row
+                ak_pre_patch: Optional[Dict[str, Any]] = None
 
                 if use_batch_api:
                     oc = outcomes_by_id.get(qid)
@@ -411,12 +453,16 @@ def run_quality_gate_job(
                     result, raw_text = oc.result, oc.raw_text
                 else:
                     assert llm is not None
+                    row_orig = row
+                    ak_pre_patch, _ak_reason = build_answer_key_patch(row_orig)
+                    row_assess = {**row_orig, **ak_pre_patch} if ak_pre_patch else row_orig
                     try:
                         result, raw_text, db_model = assess_question(
                             llm,
-                            row,
+                            row_assess,
                             model=model,
                             vertex_not_found_fallbacks=(provider == "vertex"),
+                            answer_key_source_row=row_orig,
                         )
                     except Exception as e:
                         stats["errors"] += 1
@@ -436,7 +482,7 @@ def run_quality_gate_job(
 
                 assert result is not None
                 row_err, eff = _commit_gate_row(
-                    row=row,
+                    row=row_orig,
                     qid=qid,
                     result=result,
                     raw_text=raw_text,
@@ -452,6 +498,7 @@ def run_quality_gate_job(
                     llm=llm,
                     auto_fix_formatting=auto_fix_formatting,
                     apply_tag_fixes=apply_tag_fixes,
+                    answer_key_pre_patch=ak_pre_patch,
                 )
                 if row_err:
                     last_error = row_err

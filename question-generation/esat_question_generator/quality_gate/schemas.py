@@ -10,6 +10,28 @@ CalibrationTier = Literal["gold"]
 GraphMode = Literal["none", "candidate", "missing_expected"]
 CurriculumMatch = Literal["in_syllabus", "borderline", "off_syllabus"]
 CurriculumSeverity = Literal["hard_fail", "warning"]
+DispositionOutcome = Literal["keep", "edit", "disregard", "regenerate"]
+
+# Standard labels for why an item was kept, edited, or disregarded.
+DISPOSITION_LABELS = frozenset(
+    {
+        "too_hard",
+        "too_easy",
+        "too_long",
+        "too_short",
+        "wrong_answer_key",
+        "wrong_answer_key_fixed",
+        "formatting",
+        "formatting_fixed",
+        "off_syllabus",
+        "unclear_wording",
+        "weak_distractors",
+        "solution_error",
+        "unrealistic_pacing",
+        "needs_diagram",
+        "other",
+    }
+)
 
 
 @dataclass
@@ -71,6 +93,13 @@ class QualityGateResult:
     formatting_issues: List[str] = field(default_factory=list)
     formatting_apply_fix: bool = False
     formatting_reason: str = ""
+    answer_key_stored: Optional[str] = None
+    answer_key_true: Optional[str] = None
+    answer_key_was_wrong: bool = False
+    answer_key_fix_applied: bool = False
+    disposition_outcome: Optional[DispositionOutcome] = None
+    disposition_labels: List[str] = field(default_factory=list)
+    disposition_notes: str = ""
     raw: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -107,6 +136,17 @@ class QualityGateResult:
                 "formatting_issues": list(self.formatting_issues),
                 "apply_fix": self.formatting_apply_fix,
                 "formatting_reason": self.formatting_reason,
+            },
+            "answer_key_validation": {
+                "stored_option": self.answer_key_stored,
+                "true_option": self.answer_key_true,
+                "was_wrong": self.answer_key_was_wrong,
+                "fix_applied": self.answer_key_fix_applied,
+            },
+            "review_disposition": {
+                "outcome": self.disposition_outcome,
+                "labels": list(self.disposition_labels),
+                "notes": self.disposition_notes,
             },
         }
 
@@ -265,6 +305,30 @@ def parse_quality_gate_json(
     fmt_apply = bool(fv.get("apply_fix"))
     fmt_reason = str(fv.get("formatting_reason") or "")[:2000]
 
+    ak = data.get("answer_key_validation") if isinstance(data.get("answer_key_validation"), dict) else {}
+    ak_stored = _norm_option_letter(ak.get("stored_option"))
+    ak_true = _norm_option_letter(ak.get("true_option"))
+    ak_wrong = bool(ak.get("was_wrong")) or (
+        ak_stored and ak_true and ak_stored != ak_true
+    )
+    ak_fix = bool(ak.get("fix_applied"))
+
+    rd = data.get("review_disposition") if isinstance(data.get("review_disposition"), dict) else {}
+    disp_out = str(rd.get("outcome") or "").strip().lower()
+    if disp_out not in ("keep", "edit", "disregard", "regenerate"):
+        disp_out = None
+    disp_labels = _parse_disposition_labels(rd.get("labels"))
+    disp_notes = str(rd.get("notes") or rd.get("summary") or "")[:4000]
+
+    if disp_out == "disregard" and action != "delete":
+        action = "delete"
+    elif disp_out == "regenerate" and action == "approve":
+        action = "regenerate"
+    elif disp_out == "edit" and action == "approve" and verdict == "Minor":
+        action = "human_review"
+    elif disp_out == "keep" and action == "human_review" and verdict == "Pass":
+        action = "approve"
+
     result = QualityGateResult(
         verdict=verdict,
         scores=scores,
@@ -289,9 +353,41 @@ def parse_quality_gate_json(
         formatting_issues=fmt_issues,
         formatting_apply_fix=fmt_apply,
         formatting_reason=fmt_reason,
+        answer_key_stored=ak_stored,
+        answer_key_true=ak_true,
+        answer_key_was_wrong=ak_wrong,
+        answer_key_fix_applied=ak_fix,
+        disposition_outcome=disp_out,  # type: ignore[arg-type]
+        disposition_labels=disp_labels,
+        disposition_notes=disp_notes,
         raw=dict(data),
     )
     return merge_deterministic_curriculum_flags(result, pre)
+
+
+def _norm_option_letter(raw: Any) -> Optional[str]:
+    if raw is None:
+        return None
+    s = str(raw).strip().upper()[:1]
+    return s if s in "ABCDEFGH" else None
+
+
+def _parse_disposition_labels(raw: Any) -> List[str]:
+    if not isinstance(raw, list):
+        return []
+    out: List[str] = []
+    for item in raw:
+        s = str(item).strip().lower().replace(" ", "_")
+        if s in DISPOSITION_LABELS and s not in out:
+            out.append(s)
+    return out[:12]
+
+
+def _only_auto_fix_disposition(labels: List[str]) -> bool:
+    if not labels:
+        return False
+    allowed = {"wrong_answer_key_fixed", "formatting_fixed"}
+    return set(labels) <= allowed
 
 
 @dataclass
@@ -397,6 +493,14 @@ def effective_action(
     if result.curriculum_match == "off_syllabus" and action == "approve":
         action = "human_review"
 
+    if (
+        result.verdict == "Pass"
+        and result.answer_key_fix_applied
+        and action == "human_review"
+        and _only_auto_fix_disposition(result.disposition_labels)
+    ):
+        action = "approve"
+
     return action
 
 
@@ -404,6 +508,8 @@ def effective_action_with_graph_queue(result: QualityGateResult, base: Recommend
     if base in ("delete", "regenerate", "human_review"):
         return base
     if result.graph_mode in ("candidate", "missing_expected") and result.verdict != "Major":
+        if base == "approve" and _only_auto_fix_disposition(result.disposition_labels):
+            return "approve"
         return "human_review"
     return base
 
@@ -444,6 +550,11 @@ def curriculum_fields_from_payload(payload: Optional[Dict[str, Any]]) -> Dict[st
         "formatting_score": (p.get("formatting_validation") or {}).get("formatting_score"),
         "formatting_issues": ", ".join(
             _parse_str_list((p.get("formatting_validation") or {}).get("formatting_issues"), limit=3)
+        )
+        or "—",
+        "disposition": (p.get("review_disposition") or {}).get("outcome") or "—",
+        "disposition_labels": ", ".join(
+            _parse_disposition_labels((p.get("review_disposition") or {}).get("labels"))
         )
         or "—",
     }

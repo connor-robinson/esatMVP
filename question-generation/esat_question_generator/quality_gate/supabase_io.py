@@ -666,6 +666,66 @@ def reset_approved_to_pending(client: Any) -> int:
     return before
 
 
+def _quality_gate_clear_patch() -> Dict[str, Any]:
+    return {
+        "quality_gate_assessed_at": None,
+        "quality_gate_verdict": None,
+        "quality_gate_action": None,
+        "quality_gate_reason": None,
+        "quality_gate_payload": None,
+        "quality_gate_job_id": None,
+        "quality_gate_model": None,
+        "quality_gate_calibration_tier": None,
+        "quality_gate_calibration_notes": None,
+        "quality_gate_graph_candidate": False,
+        "quality_gate_graph_mode": None,
+        "quality_gate_graph_notes": None,
+        "quality_gate_diagram_backfill_kind": None,
+        "quality_gate_diagram_backfill_at": None,
+        "quality_gate_diagram_image_url": None,
+        "quality_gate_diagram_image_model": None,
+        "quality_gate_diagram_image_verified_at": None,
+        "quality_gate_diagram_image_payload": None,
+        "svg_operator_backfill_choice": None,
+    }
+
+
+def count_assessed_questions(client: Any) -> int:
+    resp = (
+        client.table(TABLE)
+        .select("id", count="exact", head=True)
+        .neq("status", "deleted")
+        .not_.is_("quality_gate_assessed_at", "null")
+        .execute()
+    )
+    return int(resp.count or 0)
+
+
+def clear_all_quality_gate_assessments(client: Any, *, reset_status_to_pending: bool = True) -> Dict[str, int]:
+    """
+    Wipe all quality-gate fields on non-deleted rows; optionally set approved → pending.
+
+    Does **not** change ``status=deleted`` rows.
+    """
+    assessed_before = count_assessed_questions(client)
+    approved_before = count_approved_questions(client)
+    patch = _quality_gate_clear_patch()
+    if reset_status_to_pending:
+        # approved → pending; leave already-pending and deleted unchanged
+        client.table(TABLE).update({**patch, "status": "pending"}).eq("status", "approved").execute()
+        client.table(TABLE).update(patch).eq("status", "pending").execute()
+    else:
+        client.table(TABLE).update(patch).neq("status", "deleted").execute()
+    try:
+        client.table("quality_gate_jobs").delete().neq("id", "").execute()
+    except Exception:
+        pass
+    return {
+        "assessed_cleared": assessed_before,
+        "approved_reset": approved_before,
+    }
+
+
 def clear_quality_gate_for_graph_flagged_rows(client: Any) -> int:
     """
     Clear quality-gate columns **only** for rows graph-flagged (candidate or missing_expected),

@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from project import _gemini_console
 
+from .answer_key import build_answer_key_precheck
 from .curriculum import get_curriculum_for_row, normalize_subject
 from .formatting import build_formatting_report, detect_formatting_issues
 from .defaults import quality_gate_model_try_order
@@ -75,6 +76,7 @@ def build_question_payload(
     row: Dict[str, Any],
     *,
     pre_flags: Optional[List[CurriculumFlag]] = None,
+    answer_key_row: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Fields sent to the quality-gate judge, including official curriculum snapshot."""
 
@@ -88,18 +90,19 @@ def build_question_payload(
     payload: Dict[str, Any] = {
         "subject": subject,
         "difficulty": row.get("difficulty"),
-        "schema_id": row.get("schema_id"),
         "primary_tag": row.get("primary_tag"),
         "secondary_tags": _secondary_tags_for_payload(row),
         "question_stem": _trim(row.get("question_stem"), 16000),
         "options": row.get("options"),
         "correct_option": row.get("correct_option"),
         "solution_reasoning": _trim(row.get("solution_reasoning"), 12000),
+        "solution_key_insight": _trim(row.get("solution_key_insight"), 12000),
         "distractor_map": row.get("distractor_map"),
         "curriculum_source": curriculum["curriculum_source"],
         "curriculum_allowed_codes": curriculum["curriculum_allowed_codes"],
         "curriculum_snapshot": curriculum["curriculum_snapshot"],
         "primary_tag_allowed_for_subject": curriculum["primary_tag_allowed"],
+        "answer_key_precheck": build_answer_key_precheck(answer_key_row or row),
     }
     if pre_flags:
         payload["deterministic_curriculum_flags"] = [f.to_dict() for f in pre_flags]
@@ -115,13 +118,21 @@ def build_assessment_system_user_prompts(
     row: Dict[str, Any],
     *,
     pre_flags: Optional[List[CurriculumFlag]] = None,
+    answer_key_row: Optional[Dict[str, Any]] = None,
 ) -> Tuple[str, str]:
     rubric = load_rubric_markdown()
     system_prompt = (
         "You are an expert ESAT item reviewer. Follow the rubric exactly. "
+        "The question is a standalone exam item — do NOT use or infer any generation schema; "
+        "judge only the stem, options, solution, tags, and official curriculum snapshot. "
         "Judge syllabus fit ONLY against the provided `curriculum_snapshot` and "
         "`curriculum_allowed_codes` — do not rely on memory of ESAT. "
-        "Treat deterministic_curriculum_flags as strong evidence; explain if you disagree. "
+        "Treat deterministic_curriculum_flags and answer_key_precheck as strong evidence. "
+        "If the stored correct_option disagrees with the worked solution/distractor_map, "
+        "set answer_key_validation.was_wrong true, true_option to the right letter, apply_fix true. "
+        "When the ONLY defect was a wrong answer key and you would Pass after fixing it, "
+        "use review_disposition outcome keep with label wrong_answer_key_fixed. "
+        "Always label review_disposition.labels (e.g. too_hard, too_easy, too_long) for edit/disregard. "
         "Check stem/options/solution for inappropriate line breaks, double spaces, and awkward wrapping; "
         "set formatting_validation.apply_fix true when deterministic whitespace normalization would help. "
         "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps "
@@ -129,7 +140,7 @@ def build_assessment_system_user_prompts(
         + rubric
         + "\n\nAlways respond with a single JSON object only."
     )
-    payload = build_question_payload(row, pre_flags=pre_flags)
+    payload = build_question_payload(row, pre_flags=pre_flags, answer_key_row=answer_key_row)
     user_prompt = (
         "Grade this question. Input JSON:\n"
         + json.dumps(payload, ensure_ascii=False, indent=2)
@@ -154,12 +165,16 @@ def assess_question(
     temperature: float = 0.25,
     vertex_not_found_fallbacks: bool = True,
     pre_flags: Optional[List[CurriculumFlag]] = None,
+    answer_key_source_row: Optional[Dict[str, Any]] = None,
 ) -> Tuple[QualityGateResult, str, str]:
     """
     Returns (parsed result, raw model text, model id actually used for the API call).
     """
     flags = pre_flags if pre_flags is not None else run_curriculum_precheck(row)
-    system_prompt, user_prompt = build_assessment_system_user_prompts(row, pre_flags=flags)
+    ak_src = answer_key_source_row or row
+    system_prompt, user_prompt = build_assessment_system_user_prompts(
+        row, pre_flags=flags, answer_key_row=ak_src
+    )
     primary = (model or "").strip()
     last_exc: Optional[BaseException] = None
     for m in quality_gate_model_try_order(primary, vertex_not_found_fallbacks=vertex_not_found_fallbacks):
