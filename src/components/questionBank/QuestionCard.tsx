@@ -340,33 +340,30 @@ export function QuestionCard({
 
   return (
     <div className="space-y-5">
-      <div className={cn(PANEL_SHELL, "px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
-        <div className="flex gap-4 sm:gap-6">
-          {showSessionNotation && (
-            <aside
-              className="flex w-12 shrink-0 flex-col items-start gap-2 sm:w-14"
-              aria-label={`Question ${questionNumber}`}
-            >
-              <span className="text-[2.5rem] font-semibold leading-none tabular-nums tracking-tight text-text sm:text-5xl">
-                {questionNumber}
-              </span>
+      <div className={cn(PANEL_SHELL, "relative px-5 pb-8 pt-5 sm:px-8 sm:pt-6 sm:pb-10")}>
+        {showSessionNotation && (
+          <div
+            className="pointer-events-none absolute left-5 top-5 z-10 sm:left-8 sm:top-6"
+            aria-label={`Question ${questionNumber}`}
+          >
+            <span className="relative inline-block text-[2.5rem] font-semibold leading-none tabular-nums tracking-tight text-text sm:text-5xl">
+              {questionNumber}
               {verified && (
                 <span
-                  className="inline-flex -rotate-6 origin-top-left items-center gap-1 rounded-organic-md border border-secondary/40 bg-secondary/15 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-secondary shadow-sm"
+                  className="pointer-events-auto absolute -right-3 -top-1 sm:-right-3.5 sm:-top-1.5"
                   title="Verified by ESAT quality gate"
                 >
                   <BadgeCheck
-                    className="h-3.5 w-3.5 shrink-0"
-                    strokeWidth={2.5}
-                    aria-hidden
+                    className="h-4 w-4 text-secondary sm:h-[1.125rem] sm:w-[1.125rem]"
+                    strokeWidth={2.25}
+                    aria-label="Verified"
                   />
-                  Verified
                 </span>
               )}
-            </aside>
-          )}
+            </span>
+          </div>
+        )}
 
-          <div className="min-w-0 flex-1">
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5 gap-y-2.5 sm:gap-3">
             {verified && !showSessionNotation && (
@@ -454,8 +451,6 @@ export function QuestionCard({
           ) : (
             <MathContent content={question.question_stem} className="text-inherit inline" />
           )}
-        </div>
-          </div>
         </div>
       </div>
 
