@@ -4,13 +4,13 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Literal, Optional
 
 Verdict = Literal["Pass", "Minor", "Major"]
-RecommendedAction = Literal["approve", "human_review", "regenerate", "delete"]
+RecommendedAction = Literal["approve", "human_review", "regenerate", "move_to_math2", "delete"]
 Confidence = Literal["high", "medium", "low"]
 CalibrationTier = Literal["gold"]
 GraphMode = Literal["none", "candidate", "missing_expected"]
 CurriculumMatch = Literal["in_syllabus", "borderline", "off_syllabus"]
 CurriculumSeverity = Literal["hard_fail", "warning"]
-DispositionOutcome = Literal["keep", "edit", "disregard", "regenerate"]
+DispositionOutcome = Literal["keep", "edit", "disregard", "regenerate", "move_paper"]
 
 # Standard labels for why an item was kept, edited, or disregarded.
 DISPOSITION_LABELS = frozenset(
@@ -30,8 +30,14 @@ DISPOSITION_LABELS = frozenset(
         "unrealistic_pacing",
         "needs_diagram",
         "deterministic_conflict",
+        "wrong_paper",
+        "math2_content_on_math1",
         "other",
     }
+)
+
+_ALL_RECOMMENDED_ACTIONS = frozenset(
+    {"approve", "human_review", "regenerate", "move_to_math2", "delete"}
 )
 
 
@@ -58,7 +64,7 @@ class CurriculumFlag:
         if sev not in ("hard_fail", "warning"):
             sev = "warning"
         act = data.get("suggested_action")
-        if act not in ("approve", "human_review", "regenerate", "delete"):
+        if act not in _ALL_RECOMMENDED_ACTIONS:
             act = "human_review"
         return cls(
             severity=sev,  # type: ignore[arg-type]
@@ -251,7 +257,7 @@ def parse_quality_gate_json(
         curriculum_match = "borderline"
 
     action = data.get("recommended_action")
-    if action not in ("approve", "human_review", "regenerate", "delete"):
+    if action not in _ALL_RECOMMENDED_ACTIONS:
         raise ValueError(f"invalid recommended_action: {action!r}")
 
     reasoning = (data.get("reasoning") or "").strip()
@@ -326,7 +332,7 @@ def parse_quality_gate_json(
 
     rd = data.get("review_disposition") if isinstance(data.get("review_disposition"), dict) else {}
     disp_out = str(rd.get("outcome") or "").strip().lower()
-    if disp_out not in ("keep", "edit", "disregard", "regenerate"):
+    if disp_out not in ("keep", "edit", "disregard", "regenerate", "move_paper"):
         disp_out = None
     disp_labels = _parse_disposition_labels(rd.get("labels"))
     disp_notes = str(rd.get("notes") or rd.get("summary") or "")[:4000]
@@ -336,7 +342,7 @@ def parse_quality_gate_json(
     human_blocking = _parse_str_list(aft.get("human_blocking_issues"), limit=12)
     after_raw = str(aft.get("recommended_action_after_auto_fix") or "").strip().lower()
     action_after_auto_fix: Optional[RecommendedAction] = None
-    if after_raw in ("approve", "human_review", "regenerate", "delete"):
+    if after_raw in _ALL_RECOMMENDED_ACTIONS:
         action_after_auto_fix = after_raw  # type: ignore[assignment]
     triage_reason = str(aft.get("reason") or "")[:2000]
 
@@ -349,6 +355,8 @@ def parse_quality_gate_json(
         action = "delete"
     elif disp_out == "regenerate" and action == "approve":
         action = "regenerate"
+    elif disp_out == "move_paper" and action in ("approve", "regenerate"):
+        action = "move_to_math2"
     elif disp_out == "edit" and action == "approve" and verdict == "Minor":
         action = "human_review"
     elif disp_out == "keep" and action == "human_review" and verdict == "Pass":
@@ -429,7 +437,7 @@ def _blocking_disposition_labels(labels: List[str]) -> List[str]:
 
 def _parse_action_after_auto_fix(raw: Any) -> Optional[RecommendedAction]:
     s = str(raw or "").strip().lower()
-    if s in ("approve", "human_review", "regenerate", "delete"):
+    if s in _ALL_RECOMMENDED_ACTIONS:
         return s  # type: ignore[return-value]
     return None
 
@@ -480,7 +488,7 @@ def apply_post_auto_fix_action(
     Upgrade human_review → approve when auto-fixes resolve all blocking issues.
     Never downgrades delete/regenerate; never approves off_syllabus / hard_fail.
     """
-    if action in ("delete", "regenerate"):
+    if action in ("delete", "regenerate", "move_to_math2"):
         return action
     if not auto_fixes_planned:
         return action
@@ -551,6 +559,24 @@ def _required_has_mm(codes: List[str]) -> bool:
     return False
 
 
+def _is_math1_subject(subject: str) -> bool:
+    return subject.casefold() in ("math 1", "mathematics 1")
+
+
+def _salvageable_math1_paper_move(result: QualityGateResult, *, subject: str) -> bool:
+    """Heuristic: MM/off-syllabus on Math 1 but question may belong on Math 2 paper."""
+    if not _is_math1_subject(subject):
+        return False
+    if not (_required_has_mm(result.required_topic_codes) or result.curriculum_match == "off_syllabus"):
+        return False
+    labels = set(result.disposition_labels)
+    if labels & {"solution_error", "unclear_wording", "weak_distractors"}:
+        return False
+    if int(result.scores.get("solution_quality") or 5) <= 2:
+        return False
+    return True
+
+
 def effective_action(
     result: QualityGateResult,
     *,
@@ -571,7 +597,7 @@ def effective_action(
             action = "human_review"
 
     if _answer_key_blocks_auto_approve(result, answer_key_will_fix=answer_key_will_fix):
-        if action == "approve":
+        if action in ("approve", "move_to_math2"):
             action = "human_review"
 
     if result.curriculum_match == "borderline" and action == "approve":
@@ -586,6 +612,12 @@ def effective_action(
     if subj_cf in ("math 1", "mathematics 1") and _required_has_mm(result.required_topic_codes):
         if action == "approve":
             action = "human_review"
+
+    if action == "regenerate" and _salvageable_math1_paper_move(result, subject=subject):
+        action = "move_to_math2"
+
+    if action == "move_to_math2" and not _is_math1_subject(subject):
+        action = "human_review"
 
     if result.verdict == "Pass" and result.syllabus_fit_score < 4 and action == "approve":
         action = "human_review"
@@ -616,7 +648,7 @@ def effective_action(
 
 
 def effective_action_with_graph_queue(result: QualityGateResult, base: RecommendedAction) -> RecommendedAction:
-    if base in ("delete", "regenerate", "human_review"):
+    if base in ("delete", "regenerate", "move_to_math2", "human_review"):
         return base
     if result.graph_mode in ("candidate", "missing_expected") and result.verdict != "Major":
         if base == "approve" and _only_auto_fix_disposition(result.disposition_labels):

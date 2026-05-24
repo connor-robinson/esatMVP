@@ -3,7 +3,12 @@
  */
 
 export type QualityGateVerdict = 'Pass' | 'Minor' | 'Major';
-export type QualityGateAction = 'approve' | 'human_review' | 'regenerate' | 'delete';
+export type QualityGateAction =
+  | 'approve'
+  | 'human_review'
+  | 'regenerate'
+  | 'move_to_math2'
+  | 'delete';
 export type QualityGateCalibrationTier = 'gold';
 
 export interface ReviewQuestion {

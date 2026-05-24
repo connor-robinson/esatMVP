@@ -100,6 +100,7 @@ def _quality_gate_action_label(action: Optional[str]) -> str:
         "approve": "Keep (approve)",
         "human_review": "Human review",
         "regenerate": "Regenerate / rewrite",
+        "move_to_math2": "Move to Math 2",
         "delete": "Delete",
     }.get(action, action)
 
@@ -249,7 +250,7 @@ def _sort_rows_for_results_table(rows: list[dict[str, Any]]) -> list[dict[str, A
         else:
             tier = 4
         action = (r.get("quality_gate_action") or "").strip().lower()
-        action_rank = {"delete": 0, "regenerate": 1, "human_review": 2, "approve": 3}.get(action, 4)
+        action_rank = {"delete": 0, "regenerate": 1, "move_to_math2": 2, "human_review": 3, "approve": 4}.get(action, 5)
         qid = str(r.get("id") or "")
         return (tier, action_rank, qid)
 
@@ -883,6 +884,8 @@ def _outcome_label(eff: str | None, *, auto_applied: bool, status: str | None) -
         return "Delete"
     if eff == "regenerate":
         return "Regenerate"
+    if eff == "move_to_math2":
+        return "Move to Math 2"
     if eff == "human_review":
         return "Human review"
     if eff == "approve":
@@ -1631,7 +1634,7 @@ with tab_review:
                 st.subheader("Per-question results")
                 st.caption(
                     "Rows are sorted for review load: **Major** verdict first, then **Minor**, then **Pass** with "
-                    "**Graph**, then the rest. Within each band, **delete / regenerate / human review** before **approve**. "
+                    "**Graph**, then the rest. Within each band, **delete / regenerate / move to Math 2 / human review** before **approve**. "
                     "**Code or id** is the walkthrough code when set; otherwise the full question id. "
                     "**Status** is the row workflow in Supabase (e.g. **approved** after Approve in the question reviewer); refresh this page to reload."
                 )
@@ -1702,10 +1705,22 @@ with tab_review:
             st.exception(e)
 
     st.divider()
-    st.markdown("### Export list for regeneration")
-    st.caption("Writes a small file listing question ids the AI said should be regenerated.")
-    out_path = st.text_input("Where to save the file", str(ROOT / "quality_gate" / "regen_export.jsonl"))
-    if st.button("Write file"):
+    st.markdown("### Export action lists")
+    st.caption("JSONL files of question ids for batch operator workflows.")
+    c_regen, c_move = st.columns(2)
+    with c_regen:
+        regen_path = st.text_input(
+            "Regenerate export path",
+            str(ROOT / "quality_gate" / "regen_export.jsonl"),
+            key="qg_regen_export_path",
+        )
+    with c_move:
+        move_path = st.text_input(
+            "Move to Math 2 export path",
+            str(ROOT / "quality_gate" / "move_to_math2_export.jsonl"),
+            key="qg_move_math2_export_path",
+        )
+    if st.button("Write export files", key="qg_write_action_exports"):
         if not run_id:
             st.error("Choose a run from the list or type a run id.")
         else:
@@ -1715,11 +1730,21 @@ with tab_review:
 
                 init_env()
                 client = get_supabase()
-                ids = fetch_ids_for_job_action(client, run_id, "regenerate")
-                p = Path(out_path).expanduser()
-                p.parent.mkdir(parents=True, exist_ok=True)
-                p.write_text("\n".join(json.dumps({"id": qid}) for qid in ids) + ("\n" if ids else ""), encoding="utf-8")
-                st.success(f"Wrote {len(ids)} line(s) to {p}")
+                regen_ids = fetch_ids_for_job_action(client, run_id, "regenerate")
+                move_ids = fetch_ids_for_job_action(client, run_id, "move_to_math2")
+                for label, ids, path_s in (
+                    ("regenerate", regen_ids, regen_path),
+                    ("move_to_math2", move_ids, move_path),
+                ):
+                    p = Path(path_s).expanduser()
+                    p.parent.mkdir(parents=True, exist_ok=True)
+                    p.write_text(
+                        "\n".join(json.dumps({"id": qid}) for qid in ids) + ("\n" if ids else ""),
+                        encoding="utf-8",
+                    )
+                st.success(
+                    f"Wrote **{len(regen_ids)}** regenerate and **{len(move_ids)}** move-to-Math-2 id(s)."
+                )
             except Exception as e:
                 st.exception(e)
 

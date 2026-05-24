@@ -51,16 +51,17 @@ Return inside `answer_key_validation`:
 
 ## Review disposition labels (required)
 
-Every item needs explicit operator-facing labels explaining **keep**, **edit**, **disregard**, or **regenerate**.
+Every item needs explicit operator-facing labels explaining **keep**, **edit**, **disregard**, **regenerate**, or **move to another paper**.
 
 Return inside `review_disposition`:
 
-- `outcome` — `keep` | `edit` | `disregard` | `regenerate`
+- `outcome` — `keep` | `edit` | `disregard` | `regenerate` | `move_paper`
   - **keep** — bank-ready after no substantive changes
   - **edit** — salvageable with human tweak or human inspection
   - **disregard** — do not keep (`delete`)
-  - **regenerate** — rewrite stem/options/solution
-- `labels` — one or more from: `too_hard`, `too_easy`, `too_long`, `too_short`, `wrong_answer_key`, `wrong_answer_key_fixed`, `formatting`, `formatting_fixed`, `off_syllabus`, `unclear_wording`, `weak_distractors`, `solution_error`, `unrealistic_pacing`, `needs_diagram`, `deterministic_conflict`, `other`
+  - **regenerate** — rewrite stem/options/solution (item is flawed or not salvageable by moving)
+  - **move_paper** — sound question filed under the wrong ESAT paper; operator should move it (see **Math 1 → Math 2** below)
+- `labels` — one or more from: `too_hard`, `too_easy`, `too_long`, `too_short`, `wrong_answer_key`, `wrong_answer_key_fixed`, `formatting`, `formatting_fixed`, `off_syllabus`, `unclear_wording`, `weak_distractors`, `solution_error`, `unrealistic_pacing`, `needs_diagram`, `deterministic_conflict`, `wrong_paper`, `math2_content_on_math1`, `other`
 - `notes` — one short line for humans, e.g. "Too easy for ESAT; reads like GCSE."
 
 Map outcomes to `recommended_action`:
@@ -69,6 +70,7 @@ Map outcomes to `recommended_action`:
 - edit → `human_review`
 - disregard → `delete`
 - regenerate → `regenerate`
+- move_paper → `move_to_math2`
 
 Exceptions:
 
@@ -85,7 +87,7 @@ Many items have **more than one** defect. The pipeline may automatically fix saf
 
 When **any** of these apply, you **must** fill `auto_fix_triage` carefully:
 
-- `recommended_action` is `human_review`, `regenerate`, or `delete`, **or**
+- `recommended_action` is `human_review`, `regenerate`, `move_to_math2`, or `delete`, **or**
 - `formatting_validation.apply_fix` is **true**, **or**
 - `answer_key_validation.apply_fix` is **true**, **or**
 - there is more than one issue in `review_disposition.labels` / curriculum / formatting flags, **or**
@@ -95,7 +97,7 @@ Return inside `auto_fix_triage`:
 
 - `auto_fixable_issues` — short strings for issues the **system can fix** without rewriting content, e.g. `"excessive blank lines"`, `"wrong answer key"`, `"double spaces"`.
 - `human_blocking_issues` — short strings for issues that **still need a human** even after auto-fix, e.g. `"borderline syllabus fit"`, `"too long"`, `"weak distractors"`, `"off-syllabus topic"`, `"wrong answer key requires inspection"`, `"deterministic flag conflict"`.
-- `recommended_action_after_auto_fix` — **`approve`** | **`human_review`** | **`regenerate`** | **`delete`**: the action you would choose **if** all auto-fixable issues were already resolved.
+- `recommended_action_after_auto_fix` — **`approve`** | **`human_review`** | **`regenerate`** | **`move_to_math2`** | **`delete`**: the action you would choose **if** all auto-fixable issues were already resolved.
   - Ask: *“If blank lines / spacing / stored answer key were fixed, would I still send this to a human?”*
   - Use **`approve`** only when the item is otherwise Pass-worthy and **no** human-blocking issues remain.
   - Use **`human_review`** when any substantive judgement remains: borderline curriculum, suspicious hidden topic, wrong answer key, wording, difficulty, pacing, weak distractors, or deterministic conflict.
@@ -136,7 +138,7 @@ Return inside `curriculum_validation`:
 
 - Content **outside** `curriculum_allowed_codes` → `curriculum_match` cannot be `in_syllabus`; `verdict` cannot be **Pass**.
 - Subject mismatch → `off_syllabus`. Example: Mathematics 2 content on a Mathematics 1 row.
-- **Mathematics 1** requiring **MM** content → `off_syllabus`; use `human_review`, `regenerate`, or `delete` depending on salvageability.
+- **Mathematics 1** requiring **MM** content → `off_syllabus` on the Math 1 row. Before `regenerate` or `delete`, check whether the **solve path fits Mathematics 2** (see **Math 1 → Math 2 relocation**). If yes, use `move_to_math2` / `move_paper` instead of `regenerate`.
 - **Mathematics 1** + needed calculus notation → usually `delete` or `human_review`, unless the notation is purely decorative and not needed to solve.
 - **Maths 1 vs Maths 2:** logarithm laws, formal differentiation/integration, geometric series sum to infinity, binomial theorem/binomial coefficients, factor theorem/remainder theorem, radians, sine/cosine rule, and formal function transformations are not allowed for Mathematics 1 unless explicitly supplied and avoidable.
 - **Maths 2 differentiation:** allow only what the snapshot explicitly allows. Differentiation of powers `x^n` and related sums/differences is fine where allowed. Product rule, quotient rule, chain rule, differentiating `e^x`, differentiating `ln x`, and differentiating composite exponentials/logarithms are suspicious unless the required rule is supplied in the stem.
@@ -146,6 +148,38 @@ Return inside `curriculum_validation`:
 - **Too easy / low-discrimination items:** If the item is mostly direct recall, one-step GCSE procedure, or a routine substitution with no ESAT-style twist, do not give a strong Pass. Add `too_easy`, set `solution_quality` or `esat_realism_pacing` at most 3 as appropriate, and usually use `human_review` unless the bank intentionally wants warm-up/easy items. Never set `calibration_tier: "gold"` on a merely easy/routine item.
 - **Easy but valid exception:** An Easy item may still be approved only if it is clean, syllabus-exact, useful as a deliberate low-difficulty item, and not pretending to be Medium/Hard. In that case, keep `calibration_tier: null` and mention the low difficulty in `review_disposition.notes`.
 - In syllabus but too long for ~90 seconds per question → `esat_realism_pacing` ≤ 2; prefer `human_review` or `regenerate`.
+
+---
+
+## Math 1 → Math 2 relocation (`move_to_math2`)
+
+Many **Major** or **off_syllabus** Math 1 rows are **good questions in the wrong module**. Do **not** default to `regenerate` when the only real problem is paper/subject mismatch.
+
+**When the row’s stated subject is Mathematics 1**, after listing solve-path concepts:
+
+1. Map required concepts against the **Mathematics 1** `curriculum_allowed_codes`.
+2. **Also** map the same concepts against the **Mathematics 2** snapshot (if provided in the input, or from your knowledge of the ESAT Math 2 spec: MM topics, log laws, differentiation/integration within Math 2 scope, binomial, radians, sine/cosine rule, etc.).
+3. Ask: *“If this row were filed under Mathematics 2, would the solve path be `in_syllabus` with no hidden off-spec leap?”*
+
+Use **`recommended_action`: `move_to_math2`** (and `review_disposition.outcome`: `move_paper`, labels `wrong_paper` and/or `math2_content_on_math1`) when **all** hold:
+
+- Current row subject is **Mathematics 1** (not already Math 2).
+- The item is **not** merely broken (no substantive solution error, no nonsense wording, distractors still plausible).
+- The **actual solve path** needs topics/codes that are **disallowed on Math 1** but **allowed on Math 2** (e.g. MM codes, log laws, formal differentiation/integration, binomial theorem, radians/trig rules, geometric series to infinity, etc.).
+- Moving to Math 2 would make `curriculum_match` **`in_syllabus`** or at worst **`borderline`** — not still off-syllabus on Math 2.
+- The question would still be a plausible ESAT MCQ on the Math 2 paper (pacing/discrimination acceptable for that paper).
+
+**Prefer `move_to_math2` over `regenerate`** when the stem/options/key are sound and the main issue is **wrong paper**. Many otherwise **Major** items should be **`move_to_math2`**, not rewritten.
+
+**Do not use `move_to_math2` when:**
+
+- The row is already **Mathematics 2** (use `human_review` / `regenerate` / `delete` as usual).
+- The content is off-syllabus **even on Math 2**, or needs Physics/Chemistry/Biology/Further Maths.
+- The item is weak on its own merits (bad solution, absurd distractors, GCSE drill with no ESAT value) — use `regenerate` or `delete`.
+- `answer_key_validation.was_wrong` is true — use `human_review` first (key may be fixed, then operator moves paper).
+- You are unsure Math 2 fully covers the solve path — use `human_review`, not `move_to_math2`.
+
+In `reasoning` and `curriculum_reason`, state explicitly: *“Solve path requires [X]; disallowed on Math 1, allowed on Math 2 → move paper.”*
 
 **Borderline policy:**
 
@@ -200,7 +234,8 @@ Choose exactly one:
 
 - `approve` — Keep as-is for the bank. Only use when there are no substantive issues. If the item is `too_easy`, approve only when it is intentionally valuable as an Easy/warm-up item and clearly labelled as such in the notes.
 - `human_review` — Needs a human decision: borderline syllabus, wrong key fixed, deterministic conflict, ambiguous wording, uncertain difficulty, suspicious hidden topic, or an item that may be too easy/low-discrimination for the target bank.
-- `regenerate` — Stem/options/solution should be regenerated, not just tweaked.
+- `regenerate` — Stem/options/solution should be regenerated, not just tweaked. Do **not** use when `move_to_math2` is the right fix for a sound question on the wrong paper.
+- `move_to_math2` — Row is (or should be) **Mathematics 1** but the solve path fits **Mathematics 2**; operator should change `subjects` to Math 2, not rewrite the question. Never auto-applied by the pipeline — human confirms the move.
 - `delete` — Unsalvageable or harmful to keep.
 
 Do not auto-approve if any of these are true:
@@ -212,6 +247,7 @@ Do not auto-approve if any of these are true:
 - pacing score is 2 or below
 - formatting score is 2 or below
 - solution has a substantive gap or possible error
+- `recommended_action` is `move_to_math2`, `regenerate`, or `delete`
 
 ---
 

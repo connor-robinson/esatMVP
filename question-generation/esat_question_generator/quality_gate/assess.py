@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from project import _gemini_console
 
 from .answer_key import build_answer_key_precheck
-from .curriculum import get_curriculum_for_row, normalize_subject
+from .curriculum import get_curriculum_for_row, get_math2_relocation_context, normalize_subject
 from .curriculum_flags import detect_curriculum_flags
 from .formatting import build_formatting_report, detect_formatting_issues
 from .defaults import quality_gate_model_try_order
@@ -112,6 +112,7 @@ def build_question_payload(
     fmt_issues = detect_formatting_issues(row)
     if fmt_issues:
         payload["deterministic_formatting_flags"] = fmt_report.get("deterministic_formatting_flags")
+    payload.update(get_math2_relocation_context(row))
     return payload
 
 
@@ -136,7 +137,9 @@ def build_assessment_system_user_prompts(
         "Always label review_disposition.labels. "
         "When multiple issues exist, fill auto_fix_triage with auto-fixable vs human-blocking issues and "
         "recommended_action_after_auto_fix (approve only when no human-blocking issues remain). "
-        "Do not auto-approve borderline or off-syllabus items.\n\n"
+        "Do not auto-approve borderline or off-syllabus items. "
+        "For Mathematics 1 rows with curriculum_math2_snapshot, check whether a sound question "
+        "belongs on Math 2 (move_to_math2) before regenerate.\n\n"
         + rubric
         + "\n\nAlways respond with a single JSON object only."
     )

@@ -292,6 +292,7 @@ export function normalizeReviewQuestion(data: any): ReviewQuestion {
       data.quality_gate_action === "approve" ||
       data.quality_gate_action === "human_review" ||
       data.quality_gate_action === "regenerate" ||
+      data.quality_gate_action === "move_to_math2" ||
       data.quality_gate_action === "delete"
         ? data.quality_gate_action
         : null,

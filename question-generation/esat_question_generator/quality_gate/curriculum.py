@@ -174,6 +174,21 @@ def is_mm_tag(tag: str) -> bool:
     return t.startswith("M2-MM") or t.startswith("MM") or "-MM" in t
 
 
+def get_math2_relocation_context(row: Dict[str, Any]) -> Dict[str, Any]:
+    """For Math 1 rows, include Math 2 curriculum so the judge can recommend move_to_math2."""
+    subject = normalize_subject(row.get("subjects"))
+    if subject.casefold() not in ("math 1", "mathematics 1"):
+        return {}
+    return {
+        "curriculum_math2_allowed_codes": get_allowed_topic_codes("Math 2"),
+        "curriculum_math2_snapshot": get_curriculum_snapshot("Math 2", max_chars=6000),
+        "relocation_note": (
+            "Row is Mathematics 1. If the solve path fits Math 2 allowed codes but not Math 1, "
+            "prefer recommended_action move_to_math2 over regenerate when the item is otherwise sound."
+        ),
+    }
+
+
 def get_curriculum_for_row(row: Dict[str, Any]) -> Dict[str, Any]:
     subject = normalize_subject(row.get("subjects"))
     primary = (row.get("primary_tag") or "").strip() or None
