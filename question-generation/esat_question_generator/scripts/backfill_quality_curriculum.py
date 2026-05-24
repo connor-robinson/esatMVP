@@ -80,6 +80,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     parser.add_argument("--model", default="", help="Override quality gate model id")
     parser.add_argument("--only-assessed", action="store_true", help="Only rows already assessed")
+    parser.add_argument("--apply-tag-fixes", action="store_true", help="Re-run classifier for wrong/missing tags")
     ns = parser.parse_args(argv)
     dry_run = not ns.apply
 
@@ -116,8 +117,31 @@ def main(argv: Optional[List[str]] = None) -> int:
             eff = effective_action_with_graph_queue(result, base_eff)
             payload = result.to_payload()
             payload["effective_recommended_action"] = eff
-            payload["raw_model_excerpt"] = (raw or "")[:4000]
+            payload["raw_model_excerpt"] = (raw)[:4000]
             payload["curriculum_backfill"] = True
+
+            content_patch: Dict[str, Any] = {}
+            if not dry_run:
+                from quality_gate.formatting import build_formatting_patch, should_apply_formatting_fix
+                from quality_gate.formatting import detect_formatting_issues
+
+                if should_apply_formatting_fix(
+                    issues=detect_formatting_issues(row),
+                    llm_apply_fix=result.formatting_apply_fix,
+                    eff=eff,
+                ):
+                    fp = build_formatting_patch(row)
+                    if fp:
+                        content_patch.update(fp)
+                        payload["formatting_fix_applied"] = sorted(fp.keys())
+
+                if ns.apply_tag_fixes and eff != "delete":
+                    from quality_gate.tag_relabel import maybe_relabel_tags
+
+                    tag_patch = maybe_relabel_tags(row, result, llm=llm, model=used_model)
+                    if tag_patch:
+                        content_patch.update(tag_patch)
+                        payload["tag_relabel_applied"] = tag_patch.get("primary_tag")
 
             if result.curriculum_match == "off_syllabus":
                 stats["off_syllabus"] += 1

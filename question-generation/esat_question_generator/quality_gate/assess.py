@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from project import _gemini_console
 
 from .curriculum import get_curriculum_for_row, normalize_subject
-from .curriculum_flags import detect_curriculum_flags
+from .formatting import build_formatting_report, detect_formatting_issues
 from .defaults import quality_gate_model_try_order
 from .schemas import CurriculumFlag, QualityGateResult, parse_quality_gate_json
 
@@ -103,6 +103,11 @@ def build_question_payload(
     }
     if pre_flags:
         payload["deterministic_curriculum_flags"] = [f.to_dict() for f in pre_flags]
+    fmt_report = build_formatting_report(row)
+    payload["formatting_precheck"] = fmt_report
+    fmt_issues = detect_formatting_issues(row)
+    if fmt_issues:
+        payload["deterministic_formatting_flags"] = fmt_report.get("deterministic_formatting_flags")
     return payload
 
 
@@ -117,6 +122,8 @@ def build_assessment_system_user_prompts(
         "Judge syllabus fit ONLY against the provided `curriculum_snapshot` and "
         "`curriculum_allowed_codes` — do not rely on memory of ESAT. "
         "Treat deterministic_curriculum_flags as strong evidence; explain if you disagree. "
+        "Check stem/options/solution for inappropriate line breaks, double spaces, and awkward wrapping; "
+        "set formatting_validation.apply_fix true when deterministic whitespace normalization would help. "
         "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps "
         "or too much clock time** for one MCQ as serious defects.\n\n"
         + rubric
@@ -170,6 +177,13 @@ def assess_question(
                 )
             data = extract_json_object(raw)
             result = parse_quality_gate_json(data, pre_flags=flags)
+            fmt_issues = detect_formatting_issues(row)
+            if fmt_issues and not result.formatting_issues:
+                result.formatting_issues = [i.get("detail", i.get("issue_id", "")) for i in fmt_issues[:8]]
+            if fmt_report := build_formatting_report(row):
+                if fmt_report.get("formatting_fixable") and not result.formatting_apply_fix:
+                    if result.formatting_score >= 4:
+                        result.formatting_apply_fix = True
             if not result.curriculum_reason and flags:
                 result.curriculum_reason = "; ".join(f.reason for f in flags[:3])[:4000]
             subj = normalize_subject(row.get("subjects")).casefold()

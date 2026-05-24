@@ -55,3 +55,4 @@ Rules:
 - **Curve labels** (`y=x^2`, etc.): place `approx_x` / `approx_y` **away** from intersection neighbourhoods listed in the scene.
 - `layers` ordered by increasing `z`; backgrounds and fills lower z than strokes than labels (labels will be drawn in render phase last — still give label positions that avoid strokes).
 - Strokes: main `#222222` or `#111111`, secondary `#333333`, fills `#B8B8B8` / `#D9D9D9` only when needed.
+`

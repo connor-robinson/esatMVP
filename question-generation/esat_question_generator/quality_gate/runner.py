@@ -80,6 +80,9 @@ def _commit_gate_row(
     stats: Dict[str, Any],
     log_lines: Optional[List[str]],
     on_row: Optional[Callable[[Dict[str, Any]], None]],
+    llm: Optional[Any] = None,
+    auto_fix_formatting: bool = True,
+    apply_tag_fixes: bool = False,
 ) -> tuple[str, str]:
     """Apply sanitization, DB patch, counters, logs. Returns ``(last_error, effective_action)``."""
     last_error = ""
@@ -104,6 +107,11 @@ def _commit_gate_row(
     payload["effective_recommended_action"] = eff
     payload["raw_model_excerpt"] = (raw_text or "")[:4000]
 
+    from .formatting import build_formatting_patch, detect_formatting_issues, should_apply_formatting_fix
+
+    fmt_issues = detect_formatting_issues(row)
+    content_patch: Dict[str, Any] = {}
+
     auto_applied = False
     if not dry_run and client is not None:
         graph_notes = build_graph_notes_for_db(result)
@@ -121,6 +129,37 @@ def _commit_gate_row(
             "quality_gate_graph_mode": result.graph_mode,
             "quality_gate_graph_notes": graph_notes,
         }
+
+        if auto_fix_formatting and should_apply_formatting_fix(
+            issues=fmt_issues,
+            llm_apply_fix=result.formatting_apply_fix,
+            eff=eff,
+        ):
+            fmt_patch = build_formatting_patch(row)
+            if fmt_patch:
+                content_patch.update(fmt_patch)
+                payload["formatting_fix_applied"] = sorted(fmt_patch.keys())
+                stats["formatting_fixed"] = stats.get("formatting_fixed", 0) + 1
+
+        if apply_tag_fixes and eff != "delete" and llm is not None:
+            try:
+                from .tag_relabel import maybe_relabel_tags
+
+                tag_patch = maybe_relabel_tags(row, result, llm=llm, model=model)
+                if tag_patch:
+                    content_patch.update(tag_patch)
+                    payload["tag_relabel_applied"] = {
+                        "primary_tag": tag_patch.get("primary_tag"),
+                        "secondary_tags": tag_patch.get("secondary_tags"),
+                    }
+                    stats["tags_relabeled"] = stats.get("tags_relabeled", 0) + 1
+            except Exception as ex:
+                _append_log(log_lines, f"[warn] tag relabel {qid}: {ex}")
+
+        if content_patch:
+            patch.update(content_patch)
+            patch["quality_gate_payload"] = payload
+
         if (
             result.verdict == "Pass"
             and eff == "approve"
@@ -196,6 +235,8 @@ def run_quality_gate_job(
     batch_timeout_s: float = 86400.0,
     auto_svg_diagrams: bool = False,
     diagram_model: str = "",
+    auto_fix_formatting: bool = True,
+    apply_tag_fixes: bool = False,
 ) -> Dict[str, Any]:
     """
     Process up to ``limit`` questions matching ``cohort``.
@@ -244,6 +285,8 @@ def run_quality_gate_job(
         "batch_api_jobs": 0,
         "diagrams_inserted": 0,
         "diagram_errors": 0,
+        "formatting_fixed": 0,
+        "tags_relabeled": 0,
     }
     last_error = ""
 
@@ -406,6 +449,9 @@ def run_quality_gate_job(
                     stats=stats,
                     log_lines=log_lines,
                     on_row=on_row,
+                    llm=llm,
+                    auto_fix_formatting=auto_fix_formatting,
+                    apply_tag_fixes=apply_tag_fixes,
                 )
                 if row_err:
                     last_error = row_err

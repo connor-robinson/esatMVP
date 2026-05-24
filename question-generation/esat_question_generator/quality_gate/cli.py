@@ -72,6 +72,8 @@ def cmd_run(ns: argparse.Namespace) -> int:
         batch_timeout_s=float(ns.batch_timeout),
         auto_svg_diagrams=bool(getattr(ns, "auto_svg", False)),
         diagram_model=(getattr(ns, "diagram_model", None) or "").strip(),
+        auto_fix_formatting=not getattr(ns, "no_fix_formatting", False),
+        apply_tag_fixes=bool(getattr(ns, "apply_tag_fixes", False)),
     )
     for line in log[-40:]:
         print(line)
@@ -306,6 +308,16 @@ def main() -> int:
         type=float,
         default=86400.0,
         help="With --batch-api: max seconds to wait for each batch job",
+    )
+    r.add_argument(
+        "--no-fix-formatting",
+        action="store_true",
+        help="Do not auto-normalize stem/options whitespace when fixable issues are detected",
+    )
+    r.add_argument(
+        "--apply-tag-fixes",
+        action="store_true",
+        help="Re-run classifier to fix missing/wrong primary_tag when curriculum flags require it",
     )
     r.add_argument(
         "--auto-svg",

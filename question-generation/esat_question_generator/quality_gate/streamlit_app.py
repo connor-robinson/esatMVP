@@ -130,6 +130,8 @@ def _curriculum_cols(row: dict[str, Any]) -> dict[str, Any]:
         "Suspicious": fields.get("suspicious_topics") or "—",
         "Curriculum reason": fields.get("curriculum_reason") or "—",
         "Curriculum flags": fields.get("curriculum_flags") or "—",
+        "Formatting": fields.get("formatting_score") if fields.get("formatting_score") is not None else "—",
+        "Format issues": fields.get("formatting_issues") or "—",
         "_off_syllabus": fields.get("curriculum_match") == "off_syllabus",
         "_math1_mm": bool(fields.get("math1_mm_required")),
         "_calculus_math1": bool(fields.get("calculus_in_math1")),
@@ -247,6 +249,8 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
                 "Suspicious": cur["Suspicious"],
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
+                "Formatting": cur["Formatting"],
+                "Format issues": cur["Format issues"],
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -288,6 +292,8 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
                 "Suspicious": cur["Suspicious"],
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
+                "Formatting": cur["Formatting"],
+                "Format issues": cur["Format issues"],
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -808,6 +814,16 @@ with tab_score:
         value=False,
         help="Normally already-scored questions are skipped. Turn on to run the AI again on them.",
     )
+    auto_fix_formatting = st.checkbox(
+        "Auto-fix line breaks / spacing when safe",
+        value=True,
+        help="Normalizes awkward stem/option whitespace using the same rules as the generation pipeline.",
+    )
+    apply_tag_fixes = st.checkbox(
+        "Re-label wrong or missing curriculum tags (classifier)",
+        value=False,
+        help="When primary_tag is missing or invalid, re-run the tag classifier and write new tags. Off by default.",
+    )
     with st.expander("Advanced (rarely needed)", expanded=False):
         include_deleted = st.checkbox(
             "Include deleted questions in the pool",
@@ -868,6 +884,10 @@ with tab_score:
                 cmd.append("--record-only")
             if rescore:
                 cmd.append("--force-reassess")
+            if not auto_fix_formatting:
+                cmd.append("--no-fix-formatting")
+            if apply_tag_fixes:
+                cmd.append("--apply-tag-fixes")
             if include_deleted:
                 cmd.append("--include-deleted")
             cmd += ["--state-file", str(STATE_PATH)]

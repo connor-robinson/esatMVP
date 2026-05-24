@@ -67,6 +67,10 @@ class QualityGateResult:
     suspicious_topics: List[str] = field(default_factory=list)
     curriculum_reason: str = ""
     curriculum_flags: List[CurriculumFlag] = field(default_factory=list)
+    formatting_score: int = 5
+    formatting_issues: List[str] = field(default_factory=list)
+    formatting_apply_fix: bool = False
+    formatting_reason: str = ""
     raw: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -97,6 +101,12 @@ class QualityGateResult:
                 "suspicious_topics": list(self.suspicious_topics),
                 "curriculum_reason": self.curriculum_reason,
                 "curriculum_flags": [f.to_dict() for f in self.curriculum_flags],
+            },
+            "formatting_validation": {
+                "formatting_score": self.formatting_score,
+                "formatting_issues": list(self.formatting_issues),
+                "apply_fix": self.formatting_apply_fix,
+                "formatting_reason": self.formatting_reason,
             },
         }
 
@@ -244,6 +254,17 @@ def parse_quality_gate_json(
     llm_flags = _parse_curriculum_flags(cv.get("curriculum_flags"))
     pre = pre_flags or []
 
+    fv = data.get("formatting_validation") if isinstance(data.get("formatting_validation"), dict) else {}
+    fmt_score = fv.get("formatting_score", 5)
+    try:
+        fmt_score = int(fmt_score)
+    except (TypeError, ValueError):
+        fmt_score = 5
+    fmt_score = max(1, min(5, fmt_score))
+    fmt_issues = _parse_str_list(fv.get("formatting_issues"), limit=12)
+    fmt_apply = bool(fv.get("apply_fix"))
+    fmt_reason = str(fv.get("formatting_reason") or "")[:2000]
+
     result = QualityGateResult(
         verdict=verdict,
         scores=scores,
@@ -264,6 +285,10 @@ def parse_quality_gate_json(
         suspicious_topics=_parse_str_list(cv.get("suspicious_topics")),
         curriculum_reason=str(cv.get("curriculum_reason") or "")[:4000],
         curriculum_flags=llm_flags,
+        formatting_score=fmt_score,
+        formatting_issues=fmt_issues,
+        formatting_apply_fix=fmt_apply,
+        formatting_reason=fmt_reason,
         raw=dict(data),
     )
     return merge_deterministic_curriculum_flags(result, pre)
@@ -352,6 +377,9 @@ def effective_action(
     if result.pacing_score <= 2 and action == "approve":
         action = "human_review"
 
+    if result.formatting_score <= 2 and action == "approve":
+        action = "human_review"
+
     if result.curriculum_match == "off_syllabus" and result.verdict == "Pass":
         action = "human_review"
 
@@ -413,4 +441,9 @@ def curriculum_fields_from_payload(payload: Optional[Dict[str, Any]]) -> Dict[st
         "math1_mm_required": _required_has_mm(_parse_str_list(cv.get("required_topic_codes"))),
         "calculus_in_math1": any(f.flag_id in ("differentiation", "integration") for f in flags),
         "missing_primary_tag": any(f.flag_id == "missing_primary_tag" for f in flags),
+        "formatting_score": (p.get("formatting_validation") or {}).get("formatting_score"),
+        "formatting_issues": ", ".join(
+            _parse_str_list((p.get("formatting_validation") or {}).get("formatting_issues"), limit=3)
+        )
+        or "—",
     }

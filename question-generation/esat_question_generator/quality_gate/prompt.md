@@ -37,6 +37,27 @@ Return inside `curriculum_validation`:
 
 ---
 
+## Text formatting / line breaks (required)
+
+Check **question_stem**, **options**, and **solution_reasoning** for exam-style layout:
+
+- **Too many line breaks** — single sentences split across lines; 3+ blank lines; every phrase on its own line.
+- **Too few** — dense wall of text where a single break before the final question would help (text-only stems).
+- **Spacing** — double spaces, trailing spaces on lines, awkward wraps inside options.
+
+Return inside `formatting_validation`:
+
+- `formatting_score` — integer **1–5** (5 = clean ESAT layout)
+- `formatting_issues` — short strings describing problems found
+- `apply_fix` — **true** if deterministic whitespace normalization should be applied (safe fixes only: collapse spurious line breaks, trim spaces; do not rewrite math or figures)
+- `formatting_reason` — one line summary
+
+If `formatting_precheck.formatting_fixable` is true in the input, prefer `apply_fix: true` unless figures/math would be harmed.
+
+If `formatting_score` ≤ 2, do not recommend `approve` without `human_review`.
+
+---
+
 ## Verdict bands
 
 - **Pass** — Plausible ESAT item; **stem and options readable at a glance**; realistic step count; difficulty appropriate; **solvable within normal per-question timing** (roughly on the 90s–2min scale above, not a slog).
@@ -146,10 +167,16 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
     "suspicious_topics": [],
     "curriculum_reason": "Uses only algebra from allowed snapshot.",
     "curriculum_flags": []
+  },
+  "formatting_validation": {
+    "formatting_score": 5,
+    "formatting_issues": [],
+    "apply_fix": false,
+    "formatting_reason": "Stem and options are compact single-block prose."
   }
 }
 ```
 
-**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown).
+**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown), `formatting_validation` (all sub-keys as shown).
 
 `scores` use integers **1–5** (5 best). `confidence` is `high`, `medium`, or `low`.
