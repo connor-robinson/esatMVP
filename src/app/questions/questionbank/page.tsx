@@ -68,6 +68,12 @@ const SESSION_BAR_BTN_SECONDARY = cn(
   'bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text',
   'dark:bg-surface dark:hover:bg-surface-elevated',
 );
+/** Reveal answer — one surface step from bar background */
+const SESSION_BAR_BTN_REVEAL = cn(
+  SESSION_BAR_BTN,
+  'bg-surface-subtle text-text-muted hover:bg-surface-mid hover:text-text',
+  'dark:bg-surface dark:text-text-muted dark:hover:bg-surface-elevated dark:hover:text-text',
+);
 const SESSION_BAR_BTN_PRIMARY = cn(SESSION_BAR_BTN, 'font-semibold');
 
 function getFreeAttemptsKey(userId: string | undefined): string {
@@ -850,7 +856,7 @@ export default function QuestionBankPage() {
                         <button
                           type='button'
                           onClick={() => setAnswerRevealed(true)}
-                          className={SESSION_BAR_BTN_SECONDARY}
+                          className={SESSION_BAR_BTN_REVEAL}
                         >
                           <Eye className='h-4 w-4 shrink-0' />
                           Reveal answer
