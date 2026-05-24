@@ -24,7 +24,7 @@ Before giving the JSON answer, do this in order:
 2. **List the solve-path concepts internally.** Include every concept a candidate genuinely needs, not just the broad topic label.
 3. **Map each required concept to explicit allowed curriculum codes.** If a required concept cannot be matched to a code in `curriculum_allowed_codes`, treat it as suspicious.
 4. **Check subject fit.** Content that is valid in Mathematics 2 is still off-syllabus on a Mathematics 1 row. Content valid in A-level Physics is still off-syllabus if not in the ESAT Physics snapshot.
-5. **Check timing and realism.** A question can be in syllabus but still fail as ESAT-style if it is too long, too fiddly, too algebra-heavy, or too slow.
+5. **Check timing, realism, and standard.** A question can be in syllabus but still fail as ESAT-style if it is too long, too fiddly, too algebra-heavy, too slow, or too direct/GCSE-drill-like to be useful as an ESAT item.
 6. **Check deterministic flags/prechecks.** If deterministic flags and your LLM judgement disagree, do **not** auto-delete and do **not** auto-approve. Send to `human_review` unless the flag is clearly cosmetic and safely auto-fixable.
 7. **Check answer key.** If the stored answer key is wrong, set `apply_fix: true`, but still send the item to `human_review`.
 
@@ -143,6 +143,8 @@ Return inside `curriculum_validation`:
 - **Chemistry bonding:** C6 allows bonding/structure/properties, but do not assume VSEPR shape prediction, bond angles, electron-pair geometry, lone-pair repulsion rules, or orbital hybridisation unless the stem gives the needed rules.
 - **Biology nervous system:** B9 allows sensory/relay/motor neurones, synapses, and reflex arcs, but do not assume action potentials, ligand-gated ion channels, Na+/K+ pump details, membrane potentials, excitatory/inhibitory postsynaptic potentials, or threshold-potential modelling unless the stem gives the needed facts.
 - **Physics mechanics:** allow listed kinematics, forces, Newton’s laws, Hooke’s law, energy, momentum, mass/weight. Treat moments/torque, centre of mass, rotational equilibrium, ladder-on-wall statics, and coefficient-of-friction statics as suspicious/off-syllabus unless the snapshot explicitly includes them or the stem fully supplies the principle.
+- **Too easy / low-discrimination items:** If the item is mostly direct recall, one-step GCSE procedure, or a routine substitution with no ESAT-style twist, do not give a strong Pass. Add `too_easy`, set `solution_quality` or `esat_realism_pacing` at most 3 as appropriate, and usually use `human_review` unless the bank intentionally wants warm-up/easy items. Never set `calibration_tier: "gold"` on a merely easy/routine item.
+- **Easy but valid exception:** An Easy item may still be approved only if it is clean, syllabus-exact, useful as a deliberate low-difficulty item, and not pretending to be Medium/Hard. In that case, keep `calibration_tier: null` and mention the low difficulty in `review_disposition.notes`.
 - In syllabus but too long for ~90 seconds per question → `esat_realism_pacing` ≤ 2; prefer `human_review` or `regenerate`.
 
 **Borderline policy:**
@@ -186,24 +188,25 @@ If `formatting_score` ≤ 2, do not recommend `approve` without `human_review`.
 
 ## Verdict bands
 
-- **Pass** — Plausible ESAT item; stem and options readable at a glance; realistic step count; difficulty appropriate; solvable within normal per-question timing; and no unresolved curriculum / key / deterministic concerns.
+- **Pass** — Plausible ESAT item; stem and options readable at a glance; realistic step count; difficulty appropriate; solvable within normal per-question timing; not merely routine GCSE recall/procedure unless intentionally kept as an Easy warm-up; and no unresolved curriculum / key / deterministic concerns.
 
-- **Minor** — Slightly too wordy, slightly too easy, slightly too long or time-heavy, slightly fiddly, or borderline but salvageable. Usually `human_review` rather than blind auto-keep.
+- **Minor** — Slightly too wordy, slightly too easy, slightly too long or time-heavy, slightly fiddly, or borderline but salvageable. For `too_easy`, usually `human_review` unless the item is deliberately useful as a clean low-difficulty/warm-up question.
 
-- **Major** — Clearly too long to read and solve comfortably in one MCQ slot, too many steps, overly computation-heavy, too puzzle-like or unlike ESAT, unrealistically time-consuming, off-syllabus, or trivial below standard.
+- **Major** — Clearly too long to read and solve comfortably in one MCQ slot, too many steps, overly computation-heavy, too puzzle-like or unlike ESAT, unrealistically time-consuming, off-syllabus, or trivial below standard / non-discriminating.
 
 ## Recommended action
 
 Choose exactly one:
 
-- `approve` — Keep as-is for the bank. Only use when there are no substantive issues.
-- `human_review` — Needs a human decision: borderline syllabus, wrong key fixed, deterministic conflict, ambiguous wording, uncertain difficulty, or suspicious hidden topic.
+- `approve` — Keep as-is for the bank. Only use when there are no substantive issues. If the item is `too_easy`, approve only when it is intentionally valuable as an Easy/warm-up item and clearly labelled as such in the notes.
+- `human_review` — Needs a human decision: borderline syllabus, wrong key fixed, deterministic conflict, ambiguous wording, uncertain difficulty, suspicious hidden topic, or an item that may be too easy/low-discrimination for the target bank.
 - `regenerate` — Stem/options/solution should be regenerated, not just tweaked.
 - `delete` — Unsalvageable or harmful to keep.
 
 Do not auto-approve if any of these are true:
 
 - `answer_key_validation.was_wrong` is true
+- `review_disposition.labels` contains `too_easy` and the item is not explicitly being kept as a deliberate Easy/warm-up item
 - `curriculum_validation.curriculum_match` is `borderline` or `off_syllabus`
 - deterministic hard-fail flags conflict with your judgement
 - pacing score is 2 or below
