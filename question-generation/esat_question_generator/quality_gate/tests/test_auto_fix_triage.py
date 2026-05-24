@@ -144,5 +144,20 @@ class TestAutoFixTriage(unittest.TestCase):
         self.assertEqual(out, "human_review")
 
 
+    def test_deterministic_conflict_blocks_auto_delete(self) -> None:
+        result = parse_quality_gate_json(
+            _base_payload(
+                recommended_action="delete",
+                review_disposition={
+                    "outcome": "edit",
+                    "labels": ["deterministic_conflict"],
+                    "notes": "Precheck over-triggered.",
+                },
+            )
+        )
+        eff = effective_action(result)
+        self.assertEqual(eff, "human_review")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 
 from quality_gate.answer_key import build_answer_key_patch, build_answer_key_precheck
-from quality_gate.schemas import _only_auto_fix_disposition, parse_quality_gate_json
+from quality_gate.schemas import _only_auto_fix_disposition, effective_action, parse_quality_gate_json
 
 
 class TestAnswerKey(unittest.TestCase):
@@ -80,8 +80,8 @@ class TestAnswerKey(unittest.TestCase):
             },
             "auto_fix_triage": {
                 "auto_fixable_issues": ["wrong answer key"],
-                "human_blocking_issues": [],
-                "recommended_action_after_auto_fix": "approve",
+                "human_blocking_issues": ["wrong answer key requires inspection"],
+                "recommended_action_after_auto_fix": "human_review",
                 "reason": "Key only.",
             },
         }
@@ -90,6 +90,8 @@ class TestAnswerKey(unittest.TestCase):
         self.assertEqual(result.disposition_outcome, "keep")
         self.assertIn("wrong_answer_key_fixed", result.disposition_labels)
         self.assertTrue(_only_auto_fix_disposition(result.disposition_labels))
+        eff = effective_action(result, answer_key_will_fix=True)
+        self.assertEqual(eff, "human_review")
 
 
 if __name__ == "__main__":

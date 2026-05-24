@@ -29,6 +29,7 @@ DISPOSITION_LABELS = frozenset(
         "solution_error",
         "unrealistic_pacing",
         "needs_diagram",
+        "deterministic_conflict",
         "other",
     }
 )
@@ -339,6 +340,11 @@ def parse_quality_gate_json(
         action_after_auto_fix = after_raw  # type: ignore[assignment]
     triage_reason = str(aft.get("reason") or "")[:2000]
 
+    if ak_wrong and action == "approve":
+        action = "human_review"
+    if "deterministic_conflict" in disp_labels and action in ("approve", "delete"):
+        action = "human_review"
+
     if disp_out == "disregard" and action != "delete":
         action = "delete"
     elif disp_out == "regenerate" and action == "approve":
@@ -428,6 +434,13 @@ def _parse_action_after_auto_fix(raw: Any) -> Optional[RecommendedAction]:
     return None
 
 
+def _answer_key_blocks_auto_approve(result: QualityGateResult, *, answer_key_will_fix: bool = False) -> bool:
+    if answer_key_will_fix or result.answer_key_was_wrong:
+        return True
+    labels = set(result.disposition_labels)
+    return bool(labels & {"wrong_answer_key", "wrong_answer_key_fixed"})
+
+
 def resolve_action_after_auto_fix(
     result: QualityGateResult,
     *,
@@ -437,6 +450,10 @@ def resolve_action_after_auto_fix(
     """LLM triage field, with deterministic fallback when omitted."""
     if result.action_after_auto_fix:
         return result.action_after_auto_fix
+    if _answer_key_blocks_auto_approve(result, answer_key_will_fix=answer_key_will_fix):
+        return "human_review"
+    if "deterministic_conflict" in result.disposition_labels:
+        return "human_review"
     if result.human_blocking_issues:
         return "human_review"
     if _blocking_disposition_labels(result.disposition_labels):
@@ -445,11 +462,9 @@ def resolve_action_after_auto_fix(
         return "human_review"
     if result.curriculum_match == "borderline":
         return "human_review"
-    will_fix = formatting_will_fix or answer_key_will_fix or result.formatting_apply_fix or (
-        result.answer_key_was_wrong and bool(result.raw.get("answer_key_validation", {}).get("apply_fix"))
-    )
-    if will_fix and result.verdict == "Pass":
-        return "approve"
+    if formatting_will_fix or result.formatting_apply_fix:
+        if result.verdict == "Pass":
+            return "approve"
     return None
 
 
@@ -469,6 +484,10 @@ def apply_post_auto_fix_action(
         return action
     if not auto_fixes_planned:
         return action
+    if _answer_key_blocks_auto_approve(result, answer_key_will_fix=answer_key_will_fix):
+        return action if action != "approve" else "human_review"
+    if "deterministic_conflict" in result.disposition_labels:
+        return "human_review" if action == "approve" else action
     after = resolve_action_after_auto_fix(
         result,
         formatting_will_fix=formatting_will_fix,
@@ -541,42 +560,40 @@ def effective_action(
     formatting_will_fix: bool = False,
     answer_key_will_fix: bool = False,
 ) -> RecommendedAction:
-    """Apply curriculum + confidence overrides before graph queue."""
+    """Apply curriculum + confidence overrides; trust LLM delete, guard against bad auto-approve."""
     action = result.recommended_action
     subject = _subject_label(row)
     subj_cf = subject.casefold()
     has_hard = _has_hard_fail(result.curriculum_flags)
 
-    if result.curriculum_match == "off_syllabus":
-        if has_hard and result.confidence in ("high", "medium"):
-            return "delete"
-        return "human_review"
+    if "deterministic_conflict" in result.disposition_labels:
+        if action in ("approve", "delete"):
+            action = "human_review"
 
-    if result.curriculum_match == "borderline":
+    if _answer_key_blocks_auto_approve(result, answer_key_will_fix=answer_key_will_fix):
+        if action == "approve":
+            action = "human_review"
+
+    if result.curriculum_match == "borderline" and action == "approve":
         action = "human_review"
 
-    if has_hard:
-        if result.confidence in ("high", "medium") and any(
-            f.suggested_action == "delete" for f in result.curriculum_flags if f.severity == "hard_fail"
-        ):
-            return "delete"
-        return "human_review"
+    if result.curriculum_match == "off_syllabus" and action == "approve":
+        action = "human_review"
+
+    if has_hard and action == "approve":
+        action = "human_review"
 
     if subj_cf in ("math 1", "mathematics 1") and _required_has_mm(result.required_topic_codes):
-        if result.confidence in ("high", "medium"):
-            return "delete"
-        return "human_review"
+        if action == "approve":
+            action = "human_review"
 
-    if result.verdict == "Pass" and result.syllabus_fit_score < 4:
+    if result.verdict == "Pass" and result.syllabus_fit_score < 4 and action == "approve":
         action = "human_review"
 
     if result.pacing_score <= 2 and action == "approve":
         action = "human_review"
 
     if result.formatting_score <= 2 and action == "approve":
-        action = "human_review"
-
-    if result.curriculum_match == "off_syllabus" and result.verdict == "Pass":
         action = "human_review"
 
     if (
@@ -586,20 +603,6 @@ def effective_action(
         and result.confidence == "low"
     ):
         action = "human_review"
-
-    if action == "approve" and has_hard:
-        action = "human_review"
-
-    if result.curriculum_match == "off_syllabus" and action == "approve":
-        action = "human_review"
-
-    if (
-        result.verdict == "Pass"
-        and result.answer_key_fix_applied
-        and action == "human_review"
-        and _only_auto_fix_disposition(result.disposition_labels)
-    ):
-        action = "approve"
 
     action = apply_post_auto_fix_action(
         action,
