@@ -63,15 +63,17 @@ export function RoadmapAnalytics({
     <section className="mb-8 font-sans">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-text-subtle">Your progress</p>
-          <p className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <span className="text-3xl font-bold tabular-nums tracking-tight text-text sm:text-4xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-subtle">
+            Your progress
+          </p>
+          <p className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+            <span className="text-4xl font-bold tabular-nums leading-none tracking-tight text-text sm:text-5xl">
               {stats.progressPercentage}
-              <span className="text-lg font-semibold text-text-muted sm:text-xl">
+              <span className="text-2xl font-semibold text-text-muted sm:text-3xl">
                 %
               </span>
             </span>
-            <span className="text-sm tabular-nums text-text-muted">
+            <span className="text-base tabular-nums text-text-muted">
               {stats.completedParts} of {stats.totalParts} parts
             </span>
           </p>
@@ -81,7 +83,7 @@ export function RoadmapAnalytics({
           <button
             type="button"
             onClick={handleScrollToStage}
-            className="group inline-flex shrink-0 items-center gap-2 text-left text-sm transition-colors duration-fast ease-signature"
+            className="group inline-flex shrink-0 items-center gap-2 text-left text-base transition-colors duration-fast ease-signature"
           >
             <span className="text-text-muted">Continue with</span>
             <span

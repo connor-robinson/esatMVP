@@ -130,10 +130,10 @@ export function StageListCard({
         )}
         onClick={handleCardClick}
       >
-        <div className="flex items-center gap-3 px-4 py-3.5 sm:px-5 sm:py-4">
+        <div className="flex items-center gap-4 px-5 py-4 sm:px-6 sm:py-5">
           <div
             className={cn(
-              "flex h-11 w-11 shrink-0 items-center justify-center rounded-organic-md text-base font-bold tabular-nums",
+              "flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md text-xl font-bold tabular-nums",
               isUnlocked
                 ? getExamAccentFillClass(stage.examName)
                 : "bg-surface-neutral text-text-disabled",
@@ -143,7 +143,7 @@ export function StageListCard({
               index + 1
             ) : (
               <Lock
-                className="h-4 w-4 text-text-disabled"
+                className="h-5 w-5 text-text-disabled"
                 strokeWidth={2}
                 aria-hidden
               />
@@ -151,11 +151,11 @@ export function StageListCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-3">
-              <p className="min-w-0 truncate">
+            <div className="flex items-center justify-between gap-4">
+              <p className="min-w-0">
                 <span
                   className={cn(
-                    "font-semibold",
+                    "text-lg font-semibold tracking-wide sm:text-xl",
                     isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
                   )}
                 >
@@ -163,7 +163,7 @@ export function StageListCard({
                 </span>
                 <span
                   className={cn(
-                    "ml-2 font-medium",
+                    "ml-2 text-lg font-semibold tracking-wide sm:text-xl",
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
@@ -174,7 +174,7 @@ export function StageListCard({
               {totalCount > 0 ? (
                 <span
                   className={cn(
-                    "shrink-0 text-xs tabular-nums",
+                    "shrink-0 text-sm font-medium tabular-nums sm:text-[0.9375rem]",
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
@@ -191,7 +191,7 @@ export function StageListCard({
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <ChevronDown
-                  className="h-4 w-4 text-text-muted"
+                  className="h-5 w-5 text-text-muted"
                   aria-hidden
                 />
               </motion.div>
