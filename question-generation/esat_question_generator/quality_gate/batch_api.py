@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 from google import genai
 from google.genai import types
 
-from .assess import build_assessment_system_user_prompts, extract_json_object
+from .assess import build_assessment_system_user_prompts, extract_json_object, run_curriculum_precheck
 from .defaults import DEFAULT_QUALITY_GATE_BATCH_MODEL
 from .schemas import QualityGateResult, parse_quality_gate_json
 
@@ -46,7 +46,8 @@ def _build_inline_request(
     *,
     temperature: float,
 ) -> Dict[str, Any]:
-    system_prompt, user_prompt = build_assessment_system_user_prompts(row)
+    pre_flags = run_curriculum_precheck(row)
+    system_prompt, user_prompt = build_assessment_system_user_prompts(row, pre_flags=pre_flags)
     qid = str(row.get("id") or "")
     return {
         "metadata": {"key": qid},
@@ -154,7 +155,8 @@ def run_inline_batch_assessments(
             continue
         try:
             data = extract_json_object(raw)
-            result = parse_quality_gate_json(data)
+            pre_flags = run_curriculum_precheck(row)
+            result = parse_quality_gate_json(data, pre_flags=pre_flags)
             outcomes.append(BatchAssessOutcome(question_id=qid, result=result, raw_text=raw))
         except Exception as e:
             outcomes.append(BatchAssessOutcome(question_id=qid, raw_text=raw, error=str(e)))

@@ -126,8 +126,9 @@ def fetch_all_assessed_rows_for_overview(
         q = (
             client.table(TABLE)
             .select(
-                "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
-                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode, "
+                "id, status, subjects, primary_tag, media_upload_code, quality_gate_verdict, "
+                "quality_gate_action, quality_gate_payload, quality_gate_calibration_tier, "
+                "quality_gate_graph_candidate, quality_gate_graph_mode, "
                 "quality_gate_diagram_backfill_kind, quality_gate_assessed_at, quality_gate_job_id"
             )
             .neq("status", "deleted")
@@ -263,8 +264,9 @@ def fetch_quality_gate_job_result_rows(
         resp = (
             client.table(TABLE)
             .select(
-                "id, status, media_upload_code, quality_gate_verdict, quality_gate_action, "
-                "quality_gate_calibration_tier, quality_gate_graph_candidate, quality_gate_graph_mode, "
+                "id, status, subjects, primary_tag, media_upload_code, quality_gate_verdict, "
+                "quality_gate_action, quality_gate_payload, quality_gate_calibration_tier, "
+                "quality_gate_graph_candidate, quality_gate_graph_mode, "
                 "quality_gate_diagram_backfill_kind"
             )
             .eq("quality_gate_job_id", job_id)

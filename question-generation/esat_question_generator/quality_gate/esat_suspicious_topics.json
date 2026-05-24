@@ -1,0 +1,168 @@
+{
+  "source": "ESAT Content Specification (May 2024) — common AI syllabus mistakes",
+  "math1_hard_fail": [
+    {
+      "id": "differentiation",
+      "patterns": [
+        "dy/dx",
+        "d y/d x",
+        "f'(x)",
+        "f′(x)",
+        "derivative of",
+        "differentiat",
+        "stationary point",
+        "turning point.*different",
+        "local minimum",
+        "local maximum",
+        "rate of change of gradient"
+      ],
+      "reason": "Differentiation / stationary points via calculus are Mathematics 2 (MM7), not Mathematics 1."
+    },
+    {
+      "id": "integration",
+      "patterns": [
+        "∫",
+        "\\int",
+        "integral",
+        "integrate",
+        "definite integral",
+        "area under the curve",
+        "area under curve"
+      ],
+      "reason": "Integration is Mathematics 2 (MM7), not Mathematics 1."
+    },
+    {
+      "id": "e_and_ln",
+      "patterns": [
+        "natural logarithm",
+        "\\ln",
+        " ln ",
+        "log_e",
+        "e^{",
+        "e^x",
+        "exp("
+      ],
+      "reason": "Natural logs and e^x manipulation are MM4 (Mathematics 2), not Mathematics 1."
+    },
+    {
+      "id": "radians_trig_identities",
+      "patterns": [
+        "radian",
+        "sin\\^2",
+        "cos\\^2",
+        "tan\\^2",
+        "double angle",
+        "trigonometric identit"
+      ],
+      "reason": "Radians and advanced trig identities are beyond Mathematics 1 GCSE-style trig."
+    },
+    {
+      "id": "binomial_ncr_factorial",
+      "patterns": [
+        "nCr",
+        "nPr",
+        "\\binom",
+        "binom{",
+        "factorial",
+        "!\\s",
+        "choose\\s+\\d+"
+      ],
+      "reason": "Formal binomial coefficients / nCr / factorial notation is MM6 (Mathematics 2), not Mathematics 1."
+    },
+    {
+      "id": "factor_remainder_theorem",
+      "patterns": [
+        "factor theorem",
+        "remainder theorem",
+        "polynomial division",
+        "algebraic division",
+        "divide.*polynomial"
+      ],
+      "reason": "Factor / remainder theorem and polynomial division are Mathematics 2 algebra."
+    },
+    {
+      "id": "advanced_polynomial_roots",
+      "patterns": [
+        "number of real roots",
+        "real roots of",
+        "roots of the cubic",
+        "roots of the quartic",
+        "quartic",
+        "general cubic"
+      ],
+      "reason": "General cubic/quartic root theory exceeds Mathematics 1 graph-recognition scope."
+    },
+    {
+      "id": "complex_numbers",
+      "patterns": ["complex number", "imaginary unit", "\\bi\\b", " arg ", "modulus of"]
+    },
+    {
+      "id": "matrices",
+      "patterns": ["matrix", "matrices", "determinant", "eigen"]
+    },
+    {
+      "id": "vectors_advanced",
+      "patterns": ["vector equation", "scalar product", "dot product", "cross product"]
+    },
+    {
+      "id": "sine_cosine_rule",
+      "patterns": ["sine rule", "cosine rule", "sin rule", "cos rule"]
+    },
+    {
+      "id": "modulus_functions",
+      "patterns": ["modulus function", "modulus of", "piecewise.*modulus"]
+    },
+    {
+      "id": "proof_induction",
+      "patterns": ["proof by induction", "mathematical induction"]
+    }
+  ],
+  "math1_warning": [
+    {
+      "id": "asymptotes_rational",
+      "patterns": ["asymptote", "rational function", "oblique asymptote", "vertical asymptote"]
+    },
+    {
+      "id": "telescoping_sigma",
+      "patterns": ["telescop", "sigma notation", "∑", "\\sum"]
+    },
+    {
+      "id": "combinatorics_permutation",
+      "patterns": [
+        "permutation",
+        "combination",
+        "arranged in a row",
+        "no two vowels adjacent",
+        "letters arranged"
+      ]
+    },
+    {
+      "id": "optimisation_calculus",
+      "patterns": ["optimis", "optimiz", "maximum volume", "minimum distance"]
+    },
+    {
+      "id": "cubic_turning",
+      "patterns": ["cubic.*minimum", "cubic.*maximum", "local min", "local max"]
+    }
+  ],
+  "math2_pacing_sensitive": [
+    "differentiation",
+    "integration",
+    "binomial expansion",
+    "factor theorem",
+    "remainder theorem",
+    "logarithm",
+    "exponential",
+    "trig equation",
+    "vector",
+    "definite integral",
+    "graph transformation"
+  ],
+  "physics_allowed_hints": [
+    {
+      "id": "half_life",
+      "patterns": ["half-life", "half life", "decay constant", "radioactive decay"],
+      "topic": "P7 Radioactivity"
+    }
+  ]
+}

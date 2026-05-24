@@ -113,6 +113,60 @@ def _backfill_review_label(row: dict[str, Any]) -> str:
     return backfill_review_label(row.get("quality_gate_diagram_backfill_kind")) or "—"
 
 
+def _curriculum_cols(row: dict[str, Any]) -> dict[str, Any]:
+    from quality_gate.schemas import curriculum_fields_from_payload
+
+    p = row.get("quality_gate_payload")
+    if isinstance(p, str):
+        try:
+            p = json.loads(p)
+        except Exception:
+            p = {}
+    fields = curriculum_fields_from_payload(p if isinstance(p, dict) else None)
+    return {
+        "Curriculum": fields.get("curriculum_match") or "—",
+        "Syllabus fit": fields.get("syllabus_fit_score") if fields.get("syllabus_fit_score") is not None else "—",
+        "Required codes": fields.get("required_topic_codes") or "—",
+        "Suspicious": fields.get("suspicious_topics") or "—",
+        "Curriculum reason": fields.get("curriculum_reason") or "—",
+        "Curriculum flags": fields.get("curriculum_flags") or "—",
+        "_off_syllabus": fields.get("curriculum_match") == "off_syllabus",
+        "_math1_mm": bool(fields.get("math1_mm_required")),
+        "_calculus_math1": bool(fields.get("calculus_in_math1")),
+        "_likely_too_long": False,
+        "_missing_primary_tag": bool(fields.get("missing_primary_tag")),
+    }
+
+
+def _apply_curriculum_filters(rows: list[dict[str, Any]], filters: dict[str, bool]) -> list[dict[str, Any]]:
+    if not any(filters.values()):
+        return rows
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        c = _curriculum_cols(r)
+        if filters.get("off_syllabus") and not c["_off_syllabus"]:
+            continue
+        if filters.get("math1_mm") and not c["_math1_mm"]:
+            continue
+        if filters.get("calculus_math1") and not c["_calculus_math1"]:
+            continue
+        if filters.get("likely_too_long"):
+            p = r.get("quality_gate_payload")
+            if isinstance(p, str):
+                try:
+                    p = json.loads(p)
+                except Exception:
+                    p = {}
+            scores = (p or {}).get("scores") if isinstance(p, dict) else {}
+            pacing = int((scores or {}).get("esat_realism_pacing") or 5)
+            if pacing > 2:
+                continue
+        if filters.get("missing_primary_tag") and not c["_missing_primary_tag"]:
+            continue
+        out.append(r)
+    return out
+
+
 def _audit_route_label(audit: dict[str, Any]) -> str:
     """How this row was (or would be) generated: SVG graph vs Imagen diagram."""
     if audit.get("renderer") == "svg" or audit.get("reason") == "graph_svg_ok":
@@ -180,12 +234,19 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
         action = r.get("quality_gate_action")
         wf = (r.get("status") or "—").strip() or "—"
         backfill = _backfill_review_label(r)
+        cur = _curriculum_cols(r)
         records.append(
             {
                 "Code or id": code,
                 "Verdict": verdict,
                 "AI suggestion": _quality_gate_action_label(action),
                 "Backfill review": backfill,
+                "Curriculum": cur["Curriculum"],
+                "Syllabus fit": cur["Syllabus fit"],
+                "Required codes": cur["Required codes"],
+                "Suspicious": cur["Suspicious"],
+                "Curriculum reason": cur["Curriculum reason"],
+                "Curriculum flags": cur["Curriculum flags"],
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -214,12 +275,19 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
         at = r.get("quality_gate_assessed_at")
         assessed_s = str(at)[:22] if at else "—"
         backfill = _backfill_review_label(r)
+        cur = _curriculum_cols(r)
         records.append(
             {
                 "Code or id": code,
                 "Verdict": verdict,
                 "AI suggestion": _quality_gate_action_label(action),
                 "Backfill review": backfill,
+                "Curriculum": cur["Curriculum"],
+                "Syllabus fit": cur["Syllabus fit"],
+                "Required codes": cur["Required codes"],
+                "Suspicious": cur["Suspicious"],
+                "Curriculum reason": cur["Curriculum reason"],
+                "Curriculum flags": cur["Curriculum flags"],
                 "Gold": gold,
                 "Graph": graph,
                 "Status": wf,
@@ -938,7 +1006,30 @@ with tab_review:
                     max_scan=int(ov_scan_cap),
                     page_size=500,
                 )
-            ov_rows = _sort_rows_for_results_table(all_assessed)[: int(ov_limit)]
+            sorted_assessed = _sort_rows_for_results_table(all_assessed)
+            st.markdown("#### Curriculum filters")
+            cf1, cf2, cf3, cf4, cf5 = st.columns(5)
+            with cf1:
+                f_off = st.checkbox("Off-syllabus only", key="qg_f_off")
+            with cf2:
+                f_mm = st.checkbox("Math 1 needs MM", key="qg_f_mm")
+            with cf3:
+                f_calc = st.checkbox("Calculus in Math 1", key="qg_f_calc")
+            with cf4:
+                f_long = st.checkbox("Likely too long (pacing ≤2)", key="qg_f_long")
+            with cf5:
+                f_tag = st.checkbox("Missing primary_tag", key="qg_f_tag")
+            filtered_assessed = _apply_curriculum_filters(
+                sorted_assessed,
+                {
+                    "off_syllabus": f_off,
+                    "math1_mm": f_mm,
+                    "calculus_math1": f_calc,
+                    "likely_too_long": f_long,
+                    "missing_primary_tag": f_tag,
+                },
+            )
+            ov_rows = filtered_assessed[: int(ov_limit)]
             if len(all_assessed) >= int(ov_scan_cap):
                 st.warning(
                     f"Hit scan cap ({ov_scan_cap:,} rows). Priority sort applies only within this subset — "

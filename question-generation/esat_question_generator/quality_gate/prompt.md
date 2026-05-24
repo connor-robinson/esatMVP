@@ -6,11 +6,36 @@ You are grading stored ESAT-style questions for **syllabus fit**, **solution qua
 
 ## Axes
 
-1. **Syllabus fit** — Appropriate for the stated **subject** and **difficulty** in the input JSON (treat those labels as authoritative). Not off-syllabus for that subject, not undergraduate research, not a clear topic mismatch.
+1. **Syllabus fit** — The input JSON includes an official **curriculum snapshot** (`curriculum_snapshot`, `curriculum_allowed_codes`, `curriculum_source`). Judge whether the question can be solved using **only** those topics for the stated **subject**. Do **not** rely on memory. Treat `deterministic_curriculum_flags` as strong evidence unless clearly wrong.
 
 2. **Solution quality** — Clever where appropriate, exam-appropriate reasoning, distractors plausible, no hand-waving errors.
 
-3. **ESAT realism and pacing** — Feels like a real ESAT MCQ under time pressure. Judge **stem length** (wordy setups, unnecessary context), **option bulk**, and **how long the reasoning chain is** (including whether the “right” path is easy to find in exam conditions). A strong candidate could often finish in about **90 seconds**; harder items may stretch toward **~2 minutes** but must still feel **fair for one question** — not a long puzzle, not a multi-page calculation, not something that only works if you have unlimited scratch time. When in doubt on borderline length or step count, **score this axis lower** and mention it in `exam_timing_notes`.
+3. **ESAT realism and pacing** — Feels like a real ESAT MCQ under time pressure. Judge **stem length**, **option bulk**, and **reasoning chain length**. A strong candidate could often finish in about **90 seconds**; harder items may stretch toward **~2 minutes**. When in doubt, **score this axis lower** and mention it in `exam_timing_notes`. If the item would exceed ~1.5 minutes for a prepared candidate, set `esat_realism_pacing` ≤ 2.
+
+---
+
+## Curriculum validation (required)
+
+You are given the official allowed curriculum snapshot for this subject. You **must** judge whether the question can be solved using **ONLY** those topics. Cite specific topic codes from the snapshot.
+
+Return inside `curriculum_validation`:
+
+- `syllabus_fit_score` — integer **1–5** (keep equal to `scores.syllabus_fit`)
+- `curriculum_match` — `in_syllabus` | `borderline` | `off_syllabus`
+- `required_topic_codes` — codes actually needed (e.g. `M1-M4`, `M2-MM7`, `P-P7`)
+- `suspicious_topics` — off-syllabus or borderline topics (short strings)
+- `curriculum_reason` — concise explanation citing allowed/forbidden codes
+- `curriculum_flags` — optional `{severity, reason, matched_pattern, suggested_action, flag_id}`
+
+**Strict curriculum rules:**
+
+- Content **outside** `curriculum_allowed_codes` → `curriculum_match` cannot be `in_syllabus`; `verdict` cannot be **Pass**.
+- **Mathematics 1** requiring **MM** content (differentiation, integration, e/ln, binomial coefficients, factor theorem, etc.) → `off_syllabus`; `delete` or `human_review`.
+- **Mathematics 1** + needed calculus notation → `delete` unless purely decorative.
+- Topic is **Math 2** but row **subject** is **Math 1** → topic mismatch (`off_syllabus`).
+- In syllabus but too long for ~90s per question → `esat_realism_pacing` ≤ 2; prefer `human_review` or `regenerate`.
+
+---
 
 ## Verdict bands
 
@@ -113,10 +138,18 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
     "suggested_stem_edits": "",
     "insertion_placeholders": [],
     "notes_for_human": ""
+  },
+  "curriculum_validation": {
+    "syllabus_fit_score": 4,
+    "curriculum_match": "in_syllabus",
+    "required_topic_codes": ["M1-M4"],
+    "suspicious_topics": [],
+    "curriculum_reason": "Uses only algebra from allowed snapshot.",
+    "curriculum_flags": []
   }
 }
 ```
 
-**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`).
+**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown).
 
 `scores` use integers **1–5** (5 best). `confidence` is `high`, `medium`, or `low`.

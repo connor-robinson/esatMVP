@@ -98,7 +98,7 @@ def _commit_gate_row(
     elif result.verdict == "Major":
         result = replace(result, calibration_tier=None, calibration_notes=None)
 
-    base_eff = effective_action(result, downgrade_low_confidence_pass=True)
+    base_eff = effective_action(result, row=row, downgrade_low_confidence_pass=True)
     eff = effective_action_with_graph_queue(result, base_eff)
     payload = result.to_payload()
     payload["effective_recommended_action"] = eff
@@ -159,6 +159,7 @@ def _commit_gate_row(
         _append_log(
             log_lines,
             f"[ok] {qid} verdict={result.verdict} eff={eff} auto_approve={auto_applied} "
+            f"curriculum={result.curriculum_match} syllabus={result.syllabus_fit_score} "
             f"gold={result.calibration_tier!r} graph={result.graph_candidate} graph_mode={result.graph_mode}",
         )
 

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from project import _gemini_console
 
+from .curriculum import get_curriculum_for_row, normalize_subject
+from .curriculum_flags import detect_curriculum_flags
 from .defaults import quality_gate_model_try_order
-from .schemas import QualityGateResult, parse_quality_gate_json
+from .schemas import CurriculumFlag, QualityGateResult, parse_quality_gate_json
 
 _DIR = Path(__file__).resolve().parent
 
@@ -35,7 +37,6 @@ def extract_json_object(text: str) -> Dict[str, Any]:
         return json.loads(s)
     except json.JSONDecodeError:
         pass
-    # Fallback: first {...} block
     start = s.find("{")
     end = s.rfind("}")
     if start >= 0 and end > start:
@@ -44,7 +45,6 @@ def extract_json_object(text: str) -> Dict[str, Any]:
 
 
 def _subject_for_payload(row: Dict[str, Any]) -> Any:
-    """Single string for the rubric (from ``subjects`` column: str or list)."""
     raw = row.get("subjects")
     if raw is None:
         return None
@@ -58,35 +58,71 @@ def _subject_for_payload(row: Dict[str, Any]) -> Any:
     return s or None
 
 
-def build_question_payload(row: Dict[str, Any]) -> Dict[str, Any]:
-    """Fields sent to the quality-gate judge only (no schema snapshot or curriculum ids)."""
+def _secondary_tags_for_payload(row: Dict[str, Any]) -> List[str]:
+    raw = row.get("secondary_tags")
+    if isinstance(raw, list):
+        return [str(x).strip() for x in raw if x is not None and str(x).strip()]
+    if isinstance(raw, str) and raw.strip():
+        return [raw.strip()]
+    return []
+
+
+def run_curriculum_precheck(row: Dict[str, Any]) -> List[CurriculumFlag]:
+    return [CurriculumFlag.from_dict(f) for f in detect_curriculum_flags(row)]
+
+
+def build_question_payload(
+    row: Dict[str, Any],
+    *,
+    pre_flags: Optional[List[CurriculumFlag]] = None,
+) -> Dict[str, Any]:
+    """Fields sent to the quality-gate judge, including official curriculum snapshot."""
 
     def _trim(s: Any, n: int) -> Any:
         if not isinstance(s, str):
             return s
         return s if len(s) <= n else s[:n] + "\n…[truncated]"
 
-    return {
-        "subject": _subject_for_payload(row),
+    subject = _subject_for_payload(row)
+    curriculum = get_curriculum_for_row(row)
+    payload: Dict[str, Any] = {
+        "subject": subject,
         "difficulty": row.get("difficulty"),
+        "schema_id": row.get("schema_id"),
+        "primary_tag": row.get("primary_tag"),
+        "secondary_tags": _secondary_tags_for_payload(row),
         "question_stem": _trim(row.get("question_stem"), 16000),
         "options": row.get("options"),
         "correct_option": row.get("correct_option"),
         "solution_reasoning": _trim(row.get("solution_reasoning"), 12000),
         "distractor_map": row.get("distractor_map"),
+        "curriculum_source": curriculum["curriculum_source"],
+        "curriculum_allowed_codes": curriculum["curriculum_allowed_codes"],
+        "curriculum_snapshot": curriculum["curriculum_snapshot"],
+        "primary_tag_allowed_for_subject": curriculum["primary_tag_allowed"],
     }
+    if pre_flags:
+        payload["deterministic_curriculum_flags"] = [f.to_dict() for f in pre_flags]
+    return payload
 
 
-def build_assessment_system_user_prompts(row: Dict[str, Any]) -> Tuple[str, str]:
-    """Shared by sync Vertex calls and Gemini Developer batch inline requests."""
+def build_assessment_system_user_prompts(
+    row: Dict[str, Any],
+    *,
+    pre_flags: Optional[List[CurriculumFlag]] = None,
+) -> Tuple[str, str]:
     rubric = load_rubric_markdown()
     system_prompt = (
         "You are an expert ESAT item reviewer. Follow the rubric exactly. "
-        "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps or too much clock time** for one MCQ as serious defects—score pacing accordingly and say so in `exam_timing_notes` when relevant.\n\n"
+        "Judge syllabus fit ONLY against the provided `curriculum_snapshot` and "
+        "`curriculum_allowed_codes` — do not rely on memory of ESAT. "
+        "Treat deterministic_curriculum_flags as strong evidence; explain if you disagree. "
+        "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps "
+        "or too much clock time** for one MCQ as serious defects.\n\n"
         + rubric
         + "\n\nAlways respond with a single JSON object only."
     )
-    payload = build_question_payload(row)
+    payload = build_question_payload(row, pre_flags=pre_flags)
     user_prompt = (
         "Grade this question. Input JSON:\n"
         + json.dumps(payload, ensure_ascii=False, indent=2)
@@ -110,16 +146,13 @@ def assess_question(
     model: str,
     temperature: float = 0.25,
     vertex_not_found_fallbacks: bool = True,
+    pre_flags: Optional[List[CurriculumFlag]] = None,
 ) -> Tuple[QualityGateResult, str, str]:
     """
     Returns (parsed result, raw model text, model id actually used for the API call).
-
-    ``llm`` is typically ``ClaudePurgeClient`` or ``LLMClient`` (both implement ``generate``).
-
-    If ``vertex_not_found_fallbacks`` is true and the configured Gemini id returns Vertex
-    ``404 NOT_FOUND``, retries ``quality_gate_model_try_order`` with Gemini fallbacks.
     """
-    system_prompt, user_prompt = build_assessment_system_user_prompts(row)
+    flags = pre_flags if pre_flags is not None else run_curriculum_precheck(row)
+    system_prompt, user_prompt = build_assessment_system_user_prompts(row, pre_flags=flags)
     primary = (model or "").strip()
     last_exc: Optional[BaseException] = None
     for m in quality_gate_model_try_order(primary, vertex_not_found_fallbacks=vertex_not_found_fallbacks):
@@ -136,7 +169,16 @@ def assess_question(
                     f"Quality gate: primary model {primary!r} was not available; used {m!r} for this question."
                 )
             data = extract_json_object(raw)
-            return parse_quality_gate_json(data), raw, m
+            result = parse_quality_gate_json(data, pre_flags=flags)
+            if not result.curriculum_reason and flags:
+                result.curriculum_reason = "; ".join(f.reason for f in flags[:3])[:4000]
+            subj = normalize_subject(row.get("subjects")).casefold()
+            if subj in ("math 1", "mathematics 1") and result.verdict == "Pass":
+                if any(f.severity == "hard_fail" for f in flags):
+                    result.verdict = "Major"
+                    if result.recommended_action == "approve":
+                        result.recommended_action = "delete"
+            return result, raw, m
         except Exception as e:
             if not _vertex_model_not_found(e):
                 raise
