@@ -37,7 +37,7 @@ function getNodeX(y: number): number {
 }
 
 function generateSpinePath(startY: number, endY: number): string {
-  if (allNodePositions.length === 0 || endY <= startY) return "";
+  if (endY <= startY) return "";
 
   const points: { x: number; y: number }[] = [];
   const pathLength = endY - startY;
