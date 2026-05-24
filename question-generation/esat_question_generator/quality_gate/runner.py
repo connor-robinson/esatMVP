@@ -66,6 +66,16 @@ def write_run_state(
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
+def _is_move_to_math2_db_constraint_error(exc: BaseException) -> bool:
+    msg = str(exc).casefold()
+    return (
+        "23514" in msg
+        and "quality_gate_action_check" in msg
+    ) or (
+        "move_to_math2" in msg and "check constraint" in msg
+    )
+
+
 def _commit_gate_row(
     *,
     row: Dict[str, Any],
@@ -256,10 +266,38 @@ def _commit_gate_row(
         try:
             update_question_assessment(client, qid, patch)
         except Exception as e:
-            stats["errors"] += 1
-            last_error = f"{qid} db: {e}"
-            _append_log(log_lines, f"[error] {last_error}")
-            return last_error, eff
+            if eff == "move_to_math2" and _is_move_to_math2_db_constraint_error(e):
+                payload["effective_recommended_action"] = "move_to_math2"
+                payload["db_action_fallback"] = (
+                    "Stored quality_gate_action as human_review until Supabase migration "
+                    "add_quality_gate_move_to_math2.sql is applied."
+                )
+                patch["quality_gate_action"] = "human_review"
+                patch["quality_gate_payload"] = payload
+                try:
+                    update_question_assessment(client, qid, patch)
+                    _append_log(
+                        log_lines,
+                        f"[warn] {qid} move_to_math2 blocked by DB check constraint — "
+                        "saved as human_review; run supabase/migrations/"
+                        "20260524210000_quality_gate_action_move_to_math2.sql",
+                    )
+                    eff = "human_review"
+                except Exception as e2:
+                    stats["errors"] += 1
+                    last_error = f"{qid} db: {e2}"
+                    _append_log(log_lines, f"[error] {last_error}")
+                    return last_error, eff
+            else:
+                stats["errors"] += 1
+                last_error = f"{qid} db: {e}"
+                if _is_move_to_math2_db_constraint_error(e):
+                    last_error += (
+                        " — run supabase/migrations/"
+                        "20260524210000_quality_gate_action_move_to_math2.sql on Supabase"
+                    )
+                _append_log(log_lines, f"[error] {last_error}")
+                return last_error, eff
 
     if dry_run:
         _append_log(
