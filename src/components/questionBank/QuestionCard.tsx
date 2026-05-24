@@ -256,15 +256,18 @@ export function QuestionCard({
     "bg-surface-subtle dark:bg-surface-mid";
   const OPTION_ROW_SELECTED =
     "bg-surface-mid dark:bg-folder-card-selected";
+  /** Correct when answered or revealed — one step darker (light) / lighter (dark) than row base. */
+  const OPTION_ROW_CORRECT =
+    "bg-surface-mid dark:bg-folder-card-selected";
   const OPTION_ROW_HOVER =
     "hover:bg-surface-mid/70 dark:hover:bg-surface-neutral";
 
   const getOptionStyle = (letter: string) => {
     if (isAnswered && isCorrect && letter === correctAnswer) {
-      return "cursor-default bg-primary/12";
+      return cn("cursor-default", OPTION_ROW_CORRECT);
     }
     if (answerRevealed && letter === correctAnswer) {
-      return "cursor-default bg-primary/12";
+      return cn("cursor-default", OPTION_ROW_CORRECT);
     }
     if (incorrectAnswers.has(letter) && letter !== correctAnswer) {
       return "cursor-default bg-error/10";
