@@ -885,15 +885,15 @@ def _render_export_panel(
     title: str = "Export full report",
 ) -> None:
     """Download stems + tags + AI reasoning / flags for assessed questions."""
-    from quality_gate.export_report import export_csv_bytes, export_jsonl_bytes
+    from quality_gate.export_report import export_csv_bytes, export_html_bytes, export_jsonl_bytes
     from quality_gate.supabase_io import fetch_assessed_questions_for_export
 
     st.subheader(title)
     scope = "this run only" if (job_id or "").strip() else f"all assessed ({test_type or 'any'})"
     st.caption(
-        f"Includes question stem (plain text in CSV), subject, difficulty, tags, verdict, "
-        f"AI reasoning, scores, curriculum/formatting flags, disposition labels, and review link. "
-        f"Scope: **{scope}**."
+        f"Includes stems (HTML in **HTML** / **JSONL** / `question_stem_html` CSV column), subject, "
+        f"difficulty, tags, verdict, AI reasoning, flags, and review link. "
+        f"Scope: **{scope}**. Open **Download HTML** in a browser for math + diagrams."
     )
     export_cap = st.number_input(
         "Max questions to export",
@@ -929,10 +929,18 @@ def _render_export_panel(
         return
 
     st.caption(
-        f"**{len(rows):,}** question(s) ready. CSV uses plain-text stems; JSONL includes full HTML stems."
+        f"**{len(rows):,}** question(s) ready. Use **HTML** for readable stems with math and diagrams."
     )
     slug = "".join(c if c.isalnum() else "_" for c in (job_id or test_type or "export"))[:40]
-    c_csv, c_jsonl = st.columns(2)
+    c_html, c_csv, c_jsonl = st.columns(3)
+    with c_html:
+        st.download_button(
+            label="Download HTML",
+            data=export_html_bytes(rows, review_base=review_base),
+            file_name=f"quality_gate_export_{slug}.html",
+            mime="text/html",
+            key=f"{key_prefix}_dl_html",
+        )
     with c_csv:
         st.download_button(
             label="Download CSV",

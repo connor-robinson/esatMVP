@@ -9,6 +9,7 @@ Usage (from ``esat_question_generator/``):
   python export_math_questions.py
   python export_math_questions.py -o math_stems.txt
   python export_math_questions.py --format jsonl -o math_stems.jsonl
+  python export_math_questions.py --format html -o math_stems.html
   python export_math_questions.py --include-deleted
 """
 
@@ -88,9 +89,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     parser.add_argument(
         "--format",
-        choices=("txt", "jsonl"),
+        choices=("txt", "jsonl", "html"),
         default="txt",
-        help="Output format (default: txt)",
+        help="Output format: txt (raw), jsonl, html (browser-readable with math)",
     )
     parser.add_argument(
         "--include-deleted",
@@ -119,12 +120,18 @@ def main(argv: Optional[List[str]] = None) -> int:
     out = Path(ns.output).resolve()
     if ns.format == "jsonl" and out.suffix.lower() != ".jsonl":
         out = out.with_suffix(".jsonl")
+    elif ns.format == "html" and out.suffix.lower() not in (".html", ".htm"):
+        out = out.with_suffix(".html")
     elif ns.format == "txt" and out.suffix.lower() not in (".txt", ".md") and not out.suffix:
         out = out.with_suffix(".txt")
 
     out.parent.mkdir(parents=True, exist_ok=True)
     if ns.format == "jsonl":
         write_jsonl(stems, out)
+    elif ns.format == "html":
+        from quality_gate.export_report import export_stems_html_document
+
+        out.write_bytes(export_stems_html_document(stems, title="ESAT Math Question Stems"))
     else:
         write_txt(stems, out)
 
