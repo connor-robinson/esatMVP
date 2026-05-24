@@ -40,6 +40,21 @@ _ALL_RECOMMENDED_ACTIONS = frozenset(
     {"approve", "human_review", "regenerate", "move_to_math2", "delete"}
 )
 
+_ACTION_ALIASES = {
+    "move_to_math_2": "move_to_math2",
+    "move_to_mathematics_2": "move_to_math2",
+    "move_paper": "move_to_math2",
+    "human review": "human_review",
+}
+
+
+def normalize_recommended_action(raw: Any) -> Optional[RecommendedAction]:
+    s = str(raw or "").strip().lower().replace(" ", "_").replace("-", "_")
+    s = _ACTION_ALIASES.get(s, s)
+    if s in _ALL_RECOMMENDED_ACTIONS:
+        return s  # type: ignore[return-value]
+    return None
+
 
 @dataclass
 class CurriculumFlag:
@@ -64,8 +79,7 @@ class CurriculumFlag:
         if sev not in ("hard_fail", "warning"):
             sev = "warning"
         act = data.get("suggested_action")
-        if act not in _ALL_RECOMMENDED_ACTIONS:
-            act = "human_review"
+        act = normalize_recommended_action(act) or "human_review"
         return cls(
             severity=sev,  # type: ignore[arg-type]
             reason=str(data.get("reason") or ""),
@@ -258,9 +272,9 @@ def parse_quality_gate_json(
     if curriculum_match not in ("in_syllabus", "borderline", "off_syllabus"):
         curriculum_match = "borderline"
 
-    action = data.get("recommended_action")
-    if action not in _ALL_RECOMMENDED_ACTIONS:
-        raise ValueError(f"invalid recommended_action: {action!r}")
+    action = normalize_recommended_action(data.get("recommended_action"))
+    if action is None:
+        raise ValueError(f"invalid recommended_action: {data.get('recommended_action')!r}")
 
     reasoning = (data.get("reasoning") or "").strip()
     if not reasoning:
@@ -342,10 +356,8 @@ def parse_quality_gate_json(
     aft = data.get("auto_fix_triage") if isinstance(data.get("auto_fix_triage"), dict) else {}
     auto_fixable = _parse_str_list(aft.get("auto_fixable_issues"), limit=12)
     human_blocking = _parse_str_list(aft.get("human_blocking_issues"), limit=12)
-    after_raw = str(aft.get("recommended_action_after_auto_fix") or "").strip().lower()
-    action_after_auto_fix: Optional[RecommendedAction] = None
-    if after_raw in _ALL_RECOMMENDED_ACTIONS:
-        action_after_auto_fix = after_raw  # type: ignore[assignment]
+    after_raw = normalize_recommended_action(aft.get("recommended_action_after_auto_fix"))
+    action_after_auto_fix: Optional[RecommendedAction] = after_raw
     triage_reason = str(aft.get("reason") or "")[:2000]
 
     if ak_wrong and action == "approve":
@@ -438,10 +450,7 @@ def _blocking_disposition_labels(labels: List[str]) -> List[str]:
 
 
 def _parse_action_after_auto_fix(raw: Any) -> Optional[RecommendedAction]:
-    s = str(raw or "").strip().lower()
-    if s in _ALL_RECOMMENDED_ACTIONS:
-        return s  # type: ignore[return-value]
-    return None
+    return normalize_recommended_action(raw)
 
 
 def _answer_key_blocks_auto_approve(result: QualityGateResult, *, answer_key_will_fix: bool = False) -> bool:

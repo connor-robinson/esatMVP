@@ -340,6 +340,14 @@ def run_quality_gate_job(
     if force_reassess:
         cohort.only_unassessed = False
 
+    from .schemas import _ALL_RECOMMENDED_ACTIONS
+
+    _append_log(
+        log_lines,
+        "[qg] supported recommended_action: "
+        + ", ".join(sorted(_ALL_RECOMMENDED_ACTIONS)),
+    )
+
     client = None if dry_run else get_supabase()
 
     if not dry_run and client is not None:
