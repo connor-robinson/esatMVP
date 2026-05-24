@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -35,14 +36,29 @@ def _strip_json_fences(text: str) -> str:
 
 def extract_json_object(text: str) -> Dict[str, Any]:
     s = _strip_json_fences(text)
-    try:
-        return json.loads(s)
-    except json.JSONDecodeError:
-        pass
+    for candidate in (s,):
+        try:
+            parsed = json.loads(candidate)
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
+            pass
     start = s.find("{")
     end = s.rfind("}")
     if start >= 0 and end > start:
-        return json.loads(s[start : end + 1])
+        chunk = s[start : end + 1]
+        try:
+            parsed = json.loads(chunk)
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
+            pass
+        try:
+            parsed = ast.literal_eval(chunk)
+            if isinstance(parsed, dict):
+                return parsed
+        except (SyntaxError, ValueError):
+            pass
     raise ValueError("no JSON object found in model output")
 
 

@@ -1024,6 +1024,7 @@ def _launch_scoring_subprocess(
     LOG_PATH.write_text("", encoding="utf-8")
     cmd = [
         sys.executable,
+        "-B",
         "-u",
         str(CLI),
         "run",
@@ -1046,6 +1047,9 @@ def _launch_scoring_subprocess(
 
     child_env = os.environ.copy()
     child_env["PYTHONUNBUFFERED"] = "1"
+    root_s = str(ROOT)
+    existing = child_env.get("PYTHONPATH", "")
+    child_env["PYTHONPATH"] = root_s if not existing else f"{root_s}{os.pathsep}{existing}"
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     LOG_PATH.write_text("", encoding="utf-8")
     log_handle = open(LOG_PATH, "w", encoding="utf-8")

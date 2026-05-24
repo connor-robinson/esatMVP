@@ -344,6 +344,11 @@ def run_quality_gate_job(
 
     _append_log(
         log_lines,
+        "[qg] scorer code: "
+        + str(Path(__file__).resolve().parent / "schemas.py"),
+    )
+    _append_log(
+        log_lines,
         "[qg] supported recommended_action: "
         + ", ".join(sorted(_ALL_RECOMMENDED_ACTIONS)),
     )

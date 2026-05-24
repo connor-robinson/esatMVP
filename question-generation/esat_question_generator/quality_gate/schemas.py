@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Literal, Optional
 
@@ -49,10 +50,14 @@ _ACTION_ALIASES = {
 
 
 def normalize_recommended_action(raw: Any) -> Optional[RecommendedAction]:
-    s = str(raw or "").strip().lower().replace(" ", "_").replace("-", "_")
+    s = str(raw or "").strip().lower()
+    s = re.sub(r"[^\w]+", "_", s)
+    s = re.sub(r"_+", "_", s).strip("_")
     s = _ACTION_ALIASES.get(s, s)
     if s in _ALL_RECOMMENDED_ACTIONS:
         return s  # type: ignore[return-value]
+    if "move" in s and "math" in s and "2" in s:
+        return "move_to_math2"
     return None
 
 
