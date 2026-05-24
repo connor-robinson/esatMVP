@@ -100,6 +100,10 @@ class QualityGateResult:
     disposition_outcome: Optional[DispositionOutcome] = None
     disposition_labels: List[str] = field(default_factory=list)
     disposition_notes: str = ""
+    auto_fixable_issues: List[str] = field(default_factory=list)
+    human_blocking_issues: List[str] = field(default_factory=list)
+    action_after_auto_fix: Optional[RecommendedAction] = None
+    auto_fix_triage_reason: str = ""
     raw: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -147,6 +151,12 @@ class QualityGateResult:
                 "outcome": self.disposition_outcome,
                 "labels": list(self.disposition_labels),
                 "notes": self.disposition_notes,
+            },
+            "auto_fix_triage": {
+                "auto_fixable_issues": list(self.auto_fixable_issues),
+                "human_blocking_issues": list(self.human_blocking_issues),
+                "recommended_action_after_auto_fix": self.action_after_auto_fix,
+                "reason": self.auto_fix_triage_reason,
             },
         }
 
@@ -320,6 +330,15 @@ def parse_quality_gate_json(
     disp_labels = _parse_disposition_labels(rd.get("labels"))
     disp_notes = str(rd.get("notes") or rd.get("summary") or "")[:4000]
 
+    aft = data.get("auto_fix_triage") if isinstance(data.get("auto_fix_triage"), dict) else {}
+    auto_fixable = _parse_str_list(aft.get("auto_fixable_issues"), limit=12)
+    human_blocking = _parse_str_list(aft.get("human_blocking_issues"), limit=12)
+    after_raw = str(aft.get("recommended_action_after_auto_fix") or "").strip().lower()
+    action_after_auto_fix: Optional[RecommendedAction] = None
+    if after_raw in ("approve", "human_review", "regenerate", "delete"):
+        action_after_auto_fix = after_raw  # type: ignore[assignment]
+    triage_reason = str(aft.get("reason") or "")[:2000]
+
     if disp_out == "disregard" and action != "delete":
         action = "delete"
     elif disp_out == "regenerate" and action == "approve":
@@ -360,6 +379,10 @@ def parse_quality_gate_json(
         disposition_outcome=disp_out,  # type: ignore[arg-type]
         disposition_labels=disp_labels,
         disposition_notes=disp_notes,
+        auto_fixable_issues=auto_fixable,
+        human_blocking_issues=human_blocking,
+        action_after_auto_fix=action_after_auto_fix,
+        auto_fix_triage_reason=triage_reason,
         raw=dict(data),
     )
     return merge_deterministic_curriculum_flags(result, pre)
@@ -383,11 +406,85 @@ def _parse_disposition_labels(raw: Any) -> List[str]:
     return out[:12]
 
 
+_AUTO_FIX_DISPOSITION_LABELS = frozenset(
+    {"wrong_answer_key", "wrong_answer_key_fixed", "formatting", "formatting_fixed"}
+)
+
+
 def _only_auto_fix_disposition(labels: List[str]) -> bool:
     if not labels:
         return False
-    allowed = {"wrong_answer_key_fixed", "formatting_fixed"}
-    return set(labels) <= allowed
+    return set(labels) <= _AUTO_FIX_DISPOSITION_LABELS
+
+
+def _blocking_disposition_labels(labels: List[str]) -> List[str]:
+    return [l for l in labels if l not in _AUTO_FIX_DISPOSITION_LABELS]
+
+
+def _parse_action_after_auto_fix(raw: Any) -> Optional[RecommendedAction]:
+    s = str(raw or "").strip().lower()
+    if s in ("approve", "human_review", "regenerate", "delete"):
+        return s  # type: ignore[return-value]
+    return None
+
+
+def resolve_action_after_auto_fix(
+    result: QualityGateResult,
+    *,
+    formatting_will_fix: bool = False,
+    answer_key_will_fix: bool = False,
+) -> Optional[RecommendedAction]:
+    """LLM triage field, with deterministic fallback when omitted."""
+    if result.action_after_auto_fix:
+        return result.action_after_auto_fix
+    if result.human_blocking_issues:
+        return "human_review"
+    if _blocking_disposition_labels(result.disposition_labels):
+        return "human_review"
+    if result.curriculum_match == "off_syllabus" or _has_hard_fail(result.curriculum_flags):
+        return "human_review"
+    if result.curriculum_match == "borderline":
+        return "human_review"
+    will_fix = formatting_will_fix or answer_key_will_fix or result.formatting_apply_fix or (
+        result.answer_key_was_wrong and bool(result.raw.get("answer_key_validation", {}).get("apply_fix"))
+    )
+    if will_fix and result.verdict == "Pass":
+        return "approve"
+    return None
+
+
+def apply_post_auto_fix_action(
+    action: RecommendedAction,
+    result: QualityGateResult,
+    *,
+    auto_fixes_planned: bool,
+    formatting_will_fix: bool = False,
+    answer_key_will_fix: bool = False,
+) -> RecommendedAction:
+    """
+    Upgrade human_review → approve when auto-fixes resolve all blocking issues.
+    Never downgrades delete/regenerate; never approves off_syllabus / hard_fail.
+    """
+    if action in ("delete", "regenerate"):
+        return action
+    if not auto_fixes_planned:
+        return action
+    after = resolve_action_after_auto_fix(
+        result,
+        formatting_will_fix=formatting_will_fix,
+        answer_key_will_fix=answer_key_will_fix,
+    )
+    if after != "approve" or action != "human_review":
+        return action
+    if result.verdict != "Pass":
+        return action
+    if result.curriculum_match == "off_syllabus" or _has_hard_fail(result.curriculum_flags):
+        return action
+    if result.human_blocking_issues:
+        return action
+    if _blocking_disposition_labels(result.disposition_labels):
+        return action
+    return "approve"
 
 
 @dataclass
@@ -440,6 +537,9 @@ def effective_action(
     *,
     row: Optional[Dict[str, Any]] = None,
     downgrade_low_confidence_pass: bool = True,
+    auto_fixes_planned: bool = False,
+    formatting_will_fix: bool = False,
+    answer_key_will_fix: bool = False,
 ) -> RecommendedAction:
     """Apply curriculum + confidence overrides before graph queue."""
     action = result.recommended_action
@@ -500,6 +600,14 @@ def effective_action(
         and _only_auto_fix_disposition(result.disposition_labels)
     ):
         action = "approve"
+
+    action = apply_post_auto_fix_action(
+        action,
+        result,
+        auto_fixes_planned=auto_fixes_planned,
+        formatting_will_fix=formatting_will_fix,
+        answer_key_will_fix=answer_key_will_fix,
+    )
 
     return action
 

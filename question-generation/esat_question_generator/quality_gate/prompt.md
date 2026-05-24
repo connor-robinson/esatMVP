@@ -50,6 +50,37 @@ Map outcomes to `recommended_action`: keep→approve, edit→human_review, disre
 
 ---
 
+## Multi-issue triage and auto-fix (required)
+
+Many items have **more than one** defect (e.g. borderline syllabus fit **and** excessive blank lines). The pipeline **automatically fixes** safe issues (whitespace / line breaks, wrong `correct_option`) **before** deciding approve vs human review.
+
+When **any** of these apply, you **must** fill `auto_fix_triage`:
+
+- `recommended_action` is `human_review`, **or**
+- `formatting_validation.apply_fix` is **true**, **or**
+- `answer_key_validation.apply_fix` is **true**, **or**
+- there is more than one issue in `review_disposition.labels` / curriculum / formatting flags.
+
+Return inside `auto_fix_triage`:
+
+- `auto_fixable_issues` — short strings for issues the **system can fix** without rewriting content (e.g. `"excessive blank lines"`, `"wrong answer key"`, `"double spaces"`). Empty array if none.
+- `human_blocking_issues` — short strings for issues that **still need a human** even after auto-fix (e.g. `"borderline syllabus fit"`, `"too long"`, `"weak distractors"`, `"off-syllabus topic"`). Empty if none remain after fix.
+- `recommended_action_after_auto_fix` — **`approve`** | **`human_review`** | **`regenerate`** | **`delete`**: the action you would choose **if** all auto-fixable issues were already resolved.
+  - Ask yourself: *“If blank lines / spacing / the answer key were fixed, would I still send this to a human?”*
+  - **Only** `approve` when the item is otherwise **Pass**-worthy and **no** human-blocking issues remain.
+  - Use **`human_review`** when substantive judgment remains (borderline curriculum, wording, difficulty, pacing, etc.) — still set `apply_fix` true for formatting/answer key so the system fixes what it can.
+- `reason` — one line explaining the split (e.g. “Line breaks are cosmetic; borderline M2 topic on Math 1 row still needs a human.”).
+
+**Examples**
+
+1. **Pass** item, only bad line breaks → `apply_fix: true`, `human_blocking_issues: []`, `recommended_action_after_auto_fix: "approve"`, labels include `formatting` (system will add `formatting_fixed` after patch).
+2. **Pass** item, wrong key only → `answer_key_validation.apply_fix: true`, `recommended_action_after_auto_fix: "approve"`, label `wrong_answer_key_fixed`.
+3. **Minor** item, borderline curriculum **and** excessive blank lines → `apply_fix: true`, `human_blocking_issues: ["borderline syllabus fit"]`, `recommended_action_after_auto_fix: "human_review"`, initial `recommended_action: "human_review"`.
+
+Always set `formatting_validation.apply_fix` / `answer_key_validation.apply_fix` when those deterministic fixes should run, even if the final action stays `human_review`.
+
+---
+
 ## Curriculum validation (required)
 
 You are given the official allowed curriculum snapshot for this subject. You **must** judge whether the question can be solved using **ONLY** those topics. Cite specific topic codes from the snapshot.
@@ -221,10 +252,16 @@ Reply with **only** a single JSON object (no markdown fences, no commentary). Ex
     "outcome": "keep",
     "labels": [],
     "notes": ""
+  },
+  "auto_fix_triage": {
+    "auto_fixable_issues": [],
+    "human_blocking_issues": [],
+    "recommended_action_after_auto_fix": "approve",
+    "reason": "No auto-fixable or blocking issues."
   }
 }
 ```
 
-**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown), `formatting_validation` (all sub-keys as shown), `answer_key_validation` (all sub-keys as shown), `review_disposition` (all sub-keys as shown).
+**Required keys:** `verdict`, `scores` (with all three score keys), `recommended_action`, `reasoning`, `confidence`, `calibration_tier`, `graph_enrichment` (object with all sub-keys as shown, including `mode`), `curriculum_validation` (all sub-keys as shown), `formatting_validation` (all sub-keys as shown), `answer_key_validation` (all sub-keys as shown), `review_disposition` (all sub-keys as shown), `auto_fix_triage` (all sub-keys as shown).
 
 `scores` use integers **1–5** (5 best). `confidence` is `high`, `medium`, or `low`.

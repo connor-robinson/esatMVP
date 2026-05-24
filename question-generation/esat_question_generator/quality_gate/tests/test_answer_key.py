@@ -78,6 +78,12 @@ class TestAnswerKey(unittest.TestCase):
                 "labels": ["wrong_answer_key_fixed"],
                 "notes": "Auto-fix key only.",
             },
+            "auto_fix_triage": {
+                "auto_fixable_issues": ["wrong answer key"],
+                "human_blocking_issues": [],
+                "recommended_action_after_auto_fix": "approve",
+                "reason": "Key only.",
+            },
         }
         result = parse_quality_gate_json(data)
         self.assertTrue(result.answer_key_was_wrong)

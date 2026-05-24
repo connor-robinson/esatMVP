@@ -136,6 +136,8 @@ def build_assessment_system_user_prompts(
         "Always label review_disposition.labels (e.g. too_hard, too_easy, too_long) for edit/disregard. "
         "Check stem/options/solution for inappropriate line breaks, double spaces, and awkward wrapping; "
         "set formatting_validation.apply_fix true when deterministic whitespace normalization would help. "
+        "When multiple issues exist, fill auto_fix_triage: list auto-fixable vs human-blocking issues and "
+        "recommended_action_after_auto_fix (approve only if no human-blocking issues remain after auto-fix). "
         "Treat **overlong stems**, **bloated options**, and **solutions that take too many steps "
         "or too much clock time** for one MCQ as serious defects.\n\n"
         + rubric

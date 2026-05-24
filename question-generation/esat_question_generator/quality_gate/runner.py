@@ -122,11 +122,19 @@ def _commit_gate_row(
         )
         stats["answer_key_fixed"] = stats.get("answer_key_fixed", 0) + 1
 
+    from .formatting import build_formatting_patch, detect_formatting_issues, should_apply_formatting_fix
+
+    fmt_issues = detect_formatting_issues(row)
+    if answer_key_pre_patch:
+        row = {**row, **answer_key_pre_patch}
+
+    answer_key_will_fix = bool(answer_key_pre_patch)
     akv = result.raw.get("answer_key_validation") if isinstance(result.raw.get("answer_key_validation"), dict) else {}
     if akv.get("apply_fix") and akv.get("true_option"):
         llm_ak = apply_llm_answer_key_patch(row, true_option=str(akv.get("true_option")))
         if llm_ak:
             content_patch.update(llm_ak)
+            answer_key_will_fix = True
             result = replace(
                 result,
                 answer_key_fix_applied=True,
@@ -134,23 +142,42 @@ def _commit_gate_row(
                 answer_key_true=llm_ak.get("correct_option"),
                 disposition_labels=list(
                     dict.fromkeys(
-                        list(result.disposition_labels) + ["wrong_answer_key_fixed"]
+                        [
+                            *(l for l in result.disposition_labels if l != "wrong_answer_key"),
+                            "wrong_answer_key_fixed",
+                        ]
                     )
                 ),
             )
             stats["answer_key_fixed"] = stats.get("answer_key_fixed", 0) + 1
 
-    base_eff = effective_action(result, row=row, downgrade_low_confidence_pass=True)
+    formatting_will_fix = False
+    if auto_fix_formatting:
+        formatting_will_fix = should_apply_formatting_fix(
+            issues=fmt_issues,
+            llm_apply_fix=result.formatting_apply_fix,
+            eff="human_review",
+        )
+        if formatting_will_fix:
+            fmt_patch_preview = build_formatting_patch(row)
+            formatting_will_fix = bool(fmt_patch_preview)
+
+    auto_fixes_planned = answer_key_will_fix or formatting_will_fix
+    base_eff = effective_action(
+        result,
+        row=row,
+        downgrade_low_confidence_pass=True,
+        auto_fixes_planned=auto_fixes_planned,
+        formatting_will_fix=formatting_will_fix,
+        answer_key_will_fix=answer_key_will_fix,
+    )
     eff = effective_action_with_graph_queue(result, base_eff)
     payload = result.to_payload()
     payload["effective_recommended_action"] = eff
+    payload["auto_fixes_planned"] = auto_fixes_planned
+    payload["formatting_will_fix"] = formatting_will_fix
+    payload["answer_key_will_fix"] = answer_key_will_fix
     payload["raw_model_excerpt"] = (raw_text or "")[:4000]
-
-    from .formatting import build_formatting_patch, detect_formatting_issues, should_apply_formatting_fix
-
-    fmt_issues = detect_formatting_issues(row)
-    if answer_key_pre_patch:
-        row = {**row, **answer_key_pre_patch}
 
     auto_applied = False
     if not dry_run and client is not None:
@@ -170,16 +197,29 @@ def _commit_gate_row(
             "quality_gate_graph_notes": graph_notes,
         }
 
-        if auto_fix_formatting and should_apply_formatting_fix(
-            issues=fmt_issues,
-            llm_apply_fix=result.formatting_apply_fix,
-            eff=eff,
-        ):
+        if auto_fix_formatting and formatting_will_fix:
             fmt_patch = build_formatting_patch(row)
             if fmt_patch:
                 content_patch.update(fmt_patch)
                 payload["formatting_fix_applied"] = sorted(fmt_patch.keys())
                 stats["formatting_fixed"] = stats.get("formatting_fixed", 0) + 1
+                result = replace(
+                    result,
+                    disposition_labels=list(
+                        dict.fromkeys(
+                            [
+                                *(l for l in result.disposition_labels if l != "formatting"),
+                                "formatting_fixed",
+                            ]
+                        )
+                    ),
+                )
+                payload = result.to_payload()
+                payload["effective_recommended_action"] = eff
+                payload["auto_fixes_planned"] = auto_fixes_planned
+                payload["formatting_will_fix"] = True
+                payload["formatting_fix_applied"] = sorted(fmt_patch.keys())
+                payload["raw_model_excerpt"] = (raw_text or "")[:4000]
 
         if apply_tag_fixes and eff != "delete" and llm is not None:
             try:
