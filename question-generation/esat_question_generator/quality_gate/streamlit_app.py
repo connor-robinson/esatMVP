@@ -168,6 +168,8 @@ def _curriculum_cols(row: dict[str, Any]) -> dict[str, Any]:
         "Curriculum flags": fields.get("curriculum_flags") or "—",
         "Formatting": fields.get("formatting_score") if fields.get("formatting_score") is not None else "—",
         "Format issues": fields.get("formatting_issues") or "—",
+        "Disposition": fields.get("disposition") or "—",
+        "Labels": fields.get("disposition_labels") or "—",
         "_off_syllabus": fields.get("curriculum_match") == "off_syllabus",
         "_math1_mm": bool(fields.get("math1_mm_required")),
         "_calculus_math1": bool(fields.get("calculus_in_math1")),
@@ -286,9 +288,9 @@ def _build_results_dataframe(rows: list[dict[str, Any]], review_base: str) -> pd
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
                 "Formatting": cur["Formatting"],
-        "Format issues": cur["Format issues"],
-        "Disposition": cur.get("disposition") or "—",
-        "Labels": cur.get("disposition_labels") or "—",
+                "Format issues": cur["Format issues"],
+                "Disposition": cur["Disposition"],
+                "Labels": cur["Labels"],
                 "Why": _ai_why_from_row(r) or "—",
                 "Gold": gold,
                 "Graph": graph,
@@ -332,9 +334,9 @@ def _build_overview_dataframe(rows: list[dict[str, Any]], review_base: str) -> p
                 "Curriculum reason": cur["Curriculum reason"],
                 "Curriculum flags": cur["Curriculum flags"],
                 "Formatting": cur["Formatting"],
-        "Format issues": cur["Format issues"],
-        "Disposition": cur.get("disposition") or "—",
-        "Labels": cur.get("disposition_labels") or "—",
+                "Format issues": cur["Format issues"],
+                "Disposition": cur["Disposition"],
+                "Labels": cur["Labels"],
                 "Why": _ai_why_from_row(r) or "—",
                 "Gold": gold,
                 "Graph": graph,
@@ -1312,6 +1314,10 @@ with tab_review:
             )
 
             st.subheader("Combined review queue (all runs)")
+            st.caption(
+                "Click **Load queue table** to fetch assessed questions. The table is **not** loaded on every "
+                "page refresh — that used to run during **Score questions** auto-refresh and could hang or fail."
+            )
             ov_scan_cap = st.number_input(
                 "Safety scan cap (assessed rows loaded before sorting)",
                 min_value=5_000,
@@ -1330,69 +1336,94 @@ with tab_review:
                 key="qg_overview_limit",
                 help="Global sort: Major → Minor → Pass+Graph → … then action urgency.",
             )
-            with st.spinner("Loading assessed questions for combined overview…"):
-                all_assessed = fetch_all_assessed_rows_for_overview(
-                    _qg_client,
-                    test_type=tt_param,
-                    max_scan=int(ov_scan_cap),
-                    page_size=500,
-                )
-            sorted_assessed = _sort_rows_for_results_table(all_assessed)
-            st.markdown("#### Curriculum filters")
-            cf1, cf2, cf3, cf4, cf5 = st.columns(5)
-            with cf1:
-                f_off = st.checkbox("Off-syllabus only", key="qg_f_off")
-            with cf2:
-                f_mm = st.checkbox("Math 1 needs MM", key="qg_f_mm")
-            with cf3:
-                f_calc = st.checkbox("Calculus in Math 1", key="qg_f_calc")
-            with cf4:
-                f_long = st.checkbox("Likely too long (pacing ≤2)", key="qg_f_long")
-            with cf5:
-                f_tag = st.checkbox("Missing primary_tag", key="qg_f_tag")
-            filtered_assessed = _apply_curriculum_filters(
-                sorted_assessed,
-                {
-                    "off_syllabus": f_off,
-                    "math1_mm": f_mm,
-                    "calculus_math1": f_calc,
-                    "likely_too_long": f_long,
-                    "missing_primary_tag": f_tag,
-                },
-            )
-            ov_rows = filtered_assessed[: int(ov_limit)]
-            if len(all_assessed) >= int(ov_scan_cap):
-                st.warning(
-                    f"Hit scan cap ({ov_scan_cap:,} rows). Priority sort applies only within this subset — "
-                    "raise the cap if you need lower-priority older items."
-                )
-            st.caption(
-                f"Loaded **{len(all_assessed):,}** assessed question(s); showing top **{len(ov_rows):,}** after review-priority sort. "
-                "One row per question id. **Status** reflects the DB workflow field (including **approved** from the question reviewer)."
-            )
-            if ov_rows:
-                df_ov = _build_overview_dataframe(ov_rows, review_base)
-                st.dataframe(
-                    df_ov,
-                    use_container_width=True,
-                    hide_index=True,
-                    column_config={
-                        "Open": st.column_config.LinkColumn(
-                            "Review",
-                            display_text="Open",
-                            help="Opens the Next.js review queue for this question",
-                        ),
-                        "Why": _wide_text_column("Why"),
-                        "Curriculum reason": _wide_text_column("Curriculum reason"),
+            ov_cache_sig = f"{overview_tt}:{int(ov_scan_cap)}"
+            b_load_ov, b_clear_ov = st.columns([1, 1])
+            with b_load_ov:
+                load_overview = st.button("Load queue table", type="primary", key="qg_load_overview")
+            with b_clear_ov:
+                if st.button("Clear cached queue", key="qg_clear_overview"):
+                    st.session_state.pop("qg_overview_rows", None)
+                    st.session_state.pop("qg_overview_cache_sig", None)
+                    st.rerun()
+
+            all_assessed: list[dict[str, Any]] = []
+            if load_overview:
+                with st.spinner("Loading assessed questions for combined overview…"):
+                    all_assessed = fetch_all_assessed_rows_for_overview(
+                        _qg_client,
+                        test_type=tt_param,
+                        max_scan=int(ov_scan_cap),
+                        page_size=500,
+                    )
+                st.session_state["qg_overview_rows"] = all_assessed
+                st.session_state["qg_overview_cache_sig"] = ov_cache_sig
+            elif (
+                st.session_state.get("qg_overview_cache_sig") == ov_cache_sig
+                and isinstance(st.session_state.get("qg_overview_rows"), list)
+            ):
+                all_assessed = st.session_state["qg_overview_rows"]
+            elif st.session_state.get("qg_overview_cache_sig"):
+                st.info("Pool or scan cap changed — click **Load queue table** to refresh.")
+            else:
+                st.info("No queue loaded yet. Click **Load queue table**.")
+
+            if all_assessed:
+                sorted_assessed = _sort_rows_for_results_table(all_assessed)
+                st.markdown("#### Curriculum filters")
+                cf1, cf2, cf3, cf4, cf5 = st.columns(5)
+                with cf1:
+                    f_off = st.checkbox("Off-syllabus only", key="qg_f_off")
+                with cf2:
+                    f_mm = st.checkbox("Math 1 needs MM", key="qg_f_mm")
+                with cf3:
+                    f_calc = st.checkbox("Calculus in Math 1", key="qg_f_calc")
+                with cf4:
+                    f_long = st.checkbox("Likely too long (pacing ≤2)", key="qg_f_long")
+                with cf5:
+                    f_tag = st.checkbox("Missing primary_tag", key="qg_f_tag")
+                filtered_assessed = _apply_curriculum_filters(
+                    sorted_assessed,
+                    {
+                        "off_syllabus": f_off,
+                        "math1_mm": f_mm,
+                        "calculus_math1": f_calc,
+                        "likely_too_long": f_long,
+                        "missing_primary_tag": f_tag,
                     },
                 )
-                st.download_button(
-                    label="Download combined overview as CSV",
-                    data=df_ov.to_csv(index=False).encode("utf-8"),
-                    file_name="quality_gate_combined_overview.csv",
-                    mime="text/csv",
-                    key="qg_download_overview_csv",
+                ov_rows = filtered_assessed[: int(ov_limit)]
+                if len(all_assessed) >= int(ov_scan_cap):
+                    st.warning(
+                        f"Hit scan cap ({ov_scan_cap:,} rows). Priority sort applies only within this subset — "
+                        "raise the cap if you need lower-priority older items."
+                    )
+                st.caption(
+                    f"Loaded **{len(all_assessed):,}** assessed question(s); showing top **{len(ov_rows):,}** after review-priority sort. "
+                    "One row per question id. **Status** reflects the DB workflow field (including **approved** from the question reviewer)."
                 )
+                if ov_rows:
+                    df_ov = _build_overview_dataframe(ov_rows, review_base)
+                    st.dataframe(
+                        df_ov,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "Open": st.column_config.LinkColumn(
+                                "Review",
+                                display_text="Open",
+                                help="Opens the Next.js review queue for this question",
+                            ),
+                            "Why": _wide_text_column("Why"),
+                            "Curriculum reason": _wide_text_column("Curriculum reason"),
+                        },
+                    )
+                    st.download_button(
+                        label="Download combined overview as CSV",
+                        data=df_ov.to_csv(index=False).encode("utf-8"),
+                        file_name="quality_gate_combined_overview.csv",
+                        mime="text/csv",
+                        key="qg_download_overview_csv",
+                    )
             st.divider()
             _render_export_panel(
                 _qg_client,
