@@ -29,6 +29,16 @@ DEFAULT_QUALITY_GATE_IMAGE_INTEGRATE_MODEL = "gemini-2.5-pro"
 IMAGE_BACKFILL_BUCKET = "quality-gate-diagrams"
 
 
+def deterministic_prechecks_enabled() -> bool:
+    """
+    Regex/tag answer-key/formatting prechecks and post-LLM overrides.
+
+    Default **off** — scoring uses LLM rubric only. Set ``QUALITY_GATE_DETERMINISTIC=1`` to re-enable.
+    """
+    raw = (os.environ.get("QUALITY_GATE_DETERMINISTIC") or "0").strip().lower()
+    return raw in ("1", "true", "yes", "on")
+
+
 def default_diagram_model() -> str:
     """Model for graph-candidate SVG + stem merge (override with ``MODEL_QUALITY_GATE_SVG``)."""
     override = (os.environ.get("MODEL_QUALITY_GATE_SVG") or "").strip()

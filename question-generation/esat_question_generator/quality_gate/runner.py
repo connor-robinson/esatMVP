@@ -122,9 +122,9 @@ def _commit_gate_row(
         )
         stats["answer_key_fixed"] = stats.get("answer_key_fixed", 0) + 1
 
+    from .defaults import deterministic_prechecks_enabled
     from .formatting import build_formatting_patch, detect_formatting_issues, should_apply_formatting_fix
 
-    fmt_issues = detect_formatting_issues(row)
     if answer_key_pre_patch:
         row = {**row, **answer_key_pre_patch}
 
@@ -153,11 +153,15 @@ def _commit_gate_row(
 
     formatting_will_fix = False
     if auto_fix_formatting:
-        formatting_will_fix = should_apply_formatting_fix(
-            issues=fmt_issues,
-            llm_apply_fix=result.formatting_apply_fix,
-            eff="human_review",
-        )
+        if deterministic_prechecks_enabled():
+            fmt_issues = detect_formatting_issues(row)
+            formatting_will_fix = should_apply_formatting_fix(
+                issues=fmt_issues,
+                llm_apply_fix=result.formatting_apply_fix,
+                eff="human_review",
+            )
+        else:
+            formatting_will_fix = bool(result.formatting_apply_fix)
         if formatting_will_fix:
             fmt_patch_preview = build_formatting_patch(row)
             formatting_will_fix = bool(fmt_patch_preview)
@@ -515,7 +519,11 @@ def run_quality_gate_job(
                 else:
                     assert llm is not None
                     row_orig = row
-                    ak_pre_patch, _ak_reason = build_answer_key_patch(row_orig)
+                    from .defaults import deterministic_prechecks_enabled
+
+                    ak_pre_patch: Optional[Dict[str, Any]] = None
+                    if deterministic_prechecks_enabled():
+                        ak_pre_patch, _ak_reason = build_answer_key_patch(row_orig)
                     row_assess = {**row_orig, **ak_pre_patch} if ak_pre_patch else row_orig
                     try:
                         result, raw_text, db_model = assess_question(

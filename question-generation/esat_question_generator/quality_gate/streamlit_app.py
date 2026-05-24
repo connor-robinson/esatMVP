@@ -1136,7 +1136,8 @@ with tab_score:
 
     st.markdown(
         "Process **all un-scored ESAT questions** — saves scores, auto-approves strong passes, "
-        "fixes line breaks, and re-labels bad tags. Already-scored rows are skipped."
+        "fixes line breaks, and re-labels bad tags. Already-scored rows are skipped. "
+        "**Deterministic regex/tag prechecks are off** — only the LLM rubric decides syllabus and actions."
     )
 
     c_start, c_stop, c_refresh = st.columns([2, 1, 1])

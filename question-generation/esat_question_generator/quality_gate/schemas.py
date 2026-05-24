@@ -194,6 +194,8 @@ def merge_deterministic_curriculum_flags(
     pre_flags: List[CurriculumFlag],
 ) -> QualityGateResult:
     """Merge pre-check flags; deterministic hard fails tighten curriculum_match."""
+    if not pre_flags:
+        return result
     seen: set[tuple[str, str]] = set()
     merged: List[CurriculumFlag] = []
     for f in list(pre_flags) + list(result.curriculum_flags):

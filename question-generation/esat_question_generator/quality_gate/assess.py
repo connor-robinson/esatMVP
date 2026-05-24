@@ -10,7 +10,7 @@ from .answer_key import build_answer_key_precheck
 from .curriculum import get_curriculum_for_row, get_math2_relocation_context, normalize_subject
 from .curriculum_flags import detect_curriculum_flags
 from .formatting import build_formatting_report, detect_formatting_issues
-from .defaults import quality_gate_model_try_order
+from .defaults import deterministic_prechecks_enabled, quality_gate_model_try_order
 from .schemas import CurriculumFlag, QualityGateResult, parse_quality_gate_json
 
 _DIR = Path(__file__).resolve().parent
@@ -70,6 +70,8 @@ def _secondary_tags_for_payload(row: Dict[str, Any]) -> List[str]:
 
 
 def run_curriculum_precheck(row: Dict[str, Any]) -> List[CurriculumFlag]:
+    if not deterministic_prechecks_enabled():
+        return []
     return [CurriculumFlag.from_dict(f) for f in detect_curriculum_flags(row)]
 
 
@@ -103,15 +105,16 @@ def build_question_payload(
         "curriculum_allowed_codes": curriculum["curriculum_allowed_codes"],
         "curriculum_snapshot": curriculum["curriculum_snapshot"],
         "primary_tag_allowed_for_subject": curriculum["primary_tag_allowed"],
-        "answer_key_precheck": build_answer_key_precheck(answer_key_row or row),
     }
-    if pre_flags:
-        payload["deterministic_curriculum_flags"] = [f.to_dict() for f in pre_flags]
-    fmt_report = build_formatting_report(row)
-    payload["formatting_precheck"] = fmt_report
-    fmt_issues = detect_formatting_issues(row)
-    if fmt_issues:
-        payload["deterministic_formatting_flags"] = fmt_report.get("deterministic_formatting_flags")
+    if deterministic_prechecks_enabled():
+        payload["answer_key_precheck"] = build_answer_key_precheck(answer_key_row or row)
+        if pre_flags:
+            payload["deterministic_curriculum_flags"] = [f.to_dict() for f in pre_flags]
+        fmt_report = build_formatting_report(row)
+        payload["formatting_precheck"] = fmt_report
+        fmt_issues = detect_formatting_issues(row)
+        if fmt_issues:
+            payload["deterministic_formatting_flags"] = fmt_report.get("deterministic_formatting_flags")
     payload.update(get_math2_relocation_context(row))
     return payload
 
@@ -127,11 +130,9 @@ def build_assessment_system_user_prompts(
         "You are an expert ESAT item reviewer. Follow the rubric exactly. "
         "The question is a standalone exam item — do NOT use or infer any generation schema; "
         "judge only the stem, options, solution, tags, and official curriculum snapshot. "
-        "Solve each item independently before trusting the stored key, solution, tags, or prechecks. "
+        "Solve each item independently before trusting the stored key, solution, or tags. "
         "Judge syllabus fit ONLY against the provided `curriculum_snapshot` and "
         "`curriculum_allowed_codes` — map the actual solve-path concepts to explicit codes. "
-        "Treat deterministic_curriculum_flags and answer_key_precheck as evidence, not absolute truth; "
-        "if they conflict with your independent judgement, use human_review and label deterministic_conflict. "
         "If the stored correct_option is wrong, set apply_fix true but recommended_action must be human_review "
         "(never auto-approve wrong-key items). "
         "Always label review_disposition.labels. "
@@ -173,7 +174,9 @@ def assess_question(
     """
     Returns (parsed result, raw model text, model id actually used for the API call).
     """
-    flags = pre_flags if pre_flags is not None else run_curriculum_precheck(row)
+    flags: List[CurriculumFlag] = []
+    if deterministic_prechecks_enabled():
+        flags = pre_flags if pre_flags is not None else run_curriculum_precheck(row)
     ak_src = answer_key_source_row or row
     system_prompt, user_prompt = build_assessment_system_user_prompts(
         row, pre_flags=flags, answer_key_row=ak_src
@@ -194,22 +197,28 @@ def assess_question(
                     f"Quality gate: primary model {primary!r} was not available; used {m!r} for this question."
                 )
             data = extract_json_object(raw)
-            result = parse_quality_gate_json(data, pre_flags=flags)
-            fmt_issues = detect_formatting_issues(row)
-            if fmt_issues and not result.formatting_issues:
-                result.formatting_issues = [i.get("detail", i.get("issue_id", "")) for i in fmt_issues[:8]]
-            if fmt_report := build_formatting_report(row):
-                if fmt_report.get("formatting_fixable") and not result.formatting_apply_fix:
-                    if result.formatting_score >= 4:
-                        result.formatting_apply_fix = True
-            if not result.curriculum_reason and flags:
-                result.curriculum_reason = "; ".join(f.reason for f in flags[:3])[:4000]
-            subj = normalize_subject(row.get("subjects")).casefold()
-            if subj in ("math 1", "mathematics 1") and result.verdict == "Pass":
-                if any(f.severity == "hard_fail" for f in flags):
-                    result.verdict = "Major"
-                    if result.recommended_action == "approve":
-                        result.recommended_action = "delete"
+            result = parse_quality_gate_json(
+                data,
+                pre_flags=flags if deterministic_prechecks_enabled() else [],
+            )
+            if deterministic_prechecks_enabled():
+                fmt_issues = detect_formatting_issues(row)
+                if fmt_issues and not result.formatting_issues:
+                    result.formatting_issues = [
+                        i.get("detail", i.get("issue_id", "")) for i in fmt_issues[:8]
+                    ]
+                if fmt_report := build_formatting_report(row):
+                    if fmt_report.get("formatting_fixable") and not result.formatting_apply_fix:
+                        if result.formatting_score >= 4:
+                            result.formatting_apply_fix = True
+                if not result.curriculum_reason and flags:
+                    result.curriculum_reason = "; ".join(f.reason for f in flags[:3])[:4000]
+                subj = normalize_subject(row.get("subjects")).casefold()
+                if subj in ("math 1", "mathematics 1") and result.verdict == "Pass":
+                    if any(f.severity == "hard_fail" for f in flags):
+                        result.verdict = "Major"
+                        if result.recommended_action == "approve":
+                            result.recommended_action = "delete"
             return result, raw, m
         except Exception as e:
             if not _vertex_model_not_found(e):
