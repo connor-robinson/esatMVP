@@ -580,7 +580,7 @@ export function QuestionCard({
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 px-1 py-1 sm:px-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wide text-text-muted">
-              Rate the difficulty
+              Rate this question
             </span>
             {ratingLoading ? (
               <span className="text-xs text-text-muted">—</span>
@@ -589,7 +589,7 @@ export function QuestionCard({
                 <div
                   className="flex items-center gap-0.5"
                   role="group"
-                  aria-label="Difficulty rating"
+                  aria-label="Question rating"
                   onMouseLeave={() => setHoverStar(null)}
                 >
                   {[1, 2, 3, 4, 5].map((value) => {

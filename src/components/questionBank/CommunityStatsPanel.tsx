@@ -1,11 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
-import type {
-  QuestionBankCommunityStats,
-  QuestionRatingResponse,
-} from "@/types/questionBank";
-import { Star } from "lucide-react";
+import type { QuestionBankCommunityStats } from "@/types/questionBank";
 import { cn, formatTime } from "@/lib/utils";
 
 const SHELL = "rounded-organic-xl bg-surface-elevated";
@@ -25,23 +20,6 @@ export function CommunityStatsPanel({
   stats,
   loading,
 }: CommunityStatsPanelProps) {
-  const [rating, setRating] = useState<QuestionRatingResponse | null>(null);
-
-  useEffect(() => {
-    if (!questionId) {
-      setRating(null);
-      return;
-    }
-    const ac = new AbortController();
-    fetch(`/api/question-bank/questions/${questionId}/rating`, {
-      signal: ac.signal,
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: QuestionRatingResponse) => setRating(data))
-      .catch(() => setRating({ average: 0, count: 0 }));
-    return () => ac.abort();
-  }, [questionId]);
-
   const letters = Object.keys(options).sort();
   const correctU = (correctOption || "").trim().toUpperCase();
   const maxPct = Math.max(
@@ -49,44 +27,12 @@ export function CommunityStatsPanel({
     ...letters.map((l) => stats?.optionPercentages[l] ?? 0),
   );
 
-  const displayStars = rating?.average ? Math.min(5, Math.round(rating.average)) : 0;
-
   return (
     <div className={cn(SHELL, "px-5 py-5 sm:px-6 sm:py-6")}>
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <h3 className="text-base font-semibold tracking-tight text-text sm:text-lg">
-            Community stats
-          </h3>
-          <div className="flex items-center gap-0.5" aria-label="Community difficulty rating">
-            {[1, 2, 3, 4, 5].map((value) => (
-              <Star
-                key={value}
-                className={cn(
-                  "h-4 w-4 sm:h-[18px] sm:w-[18px]",
-                  value <= displayStars
-                    ? "fill-secondary text-secondary"
-                    : "text-text-disabled",
-                )}
-                strokeWidth={1.35}
-              />
-            ))}
-          </div>
-          {rating && rating.count > 0 ? (
-            <span className="text-xs text-text-muted">
-              {rating.average.toFixed(1)} · {rating.count} rating
-              {rating.count === 1 ? "" : "s"}
-            </span>
-          ) : null}
-        </div>
-        {stats !== null ? (
-          <span className="text-xs text-text-muted sm:text-sm">
-            {stats.attempts} attempt
-            {stats.attempts === 1 ? "" : "s"}
-          </span>
-        ) : (
-          !loading && <span className="text-xs text-text-muted">—</span>
-        )}
+      <div className="mb-6">
+        <h3 className="text-base font-semibold tracking-tight text-text sm:text-lg">
+          Community stats
+        </h3>
       </div>
 
       {!questionId ? (
@@ -96,21 +42,13 @@ export function CommunityStatsPanel({
       ) : !stats ? (
         <p className="text-sm text-text-muted">Could not load community stats.</p>
       ) : (
-        <>
-          {!stats.hasSufficientData ? (
-            <p className="mb-5 text-xs text-text-muted">
-              Showing early aggregates — stats strengthen as more learners attempt
-              this question.
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch lg:gap-10">
+          <div className="min-w-0 flex-1">
+            <p className="mb-4 text-xs font-medium uppercase tracking-wide text-text-subtle">
+              Average distribution
             </p>
-          ) : null}
-
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch lg:gap-10">
-            <div className="min-w-0 flex-1">
-              <p className="mb-4 text-xs font-medium uppercase tracking-wide text-text-subtle">
-                Average distribution
-              </p>
-              <div className="rounded-organic-lg bg-surface-mid px-3 pb-2 pt-3 sm:px-4">
-                <div className="flex gap-1.5 sm:gap-2">
+            <div className="rounded-organic-lg bg-surface-mid px-3 pb-2 pt-3 sm:px-4">
+              <div className="flex gap-1.5 sm:gap-2">
                 {letters.map((letter) => {
                   const pct = stats.optionPercentages[letter] ?? 0;
                   const barHeightPx = Math.round(
@@ -154,34 +92,25 @@ export function CommunityStatsPanel({
                     </div>
                   );
                 })}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex w-full flex-col lg:w-auto lg:min-w-[200px]">
-              <p className="mb-4 text-xs font-medium uppercase tracking-wide text-text-subtle lg:text-right">
-                Average correct time
-              </p>
-              <div
-                className={cn(
-                  "flex flex-1 flex-col justify-center rounded-organic-lg bg-surface-mid px-6 py-6 lg:py-8",
-                )}
-              >
-                {correctU && stats.avgCorrectTimeSeconds > 0 ? (
-                  <span className="text-center tabular-nums text-3xl font-bold tracking-tight text-text sm:text-[2rem]">
-                    {formatTime(
-                      Math.round(stats.avgCorrectTimeSeconds * 1000),
-                    )}
-                  </span>
-                ) : (
-                  <span className="text-center text-sm text-text-muted">
-                    —
-                  </span>
-                )}
               </div>
             </div>
           </div>
-        </>
+
+          <div className="flex w-full flex-col lg:w-auto lg:min-w-[200px]">
+            <p className="mb-4 text-xs font-medium uppercase tracking-wide text-text-subtle lg:text-right">
+              Average correct time
+            </p>
+            <div className="flex flex-1 flex-col justify-center rounded-organic-lg bg-surface-mid px-6 py-6 lg:py-8">
+              {correctU && stats.avgCorrectTimeSeconds > 0 ? (
+                <span className="text-center tabular-nums text-3xl font-bold tracking-tight text-text sm:text-[2rem]">
+                  {formatTime(Math.round(stats.avgCorrectTimeSeconds * 1000))}
+                </span>
+              ) : (
+                <span className="text-center text-sm text-text-muted">—</span>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
