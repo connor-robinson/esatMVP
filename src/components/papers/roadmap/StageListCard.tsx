@@ -130,10 +130,10 @@ export function StageListCard({
         )}
         onClick={handleCardClick}
       >
-        <div className="flex items-center gap-4 px-5 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-center gap-3.5 px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4">
           <div
             className={cn(
-              "flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md text-xl font-bold tabular-nums",
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums",
               isUnlocked
                 ? getExamAccentFillClass(stage.examName)
                 : "bg-surface-neutral text-text-disabled",
@@ -155,7 +155,7 @@ export function StageListCard({
               <p className="min-w-0">
                 <span
                   className={cn(
-                    "text-lg font-semibold tracking-wide sm:text-xl",
+                    "text-base font-semibold sm:text-lg",
                     isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
                   )}
                 >
@@ -163,7 +163,7 @@ export function StageListCard({
                 </span>
                 <span
                   className={cn(
-                    "ml-2 text-lg font-semibold tracking-wide sm:text-xl",
+                    "ml-2 text-base font-medium sm:text-lg",
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
@@ -174,7 +174,7 @@ export function StageListCard({
               {totalCount > 0 ? (
                 <span
                   className={cn(
-                    "shrink-0 text-sm font-medium tabular-nums sm:text-[0.9375rem]",
+                    "shrink-0 text-sm tabular-nums",
                     isUnlocked ? "text-text-muted" : "text-text-disabled",
                   )}
                 >
