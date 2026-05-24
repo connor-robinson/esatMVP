@@ -17,12 +17,18 @@ import time
 from pathlib import Path
 from typing import Any, Optional
 
+# Streamlit puts ``quality_gate/`` on sys.path[0], which breaks ``import quality_gate``.
+ROOT = Path(__file__).resolve().parent.parent
+_PKG_DIR = Path(__file__).resolve().parent
+_root_s = str(ROOT)
+_pkg_s = str(_PKG_DIR)
+for _p in (_pkg_s, _root_s):
+    while _p in sys.path:
+        sys.path.remove(_p)
+sys.path.insert(0, _root_s)
+
 import pandas as pd
 import streamlit as st
-
-ROOT = Path(__file__).resolve().parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 from quality_gate.defaults import DEFAULT_QUALITY_GATE_BATCH_MODEL, default_sync_model
 
