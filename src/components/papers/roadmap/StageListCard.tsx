@@ -19,7 +19,7 @@ import {
   getExamAccentTextClass,
   getExamAccentFillClass,
   getExamAccentSurfaceClass,
-  getExamAccentSurfaceStrongClass,
+  PAST_PAPERS_PROGRESS_FILL,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 
@@ -112,6 +112,9 @@ export function StageListCard({
     }
   };
 
+  const completionPct =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
   return (
     <div className="relative overflow-visible font-sans">
       {timelineNodeY !== undefined && (
@@ -132,27 +135,39 @@ export function StageListCard({
           "relative flex flex-col overflow-hidden rounded-organic-xl transition-colors duration-fast ease-signature",
           isUnlocked
             ? cn(
-                "cursor-pointer bg-surface-elevated",
-                isCurrent && getExamAccentSurfaceStrongClass(stage.examName),
+                "cursor-pointer bg-surface-elevated hover:bg-surface",
+                isCompleted && "opacity-90",
               )
-            : "cursor-not-allowed bg-surface-mid opacity-75",
+            : "cursor-not-allowed bg-surface-mid opacity-60",
         )}
         onClick={handleCardClick}
       >
-        <div className="flex items-center gap-4 p-5 sm:p-6">
+        {isCurrent && isUnlocked ? (
           <div
             className={cn(
-              "relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums transition-colors",
+              "absolute bottom-3 left-0 top-3 w-1 rounded-r-full",
+              getExamAccentFillClass(stage.examName),
+            )}
+            aria-hidden
+          />
+        ) : null}
+
+        <div className="flex items-center gap-3.5 p-4 sm:gap-4 sm:p-5">
+          <div
+            className={cn(
+              "relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-base font-bold tabular-nums transition-colors",
               isUnlocked
                 ? getExamAccentFillClass(stage.examName)
                 : "bg-surface-neutral text-text-disabled",
             )}
           >
-            {isUnlocked ? (
+            {isCompleted && isUnlocked ? (
+              <Check className="h-4 w-4 stroke-[3]" aria-hidden />
+            ) : isUnlocked ? (
               index + 1
             ) : (
               <Lock
-                className="h-5 w-5 text-text-disabled"
+                className="h-4 w-4 text-text-disabled"
                 strokeWidth={2}
                 aria-hidden
               />
@@ -160,11 +175,11 @@ export function StageListCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2 gap-y-1 sm:gap-4">
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                 <span
                   className={cn(
-                    "text-lg font-semibold tracking-wide sm:text-xl",
+                    "text-base font-semibold sm:text-lg",
                     isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
                   )}
                 >
@@ -173,7 +188,7 @@ export function StageListCard({
                 {stage.id === "specimen-papers" ? (
                   <span
                     className={cn(
-                      "text-lg font-semibold tracking-wide sm:text-xl",
+                      "text-base font-medium sm:text-lg",
                       isUnlocked ? "text-text-muted" : "text-text-disabled",
                     )}
                   >
@@ -182,7 +197,7 @@ export function StageListCard({
                 ) : (
                   <span
                     className={cn(
-                      "text-lg font-semibold tracking-wide sm:text-xl",
+                      "text-base font-medium sm:text-lg",
                       isUnlocked ? "text-text-muted" : "text-text-disabled",
                     )}
                   >
@@ -198,14 +213,14 @@ export function StageListCard({
                     stage.parts.every((p) => p.examType === "Official");
                   if (allSpecimen) {
                     return (
-                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
                         Specimen
                       </span>
                     );
                   }
                   if (allOfficial) {
                     return (
-                      <span className="rounded-organic-sm bg-surface-mid px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-text-muted">
+                      <span className="rounded-organic-sm bg-surface-mid px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
                         Official
                       </span>
                     );
@@ -215,32 +230,44 @@ export function StageListCard({
               </div>
 
               {totalCount > 0 ? (
-                <div
-                  className={cn(
-                    "flex-shrink-0 whitespace-nowrap text-[0.85rem]",
-                    isUnlocked ? "text-text-muted" : "text-text-disabled",
-                  )}
-                >
-                  {completedCount}/{totalCount} parts completed
+                <div className="flex min-w-[5.5rem] items-center gap-2">
+                  <div
+                    className="h-1 flex-1 overflow-hidden rounded-full bg-surface-mid"
+                    aria-hidden
+                  >
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-signature",
+                        PAST_PAPERS_PROGRESS_FILL,
+                      )}
+                      style={{ width: `${completionPct}%` }}
+                    />
+                  </div>
+                  <span
+                    className={cn(
+                      "shrink-0 text-xs tabular-nums",
+                      isUnlocked ? "text-text-muted" : "text-text-disabled",
+                    )}
+                  >
+                    {completedCount}/{totalCount}
+                  </span>
                 </div>
               ) : null}
             </div>
           </div>
 
           <div className="flex shrink-0 items-center">
-            {!isUnlocked ? (
-              <Lock className="h-5 w-5 text-text-disabled" aria-hidden />
-            ) : (
+            {isUnlocked ? (
               <motion.div
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <ChevronDown
-                  className="h-5 w-5 text-text-muted"
+                  className="h-4 w-4 text-text-muted"
                   aria-hidden
                 />
               </motion.div>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -253,10 +280,10 @@ export function StageListCard({
               transition={{ duration: 0.28, ease: "easeInOut" }}
               className="overflow-hidden bg-surface-mid"
             >
-              <div className="p-5 pt-4 sm:p-6 sm:pt-5">
+              <div className="p-4 pt-3 sm:p-5 sm:pt-4">
                 <div
                   className={cn(
-                    "space-y-3 rounded-organic-lg p-4",
+                    "space-y-3 rounded-organic-lg p-3",
                     getExamAccentSurfaceClass(stage.examName),
                   )}
                 >
@@ -421,7 +448,7 @@ export function StageListCard({
                     onClick={handleStartSession}
                     disabled={selectedParts.size === 0}
                     className={cn(
-                      "flex w-full items-center justify-center gap-3 rounded-organic-lg px-6 py-3.5 text-sm font-semibold transition-all duration-fast ease-signature",
+                      "flex w-full items-center justify-center gap-3 rounded-organic-lg px-5 py-3 text-sm font-semibold transition-all duration-fast ease-signature",
                       selectedParts.size === 0
                         ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
                         : cn(
