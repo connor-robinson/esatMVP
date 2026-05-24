@@ -204,6 +204,13 @@ def cmd_reset_graph_gate(ns: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_apply_migration(ns: argparse.Namespace) -> int:
+    from quality_gate.db_migrate import apply_migration
+
+    apply_migration(ns.name, verify=not ns.skip_verify)
+    return 0
+
+
 def cmd_counts(ns: argparse.Namespace) -> int:
     from quality_gate.runner import init_env
     from quality_gate.supabase_io import get_supabase, summarize_quality_gate_job
@@ -358,6 +365,24 @@ def main() -> int:
     )
     g.add_argument("--dry-run", action="store_true", help="Print count only; do not update")
     g.set_defaults(func=cmd_reset_graph_gate)
+
+    mig = sub.add_parser(
+        "apply-migration",
+        help="Apply a quality-gate DB migration via Supabase CLI (linked project)",
+        epilog="Requires: repo linked with `npx supabase link` from repo root.",
+    )
+    mig.add_argument(
+        "name",
+        nargs="?",
+        default="move_to_math2",
+        help="Migration name (default: move_to_math2)",
+    )
+    mig.add_argument(
+        "--skip-verify",
+        action="store_true",
+        help="Do not query pg_constraint after applying",
+    )
+    mig.set_defaults(func=cmd_apply_migration)
 
     m = sub.add_parser(
         "generate-missing-svgs",
