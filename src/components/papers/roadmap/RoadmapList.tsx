@@ -240,7 +240,7 @@ export function RoadmapList({
   return (
     <div
       ref={containerRef}
-      className="relative w-full space-y-4 overflow-visible sm:space-y-5"
+      className="relative w-full space-y-3 overflow-visible"
     >
       {nodes.map((node, index) => {
         const stageCompletionData =
@@ -270,8 +270,6 @@ export function RoadmapList({
               completedCount={node.completedCount}
               totalCount={node.totalCount}
               isUnlocked={node.isUnlocked}
-              isCurrent={node.isCurrent}
-              isCompleted={node.isCompleted}
               isExpanded={expandedStageId === node.stage.id}
               onToggleExpand={() => setExpandedStageId(expandedStageId === node.stage.id ? null : node.stage.id)}
               completionData={stageCompletionData}

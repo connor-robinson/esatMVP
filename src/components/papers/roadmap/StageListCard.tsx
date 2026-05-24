@@ -18,8 +18,6 @@ import { cn } from "@/lib/utils";
 import {
   getExamAccentTextClass,
   getExamAccentFillClass,
-  getExamAccentSurfaceClass,
-  getExamProgressFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 
@@ -29,8 +27,6 @@ interface StageListCardProps {
   completedCount: number;
   totalCount: number;
   isUnlocked: boolean;
-  isCurrent?: boolean;
-  isCompleted?: boolean;
   isExpanded: boolean;
   onToggleExpand: () => void;
   completionData: Map<string, boolean>;
@@ -44,8 +40,6 @@ export function StageListCard({
   completedCount,
   totalCount,
   isUnlocked,
-  isCurrent = false,
-  isCompleted = false,
   isExpanded,
   onToggleExpand,
   completionData,
@@ -112,9 +106,6 @@ export function StageListCard({
     }
   };
 
-  const completionPct =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
   return (
     <div className="relative overflow-visible font-sans">
       {timelineNodeY !== undefined && (
@@ -132,38 +123,23 @@ export function StageListCard({
       <motion.div
         layout
         className={cn(
-          "relative flex flex-col overflow-hidden rounded-organic-xl transition-colors duration-fast ease-signature",
+          "relative flex flex-col overflow-hidden rounded-organic-lg transition-colors duration-fast ease-signature",
           isUnlocked
-            ? cn(
-                "cursor-pointer bg-surface-elevated hover:bg-surface",
-                isCompleted && "opacity-90",
-              )
-            : "cursor-not-allowed bg-surface-mid opacity-60",
+            ? "cursor-pointer bg-surface-elevated"
+            : "cursor-not-allowed bg-surface-mid opacity-70",
         )}
         onClick={handleCardClick}
       >
-        {isCurrent && isUnlocked ? (
+        <div className="flex items-center gap-3 px-4 py-3.5 sm:px-5 sm:py-4">
           <div
             className={cn(
-              "absolute bottom-3 left-0 top-3 w-1 rounded-r-full",
-              getExamAccentFillClass(stage.examName),
-            )}
-            aria-hidden
-          />
-        ) : null}
-
-        <div className="flex items-center gap-3.5 p-4 sm:gap-4 sm:p-5">
-          <div
-            className={cn(
-              "relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md text-base font-bold tabular-nums transition-colors",
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-organic-md text-base font-bold tabular-nums",
               isUnlocked
                 ? getExamAccentFillClass(stage.examName)
                 : "bg-surface-neutral text-text-disabled",
             )}
           >
-            {isCompleted && isUnlocked ? (
-              <Check className="h-4 w-4 stroke-[3]" aria-hidden />
-            ) : isUnlocked ? (
+            {isUnlocked ? (
               index + 1
             ) : (
               <Lock
@@ -175,83 +151,35 @@ export function StageListCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="min-w-0 truncate">
                 <span
                   className={cn(
-                    "text-base font-semibold sm:text-lg",
+                    "font-semibold",
                     isUnlocked ? getExamAccentTextClass(stage.examName) : "text-text-disabled",
                   )}
                 >
                   {stage.examName}
                 </span>
-                {stage.id === "specimen-papers" ? (
-                  <span
-                    className={cn(
-                      "text-base font-medium sm:text-lg",
-                      isUnlocked ? "text-text-muted" : "text-text-disabled",
-                    )}
-                  >
-                    Specimen
-                  </span>
-                ) : (
-                  <span
-                    className={cn(
-                      "text-base font-medium sm:text-lg",
-                      isUnlocked ? "text-text-muted" : "text-text-disabled",
-                    )}
-                  >
-                    {stage.year}
-                  </span>
-                )}
-                {(() => {
-                  const allSpecimen =
-                    stage.parts.length > 0 &&
-                    stage.parts.every((p) => p.examType === "Specimen");
-                  const allOfficial =
-                    stage.parts.length > 0 &&
-                    stage.parts.every((p) => p.examType === "Official");
-                  if (allSpecimen) {
-                    return (
-                      <span className="rounded-organic-sm bg-surface-mid px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
-                        Specimen
-                      </span>
-                    );
-                  }
-                  if (allOfficial) {
-                    return (
-                      <span className="rounded-organic-sm bg-surface-mid px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
-                        Official
-                      </span>
-                    );
-                  }
-                  return null;
-                })()}
-              </div>
+                <span
+                  className={cn(
+                    "ml-2 font-medium",
+                    isUnlocked ? "text-text-muted" : "text-text-disabled",
+                  )}
+                >
+                  {stage.id === "specimen-papers" ? "Specimen" : stage.year}
+                </span>
+              </p>
 
               {totalCount > 0 ? (
-                <div className="flex min-w-[5.5rem] items-center gap-2">
-                  <div
-                    className="h-1 flex-1 overflow-hidden rounded-full bg-surface-mid"
-                    aria-hidden
-                  >
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all duration-500 ease-signature",
-                        getExamProgressFillClass(stage.examName),
-                      )}
-                      style={{ width: `${completionPct}%` }}
-                    />
-                  </div>
-                  <span
-                    className={cn(
-                      "shrink-0 text-xs tabular-nums",
-                      isUnlocked ? "text-text-muted" : "text-text-disabled",
-                    )}
-                  >
-                    {completedCount}/{totalCount}
-                  </span>
-                </div>
+                <span
+                  className={cn(
+                    "shrink-0 text-xs tabular-nums",
+                    isUnlocked ? "text-text-muted" : "text-text-disabled",
+                  )}
+                >
+                  {completedCount}/{totalCount}
+                </span>
               ) : null}
             </div>
           </div>
@@ -278,19 +206,13 @@ export function StageListCard({
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.28, ease: "easeInOut" }}
-              className="overflow-hidden bg-surface-mid"
+              className="overflow-hidden border-t border-border-subtle/40"
             >
-              <div className="p-4 pt-3 sm:p-5 sm:pt-4">
-                <div
-                  className={cn(
-                    "space-y-3 rounded-organic-lg p-3",
-                    getExamAccentSurfaceClass(stage.examName),
-                  )}
-                >
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-text-muted">
-                      Select parts to practice
-                    </span>
+              <div className="space-y-4 px-4 py-4 sm:px-5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-text-muted">
+                    Select parts
+                  </span>
                     <button
                       type="button"
                       onClick={handleSelectAll}
@@ -384,7 +306,7 @@ export function StageListCard({
                                           } as React.MouseEvent);
                                         }
                                       }}
-                                      className="flex cursor-pointer items-center gap-3 rounded-organic-md bg-surface-elevated p-3 text-sm transition-colors duration-fast ease-signature hover:bg-surface"
+                                      className="flex cursor-pointer items-center gap-3 rounded-organic-md bg-surface-mid px-3 py-2.5 text-sm transition-colors duration-fast ease-signature hover:bg-surface-neutral"
                                       onClick={(e) => handlePartToggle(partKey, e)}
                                     >
                                       <div
@@ -392,7 +314,7 @@ export function StageListCard({
                                           "flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors duration-fast ease-signature",
                                           isSelected
                                             ? getExamAccentFillClass(stage.examName)
-                                            : "bg-surface-mid",
+                                            : "bg-surface-elevated",
                                         )}
                                       >
                                         {isSelected ? (
@@ -448,7 +370,7 @@ export function StageListCard({
                     onClick={handleStartSession}
                     disabled={selectedParts.size === 0}
                     className={cn(
-                      "flex w-full items-center justify-center gap-3 rounded-organic-lg px-5 py-3 text-sm font-semibold transition-all duration-fast ease-signature",
+                      "flex w-full items-center justify-center gap-2 rounded-organic-md px-4 py-3 text-sm font-semibold transition-all duration-fast ease-signature",
                       selectedParts.size === 0
                         ? "cursor-not-allowed bg-surface-neutral text-text-disabled"
                         : cn(
@@ -457,10 +379,9 @@ export function StageListCard({
                           ),
                     )}
                   >
-                    <span>Start Practice Session</span>
+                    <span>Start session</span>
                     <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                   </button>
-                </div>
               </div>
             </motion.div>
           )}
