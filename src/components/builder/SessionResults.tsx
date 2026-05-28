@@ -822,6 +822,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     ? "rounded-organic-lg bg-surface-elevated"
     : "rounded-organic-lg border border-border bg-surface-elevated";
 
+  const scoreOverviewCard = mentalMathUi
+    ? "rounded-organic-lg bg-success/10"
+    : resultsCard;
+
   const highlightedSessionClass = mentalMathUi
     ? "bg-success/10 ring-[3px] ring-success"
     : "bg-primary/10 ring-1 ring-primary/20";
@@ -878,11 +882,22 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             transition={{ delay: 0.1 }}
             className="lg:col-span-1"
           >
-            <div className={`h-full p-6 ${resultsCard}`}>
+            <div className={cn("h-full p-6", scoreOverviewCard)}>
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-warning" aria-hidden />
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  <Trophy
+                    className={cn(
+                      "h-4 w-4",
+                      mentalMathUi ? "text-success" : "text-warning",
+                    )}
+                    aria-hidden
+                  />
+                  <div
+                    className={cn(
+                      "text-[11px] font-semibold uppercase tracking-wider",
+                      mentalMathUi ? "text-success/90" : "text-text-muted",
+                    )}
+                  >
                     Session score
                   </div>
                 </div>
@@ -895,7 +910,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   <Info className="h-4 w-4" />
                 </button>
               </div>
-              <div className="mb-2 font-bold tabular-nums text-4xl leading-none text-warning sm:text-5xl">
+              <div
+                className={cn(
+                  "mb-2 font-bold tabular-nums text-4xl leading-none sm:text-5xl",
+                  mentalMathUi ? "text-success" : "text-warning",
+                )}
+              >
                 {result.score}
               </div>
               <div className="text-xs text-text-subtle">
