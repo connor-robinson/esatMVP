@@ -42,10 +42,11 @@ export type LeaderboardDisplayItem =
   | { type: "ellipsis" };
 
 /**
- * Leaderboard window: #1, then "…" when needed, then context around the current session.
- * - Default: one row above and one below the user
- * - User is #1: also show two below
- * - User is last: show two above (still always includes #1)
+ * Leaderboard window by rank number (not list index — ties can share a rank).
+ * Example at rank 54: #1 → … → #53 → #54 (you) → #55.
+ * - Default: ranks current−1, current, current+1, plus #1
+ * - User is #1: also ranks 2 and 3
+ * - User is last: ranks max−2, max−1, max, plus #1
  */
 export function buildLeaderboardWindow(
   rankings: LeaderboardRankingRow[],
@@ -53,42 +54,52 @@ export function buildLeaderboardWindow(
 ): LeaderboardDisplayItem[] {
   if (rankings.length === 0) return [];
 
-  const currentIndex = rankings.findIndex(
+  const currentEntry = rankings.find(
     (r) =>
       r.isCurrent ||
       (currentSessionId &&
         (r.builder_session_id === currentSessionId || r.id === currentSessionId)),
   );
+  const currentRank = currentEntry?.rank ?? null;
+  const maxRank = Math.max(...rankings.map((r) => r.rank));
 
-  const indices = new Set<number>();
-  indices.add(0);
+  const ranksToShow = new Set<number>();
+  ranksToShow.add(1);
 
-  if (currentIndex < 0) {
-    if (rankings.length > 1) indices.add(1);
-    if (rankings.length > 2) indices.add(2);
-  } else if (currentIndex === 0) {
-    if (rankings.length > 1) indices.add(1);
-    if (rankings.length > 2) indices.add(2);
-  } else if (currentIndex === rankings.length - 1) {
-    if (currentIndex >= 2) indices.add(currentIndex - 2);
-    if (currentIndex >= 1) indices.add(currentIndex - 1);
-    indices.add(currentIndex);
+  if (currentRank === null) {
+    ranksToShow.add(2);
+    ranksToShow.add(3);
+  } else if (currentRank === 1) {
+    ranksToShow.add(2);
+    ranksToShow.add(3);
+  } else if (currentRank === maxRank) {
+    if (currentRank >= 3) ranksToShow.add(currentRank - 2);
+    if (currentRank >= 2) ranksToShow.add(currentRank - 1);
+    ranksToShow.add(currentRank);
   } else {
-    indices.add(currentIndex - 1);
-    indices.add(currentIndex);
-    indices.add(currentIndex + 1);
+    ranksToShow.add(currentRank - 1);
+    ranksToShow.add(currentRank);
+    ranksToShow.add(currentRank + 1);
   }
 
-  const sorted = [...indices].sort((a, b) => a - b);
-  const items: LeaderboardDisplayItem[] = [];
-  let prev = -1;
+  for (const r of [...ranksToShow]) {
+    if (r < 1) ranksToShow.delete(r);
+  }
 
-  for (const idx of sorted) {
-    if (prev >= 0 && idx - prev > 1) {
+  const items: LeaderboardDisplayItem[] = [];
+  let lastRankShown = 0;
+
+  for (let i = 0; i < rankings.length; i++) {
+    const entry = rankings[i];
+    const include = i === 0 || ranksToShow.has(entry.rank);
+    if (!include) continue;
+
+    if (lastRankShown > 0 && entry.rank - lastRankShown > 1) {
       items.push({ type: "ellipsis" });
     }
-    items.push({ type: "entry", entry: rankings[idx] });
-    prev = idx;
+
+    items.push({ type: "entry", entry });
+    lastRankShown = entry.rank;
   }
 
   return items;
