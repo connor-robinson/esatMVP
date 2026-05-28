@@ -39,7 +39,7 @@ interface TopicSessionStats {
  */
 function calculateTopicStats(
   attempts: QuestionAttempt[],
-  questionTopics: { topicId: string; variantId?: string }[]
+  questionTopics: SessionData["questionTopics"],
 ): Map<string, TopicSessionStats> {
   const topicMap = new Map<string, TopicSessionStats>();
 
