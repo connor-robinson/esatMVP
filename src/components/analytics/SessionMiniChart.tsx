@@ -19,8 +19,8 @@ interface SessionMiniChartProps {
   data: SessionProgressPoint[];
 }
 
-/** Figma Session Progress — accuracy line (accent teal), speed line (warning). */
-const ACCURACY_LINE = "var(--color-accent)";
+/** Session progress — accuracy (green), speed (warning). */
+const ACCURACY_LINE = "var(--color-success)";
 const SPEED_LINE = "var(--color-warning)";
 const CHART_GRID = "var(--color-border-subtle)";
 const CHART_AXIS = "var(--color-border)";
