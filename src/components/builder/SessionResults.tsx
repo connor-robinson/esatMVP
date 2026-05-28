@@ -284,8 +284,76 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     // For global view, use column-based layout
     if (isGlobalView) {
       const scorePercentage = (session.score / 1000) * 100;
-      // Show progress bar only for top 3 or current attempt
       const showProgressBar = session.rank <= 3 || isHighlighted;
+
+      if (mentalMathUi) {
+        return (
+          <motion.div
+            key={session.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.03 }}
+            className={cn(
+              "relative overflow-hidden rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
+              isHighlighted ? highlightedSessionClass : "bg-surface-subtle/80 hover:bg-surface-mid/70",
+            )}
+          >
+            {showProgressBar && (
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-border-subtle/60">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${scorePercentage}%` }}
+                  transition={{ duration: 0.8, delay: idx * 0.05 }}
+                  className="h-full bg-success/45"
+                />
+              </div>
+            )}
+            <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+              <div
+                className={cn(
+                  "w-8 shrink-0 text-center text-sm font-bold tabular-nums",
+                  isHighlighted ? "text-success" : "text-text-muted",
+                  topicStatsFontClass,
+                )}
+              >
+                {session.rank}
+              </div>
+              <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-mid">
+                  {session.avatar ? (
+                    <img
+                      src={session.avatar}
+                      alt={session.username}
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `<span class="text-xs font-medium text-text-muted">${getInitials(session.username)}</span>`;
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span className="text-xs font-medium text-text-muted">
+                      {getInitials(session.username)}
+                    </span>
+                  )}
+                </div>
+                <span className="truncate text-sm font-medium text-text">{session.username}</span>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className={cn("text-2xl font-bold tabular-nums leading-none text-text", topicStatsFontClass)}>
+                  {session.score}
+                </div>
+                <div className={cn("mt-0.5 text-[11px] text-text-muted", topicStatsFontClass)}>
+                  {session.accuracy.toFixed(0)}% · {session.correctAnswers}/{session.totalQuestions}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        );
+      }
       
       return (
         <motion.div
@@ -295,9 +363,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           transition={{ delay: idx * 0.03 }}
             className={cn(
               "relative overflow-hidden rounded-organic-md p-5 transition-colors",
-              mentalMathUi && "rounded-organic-lg sm:p-6",
               isHighlighted
-                ? "bg-primary/10 ring-1 ring-primary/20"
+                ? highlightedSessionClass
                 : "bg-surface-subtle hover:bg-surface-mid/80",
             )}
         >
@@ -402,6 +469,47 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     }
 
     // For personal view, keep the original layout
+    if (mentalMathUi) {
+      return (
+        <motion.div
+          key={session.id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: idx * 0.03 }}
+          className={cn(
+            "rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
+            isHighlighted ? highlightedSessionClass : "bg-surface-subtle/80 hover:bg-surface-mid/70",
+          )}
+        >
+          <div className="flex items-center gap-4">
+            <div
+              className={cn(
+                "w-9 shrink-0 text-center text-sm font-bold tabular-nums",
+                isHighlighted ? "text-success" : "text-text-muted",
+                topicStatsFontClass,
+              )}
+            >
+              {session.rank}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className={cn("text-3xl font-bold tabular-nums leading-none text-text", topicStatsFontClass)}>
+                {session.score}
+              </div>
+              <div className={cn("mt-1 text-xs text-text-muted", topicStatsFontClass)}>/ 1000</div>
+            </div>
+            <div className="shrink-0 text-right">
+              <div className={cn("text-lg font-bold tabular-nums text-success", topicStatsFontClass)}>
+                {session.accuracy.toFixed(0)}%
+              </div>
+              <div className={cn("mt-0.5 text-xs text-text-muted", topicStatsFontClass)}>
+                {session.correctAnswers}/{session.totalQuestions} correct
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
     return (
       <motion.div
         key={session.id}
@@ -409,10 +517,11 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: idx * 0.03 }}
         className={cn(
-          "rounded-organic-md border border-border-subtle bg-surface-mid transition-colors",
+          sessionRowSurface,
+          "transition-colors",
           mentalMathUi ? "p-4 sm:p-5" : "p-3",
           isHighlighted
-            ? "ring-1 ring-primary/20 bg-primary/10"
+            ? highlightedSessionClass
             : "hover:bg-surface-neutral/60",
         )}
       >
@@ -503,7 +612,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       };
       
       return (
-        <div className="space-y-4">
+        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
           {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
         </div>
       );
@@ -599,14 +708,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           username: "You",
         };
         return (
-          <div className="space-y-4">
+          <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
             {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
           </div>
         );
       }
 
       return (
-        <div className="space-y-4">
+        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
           {cards}
         </div>
       );
@@ -620,7 +729,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         arrayLength: data.length,
       });
       return (
-        <div className="space-y-4">
+        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
           {data.slice(0, 10).map((sessionData: any, idx: number) => 
             renderSingleCard(sessionData, isGlobalView, idx, topicName, session.id)
           )}
@@ -638,8 +747,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       ? `Mental math session • ${result.totalQuestions} ${result.totalQuestions === 1 ? "question" : "questions"}`
       : `${mode.replace("-", " ")} session • ${result.totalQuestions} questions`;
 
-  const resultsCard =
-    "rounded-organic-lg border border-border bg-surface-elevated";
+  const resultsCard = mentalMathUi
+    ? "rounded-organic-xl bg-surface-mid/35"
+    : "rounded-organic-lg border border-border bg-surface-elevated";
+
+  const highlightedSessionClass = mentalMathUi
+    ? "bg-success/12 ring-[3px] ring-success/60"
+    : "bg-primary/10 ring-1 ring-primary/20";
+
+  const sessionRowSurface = mentalMathUi
+    ? "rounded-organic-lg bg-surface-subtle/80"
+    : "rounded-organic-md border border-border-subtle bg-surface-mid";
 
   return (
     <div className="min-h-screen bg-background">
@@ -647,7 +765,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         {/* Header */}
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="mb-2 font-heading text-3xl font-bold tracking-tight text-text sm:text-4xl">
+            <h1
+              className={cn(
+                "mb-2 font-heading font-bold tracking-tight text-text",
+                mentalMathUi ? "text-2xl sm:text-3xl" : "text-3xl sm:text-4xl",
+              )}
+            >
               Session Complete! 🎉
             </h1>
             <p className="text-sm text-text-muted sm:text-base">{sessionSubtitle}</p>
@@ -662,7 +785,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               variant="secondary"
               size="sm"
               onClick={onBackToBuilder}
-              className="rounded-organic-md border-border bg-surface-mid px-4 py-2 text-sm font-semibold text-text shadow-sm hover:bg-surface-neutral"
+              className={cn(
+                "rounded-organic-md px-4 py-2 text-sm font-semibold text-text",
+                mentalMathUi
+                  ? "bg-surface-mid hover:bg-surface-neutral"
+                  : "border-border bg-surface-mid shadow-sm hover:bg-surface-neutral",
+              )}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Start new session
@@ -902,20 +1030,49 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       transition={{ delay: 0.5 + idx * 0.1 }}
                       className={cn(
                         mentalMathUi &&
-                          "rounded-organic-xl bg-surface-mid/20 p-5 shadow-sm sm:p-6 dark:bg-surface-mid/15",
+                          "rounded-organic-xl bg-surface-mid/25 p-4 sm:p-5",
                       )}
                     >
                       {/* Topic Header */}
-                      <div className={cn("mb-6", mentalMathUi && "mb-5")}>
-                        <h3
+                      <div className={cn("mb-4", mentalMathUi && "mb-4")}>
+                        <div
                           className={cn(
-                            "mb-1 text-xl font-bold capitalize text-text",
-                            mentalMathUi ? "font-sans tracking-tight" : "font-heading",
+                            "flex flex-wrap items-end justify-between gap-3",
+                            mentalMathUi && "gap-4",
                           )}
                         >
-                          {topicName}
-                        </h3>
-                        {isGlobalView && (
+                          <h3
+                            className={cn(
+                              "font-bold capitalize text-text",
+                              mentalMathUi
+                                ? "font-sans text-lg tracking-tight sm:text-xl"
+                                : "mb-1 font-heading text-xl",
+                            )}
+                          >
+                            {topicName}
+                          </h3>
+                          {mentalMathUi && (
+                            <div className="text-right">
+                              <div
+                                className={cn(
+                                  "text-3xl font-bold tabular-nums leading-none text-text",
+                                  topicStatsFontClass,
+                                )}
+                              >
+                                {topic.score}
+                              </div>
+                              <div
+                                className={cn(
+                                  "mt-1 text-xs text-text-muted",
+                                  topicStatsFontClass,
+                                )}
+                              >
+                                {topic.accuracy.toFixed(0)}% · {topic.correct}/{topic.total}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        {isGlobalView && !mentalMathUi && (
                           <div
                             className={cn(
                               "mt-4 grid grid-cols-12 items-center gap-3 gap-y-2 sm:gap-4",
@@ -1072,7 +1229,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     Your session score (0-1000) is calculated based on three weighted factors:
                   </p>
 
-                  <div className="space-y-4">
+                  <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
                     <div className="flex gap-4">
                       <div className="font-mono text-primary font-bold">50%</div>
                       <div>
