@@ -8,7 +8,7 @@ import { buildDisplayFolders } from '@/config/drillDisplayFolders';
 import { getTopic } from '@/config/topics';
 import { SESSION_FALLBACK_TOPIC_ID } from '@/lib/analytics';
 
-const ALL_CATEGORIES: HighLevelCategory[] = [
+export const ANALYTICS_CATEGORY_ORDER: HighLevelCategory[] = [
   'arithmetic',
   'algebra',
   'geometry',
@@ -17,6 +17,20 @@ const ALL_CATEGORIES: HighLevelCategory[] = [
   'trigonometry',
   'physics',
 ];
+
+export const ANALYTICS_CATEGORY_LABELS: Record<HighLevelCategory, string> = {
+  arithmetic: 'Arithmetic',
+  algebra: 'Algebra',
+  geometry: 'Geometry',
+  number_theory: 'Number Theory',
+  shortcuts: 'Shortcuts',
+  trigonometry: 'Trigonometry',
+  physics: 'Physics',
+};
+
+export const CATEGORY_FILTER_PREFIX = 'category:';
+
+const ALL_CATEGORIES = ANALYTICS_CATEGORY_ORDER;
 
 export type DisplayFolderRef = {
   id: string;
@@ -116,4 +130,60 @@ export function normalizeTopicIdsToFolders(rawTopicIds: string[]): string[] {
     ids.add(resolveDisplayFolderForTopic(id).folderId);
   }
   return [...ids];
+}
+
+export function isCategoryFilter(value: string): boolean {
+  return value.startsWith(CATEGORY_FILTER_PREFIX);
+}
+
+export function parseCategoryFromFilter(
+  value: string,
+): HighLevelCategory | null {
+  if (!isCategoryFilter(value)) return null;
+  const id = value.slice(CATEGORY_FILTER_PREFIX.length) as HighLevelCategory;
+  return ANALYTICS_CATEGORY_ORDER.includes(id) ? id : null;
+}
+
+export function categoryFilterValue(category: HighLevelCategory): string {
+  return `${CATEGORY_FILTER_PREFIX}${category}`;
+}
+
+export function getDisplayFoldersGroupedByCategory(): Record<
+  HighLevelCategory,
+  DisplayFolderRef[]
+> {
+  ensureRegistry();
+  const grouped = Object.fromEntries(
+    ANALYTICS_CATEGORY_ORDER.map((c) => [c, [] as DisplayFolderRef[]]),
+  ) as Record<HighLevelCategory, DisplayFolderRef[]>;
+
+  for (const folder of folders!) {
+    grouped[folder.category].push(folder);
+  }
+  return grouped;
+}
+
+export function getFolderIdsForCategory(category: HighLevelCategory): string[] {
+  return getDisplayFoldersGroupedByCategory()[category].map((f) => f.id);
+}
+
+export function getAnalyticsFilterLabel(value: string): string {
+  if (value === 'all') return 'All topics';
+  const category = parseCategoryFromFilter(value);
+  if (category) return ANALYTICS_CATEGORY_LABELS[category];
+  return getDisplayFolderName(value);
+}
+
+/** Whether a session summary matches the analytics topic filter. */
+export function sessionMatchesAnalyticsFilter(
+  sessionTopicIds: string[],
+  filter: string,
+): boolean {
+  if (filter === 'all') return true;
+  const category = parseCategoryFromFilter(filter);
+  if (category) {
+    const folderSet = new Set(getFolderIdsForCategory(category));
+    return sessionTopicIds.some((id) => folderSet.has(id));
+  }
+  return sessionTopicIds.includes(filter);
 }

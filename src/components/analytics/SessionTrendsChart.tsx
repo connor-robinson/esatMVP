@@ -13,7 +13,8 @@ import {
 } from "recharts";
 import { ChevronDown } from "lucide-react";
 import { SessionSummary } from "@/types/analytics";
-import { getDisplayFolderName } from "@/lib/display-folder-registry";
+import { sessionMatchesAnalyticsFilter } from "@/lib/display-folder-registry";
+import { AnalyticsTopicFilter } from "@/components/analytics/AnalyticsTopicFilter";
 import { buildSmoothedTrendSeries } from "@/lib/analytics/sessionTrendSmoothing";
 import { cn } from "@/lib/utils";
 
@@ -125,7 +126,9 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
   const chartData = useMemo((): ChartRow[] => {
     let list = [...sessions];
     if (topicFilter !== "all") {
-      list = list.filter((s) => s.topicIds.includes(topicFilter));
+      list = list.filter((s) =>
+        sessionMatchesAnalyticsFilter(s.topicIds, topicFilter),
+      );
     }
     list.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
@@ -205,22 +208,11 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
           </select>
           <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
         </div>
-        <div className="relative shrink-0">
-          <select
-            value={topicFilter}
-            onChange={(e) => setTopicFilter(e.target.value)}
-            className={cn(analyticsSelectClass, "min-w-[140px]")}
-            aria-label="Filter by topic"
-          >
-            <option value="all">All topics</option>
-            {topicIds.map((id) => (
-              <option key={id} value={id}>
-                {getDisplayFolderName(id)}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
-        </div>
+        <AnalyticsTopicFilter
+          value={topicFilter}
+          onChange={setTopicFilter}
+          practicedFolderIds={topicIds}
+        />
         {useSmoothedTrend && (
           <p className="text-xs text-text-muted sm:ml-auto">
             Smoothed trend; unusual sessions are de-emphasised.
