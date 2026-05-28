@@ -10,13 +10,16 @@ import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { BuilderSession, QuestionAttempt } from "@/types/core";
-import { getTopic } from "@/config/topics";
 import {
   calculateSessionScore,
   averageQuestionDifficulty,
   fetchTopicRankings,
   SESSION_FALLBACK_TOPIC_ID,
 } from "@/lib/analytics";
+import {
+  resolveDisplayFolderForTopic,
+  getDisplayFolderName,
+} from "@/lib/display-folder-registry";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { 
   ArrowLeft, 
@@ -77,8 +80,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
     attempts.forEach((attempt) => {
       const question = questionMap.get(attempt.questionId);
-      const topicId =
+      const rawTopicId =
         question?.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
+      const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
 
       const difficulty = question?.difficulty ?? 2;
       sessionDifficulties.push(difficulty);
@@ -1033,14 +1037,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
               <div className={cn(mentalMathUi ? "space-y-10" : "space-y-8")}>
                 {result.topicBreakdown.map((topic, idx) => {
-                  const topicInfo = getTopic(topic.topicId);
-                  if (!topicInfo && topic.topicId !== SESSION_FALLBACK_TOPIC_ID) {
-                    console.warn(`[SessionResults] Topic not found for topicId: ${topic.topicId}`);
-                  }
-                  const topicName =
-                    topic.topicId === SESSION_FALLBACK_TOPIC_ID
-                      ? "General"
-                      : topicInfo?.name || topic.topicId;
+                  const topicName = getDisplayFolderName(topic.topicId);
                   const isGlobalView = rankingView === "global";
 
                   return (

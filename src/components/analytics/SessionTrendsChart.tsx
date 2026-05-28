@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { ChevronDown } from "lucide-react";
 import { SessionSummary } from "@/types/analytics";
-import { TOPICS } from "@/config/topics";
+import { getDisplayFolderName } from "@/lib/display-folder-registry";
 import { buildSmoothedTrendSeries } from "@/lib/analytics/sessionTrendSmoothing";
 import { cn } from "@/lib/utils";
 
@@ -215,7 +215,7 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
             <option value="all">All topics</option>
             {topicIds.map((id) => (
               <option key={id} value={id}>
-                {TOPICS[id]?.name ?? id}
+                {getDisplayFolderName(id)}
               </option>
             ))}
           </select>

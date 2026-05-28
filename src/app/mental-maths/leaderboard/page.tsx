@@ -14,17 +14,13 @@ import { calculateLeaderboardScore } from "@/lib/analytics";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
-import { TOPICS } from "@/config/topics";
+import { getAnalyticsFolderOptions, topicIdsForFolderQuery } from "@/lib/display-folder-registry";
 
 const GlobalView = lazy(() =>
   import("@/components/analytics/GlobalView").then((mod) => ({ default: mod.GlobalView })),
 );
 
-// Get all available topics from config
-const AVAILABLE_TOPICS = Object.values(TOPICS).map(topic => ({
-  id: topic.id,
-  name: topic.name,
-}));
+const AVAILABLE_TOPICS = getAnalyticsFolderOptions();
 
 async function fetchLeaderboard(
   supabase: SupabaseClient<Database>,
@@ -36,9 +32,8 @@ async function fetchLeaderboard(
     .from("topic_progress")
     .select("user_id, topic_id, questions_correct, questions_attempted, average_time_ms");
 
-  // Filter by topic if specified
   if (topicId && topicId !== "all") {
-    query = query.eq("topic_id", topicId);
+    query = query.in("topic_id", topicIdsForFolderQuery(topicId));
   }
 
   // OPTIMIZED: Reduced from 500 to 300 for egress optimization (top 300 leaderboard entries)

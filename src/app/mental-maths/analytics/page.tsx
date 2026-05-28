@@ -13,10 +13,14 @@ import type {
   SessionSummary,
 } from "@/types/analytics";
 import { calculateSessionScore, calculateTrend, getTopicExtremes } from "@/lib/analytics";
+import {
+  resolveDisplayFolderForTopic,
+  normalizeTopicIdsToFolders,
+  getDisplayFolderName,
+} from "@/lib/display-folder-registry";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressRow } from "@/lib/supabase/types";
-import { TOPICS } from "@/config/topics";
 
 const PersonalView = lazy(() =>
   import("@/components/analytics/PersonalView").then((mod) => ({ default: mod.PersonalView })),
@@ -128,13 +132,16 @@ async function fetchTopicProgress(
     .select("topic_id")
     .eq("user_id", userId);
 
-  // Count sessions per topic
-  const sessionCountsByTopic = new Map<string, number>();
+  // Count sessions per display folder (legacy topic ids map to folder)
+  const sessionCountsByFolder = new Map<string, number>();
   if (drillSessionsData) {
     drillSessionsData.forEach((ds: any) => {
-      if (ds.topic_id) {
-        sessionCountsByTopic.set(ds.topic_id, (sessionCountsByTopic.get(ds.topic_id) || 0) + 1);
-      }
+      if (!ds.topic_id) return;
+      const { folderId } = resolveDisplayFolderForTopic(ds.topic_id);
+      sessionCountsByFolder.set(
+        folderId,
+        (sessionCountsByFolder.get(folderId) || 0) + 1,
+      );
     });
   }
 
@@ -146,40 +153,60 @@ async function fetchTopicProgress(
   let lastPractice: Date | null = null;
 
   (data as TopicProgressRow[])?.forEach((row) => {
-    const topicId = row.topic_id;
+    const { folderId, folderName } = resolveDisplayFolderForTopic(row.topic_id);
     const questionsAnswered = row.questions_attempted;
     const correct = row.questions_correct;
     const avgTime = row.average_time_ms;
     const lastPracticed = row.last_practiced ? new Date(row.last_practiced) : null;
-    const topicSessionCount = sessionCountsByTopic.get(topicId) || 0;
 
-    // Map topic ID to proper name from TOPICS config
-    const topic = TOPICS[topicId];
-    const topicName = topic?.name || topicId;
-
-    topicStats[topicId] = {
-      topicId,
-      topicName,
-      questionsAnswered,
-      correctAnswers: correct,
-      accuracy: questionsAnswered > 0 ? (correct / questionsAnswered) * 100 : 0,
-      avgSpeed: avgTime,
-      bestSpeed: avgTime,
-      totalTime: questionsAnswered * avgTime,
-      sessionCount: topicSessionCount,
-      rank: row.current_level ?? 0,
-      lastPracticed,
-    };
+    const existing = topicStats[folderId];
+    if (existing) {
+      const prevAnswered = existing.questionsAnswered;
+      const newAnswered = prevAnswered + questionsAnswered;
+      const newCorrect = existing.correctAnswers + correct;
+      const prevTotalTime = existing.totalTime;
+      const newTotalTime = prevTotalTime + questionsAnswered * avgTime;
+      existing.questionsAnswered = newAnswered;
+      existing.correctAnswers = newCorrect;
+      existing.accuracy = newAnswered > 0 ? (newCorrect / newAnswered) * 100 : 0;
+      existing.avgSpeed = newAnswered > 0 ? newTotalTime / newAnswered : 0;
+      existing.bestSpeed = Math.min(existing.bestSpeed, avgTime);
+      existing.totalTime = newTotalTime;
+      existing.sessionCount =
+        sessionCountsByFolder.get(folderId) ?? existing.sessionCount;
+      if (
+        lastPracticed &&
+        (!existing.lastPracticed || lastPracticed > existing.lastPracticed)
+      ) {
+        existing.lastPracticed = lastPracticed;
+      }
+      existing.rank = Math.max(existing.rank ?? 0, row.current_level ?? 0);
+    } else {
+      topicStats[folderId] = {
+        topicId: folderId,
+        topicName: folderName,
+        questionsAnswered,
+        correctAnswers: correct,
+        accuracy: questionsAnswered > 0 ? (correct / questionsAnswered) * 100 : 0,
+        avgSpeed: avgTime,
+        bestSpeed: avgTime,
+        totalTime: questionsAnswered * avgTime,
+        sessionCount: sessionCountsByFolder.get(folderId) || 0,
+        rank: row.current_level ?? 0,
+        lastPracticed,
+      };
+    }
 
     totalQuestions += questionsAnswered;
     correctAnswers += correct;
     totalTime += questionsAnswered * avgTime;
-    sessionCount += topicSessionCount;
 
     if (lastPracticed && (!lastPractice || lastPracticed > lastPractice)) {
       lastPractice = lastPracticed;
     }
   });
+
+  sessionCount = [...sessionCountsByFolder.values()].reduce((a, b) => a + b, 0);
 
   // Calculate real streaks from database
   const streaks = await calculateStreaks(supabase, userId);
@@ -568,12 +595,10 @@ async function fetchRecentSessions(
       // Use calculateSessionScore for individual sessions, not calculateLeaderboardScore
       score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
     }
-    // Get unique topics
-    const topicIds = [...new Set(questions.map((q: any) => q.topic_id).filter(Boolean))];
-    const topicNames = topicIds.map(topicId => {
-      const topic = TOPICS[topicId];
-      return topic?.name || topicId;
-    });
+    const topicIds = normalizeTopicIdsToFolders(
+      questions.map((q: any) => q.topic_id).filter(Boolean),
+    );
+    const topicNames = topicIds.map((id) => getDisplayFolderName(id));
 
     // Get questions map for this session
     const sessionQuestionsMap = questionsMap.get(session.id) || new Map();

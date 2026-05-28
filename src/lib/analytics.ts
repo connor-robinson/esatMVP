@@ -18,6 +18,7 @@ import {
 } from "@/types/analytics";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
+import { topicIdsForFolderQuery } from "@/lib/display-folder-registry";
 
 /** Used when a drill question has no topicId so session totals match per-topic stats and DB saves */
 export const SESSION_FALLBACK_TOPIC_ID = "__session_general__";
@@ -57,11 +58,12 @@ export async function fetchTopicRankings(
   
   if (currentUserId && currentUserId !== "anonymous") {
     console.log(`[fetchTopicRankings] DEBUG: Fetching personal sessions for user ${currentUserId}, topic ${topicId}`);
+    const queryTopicIds = topicIdsForFolderQuery(topicId);
     const result = await supabase
       .from("drill_sessions")
       .select("id, builder_session_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
       .eq("user_id", currentUserId)
-      .eq("topic_id", topicId)
+      .in("topic_id", queryTopicIds)
       .order("created_at", { ascending: false });
     
     personalData = result.data || [];
@@ -98,10 +100,11 @@ export async function fetchTopicRankings(
   console.log(`[fetchTopicRankings] DEBUG: Fetching global sessions for topic ${topicId}`);
   console.log(`[fetchTopicRankings] DEBUG: Query will NOT include profiles join (fetching separately)`);
   
+  const globalQueryTopicIds = topicIdsForFolderQuery(topicId);
   const { data: globalData, error: globalError } = await supabase
     .from("drill_sessions")
     .select("id, builder_session_id, user_id, summary, completed_at, accuracy, average_time_ms, question_count, created_at")
-    .eq("topic_id", topicId)
+    .in("topic_id", globalQueryTopicIds)
     .order("created_at", { ascending: false })
     .limit(10000); // Explicit limit to get all data
 

@@ -10,6 +10,7 @@ import {
   averageQuestionDifficulty,
   SESSION_FALLBACK_TOPIC_ID,
 } from "../analytics";
+import { resolveDisplayFolderForTopic } from "@/lib/display-folder-registry";
 
 interface SessionData {
   sessionId: string;
@@ -43,8 +44,9 @@ function calculateTopicStats(
   const topicMap = new Map<string, TopicSessionStats>();
 
   attempts.forEach((attempt, index) => {
-    const topicId =
+    const rawTopicId =
       questionTopics[index]?.topicId || SESSION_FALLBACK_TOPIC_ID;
+    const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
 
     const meta = questionTopics[index];
     const existing = topicMap.get(topicId) || {
