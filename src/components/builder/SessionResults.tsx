@@ -299,6 +299,39 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         (session.builder_session_id === currentSessionId || session.isCurrent),
     );
 
+    const hlText = isHighlighted
+      ? mentalMathUi
+        ? "text-background dark:text-white"
+        : "text-background"
+      : "text-text";
+    const hlMuted = isHighlighted
+      ? mentalMathUi
+        ? "text-background/85 dark:text-white/90"
+        : "text-background/80"
+      : "text-text-muted";
+    const hlSubtle = isHighlighted
+      ? mentalMathUi
+        ? "text-background/70 dark:text-white/80"
+        : "text-background/70"
+      : "text-text-subtle";
+    const hlRank = isHighlighted
+      ? mentalMathUi
+        ? "text-background dark:text-white"
+        : "text-background"
+      : mentalMathUi
+        ? "text-text-muted"
+        : "text-primary";
+    const hlAccent = isHighlighted
+      ? mentalMathUi
+        ? "text-background dark:text-white"
+        : "text-background"
+      : mentalMathUi
+        ? "text-success"
+        : "text-primary";
+    const hlAvatarBg = isHighlighted
+      ? "bg-background/20 dark:bg-black/20"
+      : "bg-surface-mid";
+
     // For global view, use column-based layout
     if (isGlobalView) {
       const scorePercentage = (session.score / 1000) * 100;
@@ -317,12 +350,20 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             )}
           >
             {showProgressBar && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-border-subtle/60">
+              <div
+                className={cn(
+                  "absolute bottom-0 left-0 right-0 h-1",
+                  isHighlighted ? "bg-black/15" : "bg-border-subtle/60",
+                )}
+              >
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${scorePercentage}%` }}
                   transition={{ duration: 0.8, delay: idx * 0.05 }}
-                  className="h-full bg-success/45"
+                  className={cn(
+                    "h-full",
+                    isHighlighted ? "bg-background/55 dark:bg-white/50" : "bg-success/45",
+                  )}
                 />
               </div>
             )}
@@ -330,14 +371,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div
                 className={cn(
                   "w-8 shrink-0 text-center text-sm font-bold tabular-nums",
-                  isHighlighted ? "text-success" : "text-text-muted",
+                  hlRank,
                   topicStatsFontClass,
                 )}
               >
                 {session.rank}
               </div>
               <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-mid">
+                <div
+                  className={cn(
+                    "flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg",
+                    hlAvatarBg,
+                  )}
+                >
                   {session.avatar ? (
                     <img
                       src={session.avatar}
@@ -348,23 +394,31 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                         target.style.display = "none";
                         const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `<span class="text-xs font-medium text-text-muted">${getInitials(session.username)}</span>`;
+                          parent.innerHTML = `<span class="text-xs font-medium ${isHighlighted ? "text-background/90" : "text-text-muted"}">${getInitials(session.username)}</span>`;
                         }
                       }}
                     />
                   ) : (
-                    <span className="text-xs font-medium text-text-muted">
+                    <span className={cn("text-xs font-medium", hlMuted)}>
                       {getInitials(session.username)}
                     </span>
                   )}
                 </div>
-                <span className="truncate text-sm font-medium text-text">{session.username}</span>
+                <span className={cn("truncate text-sm font-medium", hlText)}>
+                  {session.username}
+                </span>
               </div>
               <div className="shrink-0 text-right">
-                <div className={cn("text-2xl font-bold tabular-nums leading-none text-text", topicStatsFontClass)}>
+                <div
+                  className={cn(
+                    "text-2xl font-bold tabular-nums leading-none",
+                    hlText,
+                    topicStatsFontClass,
+                  )}
+                >
                   {session.score}
                 </div>
-                <div className={cn("mt-0.5 text-[11px] text-text-muted", topicStatsFontClass)}>
+                <div className={cn("mt-0.5 text-[11px]", hlMuted, topicStatsFontClass)}>
                   {session.accuracy.toFixed(0)}% · {session.correctAnswers}/{session.totalQuestions}
                 </div>
               </div>
@@ -402,14 +456,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           <div className="grid grid-cols-12 gap-4 items-center relative z-10">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
-              <div className={cn("text-lg font-bold tabular-nums text-primary", topicStatsFontClass)}>
+              <div className={cn("text-lg font-bold tabular-nums", hlRank, topicStatsFontClass)}>
                 {session.rank}
               </div>
             </div>
 
             {/* Avatar + Name */}
             <div className="col-span-4 flex items-center gap-3 min-w-0">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-mid">
+              <div
+                className={cn(
+                  "flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg",
+                  hlAvatarBg,
+                )}
+              >
                 {session.avatar ? (
                   <img 
                     src={session.avatar} 
@@ -421,17 +480,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       target.style.display = 'none';
                       const parent = target.parentElement;
                       if (parent) {
-                        parent.innerHTML = `<span class="text-xs font-medium text-text-muted">${getInitials(session.username)}</span>`;
+                        parent.innerHTML = `<span class="text-xs font-medium ${isHighlighted ? "text-background/90" : "text-text-muted"}">${getInitials(session.username)}</span>`;
                       }
                     }}
                   />
                 ) : (
-                  <span className="text-xs font-medium text-text-muted">
+                  <span className={cn("text-xs font-medium", hlMuted)}>
                     {getInitials(session.username)}
                   </span>
                 )}
               </div>
-              <span className="truncate text-sm font-medium text-text">
+              <span className={cn("truncate text-sm font-medium", hlText)}>
                 {session.username}
               </span>
             </div>
@@ -439,10 +498,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className={cn("text-base font-bold tabular-nums text-text", topicStatsFontClass)}>
+                <div className={cn("text-base font-bold tabular-nums", hlText, topicStatsFontClass)}>
                   {session.score}
                 </div>
-                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
+                <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>
                   / {mentalMathUi ? 999 : 1000}
                 </div>
               </div>
@@ -451,36 +510,30 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Accuracy */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div
-                  className={cn(
-                    "text-base font-bold",
-                    "text-primary",
-                    topicStatsFontClass,
-                  )}
-                >
+                <div className={cn("text-base font-bold", hlAccent, topicStatsFontClass)}>
                   {session.accuracy.toFixed(0)}%
                 </div>
-                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>accuracy</div>
+                <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>accuracy</div>
               </div>
             </div>
 
             {/* Speed */}
             <div className="col-span-2 flex items-center justify-end">
               <div className="text-right">
-                <div className={cn("text-base font-bold tabular-nums text-text", topicStatsFontClass)}>
+                <div className={cn("text-base font-bold tabular-nums", hlText, topicStatsFontClass)}>
                   {formatTimeMs(session.avgTimeMs)}
                 </div>
-                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>per question</div>
+                <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>per question</div>
               </div>
             </div>
 
             {/* Questions */}
             <div className="col-span-1 flex items-center justify-end">
               <div className="text-right">
-                <div className={cn("text-sm font-semibold tabular-nums text-text", topicStatsFontClass)}>
+                <div className={cn("text-sm font-semibold tabular-nums", hlText, topicStatsFontClass)}>
                   {session.correctAnswers}/{session.totalQuestions}
                 </div>
-                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>correct</div>
+                <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>correct</div>
               </div>
             </div>
           </div>
@@ -505,7 +558,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div
               className={cn(
                 "w-9 shrink-0 text-center text-sm font-bold tabular-nums",
-                isHighlighted ? "text-success" : "text-text-muted",
+                hlRank,
                 topicStatsFontClass,
               )}
             >
@@ -514,20 +567,21 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
               <span
                 className={cn(
-                  "font-bold tabular-nums text-success",
+                  "font-bold tabular-nums",
+                  hlAccent,
                   topicStatsFontClass,
                 )}
               >
                 {session.accuracy.toFixed(0)}%
               </span>
-              <span className={cn("text-text-muted", topicStatsFontClass)}>
+              <span className={cn(hlMuted, topicStatsFontClass)}>
                 {session.correctAnswers}/{session.totalQuestions} correct
               </span>
-              <span className={cn("text-text-muted", topicStatsFontClass)}>
+              <span className={cn(hlMuted, topicStatsFontClass)}>
                 {formatTimeMs(session.avgTimeMs)}/q
               </span>
               {session.timestamp && (
-                <span className={cn("text-xs text-text-subtle", topicStatsFontClass)}>
+                <span className={cn("text-xs", hlSubtle, topicStatsFontClass)}>
                   {new Date(session.timestamp).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",
@@ -545,10 +599,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 topicStatsFontClass,
               )}
             >
-              <span className="text-3xl font-bold leading-none text-text">
+              <span className={cn("text-3xl font-bold leading-none", hlText)}>
                 {session.score}
               </span>
-              <span className="text-sm font-medium text-text-muted">
+              <span className={cn("text-sm font-medium", hlMuted)}>
                 /{SESSION_SCORE_DISPLAY_MAX}
               </span>
             </div>
@@ -575,7 +629,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         <div className="flex items-center gap-6">
           {/* Rank Number - Leftmost */}
           <div className="flex-shrink-0">
-            <div className={cn("text-lg font-bold tabular-nums text-primary", topicStatsFontClass)}>
+            <div className={cn("text-lg font-bold tabular-nums", hlRank, topicStatsFontClass)}>
               {session.rank}
             </div>
           </div>
@@ -585,17 +639,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             {/* Score and Topic Row */}
             <div className="flex items-baseline justify-between gap-4 mb-2">
               <div className="flex items-baseline gap-3 min-w-0">
-                <span className={cn("text-xl font-bold tabular-nums text-text", topicStatsFontClass)}>
+                <span className={cn("text-xl font-bold tabular-nums", hlText, topicStatsFontClass)}>
                   {session.score}
                 </span>
-                <span className={cn("text-sm text-text-muted", topicStatsFontClass)}>
+                <span className={cn("text-sm", hlMuted, topicStatsFontClass)}>
                   / {SESSION_SCORE_DISPLAY_MAX}
                 </span>
-                <span className={cn("truncate text-xs text-text-subtle", topicStatsFontClass)}>
+                <span className={cn("truncate text-xs", hlSubtle, topicStatsFontClass)}>
                   {topicName}
                 </span>
               </div>
-              <span className={cn("flex-shrink-0 text-xs text-text-muted", topicStatsFontClass)}>
+              <span className={cn("flex-shrink-0 text-xs", hlMuted, topicStatsFontClass)}>
                 {new Date(session.timestamp).toLocaleDateString()} {new Date(session.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -605,14 +659,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           {/* Right Side Stats */}
           <div className="flex-shrink-0 text-right">
             <div className="space-y-1">
-              <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
-                {formatTimeMs(session.avgTimeMs)} <span className="text-text-subtle">/ q</span>
+              <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>
+                {formatTimeMs(session.avgTimeMs)} <span className={hlSubtle}>/ q</span>
               </div>
-              <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
+              <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>
                 {session.correctAnswers}/{session.totalQuestions}{" "}
-                <span className="text-text-subtle">correct</span>
+                <span className={hlSubtle}>correct</span>
               </div>
-              <div className={cn("text-xs font-bold text-primary", topicStatsFontClass)}>
+              <div className={cn("text-xs font-bold", hlAccent, topicStatsFontClass)}>
                 {session.accuracy.toFixed(0)}%
               </div>
             </div>
@@ -852,8 +906,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     : resultsCard;
 
   const highlightedSessionClass = mentalMathUi
-    ? "bg-success/10 ring-[3px] ring-success"
-    : "bg-primary/10 ring-1 ring-primary/20";
+    ? "bg-success"
+    : "bg-primary";
 
   const sessionRowSurface = mentalMathUi
     ? "rounded-organic-lg bg-surface-mid"
