@@ -14,6 +14,9 @@ export const SESSION_SCORE_SPEED_BASELINE_MS = 3000;
 /** Highest score the formula can return (1000 is reserved / unreachable). */
 export const SESSION_SCORE_ABSOLUTE_MAX = 999;
 
+/** Shown as the score scale denominator in UI (e.g. 842 / 1000). */
+export const SESSION_SCORE_DISPLAY_MAX = 1000;
+
 /**
  * Steepness of the score curve. Higher = harder to approach 999.
  * ~900 typically needs a long, hard, accurate session.

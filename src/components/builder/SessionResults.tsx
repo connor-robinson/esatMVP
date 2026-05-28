@@ -16,6 +16,7 @@ import {
   fetchTopicRankings,
   SESSION_FALLBACK_TOPIC_ID,
 } from "@/lib/analytics";
+import { SESSION_SCORE_DISPLAY_MAX } from "@/lib/session-score";
 import {
   resolveDisplayFolderForTopic,
   getDisplayFolderName,
@@ -515,7 +516,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 {session.score}
               </div>
               <div className={cn("mt-1 text-xs text-text-muted", topicStatsFontClass)}>
-                / {mentalMathUi ? 999 : 1000}
+                / {SESSION_SCORE_DISPLAY_MAX}
               </div>
             </div>
             <div className="shrink-0 text-right">
@@ -563,7 +564,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   {session.score}
                 </span>
                 <span className={cn("text-sm text-text-muted", topicStatsFontClass)}>
-                  / {mentalMathUi ? 999 : 1000}
+                  / {SESSION_SCORE_DISPLAY_MAX}
                 </span>
                 <span className={cn("truncate text-xs text-text-subtle", topicStatsFontClass)}>
                   {topicName}
