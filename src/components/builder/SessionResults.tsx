@@ -13,6 +13,7 @@ import { BuilderSession, QuestionAttempt } from "@/types/core";
 import { getTopic } from "@/config/topics";
 import {
   calculateSessionScore,
+  averageQuestionDifficulty,
   fetchTopicRankings,
   SESSION_FALLBACK_TOPIC_ID,
 } from "@/lib/analytics";
@@ -64,10 +65,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     const fastestTimeMs = times.length ? Math.min(...times) : 0;
     const slowestTimeMs = times.length ? Math.max(...times) : 0;
 
-    // Use the same calculateSessionScore function that saves to database
-    const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs);
+    const sessionDifficulties: number[] = [];
 
-    const topicStats: Record<string, { correct: number; total: number; times: number[] }> = {};
+    const topicStats: Record<
+      string,
+      { correct: number; total: number; times: number[]; difficulties: number[] }
+    > = {};
     
     // Create a map of questionId -> question for efficient lookup
     const questionMap = new Map(session.questions.map(q => [q.id, q]));
@@ -77,12 +80,21 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       const topicId =
         question?.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
 
+      const difficulty = question?.difficulty ?? 2;
+      sessionDifficulties.push(difficulty);
+
       if (!topicStats[topicId]) {
-        topicStats[topicId] = { correct: 0, total: 0, times: [] };
+        topicStats[topicId] = { correct: 0, total: 0, times: [], difficulties: [] };
       }
       topicStats[topicId].total += 1;
       if (attempt.isCorrect) topicStats[topicId].correct += 1;
       topicStats[topicId].times.push(attempt.timeSpent || 0);
+      topicStats[topicId].difficulties.push(difficulty);
+    });
+
+    const sessionAvgDifficulty = averageQuestionDifficulty(sessionDifficulties);
+    const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs, {
+      avgDifficulty: sessionAvgDifficulty,
     });
 
     const topicBreakdown = Object.entries(topicStats).map(([topicId, stats]) => {
@@ -90,9 +102,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       const avgTimeMs = stats.times.length
         ? stats.times.reduce((sum, t) => sum + t, 0) / stats.times.length
         : 0;
-      
-      // Calculate score using the same method as database (matching session-saver.ts)
-      const score = calculateSessionScore(stats.correct, stats.total, avgTimeMs);
+      const avgDifficulty = averageQuestionDifficulty(stats.difficulties);
+      const score = calculateSessionScore(stats.correct, stats.total, avgTimeMs, {
+        avgDifficulty,
+      });
       
       return {
         topicId,
@@ -1217,53 +1230,51 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <Trophy className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-heading text-xl font-bold text-text">How Score works</h3>
-                    <p className="font-mono text-xs uppercase tracking-wider text-text-muted">
-                      The Agresti-Coull Method
+                    <h3 className="font-heading text-xl font-bold text-text">How score works</h3>
+                    <p className="text-xs uppercase tracking-wider text-text-muted">
+                      0–1000 session points
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-6 text-sm leading-relaxed text-text-muted">
                   <p>
-                    Your session score (0-1000) is calculated based on three weighted factors:
+                    Your score reflects how many you got right, how many you attempted, how hard the drills were, and (lightly) how fast you were.
                   </p>
 
                   <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
-                    <div className="flex gap-4">
-                      <div className="font-mono text-primary font-bold">50%</div>
-                      <div>
-                        <div className="mb-1 font-medium text-text">Adjusted Accuracy</div>
-                        <p className="text-xs text-text-muted">
-                          We use the Agresti-Coull (plus-four) adjustment which rewards consistency and ensures reliable scoring even for short sessions.
-                        </p>
-                      </div>
+                    <div>
+                      <div className="mb-1 font-medium text-text">Accuracy</div>
+                      <p className="text-xs text-text-muted">
+                        Correct ÷ total questions. One mistake on a short run lowers the score noticeably.
+                      </p>
                     </div>
 
-                    <div className="flex gap-4">
-                      <div className="font-mono text-primary font-bold">30%</div>
-                      <div>
-                        <div className="mb-1 font-medium text-text">Speed Score</div>
-                        <p className="text-xs text-text-muted">
-                          Based on your average time per question. Scores higher as you approach the 3-second mastery baseline.
-                        </p>
-                      </div>
+                    <div>
+                      <div className="mb-1 font-medium text-text">Volume</div>
+                      <p className="text-xs text-text-muted">
+                        Short sessions are capped: you need about 15 questions in one run for full volume credit. A single correct answer cannot score hundreds of points.
+                      </p>
                     </div>
 
-                    <div className="flex gap-4">
-                      <div className="font-mono text-primary font-bold">20%</div>
-                      <div>
-                        <div className="mb-1 font-medium text-text">Volume Multiplier</div>
-                        <p className="text-xs text-text-muted">
-                          A small bonus for completing more questions in a single session, scaling logarithmically.
-                        </p>
-                      </div>
+                    <div>
+                      <div className="mb-1 font-medium text-text">Difficulty</div>
+                      <p className="text-xs text-text-muted">
+                        Easy modes score lower than hard modes for the same accuracy. Harder drill variants raise your multiplier.
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="mb-1 font-medium text-text">Speed</div>
+                      <p className="text-xs text-text-muted">
+                        A small bonus if your average time per question is quick (around 3 seconds or less).
+                      </p>
                     </div>
                   </div>
 
                   <div className="border-t border-border-subtle pt-4">
                     <p className="text-xs italic text-text-muted">
-                      Note: The accuracy percentage shown on your summary is your raw score. The score uses the adjusted method to prevent "lucky" short streaks from dominating the rankings.
+                      The accuracy % on your summary is plain right ÷ attempted. The headline score applies volume and difficulty on top.
                     </p>
                   </div>
                 </div>

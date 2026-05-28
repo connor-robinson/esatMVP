@@ -393,7 +393,18 @@ async function fetchRecentSessions(
 
   // Create a map of builder_session_id -> drill_session data
   // Use summary from drill_sessions if available (contains session-level stats, not per-topic)
-  const drillSessionsMap = new Map<string, { score: number; correctAnswers: number; totalQuestions: number; totalTime: number; accuracy: number; avgSpeed: number }>();
+  const drillSessionsMap = new Map<
+    string,
+    {
+      score: number;
+      correctAnswers: number;
+      totalQuestions: number;
+      totalTime: number;
+      accuracy: number;
+      avgSpeed: number;
+      avgDifficulty?: number;
+    }
+  >();
   if (typedDrillSessionsData && typedDrillSessionsData.length > 0) {
     // Group by builder_session_id and use the first row with a summary (summary contains session-level data)
     const sessionsProcessed = new Set<string>();
@@ -408,8 +419,12 @@ async function fetchRecentSessions(
           correctAnswers: ds.summary.correctAnswers || 0,
           totalQuestions: ds.summary.totalQuestions || 0,
           totalTime: ds.summary.totalTimeMs || 0,
-          accuracy: 0, // Will calculate from correctAnswers/totalQuestions
-          avgSpeed: 0, // Will calculate from totalTime/totalQuestions
+          accuracy: 0,
+          avgSpeed: 0,
+          avgDifficulty:
+            typeof ds.summary.avgDifficulty === "number"
+              ? ds.summary.avgDifficulty
+              : undefined,
         });
         sessionsProcessed.add(ds.builder_session_id);
       }
@@ -453,7 +468,12 @@ async function fetchRecentSessions(
         }
         // Recalculate score using calculateSessionScore for consistency
         if (stats.correctAnswers > 0 || stats.totalQuestions > 0) {
-          stats.score = calculateSessionScore(stats.correctAnswers, stats.totalQuestions, stats.avgSpeed);
+          stats.score = calculateSessionScore(
+            stats.correctAnswers,
+            stats.totalQuestions,
+            stats.avgSpeed,
+            { avgDifficulty: stats.avgDifficulty },
+          );
         }
       }
     });
@@ -534,7 +554,9 @@ async function fetchRecentSessions(
       totalTime = savedData.totalTime || 0;
       avgSpeed = savedData.avgSpeed > 0 ? Math.round(savedData.avgSpeed) : 0;
       // Recalculate score using calculateSessionScore for consistency
-      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
+      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed, {
+        avgDifficulty: savedData.avgDifficulty,
+      });
     } else {
       // Fallback to calculating from attempts
       // totalQuestions should be the number of questions in the session, not attempts

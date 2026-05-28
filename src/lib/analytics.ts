@@ -750,41 +750,15 @@ export function formatTime(ms: number): string {
   return `${minutes}m ${seconds}s`;
 }
 
-/**
- * Calculate session score (0-1000)
- * Formula: (adjustedAccuracy * 0.5 + speedScore * 0.3 + volume * 0.2) * 1000
- * Uses Agresti-Coull adjustment for accuracy to reward consistency over small samples
- */
-export function calculateSessionScore(
-  correctAnswers: number,
-  totalQuestions: number,
-  avgSpeed: number
-): number {
-  const accuracyWeight = 0.5;
-  const speedWeight = 0.3;
-  const volumeWeight = 0.2;
-
-  if (totalQuestions === 0) return 0;
-
-  // Agresti-Coull adjusted accuracy (plus-four interval)
-  // Rewards consistency and penalizes small sample sizes
-  const n = totalQuestions;
-  const X = correctAnswers;
-  const adjustedAccuracy = (X + 2) / (n + 4);
-
-  // Speed score (0-1) - faster is better, 3s baseline
-  const speedScore = Math.min(1, 3000 / Math.max(avgSpeed, 500));
-
-  // Volume score (0-1) - more questions is better, logarithmic
-  const volumeScore = Math.min(1, Math.log10(totalQuestions + 1) / 2);
-
-  return Math.round(
-    (adjustedAccuracy * accuracyWeight +
-      speedScore * speedWeight +
-      volumeScore * volumeWeight) *
-      1000
-  );
-}
+export {
+  calculateSessionScore,
+  averageQuestionDifficulty,
+  difficultyScoreFactor,
+  volumeScoreFactor,
+  speedScoreFactor,
+  SESSION_SCORE_FULL_VOLUME_QUESTIONS,
+  type SessionScoreOptions,
+} from "./session-score";
 
 /**
  * Generate mock sessions

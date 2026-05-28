@@ -5,13 +5,21 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressInsert, TopicProgressRow, DrillSessionInsert } from "@/lib/supabase/types";
 import type { QuestionAttempt } from "@/types/core";
-import { calculateSessionScore, SESSION_FALLBACK_TOPIC_ID } from "../analytics";
+import {
+  calculateSessionScore,
+  averageQuestionDifficulty,
+  SESSION_FALLBACK_TOPIC_ID,
+} from "../analytics";
 
 interface SessionData {
   sessionId: string;
   userId: string;
   attempts: QuestionAttempt[];
-  questionTopics: { topicId: string; variantId?: string }[]; // Same length as attempts
+  questionTopics: {
+    topicId: string;
+    variantId?: string;
+    difficulty?: number;
+  }[];
   startedAt: number;
   endedAt: number;
 }
@@ -22,6 +30,7 @@ interface TopicSessionStats {
   questionsCorrect: number;
   totalTimeMs: number;
   avgTimeMs: number;
+  difficulties: number[];
 }
 
 /**
@@ -37,17 +46,20 @@ function calculateTopicStats(
     const topicId =
       questionTopics[index]?.topicId || SESSION_FALLBACK_TOPIC_ID;
 
+    const meta = questionTopics[index];
     const existing = topicMap.get(topicId) || {
       topicId,
       questionsAttempted: 0,
       questionsCorrect: 0,
       totalTimeMs: 0,
       avgTimeMs: 0,
+      difficulties: [],
     };
 
     existing.questionsAttempted += 1;
     if (attempt.isCorrect) existing.questionsCorrect += 1;
     existing.totalTimeMs += attempt.timeSpent || 0;
+    existing.difficulties.push(meta?.difficulty ?? 2);
 
     topicMap.set(topicId, existing);
   });
@@ -82,7 +94,13 @@ async function saveDrillSessions(
 
   for (const [topicId, stats] of topicStats.entries()) {
     const accuracy = (stats.questionsCorrect / stats.questionsAttempted) * 100;
-    const score = calculateSessionScore(stats.questionsCorrect, stats.questionsAttempted, stats.avgTimeMs);
+    const avgDifficulty = averageQuestionDifficulty(stats.difficulties);
+    const score = calculateSessionScore(
+      stats.questionsCorrect,
+      stats.questionsAttempted,
+      stats.avgTimeMs,
+      { avgDifficulty },
+    );
 
     const drillSession: DrillSessionInsert = {
       user_id: userId,
@@ -99,6 +117,7 @@ async function saveDrillSessions(
         correctAnswers: stats.questionsCorrect,
         totalQuestions: stats.questionsAttempted,
         totalTimeMs: stats.totalTimeMs,
+        avgDifficulty,
       } as any,
     };
 

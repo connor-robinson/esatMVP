@@ -592,10 +592,17 @@ export function useBuilderSession() {
       const { saveSessionAnalytics } = await import("@/lib/analytics/session-saver");
       
       // Prepare question topics data (variantId is optional, not all questions have it)
-      const questionTopics = currentSession?.questions.map(q => ({
-        topicId: q.topicId,
-        variantId: undefined, // GeneratedQuestion doesn't track variantId
-      })) || [];
+      const questionTopics =
+        attemptLog.map((attempt, index) => {
+          const q =
+            currentSession?.questions.find((q) => q.id === attempt.questionId) ??
+            currentSession?.questions[index];
+          return {
+            topicId: q?.topicId ?? "unknown",
+            variantId: undefined,
+            difficulty: q?.difficulty,
+          };
+        }) ?? [];
 
       try {
         await saveSessionAnalytics(supabase, {
