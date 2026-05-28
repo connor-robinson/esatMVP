@@ -75,7 +75,10 @@ async function saveDrillSessions(
   });
 
   for (const [topicId, stats] of topicStats.entries()) {
-    const accuracy = (stats.questionsCorrect / stats.questionsAttempted) * 100;
+    const accuracy =
+      stats.questionsAttempted > 0
+        ? (stats.questionsCorrect / stats.questionsAttempted) * 100
+        : 0;
     const avgDifficulty = averageQuestionDifficulty(stats.difficulties);
     const score = calculateSessionScore(
       stats.questionsCorrect,

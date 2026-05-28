@@ -158,6 +158,52 @@ export function computeSessionOutcomeStats(
   };
 }
 
+/** Question pool for this session (finite cap or full list). */
+export function getSessionQuestionPool(session: BuilderSession): GeneratedQuestion[] {
+  const limit = session.config?.questionLimit ?? 0;
+  return limit > 0 ? session.questions.slice(0, limit) : session.questions;
+}
+
+/** Topic rows when nothing was answered — still allows DB + leaderboard saves. */
+export function buildPlannedTopicOutcomes(session: BuilderSession): TopicOutcomeStats[] {
+  const pool = getSessionQuestionPool(session);
+  const byFolder = new Map<string, TopicOutcomeStats>();
+
+  for (const question of pool) {
+    const rawTopicId = question.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
+    const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
+    const existing = byFolder.get(topicId);
+    if (existing) {
+      existing.difficulties.push(question.difficulty ?? 2);
+      continue;
+    }
+    byFolder.set(topicId, {
+      topicId,
+      correct: 0,
+      total: 0,
+      times: [],
+      difficulties: [question.difficulty ?? 2],
+    });
+  }
+
+  if (byFolder.size === 0 && session.config?.topicVariantSelections?.length) {
+    for (const sel of session.config.topicVariantSelections) {
+      const { folderId: topicId } = resolveDisplayFolderForTopic(sel.topicId);
+      if (!byFolder.has(topicId)) {
+        byFolder.set(topicId, {
+          topicId,
+          correct: 0,
+          total: 0,
+          times: [],
+          difficulties: [2],
+        });
+      }
+    }
+  }
+
+  return Array.from(byFolder.values());
+}
+
 export function computeTopicOutcomeStats(
   session: BuilderSession,
   attempts: QuestionAttempt[],
@@ -186,6 +232,10 @@ export function computeTopicOutcomeStats(
     existing.difficulties.push(question.difficulty ?? 2);
 
     byFolder.set(topicId, existing);
+  }
+
+  if (byFolder.size === 0) {
+    return buildPlannedTopicOutcomes(session);
   }
 
   return Array.from(byFolder.entries()).map(([topicId, stats]) => ({

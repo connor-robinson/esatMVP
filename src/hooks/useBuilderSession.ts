@@ -587,16 +587,22 @@ export function useBuilderSession() {
       
       // Prepare question topics data (variantId is optional, not all questions have it)
       const questionTopics =
-        attemptLog.map((attempt, index) => {
-          const q =
-            currentSession?.questions.find((q) => q.id === attempt.questionId) ??
-            currentSession?.questions[index];
-          return {
-            topicId: q?.topicId ?? "unknown",
-            variantId: q?.variantId,
-            difficulty: q?.difficulty,
-          };
-        }) ?? [];
+        attemptLog.length > 0
+          ? attemptLog.map((attempt, index) => {
+              const q =
+                currentSession?.questions.find((q) => q.id === attempt.questionId) ??
+                currentSession?.questions[index];
+              return {
+                topicId: q?.topicId ?? "unknown",
+                variantId: q?.variantId,
+                difficulty: q?.difficulty,
+              };
+            })
+          : currentSession.questions.map((q) => ({
+              topicId: q.topicId ?? "unknown",
+              variantId: q.variantId,
+              difficulty: q.difficulty,
+            }));
 
       try {
         await saveSessionAnalytics(supabase, {
@@ -679,11 +685,36 @@ export function useBuilderSession() {
     appendQuestionToSession,
   ]);
 
-  /** Finish the run and show results (open-ended, timed, or manual stop). */
+  /** Finish early, save analytics, and show results. */
   const endSession = useCallback(() => {
     if (!currentSession) return;
-    finishSession(currentSession.attempts);
-  }, [currentSession, finishSession]);
+    finishSession(attemptLog.length);
+  }, [currentSession, attemptLog.length, finishSession]);
+
+  /** Abandon run without leaderboard / drill_session saves. */
+  const discardSession = useCallback(() => {
+    if (!currentSession) return;
+    const sessionId = currentSession.id;
+
+    if (authSession?.user) {
+      void (supabase as any)
+        .from("builder_sessions")
+        .update({
+          ended_at: new Date().toISOString(),
+          attempts: attemptLog.length,
+        })
+        .eq("id", sessionId)
+        .eq("user_id", authSession.user.id);
+    }
+
+    setView("builder");
+    setCurrentSession(null);
+    setCurrentQuestionIndex(0);
+    setShowFeedback(false);
+    setLastAttempt(null);
+    setAttemptLog([]);
+    setRemainingSeconds(null);
+  }, [authSession?.user, attemptLog.length, currentSession, supabase]);
 
   const submitAnswer = useCallback(
     (userAnswer: string) => {
@@ -879,6 +910,7 @@ export function useBuilderSession() {
     canStart,
     startSession,
     endSession,
+    discardSession,
     submitAnswer,
     continueAfterIncorrect,
     exitSession,

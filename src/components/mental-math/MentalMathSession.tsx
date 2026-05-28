@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Eye, ArrowRight } from "lucide-react";
+import { LogOut, Eye, ArrowRight, X } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Progress } from "@/components/ui/Progress";
 import { MathContent } from "@/components/shared/MathContent";
@@ -37,8 +37,10 @@ interface MentalMathSessionProps {
   isUnlimitedSession?: boolean;
   onSubmitAnswer: (answer: string) => void;
   onContinueAfterIncorrect: () => void;
-  /** Finish run and show results. */
-  onEndSession: () => void;
+  /** Save progress and open session summary. */
+  onEndEarly: () => void;
+  /** Leave without saving to leaderboard. */
+  onDiscardSession: () => void;
 }
 
 export function MentalMathSession({
@@ -53,8 +55,10 @@ export function MentalMathSession({
   isUnlimitedSession = false,
   onSubmitAnswer,
   onContinueAfterIncorrect,
-  onEndSession,
+  onEndEarly,
+  onDiscardSession,
 }: MentalMathSessionProps) {
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
   const [answer, setAnswer] = useState("");
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
@@ -186,7 +190,7 @@ export function MentalMathSession({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEndSession();
+                  setShowEndConfirm(true);
                 }}
                 className="relative z-30 flex shrink-0 items-center gap-2 rounded-organic-lg bg-surface-mid px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface-neutral active:scale-[0.98] dark:bg-surface-neutral dark:hover:bg-surface-mid"
               >
@@ -454,6 +458,72 @@ export function MentalMathSession({
 
       {/* Success feedback popup */}
       <FeedbackPopup show={showSuccessFeedback} />
+
+      <AnimatePresence>
+        {showEndConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-background/75 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="end-session-title"
+            onClick={() => setShowEndConfirm(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              className="relative w-full max-w-md rounded-organic-xl border border-border bg-surface-elevated p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setShowEndConfirm(false)}
+                className="absolute right-4 top-4 rounded-organic-md p-1.5 text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" aria-hidden />
+              </button>
+
+              <h2
+                id="end-session-title"
+                className="pr-8 font-heading text-xl font-bold text-text"
+              >
+                End session early?
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                Save your progress so far and view the summary, or discard this session and return
+                to drills without adding it to your leaderboard.
+              </p>
+
+              <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEndConfirm(false);
+                    onDiscardSession();
+                  }}
+                  className="rounded-organic-lg px-4 py-3 text-sm font-semibold text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                >
+                  Discard session
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEndConfirm(false);
+                    onEndEarly();
+                  }}
+                  className="rounded-organic-lg bg-primary px-4 py-3 text-sm font-bold text-background shadow-md shadow-primary/20 transition-colors hover:bg-primary-hover active:scale-[0.98]"
+                >
+                  End early & view summary
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

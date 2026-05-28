@@ -156,7 +156,8 @@ export default function BuilderPage() {
           isUnlimitedSession={builder.isUnlimitedSession}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
-          onEndSession={() => builder.endSession()}
+          onEndEarly={() => builder.endSession()}
+          onDiscardSession={() => builder.discardSession()}
         />
       </Suspense>
     );
