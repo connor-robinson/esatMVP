@@ -291,11 +291,41 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       ? "bg-white/25 dark:bg-black/15"
       : "bg-surface-mid";
 
+    const scorePercentage = (session.score / SESSION_SCORE_DISPLAY_MAX) * 100;
+    const showProgressBar = session.rank <= 3 || isHighlighted;
+
+    const leaderboardProgressBar = showProgressBar ? (
+      mentalMathUi ? (
+        <div
+          className={cn(
+            "absolute bottom-0 left-0 right-0 h-1",
+            isHighlighted ? "bg-black/10 dark:bg-black/20" : "bg-border-subtle/60",
+          )}
+        >
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${scorePercentage}%` }}
+            transition={{ duration: 0.8, delay: idx * 0.05 }}
+            className={cn(
+              "h-full",
+              isHighlighted ? "bg-white/40 dark:bg-gray-950/25" : "bg-success/45",
+            )}
+          />
+        </div>
+      ) : (
+        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-border-subtle">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${scorePercentage}%` }}
+            transition={{ duration: 0.8, delay: idx * 0.05 }}
+            className="h-full bg-primary/40"
+          />
+        </div>
+      )
+    ) : null;
+
     // For global view, use column-based layout
     if (isGlobalView) {
-      const scorePercentage = (session.score / 1000) * 100;
-      const showProgressBar = session.rank <= 3 || isHighlighted;
-
       if (mentalMathUi) {
         return (
           <motion.div
@@ -308,24 +338,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
             )}
           >
-            {showProgressBar && (
-              <div
-                className={cn(
-                  "absolute bottom-0 left-0 right-0 h-1",
-                  isHighlighted ? "bg-black/10 dark:bg-black/20" : "bg-border-subtle/60",
-                )}
-              >
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${scorePercentage}%` }}
-                  transition={{ duration: 0.8, delay: idx * 0.05 }}
-                  className={cn(
-                    "h-full",
-                    isHighlighted ? "bg-white/40 dark:bg-gray-950/25" : "bg-success/45",
-                  )}
-                />
-              </div>
-            )}
+            {leaderboardProgressBar}
             <div
               className={cn(
                 "relative z-10 grid items-center gap-x-8 gap-y-3 px-6 py-5 sm:gap-x-12 sm:px-8 sm:py-6",
@@ -394,20 +407,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 : "bg-surface-subtle hover:bg-surface-mid/80",
             )}
         >
-          {/* Progress Bar - Only for top 3 or current attempt */}
-          {showProgressBar && (
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-border-subtle">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${scorePercentage}%` }}
-                transition={{ duration: 0.8, delay: idx * 0.05 }}
-                className="h-full bg-primary/40"
-              />
-            </div>
-          )}
+          {leaderboardProgressBar}
 
           {/* Content Grid */}
-          <div className="grid grid-cols-12 gap-4 items-center relative z-10">
+          <div className="relative z-10 grid grid-cols-12 items-center gap-4">
             {/* Rank */}
             <div className="col-span-1 flex items-center justify-center">
               <div className={cn("text-lg font-bold tabular-nums", hlRank, topicStatsFontClass)}>
@@ -503,12 +506,18 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
           className={cn(
-            "grid items-center gap-x-8 gap-y-3 rounded-organic-lg px-6 py-5 transition-colors sm:gap-x-12 sm:px-8 sm:py-6",
-            "grid-cols-[2.5rem_minmax(6.5rem,auto)_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
-            topicStatsFontClass,
+            "relative overflow-hidden rounded-organic-lg transition-colors",
             isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
           )}
         >
+          {leaderboardProgressBar}
+          <div
+            className={cn(
+              "relative z-10 grid items-center gap-x-8 gap-y-3 px-6 py-5 sm:gap-x-12 sm:px-8 sm:py-6",
+              "grid-cols-[2.5rem_minmax(6.5rem,auto)_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
+              topicStatsFontClass,
+            )}
+          >
           <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
           <div className="flex items-baseline gap-1.5">
             <span className={cn("text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]", hlText)}>
@@ -541,6 +550,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               "—"
             )}
           </div>
+          </div>
         </motion.div>
       );
     }
@@ -553,14 +563,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         transition={{ delay: idx * 0.03 }}
         className={cn(
           sessionRowSurface,
-          "transition-colors",
-          mentalMathUi ? "p-4 sm:p-5" : "p-3",
+          "relative overflow-hidden transition-colors",
+          "p-3",
           isHighlighted
             ? highlightedSessionClass
             : "hover:bg-surface-neutral/60",
         )}
       >
-        <div className="flex items-center gap-6">
+        {leaderboardProgressBar}
+        <div className="relative z-10 flex items-center gap-6">
           {/* Rank Number - Leftmost */}
           <div className="flex-shrink-0">
             <div className={cn("text-lg font-bold tabular-nums", hlRank, topicStatsFontClass)}>
