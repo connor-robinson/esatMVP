@@ -19,6 +19,12 @@ import {
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { topicIdsForFolderQuery } from "@/lib/display-folder-registry";
+import {
+  buildSessionForStats,
+  buildSessionProgressByQuestion,
+  inferQuestionLimit,
+} from "@/lib/session-stats";
+import type { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 
 /** Used when a drill question has no topicId so session totals match per-topic stats and DB saves */
 export const SESSION_FALLBACK_TOPIC_ID = "__session_general__";
@@ -858,24 +864,39 @@ export function generateSessionDetail(
 ): SessionDetail {
   const progressData: SessionProgressPoint[] = [];
 
-  // If we have real attempts data, use it; otherwise generate mock data
   if (session._attempts && session._attempts.length > 0) {
-    let runningCorrect = 0;
-    session._attempts.forEach((attempt, index) => {
-      if (attempt.is_correct === true) {
-        runningCorrect++;
-      }
-      const questionNumber = index + 1;
-      // Calculate running accuracy - round to 1 decimal place
-      const runningAccuracy = Math.round((runningCorrect / questionNumber) * 1000) / 10;
-      // Convert time_spent_ms to questions per minute
-      const timeSpentMs = attempt.time_spent_ms || session.avgSpeed || 1000;
-      const questionsPerMinute = timeSpentMs > 0 ? 60000 / timeSpentMs : 0;
+    const questionAttempts: QuestionAttempt[] = session._attempts.map((attempt: any) => ({
+      questionId: attempt.question_id,
+      answer: attempt.user_answer ?? "",
+      isCorrect: attempt.is_correct === true,
+      timeSpent: attempt.time_spent_ms || 0,
+      timestamp: 0,
+    }));
 
+    const storedQuestions: GeneratedQuestion[] = [];
+    if (session._questionsMap) {
+      for (const [id] of session._questionsMap) {
+        storedQuestions.push({
+          id,
+          question: "",
+          answer: "",
+          topicId: "",
+          difficulty: 2,
+        });
+      }
+    }
+
+    const limit = inferQuestionLimit(
+      Math.max(storedQuestions.length, session.totalQuestions),
+      questionAttempts,
+    );
+    const statsSession = buildSessionForStats(storedQuestions, limit);
+    const perQuestion = buildSessionProgressByQuestion(statsSession, questionAttempts);
+    perQuestion.forEach((point) => {
       progressData.push({
-        questionNumber,
-        accuracy: runningAccuracy,
-        speed: questionsPerMinute,
+        questionNumber: point.questionNumber,
+        accuracy: Math.round(point.accuracy * 10) / 10,
+        speed: point.speed,
       });
     });
   } else {

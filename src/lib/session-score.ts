@@ -37,19 +37,20 @@ export function difficultyScoreFactor(avgDifficulty: number): number {
 }
 
 /**
- * Volume multiplier: linear ramp until FULL_VOLUME_QUESTIONS.
+ * Volume bonus: small lift for longer sessions (88%–100%), not a cap on accuracy.
  */
 export function volumeScoreFactor(totalQuestions: number): number {
-  if (totalQuestions <= 0) return 0;
-  return Math.min(1, totalQuestions / SESSION_SCORE_FULL_VOLUME_QUESTIONS);
+  if (totalQuestions <= 0) return 0.88;
+  const ramp = Math.min(1, totalQuestions / SESSION_SCORE_FULL_VOLUME_QUESTIONS);
+  return 0.88 + 0.12 * ramp;
 }
 
 /**
- * Speed multiplier: minor tweak (85%–100% of composite).
+ * Speed multiplier: minor tweak (90%–100% of composite).
  */
 export function speedScoreFactor(avgSpeedMs: number): number {
   const ratio = Math.min(1, SESSION_SCORE_SPEED_BASELINE_MS / Math.max(avgSpeedMs, 600));
-  return 0.85 + 0.15 * ratio;
+  return 0.9 + 0.1 * ratio;
 }
 
 /**
@@ -81,7 +82,9 @@ export function calculateSessionScore(
   const difficultyFactor = difficultyScoreFactor(options?.avgDifficulty ?? 2);
   const speedFactor = speedScoreFactor(avgSpeedMs);
 
-  const composite = accuracy * volumeFactor * difficultyFactor * speedFactor;
+  // Accuracy is primary; volume/speed/difficulty are modest multipliers (~±12–28%).
+  const composite =
+    accuracy * volumeFactor * difficultyFactor * speedFactor;
   return scoreFromComposite(composite);
 }
 

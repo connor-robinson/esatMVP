@@ -14,13 +14,15 @@ import {
   calculateSessionScore,
   averageQuestionDifficulty,
   fetchTopicRankings,
-  SESSION_FALLBACK_TOPIC_ID,
 } from "@/lib/analytics";
 import { SESSION_SCORE_DISPLAY_MAX } from "@/lib/session-score";
 import {
-  resolveDisplayFolderForTopic,
-  getDisplayFolderName,
-} from "@/lib/display-folder-registry";
+  computeSessionOutcomeStats,
+  computeTopicOutcomeStats,
+  buildSessionProgressByQuestion,
+  averageDifficultyForSession,
+} from "@/lib/session-stats";
+import { getDisplayFolderName } from "@/lib/display-folder-registry";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
 import { 
   ArrowLeft, 
@@ -60,89 +62,44 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   // CENTRAL CALCULATION: All session-level stats calculated here from attempts
   // This ensures consistency across all displays (top cards, highlighted cards, etc.)
   const result = useMemo(() => {
-    const totalQuestions = attempts.length;
-    const correctAnswers = attempts.filter((a) => a.isCorrect).length;
-    const accuracy = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+    const outcome = computeSessionOutcomeStats(session, attempts);
+    const {
+      totalQuestions,
+      correctAnswers,
+      accuracy,
+      averageTimeMs,
+      fastestTimeMs,
+      slowestTimeMs,
+    } = outcome;
 
-    const times = attempts.map((a) => a.timeSpent || 0);
-    const averageTimeMs = times.length ? times.reduce((sum, t) => sum + t, 0) / times.length : 0;
-    const fastestTimeMs = times.length ? Math.min(...times) : 0;
-    const slowestTimeMs = times.length ? Math.max(...times) : 0;
-
-    const sessionDifficulties: number[] = [];
-
-    const topicStats: Record<
-      string,
-      { correct: number; total: number; times: number[]; difficulties: number[] }
-    > = {};
-    
-    // Create a map of questionId -> question for efficient lookup
-    const questionMap = new Map(session.questions.map(q => [q.id, q]));
-
-    attempts.forEach((attempt) => {
-      const question = questionMap.get(attempt.questionId);
-      const rawTopicId =
-        question?.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
-      const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
-
-      const difficulty = question?.difficulty ?? 2;
-      sessionDifficulties.push(difficulty);
-
-      if (!topicStats[topicId]) {
-        topicStats[topicId] = { correct: 0, total: 0, times: [], difficulties: [] };
-      }
-      topicStats[topicId].total += 1;
-      if (attempt.isCorrect) topicStats[topicId].correct += 1;
-      topicStats[topicId].times.push(attempt.timeSpent || 0);
-      topicStats[topicId].difficulties.push(difficulty);
-    });
-
-    const sessionAvgDifficulty = averageQuestionDifficulty(sessionDifficulties);
+    const sessionAvgDifficulty = averageDifficultyForSession(session, attempts);
     const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs, {
       avgDifficulty: sessionAvgDifficulty,
     });
 
-    const topicBreakdown = Object.entries(topicStats).map(([topicId, stats]) => {
-      // Calculate avgTimeMs consistently with database logic
-      const avgTimeMs = stats.times.length
-        ? stats.times.reduce((sum, t) => sum + t, 0) / stats.times.length
+    const topicBreakdown = computeTopicOutcomeStats(session, attempts).map((stats) => {
+      const avgTimeMs = stats.total
+        ? stats.times.reduce((sum, t) => sum + t, 0) / stats.total
         : 0;
       const avgDifficulty = averageQuestionDifficulty(stats.difficulties);
-      const score = calculateSessionScore(stats.correct, stats.total, avgTimeMs, {
+      const topicScore = calculateSessionScore(stats.correct, stats.total, avgTimeMs, {
         avgDifficulty,
       });
-      
+
       return {
-        topicId,
+        topicId: stats.topicId,
         correct: stats.correct,
         total: stats.total,
         accuracy: stats.total ? (stats.correct / stats.total) * 100 : 0,
         avgTimeMs,
-        score,
+        score: topicScore,
       };
     });
 
-    // Generate progress data for the session chart
-    const progressData: SessionProgressPoint[] = [];
-    let runningCorrect = 0;
-    
-    attempts.forEach((attempt, index) => {
-      const questionNumber = index + 1;
-      if (attempt.isCorrect) runningCorrect += 1;
-      
-      // Running accuracy up to this point
-      const runningAccuracy = questionNumber > 0 ? (runningCorrect / questionNumber) * 100 : 0;
-      
-      // Speed in questions per minute (convert ms to minutes)
-      const timeSpentMs = attempt.timeSpent || 0;
-      const speed = timeSpentMs > 0 ? (60000 / timeSpentMs) : 0; // questions per minute
-      
-      progressData.push({
-        questionNumber,
-        accuracy: runningAccuracy,
-        speed,
-      });
-    });
+    const progressData: SessionProgressPoint[] = buildSessionProgressByQuestion(
+      session,
+      attempts,
+    );
 
     return {
       session,
@@ -901,9 +858,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     ? "rounded-organic-lg bg-surface-elevated"
     : "rounded-organic-lg border border-border bg-surface-elevated";
 
-  const scoreOverviewCard = mentalMathUi
-    ? "rounded-organic-lg bg-success/10"
-    : resultsCard;
+  const scoreOverviewCard = resultsCard;
 
   const highlightedSessionClass = mentalMathUi
     ? "bg-success"

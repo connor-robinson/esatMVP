@@ -20,6 +20,7 @@ import { buildVariantLevelMap, levelForDrill } from "@/lib/drill-selection";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
 import { expressionsEqual } from "@/lib/answer-checker";
+import { computeSessionOutcomeStats } from "@/lib/session-stats";
 
 type ViewState = "builder" | "running" | "results";
 
@@ -153,8 +154,10 @@ export function useBuilderSession() {
           currentSession?.questions.length ?? 1,
         );
   
-  // Calculate correct count from attempt log
-  const correctCount = attemptLog.filter(attempt => attempt.isCorrect).length;
+  const correctCount = useMemo(() => {
+    if (!currentSession) return 0;
+    return computeSessionOutcomeStats(currentSession, attemptLog).correctAnswers;
+  }, [currentSession, attemptLog]);
 
   // Parse topicVariantId (e.g., "addition-single-digit" or "addition")
   const parseTopicVariantId = useCallback((topicVariantId: string): { topicId: string; variantId: string } | null => {
@@ -599,6 +602,7 @@ export function useBuilderSession() {
         await saveSessionAnalytics(supabase, {
           sessionId,
           userId: authSession.user.id,
+          session: currentSession,
           attempts: attemptLog,
           questionTopics,
           startedAt: currentSession?.startedAt || Date.now(),

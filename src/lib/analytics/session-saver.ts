@@ -4,18 +4,22 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, TopicProgressInsert, TopicProgressRow, DrillSessionInsert } from "@/lib/supabase/types";
-import type { QuestionAttempt } from "@/types/core";
+import type { BuilderSession, QuestionAttempt } from "@/types/core";
 import {
   calculateSessionScore,
   averageQuestionDifficulty,
-  SESSION_FALLBACK_TOPIC_ID,
 } from "../analytics";
-import { resolveDisplayFolderForTopic } from "@/lib/display-folder-registry";
+import {
+  computeSessionOutcomeStats,
+  computeTopicOutcomeStats,
+} from "@/lib/session-stats";
 
 interface SessionData {
   sessionId: string;
   userId: string;
   attempts: QuestionAttempt[];
+  /** Full session for per-question stats (required for correct totals). */
+  session: BuilderSession;
   questionTopics: {
     topicId: string;
     variantId?: string;
@@ -34,44 +38,20 @@ interface TopicSessionStats {
   difficulties: number[];
 }
 
-/**
- * Calculate per-topic stats from session attempts
- */
-function calculateTopicStats(
-  attempts: QuestionAttempt[],
-  questionTopics: SessionData["questionTopics"],
-): Map<string, TopicSessionStats> {
+function calculateTopicStats(session: BuilderSession, attempts: QuestionAttempt[]): Map<string, TopicSessionStats> {
   const topicMap = new Map<string, TopicSessionStats>();
 
-  attempts.forEach((attempt, index) => {
-    const rawTopicId =
-      questionTopics[index]?.topicId || SESSION_FALLBACK_TOPIC_ID;
-    const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
-
-    const meta = questionTopics[index];
-    const existing = topicMap.get(topicId) || {
-      topicId,
-      questionsAttempted: 0,
-      questionsCorrect: 0,
-      totalTimeMs: 0,
-      avgTimeMs: 0,
-      difficulties: [],
-    };
-
-    existing.questionsAttempted += 1;
-    if (attempt.isCorrect) existing.questionsCorrect += 1;
-    existing.totalTimeMs += attempt.timeSpent || 0;
-    existing.difficulties.push(meta?.difficulty ?? 2);
-
-    topicMap.set(topicId, existing);
-  });
-
-  // Calculate averages
-  topicMap.forEach((stats) => {
-    stats.avgTimeMs = stats.questionsAttempted > 0 
-      ? stats.totalTimeMs / stats.questionsAttempted 
-      : 0;
-  });
+  for (const row of computeTopicOutcomeStats(session, attempts)) {
+    const totalTimeMs = row.times.reduce((sum, t) => sum + t, 0);
+    topicMap.set(row.topicId, {
+      topicId: row.topicId,
+      questionsAttempted: row.total,
+      questionsCorrect: row.correct,
+      totalTimeMs,
+      avgTimeMs: row.total > 0 ? totalTimeMs / row.total : 0,
+      difficulties: row.difficulties,
+    });
+  }
 
   return topicMap;
 }
@@ -233,9 +213,10 @@ async function updateDailyMetrics(
 ): Promise<void> {
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
   
-  const totalQuestions = sessionData.attempts.length;
-  const correctAnswers = sessionData.attempts.filter(a => a.isCorrect).length;
-  const totalTimeMs = sessionData.attempts.reduce((sum, a) => sum + (a.timeSpent || 0), 0);
+  const outcome = computeSessionOutcomeStats(sessionData.session, sessionData.attempts);
+  const totalQuestions = outcome.totalQuestions;
+  const correctAnswers = outcome.correctAnswers;
+  const totalTimeMs = outcome.totalTimeMs;
 
   // Check if we have a record for today
   const { data: existing, error: fetchError } = await supabase
@@ -322,7 +303,7 @@ export async function saveSessionAnalytics(
 
   try {
     // Calculate topic-level stats
-    const topicStats = calculateTopicStats(sessionData.attempts, sessionData.questionTopics);
+    const topicStats = calculateTopicStats(sessionData.session, sessionData.attempts);
     console.log("[session-saver] DEBUG: Calculated topic stats", {
       topicCount: topicStats.size,
       topics: Array.from(topicStats.entries()).map(([id, stats]) => ({

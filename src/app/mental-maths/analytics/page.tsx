@@ -14,6 +14,13 @@ import type {
 } from "@/types/analytics";
 import { calculateSessionScore, calculateTrend, getTopicExtremes } from "@/lib/analytics";
 import {
+  buildSessionForStats,
+  computeSessionOutcomeStats,
+  inferQuestionLimit,
+  averageDifficultyForSession,
+} from "@/lib/session-stats";
+import type { GeneratedQuestion, QuestionAttempt } from "@/types/core";
+import {
   resolveDisplayFolderForTopic,
   normalizeTopicIdsToFolders,
   getDisplayFolderName,
@@ -568,26 +575,34 @@ async function fetchRecentSessions(
     let avgSpeed: number;
     let score: number;
 
-    // Open-ended / timed sessions only persist a small initial question pool in
-    // builder_session_questions; attempts are the source of truth for volume.
-    const attemptedCount = attempts.length;
-    const correctFromAttempts = attempts.filter(
-      (a) => a.is_correct === true,
-    ).length;
+    const questionAttempts: QuestionAttempt[] = attempts.map((a: any) => ({
+      questionId: a.question_id,
+      answer: a.user_answer ?? "",
+      isCorrect: a.is_correct === true,
+      timeSpent: a.time_spent_ms || 0,
+      timestamp: 0,
+    }));
 
-    if (attemptedCount > 0) {
-      totalQuestions = attemptedCount;
-      correctAnswers = correctFromAttempts;
-      totalTime = attempts.reduce(
-        (sum, a) => sum + (a.time_spent_ms || 0),
-        0,
-      );
-      avgSpeed =
-        totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0;
-      accuracy =
-        Math.round((correctAnswers / totalQuestions) * 1000) / 10;
+    const storedQuestions: GeneratedQuestion[] = questions.map((q: any) => ({
+      id: q.question_id,
+      question: "",
+      answer: "",
+      topicId: q.topic_id ?? "",
+      difficulty: 2,
+    }));
+
+    if (questionAttempts.length > 0) {
+      const limit = inferQuestionLimit(storedQuestions.length, questionAttempts);
+      const statsSession = buildSessionForStats(storedQuestions, limit);
+      const outcome = computeSessionOutcomeStats(statsSession, questionAttempts);
+      totalQuestions = outcome.totalQuestions;
+      correctAnswers = outcome.correctAnswers;
+      totalTime = outcome.totalTimeMs;
+      avgSpeed = Math.round(outcome.averageTimeMs);
+      accuracy = Math.round(outcome.accuracy * 10) / 10;
+      const avgDifficulty = averageDifficultyForSession(statsSession, questionAttempts);
       score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed, {
-        avgDifficulty: savedData?.avgDifficulty,
+        avgDifficulty: savedData?.avgDifficulty ?? avgDifficulty,
       });
     } else if (
       savedData &&
