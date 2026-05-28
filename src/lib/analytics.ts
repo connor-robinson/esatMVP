@@ -29,6 +29,71 @@ import type { GeneratedQuestion, QuestionAttempt } from "@/types/core";
 /** Used when a drill question has no topicId so session totals match per-topic stats and DB saves */
 export const SESSION_FALLBACK_TOPIC_ID = "__session_general__";
 
+export type LeaderboardRankingRow = {
+  id: string;
+  builder_session_id?: string;
+  rank: number;
+  isCurrent?: boolean;
+  [key: string]: unknown;
+};
+
+export type LeaderboardDisplayItem =
+  | { type: "entry"; entry: LeaderboardRankingRow }
+  | { type: "ellipsis" };
+
+/**
+ * Leaderboard window: #1, then "…" when needed, then context around the current session.
+ * - Default: one row above and one below the user
+ * - User is #1: also show two below
+ * - User is last: show two above (still always includes #1)
+ */
+export function buildLeaderboardWindow(
+  rankings: LeaderboardRankingRow[],
+  currentSessionId?: string,
+): LeaderboardDisplayItem[] {
+  if (rankings.length === 0) return [];
+
+  const currentIndex = rankings.findIndex(
+    (r) =>
+      r.isCurrent ||
+      (currentSessionId &&
+        (r.builder_session_id === currentSessionId || r.id === currentSessionId)),
+  );
+
+  const indices = new Set<number>();
+  indices.add(0);
+
+  if (currentIndex < 0) {
+    if (rankings.length > 1) indices.add(1);
+    if (rankings.length > 2) indices.add(2);
+  } else if (currentIndex === 0) {
+    if (rankings.length > 1) indices.add(1);
+    if (rankings.length > 2) indices.add(2);
+  } else if (currentIndex === rankings.length - 1) {
+    if (currentIndex >= 2) indices.add(currentIndex - 2);
+    if (currentIndex >= 1) indices.add(currentIndex - 1);
+    indices.add(currentIndex);
+  } else {
+    indices.add(currentIndex - 1);
+    indices.add(currentIndex);
+    indices.add(currentIndex + 1);
+  }
+
+  const sorted = [...indices].sort((a, b) => a - b);
+  const items: LeaderboardDisplayItem[] = [];
+  let prev = -1;
+
+  for (const idx of sorted) {
+    if (prev >= 0 && idx - prev > 1) {
+      items.push({ type: "ellipsis" });
+    }
+    items.push({ type: "entry", entry: rankings[idx] });
+    prev = idx;
+  }
+
+  return items;
+}
+
 /**
  * Fetch topic rankings (Personal and Global)
  * Returns ALL attempts sorted by score
@@ -364,25 +429,18 @@ export async function fetchTopicRankings(
     const currentIndex = rankings.findIndex(r => r.isCurrent);
     const currentRank = currentIndex >= 0 ? (rankings[currentIndex] as any).rank : null;
 
-    // For global view, show top 10 to allow multiple entries per person
-    // For personal view, show top 3 + adjacent (current session context)
-    const topCount = isGlobal ? 10 : 3;
-    const top3 = rankings.slice(0, topCount);
-
-    // Get adjacent ranks if current is not in top N (only for personal view)
-    let adjacent: typeof rankings = [];
-    if (!isGlobal && currentRank !== null && currentRank > topCount && currentIndex >= 0) {
-      // Get rank-1, current, rank+1 (but avoid duplicates with top3)
-      const adjacentStart = Math.max(0, currentIndex - 1);
-      const adjacentEnd = Math.min(rankings.length, currentIndex + 2);
-      adjacent = rankings.slice(adjacentStart, adjacentEnd).filter((r: any) => r.rank > topCount);
-      console.log(`[processRankings] DEBUG: Current rank: ${currentRank}, adjacent ranks:`, adjacent.map((r: any) => r.rank));
-    }
+    const displayWindow = buildLeaderboardWindow(
+      rankings as LeaderboardRankingRow[],
+      currentSessionId,
+    );
 
     console.log(`[processRankings] DEBUG: Final rankings summary`, {
       isGlobal,
       totalRankings: rankings.length,
-      top3Scores: top3.map((r: any) => ({ rank: r.rank, score: r.score, userId: r.userId })),
+      displayWindowLength: displayWindow.length,
+      windowRanks: displayWindow
+        .filter((w) => w.type === "entry")
+        .map((w) => (w as { type: "entry"; entry: LeaderboardRankingRow }).entry.rank),
       currentRank,
       currentIndex,
       hasCurrent: currentIndex >= 0,
@@ -390,10 +448,13 @@ export async function fetchTopicRankings(
     });
 
     return {
-      top3,
+      displayWindow,
       currentRank,
-      adjacent,
-      allRankings: rankings, // Keep all for reference but use structured data for display
+      allRankings: rankings,
+      /** @deprecated Use displayWindow */
+      top3: rankings.slice(0, 3),
+      /** @deprecated Use displayWindow */
+      adjacent: [] as typeof rankings,
     };
   };
 
