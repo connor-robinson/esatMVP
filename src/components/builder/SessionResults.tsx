@@ -1117,26 +1117,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                           >
                             {topicName}
                           </h3>
-                          {mentalMathUi && (
-                            <div className="text-right">
-                              <div
-                                className={cn(
-                                  "text-3xl font-bold tabular-nums leading-none text-text",
-                                  topicStatsFontClass,
-                                )}
-                              >
-                                {topic.score}
-                              </div>
-                              <div
-                                className={cn(
-                                  "mt-1 text-xs text-text-muted",
-                                  topicStatsFontClass,
-                                )}
-                              >
-                                {topic.accuracy.toFixed(0)}% · {topic.correct}/{topic.total}
-                              </div>
-                            </div>
-                          )}
                         </div>
                         {isGlobalView && !mentalMathUi && (
                           <div
