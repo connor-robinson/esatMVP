@@ -702,9 +702,10 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div key={`ellipsis-${windowIdx}`} className="flex justify-center py-3">
               <span
                 className={cn(
-                  "text-2xl font-bold leading-none",
+                  "inline-block rotate-90 text-2xl font-bold leading-none",
                   isGlobalView ? "text-primary/30" : "text-text-disabled",
                 )}
+                aria-hidden
               >
                 …
               </span>
@@ -842,7 +843,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               size="sm"
               onClick={onBackToBuilder}
               className={cn(
-                "rounded-organic-md px-4 py-2 text-sm font-semibold text-text",
+                "min-h-[2.875rem] rounded-organic-md px-5 py-3.5 text-sm font-semibold text-text",
                 mentalMathUi
                   ? "border-0 bg-surface-mid shadow-none hover:bg-surface-neutral focus-visible:ring-success/35"
                   : "border-border bg-surface-mid shadow-sm hover:bg-surface-neutral",
