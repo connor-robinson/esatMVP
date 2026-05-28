@@ -308,7 +308,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             transition={{ delay: idx * 0.03 }}
             className={cn(
               "relative overflow-hidden rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
-              isHighlighted ? highlightedSessionClass : "bg-surface-subtle/80 hover:bg-surface-mid/70",
+              isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
             )}
           >
             {showProgressBar && (
@@ -491,7 +491,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           transition={{ delay: idx * 0.03 }}
           className={cn(
             "rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
-            isHighlighted ? highlightedSessionClass : "bg-surface-subtle/80 hover:bg-surface-mid/70",
+            isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
           )}
         >
           <div className="flex items-center gap-4">
@@ -761,15 +761,15 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       : `${mode.replace("-", " ")} session • ${result.totalQuestions} questions`;
 
   const resultsCard = mentalMathUi
-    ? "rounded-organic-xl bg-surface-mid/35"
+    ? "rounded-organic-lg bg-surface-elevated"
     : "rounded-organic-lg border border-border bg-surface-elevated";
 
   const highlightedSessionClass = mentalMathUi
-    ? "bg-success/12 ring-[3px] ring-success/60"
+    ? "bg-success/10 ring-[3px] ring-success"
     : "bg-primary/10 ring-1 ring-primary/20";
 
   const sessionRowSurface = mentalMathUi
-    ? "rounded-organic-lg bg-surface-subtle/80"
+    ? "rounded-organic-lg bg-surface-mid"
     : "rounded-organic-md border border-border-subtle bg-surface-mid";
 
   return (
@@ -801,7 +801,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               className={cn(
                 "rounded-organic-md px-4 py-2 text-sm font-semibold text-text",
                 mentalMathUi
-                  ? "bg-surface-mid hover:bg-surface-neutral"
+                  ? "border-0 bg-surface-mid shadow-none hover:bg-surface-neutral focus-visible:ring-success/35"
                   : "border-border bg-surface-mid shadow-sm hover:bg-surface-neutral",
               )}
             >
@@ -1043,7 +1043,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                       transition={{ delay: 0.5 + idx * 0.1 }}
                       className={cn(
                         mentalMathUi &&
-                          "rounded-organic-xl bg-surface-mid/25 p-4 sm:p-5",
+                          "rounded-organic-xl bg-surface-mid/20 p-4 shadow-sm sm:p-5 dark:bg-surface-mid/15",
                       )}
                     >
                       {/* Topic Header */}
@@ -1164,7 +1164,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                           className={cn(
                             "flex h-32 items-center justify-center rounded-organic-lg",
                             mentalMathUi
-                              ? "bg-surface-subtle/60"
+                              ? "bg-surface-subtle"
                               : "border border-border-subtle bg-surface-subtle",
                           )}
                         >
