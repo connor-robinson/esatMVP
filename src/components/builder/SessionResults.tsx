@@ -501,7 +501,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
           )}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div
               className={cn(
                 "w-9 shrink-0 text-center text-sm font-bold tabular-nums",
@@ -511,21 +511,46 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             >
               {session.rank}
             </div>
-            <div className="min-w-0 flex-1">
-              <div className={cn("text-3xl font-bold tabular-nums leading-none text-text", topicStatsFontClass)}>
-                {session.score}
-              </div>
-              <div className={cn("mt-1 text-xs text-text-muted", topicStatsFontClass)}>
-                / {SESSION_SCORE_DISPLAY_MAX}
-              </div>
-            </div>
-            <div className="shrink-0 text-right">
-              <div className={cn("text-lg font-bold tabular-nums text-success", topicStatsFontClass)}>
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+              <span
+                className={cn(
+                  "font-bold tabular-nums text-success",
+                  topicStatsFontClass,
+                )}
+              >
                 {session.accuracy.toFixed(0)}%
-              </div>
-              <div className={cn("mt-0.5 text-xs text-text-muted", topicStatsFontClass)}>
+              </span>
+              <span className={cn("text-text-muted", topicStatsFontClass)}>
                 {session.correctAnswers}/{session.totalQuestions} correct
-              </div>
+              </span>
+              <span className={cn("text-text-muted", topicStatsFontClass)}>
+                {formatTimeMs(session.avgTimeMs)}/q
+              </span>
+              {session.timestamp && (
+                <span className={cn("text-xs text-text-subtle", topicStatsFontClass)}>
+                  {new Date(session.timestamp).toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })}{" "}
+                  {new Date(session.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              )}
+            </div>
+            <div
+              className={cn(
+                "flex shrink-0 items-baseline gap-1 tabular-nums",
+                topicStatsFontClass,
+              )}
+            >
+              <span className="text-3xl font-bold leading-none text-text">
+                {session.score}
+              </span>
+              <span className="text-sm font-medium text-text-muted">
+                /{SESSION_SCORE_DISPLAY_MAX}
+              </span>
             </div>
           </div>
         </motion.div>

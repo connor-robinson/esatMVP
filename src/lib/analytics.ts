@@ -122,81 +122,59 @@ export async function fetchTopicRankings(
       count: globalData?.length || 0,
       topicId,
     });
-    
-    // Fetch profiles separately since there's no direct FK relationship
-    const userIds = globalData ? [...new Set(globalData.map((d: any) => d.user_id))] : [];
-    console.log(`[fetchTopicRankings] DEBUG: Extracted ${userIds.length} unique user IDs from sessions`, {
-      userIds: userIds.slice(0, 10), // Log first 10
-      totalSessions: globalData?.length || 0,
-    });
-    
-    let profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
-    
+  }
+
+  let profilesMap: Record<
+    string,
+    { display_name: string | null; avatar_url: string | null }
+  > = {};
+
+  if (!globalError && globalData) {
+    const userIds = [
+      ...new Set([
+        ...globalData.map((d: any) => d.user_id),
+        currentUserId,
+      ].filter(Boolean)),
+    ] as string[];
+
     if (userIds.length > 0) {
-      console.log(`[fetchTopicRankings] DEBUG: Fetching profiles for ${userIds.length} users`);
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
         .select("id, display_name, avatar_url")
         .in("id", userIds);
-      
-      if (profilesError) {
-        // Handle missing table gracefully
-        if (profilesError.code === '42P01') {
-          console.warn("[fetchTopicRankings] profiles table does not exist, using anonymous names");
-        } else {
-          console.error("[fetchTopicRankings] ERROR: Failed to fetch profiles:", {
-            error: profilesError,
-            errorCode: profilesError.code,
-            errorMessage: profilesError.message,
-            errorDetails: profilesError.details,
-            userIdCount: userIds.length,
-          });
-        }
-      } else {
-        console.log(`[fetchTopicRankings] DEBUG: Profiles fetched successfully`, {
-          profileCount: profilesData?.length || 0,
-          expectedCount: userIds.length,
-        });
-        // Create a map of user_id -> profile
-        profilesMap = (profilesData || []).reduce((acc: any, p: any) => {
-          acc[p.id] = { display_name: p.display_name, avatar_url: p.avatar_url };
-          return acc;
-        }, {});
-        console.log(`[fetchTopicRankings] DEBUG: Profiles map created`, {
-          mapSize: Object.keys(profilesMap).length,
-          sampleProfiles: Object.entries(profilesMap).slice(0, 3),
-        });
+
+      if (!profilesError && profilesData) {
+        profilesMap = profilesData.reduce(
+          (acc: typeof profilesMap, p: any) => {
+            acc[p.id] = {
+              display_name: p.display_name,
+              avatar_url: p.avatar_url,
+            };
+            return acc;
+          },
+          {},
+        );
       }
-    }
-    
-    // Attach profiles to global data
-    if (globalData) {
+
       globalData.forEach((d: any) => {
         d.profiles = profilesMap[d.user_id] || null;
       });
-      console.log(`[fetchTopicRankings] DEBUG: Attached profiles to sessions`, {
-        sessionsWithProfiles: globalData.filter((d: any) => d.profiles).length,
-        sessionsWithoutProfiles: globalData.filter((d: any) => !d.profiles).length,
-      });
     }
-    
-    const globalDataArray = (globalData || []) as any[];
-    console.log(`[fetchTopicRankings] DEBUG: Global sessions fetched`, {
-      count: globalDataArray.length,
-      topicId,
-      uniqueUsers: globalDataArray.length > 0 ? new Set(globalDataArray.map((d: any) => d.user_id)).size : 0,
-      sample: globalDataArray.slice(0, 3).map((d: any) => ({
-        id: d.id,
-        user_id: d.user_id,
-        builder_session_id: d.builder_session_id,
-        score: d.summary?.score,
-        accuracy: d.accuracy,
-        question_count: d.question_count,
-      })),
-    });
   }
-  
+
   const globalDataArray = (globalData || []) as any[];
+
+  const resolveLeaderboardName = (
+    userId: string,
+    profile?: { display_name: string | null } | null,
+    isGlobal: boolean,
+  ): string => {
+    const fromProfile = profile?.display_name?.trim();
+    if (fromProfile) return fromProfile;
+    const fromMap = profilesMap[userId]?.display_name?.trim();
+    if (fromMap) return fromMap;
+    return isGlobal ? "Anonymous User" : "You";
+  };
 
   const processRankings = (
     data: any[], 
@@ -237,19 +215,11 @@ export async function fetchTopicRankings(
       
       const isCurrent = d.builder_session_id === currentSessionId;
       
-      // Get username - for global view, use display_name from profiles, for personal use "You"
-      let username: string;
-      if (isGlobal) {
-        // Use display_name from profiles if available
-        username = d.profiles?.display_name || "Anonymous User";
-        // If it's the current user, show "You" instead
-        if (d.user_id === currentUserId) {
-          username = "You";
-        }
-      } else {
-        // Personal view always shows "You"
-        username = "You";
-      }
+      const username = resolveLeaderboardName(
+        d.user_id || currentUserId,
+        d.profiles,
+        isGlobal,
+      );
       
       if (index < 3 || isCurrent) {
         console.log(`[processRankings] DEBUG: Processing record ${index}`, {
@@ -272,7 +242,10 @@ export async function fetchTopicRankings(
         builder_session_id: d.builder_session_id, // Include this for duplicate checking
         userId: d.user_id || currentUserId,
         username,
-        avatar: d.profiles?.avatar_url || undefined,
+        avatar:
+          d.profiles?.avatar_url ||
+          profilesMap[d.user_id]?.avatar_url ||
+          undefined,
         score,
         timestamp,
         isCurrent,
@@ -328,21 +301,19 @@ export async function fetchTopicRankings(
     );
     
     if (currentSessionData && currentSessionId && !currentSessionAlreadyInRankings) {
-      // Set username based on view type
-      let currentUsername = "You";
-      if (isGlobal) {
-        // For global view, we'll show "You" for current user's session
-        // The username will be set from profiles in the data processing above
-        // But since this is the current session, we know it's the current user
-        currentUsername = "You";
-      }
-      
+      const currentProfile = profilesMap[currentUserId];
+      const currentUsername = resolveLeaderboardName(
+        currentUserId,
+        currentProfile,
+        isGlobal,
+      );
+
       const currentSession = {
         id: currentSessionId || "current",
         builder_session_id: currentSessionId,
         userId: currentUserId,
         username: currentUsername,
-        avatar: undefined, // Current user's avatar would need to be fetched separately if needed
+        avatar: currentProfile?.avatar_url || undefined,
         score: currentSessionData.score,
         timestamp: new Date(), // Most recent timestamp
         isCurrent: true, // Mark as current session
