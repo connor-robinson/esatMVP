@@ -13,7 +13,7 @@
 "use client";
 
 import { useState, Suspense, lazy, useMemo, useEffect } from "react";
-import { getAllTopics, getTopic } from "@/config/topics";
+import { getAllTopics } from "@/config/topics";
 import { useBuilderSession } from "@/hooks/useBuilderSession";
 import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { SessionSelectionBar } from "@/components/ui/SessionSelectionBar";
@@ -84,15 +84,6 @@ export default function BuilderPage() {
       setReviewModalOpen(false);
     }
   }, [reviewModalOpen, builder.selectedTopicVariants.length]);
-
-  const showFlashModeOption = useMemo(
-    () =>
-      builder.selectedTopicVariants.length > 0 &&
-      builder.selectedTopicVariants.every(
-        ({ topicId }) => getTopic(topicId)?.category === "arithmetic",
-      ),
-    [builder.selectedTopicVariants],
-  );
 
   // Builder view
   if (builder.view === "builder") {
@@ -186,9 +177,6 @@ export default function BuilderPage() {
           timeLimitMinutes={builder.timeLimitMinutes}
           onTimeLimitChange={(n) => builder.setTimeLimitMinutes(n)}
           onRemoveVariant={builder.removeTopicVariant}
-          showFlashModeOption={showFlashModeOption}
-          flashMode={builder.flashMode}
-          onFlashModeChange={builder.setFlashMode}
           onStartSession={() => {
             setReviewModalOpen(false);
             builder.startSession();
@@ -221,8 +209,6 @@ export default function BuilderPage() {
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
           onEndSession={() => builder.endSession()}
-          flashMode={builder.sessionFlashMode}
-          flashDurationMs={builder.flashDurationMs}
         />
       </Suspense>
     );

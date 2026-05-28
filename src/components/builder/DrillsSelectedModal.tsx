@@ -29,10 +29,6 @@ export type DrillsSelectedModalProps = {
   timeLimitMax?: number;
   onRemoveVariant: (topicVariantId: string) => void;
   onStartSession: () => void;
-  /** Show flash-mode toggle (mental maths arithmetic drills). */
-  showFlashModeOption?: boolean;
-  flashMode?: boolean;
-  onFlashModeChange?: (enabled: boolean) => void;
 };
 
 function toTopicVariantId(sel: TopicVariantSelection) {
@@ -55,9 +51,6 @@ export function DrillsSelectedModal({
   timeLimitMax = 180,
   onRemoveVariant,
   onStartSession,
-  showFlashModeOption = false,
-  flashMode = false,
-  onFlashModeChange,
 }: DrillsSelectedModalProps) {
   useEffect(() => {
     if (!open) return;
@@ -197,34 +190,7 @@ export function DrillsSelectedModal({
         {/* Lower: start CTA ??? light: one step lighter; dark: one step darker */}
         <div className='shrink-0 bg-surface-neutral px-5 py-6 dark:bg-surface-mid sm:px-6'>
           <div className='flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8'>
-            <div className='min-w-0 flex-1 space-y-4'>
-              {showFlashModeOption && onFlashModeChange ? (
-                <label className='flex cursor-pointer items-center justify-between gap-3 rounded-organic-lg bg-surface-subtle px-4 py-3 dark:bg-surface'>
-                  <div>
-                    <p className='text-sm font-semibold text-text'>Flash mode</p>
-                    <p className='text-xs text-text-muted'>
-                      Question hides after 2s — answer from memory
-                    </p>
-                  </div>
-                  <button
-                    type='button'
-                    role='switch'
-                    aria-checked={flashMode}
-                    onClick={() => onFlashModeChange(!flashMode)}
-                    className={cn(
-                      'relative h-7 w-12 shrink-0 rounded-full transition-colors',
-                      flashMode ? 'bg-primary' : 'bg-surface-mid',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'absolute top-0.5 h-6 w-6 rounded-full bg-background shadow-sm transition-transform',
-                        flashMode ? 'translate-x-5' : 'translate-x-0.5',
-                      )}
-                    />
-                  </button>
-                </label>
-              ) : null}
+            <div className='min-w-0 flex-1'>
               <SessionLengthControl
                 mode={sessionLengthMode}
                 onModeChange={onSessionLengthModeChange}

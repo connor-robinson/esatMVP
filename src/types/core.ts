@@ -200,10 +200,6 @@ export interface BuilderSessionConfig {
   topicIds: string[];
   variantToLevelMap: Record<string, number>;
   topicVariantSelections: TopicVariantSelection[];
-  /** Hide the question prompt after a short delay (mental maths). */
-  flashMode?: boolean;
-  /** Ms before hiding the question when flashMode is on. Default 2000. */
-  flashDurationMs?: number;
 }
 
 export interface BuilderSession {

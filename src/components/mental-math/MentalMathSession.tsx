@@ -39,9 +39,6 @@ interface MentalMathSessionProps {
   onContinueAfterIncorrect: () => void;
   /** Finish run and show results. */
   onEndSession: () => void;
-  /** Hide the question after a short delay (memory drill). */
-  flashMode?: boolean;
-  flashDurationMs?: number;
 }
 
 export function MentalMathSession({
@@ -57,14 +54,11 @@ export function MentalMathSession({
   onSubmitAnswer,
   onContinueAfterIncorrect,
   onEndSession,
-  flashMode = false,
-  flashDurationMs = 2000,
 }: MentalMathSessionProps) {
   const [answer, setAnswer] = useState("");
   const [multiAnswers, setMultiAnswers] = useState<string[]>([]);
   const [showSuccessFeedback, setShowSuccessFeedback] = useState(false);
   const [answerRevealed, setAnswerRevealed] = useState(false);
-  const [questionVisible, setQuestionVisible] = useState(true);
   const [useKatexInput, setUseKatexInput] = useState(true);
   const katexInputRef = useRef<HTMLInputElement>(null);
   const simpleInputRef = useRef<HTMLInputElement>(null);
@@ -76,14 +70,6 @@ export function MentalMathSession({
   const isMultiAnswer =
     typeof currentQuestion.answer === "string" &&
     currentQuestion.answer.split(",").filter((p) => p.trim().length > 0).length === 2;
-
-  // Flash mode: show question briefly, then hide (answer from memory)
-  useEffect(() => {
-    setQuestionVisible(true);
-    if (!flashMode || showFeedback) return;
-    const timer = window.setTimeout(() => setQuestionVisible(false), flashDurationMs);
-    return () => window.clearTimeout(timer);
-  }, [currentQuestion.id, flashMode, flashDurationMs, showFeedback]);
 
   // Auto-focus and clear input when question changes
   useEffect(() => {
@@ -240,7 +226,7 @@ export function MentalMathSession({
               </span>
             </div>
 
-            {/* Question (hidden after delay in flash mode) */}
+            {/* Question */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentQuestion.id}
@@ -248,17 +234,11 @@ export function MentalMathSession({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.1, ease: "easeInOut" }}
-                className="min-h-[2.5rem] text-center"
+                className="text-center"
               >
-                {questionVisible || showFeedback ? (
-                  <div className="text-lg font-semibold tracking-tight leading-tight text-text-muted md:text-xl">
-                    <MathContent content={currentQuestion.question} />
-                  </div>
-                ) : (
-                  <p className="text-sm font-medium uppercase tracking-wider text-text-subtle">
-                    Recall the sum
-                  </p>
-                )}
+                <div className="text-lg font-semibold tracking-tight leading-tight text-text-muted md:text-xl">
+                  <MathContent content={currentQuestion.question} />
+                </div>
               </motion.div>
             </AnimatePresence>
 
