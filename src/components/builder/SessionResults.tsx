@@ -328,17 +328,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             <div
               className={cn(
                 "relative z-10 grid items-center gap-x-8 gap-y-3 px-6 py-5 sm:gap-x-12 sm:px-8 sm:py-6",
-                "grid-cols-[minmax(6.5rem,auto)_2.5rem_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]",
+                "grid-cols-[2.5rem_minmax(6.5rem,auto)_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]",
                 topicStatsFontClass,
               )}
             >
+              <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
               <div className="flex items-baseline gap-1.5">
                 <span className={cn("text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]", hlText)}>
                   {session.score}
                 </span>
                 <span className={cn("text-sm font-semibold", hlMuted)}>/{SESSION_SCORE_DISPLAY_MAX}</span>
               </div>
-              <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
               <div className="flex min-w-0 items-center gap-3">
                 <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg", hlAvatarBg)}>
                   {session.avatar ? (
@@ -503,18 +503,18 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           transition={{ delay: idx * 0.03 }}
           className={cn(
             "grid items-center gap-x-8 gap-y-3 rounded-organic-lg px-6 py-5 transition-colors sm:gap-x-12 sm:px-8 sm:py-6",
-            "grid-cols-[minmax(6.5rem,auto)_2.5rem_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
+            "grid-cols-[2.5rem_minmax(6.5rem,auto)_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
             topicStatsFontClass,
             isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
           )}
         >
+          <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
           <div className="flex items-baseline gap-1.5">
             <span className={cn("text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]", hlText)}>
               {session.score}
             </span>
             <span className={cn("text-sm font-semibold", hlMuted)}>/{SESSION_SCORE_DISPLAY_MAX}</span>
           </div>
-          <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
           <div className="text-right">
             <div className={cn("text-base font-bold tabular-nums", hlAccent)}>{session.accuracy.toFixed(0)}%</div>
             <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Accuracy</div>
@@ -884,145 +884,118 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         </div>
 
         {/* Stats row */}
-        {mentalMathUi ? (
+        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className={cn("mb-10 overflow-hidden", resultsCard)}
+            className="lg:col-span-1"
           >
-            <div className="flex flex-col lg:flex-row">
-              <div className="flex flex-col justify-center border-b border-border-subtle px-8 py-10 lg:w-[min(300px,36%)] lg:border-b-0 lg:border-r lg:py-12 lg:pl-10 lg:pr-12">
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-2.5">
-                    <Trophy className="h-5 w-5 text-success" aria-hidden />
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                      Session score
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowScoreInfo(true)}
-                    className="rounded-organic-md p-1.5 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
-                    aria-label="How scoring works"
+            <div className={cn("h-full p-6", scoreOverviewCard)}>
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy
+                    className={cn(
+                      "h-4 w-4",
+                      mentalMathUi ? "text-success" : "text-warning",
+                    )}
+                    aria-hidden
+                  />
+                  <div
+                    className={cn(
+                      "text-[11px] font-semibold uppercase tracking-wider",
+                      mentalMathUi ? "text-success/90" : "text-text-muted",
+                    )}
                   >
-                    <Info className="h-4 w-4" />
-                  </button>
+                    Session score
+                  </div>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-sans text-5xl font-bold tabular-nums leading-none tracking-tight text-success sm:text-6xl">
-                    {result.score}
-                  </span>
-                  <span className="font-sans text-lg font-semibold tabular-nums text-text-muted">
-                    / {SESSION_SCORE_DISPLAY_MAX}
-                  </span>
-                </div>
-                {result.topicBreakdown.length > 1 && (
-                  <p className="mt-4 max-w-xs text-xs leading-relaxed text-text-subtle">
-                    Combined across {result.topicBreakdown.length} topics. Per-topic scores are listed below.
-                  </p>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setShowScoreInfo(true)}
+                  className="rounded-organic-md p-1 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
+                  aria-label="How scoring works"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
               </div>
-              <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-12 lg:py-10">
-                <table className="w-full border-collapse font-sans">
-                  <tbody className="divide-y divide-border-subtle">
-                    <tr>
-                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                        Accuracy
-                      </td>
-                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
-                        {result.accuracy.toFixed(1)}%
-                      </td>
-                      <td className="w-28 py-5 pl-6 text-right text-sm text-text-subtle">
-                        {result.correctAnswers} / {result.totalQuestions}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                        Avg speed
-                      </td>
-                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
-                        {formatTimeMs(result.averageTimeMs)}
-                      </td>
-                      <td className="py-5 pl-6 text-right text-sm text-text-subtle">per question</td>
-                    </tr>
-                    <tr>
-                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                        Fastest
-                      </td>
-                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
-                        {formatTime(result.fastestTimeMs)}
-                      </td>
-                      <td className="py-5 pl-6 text-right text-sm text-text-subtle">best answer</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div
+                className={cn(
+                  "mb-2 font-bold tabular-nums text-4xl leading-none sm:text-5xl",
+                  mentalMathUi ? "text-success" : "text-warning",
+                )}
+              >
+                {result.score}
+              </div>
+              <div className="text-xs text-text-subtle">Out of 1000 points</div>
+              {result.topicBreakdown.length > 1 && (
+                <div className="mt-3 text-[10px] leading-snug text-text-subtle">
+                  Combined score across {result.topicBreakdown.length} topics; each topic has its own
+                  leaderboard score below.
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Target className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Accuracy
+                </div>
+              </div>
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
+                {result.accuracy.toFixed(1)}%
+              </div>
+              <div className="text-xs text-text-subtle">
+                {result.correctAnswers} / {result.totalQuestions} correct
               </div>
             </div>
           </motion.div>
-        ) : (
-          <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="lg:col-span-1"
-            >
-              <div className={cn("h-full p-6", scoreOverviewCard)}>
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4 text-warning" aria-hidden />
-                    <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                      Session score
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowScoreInfo(true)}
-                    className="rounded-organic-md p-1 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
-                    aria-label="How scoring works"
-                  >
-                    <Info className="h-4 w-4" />
-                  </button>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Clock className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Avg speed
                 </div>
-                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-warning sm:text-5xl">
-                  {result.score}
-                </div>
-                <div className="text-xs text-text-subtle">Out of 1000 points</div>
               </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <div className={`h-full p-6 ${resultsCard}`}>
-                <div className="mb-4 flex items-center gap-2">
-                  <Target className="h-4 w-4 text-text-muted" aria-hidden />
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Accuracy</div>
-                </div>
-                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{result.accuracy.toFixed(1)}%</div>
-                <div className="text-xs text-text-subtle">{result.correctAnswers} / {result.totalQuestions} correct</div>
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
+                {formatTimeMs(result.averageTimeMs)}
               </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <div className={`h-full p-6 ${resultsCard}`}>
-                <div className="mb-4 flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-text-muted" aria-hidden />
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Avg speed</div>
+              <div className="text-xs text-text-subtle">per question</div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className={`h-full p-6 ${resultsCard}`}>
+              <div className="mb-4 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-text-muted" aria-hidden />
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                  Fastest
                 </div>
-                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{formatTimeMs(result.averageTimeMs)}</div>
-                <div className="text-xs text-text-subtle">per question</div>
               </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-              <div className={`h-full p-6 ${resultsCard}`}>
-                <div className="mb-4 flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-text-muted" aria-hidden />
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Fastest</div>
-                </div>
-                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{formatTime(result.fastestTimeMs)}</div>
-                <div className="text-xs lowercase text-text-subtle">Best performance</div>
+              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
+                {formatTime(result.fastestTimeMs)}
               </div>
-            </motion.div>
-          </div>
-        )}
+              <div className="text-xs lowercase text-text-subtle">Best performance</div>
+            </div>
+          </motion.div>
+        </div>
 
         {/* Session Progress Section */}
         {result.progressData && result.progressData.length > 0 && (
@@ -1174,12 +1147,12 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                             className={cn(
                               "mb-2 grid items-center gap-x-8 px-6 pb-3 pt-1 font-sans sm:gap-x-12 sm:px-8",
                               isGlobalView
-                                ? "grid-cols-[minmax(6.5rem,auto)_2.5rem_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]"
-                                : "grid-cols-[minmax(6.5rem,auto)_2.5rem_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
+                                ? "grid-cols-[2.5rem_minmax(6.5rem,auto)_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]"
+                                : "grid-cols-[2.5rem_minmax(6.5rem,auto)_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
                             )}
                           >
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Score</span>
                             <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Rank</span>
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Score</span>
                             {isGlobalView ? (
                               <span className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Player</span>
                             ) : null}
