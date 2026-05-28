@@ -568,32 +568,48 @@ async function fetchRecentSessions(
     let avgSpeed: number;
     let score: number;
 
-    // Always use questions.length as the source of truth for totalQuestions
-    // Questions in the session, not just attempted ones
-    const sessionTotalQuestions = questions.length;
+    // Open-ended / timed sessions only persist a small initial question pool in
+    // builder_session_questions; attempts are the source of truth for volume.
+    const attemptedCount = attempts.length;
+    const correctFromAttempts = attempts.filter(
+      (a) => a.is_correct === true,
+    ).length;
 
-    if (savedData && savedData.totalQuestions > 0 && savedData.correctAnswers !== undefined) {
-      // Use saved data from database (most accurate)
-      // Use the totalQuestions from savedData if it matches questions.length, otherwise use questions.length
-      totalQuestions = savedData.totalQuestions === sessionTotalQuestions ? savedData.totalQuestions : sessionTotalQuestions;
+    if (attemptedCount > 0) {
+      totalQuestions = attemptedCount;
+      correctAnswers = correctFromAttempts;
+      totalTime = attempts.reduce(
+        (sum, a) => sum + (a.time_spent_ms || 0),
+        0,
+      );
+      avgSpeed =
+        totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0;
+      accuracy =
+        Math.round((correctAnswers / totalQuestions) * 1000) / 10;
+      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed, {
+        avgDifficulty: savedData?.avgDifficulty,
+      });
+    } else if (
+      savedData &&
+      savedData.totalQuestions > 0 &&
+      savedData.correctAnswers !== undefined
+    ) {
+      totalQuestions = savedData.totalQuestions;
       correctAnswers = savedData.correctAnswers;
-      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0;
+      accuracy =
+        Math.round((correctAnswers / totalQuestions) * 1000) / 10;
       totalTime = savedData.totalTime || 0;
       avgSpeed = savedData.avgSpeed > 0 ? Math.round(savedData.avgSpeed) : 0;
-      // Recalculate score using calculateSessionScore for consistency
       score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed, {
         avgDifficulty: savedData.avgDifficulty,
       });
     } else {
-      // Fallback to calculating from attempts
-      // totalQuestions should be the number of questions in the session, not attempts
-      totalQuestions = sessionTotalQuestions;
-      correctAnswers = attempts.filter(a => a.is_correct === true).length;
-      accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 1000) / 10 : 0;
-      totalTime = attempts.reduce((sum, a) => sum + (a.time_spent_ms || 0), 0);
-      avgSpeed = totalQuestions > 0 && totalTime > 0 ? Math.round(totalTime / totalQuestions) : 0;
-      // Use calculateSessionScore for individual sessions, not calculateLeaderboardScore
-      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed);
+      totalQuestions = 0;
+      correctAnswers = 0;
+      accuracy = 0;
+      totalTime = 0;
+      avgSpeed = 0;
+      score = 0;
     }
     const topicIds = normalizeTopicIdsToFolders(
       questions.map((q: any) => q.topic_id).filter(Boolean),

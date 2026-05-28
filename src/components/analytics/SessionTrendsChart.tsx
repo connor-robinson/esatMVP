@@ -33,6 +33,17 @@ function msPerQuestionToQpm(ms: number): number | null {
   return Math.round((60000 / ms) * 10) / 10;
 }
 
+/** correct ÷ questions attempted, capped 0–100% (open-ended sessions). */
+function sessionAccuracyPercent(
+  correctAnswers: number,
+  totalQuestions: number,
+): number | null {
+  if (totalQuestions <= 0) return null;
+  const correct = Math.min(correctAnswers, totalQuestions);
+  const pct = (correct / totalQuestions) * 100;
+  return Math.round(Math.min(100, Math.max(0, pct)) * 10) / 10;
+}
+
 function formatSessionAxisLabel(date: Date): string {
   return date.toLocaleString("en-GB", {
     month: "short",
@@ -133,7 +144,7 @@ export function SessionTrendsChart({ sessions }: SessionTrendsChartProps) {
     list.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
     const accuracy = list.map((s) =>
-      s.totalQuestions > 0 ? Math.round(s.accuracy * 10) / 10 : null,
+      sessionAccuracyPercent(s.correctAnswers, s.totalQuestions),
     );
     const speed = list.map((s) => msPerQuestionToQpm(s.avgSpeed));
     const { accuracyTrend, speedTrend } = buildSmoothedTrendSeries(
