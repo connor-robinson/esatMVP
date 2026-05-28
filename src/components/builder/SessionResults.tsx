@@ -294,9 +294,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     
     // Only highlight if it's the current session (matches the session.id we're viewing)
     // Check if builder_session_id matches currentSessionId, or if isCurrent flag is set and IDs match
-    const isHighlighted = currentSessionId && (
-      session.builder_session_id === currentSessionId ||
-      (session.isCurrent && session.id === currentSessionId)
+    const isHighlighted = Boolean(
+      currentSessionId &&
+        (session.builder_session_id === currentSessionId || session.isCurrent),
     );
 
     // For global view, use column-based layout
@@ -597,6 +597,29 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     );
   };
 
+  const getTopicRankingSnapshot = (topicId: string) => {
+    const t = result.topicBreakdown.find((x) => x.topicId === topicId);
+    if (!t) return null;
+    return {
+      score: t.score,
+      correctAnswers: t.correct,
+      totalQuestions: t.total,
+      avgTimeMs: t.avgTimeMs,
+      accuracy: t.accuracy,
+    };
+  };
+
+  const withLiveCurrentSessionStats = (entry: any, topicId: string) => {
+    const snap = getTopicRankingSnapshot(topicId);
+    if (!snap) return entry;
+    const isThisRun =
+      entry.isCurrent ||
+      entry.builder_session_id === session.id ||
+      entry.id === session.id;
+    if (!isThisRun) return entry;
+    return { ...entry, ...snap, isCurrent: true };
+  };
+
   const renderSessionCards = (topicId: string, topicName: string) => {
     const data = rankingsData[topicId]?.[rankingView];
     
@@ -619,19 +642,17 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
     
     // Handle case where data structure is old format (array) or new format (object)
     if (!data) {
-      // Fallback: show current attempt if no data
-      // IMPORTANT: Use SESSION-LEVEL stats, not topic-level stats
-      // This ensures consistency with the top cards
+      const snap = getTopicRankingSnapshot(topicId);
       const currentSession = {
         id: session.id,
         rank: 1,
-        score: result.score, // Session-level score
+        score: snap?.score ?? result.score,
         timestamp: new Date(),
         isCurrent: true,
-        correctAnswers: result.correctAnswers, // Session-level correct
-        totalQuestions: result.totalQuestions, // Session-level total
-        avgTimeMs: result.averageTimeMs, // Session-level avg time
-        accuracy: result.accuracy, // Session-level accuracy
+        correctAnswers: snap?.correctAnswers ?? result.correctAnswers,
+        totalQuestions: snap?.totalQuestions ?? result.totalQuestions,
+        avgTimeMs: snap?.avgTimeMs ?? result.averageTimeMs,
+        accuracy: snap?.accuracy ?? result.accuracy,
         username: "You",
       };
       
@@ -654,7 +675,13 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       // Show top N (5 for global, 3 for personal)
       const topEntries = isGlobalView ? top3.slice(0, 5) : top3.slice(0, 3);
       topEntries.forEach((sessionData: any) => {
-        const card = renderSingleCard(sessionData, isGlobalView, cardIndex, topicName, session.id);
+        const card = renderSingleCard(
+          withLiveCurrentSessionStats(sessionData, topicId),
+          isGlobalView,
+          cardIndex,
+          topicName,
+          session.id,
+        );
         if (card) {
           cards.push(card);
           cardIndex++;
@@ -669,18 +696,19 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       // If current is not in top N, show ellipsis and current attempt
       if (currentRank !== null && currentRank > topCount && !currentInTop) {
         // Find current attempt in adjacent or create from session data
+        const snap = getTopicRankingSnapshot(topicId);
         const currentAttempt = adjacent.find((entry: any) => 
           entry.isCurrent || (session.id && (entry.builder_session_id === session.id || entry.id === session.id))
         ) || {
           id: session.id,
           rank: currentRank,
-          score: result.score,
+          score: snap?.score ?? result.score,
           timestamp: new Date(),
           isCurrent: true,
-          correctAnswers: result.correctAnswers,
-          totalQuestions: result.totalQuestions,
-          avgTimeMs: result.averageTimeMs,
-          accuracy: result.accuracy,
+          correctAnswers: snap?.correctAnswers ?? result.correctAnswers,
+          totalQuestions: snap?.totalQuestions ?? result.totalQuestions,
+          avgTimeMs: snap?.avgTimeMs ?? result.averageTimeMs,
+          accuracy: snap?.accuracy ?? result.accuracy,
           username: "You",
         };
 
@@ -698,7 +726,13 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             </div>
           );
           
-          const card = renderSingleCard(currentAttempt, isGlobalView, cardIndex, topicName, session.id);
+          const card = renderSingleCard(
+            withLiveCurrentSessionStats(currentAttempt, topicId),
+            isGlobalView,
+            cardIndex,
+            topicName,
+            session.id,
+          );
           if (card) {
             cards.push(card);
             cardIndex++;
@@ -719,21 +753,28 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         // Fallback to showing current attempt
         // IMPORTANT: Use SESSION-LEVEL stats, not topic-level stats
         // This ensures consistency with the top cards
+        const snap = getTopicRankingSnapshot(topicId);
         const currentSession = {
           id: session.id,
           rank: currentRank || 1,
-          score: result.score, // Session-level score
+          score: snap?.score ?? result.score,
           timestamp: new Date(),
           isCurrent: true,
-          correctAnswers: result.correctAnswers, // Session-level correct
-          totalQuestions: result.totalQuestions, // Session-level total
-          avgTimeMs: result.averageTimeMs, // Session-level avg time
-          accuracy: result.accuracy, // Session-level accuracy
+          correctAnswers: snap?.correctAnswers ?? result.correctAnswers,
+          totalQuestions: snap?.totalQuestions ?? result.totalQuestions,
+          avgTimeMs: snap?.avgTimeMs ?? result.averageTimeMs,
+          accuracy: snap?.accuracy ?? result.accuracy,
           username: "You",
         };
         return (
           <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
-            {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
+            {renderSingleCard(
+              withLiveCurrentSessionStats(currentSession, topicId),
+              isGlobalView,
+              0,
+              topicName,
+              session.id,
+            )}
           </div>
         );
       }
@@ -754,8 +795,14 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       });
       return (
         <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
-          {data.slice(0, 10).map((sessionData: any, idx: number) => 
-            renderSingleCard(sessionData, isGlobalView, idx, topicName, session.id)
+          {data.slice(0, 10).map((sessionData: any, idx: number) =>
+            renderSingleCard(
+              withLiveCurrentSessionStats(sessionData, topicId),
+              isGlobalView,
+              idx,
+              topicName,
+              session.id,
+            ),
           )}
         </div>
       );

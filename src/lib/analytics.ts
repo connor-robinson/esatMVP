@@ -283,6 +283,44 @@ export async function fetchTopicRankings(
       };
     });
 
+    // Personal history can return multiple drill_sessions rows per builder session
+    // (legacy per-topic saves under one folder). Keep one row per session.
+    if (!isGlobal) {
+      const byBuilder = new Map<string, (typeof rankings)[number]>();
+      for (const row of rankings) {
+        const key = row.builder_session_id || row.id;
+        const prev = byBuilder.get(key);
+        if (!prev || row.score > prev.score) {
+          byBuilder.set(key, row);
+        }
+      }
+      rankings = Array.from(byBuilder.values());
+    }
+
+    // Always use live topic/session stats for the run just completed (matches
+    // Session score card + topic header; DB row may be stale or per-subtopic).
+    if (currentSessionData && currentSessionId) {
+      rankings = rankings.map((row) => {
+        const isThisRun =
+          row.builder_session_id === currentSessionId ||
+          row.id === currentSessionId;
+        if (!isThisRun) return row;
+        const total = currentSessionData.totalQuestions;
+        return {
+          ...row,
+          score: currentSessionData.score,
+          correctAnswers: currentSessionData.correctAnswers,
+          totalQuestions: total,
+          avgTimeMs: currentSessionData.avgTimeMs,
+          accuracy:
+            total > 0
+              ? (currentSessionData.correctAnswers / total) * 100
+              : row.accuracy,
+          isCurrent: true,
+        };
+      });
+    }
+
     // Only add current session if it's not already in the rankings (already saved to database)
     // If it's already in rankings, it's already marked as current via the mapping above
     const currentSessionAlreadyInRankings = rankings.some((r: any) => 
