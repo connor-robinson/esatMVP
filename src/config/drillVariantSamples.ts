@@ -35,32 +35,36 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '47 + 36 + 22' },
   ]),
   'subtraction-single-digit': S([
-    { kind: 'plain', text: '9 − 4' },
-    { kind: 'plain', text: '8 − 3' },
+    { kind: 'plain', text: '13 − 7' },
+    { kind: 'plain', text: '16 − 9' },
   ]),
-  'subtraction-two-digit-no-borrow': S([
-    { kind: 'plain', text: '47 − 3' },
-    { kind: 'plain', text: '82 − 5' },
+  'subtraction-double-no-borrow': S([
+    { kind: 'plain', text: '47 − 23' },
+    { kind: 'plain', text: '68 − 35' },
   ]),
-  'subtraction-two-digit-with-borrow': S([
-    { kind: 'plain', text: '52 − 7' },
-    { kind: 'plain', text: '61 − 8' },
+  'subtraction-double-with-borrow': S([
+    { kind: 'plain', text: '52 − 27' },
+    { kind: 'plain', text: '61 − 38' },
   ]),
-  'subtraction-two-digit-two-digit': S([
-    { kind: 'plain', text: '63 − 28' },
-    { kind: 'plain', text: '74 − 39' },
+  'subtraction-mental-subtract-5': S([
+    { kind: 'plain', text: '43 − 15' },
+    { kind: 'plain', text: '58 − 20' },
   ]),
-  'subtraction-three-digit': S([
-    { kind: 'plain', text: '502 − 187' },
-    { kind: 'plain', text: '640 − 258' },
+  'subtraction-three-numbers': S([
+    { kind: 'plain', text: '18 − 5 − 4' },
+    { kind: 'plain', text: '25 − 7 − 6' },
+  ]),
+  'subtraction-three-numbers-hard': S([
+    { kind: 'plain', text: '85 − 27 − 14' },
+    { kind: 'plain', text: '72 − 38 − 9' },
   ]),
   'multiplication-single-digit': S([
     { kind: 'plain', text: '7 × 8' },
     { kind: 'plain', text: '9 × 6' },
   ]),
-  'multiplication-tables-up-to-10': S([
-    { kind: 'plain', text: '6 × 9' },
-    { kind: 'plain', text: '8 × 7' },
+  'multiplication-tables-up-to-12': S([
+    { kind: 'plain', text: '7 × 9' },
+    { kind: 'plain', text: '11 × 8' },
   ]),
   'multiplication-double-single': S([
     { kind: 'plain', text: '24 × 7' },
@@ -69,6 +73,10 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   'multiplication-double-double': S([
     { kind: 'plain', text: '23 × 14' },
     { kind: 'plain', text: '18 × 16' },
+  ]),
+  'multiplication-double-double-hard': S([
+    { kind: 'plain', text: '47 × 36' },
+    { kind: 'plain', text: '58 × 27' },
   ]),
   'multiplication-decimal': S([
     { kind: 'plain', text: '2.5 × 4' },
@@ -89,6 +97,10 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
   'division-with-remainders': S([
     { kind: 'plain', text: '47 ÷ 6' },
     { kind: 'plain', text: '53 ÷ 8' },
+  ]),
+  'division-harder-remainders': S([
+    { kind: 'plain', text: '127 ÷ 9' },
+    { kind: 'plain', text: '158 ÷ 11' },
   ]),
   'division-long-division': S([
     { kind: 'plain', text: '372 ÷ 4' },

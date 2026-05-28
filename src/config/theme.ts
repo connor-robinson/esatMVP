@@ -255,10 +255,10 @@ export const primaryButtonLabelClasses =
 export const removeButtonLabelClasses =
   "text-text [text-shadow:0_0.5px_1px_rgb(255_255_255_/_0.35)] dark:text-white dark:[text-shadow:0_0.5px_2px_rgb(0_0_0_/_0.45),0_0_1px_rgb(0_0_0_/_0.35)] dark:hover:text-white";
 
-/** Map numeric difficulty (1-5) → easy | medium | hard (no separate “extra” pill). */
+/** Map numeric difficulty (1–6) → easy | medium | hard for drill pills. */
 export function getDifficultyKey(difficulty: number): DifficultyKey {
   if (difficulty <= 2) return "easy";
-  if (difficulty <= 3) return "medium";
+  if (difficulty <= 4) return "medium";
   return "hard";
 }
 

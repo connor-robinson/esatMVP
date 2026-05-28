@@ -1,46 +1,66 @@
 /**
  * Multiplication question generator
- * Levels:
- * 1 - Single digit × single digit
- * 2 - Multiplication tables (up to 10)
- * 3 - Two digit × single digit
- * 4 - Two digit × two digit
- * 5 - Decimal multiplication
+ *
+ * 1 → Single digit × single digit (weighted)
+ * 2 → Times tables 2–12 (weighted)
+ * 3 → Two digit × one digit
+ * 4 → Two digit × two digit (smaller)
+ * 5 → Two digit × two digit (full range)
+ * 6 → Decimal × whole number
  */
 
 import { GeneratedQuestion } from "@/types/core";
-import { generateId } from "@/lib/utils";
-import { pick, randomInt, randomDigit } from "./utils/random";
+import { generateId, randomInt } from "@/lib/utils";
+import { randomDigit } from "./utils/random";
 import { createAnswerChecker } from "@/lib/answer-checker";
+
+const SINGLE_DIGIT_WEIGHTS = [0, 0, 1, 2, 3, 5, 6, 7, 8, 9];
 
 export function generateMultiplication(
   level: number,
   weights?: Record<string, number>
 ): GeneratedQuestion {
-  if (level === 1) return generateSingleDigit();
-  if (level === 2) return generateTables();
-  if (level === 3) return generateTwoDigitBySingle();
-  if (level === 4) return generateTwoDigitByTwoDigit();
-  return generateDecimalMultiplication();
+  switch (level) {
+    case 1:
+      return generateSingleDigit();
+    case 2:
+      return generateTables();
+    case 3:
+      return generateTwoDigitBySingle();
+    case 4:
+      return generateTwoDigitByTwoDigitEasy();
+    case 5:
+      return generateTwoDigitByTwoDigitHard();
+    case 6:
+      return generateDecimalMultiplication();
+    default:
+      return generateSingleDigit();
+  }
 }
 
 function generateSingleDigit(): GeneratedQuestion {
-  const d1 = randomDigit([1, 1, 2, 3, 4, 5, 6, 6, 7, 8]);
-  const d2 = randomDigit([1, 1, 2, 3, 4, 5, 6, 6, 7, 8]);
-  
+  let a = randomDigit(SINGLE_DIGIT_WEIGHTS);
+  let b = randomDigit(SINGLE_DIGIT_WEIGHTS);
+  let attempts = 0;
+  while (a * b <= 12 && attempts < 8) {
+    a = randomDigit(SINGLE_DIGIT_WEIGHTS);
+    b = randomDigit(SINGLE_DIGIT_WEIGHTS);
+    attempts += 1;
+  }
+
   return {
     id: generateId(),
     topicId: "multiplication",
-    question: `$${d1} \\times ${d2}$`,
-    answer: String(d1 * d2),
+    question: `$${a} \\times ${b}$`,
+    answer: String(a * b),
     difficulty: 1,
   };
 }
 
 function generateTables(): GeneratedQuestion {
-  const a = randomInt(1, 10);
-  const b = randomInt(1, 10);
-  
+  const a = randomInt(3, 12);
+  const b = randomInt(3, 12);
+
   return {
     id: generateId(),
     topicId: "multiplication",
@@ -51,9 +71,9 @@ function generateTables(): GeneratedQuestion {
 }
 
 function generateTwoDigitBySingle(): GeneratedQuestion {
-  const a = randomInt(10, 99);
-  const b = randomInt(2, 9);
-  
+  const a = randomInt(12, 99);
+  const b = randomInt(3, 9);
+
   return {
     id: generateId(),
     topicId: "multiplication",
@@ -63,16 +83,29 @@ function generateTwoDigitBySingle(): GeneratedQuestion {
   };
 }
 
-function generateTwoDigitByTwoDigit(): GeneratedQuestion {
-  const a = randomInt(10, 99);
-  const b = randomInt(10, 99);
-  
+function generateTwoDigitByTwoDigitEasy(): GeneratedQuestion {
+  const a = randomInt(11, 49);
+  const b = randomInt(11, 49);
+
   return {
     id: generateId(),
     topicId: "multiplication",
     question: `$${a} \\times ${b}$`,
     answer: String(a * b),
     difficulty: 4,
+  };
+}
+
+function generateTwoDigitByTwoDigitHard(): GeneratedQuestion {
+  const a = randomInt(12, 99);
+  const b = randomInt(12, 99);
+
+  return {
+    id: generateId(),
+    topicId: "multiplication",
+    question: `$${a} \\times ${b}$`,
+    answer: String(a * b),
+    difficulty: 5,
   };
 }
 
@@ -101,7 +134,7 @@ function generateDecimalMultiplication(): GeneratedQuestion {
     topicId: "multiplication",
     question: `$${decimalStr} \\times ${digit}$`,
     answer,
-    difficulty: 5,
+    difficulty: 6,
     checker,
   };
 }
