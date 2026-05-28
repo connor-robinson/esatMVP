@@ -256,37 +256,38 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         (session.builder_session_id === currentSessionId || session.isCurrent),
     );
 
-    const hlText = isHighlighted
-      ? mentalMathUi
-        ? "text-background dark:text-white"
-        : "text-background"
-      : "text-text";
-    const hlMuted = isHighlighted
-      ? mentalMathUi
-        ? "text-background/85 dark:text-white/90"
-        : "text-background/80"
-      : "text-text-muted";
-    const hlSubtle = isHighlighted
-      ? mentalMathUi
-        ? "text-background/70 dark:text-white/80"
-        : "text-background/70"
-      : "text-text-subtle";
-    const hlRank = isHighlighted
-      ? mentalMathUi
-        ? "text-background dark:text-white"
-        : "text-background"
-      : mentalMathUi
-        ? "text-text-muted"
-        : "text-primary";
-    const hlAccent = isHighlighted
-      ? mentalMathUi
-        ? "text-background dark:text-white"
-        : "text-background"
-      : mentalMathUi
-        ? "text-success"
-        : "text-primary";
-    const hlAvatarBg = isHighlighted
-      ? "bg-background/20 dark:bg-black/20"
+    const hlOnGreen = isHighlighted && mentalMathUi;
+    const hlText = hlOnGreen
+      ? "text-white dark:text-gray-950"
+      : isHighlighted
+        ? "text-background"
+        : "text-text";
+    const hlMuted = hlOnGreen
+      ? "text-white/90 dark:text-gray-950/75"
+      : isHighlighted
+        ? "text-background/80"
+        : "text-text-muted";
+    const hlSubtle = hlOnGreen
+      ? "text-white/75 dark:text-gray-950/65"
+      : isHighlighted
+        ? "text-background/70"
+        : "text-text-subtle";
+    const hlRank = hlOnGreen
+      ? "text-white dark:text-gray-950"
+      : isHighlighted
+        ? "text-background"
+        : mentalMathUi
+          ? "text-text-muted"
+          : "text-primary";
+    const hlAccent = hlOnGreen
+      ? "text-white dark:text-gray-950"
+      : isHighlighted
+        ? "text-background"
+        : mentalMathUi
+          ? "text-success"
+          : "text-primary";
+    const hlAvatarBg = hlOnGreen
+      ? "bg-white/25 dark:bg-black/15"
       : "bg-surface-mid";
 
     // For global view, use column-based layout
@@ -302,7 +303,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.03 }}
             className={cn(
-              "relative overflow-hidden rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
+              "relative overflow-hidden rounded-organic-lg transition-colors",
               isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
             )}
           >
@@ -310,7 +311,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div
                 className={cn(
                   "absolute bottom-0 left-0 right-0 h-1",
-                  isHighlighted ? "bg-black/15" : "bg-border-subtle/60",
+                  isHighlighted ? "bg-black/10 dark:bg-black/20" : "bg-border-subtle/60",
                 )}
               >
                 <motion.div
@@ -319,28 +320,27 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   transition={{ duration: 0.8, delay: idx * 0.05 }}
                   className={cn(
                     "h-full",
-                    isHighlighted ? "bg-background/55 dark:bg-white/50" : "bg-success/45",
+                    isHighlighted ? "bg-white/40 dark:bg-gray-950/25" : "bg-success/45",
                   )}
                 />
               </div>
             )}
-            <div className="relative z-10 flex items-center gap-3 sm:gap-4">
-              <div
-                className={cn(
-                  "w-8 shrink-0 text-center text-sm font-bold tabular-nums",
-                  hlRank,
-                  topicStatsFontClass,
-                )}
-              >
-                {session.rank}
+            <div
+              className={cn(
+                "relative z-10 grid items-center gap-x-8 gap-y-3 px-6 py-5 sm:gap-x-12 sm:px-8 sm:py-6",
+                "grid-cols-[minmax(6.5rem,auto)_2.5rem_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]",
+                topicStatsFontClass,
+              )}
+            >
+              <div className="flex items-baseline gap-1.5">
+                <span className={cn("text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]", hlText)}>
+                  {session.score}
+                </span>
+                <span className={cn("text-sm font-semibold", hlMuted)}>/{SESSION_SCORE_DISPLAY_MAX}</span>
               </div>
-              <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                <div
-                  className={cn(
-                    "flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg",
-                    hlAvatarBg,
-                  )}
-                >
+              <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
+              <div className="flex min-w-0 items-center gap-3">
+                <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg", hlAvatarBg)}>
                   {session.avatar ? (
                     <img
                       src={session.avatar}
@@ -351,33 +351,29 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                         target.style.display = "none";
                         const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `<span class="text-xs font-medium ${isHighlighted ? "text-background/90" : "text-text-muted"}">${getInitials(session.username)}</span>`;
+                          parent.innerHTML = `<span class="text-xs font-medium ${hlMuted}">${getInitials(session.username)}</span>`;
                         }
                       }}
                     />
                   ) : (
-                    <span className={cn("text-xs font-medium", hlMuted)}>
-                      {getInitials(session.username)}
-                    </span>
+                    <span className={cn("text-xs font-semibold", hlMuted)}>{getInitials(session.username)}</span>
                   )}
                 </div>
-                <span className={cn("truncate text-sm font-medium", hlText)}>
-                  {session.username}
-                </span>
+                <span className={cn("truncate text-sm font-semibold", hlText)}>{session.username}</span>
               </div>
-              <div className="shrink-0 text-right">
-                <div
-                  className={cn(
-                    "text-2xl font-bold tabular-nums leading-none",
-                    hlText,
-                    topicStatsFontClass,
-                  )}
-                >
-                  {session.score}
+              <div className="text-right">
+                <div className={cn("text-base font-bold tabular-nums", hlAccent)}>{session.accuracy.toFixed(0)}%</div>
+                <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Accuracy</div>
+              </div>
+              <div className="text-right">
+                <div className={cn("text-base font-bold tabular-nums", hlText)}>{formatTimeMs(session.avgTimeMs)}</div>
+                <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Pace</div>
+              </div>
+              <div className="text-right">
+                <div className={cn("text-base font-bold tabular-nums", hlText)}>
+                  {session.correctAnswers}/{session.totalQuestions}
                 </div>
-                <div className={cn("mt-0.5 text-[11px]", hlMuted, topicStatsFontClass)}>
-                  {session.accuracy.toFixed(0)}% · {session.correctAnswers}/{session.totalQuestions}
-                </div>
+                <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Correct</div>
               </div>
             </div>
           </motion.div>
@@ -498,7 +494,6 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       );
     }
 
-    // For personal view, keep the original layout
     if (mentalMathUi) {
       return (
         <motion.div
@@ -507,62 +502,43 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.03 }}
           className={cn(
-            "rounded-organic-lg px-4 py-3.5 transition-colors sm:px-5 sm:py-4",
+            "grid items-center gap-x-8 gap-y-3 rounded-organic-lg px-6 py-5 transition-colors sm:gap-x-12 sm:px-8 sm:py-6",
+            "grid-cols-[minmax(6.5rem,auto)_2.5rem_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
+            topicStatsFontClass,
             isHighlighted ? highlightedSessionClass : "bg-surface-mid hover:bg-surface-neutral/60",
           )}
         >
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div
-              className={cn(
-                "w-9 shrink-0 text-center text-sm font-bold tabular-nums",
-                hlRank,
-                topicStatsFontClass,
-              )}
-            >
-              {session.rank}
+          <div className="flex items-baseline gap-1.5">
+            <span className={cn("text-4xl font-bold tabular-nums leading-none sm:text-[2.75rem]", hlText)}>
+              {session.score}
+            </span>
+            <span className={cn("text-sm font-semibold", hlMuted)}>/{SESSION_SCORE_DISPLAY_MAX}</span>
+          </div>
+          <div className={cn("text-center text-sm font-bold tabular-nums", hlRank)}>{session.rank}</div>
+          <div className="text-right">
+            <div className={cn("text-base font-bold tabular-nums", hlAccent)}>{session.accuracy.toFixed(0)}%</div>
+            <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Accuracy</div>
+          </div>
+          <div className="text-right">
+            <div className={cn("text-base font-bold tabular-nums", hlText)}>
+              {session.correctAnswers}/{session.totalQuestions}
             </div>
-            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-              <span
-                className={cn(
-                  "font-bold tabular-nums",
-                  hlAccent,
-                  topicStatsFontClass,
-                )}
-              >
-                {session.accuracy.toFixed(0)}%
-              </span>
-              <span className={cn(hlMuted, topicStatsFontClass)}>
-                {session.correctAnswers}/{session.totalQuestions} correct
-              </span>
-              <span className={cn(hlMuted, topicStatsFontClass)}>
-                {formatTimeMs(session.avgTimeMs)}/q
-              </span>
-              {session.timestamp && (
-                <span className={cn("text-xs", hlSubtle, topicStatsFontClass)}>
-                  {new Date(session.timestamp).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                  })}{" "}
-                  {new Date(session.timestamp).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              )}
-            </div>
-            <div
-              className={cn(
-                "flex shrink-0 items-baseline gap-1 tabular-nums",
-                topicStatsFontClass,
-              )}
-            >
-              <span className={cn("text-3xl font-bold leading-none", hlText)}>
-                {session.score}
-              </span>
-              <span className={cn("text-sm font-medium", hlMuted)}>
-                /{SESSION_SCORE_DISPLAY_MAX}
-              </span>
-            </div>
+            <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Correct</div>
+          </div>
+          <div className="text-right">
+            <div className={cn("text-base font-bold tabular-nums", hlText)}>{formatTimeMs(session.avgTimeMs)}</div>
+            <div className={cn("mt-1 text-[10px] font-medium uppercase tracking-wider", hlMuted)}>Pace</div>
+          </div>
+          <div className={cn("text-right text-xs font-medium", hlSubtle)}>
+            {session.timestamp ? (
+              <>
+                {new Date(session.timestamp).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                <span className="mx-2 opacity-40">·</span>
+                {new Date(session.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </>
+            ) : (
+              "—"
+            )}
           </div>
         </motion.div>
       );
@@ -693,7 +669,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       };
       
       return (
-        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
+        <div className={cn(mentalMathUi ? "space-y-4" : "space-y-4")}>
           {renderSingleCard(currentSession, isGlobalView, 0, topicName, session.id)}
         </div>
       );
@@ -803,7 +779,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
           username: "You",
         };
         return (
-          <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
+          <div className="space-y-4">
             {renderSingleCard(
               withLiveCurrentSessionStats(currentSession, topicId),
               isGlobalView,
@@ -816,7 +792,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       }
 
       return (
-        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
+        <div className={cn(mentalMathUi ? "space-y-4" : "space-y-4")}>
           {cards}
         </div>
       );
@@ -830,7 +806,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         arrayLength: data.length,
       });
       return (
-        <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
+        <div className="space-y-4">
           {data.slice(0, 10).map((sessionData: any, idx: number) =>
             renderSingleCard(
               withLiveCurrentSessionStats(sessionData, topicId),
@@ -908,124 +884,145 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
         </div>
 
         {/* Stats row */}
-        <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4">
-          {/* Score Card */}
+        {mentalMathUi ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="lg:col-span-1"
+            className={cn("mb-10 overflow-hidden", resultsCard)}
           >
-            <div className={cn("h-full p-6", scoreOverviewCard)}>
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Trophy
-                    className={cn(
-                      "h-4 w-4",
-                      mentalMathUi ? "text-success" : "text-warning",
-                    )}
-                    aria-hidden
-                  />
-                  <div
-                    className={cn(
-                      "text-[11px] font-semibold uppercase tracking-wider",
-                      mentalMathUi ? "text-success/90" : "text-text-muted",
-                    )}
-                  >
-                    Session score
+            <div className="flex flex-col lg:flex-row">
+              <div className="flex flex-col justify-center border-b border-border-subtle px-8 py-10 lg:w-[min(300px,36%)] lg:border-b-0 lg:border-r lg:py-12 lg:pl-10 lg:pr-12">
+                <div className="mb-5 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2.5">
+                    <Trophy className="h-5 w-5 text-success" aria-hidden />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                      Session score
+                    </span>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowScoreInfo(true)}
+                    className="rounded-organic-md p-1.5 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
+                    aria-label="How scoring works"
+                  >
+                    <Info className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowScoreInfo(true)}
-                  className="rounded-organic-md p-1 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
-                  aria-label="How scoring works"
-                >
-                  <Info className="h-4 w-4" />
-                </button>
-              </div>
-              <div
-                className={cn(
-                  "mb-2 font-bold tabular-nums text-4xl leading-none sm:text-5xl",
-                  mentalMathUi ? "text-success" : "text-warning",
+                <div className="flex items-baseline gap-2">
+                  <span className="font-sans text-5xl font-bold tabular-nums leading-none tracking-tight text-success sm:text-6xl">
+                    {result.score}
+                  </span>
+                  <span className="font-sans text-lg font-semibold tabular-nums text-text-muted">
+                    / {SESSION_SCORE_DISPLAY_MAX}
+                  </span>
+                </div>
+                {result.topicBreakdown.length > 1 && (
+                  <p className="mt-4 max-w-xs text-xs leading-relaxed text-text-subtle">
+                    Combined across {result.topicBreakdown.length} topics. Per-topic scores are listed below.
+                  </p>
                 )}
-              >
-                {result.score}
               </div>
-              <div className="text-xs text-text-subtle">
-                Out of 1000 points
+              <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-12 lg:py-10">
+                <table className="w-full border-collapse font-sans">
+                  <tbody className="divide-y divide-border-subtle">
+                    <tr>
+                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                        Accuracy
+                      </td>
+                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
+                        {result.accuracy.toFixed(1)}%
+                      </td>
+                      <td className="w-28 py-5 pl-6 text-right text-sm text-text-subtle">
+                        {result.correctAnswers} / {result.totalQuestions}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                        Avg speed
+                      </td>
+                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
+                        {formatTimeMs(result.averageTimeMs)}
+                      </td>
+                      <td className="py-5 pl-6 text-right text-sm text-text-subtle">per question</td>
+                    </tr>
+                    <tr>
+                      <td className="py-5 pr-10 text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                        Fastest
+                      </td>
+                      <td className="py-5 text-right text-3xl font-bold tabular-nums tracking-tight text-text">
+                        {formatTime(result.fastestTimeMs)}
+                      </td>
+                      <td className="py-5 pl-6 text-right text-sm text-text-subtle">best answer</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              {result.topicBreakdown.length > 1 && (
-                <div className="mt-3 text-[10px] leading-snug text-text-subtle">
-                  Combined score across {result.topicBreakdown.length} topics; each topic has its own
-                  leaderboard score below.
-                </div>
-              )}
             </div>
           </motion.div>
-
-          {/* Accuracy Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className={`h-full p-6 ${resultsCard}`}>
-              <div className="mb-4 flex items-center gap-2">
-                <Target className="h-4 w-4 text-text-muted" aria-hidden />
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                  Accuracy
+        ) : (
+          <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="lg:col-span-1"
+            >
+              <div className={cn("h-full p-6", scoreOverviewCard)}>
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="h-4 w-4 text-warning" aria-hidden />
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+                      Session score
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowScoreInfo(true)}
+                    className="rounded-organic-md p-1 text-text-subtle transition-colors hover:bg-surface-subtle hover:text-text"
+                    aria-label="How scoring works"
+                  >
+                    <Info className="h-4 w-4" />
+                  </button>
                 </div>
-              </div>
-              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
-                {result.accuracy.toFixed(1)}%
-              </div>
-              <div className="text-xs text-text-subtle">
-                {result.correctAnswers} / {result.totalQuestions} correct
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Avg Time Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div className={`h-full p-6 ${resultsCard}`}>
-              <div className="mb-4 flex items-center gap-2">
-                <Clock className="h-4 w-4 text-text-muted" aria-hidden />
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                  Avg speed
+                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-warning sm:text-5xl">
+                  {result.score}
                 </div>
+                <div className="text-xs text-text-subtle">Out of 1000 points</div>
               </div>
-              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
-                {formatTimeMs(result.averageTimeMs)}
-              </div>
-              <div className="text-xs text-text-subtle">per question</div>
-            </div>
-          </motion.div>
-
-          {/* Fastest Time Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className={`h-full p-6 ${resultsCard}`}>
-              <div className="mb-4 flex items-center gap-2">
-                <Zap className="h-4 w-4 text-text-muted" aria-hidden />
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-                  Fastest
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <div className={`h-full p-6 ${resultsCard}`}>
+                <div className="mb-4 flex items-center gap-2">
+                  <Target className="h-4 w-4 text-text-muted" aria-hidden />
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Accuracy</div>
                 </div>
+                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{result.accuracy.toFixed(1)}%</div>
+                <div className="text-xs text-text-subtle">{result.correctAnswers} / {result.totalQuestions} correct</div>
               </div>
-              <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">
-                {formatTime(result.fastestTimeMs)}
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+              <div className={`h-full p-6 ${resultsCard}`}>
+                <div className="mb-4 flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-text-muted" aria-hidden />
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Avg speed</div>
+                </div>
+                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{formatTimeMs(result.averageTimeMs)}</div>
+                <div className="text-xs text-text-subtle">per question</div>
               </div>
-              <div className="text-xs lowercase text-text-subtle">Best performance</div>
-            </div>
-          </motion.div>
-        </div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+              <div className={`h-full p-6 ${resultsCard}`}>
+                <div className="mb-4 flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-text-muted" aria-hidden />
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-text-muted">Fastest</div>
+                </div>
+                <div className="mb-2 text-4xl font-bold tabular-nums leading-none text-text">{formatTime(result.fastestTimeMs)}</div>
+                <div className="text-xs lowercase text-text-subtle">Best performance</div>
+              </div>
+            </motion.div>
+          </div>
+        )}
 
         {/* Session Progress Section */}
         {result.progressData && result.progressData.length > 0 && (
@@ -1137,7 +1134,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 </div>
               </div>
 
-              <div className={cn(mentalMathUi ? "space-y-10" : "space-y-8")}>
+              <div className={cn(mentalMathUi ? "space-y-12" : "space-y-8")}>
                 {result.topicBreakdown.map((topic, idx) => {
                   const topicName = getDisplayFolderName(topic.topicId);
                   const isGlobalView = rankingView === "global";
@@ -1172,13 +1169,40 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                             {topicName}
                           </h3>
                         </div>
+                        {mentalMathUi && (
+                          <div
+                            className={cn(
+                              "mb-2 grid items-center gap-x-8 px-6 pb-3 pt-1 font-sans sm:gap-x-12 sm:px-8",
+                              isGlobalView
+                                ? "grid-cols-[minmax(6.5rem,auto)_2.5rem_minmax(0,1fr)_4.5rem_4.5rem_4.5rem]"
+                                : "grid-cols-[minmax(6.5rem,auto)_2.5rem_4.5rem_5rem_4.5rem_minmax(0,1fr)]",
+                            )}
+                          >
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Score</span>
+                            <span className="text-center text-[10px] font-semibold uppercase tracking-wider text-text-muted">Rank</span>
+                            {isGlobalView ? (
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">Player</span>
+                            ) : null}
+                            <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Accuracy</span>
+                            {isGlobalView ? (
+                              <>
+                                <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Pace</span>
+                                <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Correct</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Correct</span>
+                                <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Pace</span>
+                                <span className="text-right text-[10px] font-semibold uppercase tracking-wider text-text-muted">Date</span>
+                              </>
+                            )}
+                          </div>
+                        )}
                         {isGlobalView && !mentalMathUi && (
                           <div
                             className={cn(
                               "mt-4 grid grid-cols-12 items-center gap-3 gap-y-2 sm:gap-4",
-                              mentalMathUi
-                                ? "rounded-organic-lg bg-surface-subtle/80 px-3 py-3 sm:px-4"
-                                : "border-b border-border-subtle pb-2",
+                              "border-b border-border-subtle pb-2",
                             )}
                           >
                             <div className="col-span-1 text-center">
@@ -1329,7 +1353,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     The session score summarises your result on a 0–1000 scale. Accuracy is the main factor; session length, drill difficulty, and pace adjust the final value.
                   </p>
 
-                  <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
+                  <div className="space-y-4">
                     <div>
                       <div className="mb-1 font-medium text-text">Accuracy</div>
                       <p className="text-xs text-text-muted">
