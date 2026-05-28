@@ -25,6 +25,9 @@ type ViewState = "builder" | "running" | "results";
 /** Initial questions when length is not fixed (open-ended or time-based). */
 const ON_DEMAND_SESSION_START_SIZE = 1;
 
+/** Default time before the prompt hides in flash mode. */
+export const DEFAULT_FLASH_DURATION_MS = 2000;
+
 const mapPresetRow = (row: any): SessionPreset => {
   const topicLevelsData = row.topic_levels as any;
   
@@ -103,6 +106,7 @@ export function useBuilderSession() {
   const [lastAttempt, setLastAttempt] = useState<QuestionAttempt | null>(null);
   const [attemptLog, setAttemptLog] = useState<QuestionAttempt[]>([]);
   const [mode, setMode] = useState<"standard" | "mental-math">("standard");
+  const [flashMode, setFlashMode] = useState(false);
 
   useEffect(() => {
     if (!authSession?.user) {
@@ -403,6 +407,12 @@ export function useBuilderSession() {
       topicIds,
       variantToLevelMap,
       topicVariantSelections: [...selectedTopicVariants],
+      ...(isMentalMath && flashMode
+        ? {
+            flashMode: true,
+            flashDurationMs: DEFAULT_FLASH_DURATION_MS,
+          }
+        : {}),
     };
 
     const finiteQuestionSession =
@@ -522,6 +532,7 @@ export function useBuilderSession() {
     sessionLengthMode,
     timeLimitMinutes,
     selectedTopicVariants,
+    flashMode,
     supabase,
   ]);
 
@@ -880,6 +891,11 @@ export function useBuilderSession() {
     attemptLog,
     correctCount,
     mode,
+    flashMode,
+    setFlashMode,
+    sessionFlashMode: currentSession?.config?.flashMode ?? false,
+    flashDurationMs:
+      currentSession?.config?.flashDurationMs ?? DEFAULT_FLASH_DURATION_MS,
     handleDragStart,
     handleDragEnd,
   };

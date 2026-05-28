@@ -4,14 +4,16 @@
 
 import { GeneratedQuestion } from "@/types/core";
 import { randomInt, generateId } from "@/lib/utils";
+import { randomDigit } from "./utils/random";
 
 /**
- * Levels are aligned with addition topic variants:
- * 1 → Single digit
- * 2 → Double digit (NO carrying)
- * 3 → Double digit (WITH carrying)
- * 4 → Mental math: adding 5, 10, 15, ...
- * 5 → Three-number addition
+ * Levels align with addition topic variants:
+ * 1 → Single digit (weighted; no zeros)
+ * 2 → Double digit (no carrying)
+ * 3 → Double digit (carry only)
+ * 4 → Mental math: +5, +10, +15, +20
+ * 5 → Three numbers (single digit or under 20)
+ * 6 → Three numbers (harder: two-digit operands)
  */
 export function generateAddition(
   level: number,
@@ -27,16 +29,33 @@ export function generateAddition(
     case 4:
       return generateMentalAdd5();
     case 5:
-      return generateThreeNumbers();
+      return generateThreeNumbersEasy();
+    case 6:
+      return generateThreeNumbersHard();
     default:
       return generateSingleDigit();
   }
 }
 
+/** Operand weights 0–9: exclude 0; favour larger digits. */
+const SINGLE_DIGIT_WEIGHTS = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10];
+
+function pickWeightedDigit(): number {
+  return randomDigit(SINGLE_DIGIT_WEIGHTS);
+}
+
 function generateSingleDigit(): GeneratedQuestion {
-  const a = randomInt(0, 9);
-  const b = randomInt(0, 9);
-  
+  let a = pickWeightedDigit();
+  let b = pickWeightedDigit();
+
+  // Down-weight very easy sums (e.g. 1+2, 2+2)
+  let attempts = 0;
+  while (a + b <= 4 && attempts < 8) {
+    a = pickWeightedDigit();
+    b = pickWeightedDigit();
+    attempts += 1;
+  }
+
   return {
     id: generateId(),
     topicId: "addition",
@@ -47,16 +66,13 @@ function generateSingleDigit(): GeneratedQuestion {
 }
 
 /**
- * Generate two 2-digit numbers with NO carrying in any column.
- * Both tens and ones digits are chosen so that a1 + b1 < 10.
+ * Two 2-digit numbers with NO carrying in any column.
  */
 function generateTwoDigitNoCarry(): GeneratedQuestion {
-  // Ones digits that keep sum < 10 (0–9 but ensure sum < 10)
   const aOnes = randomInt(0, 9);
   const bOnesMax = 9 - aOnes;
   const bOnes = randomInt(0, bOnesMax);
 
-  // Tens digits free (no carry between tens since ones sum < 10)
   const aTens = randomInt(1, 9);
   const bTens = randomInt(1, 9);
 
@@ -73,11 +89,9 @@ function generateTwoDigitNoCarry(): GeneratedQuestion {
 }
 
 /**
- * Generate two 2-digit numbers WITH carrying in at least one column.
- * We enforce a ones-digit carry to make the method practice clear.
+ * Two 2-digit numbers that always require a ones-column carry.
  */
 function generateTwoDigitWithCarry(): GeneratedQuestion {
-  // Ensure ones digits sum ≥ 10 but < 20
   const aOnes = randomInt(3, 9);
   const bOnesMin = 10 - aOnes;
   const bOnes = randomInt(bOnesMin, 9);
@@ -97,9 +111,7 @@ function generateTwoDigitWithCarry(): GeneratedQuestion {
   };
 }
 
-/**
- * Mental math: adding 5, 10, 15, 20, ...
- */
+/** Quick offsets: +5, +10, +15, +20 */
 function generateMentalAdd5(): GeneratedQuestion {
   const base = randomInt(10, 99);
   const offset = [5, 10, 15, 20][randomInt(0, 3)];
@@ -113,10 +125,35 @@ function generateMentalAdd5(): GeneratedQuestion {
   };
 }
 
+/** Pick 1–9 or 10–19 for triple-addend drills. */
+function pickTripleOperand(): number {
+  if (Math.random() < 0.65) {
+    return pickWeightedDigit();
+  }
+  return randomInt(10, 19);
+}
+
 /**
- * Three-number addition (two- or three-digit numbers).
+ * Three-number addition: operands are single digits or under 20.
  */
-function generateThreeNumbers(): GeneratedQuestion {
+function generateThreeNumbersEasy(): GeneratedQuestion {
+  const a = pickTripleOperand();
+  const b = pickTripleOperand();
+  const c = pickTripleOperand();
+
+  return {
+    id: generateId(),
+    topicId: "addition",
+    question: `$${a} + ${b} + ${c}$`,
+    answer: String(a + b + c),
+    difficulty: 5,
+  };
+}
+
+/**
+ * Three-number addition with two-digit operands (harder).
+ */
+function generateThreeNumbersHard(): GeneratedQuestion {
   const a = randomInt(10, 99);
   const b = randomInt(10, 99);
   const c = randomInt(10, 99);
@@ -126,6 +163,6 @@ function generateThreeNumbers(): GeneratedQuestion {
     topicId: "addition",
     question: `$${a} + ${b} + ${c}$`,
     answer: String(a + b + c),
-    difficulty: 5,
+    difficulty: 6,
   };
 }

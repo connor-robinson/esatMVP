@@ -27,8 +27,12 @@ export const DRILL_VARIANT_SAMPLE_SETS: Record<string, readonly DrillPreview[]> 
     { kind: 'plain', text: '38 + 20' },
   ]),
   'addition-three-numbers': S([
-    { kind: 'plain', text: '12 + 8 + 5' },
-    { kind: 'plain', text: '9 + 6 + 4' },
+    { kind: 'plain', text: '7 + 8 + 6' },
+    { kind: 'plain', text: '12 + 5 + 9' },
+  ]),
+  'addition-three-numbers-hard': S([
+    { kind: 'plain', text: '34 + 28 + 15' },
+    { kind: 'plain', text: '47 + 36 + 22' },
   ]),
   'subtraction-single-digit': S([
     { kind: 'plain', text: '9 − 4' },

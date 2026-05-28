@@ -63,6 +63,8 @@ export default function SessionPage() {
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
           onEndSession={() => builder.endSession()}
+          flashMode={builder.sessionFlashMode}
+          flashDurationMs={builder.flashDurationMs}
         />
       </Suspense>
     );
