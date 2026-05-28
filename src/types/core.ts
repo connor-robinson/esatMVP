@@ -229,6 +229,8 @@ export interface GeneratedQuestion {
   question: string;
   answer: string | number;
   topicId: string;
+  /** Set when session mixes explicit drill variants (for UI labels). */
+  variantId?: string;
   difficulty: number;
   timeLimit?: number;
   /** Custom answer checker function */

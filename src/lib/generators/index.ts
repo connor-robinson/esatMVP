@@ -163,7 +163,11 @@ export const GENERATORS: Record<string, GeneratorFunction> = validateGenerators(
 });
 
 // Re-export mixed generators for builder sessions
-export { generateMixedQuestions, generateQuestionForTopic } from "./mixed";
+export {
+  generateMixedQuestions,
+  generateQuestionForTopic,
+  pickRandomDrill,
+} from "./mixed";
 
 /**
  * Generate a question for a specific topic and level

@@ -154,10 +154,11 @@ export function MentalMathSession({
   const topic = currentQuestion.topicId ? getTopic(currentQuestion.topicId) : null;
   const topicName = topic?.name || "Unknown";
   
-  // Get variant name if available
-  const variantName = topic?.variants?.find(v => v.difficulty === currentQuestion.difficulty)?.name;
+  const variantName = currentQuestion.variantId
+    ? topic?.variants?.find((v) => v.id === currentQuestion.variantId)?.name
+    : topic?.variants?.find((v) => v.difficulty === currentQuestion.difficulty)?.name;
 
-  const displayTopicName = variantName ? topicName + ": " + variantName : topicName;
+  const displayTopicName = variantName ? `${topicName}: ${variantName}` : topicName;
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background">

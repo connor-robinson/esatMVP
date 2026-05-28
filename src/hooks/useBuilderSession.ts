@@ -15,7 +15,8 @@ import type {
   TopicVariantSelection,
 } from "@/types/core";
 import type { SessionPresetInsert } from "@/lib/supabase/types";
-import { generateMixedQuestions, generateQuestionForTopic } from "@/lib/generators";
+import { generateMixedQuestions, generateQuestionForTopic, pickRandomDrill } from "@/lib/generators";
+import { buildVariantLevelMap, levelForDrill } from "@/lib/drill-selection";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
 import { expressionsEqual } from "@/lib/answer-checker";
@@ -344,11 +345,24 @@ export function useBuilderSession() {
   const appendQuestionToSession = useCallback(
     (session: BuilderSession): BuilderSession => {
       const cfg = session.config;
-      if (!cfg || cfg.topicIds.length === 0) return session;
-      const topicIndex = session.questions.length % cfg.topicIds.length;
-      const topicId = cfg.topicIds[topicIndex];
-      const level = cfg.variantToLevelMap[topicId] ?? 1;
-      const question = generateQuestionForTopic(topicId, level);
+      const selections = cfg?.topicVariantSelections ?? [];
+      if (!cfg || selections.length === 0) return session;
+
+      const pick =
+        selections.length === 1
+          ? selections[0]
+          : pickRandomDrill(selections);
+      const level = levelForDrill(
+        cfg.variantToLevelMap,
+        pick.topicId,
+        pick.variantId,
+      );
+      const question = generateQuestionForTopic(
+        pick.topicId,
+        level,
+        undefined,
+        pick.variantId,
+      );
       return { ...session, questions: [...session.questions, question] };
     },
     [],
@@ -375,25 +389,10 @@ export function useBuilderSession() {
     });
     setMode(isMentalMath ? "mental-math" : "standard");
 
-    // Convert variant selections to topic IDs and difficulty levels for generator
-    const topicIds = selectedTopicVariants.map(tv => tv.topicId);
-    const variantToLevelMap: Record<string, number> = {};
-    
-    selectedTopicVariants.forEach(({ topicId, variantId }) => {
-      const topic = getTopic(topicId);
-      if (topic && topic.variants) {
-        const variant = topic.variants.find(v => v.id === variantId);
-        if (variant && variant.config && typeof variant.config.level === 'number') {
-          variantToLevelMap[topicId] = variant.config.level;
-        } else if (variant && typeof variant.difficulty === 'number') {
-          variantToLevelMap[topicId] = variant.difficulty;
-        } else {
-          variantToLevelMap[topicId] = 1;
-        }
-      } else {
-        variantToLevelMap[topicId] = 1;
-      }
-    });
+    const topicIds = Array.from(
+      new Set(selectedTopicVariants.map((tv) => tv.topicId)),
+    );
+    const variantToLevelMap = buildVariantLevelMap(selectedTopicVariants);
     
     const config: BuilderSessionConfig = {
       sessionLengthMode,
@@ -410,7 +409,11 @@ export function useBuilderSession() {
       ? questionCount
       : ON_DEMAND_SESSION_START_SIZE;
 
-    const questions = generateMixedQuestions(topicIds, poolSize, variantToLevelMap);
+    const questions = generateMixedQuestions(
+      selectedTopicVariants,
+      poolSize,
+      variantToLevelMap,
+    );
 
     if (questions.length === 0) {
       console.error("[startSession] No questions generated!");
@@ -587,7 +590,7 @@ export function useBuilderSession() {
             currentSession?.questions[index];
           return {
             topicId: q?.topicId ?? "unknown",
-            variantId: undefined,
+            variantId: q?.variantId,
             difficulty: q?.difficulty,
           };
         }) ?? [];
