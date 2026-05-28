@@ -459,7 +459,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   {session.score}
                 </div>
                 <div className={cn("text-xs", hlMuted, topicStatsFontClass)}>
-                  / {mentalMathUi ? 999 : 1000}
+                  / 1000
                 </div>
               </div>
             </div>
@@ -953,7 +953,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 {result.score}
               </div>
               <div className="text-xs text-text-subtle">
-                {mentalMathUi ? "Max 999 points" : "Out of 1000 points"}
+                Out of 1000 points
               </div>
               {result.topicBreakdown.length > 1 && (
                 <div className="mt-3 text-[10px] leading-snug text-text-subtle">
@@ -1317,53 +1317,51 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <Trophy className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-heading text-xl font-bold text-text">How score works</h3>
+                    <h3 className="font-heading text-xl font-bold text-text">Session score</h3>
                     <p className="text-xs uppercase tracking-wider text-text-muted">
-                      Up to 999 session points
+                      Out of 1000 points
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-6 text-sm leading-relaxed text-text-muted">
+                <div className="space-y-5 text-sm leading-relaxed text-text-muted">
                   <p>
-                    Your score reflects how many you got right, how many you attempted, how hard the drills were, and (lightly) how fast you were.
+                    The session score summarises your result on a 0–1000 scale. Accuracy is the main factor; session length, drill difficulty, and pace adjust the final value.
                   </p>
 
                   <div className={cn("space-y-4", mentalMathUi && "space-y-3")}>
                     <div>
                       <div className="mb-1 font-medium text-text">Accuracy</div>
                       <p className="text-xs text-text-muted">
-                        Correct ÷ total questions. One mistake on a short run lowers the score noticeably.
+                        Based on correct answers out of questions in the session. A single error on a short run reduces the score substantially.
                       </p>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-text">Volume</div>
+                      <div className="mb-1 font-medium text-text">Session length</div>
                       <p className="text-xs text-text-muted">
-                        Short sessions are capped: you need a long run (about 28+ questions) for full volume credit. A single correct answer cannot score hundreds of points.
+                        Longer sessions can reach a higher base score. A brief run with every answer correct will still score well below a long, accurate session.
                       </p>
                     </div>
 
                     <div>
                       <div className="mb-1 font-medium text-text">Difficulty</div>
                       <p className="text-xs text-text-muted">
-                        Easy modes score lower than hard modes for the same accuracy. Harder drill variants raise your multiplier.
+                        Harder drill settings increase the score for the same accuracy and length. Easy modes are scored against a lower ceiling.
                       </p>
                     </div>
 
                     <div>
-                      <div className="mb-1 font-medium text-text">Speed</div>
+                      <div className="mb-1 font-medium text-text">Pace</div>
                       <p className="text-xs text-text-muted">
-                        A small bonus if your average time per question is quick (around 3 seconds or less).
+                        A modest bonus applies when your average time per question is fast. It does not outweigh accuracy or session length.
                       </p>
                     </div>
                   </div>
 
-                  <div className="border-t border-border-subtle pt-4">
-                    <p className="text-xs italic text-text-muted">
-                      The accuracy % on your summary is plain right ÷ attempted. ~900 is an excellent score; 1000 is not achievable — only approaches 999 on elite long, hard, accurate runs.
-                    </p>
-                  </div>
+                  <p className="border-t border-border-subtle pt-4 text-xs text-text-muted">
+                    Scores in the high 800s and above require long, demanding sessions with strong accuracy. A score of 1000 is uncommon.
+                  </p>
                 </div>
               </motion.div>
             </motion.div>
