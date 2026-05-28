@@ -34,8 +34,36 @@ export type LeaderboardRankingRow = {
   builder_session_id?: string;
   rank: number;
   isCurrent?: boolean;
-  [key: string]: unknown;
+  score: number;
+  timestamp: Date;
+  userId?: string;
+  username?: string;
+  avatar?: string;
+  correctAnswers?: number;
+  totalQuestions?: number;
+  avgTimeMs?: number;
+  accuracy?: number;
 };
+
+/** Row before rank assignment (score sort + tie ranks applied later). */
+export type LeaderboardRankingInput = Omit<LeaderboardRankingRow, "rank">;
+
+export function assignLeaderboardRanks(
+  rows: LeaderboardRankingInput[],
+): LeaderboardRankingRow[] {
+  const sorted = [...rows].sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return b.timestamp.getTime() - a.timestamp.getTime();
+  });
+
+  let rankCounter = 1;
+  return sorted.map((row, index) => {
+    if (index > 0 && sorted[index - 1].score !== row.score) {
+      rankCounter = index + 1;
+    }
+    return { ...row, rank: rankCounter };
+  });
+}
 
 export type LeaderboardDisplayItem =
   | { type: "entry"; entry: LeaderboardRankingRow }
@@ -275,7 +303,7 @@ export async function fetchTopicRankings(
       currentSessionId,
     });
     
-    let rankings = (data || []).map((d: any, index: number) => {
+    let rankings: LeaderboardRankingInput[] = (data || []).map((d: any, index: number) => {
       const summary = d.summary as any || {};
       const score = summary.score || 0;
       const correctAnswers = summary.correctAnswers || 0;
@@ -390,7 +418,7 @@ export async function fetchTopicRankings(
         currentProfile,
       );
 
-      const currentSession = {
+      const currentSession: LeaderboardRankingInput = {
         id: currentSessionId || "current",
         builder_session_id: currentSessionId,
         userId: currentUserId,
@@ -402,7 +430,10 @@ export async function fetchTopicRankings(
         correctAnswers: currentSessionData.correctAnswers,
         totalQuestions: currentSessionData.totalQuestions,
         avgTimeMs: currentSessionData.avgTimeMs,
-        accuracy: (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100,
+        accuracy:
+          currentSessionData.totalQuestions > 0
+            ? (currentSessionData.correctAnswers / currentSessionData.totalQuestions) * 100
+            : 0,
       };
 
       // Add the current session (already verified it's not in rankings above)
@@ -417,37 +448,17 @@ export async function fetchTopicRankings(
       rankings.push(currentSession);
     }
 
-    // Sort by score descending, then by timestamp descending (newer sessions rank higher if same score)
-    rankings.sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score;
-      }
-      // If scores are equal, sort by timestamp (newer first)
-      return b.timestamp.getTime() - a.timestamp.getTime();
-    });
-
-    // Add ranks based on score (ties get same rank, but display order is by timestamp)
-    let rankCounter = 1;
-    rankings = rankings.map((r: any, i: number) => {
-      // If this score is different from previous, update rank
-      if (i > 0 && rankings[i - 1].score !== r.score) {
-        rankCounter = i + 1;
-      }
-      return { ...r, rank: rankCounter };
-    }) as any[];
+    const rankedRankings = assignLeaderboardRanks(rankings);
 
     // Find current session rank
-    const currentIndex = rankings.findIndex(r => r.isCurrent);
-    const currentRank = currentIndex >= 0 ? (rankings[currentIndex] as any).rank : null;
+    const currentIndex = rankedRankings.findIndex((r) => r.isCurrent);
+    const currentRank = currentIndex >= 0 ? rankedRankings[currentIndex].rank : null;
 
-    const displayWindow = buildLeaderboardWindow(
-      rankings as LeaderboardRankingRow[],
-      currentSessionId,
-    );
+    const displayWindow = buildLeaderboardWindow(rankedRankings, currentSessionId);
 
     console.log(`[processRankings] DEBUG: Final rankings summary`, {
       isGlobal,
-      totalRankings: rankings.length,
+      totalRankings: rankedRankings.length,
       displayWindowLength: displayWindow.length,
       windowRanks: displayWindow
         .filter((w) => w.type === "entry")
@@ -455,17 +466,17 @@ export async function fetchTopicRankings(
       currentRank,
       currentIndex,
       hasCurrent: currentIndex >= 0,
-      currentScore: currentIndex >= 0 ? rankings[currentIndex].score : null,
+      currentScore: currentIndex >= 0 ? rankedRankings[currentIndex].score : null,
     });
 
     return {
       displayWindow,
       currentRank,
-      allRankings: rankings,
+      allRankings: rankedRankings,
       /** @deprecated Use displayWindow */
-      top3: rankings.slice(0, 3),
+      top3: rankedRankings.slice(0, 3),
       /** @deprecated Use displayWindow */
-      adjacent: [] as typeof rankings,
+      adjacent: [] as LeaderboardRankingRow[],
     };
   };
 
