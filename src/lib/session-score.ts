@@ -1,15 +1,24 @@
 /**
- * Pragmatic session score (0–1000) for drill / mental maths.
+ * Pragmatic session score (0–999) for drill / mental maths.
  *
- * Designed so short sessions cannot post leaderboard-style scores, and harder
- * modes earn more credit for the same accuracy.
+ * 1000 is intentionally unreachable; ~900 is an excellent run. Longer, harder,
+ * accurate sessions score higher via a curved scale (not a flat cap at 1000).
  */
 
-/** Question count required for full “volume” credit. */
-export const SESSION_SCORE_FULL_VOLUME_QUESTIONS = 15;
+/** Questions for full linear volume credit (longer runs needed). */
+export const SESSION_SCORE_FULL_VOLUME_QUESTIONS = 28;
 
 /** At or below this avg ms per question, speed bonus is maxed. */
 export const SESSION_SCORE_SPEED_BASELINE_MS = 3000;
+
+/** Highest score the formula can return (1000 is reserved / unreachable). */
+export const SESSION_SCORE_ABSOLUTE_MAX = 999;
+
+/**
+ * Steepness of the score curve. Higher = harder to approach 999.
+ * ~900 typically needs a long, hard, accurate session.
+ */
+export const SESSION_SCORE_CURVE_K = 3.15;
 
 export type SessionScoreOptions = {
   /** Mean question difficulty (1–6 from generators). Default 2 (easy). */
@@ -17,16 +26,15 @@ export type SessionScoreOptions = {
 };
 
 /**
- * Difficulty multiplier: ~0.80 at difficulty 1, ~1.20 at difficulty 6.
+ * Difficulty multiplier: ~0.78 at difficulty 1, ~1.28 at difficulty 6.
  */
 export function difficultyScoreFactor(avgDifficulty: number): number {
   const d = Math.min(6, Math.max(1, avgDifficulty));
-  return 0.72 + (d / 6) * 0.48;
+  return 0.68 + (d / 6) * 0.6;
 }
 
 /**
  * Volume multiplier: linear ramp until FULL_VOLUME_QUESTIONS.
- * 1 question ≈ 6.7% volume credit; 15+ questions = 100%.
  */
 export function volumeScoreFactor(totalQuestions: number): number {
   if (totalQuestions <= 0) return 0;
@@ -39,6 +47,18 @@ export function volumeScoreFactor(totalQuestions: number): number {
 export function speedScoreFactor(avgSpeedMs: number): number {
   const ratio = Math.min(1, SESSION_SCORE_SPEED_BASELINE_MS / Math.max(avgSpeedMs, 600));
   return 0.85 + 0.15 * ratio;
+}
+
+/**
+ * Maps raw performance (0–~1.3+) onto 0–999 with an asymptotic curve.
+ */
+export function scoreFromComposite(composite: number): number {
+  if (composite <= 0) return 0;
+  const curved = 1 - Math.exp(-SESSION_SCORE_CURVE_K * composite);
+  return Math.min(
+    SESSION_SCORE_ABSOLUTE_MAX,
+    Math.round(1000 * curved),
+  );
 }
 
 /**
@@ -59,7 +79,7 @@ export function calculateSessionScore(
   const speedFactor = speedScoreFactor(avgSpeedMs);
 
   const composite = accuracy * volumeFactor * difficultyFactor * speedFactor;
-  return Math.round(Math.min(1000, composite * 1000));
+  return scoreFromComposite(composite);
 }
 
 /** Mean difficulty from per-question values; empty → 2. */

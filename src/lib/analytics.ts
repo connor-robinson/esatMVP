@@ -756,7 +756,10 @@ export {
   difficultyScoreFactor,
   volumeScoreFactor,
   speedScoreFactor,
+  scoreFromComposite,
   SESSION_SCORE_FULL_VOLUME_QUESTIONS,
+  SESSION_SCORE_ABSOLUTE_MAX,
+  SESSION_SCORE_CURVE_K,
   type SessionScoreOptions,
 } from "./session-score";
 

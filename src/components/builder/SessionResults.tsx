@@ -437,7 +437,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 <div className={cn("text-base font-bold tabular-nums text-text", topicStatsFontClass)}>
                   {session.score}
                 </div>
-                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>/ 1000</div>
+                <div className={cn("text-xs text-text-muted", topicStatsFontClass)}>
+                  / {mentalMathUi ? 999 : 1000}
+                </div>
               </div>
             </div>
 
@@ -508,7 +510,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className={cn("text-3xl font-bold tabular-nums leading-none text-text", topicStatsFontClass)}>
                 {session.score}
               </div>
-              <div className={cn("mt-1 text-xs text-text-muted", topicStatsFontClass)}>/ 1000</div>
+              <div className={cn("mt-1 text-xs text-text-muted", topicStatsFontClass)}>
+                / {mentalMathUi ? 999 : 1000}
+              </div>
             </div>
             <div className="shrink-0 text-right">
               <div className={cn("text-lg font-bold tabular-nums text-success", topicStatsFontClass)}>
@@ -554,7 +558,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 <span className={cn("text-xl font-bold tabular-nums text-text", topicStatsFontClass)}>
                   {session.score}
                 </span>
-                <span className={cn("text-sm text-text-muted", topicStatsFontClass)}>/ 1000</span>
+                <span className={cn("text-sm text-text-muted", topicStatsFontClass)}>
+                  / {mentalMathUi ? 999 : 1000}
+                </span>
                 <span className={cn("truncate text-xs text-text-subtle", topicStatsFontClass)}>
                   {topicName}
                 </span>
@@ -840,7 +846,9 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
               <div className="mb-2 font-bold tabular-nums text-4xl leading-none text-warning sm:text-5xl">
                 {result.score}
               </div>
-              <div className="text-xs text-text-subtle">Out of 1000 points</div>
+              <div className="text-xs text-text-subtle">
+                {mentalMathUi ? "Max 999 points" : "Out of 1000 points"}
+              </div>
               {result.topicBreakdown.length > 1 && (
                 <div className="mt-3 text-[10px] leading-snug text-text-subtle">
                   Combined score across {result.topicBreakdown.length} topics; each topic has its own
@@ -1232,7 +1240,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                   <div>
                     <h3 className="font-heading text-xl font-bold text-text">How score works</h3>
                     <p className="text-xs uppercase tracking-wider text-text-muted">
-                      0–1000 session points
+                      Up to 999 session points
                     </p>
                   </div>
                 </div>
@@ -1253,7 +1261,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                     <div>
                       <div className="mb-1 font-medium text-text">Volume</div>
                       <p className="text-xs text-text-muted">
-                        Short sessions are capped: you need about 15 questions in one run for full volume credit. A single correct answer cannot score hundreds of points.
+                        Short sessions are capped: you need a long run (about 28+ questions) for full volume credit. A single correct answer cannot score hundreds of points.
                       </p>
                     </div>
 
@@ -1274,7 +1282,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
 
                   <div className="border-t border-border-subtle pt-4">
                     <p className="text-xs italic text-text-muted">
-                      The accuracy % on your summary is plain right ÷ attempted. The headline score applies volume and difficulty on top.
+                      The accuracy % on your summary is plain right ÷ attempted. ~900 is an excellent score; 1000 is not achievable — only approaches 999 on elite long, hard, accurate runs.
                     </p>
                   </div>
                 </div>
