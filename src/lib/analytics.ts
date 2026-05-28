@@ -172,8 +172,8 @@ export async function fetchTopicRankings(
 
   const resolveLeaderboardName = (
     userId: string,
-    profile?: { display_name: string | null } | null,
     isGlobal: boolean,
+    profile?: { display_name: string | null } | null,
   ): string => {
     const fromProfile = profile?.display_name?.trim();
     if (fromProfile) return fromProfile;
@@ -223,8 +223,8 @@ export async function fetchTopicRankings(
       
       const username = resolveLeaderboardName(
         d.user_id || currentUserId,
-        d.profiles,
         isGlobal,
+        d.profiles,
       );
       
       if (index < 3 || isCurrent) {
@@ -310,8 +310,8 @@ export async function fetchTopicRankings(
       const currentProfile = profilesMap[currentUserId];
       const currentUsername = resolveLeaderboardName(
         currentUserId,
-        currentProfile,
         isGlobal,
+        currentProfile,
       );
 
       const currentSession = {
