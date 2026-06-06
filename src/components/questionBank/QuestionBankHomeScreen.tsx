@@ -29,7 +29,6 @@ export interface SubjectTileConfig {
   headline: string;
   topicCaps: string;
   testType: "ESAT" | "TMUA";
-  titleClass: string;
   topicClass: string;
   statClass: string;
   progressTrackClass: string;
@@ -306,8 +305,7 @@ export function QuestionBankHomeScreen() {
                   <div className="flex flex-1 items-center justify-center px-1 text-center">
                     <p
                       className={cn(
-                        "whitespace-nowrap text-base font-semibold leading-snug sm:text-lg",
-                        tile.titleClass,
+                        "whitespace-nowrap text-base font-semibold leading-snug text-text sm:text-lg",
                       )}
                     >
                       {tile.headline}
