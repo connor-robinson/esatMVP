@@ -172,10 +172,15 @@ export function useBuilderSession() {
           currentSession?.questions.length ?? 1,
         );
   
-  const correctCount = useMemo(() => {
-    if (!currentSession) return 0;
-    return computeSessionOutcomeStats(currentSession, attemptLog).correctAnswers;
+  const sessionOutcomeStats = useMemo(() => {
+    if (!currentSession) {
+      return { correctAnswers: 0, totalQuestions: 0, accuracy: 0 };
+    }
+    return computeSessionOutcomeStats(currentSession, attemptLog);
   }, [currentSession, attemptLog]);
+
+  const correctCount = sessionOutcomeStats.correctAnswers;
+  const attemptedQuestionCount = sessionOutcomeStats.totalQuestions;
 
   // Parse topicVariantId (e.g., "addition-single-digit" or "addition")
   const parseTopicVariantId = useCallback((topicVariantId: string): { topicId: string; variantId: string } | null => {
@@ -942,6 +947,7 @@ export function useBuilderSession() {
     lastAttempt,
     attemptLog,
     correctCount,
+    attemptedQuestionCount,
     mode,
     handleDragStart,
     handleDragEnd,

@@ -152,6 +152,7 @@ export default function BuilderPage() {
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}
+          attemptedQuestionCount={builder.attemptedQuestionCount}
           remainingSeconds={builder.remainingSeconds}
           isUnlimitedSession={builder.isUnlimitedSession}
           onSubmitAnswer={builder.submitAnswer}

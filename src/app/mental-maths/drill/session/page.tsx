@@ -60,6 +60,7 @@ export default function SessionPage() {
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
           correctCount={builder.correctCount}
+          attemptedQuestionCount={builder.attemptedQuestionCount}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
           onEndEarly={() => builder.endSession()}

@@ -31,6 +31,8 @@ interface MentalMathSessionProps {
   showFeedback: boolean;
   lastAttempt: QuestionAttempt | null;
   correctCount: number;
+  /** Distinct questions attempted (includes wrong answers before continue). */
+  attemptedQuestionCount: number;
   /** When set, show countdown instead of question cap. */
   remainingSeconds?: number | null;
   /** Open-ended questions or unlimited time — no fixed total. */
@@ -51,6 +53,7 @@ export function MentalMathSession({
   showFeedback,
   lastAttempt,
   correctCount,
+  attemptedQuestionCount,
   remainingSeconds = null,
   isUnlimitedSession = false,
   onSubmitAnswer,
@@ -67,8 +70,10 @@ export function MentalMathSession({
   const katexInputRef = useRef<HTMLInputElement>(null);
   const simpleInputRef = useRef<HTMLInputElement>(null);
 
-  // Calculate accuracy
-  const accuracy = questionNumber > 0 ? Math.round((correctCount / questionNumber) * 100) : 0;
+  const accuracy =
+    attemptedQuestionCount > 0
+      ? Math.round((correctCount / attemptedQuestionCount) * 100)
+      : 0;
 
   // Detect questions that have two numeric solutions (e.g. quadratic equations)
   const isMultiAnswer =
@@ -210,7 +215,7 @@ export function MentalMathSession({
                   </>
                 )}
               </span>
-              {accuracy > 0 && (
+              {attemptedQuestionCount > 0 && (
                 <span className="text-text-subtle text-sm">
                   {accuracy}% accurate
                 </span>
