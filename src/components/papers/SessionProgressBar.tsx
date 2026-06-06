@@ -21,6 +21,7 @@ import {
 import { UserIcon, LogInIcon } from '@/components/icons';
 import { X, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePaperSessionStore } from '@/store/paperSessionStore';
 
 interface SessionProgressBarProps {
   /** When true, render as a slim bar below the main navbar (hybrid layout) */
