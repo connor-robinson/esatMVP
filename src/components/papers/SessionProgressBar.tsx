@@ -405,7 +405,7 @@ export function SessionProgressBar({
           {!embedded && (
             <div className='flex items-center'>
               <Link href='/' className='interaction-scale' aria-label={APP_NAME}>
-                <BrandLogo variant='full' className='h-8' />
+                <BrandLogo variant='full' size='nav' />
               </Link>
             </div>
           )}

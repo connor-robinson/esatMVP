@@ -204,7 +204,7 @@ export function Navbar() {
                 className='interaction-scale shrink-0'
                 aria-label={APP_NAME}
               >
-                <BrandLogo variant='full' className='h-8 sm:h-9' />
+                <BrandLogo variant='full' size='nav' />
               </Link>
 
               {!hasActiveSession && (

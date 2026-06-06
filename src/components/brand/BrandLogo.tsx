@@ -8,8 +8,18 @@ const LOGO_SRC: Record<BrandLogoVariant, string> = {
   mark: BRAND_CONFIG.logoMarkSrc,
 };
 
+export type BrandLogoSize = 'nav' | 'md' | 'lg';
+
+const SIZE_CLASS: Record<BrandLogoSize, string> = {
+  /** Matches navbar `text-sm` link cap height (14px). */
+  nav: 'h-[0.875rem] w-auto',
+  md: 'h-8 w-auto',
+  lg: 'h-12 w-auto sm:h-14',
+};
+
 interface BrandLogoProps {
   variant?: BrandLogoVariant;
+  size?: BrandLogoSize;
   className?: string;
   /** Accessible label; defaults to app name. */
   alt?: string;
@@ -20,6 +30,7 @@ interface BrandLogoProps {
  */
 export function BrandLogo({
   variant = 'full',
+  size = 'md',
   className,
   alt = APP_NAME,
 }: BrandLogoProps) {
@@ -30,10 +41,10 @@ export function BrandLogo({
       alt={alt}
       draggable={false}
       className={cn(
-        'w-auto select-none',
+        'select-none',
         // Light: invert white-on-black art to dark-on-light. Dark: native colors + screen hides black matte.
         'invert dark:invert-0 dark:mix-blend-screen',
-        variant === 'full' ? 'h-8' : 'h-9 w-9 object-contain',
+        variant === 'full' ? SIZE_CLASS[size] : 'h-9 w-9 object-contain',
         className,
       )}
     />

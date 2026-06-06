@@ -76,7 +76,7 @@ export function LoadingPage({
             className="space-y-4"
           >
             <div className="flex justify-center">
-              <BrandLogo variant="full" className="h-12 sm:h-14" />
+              <BrandLogo variant="full" size="lg" />
             </div>
             <div className="text-sm uppercase tracking-wider text-text-muted">
               ESAT &amp; TMUA Preparation
