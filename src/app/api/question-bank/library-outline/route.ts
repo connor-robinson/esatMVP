@@ -11,6 +11,9 @@ import {
   labelForEsatTag,
   compareEsatTagLabels,
 } from "@/lib/questionBank/esatTagCanonicalize";
+import { filterRowsBySubjectTestType } from "@/lib/questionBank/libraryFilterServer";
+import { SUBJECT_TEST_TYPE } from "@/lib/questionBank/subjectTestTypes";
+import type { SubjectFilter } from "@/types/questionBank";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +22,9 @@ const PAGE_SIZE = 1000;
 type SlimRow = {
   id: string;
   primary_tag: string | null;
-  schema_id?: string | null;
+  schema_id: string | null;
+  test_type: string | null;
+  subjects: string | null;
 };
 
 function applyAttemptFilters(
@@ -160,11 +165,17 @@ export async function GET(request: NextRequest) {
     for (;;) {
       let query = supabase
         .from("ai_generated_questions")
-        .select("id, primary_tag, schema_id")
+        .select("id, primary_tag, schema_id, test_type, subjects")
         .eq("subjects", subject)
         .neq("status", "deleted")
         .order("id", { ascending: true })
         .range(offset, offset + PAGE_SIZE - 1);
+
+      const expectedTestType =
+        SUBJECT_TEST_TYPE[subject as Exclude<SubjectFilter, "All">];
+      if (expectedTestType) {
+        query = query.eq("test_type", expectedTestType);
+      }
 
       if (difficulties.length === 1) {
         query = query.eq("difficulty", difficulties[0]);
@@ -194,13 +205,15 @@ export async function GET(request: NextRequest) {
       offset += PAGE_SIZE;
     }
 
-    const filtered = applyAttemptFilters(
-      rows,
-      attemptedStatus,
-      attemptResults,
-      userId,
-      attemptedQuestionIds,
-      questionResults,
+    const filtered = filterRowsBySubjectTestType(
+      applyAttemptFilters(
+        rows,
+        attemptedStatus,
+        attemptResults,
+        userId,
+        attemptedQuestionIds,
+        questionResults,
+      ),
     );
 
     const tagCounts = new Map<string, number>();

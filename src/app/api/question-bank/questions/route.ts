@@ -6,6 +6,7 @@ import type {
   AttemptResultFilter,
   AttemptedFilter,
 } from '@/types/questionBank';
+import { SUBJECT_TEST_TYPE } from '@/lib/questionBank/subjectTestTypes';
 
 export const dynamic = 'force-dynamic';
 
@@ -332,6 +333,11 @@ export async function GET(request: NextRequest) {
 
       if (subjects.length === 1) {
         query = query.eq('subjects', subjects[0]);
+        const expectedTestType =
+          SUBJECT_TEST_TYPE[subjects[0] as Exclude<SubjectFilter, 'All'>];
+        if (expectedTestType) {
+          query = query.eq('test_type', expectedTestType);
+        }
         debug(
           '[Question Bank API] Stage 3: Applied single subject filter:',
           subjects[0],

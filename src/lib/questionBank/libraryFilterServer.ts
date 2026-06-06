@@ -5,6 +5,7 @@ import type {
   AttemptedFilter,
 } from "@/types/questionBank";
 import { LIBRARY_SUBJECTS } from "@/lib/questionBank/libraryQueryParams";
+import { subjectMatchesTestType } from "@/lib/questionBank/subjectTestTypes";
 
 export const LIBRARY_PAGE_SIZE = 1000;
 
@@ -170,6 +171,17 @@ export function applyLibraryAttemptFilters<T extends { id: string }>(
   }
 
   return filtered;
+}
+
+/** Keep rows whose test_type matches the subject (ESAT vs TMUA). */
+export function filterRowsBySubjectTestType<
+  T extends { subjects: string | null; test_type?: string | null },
+>(rows: T[]): T[] {
+  return rows.filter((row) => {
+    const subject = row.subjects?.trim();
+    if (!subject) return false;
+    return subjectMatchesTestType(subject, row.test_type);
+  });
 }
 
 export function applyLibraryQueryFilters<

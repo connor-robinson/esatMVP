@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import {
   applyLibraryAttemptFilters,
   applyLibraryQueryFilters,
+  filterRowsBySubjectTestType,
   LIBRARY_PAGE_SIZE,
   loadLibraryAttemptContext,
   parseLibraryFilterParams,
@@ -10,7 +11,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type CountRow = { id: string; subjects: string | null };
+type CountRow = { id: string; subjects: string | null; test_type: string | null };
 
 /**
  * GET /api/question-bank/library-subject-counts
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
     for (;;) {
       let query = supabase
         .from("ai_generated_questions")
-        .select("id, subjects")
+        .select("id, subjects, test_type")
         .in("subjects", params.subjects)
         .neq("status", "deleted")
         .order("id", { ascending: true })
@@ -56,7 +57,9 @@ export async function GET(request: NextRequest) {
       offset += LIBRARY_PAGE_SIZE;
     }
 
-    const filtered = applyLibraryAttemptFilters(rows, params, attemptCtx);
+    const filtered = filterRowsBySubjectTestType(
+      applyLibraryAttemptFilters(rows, params, attemptCtx),
+    );
 
     const counts: Record<string, number> = {};
     for (const subject of params.subjects) {
