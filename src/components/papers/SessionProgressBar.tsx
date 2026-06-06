@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BrandLogo } from '@/components/brand/BrandLogo';
+import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import {
   useSupabaseClient,
@@ -404,8 +404,12 @@ export function SessionProgressBar({
           {/* Logo — hidden when embedded (main Navbar already shows it) */}
           {!embedded && (
             <div className='flex items-center'>
-              <Link href='/' className='interaction-scale' aria-label={APP_NAME}>
-                <BrandLogo variant='full' size='nav' />
+              <Link
+                href='/'
+                className='group interaction-scale'
+                aria-label={APP_NAME}
+              >
+                <BrandNavLockup />
               </Link>
             </div>
           )}

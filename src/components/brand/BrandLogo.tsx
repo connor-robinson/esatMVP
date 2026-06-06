@@ -10,11 +10,17 @@ const LOGO_SRC: Record<BrandLogoVariant, string> = {
 
 export type BrandLogoSize = 'nav' | 'md' | 'lg';
 
-const SIZE_CLASS: Record<BrandLogoSize, string> = {
-  /** Matches navbar `text-sm` link cap height (14px). */
+const FULL_SIZE_CLASS: Record<BrandLogoSize, string> = {
   nav: 'h-[0.875rem] w-auto',
   md: 'h-8 w-auto',
   lg: 'h-12 w-auto sm:h-14',
+};
+
+const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
+  /** Sits beside `text-sm` nav links. */
+  nav: 'h-4 w-4',
+  md: 'h-8 w-8',
+  lg: 'h-12 w-12 sm:h-14 sm:w-14',
 };
 
 interface BrandLogoProps {
@@ -44,7 +50,9 @@ export function BrandLogo({
         'select-none',
         // Light: invert white-on-black art to dark-on-light. Dark: native colors + screen hides black matte.
         'invert dark:invert-0 dark:mix-blend-screen',
-        variant === 'full' ? SIZE_CLASS[size] : 'h-9 w-9 object-contain',
+        variant === 'full'
+          ? FULL_SIZE_CLASS[size]
+          : cn(MARK_SIZE_CLASS[size], 'object-contain'),
         className,
       )}
     />

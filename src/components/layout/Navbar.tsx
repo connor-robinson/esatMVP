@@ -16,6 +16,7 @@ import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
 
@@ -201,10 +202,10 @@ export function Navbar() {
             <div className='flex min-w-0 flex-1 items-center gap-6 lg:gap-8'>
               <Link
                 href='/'
-                className='interaction-scale shrink-0'
+                className='group interaction-scale shrink-0'
                 aria-label={APP_NAME}
               >
-                <BrandLogo variant='full' size='nav' />
+                <BrandNavLockup />
               </Link>
 
               {!hasActiveSession && (
