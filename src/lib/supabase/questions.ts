@@ -6,30 +6,35 @@
 import { supabase, handleSupabaseError } from './client';
 import type { Paper, Question, ConversionTable, ConversionRow, ExamName, ExamType } from '@/types/papers';
 
+/** Columns that exist on production `papers` (no created_at / updated_at). */
+const PAPER_LIST_SELECT =
+  'id, exam_name, exam_year, paper_name, exam_type, has_conversion';
+
+function mapPaperRow(row: Record<string, unknown>): Paper {
+  return {
+    id: row.id as number,
+    examName: row.exam_name as Paper['examName'],
+    examYear: row.exam_year as number,
+    paperName: row.paper_name as string,
+    examType: row.exam_type as Paper['examType'],
+    hasConversion: row.has_conversion as boolean,
+    createdAt: '',
+    updatedAt: '',
+  };
+}
+
 // Get all available papers
 export async function getAvailablePapers() {
   try {
     const { data, error } = await supabase
       .from('papers')
-      .select('*')
+      .select(PAPER_LIST_SELECT)
       .order('exam_name')
       .order('exam_year', { ascending: false });
 
     if (error) throw error;
-    
-    // Convert database format to TypeScript interface format
-    const papers: Paper[] = (data || []).map((row: any) => ({
-      id: row.id,
-      examName: row.exam_name,
-      examYear: row.exam_year,
-      paperName: row.paper_name,
-      examType: row.exam_type,
-      hasConversion: row.has_conversion,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }));
-    
-    return papers;
+
+    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
   } catch (error) {
     handleSupabaseError(error);
     return [];
@@ -41,24 +46,13 @@ export async function getPapersByExam(examName: ExamName) {
   try {
     const { data, error } = await supabase
       .from('papers')
-      .select('*')
+      .select(PAPER_LIST_SELECT)
       .eq('exam_name', examName)
       .order('exam_year', { ascending: false });
 
     if (error) throw error;
-    // Convert database format to TypeScript interface format
-    const papers: Paper[] = (data || []).map((row: any) => ({
-      id: row.id,
-      examName: row.exam_name,
-      examYear: row.exam_year,
-      paperName: row.paper_name,
-      examType: row.exam_type,
-      hasConversion: row.has_conversion,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }));
-    
-    return papers;
+
+    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
   } catch (error) {
     handleSupabaseError(error);
     return [];
@@ -70,25 +64,14 @@ export async function getPapersByExamAndYear(examName: ExamName, examYear: numbe
   try {
     const { data, error } = await supabase
       .from('papers')
-      .select('*')
+      .select(PAPER_LIST_SELECT)
       .eq('exam_name', examName)
       .eq('exam_year', examYear)
       .order('paper_name');
 
     if (error) throw error;
-    // Convert database format to TypeScript interface format
-    const papers: Paper[] = (data || []).map((row: any) => ({
-      id: row.id,
-      examName: row.exam_name,
-      examYear: row.exam_year,
-      paperName: row.paper_name,
-      examType: row.exam_type,
-      hasConversion: row.has_conversion,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }));
-    
-    return papers;
+
+    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
   } catch (error) {
     handleSupabaseError(error);
     return [];
@@ -101,7 +84,7 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
     // First try exact match
     const { data, error } = await supabase
       .from('papers')
-      .select('*')
+      .select(PAPER_LIST_SELECT)
       .eq('exam_name', examName)
       .eq('exam_year', examYear)
       .eq('paper_name', paperName)
@@ -109,18 +92,7 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
       .single();
 
     if (!error && data) {
-      // Convert database format to TypeScript interface format
-      const paper: Paper = {
-        id: data.id,
-        examName: data.exam_name,
-        examYear: data.exam_year,
-        paperName: data.paper_name,
-        examType: data.exam_type,
-        hasConversion: data.has_conversion,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-      };
-      return paper;
+      return mapPaperRow(data as Record<string, unknown>);
     }
 
     // If exact match fails, try common variations for NSAA/ENGAA
@@ -138,7 +110,7 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
         
         const { data: variantData, error: variantError } = await supabase
           .from('papers')
-          .select('*')
+          .select(PAPER_LIST_SELECT)
           .eq('exam_name', examName)
           .eq('exam_year', examYear)
           .eq('paper_name', variant)
@@ -147,17 +119,7 @@ export async function getPaper(examName: ExamName, examYear: number, paperName: 
 
         if (!variantError && variantData) {
           console.log(`[getPaper] Found paper using variation: "${variant}" (requested: "${paperName}")`);
-          const paper: Paper = {
-            id: variantData.id,
-            examName: variantData.exam_name,
-            examYear: variantData.exam_year,
-            paperName: variantData.paper_name,
-            examType: variantData.exam_type,
-            hasConversion: variantData.has_conversion,
-            createdAt: variantData.created_at,
-            updatedAt: variantData.updated_at,
-          };
-          return paper;
+          return mapPaperRow(variantData as Record<string, unknown>);
         }
       }
     }

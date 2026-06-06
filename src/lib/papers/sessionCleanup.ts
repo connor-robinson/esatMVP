@@ -5,6 +5,13 @@
 
 import { supabase } from "@/lib/supabase/client";
 
+function isBenignSchemaError(error: unknown): boolean {
+  const err = error as { code?: string; message?: string };
+  if (err?.code === "42P01" || err?.code === "PGRST204") return true;
+  const message = String(err?.message ?? "");
+  return message.includes("does not exist");
+}
+
 /**
  * Clean up stale in-progress sessions
  * Marks sessions as ended if they haven't been updated in X days
@@ -25,10 +32,16 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
       .from('paper_sessions')
       .select('id')
       .is('ended_at', null)
-      .or(`updated_at.lt.${cutoffISO},started_at.lt.${cutoffISO}`);
+      .lt('started_at', cutoffISO);
 
     if (fetchError) {
-      console.error('[sessionCleanup] Failed to fetch stale sessions:', fetchError);
+      if (isBenignSchemaError(fetchError)) {
+        console.warn(
+          '[sessionCleanup] Skipping cleanup — database schema not fully migrated',
+        );
+      } else {
+        console.error('[sessionCleanup] Failed to fetch stale sessions:', fetchError);
+      }
       return 0;
     }
 
@@ -46,7 +59,13 @@ export async function cleanupStaleSessions(daysInactive: number = 7): Promise<nu
       .in('id', sessionIds);
 
     if (updateError) {
-      console.error('[sessionCleanup] Failed to mark sessions as ended:', updateError);
+      if (isBenignSchemaError(updateError)) {
+        console.warn(
+          '[sessionCleanup] Skipping cleanup — database schema not fully migrated',
+        );
+      } else {
+        console.error('[sessionCleanup] Failed to mark sessions as ended:', updateError);
+      }
       return 0;
     }
 

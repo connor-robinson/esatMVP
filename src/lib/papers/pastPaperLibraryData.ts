@@ -70,8 +70,13 @@ export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {
         outlineCache.set(key, data.papers);
         return data.papers;
       }
-    } catch {
-      // fall through to direct Supabase client
+      console.warn(
+        "[pastPaperLibrary] library-outline API failed:",
+        response.status,
+        response.statusText,
+      );
+    } catch (error) {
+      console.warn("[pastPaperLibrary] library-outline API unreachable:", error);
     }
 
     const papers = await fetchPastPaperLibraryOutlineFromClient();
