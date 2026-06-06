@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
   ChevronDown,
-  CheckCircle2,
   ArrowRight,
   Check,
   ChevronRight,
@@ -334,18 +333,20 @@ export function StageListCard({
                                         </div>
                                       </div>
                                       {isPartCompleted ? (
-                                        <div
-                                          className={cn(
-                                            "flex shrink-0 items-center gap-1.5",
-                                            getExamAccentTextClass(stage.examName),
-                                          )}
-                                        >
-                                          <CheckCircle2
-                                            className="h-5 w-5 shrink-0"
-                                            strokeWidth={2.25}
+                                        <div className="flex shrink-0 items-center gap-1.5">
+                                          <span
+                                            className={cn(
+                                              "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+                                              getExamAccentFillClass(stage.examName),
+                                            )}
                                             aria-hidden
-                                          />
-                                          <span className="text-xs font-medium">
+                                          >
+                                            <Check
+                                              className="h-3 w-3 text-background dark:text-white"
+                                              strokeWidth={3}
+                                            />
+                                          </span>
+                                          <span className="text-xs font-medium text-text-muted">
                                             Done
                                           </span>
                                         </div>
