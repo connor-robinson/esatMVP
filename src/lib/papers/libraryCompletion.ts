@@ -10,14 +10,7 @@
 
 import type { Paper, PaperSection } from '@/types/papers';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
-import {
-  constructPaperVariant,
-  queryCompletedSessions,
-  isSectionInSessions,
-  isPartCompletedFromSessions,
-  checkMultiplePartsCompleted,
-} from './completionUtils';
-import { getQuestions } from '@/lib/supabase/questions';
+import { getQuestionPartsForPaper } from '@/lib/supabase/questions';
 import { mapPartToSection } from './sectionMapping';
 import { generateSectionId, generatePartId } from './partIdUtils';
 import { getCompletedPartIds, isPartIdCompleted } from './completionCache';
@@ -52,7 +45,7 @@ export async function isSectionCompleted(
     }
     
     // For NSAA/ENGAA: Check all parts within the section
-    const questions = await getQuestions(paper.id);
+    const questions = await getQuestionPartsForPaper(paper.id);
     
     // Find all parts that map to this section
     const partsInSection = new Set<{ partLetter: string | null; partName: string | null }>();
@@ -133,32 +126,17 @@ export async function getPaperSectionCompletion(
   }
 
   try {
-    const paperVariant = constructPaperVariant(
-      paper.examYear,
-      paper.paperName,
-      paper.examType || 'Official'
-    );
-    const paperTypeName = examNameToPaperType(paper.examName);
     const paperType = examNameToPaperType(paper.examName);
 
-    // Query completed sessions matching this paper
-    const sessions = await queryCompletedSessions(
-      userId,
-      paperTypeName,
-      paper.examName,
-      `${paper.examYear}-%`
-    );
-
-    if (sessions.length === 0) {
-      // No sessions - all sections incomplete
+    const completedPartIds = await getCompletedPartIds(userId);
+    if (completedPartIds.size === 0) {
       for (const section of sections) {
         completionMap.set(section, false);
       }
       return completionMap;
     }
 
-    // Get all questions for this paper
-    const questions = await getQuestions(paper.id);
+    const questions = await getQuestionPartsForPaper(paper.id);
     
     // Build a map of section -> parts
     const sectionToParts = new Map<PaperSection, Set<{ partLetter: string | null; partName: string | null }>>();
@@ -179,9 +157,6 @@ export async function getPaperSectionCompletion(
         });
       }
     }
-    
-    // Get completed part IDs from cache
-    const completedPartIds = await getCompletedPartIds(userId);
     
     // Check completion for each section
     for (const section of sections) {

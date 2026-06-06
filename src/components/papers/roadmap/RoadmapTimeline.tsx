@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -70,6 +70,14 @@ function TimelineTipTooltip({
   marker: TimelineMarker;
   anchor: DOMRect;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return createPortal(
     <div
       className="pointer-events-none fixed z-[200] w-[17rem] max-w-[calc(100vw-2rem)]"
@@ -168,6 +176,12 @@ export function RoadmapTimeline({
   nodePositions,
   currentStageIndex,
 }: RoadmapTimelineProps) {
+  const [animateSpine, setAnimateSpine] = useState(false);
+
+  useEffect(() => {
+    setAnimateSpine(true);
+  }, []);
+
   const effectiveCurrentIndex = currentStageIndex ?? 0;
   const markers = useMemo(
     () => buildRoadmapTimelineMarkers(stages),
@@ -230,17 +244,28 @@ export function RoadmapTimeline({
           ) : null}
 
           {completedPath ? (
-            <motion.path
-              d={completedPath}
-              fill="none"
-              className="stroke-accent"
-              strokeWidth={6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-            />
+            animateSpine ? (
+              <motion.path
+                d={completedPath}
+                fill="none"
+                className="stroke-accent"
+                strokeWidth={6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+              />
+            ) : (
+              <path
+                d={completedPath}
+                fill="none"
+                className="stroke-accent"
+                strokeWidth={6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            )
           ) : null}
         </svg>
 

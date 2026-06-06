@@ -1,12 +1,14 @@
 import type { Paper } from "@/types/papers";
 import {
   buildPaperSectionsOutline,
-  slimQuestionParts,
   type PaperSectionsOutline,
 } from "@/lib/papers/paperLibrarySections";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { ExamName } from "@/types/papers";
-import { getAvailablePapers, getQuestions } from "@/lib/supabase/questions";
+import {
+  getAvailablePapers,
+  getQuestionPartsForPaperIds,
+} from "@/lib/supabase/questions";
 
 const outlineCache = new Map<string, Paper[]>();
 const outlineInFlight = new Map<string, Promise<Paper[]>>();
@@ -44,12 +46,9 @@ async function fetchPaperSectionsOutlineFromClient(
         .map((p) => p.id)
     : [paper.id];
 
-  const questionLists = await Promise.all(
-    paperIds.map((id) => getQuestions(id)),
-  );
-  const allQuestions = questionLists.flat();
+  const allQuestions = await getQuestionPartsForPaperIds(paperIds);
 
-  return buildPaperSectionsOutline(paper, [], slimQuestionParts(allQuestions));
+  return buildPaperSectionsOutline(paper, [], allQuestions);
 }
 
 export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {
@@ -117,8 +116,13 @@ export async function fetchPaperSectionsOutline(
         sectionsCache.set(paperId, data);
         return data;
       }
-    } catch {
-      // fall through to direct Supabase client
+      console.warn(
+        "[pastPaperLibrary] library-sections API failed:",
+        response.status,
+        response.statusText,
+      );
+    } catch (error) {
+      console.warn("[pastPaperLibrary] library-sections API unreachable:", error);
     }
 
     const catalog = outlineCache.get("all") ?? (await fetchPastPaperLibraryOutline());

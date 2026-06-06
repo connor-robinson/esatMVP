@@ -10,6 +10,56 @@ import type { Paper, Question, ConversionTable, ConversionRow, ExamName, ExamTyp
 const PAPER_LIST_SELECT =
   'id, exam_name, exam_year, paper_name, exam_type, has_conversion';
 
+/** Metadata only — for section outlines and completion mapping. */
+const QUESTION_PARTS_SELECT =
+  'part_letter, part_name, exam_type, paper_name';
+
+export type QuestionPartRow = {
+  partLetter: string;
+  partName: string;
+  examType?: string;
+  paperName?: string;
+};
+
+function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
+  return {
+    partLetter: (row.part_letter as string) ?? '',
+    partName: (row.part_name as string) ?? '',
+    examType: (row.exam_type as string) ?? undefined,
+    paperName: (row.paper_name as string) ?? undefined,
+  };
+}
+
+export async function getQuestionPartsForPaper(
+  paperId: number,
+): Promise<QuestionPartRow[]> {
+  const { data, error } = await supabase
+    .from('questions')
+    .select(QUESTION_PARTS_SELECT)
+    .eq('paper_id', paperId);
+
+  if (error) throw error;
+  return (data || []).map((row) =>
+    mapQuestionPartRow(row as Record<string, unknown>),
+  );
+}
+
+export async function getQuestionPartsForPaperIds(
+  paperIds: number[],
+): Promise<QuestionPartRow[]> {
+  if (paperIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from('questions')
+    .select(QUESTION_PARTS_SELECT)
+    .in('paper_id', paperIds);
+
+  if (error) throw error;
+  return (data || []).map((row) =>
+    mapQuestionPartRow(row as Record<string, unknown>),
+  );
+}
+
 function mapPaperRow(row: Record<string, unknown>): Paper {
   return {
     id: row.id as number,

@@ -13,10 +13,7 @@ import { SectionsLoadingState } from "./SectionsLoadingState";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection } from "@/types/papers";
 import { useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import {
-  getPaperCompletionStatus,
-  getPaperSectionCompletion,
-} from "@/lib/papers/libraryCompletion";
+import { getPaperSectionCompletion } from "@/lib/papers/libraryCompletion";
 import {
   fetchPaperSectionsOutline,
 } from "@/lib/papers/pastPaperLibraryData";
@@ -63,7 +60,7 @@ export function PaperColumn({
   const mainSections: PaperMainSection[] = outline?.mainSections ?? [];
 
   useEffect(() => {
-    if (!isExpanded || outline || loadingSections) return;
+    if (!isExpanded || outline) return;
 
     let cancelled = false;
     setLoadingSections(true);
@@ -86,7 +83,7 @@ export function PaperColumn({
     return () => {
       cancelled = true;
     };
-  }, [isExpanded, outline, loadingSections, paper.id]);
+  }, [isExpanded, outline, paper.id]);
 
   useEffect(() => {
     if (
@@ -101,20 +98,26 @@ export function PaperColumn({
 
     void (async () => {
       try {
-        const status = await getPaperCompletionStatus(
-          session.user!.id,
-          paper,
-          availableSections,
-        );
         const sectionMap = await getPaperSectionCompletion(
           session.user!.id,
           paper,
           availableSections,
         );
-        if (!cancelled) {
-          setPaperCompletionStatus(status);
-          setSectionCompletionMap(sectionMap);
+        if (cancelled) return;
+
+        let completedCount = 0;
+        for (const section of availableSections) {
+          if (sectionMap.get(section)) completedCount++;
         }
+        const status =
+          completedCount === 0
+            ? "none"
+            : completedCount === availableSections.length
+              ? "complete"
+              : "partial";
+
+        setPaperCompletionStatus(status);
+        setSectionCompletionMap(sectionMap);
       } catch (error) {
         console.error("[PaperColumn] Error loading completion status:", error);
       }
