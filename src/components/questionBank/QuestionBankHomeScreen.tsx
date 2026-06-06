@@ -303,12 +303,9 @@ export function QuestionBankHomeScreen() {
                   )}
                 >
                   <div className="flex flex-1 items-center justify-center px-1 text-center">
-                    <p
-                      className={cn(
-                        "whitespace-nowrap text-base font-semibold leading-snug text-text sm:text-lg",
-                      )}
-                    >
-                      {tile.headline}
+                    <p className="whitespace-nowrap text-base font-semibold leading-snug sm:text-lg">
+                      <span className="text-text">{tile.testType} · </span>
+                      <span className={tile.topicClass}>{tile.key}</span>
                     </p>
                   </div>
 

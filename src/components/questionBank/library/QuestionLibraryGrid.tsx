@@ -24,6 +24,7 @@ import {
   type LibraryFilters,
 } from "@/lib/questionBank/libraryQueryParams";
 import { labelForQuestionBankTag } from "@/lib/questionBank/esatCurriculumTopicLabels";
+import { SUBJECT_TEST_TYPE } from "@/lib/questionBank/subjectTestTypes";
 import {
   clearLibraryCaches,
   fetchLibraryOutline,
@@ -446,6 +447,8 @@ export function QuestionLibraryGrid({
         <div className="mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
           {visibleSubjects.map((subject) => {
             const accentClass = getSubjectAccentTextClass(subject);
+            const testType =
+              SUBJECT_TEST_TYPE[subject as keyof typeof SUBJECT_TEST_TYPE];
             const isExpanded = expandedSubjects.has(subject);
             const outline = subjectOutlines[subject];
             const subjectCount =
@@ -471,13 +474,15 @@ export function QuestionLibraryGrid({
                       strokeWidth={2.5}
                       aria-hidden
                     />
-                    <span
-                      className={cn(
-                        "font-heading text-sm font-semibold uppercase tracking-wide",
-                        accentClass,
+                    <span className="font-heading text-sm font-semibold uppercase tracking-wide">
+                      {testType ? (
+                        <>
+                          <span className="text-text">{testType} · </span>
+                          <span className={accentClass}>{subject}</span>
+                        </>
+                      ) : (
+                        <span className={accentClass}>{subject}</span>
                       )}
-                    >
-                      {subject}
                     </span>
                   </div>
                   <span className="font-heading text-xs text-text-muted">
