@@ -700,6 +700,7 @@ export default function PapersRoadmapPage() {
             <RoadmapList
               nodes={timelineNodes}
               completionData={completionData}
+              completionLoading={completionLoading}
               onStartSession={handleStartStage}
               onNodePositionsUpdate={handleNodePositionsUpdate}
               timelineNodePositions={nodePositions}

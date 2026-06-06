@@ -205,7 +205,7 @@ export function StageListCard({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: "easeInOut" }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
               className="overflow-hidden border-t border-border-subtle/40"
             >
               <div className="space-y-4 px-4 py-4 sm:px-5">
