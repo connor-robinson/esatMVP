@@ -16,6 +16,7 @@ import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { SHORT_TITLE } from '@/config/brand';
+import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
 const NAV_ICON_PX = 22;
