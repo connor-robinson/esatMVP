@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """
+DEPRECATED: Do not use — incorrectly treats all M_<hex> ids as TMUA.
+
+Use reclassify_exam_type.py instead (schema corpus from ESAT vs TMUA files).
+
+Old doc:
 Reclassify TMUA rows in ai_generated_questions that were saved as ESAT Math 1/2.
 
 Detection:
