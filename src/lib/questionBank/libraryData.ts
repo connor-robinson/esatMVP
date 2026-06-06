@@ -5,7 +5,7 @@ import {
   UNTAGGED_TOPIC,
 } from "@/lib/questionBank/libraryQueryParams";
 
-export type LibraryOutlineTag = { tag: string; count: number };
+export type LibraryOutlineTag = { tag: string; label: string; count: number };
 
 export type LibraryOutline = {
   subject: string;
@@ -99,7 +99,7 @@ export async function fetchLibraryTagQuestions(
     if (tag === UNTAGGED_TOPIC) {
       params.set("untagged", "1");
     } else {
-      params.set("tags", tag);
+      params.set("primaryTag", tag);
     }
 
     const response = await fetch(

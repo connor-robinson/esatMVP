@@ -22,8 +22,8 @@ import {
   isLibrarySearchActive,
   libraryFiltersKey,
   type LibraryFilters,
-  UNTAGGED_TOPIC,
 } from "@/lib/questionBank/libraryQueryParams";
+import { labelForQuestionBankTag } from "@/lib/questionBank/esatCurriculumTopicLabels";
 import {
   clearLibraryCaches,
   fetchLibraryOutline,
@@ -216,20 +216,12 @@ export function QuestionLibraryGrid({
     LoadState<QuestionBankQuestion[]>
   >({ status: "idle" });
 
-  const [curriculum, setCurriculum] = useState<unknown>(null);
   const [attemptedQuestionIds, setAttemptedQuestionIds] = useState<
     Set<string>
   >(new Set());
 
   const filtersKeyRef = useRef(filtersKey);
   filtersKeyRef.current = filtersKey;
-
-  useEffect(() => {
-    fetch("/api/question-bank/curriculum")
-      .then((res) => res.json())
-      .then(setCurriculum)
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (!session?.user) {
@@ -260,71 +252,6 @@ export function QuestionLibraryGrid({
     setTagQuestions({});
     setSearchState({ status: "idle" });
   }, [filtersKey]);
-
-  const getTopicTitle = useCallback(
-    (tagCode: string): string => {
-      if (!tagCode || tagCode === UNTAGGED_TOPIC) return "Untagged";
-      const prefixes = [
-        "Math 1",
-        "Math 2",
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "Paper 1",
-        "Paper 2",
-      ];
-      for (const p of prefixes) {
-        if (new RegExp(`^${p}\\s*-\\s*`, "i").test(tagCode)) {
-          return tagCode.replace(new RegExp(`^${p}\\s*-\\s*`, "i"), "").trim();
-        }
-      }
-      const cur = curriculum as {
-        papers?: Array<{
-          paper_id: string;
-          topics?: Array<{ code: string; title: string }>;
-        }>;
-      } | null;
-      if (!cur?.papers) return tagCode;
-      let paperId = "";
-      let cleanCode = "";
-      if (tagCode.startsWith("M1-")) {
-        paperId = "math1";
-        cleanCode = tagCode.replace("M1-", "");
-      } else if (tagCode.startsWith("M2-")) {
-        paperId = "math2";
-        cleanCode = tagCode.replace("M2-", "");
-      } else if (tagCode.startsWith("P-")) {
-        paperId = "physics";
-        cleanCode = tagCode.replace("P-", "");
-      } else if (tagCode.startsWith("biology-")) {
-        paperId = "biology";
-        cleanCode = tagCode.replace("biology-", "");
-      } else if (tagCode.startsWith("chemistry-")) {
-        paperId = "chemistry";
-        cleanCode = tagCode.replace("chemistry-", "");
-      }
-      if (!paperId) {
-        for (const paper of cur.papers ?? []) {
-          const topic = paper.topics?.find(
-            (t) =>
-              t.code === tagCode || t.code === tagCode.replace(/^[A-Z]+/, ""),
-          );
-          if (topic) return topic.title;
-        }
-        return tagCode;
-      }
-      const paper = cur.papers?.find((p) => p.paper_id === paperId);
-      if (!paper) return tagCode;
-      const topic =
-        paper.topics?.find((t) => t.code === cleanCode) ??
-        paper.topics?.find(
-          (t) => t.code === cleanCode.replace(/^[A-Z]+/, ""),
-        ) ??
-        paper.topics?.find((t) => t.code === tagCode);
-      return topic?.title ?? tagCode;
-    },
-    [curriculum],
-  );
 
   const loadSubjectOutline = useCallback(
     async (subject: string) => {
@@ -583,10 +510,12 @@ export function QuestionLibraryGrid({
                             No questions in this subject for the current filters.
                           </div>
                         ) : outline?.status === "ready" ? (
-                          outline.data.tags.map(({ tag, count }) => {
+                          outline.data.tags.map(({ tag, label, count }) => {
                             const tagKey = `${subject}-${tag}`;
                             const isTagExpanded = expandedTags.has(tagKey);
                             const loaded = tagQuestions[tagKey];
+                            const topicLabel =
+                              label || labelForQuestionBankTag(tag, subject);
 
                             return (
                               <div
@@ -609,7 +538,7 @@ export function QuestionLibraryGrid({
                                       aria-hidden
                                     />
                                     <span className="truncate font-heading text-sm font-medium text-text">
-                                      {getTopicTitle(tag)}
+                                      {topicLabel}
                                     </span>
                                   </div>
                                   <span className="shrink-0 font-heading text-xs tabular-nums text-text-muted">

@@ -19,6 +19,7 @@ import {
   SolutionModal,
 } from '@/components/questionBank/SolutionModal';
 import { CommunityStatsPanel } from '@/components/questionBank/CommunityStatsPanel';
+import { labelForQuestionBankTag } from '@/lib/questionBank/esatCurriculumTopicLabels';
 import { useQuestionBank } from '@/hooks/useQuestionBank';
 import { useQuestionEditor } from '@/hooks/useQuestionEditor';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -123,7 +124,6 @@ export default function QuestionBankPage() {
     updateCurrentQuestion,
   } = useQuestionBank({ browseMode: false });
 
-  const [curriculum, setCurriculum] = useState<any>(null);
   const [sessionMode, setSessionMode] = useState(false);
   const [isDrillSession, setIsDrillSession] = useState(false);
   const [sessionQuestions, setSessionQuestions] = useState<
@@ -219,30 +219,6 @@ export default function QuestionBankPage() {
   >(null);
 
   const { updateQuestion, updateQuestionField } = useQuestionEditor();
-
-  // Fetch curriculum after idle (non-blocking for first paint)
-  useEffect(() => {
-    let cancelled = false;
-    const load = () => {
-      if (cancelled) return;
-      fetch('/api/question-bank/curriculum')
-        .then((res) => res.json())
-        .then((data) => {
-          if (!cancelled) setCurriculum(data);
-        })
-        .catch((err) => console.error('Error fetching curriculum:', err));
-    };
-    const ric =
-      typeof requestIdleCallback !== 'undefined'
-        ? requestIdleCallback(load, { timeout: 3000 })
-        : null;
-    const t = ric == null ? setTimeout(load, 1500) : null;
-    return () => {
-      cancelled = true;
-      if (ric != null) cancelIdleCallback(ric);
-      if (t != null) clearTimeout(t);
-    };
-  }, []);
 
   // Reset answer revealed state when question changes
   useEffect(() => {
@@ -424,87 +400,7 @@ export default function QuestionBankPage() {
     }
   };
 
-  // Helper to find topic title from code
-  const getTopicTitle = (tagCode: string) => {
-    if (!tagCode) return tagCode;
-
-    // First, check if tag has subject prefix format (e.g., "Chemistry - Oxidation, reduction and redox")
-    // Remove subject prefix before the '-' if present
-    const subjectPrefixes = [
-      'Math 1',
-      'Math 2',
-      'Physics',
-      'Chemistry',
-      'Biology',
-      'Paper 1',
-      'Paper 2',
-    ];
-    for (const prefix of subjectPrefixes) {
-      const prefixPattern = new RegExp(`^${prefix}\\s*-\\s*`, 'i');
-      if (prefixPattern.test(tagCode)) {
-        // Remove the subject prefix and the dash
-        return tagCode.replace(prefixPattern, '').trim();
-      }
-    }
-
-    // If no subject prefix found, try curriculum lookup
-    if (!curriculum) return tagCode;
-
-    // 1. Identify the paper and clean the code
-    let paperId = '';
-    let cleanCode = '';
-
-    if (tagCode.startsWith('M1-')) {
-      paperId = 'math1';
-      cleanCode = tagCode.replace('M1-', '');
-    } else if (tagCode.startsWith('M2-')) {
-      paperId = 'math2';
-      cleanCode = tagCode.replace('M2-', '');
-    } else if (tagCode.startsWith('P-')) {
-      paperId = 'physics';
-      cleanCode = tagCode.replace('P-', '');
-    } else if (tagCode.startsWith('biology-')) {
-      paperId = 'biology';
-      cleanCode = tagCode.replace('biology-', '');
-    } else if (tagCode.startsWith('chemistry-')) {
-      paperId = 'chemistry';
-      cleanCode = tagCode.replace('chemistry-', '');
-    }
-
-    // If no prefix matched, we'll try to find it in any paper
-    if (!paperId) {
-      // Search all papers for this code
-      for (const paper of curriculum.papers || []) {
-        const topic = paper.topics?.find(
-          (t: any) =>
-            t.code === tagCode || t.code === tagCode.replace(/^[A-Z]+/, ''),
-        );
-        if (topic) return topic.title;
-      }
-      return tagCode;
-    }
-
-    // 2. Find the paper in curriculum
-    const paper = curriculum.papers?.find((p: any) => p.paper_id === paperId);
-    if (!paper) return tagCode;
-
-    // 3. Match the topic by code
-    // Try exact match first (e.g., cleanCode "M5" matches topic code "M5")
-    let topic = paper.topics?.find((t: any) => t.code === cleanCode);
-
-    // If not found, try removing letter prefix (e.g., cleanCode "M5" -> "5" matches topic code "5")
-    if (!topic) {
-      const numericCode = cleanCode.replace(/^[A-Z]+/, '');
-      topic = paper.topics?.find((t: any) => t.code === numericCode);
-    }
-
-    // Final attempt: try matching with the original tag code
-    if (!topic) {
-      topic = paper.topics?.find((t: any) => t.code === tagCode);
-    }
-
-    return topic ? topic.title : tagCode;
-  };
+  const getTopicTitle = (tagCode: string) => labelForQuestionBankTag(tagCode);
 
   const handleStartSession = useCallback(
     async (

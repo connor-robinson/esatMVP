@@ -6,12 +6,21 @@ import type {
   AttemptedFilter,
 } from "@/types/questionBank";
 import { UNTAGGED_TOPIC } from "@/lib/questionBank/libraryQueryParams";
+import {
+  canonicalizeEsatTag,
+  labelForEsatTag,
+  compareEsatTagLabels,
+} from "@/lib/questionBank/esatTagCanonicalize";
 
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 1000;
 
-type SlimRow = { id: string; primary_tag: string | null };
+type SlimRow = {
+  id: string;
+  primary_tag: string | null;
+  schema_id?: string | null;
+};
 
 function applyAttemptFilters(
   rows: SlimRow[],
@@ -151,7 +160,7 @@ export async function GET(request: NextRequest) {
     for (;;) {
       let query = supabase
         .from("ai_generated_questions")
-        .select("id, primary_tag")
+        .select("id, primary_tag, schema_id")
         .eq("subjects", subject)
         .neq("status", "deleted")
         .order("id", { ascending: true })
@@ -196,16 +205,26 @@ export async function GET(request: NextRequest) {
 
     const tagCounts = new Map<string, number>();
     for (const row of filtered) {
-      const tag =
-        row.primary_tag && row.primary_tag.trim()
-          ? row.primary_tag.trim()
-          : UNTAGGED_TOPIC;
-      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+      const canonical = canonicalizeEsatTag(row.primary_tag, {
+        subject,
+        schemaId: row.schema_id ?? undefined,
+      });
+      tagCounts.set(canonical, (tagCounts.get(canonical) ?? 0) + 1);
     }
 
     const tags = Array.from(tagCounts.entries())
-      .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => a.tag.localeCompare(b.tag));
+      .map(([tag, count]) => ({
+        tag,
+        label: labelForEsatTag(tag, { subject }),
+        count,
+      }))
+      .sort((a, b) =>
+        a.tag === UNTAGGED_TOPIC
+          ? 1
+          : b.tag === UNTAGGED_TOPIC
+            ? -1
+            : compareEsatTagLabels(a.tag, b.tag, { subject }),
+      );
 
     return NextResponse.json({
       subject,

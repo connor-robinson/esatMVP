@@ -84,6 +84,7 @@ export async function GET(request: NextRequest) {
       attemptedStatusParam as AttemptedFilter | null;
     const tags = searchParams.get('tags') || '';
     const untagged = searchParams.get('untagged') === '1';
+    const primaryTag = searchParams.get('primaryTag') || '';
     const search = searchParams.get('search') || '';
     const idParam = searchParams.get('id') || '';
     const limit = parseInt(searchParams.get('limit') || '20', 10);
@@ -394,7 +395,10 @@ export async function GET(request: NextRequest) {
     // ============================================================================
     // STAGE 7: Apply tag filter
     // ============================================================================
-    if (untagged) {
+    if (primaryTag) {
+      debug('[Question Bank API] Stage 7: Applying exact primary_tag filter:', primaryTag);
+      query = query.eq('primary_tag', primaryTag);
+    } else if (untagged) {
       debug('[Question Bank API] Stage 7: Applying untagged filter');
       query = query.is('primary_tag', null);
     } else if (tags) {
