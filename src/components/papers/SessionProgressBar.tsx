@@ -406,7 +406,7 @@ export function SessionProgressBar({
             <div className='flex items-center'>
               <Link
                 href='/'
-                className='group interaction-scale'
+                className='group interaction-scale inline-flex items-center'
                 aria-label={APP_NAME}
               >
                 <BrandNavLockup />

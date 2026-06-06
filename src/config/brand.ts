@@ -18,7 +18,7 @@ export const BRAND_CONFIG = {
   // Short title (navbar fallback / aria)
   shortTitle: "The ESAT Guide",
 
-  // Logo assets in /public/brand (white on black; inverted in light mode via BrandLogo)
+  // Logo assets in /public/brand (transparent PNG; inverted in light mode via BrandLogo)
   logoFullSrc: "/brand/logo-full.png",
   logoMarkSrc: "/brand/logo-mark.png",
 

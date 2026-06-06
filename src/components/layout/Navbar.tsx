@@ -199,10 +199,10 @@ export function Navbar() {
       <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
         <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
           <div className='flex h-[65px] items-center justify-between'>
-            <div className='flex min-w-0 flex-1 items-center gap-6 lg:gap-8'>
+            <div className='flex min-w-0 flex-1 items-center gap-x-3 gap-y-1 lg:gap-x-6'>
               <Link
                 href='/'
-                className='group interaction-scale shrink-0'
+                className='group interaction-scale inline-flex shrink-0 items-center'
                 aria-label={APP_NAME}
               >
                 <BrandNavLockup />

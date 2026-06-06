@@ -17,8 +17,8 @@ const FULL_SIZE_CLASS: Record<BrandLogoSize, string> = {
 };
 
 const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  /** Sits beside `text-sm` nav links. */
-  nav: 'h-4 w-4',
+  /** 1em beside `text-sm` nav links — same cap height as link text. */
+  nav: 'h-[1em] w-[1em]',
   md: 'h-8 w-8',
   lg: 'h-12 w-12 sm:h-14 sm:w-14',
 };
@@ -32,7 +32,7 @@ interface BrandLogoProps {
 }
 
 /**
- * White-on-black PNG logos. In light mode we invert so the mark reads dark on the page.
+ * Transparent PNG logos (white glyph). Inverted in light mode for dark-on-light UI.
  */
 export function BrandLogo({
   variant = 'full',
@@ -47,12 +47,9 @@ export function BrandLogo({
       alt={alt}
       draggable={false}
       className={cn(
-        'select-none',
-        // Light: invert white-on-black art to dark-on-light. Dark: native colors + screen hides black matte.
-        'invert dark:invert-0 dark:mix-blend-screen',
-        variant === 'full'
-          ? FULL_SIZE_CLASS[size]
-          : cn(MARK_SIZE_CLASS[size], 'object-contain'),
+        'block shrink-0 select-none object-contain',
+        'invert dark:invert-0',
+        variant === 'full' ? FULL_SIZE_CLASS[size] : MARK_SIZE_CLASS[size],
         className,
       )}
     />
