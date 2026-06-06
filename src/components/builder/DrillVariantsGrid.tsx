@@ -4,7 +4,8 @@
 
 'use client';
 
-import { Check, Plus, Home } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Plus, Home, Info, X } from 'lucide-react';
 import type { HighLevelCategory } from '@/components/builder/TopicFolders';
 import { getDisplayFolder } from '@/config/drillDisplayFolders';
 import { getFolderSymbol, getVariantSamples } from '@/config/drillPreviews';
@@ -106,20 +107,75 @@ function DrillModuleCard({
   );
 }
 
-function DrillBuilderHome() {
+function DrillBuilderHelpModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center bg-background/75 p-4 backdrop-blur-sm'
+      onClick={onClose}
+    >
+      <div
+        className='relative w-full max-w-sm rounded-organic-xl bg-surface-elevated p-6 shadow-[0_20px_60px_rgba(0,0,0,0.25)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.55)]'
+        onClick={(e) => e.stopPropagation()}
+        role='dialog'
+        aria-labelledby='drill-builder-help-title'
+      >
+        <button
+          type='button'
+          onClick={onClose}
+          className='absolute right-3 top-3 rounded-full p-2 text-text-muted transition-colors hover:bg-surface-mid hover:text-text'
+          aria-label='Close'
+        >
+          <X className='h-4 w-4' />
+        </button>
+
+        <h3
+          id='drill-builder-help-title'
+          className='pr-8 font-heading text-lg font-bold text-text'
+        >
+          How to build a session
+        </h3>
+
+        <div className='mt-4 space-y-3 text-sm leading-relaxed text-text-muted'>
+          <p>
+            Pick a subject from the icons on the left, then open a folder in
+            the middle column.
+          </p>
+          <p>
+            Hit <span className='font-medium text-text'>Add</span> on any drill
+            you want. Set the length on the bar at the bottom, then{' '}
+            <span className='font-medium text-text'>Review selection</span> to
+            start.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DrillBuilderHome({ onShowHelp }: { onShowHelp: () => void }) {
   return (
     <div className='flex min-h-0 flex-1 items-center justify-center p-8 sm:p-12'>
       <div className='flex max-w-md flex-col items-center text-center'>
-        <div
-          className='relative mb-8 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-organic-xl bg-surface-elevated shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]'
-          aria-hidden
+        <button
+          type='button'
+          onClick={onShowHelp}
+          className='group relative mb-8 flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-organic-xl bg-surface-elevated shadow-[0_8px_32px_rgba(0,0,0,0.06)] transition-colors hover:bg-surface-neutral dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)]'
+          aria-label='How to build a session'
         >
-          <span className='absolute inset-0 rounded-organic-xl bg-primary/8 dark:bg-primary/12' />
+          <span className='absolute inset-0 rounded-organic-xl bg-primary/8 transition-colors group-hover:bg-primary/12 dark:bg-primary/12' />
           <Home
             className='relative h-9 w-9 text-primary'
             strokeWidth={1.75}
           />
-        </div>
+        </button>
 
         <h2 className='font-heading text-2xl font-bold tracking-tight text-text sm:text-[1.65rem]'>
           Mental Maths
@@ -127,24 +183,6 @@ function DrillBuilderHome() {
         <p className='mt-2 max-w-[18rem] text-sm leading-relaxed text-text-muted'>
           Build a custom practice session from the drills in the library.
         </p>
-
-        <ol className='mt-10 w-full max-w-[15rem] space-y-2.5 text-left'>
-          {[
-            'Choose a category',
-            'Pick a topic folder',
-            'Add drills to your session',
-          ].map((step, i) => (
-            <li
-              key={step}
-              className='flex items-center gap-3 text-xs text-text-subtle'
-            >
-              <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-mid font-mono text-[10px] font-semibold tabular-nums text-text-muted'>
-                {i + 1}
-              </span>
-              {step}
-            </li>
-          ))}
-        </ol>
       </div>
     </div>
   );
@@ -157,6 +195,7 @@ export function DrillVariantsGrid({
   onAddVariant,
   onRemoveVariant,
 }: DrillVariantsGridProps) {
+  const [helpOpen, setHelpOpen] = useState(false);
   const displayFolder =
     drillCategory && topicId
       ? getDisplayFolder(drillCategory, topicId)
@@ -171,7 +210,7 @@ export function DrillVariantsGrid({
   let panelBody: React.ReactNode;
 
   if (isHome) {
-    panelBody = <DrillBuilderHome />;
+    panelBody = <DrillBuilderHome onShowHelp={() => setHelpOpen(true)} />;
   } else if (!displayFolder || displayFolder.modules.length === 0) {
     panelBody = (
       <div className='flex flex-1 items-center justify-center p-8 text-sm text-text-muted'>
@@ -220,18 +259,34 @@ export function DrillVariantsGrid({
   }
 
   return (
-    <div
-      className={cn(
-        'flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl',
-        shellClass,
-      )}
-    >
-      <DrillPanelTransition
-        panelKey={panelKey}
-        className='flex min-h-0 flex-1 flex-col'
+    <>
+      <div
+        className={cn(
+          'relative flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-organic-xl',
+          shellClass,
+        )}
       >
-        {panelBody}
-      </DrillPanelTransition>
-    </div>
+        <button
+          type='button'
+          onClick={() => setHelpOpen(true)}
+          className='absolute right-3 top-3 z-10 rounded-full p-2 text-text-muted transition-colors hover:bg-surface-mid hover:text-text'
+          aria-label='How to build a session'
+        >
+          <Info className='h-4 w-4' strokeWidth={2} />
+        </button>
+
+        <DrillPanelTransition
+          panelKey={panelKey}
+          className='flex min-h-0 flex-1 flex-col'
+        >
+          {panelBody}
+        </DrillPanelTransition>
+      </div>
+
+      <DrillBuilderHelpModal
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+      />
+    </>
   );
 }
