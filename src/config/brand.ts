@@ -15,8 +15,12 @@ export const BRAND_CONFIG = {
   // Full title for pages
   fullTitle: "The ESAT Guide | ESAT & TMUA Preparation",
 
-  // Short title (navbar logo — rendered uppercase in nav)
+  // Short title (navbar fallback / aria)
   shortTitle: "The ESAT Guide",
+
+  // Logo assets in /public/brand (white on black; inverted in light mode via BrandLogo)
+  logoFullSrc: "/brand/logo-full.png",
+  logoMarkSrc: "/brand/logo-mark.png",
 
   // Copyright text
   copyright: "© 2024 The ESAT Guide. Not affiliated with any university.",

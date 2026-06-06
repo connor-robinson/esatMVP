@@ -15,7 +15,8 @@ import { cn } from '@/lib/utils';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
-import { SHORT_TITLE } from '@/config/brand';
+import { BrandLogo } from '@/components/brand/BrandLogo';
+import { APP_NAME } from '@/config/brand';
 import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
 
 /** Unified lucide sizing so logout / login glyphs match sun + gear optically */
@@ -190,7 +191,7 @@ export function Navbar() {
             className='fixed top-3 left-4 z-[100] rounded-lg border border-white/15 bg-background/90 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-text shadow-lg backdrop-blur-md transition-opacity duration-200 hover:bg-surface-subtle'
             aria-label='Show site navigation'
           >
-            {SHORT_TITLE}
+            <BrandLogo variant='mark' className='h-7 w-7' />
           </button>
         )}
       {showMainNavStrip && (
@@ -198,10 +199,12 @@ export function Navbar() {
         <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
           <div className='flex h-[65px] items-center justify-between'>
             <div className='flex min-w-0 flex-1 items-center gap-6 lg:gap-8'>
-              <Link href='/' className='interaction-scale shrink-0'>
-                <span className='text-sm font-bold uppercase tracking-[0.14em] text-text transition-colors duration-fast ease-signature hover:text-text-muted'>
-                  {SHORT_TITLE}
-                </span>
+              <Link
+                href='/'
+                className='interaction-scale shrink-0'
+                aria-label={APP_NAME}
+              >
+                <BrandLogo variant='full' className='h-8 sm:h-9' />
               </Link>
 
               {!hasActiveSession && (

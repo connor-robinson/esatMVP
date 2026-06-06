@@ -40,6 +40,10 @@ export const metadata: Metadata = {
   description:
     "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. The ESAT Guide helps you build speed and strategy for admissions exams.",
   keywords: [...BRAND_CONFIG.keywords],
+  icons: {
+    icon: BRAND_CONFIG.logoMarkSrc,
+    apple: BRAND_CONFIG.logoMarkSrc,
+  },
 };
 
 export default async function RootLayout({

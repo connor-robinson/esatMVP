@@ -6,7 +6,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { DISPLAY_NAME } from "@/config/brand";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export type LoadingPageVariant = "app" | "session";
 
@@ -74,7 +74,9 @@ export function LoadingPage({
             transition={{ duration: 0.6 }}
             className="space-y-4"
           >
-            <div className="text-4xl font-bold text-text">{DISPLAY_NAME}</div>
+            <div className="flex justify-center">
+              <BrandLogo variant="full" className="h-12 sm:h-14" />
+            </div>
             <div className="text-sm uppercase tracking-wider text-text-muted">
               ESAT &amp; TMUA Preparation
             </div>
