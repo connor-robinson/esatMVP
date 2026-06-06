@@ -48,7 +48,7 @@ export function BrandLogo({
       draggable={false}
       className={cn(
         'block shrink-0 select-none object-contain',
-        'invert dark:invert-0',
+        'brightness-0 dark:brightness-100 dark:invert-0',
         variant === 'full' ? FULL_SIZE_CLASS[size] : MARK_SIZE_CLASS[size],
         className,
       )}
