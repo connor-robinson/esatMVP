@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import { motion } from "framer-motion";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { StageListCard } from "./StageListCard";
@@ -30,6 +30,8 @@ interface RoadmapListProps {
   onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
   onNodePositionsUpdate?: (positions: number[]) => void;
   timelineNodePositions?: number[];
+  /** Sticky timeline column — node Y is measured relative to this while scrolling. */
+  timelineAnchorRef?: RefObject<HTMLDivElement | null>;
 }
 
 const SCROLL_DURATION_MS = 5800;
@@ -46,6 +48,7 @@ export function RoadmapList({
   onStartSession,
   onNodePositionsUpdate,
   timelineNodePositions = [],
+  timelineAnchorRef,
 }: RoadmapListProps) {
   const [expandedStageId, setExpandedStageId] = useState<string | null>(null);
   const [listRevealed, setListRevealed] = useState(false);
@@ -71,22 +74,25 @@ export function RoadmapList({
   }, [completionLoading]);
 
   const measurePositions = useCallback(() => {
-    if (!containerRef.current) return;
+    const anchorTop =
+      timelineAnchorRef?.current?.getBoundingClientRect().top ??
+      containerRef.current?.getBoundingClientRect().top;
 
-    const containerTop = containerRef.current.getBoundingClientRect().top;
+    if (anchorTop === undefined) return;
+
     const positions: number[] = [];
 
     cardRefs.current.forEach((cardRef) => {
       if (cardRef) {
         const cardRect = cardRef.getBoundingClientRect();
-        positions.push(cardRect.top - containerTop + cardRect.height / 2);
+        positions.push(cardRect.top - anchorTop + cardRect.height / 2);
       }
     });
 
     if (positions.length > 0 && callbackRef.current) {
       callbackRef.current(positions);
     }
-  }, []);
+  }, [timelineAnchorRef]);
 
   useEffect(() => {
     measurePositionsRef.current = measurePositions;

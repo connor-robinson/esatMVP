@@ -647,6 +647,8 @@ export default function PapersRoadmapPage() {
     setNodePositions(positions);
   }, []);
 
+  const timelineAnchorRef = useRef<HTMLDivElement>(null);
+
   const visibleStages = hasFullAccess
     ? stages
     : stages.slice(0, FREE_ROADMAP_ITEMS);
@@ -695,7 +697,7 @@ export default function PapersRoadmapPage() {
       <div className="pb-10 pt-2">
         <div className="flex w-full min-w-0 gap-6 overflow-x-clip lg:gap-8">
           <div className={cn("relative z-10 hidden shrink-0 lg:block", ROADMAP_TIMELINE_COLUMN_CLASS)}>
-            <div className="sticky top-8 overflow-visible">
+            <div ref={timelineAnchorRef} className="sticky top-8 overflow-visible">
               <RoadmapTimeline
                 stages={visibleStages}
                 nodePositions={nodePositions}
@@ -713,6 +715,7 @@ export default function PapersRoadmapPage() {
               onStartSession={handleStartStage}
               onNodePositionsUpdate={handleNodePositionsUpdate}
               timelineNodePositions={nodePositions}
+              timelineAnchorRef={timelineAnchorRef}
             />
             {!hasFullAccess && (
               <div className="mt-10">
