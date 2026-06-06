@@ -7,6 +7,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { pickRandomSessionLoadingHint } from "@/lib/questionBank/sessionLoadingHints";
 
 export type LoadingPageVariant = "app" | "session";
 
