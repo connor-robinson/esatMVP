@@ -21,6 +21,10 @@ import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
 import { expressionsEqual } from "@/lib/answer-checker";
 import { computeSessionOutcomeStats } from "@/lib/session-stats";
+import {
+  loadDrillBuilderLengthPrefs,
+  saveDrillBuilderLengthPrefs,
+} from "@/lib/drillBuilderPreferences";
 
 type ViewState = "builder" | "running" | "results";
 
@@ -87,12 +91,18 @@ export function useBuilderSession() {
   const [view, setView] = useState<ViewState>("builder");
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  // Session configuration
+  // Session configuration (length prefs restored from last visit)
   const [selectedTopicVariants, setSelectedTopicVariants] = useState<TopicVariantSelection[]>([]);
-  const [questionCount, setQuestionCount] = useState(20);
-  const [sessionLengthMode, setSessionLengthMode] =
-    useState<SessionLengthMode>("questions");
-  const [timeLimitMinutes, setTimeLimitMinutes] = useState(10);
+  const [initialLengthPrefs] = useState(loadDrillBuilderLengthPrefs);
+  const [questionCount, setQuestionCount] = useState(
+    initialLengthPrefs.questionCount,
+  );
+  const [sessionLengthMode, setSessionLengthMode] = useState<SessionLengthMode>(
+    initialLengthPrefs.sessionLengthMode,
+  );
+  const [timeLimitMinutes, setTimeLimitMinutes] = useState(
+    initialLengthPrefs.timeLimitMinutes,
+  );
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
 
   const [presets, setPresets] = useState<SessionPreset[]>([]);
@@ -105,6 +115,14 @@ export function useBuilderSession() {
   const [lastAttempt, setLastAttempt] = useState<QuestionAttempt | null>(null);
   const [attemptLog, setAttemptLog] = useState<QuestionAttempt[]>([]);
   const [mode, setMode] = useState<"standard" | "mental-math">("standard");
+  useEffect(() => {
+    saveDrillBuilderLengthPrefs({
+      sessionLengthMode,
+      questionCount,
+      timeLimitMinutes,
+    });
+  }, [sessionLengthMode, questionCount, timeLimitMinutes]);
+
   useEffect(() => {
     if (!authSession?.user) {
       setPresets([]);
