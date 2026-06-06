@@ -19,6 +19,74 @@ export type SessionOutcomeStats = {
   difficulties: number[];
 };
 
+export type AttemptAccuracyStats = {
+  totalAttempts: number;
+  correctAttempts: number;
+  accuracy: number;
+  averageTimeMs: number;
+  totalTimeMs: number;
+  fastestTimeMs: number;
+  slowestTimeMs: number;
+};
+
+/** Accuracy = correct submits / all submits (retries on the same question count). */
+export function computeAttemptAccuracyStats(
+  attempts: QuestionAttempt[],
+): AttemptAccuracyStats {
+  const totalAttempts = attempts.length;
+  const correctAttempts = attempts.filter((a) => a.isCorrect).length;
+  const times = attempts.map((a) => a.timeSpent || 0);
+  const totalTimeMs = times.reduce((sum, t) => sum + t, 0);
+  const positiveTimes = times.filter((t) => t > 0);
+
+  return {
+    totalAttempts,
+    correctAttempts,
+    accuracy:
+      totalAttempts > 0 ? (correctAttempts / totalAttempts) * 100 : 0,
+    averageTimeMs: totalAttempts > 0 ? totalTimeMs / totalAttempts : 0,
+    totalTimeMs,
+    fastestTimeMs: positiveTimes.length ? Math.min(...positiveTimes) : 0,
+    slowestTimeMs: positiveTimes.length ? Math.max(...positiveTimes) : 0,
+  };
+}
+
+export type TopicAttemptStats = {
+  topicId: string;
+  correct: number;
+  total: number;
+  times: number[];
+  difficulties: number[];
+};
+
+export function computeTopicAttemptStats(
+  session: BuilderSession,
+  attempts: QuestionAttempt[],
+): TopicAttemptStats[] {
+  const byFolder = new Map<string, TopicAttemptStats>();
+
+  for (const attempt of attempts) {
+    const question = session.questions.find((q) => q.id === attempt.questionId);
+    const rawTopicId = question?.topicId?.trim() || SESSION_FALLBACK_TOPIC_ID;
+    const { folderId: topicId } = resolveDisplayFolderForTopic(rawTopicId);
+    const existing = byFolder.get(topicId) ?? {
+      topicId,
+      correct: 0,
+      total: 0,
+      times: [],
+      difficulties: [],
+    };
+
+    existing.total += 1;
+    if (attempt.isCorrect) existing.correct += 1;
+    existing.times.push(attempt.timeSpent || 0);
+    existing.difficulties.push(question?.difficulty ?? 2);
+    byFolder.set(topicId, existing);
+  }
+
+  return Array.from(byFolder.values());
+}
+
 /** Minimal session shell for stats when only questions + limit are known. */
 export function buildSessionForStats(
   questions: GeneratedQuestion[],

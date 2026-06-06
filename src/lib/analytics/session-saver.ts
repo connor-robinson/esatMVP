@@ -10,7 +10,9 @@ import {
   averageQuestionDifficulty,
 } from "../analytics";
 import {
+  computeAttemptAccuracyStats,
   computeSessionOutcomeStats,
+  computeTopicAttemptStats,
   computeTopicOutcomeStats,
 } from "@/lib/session-stats";
 
@@ -27,6 +29,7 @@ interface SessionData {
   }[];
   startedAt: number;
   endedAt: number;
+  sessionMode?: "mental-math" | "standard";
 }
 
 interface TopicSessionStats {
@@ -38,10 +41,18 @@ interface TopicSessionStats {
   difficulties: number[];
 }
 
-function calculateTopicStats(session: BuilderSession, attempts: QuestionAttempt[]): Map<string, TopicSessionStats> {
+function calculateTopicStats(
+  session: BuilderSession,
+  attempts: QuestionAttempt[],
+  sessionMode?: "mental-math" | "standard",
+): Map<string, TopicSessionStats> {
   const topicMap = new Map<string, TopicSessionStats>();
+  const rows =
+    sessionMode === "mental-math"
+      ? computeTopicAttemptStats(session, attempts)
+      : computeTopicOutcomeStats(session, attempts);
 
-  for (const row of computeTopicOutcomeStats(session, attempts)) {
+  for (const row of rows) {
     const totalTimeMs = row.times.reduce((sum, t) => sum + t, 0);
     topicMap.set(row.topicId, {
       topicId: row.topicId,
@@ -216,9 +227,18 @@ async function updateDailyMetrics(
 ): Promise<void> {
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
   
-  const outcome = computeSessionOutcomeStats(sessionData.session, sessionData.attempts);
-  const totalQuestions = outcome.totalQuestions;
-  const correctAnswers = outcome.correctAnswers;
+  const outcome =
+    sessionData.sessionMode === "mental-math"
+      ? computeAttemptAccuracyStats(sessionData.attempts)
+      : computeSessionOutcomeStats(sessionData.session, sessionData.attempts);
+  const totalQuestions =
+    sessionData.sessionMode === "mental-math"
+      ? (outcome as ReturnType<typeof computeAttemptAccuracyStats>).totalAttempts
+      : (outcome as ReturnType<typeof computeSessionOutcomeStats>).totalQuestions;
+  const correctAnswers =
+    sessionData.sessionMode === "mental-math"
+      ? (outcome as ReturnType<typeof computeAttemptAccuracyStats>).correctAttempts
+      : (outcome as ReturnType<typeof computeSessionOutcomeStats>).correctAnswers;
   const totalTimeMs = outcome.totalTimeMs;
 
   // Check if we have a record for today
@@ -306,7 +326,11 @@ export async function saveSessionAnalytics(
 
   try {
     // Calculate topic-level stats
-    const topicStats = calculateTopicStats(sessionData.session, sessionData.attempts);
+    const topicStats = calculateTopicStats(
+      sessionData.session,
+      sessionData.attempts,
+      sessionData.sessionMode,
+    );
     console.log("[session-saver] DEBUG: Calculated topic stats", {
       topicCount: topicStats.size,
       topics: Array.from(topicStats.entries()).map(([id, stats]) => ({

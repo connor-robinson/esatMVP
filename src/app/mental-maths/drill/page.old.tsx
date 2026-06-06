@@ -151,8 +151,8 @@ export default function BuilderPage() {
           progress={builder.progress}
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
-          correctCount={builder.correctCount}
-          attemptedQuestionCount={builder.attemptedQuestionCount}
+          correctAttempts={builder.correctAttempts}
+          totalAttempts={builder.totalAttempts}
           remainingSeconds={builder.remainingSeconds}
           isUnlimitedSession={builder.isUnlimitedSession}
           onSubmitAnswer={builder.submitAnswer}

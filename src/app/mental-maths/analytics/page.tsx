@@ -15,6 +15,7 @@ import type {
 import { calculateSessionScore, calculateTrend, getTopicExtremes } from "@/lib/analytics";
 import {
   buildSessionForStats,
+  computeAttemptAccuracyStats,
   computeSessionOutcomeStats,
   inferQuestionLimit,
   averageDifficultyForSession,
@@ -594,16 +595,23 @@ async function fetchRecentSessions(
     if (questionAttempts.length > 0) {
       const limit = inferQuestionLimit(storedQuestions.length, questionAttempts);
       const statsSession = buildSessionForStats(storedQuestions, limit);
-      const outcome = computeSessionOutcomeStats(statsSession, questionAttempts);
-      totalQuestions = outcome.totalQuestions;
-      correctAnswers = outcome.correctAnswers;
-      totalTime = outcome.totalTimeMs;
-      avgSpeed = Math.round(outcome.averageTimeMs);
-      accuracy = Math.round(outcome.accuracy * 10) / 10;
+      const questionOutcome = computeSessionOutcomeStats(
+        statsSession,
+        questionAttempts,
+      );
+      const attemptOutcome = computeAttemptAccuracyStats(questionAttempts);
+      totalQuestions = attemptOutcome.totalAttempts;
+      correctAnswers = attemptOutcome.correctAttempts;
+      totalTime = attemptOutcome.totalTimeMs;
+      avgSpeed = Math.round(attemptOutcome.averageTimeMs);
+      accuracy = Math.round(attemptOutcome.accuracy * 10) / 10;
       const avgDifficulty = averageDifficultyForSession(statsSession, questionAttempts);
-      score = calculateSessionScore(correctAnswers, totalQuestions, avgSpeed, {
-        avgDifficulty: savedData?.avgDifficulty ?? avgDifficulty,
-      });
+      score = calculateSessionScore(
+        questionOutcome.correctAnswers,
+        questionOutcome.totalQuestions,
+        questionOutcome.averageTimeMs,
+        { avgDifficulty: savedData?.avgDifficulty ?? avgDifficulty },
+      );
     } else if (
       savedData &&
       savedData.totalQuestions > 0 &&

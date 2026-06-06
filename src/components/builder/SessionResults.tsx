@@ -18,7 +18,9 @@ import {
 } from "@/lib/analytics";
 import { SESSION_SCORE_DISPLAY_MAX } from "@/lib/session-score";
 import {
+  computeAttemptAccuracyStats,
   computeSessionOutcomeStats,
+  computeTopicAttemptStats,
   computeTopicOutcomeStats,
   buildSessionProgressByQuestion,
   averageDifficultyForSession,
@@ -63,29 +65,49 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
   // CENTRAL CALCULATION: All session-level stats calculated here from attempts
   // This ensures consistency across all displays (top cards, highlighted cards, etc.)
   const result = useMemo(() => {
-    const outcome = computeSessionOutcomeStats(session, attempts);
+    const questionOutcome = computeSessionOutcomeStats(session, attempts);
+    const attemptOutcome = computeAttemptAccuracyStats(attempts);
+    const displayOutcome = mentalMathUi ? attemptOutcome : questionOutcome;
+
+    const totalQuestions = mentalMathUi
+      ? attemptOutcome.totalAttempts
+      : questionOutcome.totalQuestions;
+    const correctAnswers = mentalMathUi
+      ? attemptOutcome.correctAttempts
+      : questionOutcome.correctAnswers;
     const {
-      totalQuestions,
-      correctAnswers,
       accuracy,
       averageTimeMs,
       fastestTimeMs,
       slowestTimeMs,
-    } = outcome;
+    } = displayOutcome;
 
     const sessionAvgDifficulty = averageDifficultyForSession(session, attempts);
-    const score = calculateSessionScore(correctAnswers, totalQuestions, averageTimeMs, {
-      avgDifficulty: sessionAvgDifficulty,
-    });
+    const score = calculateSessionScore(
+      questionOutcome.correctAnswers,
+      questionOutcome.totalQuestions,
+      questionOutcome.averageTimeMs,
+      { avgDifficulty: sessionAvgDifficulty },
+    );
 
-    const topicBreakdown = computeTopicOutcomeStats(session, attempts).map((stats) => {
+    const topicRows = mentalMathUi
+      ? computeTopicAttemptStats(session, attempts)
+      : computeTopicOutcomeStats(session, attempts);
+
+    const topicBreakdown = topicRows.map((stats) => {
       const avgTimeMs = stats.total
         ? stats.times.reduce((sum, t) => sum + t, 0) / stats.total
         : 0;
       const avgDifficulty = averageQuestionDifficulty(stats.difficulties);
-      const topicScore = calculateSessionScore(stats.correct, stats.total, avgTimeMs, {
-        avgDifficulty,
-      });
+      const topicQuestionStats = computeTopicOutcomeStats(session, attempts).find(
+        (row) => row.topicId === stats.topicId,
+      );
+      const topicScore = calculateSessionScore(
+        topicQuestionStats?.correct ?? stats.correct,
+        topicQuestionStats?.total ?? stats.total,
+        avgTimeMs,
+        { avgDifficulty },
+      );
 
       return {
         topicId: stats.topicId,
@@ -114,7 +136,7 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
       topicBreakdown,
       progressData,
     };
-  }, [attempts, session]);
+  }, [attempts, session, mentalMathUi]);
 
   // Load rankings data for each topic - refetch when session changes
   useEffect(() => {
@@ -925,7 +947,8 @@ export function SessionResults({ session, attempts, onBackToBuilder, mode = "sta
                 {result.accuracy.toFixed(1)}%
               </div>
               <div className="text-xs text-text-subtle">
-                {result.correctAnswers} / {result.totalQuestions} correct
+                {result.correctAnswers} / {result.totalQuestions}{" "}
+                {mentalMathUi ? "attempts correct" : "correct"}
               </div>
             </div>
           </motion.div>

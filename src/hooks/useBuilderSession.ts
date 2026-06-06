@@ -20,7 +20,7 @@ import { buildVariantLevelMap, levelForDrill } from "@/lib/drill-selection";
 import { generateId } from "@/lib/utils";
 import { getTopic } from "@/config/topics";
 import { expressionsEqual } from "@/lib/answer-checker";
-import { computeSessionOutcomeStats } from "@/lib/session-stats";
+import { computeAttemptAccuracyStats } from "@/lib/session-stats";
 import {
   loadDrillBuilderLengthPrefs,
   saveDrillBuilderLengthPrefs,
@@ -172,15 +172,13 @@ export function useBuilderSession() {
           currentSession?.questions.length ?? 1,
         );
   
-  const sessionOutcomeStats = useMemo(() => {
-    if (!currentSession) {
-      return { correctAnswers: 0, totalQuestions: 0, accuracy: 0 };
-    }
-    return computeSessionOutcomeStats(currentSession, attemptLog);
-  }, [currentSession, attemptLog]);
+  const attemptAccuracyStats = useMemo(
+    () => computeAttemptAccuracyStats(attemptLog),
+    [attemptLog],
+  );
 
-  const correctCount = sessionOutcomeStats.correctAnswers;
-  const attemptedQuestionCount = sessionOutcomeStats.totalQuestions;
+  const correctAttempts = attemptAccuracyStats.correctAttempts;
+  const totalAttempts = attemptAccuracyStats.totalAttempts;
 
   // Parse topicVariantId (e.g., "addition-single-digit" or "addition")
   const parseTopicVariantId = useCallback((topicVariantId: string): { topicId: string; variantId: string } | null => {
@@ -636,6 +634,7 @@ export function useBuilderSession() {
           questionTopics,
           startedAt: currentSession?.startedAt || Date.now(),
           endedAt: Date.now(),
+          sessionMode: mode,
         });
       } catch (error) {
         console.error("[finalizeSession] ERROR: Failed to save analytics", {
@@ -647,7 +646,7 @@ export function useBuilderSession() {
         // Don't throw - we still want to show results even if analytics save fails
       }
     },
-    [authSession?.user, supabase, currentSession, attemptLog],
+    [authSession?.user, supabase, currentSession, attemptLog, mode],
   );
 
   const finishSession = useCallback(
@@ -946,8 +945,8 @@ export function useBuilderSession() {
     showFeedback,
     lastAttempt,
     attemptLog,
-    correctCount,
-    attemptedQuestionCount,
+    correctAttempts,
+    totalAttempts,
     mode,
     handleDragStart,
     handleDragEnd,

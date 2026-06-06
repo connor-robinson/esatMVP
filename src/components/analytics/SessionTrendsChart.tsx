@@ -33,7 +33,7 @@ function msPerQuestionToQpm(ms: number): number | null {
   return Math.round((60000 / ms) * 10) / 10;
 }
 
-/** correct ÷ questions attempted, capped 0–100% (open-ended sessions). */
+/** correct ÷ total attempts, capped 0–100%. */
 function sessionAccuracyPercent(
   correctAnswers: number,
   totalQuestions: number,

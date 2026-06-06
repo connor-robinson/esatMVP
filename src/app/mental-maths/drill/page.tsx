@@ -205,8 +205,8 @@ export default function BuilderPage() {
           isUnlimitedSession={builder.isUnlimitedSession}
           showFeedback={builder.showFeedback}
           lastAttempt={builder.lastAttempt}
-          correctCount={builder.correctCount}
-          attemptedQuestionCount={builder.attemptedQuestionCount}
+          correctAttempts={builder.correctAttempts}
+          totalAttempts={builder.totalAttempts}
           onSubmitAnswer={builder.submitAnswer}
           onContinueAfterIncorrect={builder.continueAfterIncorrect}
           onEndEarly={() => builder.endSession()}
