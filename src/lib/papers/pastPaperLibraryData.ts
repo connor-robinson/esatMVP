@@ -80,6 +80,11 @@ export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {
     }
 
     const papers = await fetchPastPaperLibraryOutlineFromClient();
+    if (papers.length === 0) {
+      throw new Error(
+        "Could not load papers. The library API and database both returned no results.",
+      );
+    }
     outlineCache.set(key, papers);
     return papers;
   })();

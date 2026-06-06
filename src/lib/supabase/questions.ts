@@ -25,20 +25,18 @@ function mapPaperRow(row: Record<string, unknown>): Paper {
 
 // Get all available papers
 export async function getAvailablePapers() {
-  try {
-    const { data, error } = await supabase
-      .from('papers')
-      .select(PAPER_LIST_SELECT)
-      .order('exam_name')
-      .order('exam_year', { ascending: false });
+  const { data, error } = await supabase
+    .from('papers')
+    .select(PAPER_LIST_SELECT)
+    .order('exam_name')
+    .order('exam_year', { ascending: false });
 
-    if (error) throw error;
-
-    return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
-  } catch (error) {
-    handleSupabaseError(error);
-    return [];
+  if (error) {
+    console.error('[getAvailablePapers]', error);
+    throw new Error(error.message || 'Failed to load papers from database');
   }
+
+  return (data || []).map((row) => mapPaperRow(row as Record<string, unknown>));
 }
 
 // Get papers by exam name
