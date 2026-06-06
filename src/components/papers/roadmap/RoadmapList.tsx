@@ -5,10 +5,11 @@
 
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
 import { StageListCard } from "./StageListCard";
+import { ROADMAP_EXPAND_MS } from "./roadmapTimelineLayout";
 
 interface TimelineNode {
   stage: RoadmapStage;
@@ -51,9 +52,7 @@ export function RoadmapList({
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const callbackRef = useRef(onNodePositionsUpdate);
-  const rafRef = useRef<number | null>(null);
-  const positionFlushRafRef = useRef<number | null>(null);
-  const pendingPositionsRef = useRef<number[] | null>(null);
+  const measurePositionsRef = useRef<() => void>(() => {});
 
   const scrollRafRef = useRef<number | null>(null);
   const hasRevealedRef = useRef(false);
@@ -71,87 +70,89 @@ export function RoadmapList({
     }
   }, [completionLoading]);
 
-  useEffect(() => {
-    const updatePositions = () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
+  const measurePositions = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const containerTop = containerRef.current.getBoundingClientRect().top;
+    const positions: number[] = [];
+
+    cardRefs.current.forEach((cardRef) => {
+      if (cardRef) {
+        const cardRect = cardRef.getBoundingClientRect();
+        positions.push(cardRect.top - containerTop + cardRect.height / 2);
       }
-
-      rafRef.current = requestAnimationFrame(() => {
-        if (!containerRef.current) return;
-
-        const containerTop = containerRef.current.getBoundingClientRect().top;
-        const positions: number[] = [];
-
-        cardRefs.current.forEach((cardRef) => {
-          if (cardRef) {
-            const cardRect = cardRef.getBoundingClientRect();
-            const cardCenter =
-              cardRect.top - containerTop + cardRect.height / 2;
-            positions.push(cardCenter);
-          }
-        });
-
-        if (positions.length > 0) {
-          schedulePositionFlush(positions);
-        }
-      });
-    };
-
-    const schedulePositionFlush = (positions: number[]) => {
-      pendingPositionsRef.current = positions;
-      if (positionFlushRafRef.current !== null) return;
-
-      positionFlushRafRef.current = requestAnimationFrame(() => {
-        positionFlushRafRef.current = null;
-        const next = pendingPositionsRef.current;
-        pendingPositionsRef.current = null;
-        if (next && callbackRef.current) {
-          callbackRef.current(next);
-        }
-      });
-    };
-
-    const timeoutId = setTimeout(updatePositions, 100);
-
-    let ticking = false;
-    const throttledUpdate = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          updatePositions();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("resize", throttledUpdate, { passive: true });
-    window.addEventListener("scroll", throttledUpdate, { passive: true });
-
-    const resizeObserver = new ResizeObserver(() => {
-      updatePositions();
     });
 
-    const observeTimeoutId = setTimeout(() => {
+    if (positions.length > 0 && callbackRef.current) {
+      callbackRef.current(positions);
+    }
+  }, []);
+
+  useEffect(() => {
+    measurePositionsRef.current = measurePositions;
+  }, [measurePositions]);
+
+  // Stable observers — do not tear down when a card expands.
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const scheduleMeasure = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        measurePositionsRef.current();
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
+
+    const observeCards = () => {
+      resizeObserver.disconnect();
       cardRefs.current.forEach((ref) => {
         if (ref) resizeObserver.observe(ref);
       });
-    }, 150);
+      scheduleMeasure();
+    };
+
+    observeCards();
+    const deferredObserve = window.setTimeout(observeCards, 200);
+    const rafObserve = requestAnimationFrame(() => {
+      observeCards();
+    });
+
+    window.addEventListener("resize", scheduleMeasure, { passive: true });
+    window.addEventListener("scroll", scheduleMeasure, { passive: true });
 
     return () => {
-      clearTimeout(timeoutId);
-      clearTimeout(observeTimeoutId);
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-      if (positionFlushRafRef.current) {
-        cancelAnimationFrame(positionFlushRafRef.current);
-      }
-      window.removeEventListener("resize", throttledUpdate);
-      window.removeEventListener("scroll", throttledUpdate);
+      clearTimeout(deferredObserve);
+      cancelAnimationFrame(rafObserve);
+      if (rafId !== null) cancelAnimationFrame(rafId);
       resizeObserver.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+      window.removeEventListener("scroll", scheduleMeasure);
     };
-  }, [nodes.length, expandedStageId]);
+  }, [nodes.length]);
+
+  // Poll every frame while expand/collapse animates (siblings move without resizing).
+  useEffect(() => {
+    let rafId: number | null = null;
+    const startedAt = performance.now();
+    const duration = ROADMAP_EXPAND_MS + 100;
+
+    const tick = (now: number) => {
+      measurePositionsRef.current();
+      if (now - startedAt < duration) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    measurePositionsRef.current();
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [expandedStageId]);
 
   // After completion loads: scroll to current stage, then expand it
   useEffect(() => {
@@ -258,6 +259,7 @@ export function RoadmapList({
 
         expectedScrollYRef.current = currentY;
         window.scrollTo(0, currentY);
+        measurePositionsRef.current();
 
         if (progress < 1) {
           scrollRafRef.current = requestAnimationFrame(step);
@@ -284,7 +286,7 @@ export function RoadmapList({
   return (
     <div
       ref={containerRef}
-      className="relative z-0 w-full space-y-3 overflow-visible"
+      className="relative z-0 w-full min-w-0 space-y-3 overflow-x-clip overflow-y-visible"
     >
       {nodes.map((node, index) => {
         const stageCompletionData =
@@ -295,10 +297,7 @@ export function RoadmapList({
           <motion.div
             key={node.stage.id}
             data-stage-id={node.stage.id}
-            ref={(el) => {
-              cardRefs.current[index] = el;
-            }}
-            className="relative"
+            className="relative min-w-0"
             initial={{ opacity: 0, y: 14 }}
             animate={
               listRevealed
@@ -326,6 +325,9 @@ export function RoadmapList({
               completionData={stageCompletionData}
               onStartSession={onStartSession}
               timelineNodeY={timelineNodeY}
+              anchorRef={(el) => {
+                cardRefs.current[index] = el;
+              }}
             />
           </motion.div>
         );

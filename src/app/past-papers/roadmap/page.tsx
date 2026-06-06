@@ -683,7 +683,7 @@ export default function PapersRoadmapPage() {
   );
 
   return (
-    <Container size="lg" className="bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
+    <Container size="lg" className="overflow-x-clip bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
       <RoadmapAnalytics
         stages={visibleStages}
         completionData={completionData}
@@ -693,7 +693,7 @@ export default function PapersRoadmapPage() {
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="pb-10 pt-2">
-        <div className="flex gap-6 overflow-x-clip lg:gap-8">
+        <div className="flex w-full min-w-0 gap-6 overflow-x-clip lg:gap-8">
           <div className={cn("relative z-10 hidden shrink-0 lg:block", ROADMAP_TIMELINE_COLUMN_CLASS)}>
             <div className="sticky top-8 overflow-visible">
               <RoadmapTimeline

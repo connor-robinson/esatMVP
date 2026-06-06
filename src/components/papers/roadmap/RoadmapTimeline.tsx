@@ -19,7 +19,6 @@ import {
   type TimelineMarker,
 } from "./roadmapTimelineMarkers";
 import { ROADMAP_TIMELINE_SPINE_WIDTH } from "./roadmapTimelineLayout";
-import { useSmoothNodePositions } from "./useSmoothNodePositions";
 
 interface RoadmapTimelineProps {
   stages: RoadmapStage[];
@@ -261,20 +260,11 @@ export function RoadmapTimeline({
   );
 
   const defaultHeight = 100;
-  const measuredPositions = useMemo(() => {
-    if (nodePositions.length === stages.length && nodePositions.length > 0) {
-      return nodePositions;
-    }
-    return stages.map(
-      (_, index) => index * defaultHeight + defaultHeight / 2,
-    );
-  }, [nodePositions, stages]);
 
-  const smoothPositions = useSmoothNodePositions(measuredPositions);
-
-  const getCenterPosition = (index: number): number =>
-    smoothPositions[index] ??
-    index * defaultHeight + defaultHeight / 2;
+  const getCenterPosition = (index: number): number => {
+    if (nodePositions[index] !== undefined) return nodePositions[index];
+    return index * defaultHeight + defaultHeight / 2;
+  };
 
   const allNodePositions = stages.map((_, index) => getCenterPosition(index));
 

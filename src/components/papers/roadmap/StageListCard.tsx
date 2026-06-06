@@ -35,6 +35,8 @@ interface StageListCardProps {
   completionData: Map<string, boolean>;
   onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
   timelineNodeY?: number;
+  /** Header row anchor — timeline nodes track this, not expanded body height. */
+  anchorRef?: (el: HTMLDivElement | null) => void;
 }
 
 export function StageListCard({
@@ -48,6 +50,7 @@ export function StageListCard({
   completionData,
   onStartSession,
   timelineNodeY,
+  anchorRef,
 }: StageListCardProps) {
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
 
@@ -111,18 +114,6 @@ export function StageListCard({
 
   return (
     <div className="relative overflow-visible font-sans">
-      {timelineNodeY !== undefined && (
-        <div
-          className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
-          style={{
-            width: ROADMAP_TIMELINE_CONNECTOR_WIDTH,
-            height: "1px",
-            background:
-              "linear-gradient(to left, var(--color-border-subtle), transparent)",
-          }}
-        />
-      )}
-
       <div
         className={cn(
           "relative flex flex-col overflow-hidden rounded-organic-lg transition-colors duration-fast ease-signature",
@@ -132,7 +123,21 @@ export function StageListCard({
         )}
         onClick={handleCardClick}
       >
-        <div className="flex items-center gap-3.5 px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4">
+        <div
+          ref={anchorRef}
+          className="relative flex items-center gap-3.5 px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4"
+        >
+          {timelineNodeY !== undefined ? (
+            <div
+              className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
+              style={{
+                width: ROADMAP_TIMELINE_CONNECTOR_WIDTH,
+                height: "1px",
+                background:
+                  "linear-gradient(to left, var(--color-border-subtle), transparent)",
+              }}
+            />
+          ) : null}
           <div
             className={cn(
               "flex h-11 w-11 shrink-0 items-center justify-center rounded-organic-md text-lg font-bold tabular-nums",

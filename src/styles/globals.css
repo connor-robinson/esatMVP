@@ -8,14 +8,15 @@
   }
 
   html {
-    overflow-y: auto;
+    overflow-y: scroll;
     scrollbar-gutter: stable;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   body {
     @apply bg-background text-text antialiased font-sans;
-    overflow-x: hidden;
+    overflow-x: clip;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--surface-05) transparent;
     transition: background-color 0.2s ease, color 0.2s ease;
