@@ -20,6 +20,7 @@ import {
   getExamAccentFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
+import { ROADMAP_TIMELINE_CONNECTOR_WIDTH } from "./roadmapTimelineLayout";
 
 interface StageListCardProps {
   stage: RoadmapStage;
@@ -112,7 +113,7 @@ export function StageListCard({
         <div
           className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
           style={{
-            width: "calc(3.5rem + 1.5rem)",
+            width: ROADMAP_TIMELINE_CONNECTOR_WIDTH,
             height: "1px",
             background:
               "linear-gradient(to left, var(--color-border-subtle), transparent)",

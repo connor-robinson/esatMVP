@@ -21,6 +21,7 @@ import {
 } from '@/lib/papers/roadmapCompletion';
 import { RoadmapList } from '@/components/papers/roadmap/RoadmapList';
 import { RoadmapTimeline } from '@/components/papers/roadmap/RoadmapTimeline';
+import { ROADMAP_TIMELINE_COLUMN_CLASS } from '@/components/papers/roadmap/roadmapTimelineLayout';
 import { RoadmapAnalytics } from '@/components/papers/roadmap/RoadmapAnalytics';
 import { getSectionForRoadmapPart } from '@/lib/papers/roadmapConfig';
 import { deriveTmuaSectionFromQuestion } from '@/lib/papers/sectionMapping';
@@ -31,6 +32,7 @@ import type { PaperSection, Question, Paper } from '@/types/papers';
 import type { RoadmapPart } from '@/lib/papers/roadmapConfig';
 import { ReplaceActivePaperModal } from '@/components/papers/ReplaceActivePaperModal';
 import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessionClient';
+import { cn } from '@/lib/utils';
 
 const FREE_ROADMAP_ITEMS = 3;
 
@@ -686,7 +688,7 @@ export default function PapersRoadmapPage() {
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="pb-10 pt-2">
         <div className="flex gap-6 lg:gap-8">
-          <div className="hidden w-14 shrink-0 lg:block">
+          <div className={cn("hidden shrink-0 lg:block", ROADMAP_TIMELINE_COLUMN_CLASS)}>
             <div className="sticky top-8">
               <RoadmapTimeline
                 stages={visibleStages}
