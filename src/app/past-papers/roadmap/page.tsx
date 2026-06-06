@@ -676,6 +676,12 @@ export default function PapersRoadmapPage() {
     };
   });
 
+  const completedStageIndices = new Set(
+    timelineNodes
+      .map((node, index) => (node.isCompleted ? index : -1))
+      .filter((index) => index >= 0),
+  );
+
   return (
     <Container size="lg" className="bg-background pb-16 pt-6 font-sans sm:pb-20 sm:pt-8">
       <RoadmapAnalytics
@@ -694,6 +700,7 @@ export default function PapersRoadmapPage() {
                 stages={visibleStages}
                 nodePositions={nodePositions}
                 currentStageIndex={visibleCurrentIndex ?? undefined}
+                completedStageIndices={completedStageIndices}
               />
             </div>
           </div>
