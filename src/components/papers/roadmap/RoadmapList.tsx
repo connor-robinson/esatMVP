@@ -265,7 +265,7 @@ export function RoadmapList({
   return (
     <div
       ref={containerRef}
-      className="relative w-full space-y-3 overflow-visible"
+      className="relative z-0 w-full space-y-3 overflow-visible"
     >
       {nodes.map((node, index) => {
         const stageCompletionData =

@@ -4,12 +4,12 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
-  getExamAccentBadgeClass,
   getExamAccentFillClass,
   getExamAccentTextClass,
 } from "@/config/colors";
@@ -63,75 +63,103 @@ function generateSpinePath(startY: number, endY: number): string {
   return path;
 }
 
+function TimelineTipTooltip({
+  marker,
+  anchor,
+}: {
+  marker: TimelineMarker;
+  anchor: DOMRect;
+}) {
+  return createPortal(
+    <div
+      className="pointer-events-none fixed z-[200] w-[17rem] max-w-[calc(100vw-2rem)]"
+      style={{
+        top: anchor.top + anchor.height / 2,
+        left: anchor.right + 14,
+        transform: "translateY(-50%)",
+      }}
+      role="tooltip"
+    >
+      <div className="rounded-organic-lg bg-surface-elevated px-4 py-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.18)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
+        <p
+          className={cn(
+            "text-[13px] font-semibold leading-tight",
+            getExamAccentTextClass(marker.examName),
+          )}
+        >
+          {marker.title}
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-text-muted">
+          {marker.text}
+        </p>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 function TimelineTipMarker({
   marker,
   centerY,
   nodeX,
-  isPast,
 }: {
   marker: TimelineMarker;
   centerY: number;
   nodeX: number;
-  isPast: boolean;
 }) {
-  return (
-    <div
-      className="group/tip absolute z-20 -translate-x-1/2 -translate-y-1/2"
-      style={{ left: nodeX, top: centerY }}
-    >
-      <button
-        type="button"
-        className={cn(
-          "relative flex items-center justify-center rounded-full transition-transform duration-fast ease-signature",
-          "h-5 w-5 ring-2 ring-offset-2 ring-offset-background",
-          "hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-          getExamAccentTextClass(marker.examName),
-          isPast ? "bg-surface-mid ring-border-subtle" : "bg-surface-elevated ring-current/45",
-        )}
-        aria-label={`${marker.title}: ${marker.text}`}
-      >
-        <span
-          className={cn(
-            "absolute -inset-0.5 rounded-full border border-current opacity-40 animate-pulse",
-          )}
-          aria-hidden
-        />
-        <span
-          className={cn(
-            "relative h-2.5 w-2.5 rounded-full",
-            getExamAccentFillClass(marker.examName),
-          )}
-          aria-hidden
-        />
-      </button>
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [anchor, setAnchor] = useState<DOMRect | null>(null);
 
+  const showTip = useCallback(() => {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (rect) setAnchor(rect);
+  }, []);
+
+  const hideTip = useCallback(() => {
+    setAnchor(null);
+  }, []);
+
+  return (
+    <>
       <div
-        className={cn(
-          "pointer-events-none absolute left-full top-1/2 z-30 ml-3 w-[13.5rem] -translate-y-1/2",
-          "rounded-organic-md px-2.5 py-2 shadow-lg backdrop-blur-sm",
-          "opacity-0 transition-all duration-200 ease-out",
-          "translate-x-1 group-hover/tip:translate-x-0 group-hover/tip:opacity-100",
-          "group-focus-within/tip:translate-x-0 group-focus-within/tip:opacity-100",
-          isPast ? "bg-surface-mid/95" : "bg-surface-elevated/98",
-        )}
-        role="tooltip"
+        className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: nodeX, top: centerY }}
       >
-        <div className="mb-1 flex flex-wrap items-center gap-1.5">
+        <button
+          ref={buttonRef}
+          type="button"
+          onMouseEnter={showTip}
+          onMouseLeave={hideTip}
+          onFocus={showTip}
+          onBlur={hideTip}
+          className={cn(
+            "relative flex h-7 w-7 items-center justify-center rounded-full transition-transform duration-fast ease-signature",
+            "hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
+            getExamAccentTextClass(marker.examName),
+          )}
+          aria-label={`${marker.title}: ${marker.text}`}
+        >
+          <span
+            className="absolute inset-0 rounded-full border-[3px] border-current opacity-35 animate-pulse"
+            aria-hidden
+          />
           <span
             className={cn(
-              "rounded-organic-sm px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
-              getExamAccentBadgeClass(marker.examName),
+              "absolute inset-[5px] rounded-full ring-[3px] ring-current ring-offset-2 ring-offset-background",
             )}
-          >
-            {marker.examName}
-          </span>
-          <span className="text-[10px] font-medium text-text-subtle">
-            {marker.title}
-          </span>
-        </div>
-        <p className="text-[11px] leading-snug text-text-muted">{marker.text}</p>
+            aria-hidden
+          />
+          <span
+            className={cn(
+              "relative z-10 h-2.5 w-2.5 rounded-full",
+              getExamAccentFillClass(marker.examName),
+            )}
+            aria-hidden
+          />
+        </button>
       </div>
-    </div>
+      {anchor ? <TimelineTipTooltip marker={marker} anchor={anchor} /> : null}
+    </>
   );
 }
 
@@ -257,7 +285,6 @@ export function RoadmapTimeline({
               marker={marker}
               centerY={centerY}
               nodeX={getNodeX(centerY)}
-              isPast={marker.stageIndex < effectiveCurrentIndex}
             />
           );
         })}
