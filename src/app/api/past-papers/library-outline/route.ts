@@ -14,7 +14,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from("papers")
       .select(
-        "id, exam_name, exam_year, paper_name, exam_type, has_conversion, created_at, updated_at",
+        "id, exam_name, exam_year, paper_name, exam_type, has_conversion",
       )
       .order("exam_name")
       .order("exam_year", { ascending: false });
@@ -35,8 +35,8 @@ export async function GET() {
         paperName: row.paper_name as string,
         examType: row.exam_type as Paper["examType"],
         hasConversion: row.has_conversion as boolean,
-        createdAt: row.created_at as string,
-        updatedAt: row.updated_at as string,
+        createdAt: "",
+        updatedAt: "",
       }),
     );
 

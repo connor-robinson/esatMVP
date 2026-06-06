@@ -28,9 +28,7 @@ export async function GET(request: NextRequest) {
 
     const { data: paperRow, error: paperError } = await supabase
       .from("papers")
-      .select(
-        "id, exam_name, exam_year, paper_name, exam_type, has_conversion, created_at, updated_at",
-      )
+      .select("id, exam_name, exam_year, paper_name, exam_type, has_conversion")
       .eq("id", paperId)
       .maybeSingle();
 
@@ -47,8 +45,8 @@ export async function GET(request: NextRequest) {
       paperName: paperRowData.paper_name as string,
       examType: paperRowData.exam_type as Paper["examType"],
       hasConversion: paperRowData.has_conversion as boolean,
-      createdAt: paperRowData.created_at as string,
-      updatedAt: paperRowData.updated_at as string,
+      createdAt: "",
+      updatedAt: "",
     };
 
     const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
