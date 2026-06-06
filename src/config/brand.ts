@@ -1,40 +1,40 @@
 /**
  * Centralized brand configuration
- * 
+ *
  * Update these values to change the app name, brand name, and related text
  * throughout the application.
  */
 
 export const BRAND_CONFIG = {
   // Main brand/app name
-  appName: "NoCalc",
-  
+  appName: "The ESAT Guide",
+
   // Display name (can be different from appName for display purposes)
-  displayName: "NoCalc",
-  
+  displayName: "The ESAT Guide",
+
   // Full title for pages
-  fullTitle: "NoCalc | Premium ESAT & TMUA Mastery",
-  
-  // Short title
-  shortTitle: "NoCalc",
-  
+  fullTitle: "The ESAT Guide | ESAT & TMUA Preparation",
+
+  // Short title (navbar logo — rendered uppercase in nav)
+  shortTitle: "The ESAT Guide",
+
   // Copyright text
-  copyright: "© 2024 NoCalc. Not affiliated with any university.",
-  
+  copyright: "© 2024 The ESAT Guide. Not affiliated with any university.",
+
   // Company/Organization name (if different from app name)
-  companyName: "NoCalc",
-  
+  companyName: "The ESAT Guide",
+
   // Tagline or description
-  tagline: "Premium ESAT & TMUA Mastery",
-  
+  tagline: "ESAT & TMUA preparation",
+
   // SEO keywords (includes brand name)
   keywords: [
-    "mental math",
     "ESAT",
     "TMUA",
     "entrance exams",
-    "no calculator",
-    "NoCalc"
+    "ESAT preparation",
+    "TMUA preparation",
+    "The ESAT Guide",
   ],
 };
 

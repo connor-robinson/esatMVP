@@ -38,7 +38,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: BRAND_CONFIG.fullTitle,
   description:
-    "Master the ESAT & TMUA. Secure your offer. The non-calculator, high-pressure entrance exams demand more than just knowledge. Master the speed and strategy required for the 2024-25 cycle.",
+    "Prepare for the ESAT and TMUA with past papers, question banks, and structured practice. The ESAT Guide helps you build speed and strategy for admissions exams.",
   keywords: [...BRAND_CONFIG.keywords],
 };
 

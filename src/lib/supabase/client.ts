@@ -41,7 +41,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
   global: {
     headers: {
-      'x-client-info': 'no-calc-v3',
+      'x-client-info': 'the-esat-guide',
     },
   },
 });

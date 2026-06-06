@@ -6,7 +6,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { pickRandomSessionLoadingHint } from "@/lib/questionBank/sessionLoadingHints";
+import { DISPLAY_NAME } from "@/config/brand";
 
 export type LoadingPageVariant = "app" | "session";
 
@@ -74,9 +74,9 @@ export function LoadingPage({
             transition={{ duration: 0.6 }}
             className="space-y-4"
           >
-            <div className="text-4xl font-bold text-text">No-Calc Trainer</div>
+            <div className="text-4xl font-bold text-text">{DISPLAY_NAME}</div>
             <div className="text-sm uppercase tracking-wider text-text-muted">
-              Master Mental Math
+              ESAT &amp; TMUA Preparation
             </div>
           </motion.div>
         ) : (

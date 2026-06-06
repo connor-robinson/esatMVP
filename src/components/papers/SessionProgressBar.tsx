@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { usePaperSessionStore } from '@/store/paperSessionStore';
+import { SHORT_TITLE } from '@/config/brand';
 import {
   useSupabaseClient,
   useSupabaseSession,
@@ -404,7 +404,7 @@ export function SessionProgressBar({
             <div className='flex items-center'>
               <Link href='/' className='interaction-scale'>
                 <span className='text-sm font-semibold uppercase tracking-wider text-white/90 transition-colors duration-fast ease-signature hover:text-white'>
-                  No-Calc
+                  {SHORT_TITLE}
                 </span>
               </Link>
             </div>
