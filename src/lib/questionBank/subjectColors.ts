@@ -1,4 +1,8 @@
 import type { SubjectFilter } from "@/types/questionBank";
+import {
+  getSubjectTileBadgeClass,
+  getSubjectTileTopicClass,
+} from "@/lib/questionBank/subjectTileTheme";
 
 export const SUBJECT_PILL_CLASS: Record<SubjectFilter, string> = {
   All: "border border-border-subtle bg-surface-mid text-text-muted",
@@ -87,28 +91,12 @@ export function getSubjectPillClass(subject?: string | null): string {
   return SUBJECT_PILL_CLASS.All;
 }
 
-/** Library group title — matches past-papers `getExamAccentTextClass` pattern (borderless). */
+/** Library group title — matches question bank home subject tile hues. */
 export function getSubjectAccentTextClass(subject?: string | null): string {
-  if (!subject) return "text-text-muted";
-  const normalized = subject.toLowerCase().trim();
-  if (normalized === "math 1" || normalized === "math 2" || normalized.startsWith("m"))
-    return "text-maths";
-  if (normalized === "physics" || normalized.startsWith("p")) return "text-physics";
-  if (normalized === "chemistry" || normalized.startsWith("c")) return "text-chemistry";
-  if (normalized === "biology" || normalized.startsWith("b")) return "text-secondary";
-  return "text-text-muted";
+  return getSubjectTileTopicClass(subject);
 }
 
-/** Library pill in tips / badges — borderless tint. */
+/** Library pill in tips / badges — matches question bank home subject tile hues. */
 export function getSubjectAccentBadgeClass(subject?: string | null): string {
-  if (!subject) return "bg-surface-mid text-text-muted";
-  const normalized = subject.toLowerCase().trim();
-  if (normalized === "math 1" || normalized === "math 2" || normalized.startsWith("m"))
-    return "bg-maths/15 text-maths";
-  if (normalized === "physics" || normalized.startsWith("p")) return "bg-physics/15 text-physics";
-  if (normalized === "chemistry" || normalized.startsWith("c"))
-    return "bg-chemistry/15 text-chemistry";
-  if (normalized === "biology" || normalized.startsWith("b"))
-    return "bg-secondary/15 text-secondary";
-  return "bg-surface-mid text-text-muted";
+  return getSubjectTileBadgeClass(subject);
 }
