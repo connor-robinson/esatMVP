@@ -1,0 +1,104 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@/lib/supabase/server";
+import { examNameToPaperType } from "@/lib/papers/paperConfig";
+import {
+  buildPaperSectionsOutline,
+  type SlimQuestionPart,
+} from "@/lib/papers/paperLibrarySections";
+import type { ExamName, Paper } from "@/types/papers";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * GET /api/past-papers/library-sections?paperId=123
+ * Section outline for one paper (+ siblings in same exam/year). No question bodies.
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const paperIdParam = new URL(request.url).searchParams.get("paperId");
+    const paperId = paperIdParam ? Number(paperIdParam) : NaN;
+    if (!Number.isFinite(paperId) || paperId <= 0) {
+      return NextResponse.json(
+        { error: "paperId is required" },
+        { status: 400 },
+      );
+    }
+
+    const supabase = createServerClient();
+
+    const { data: paperRow, error: paperError } = await supabase
+      .from("papers")
+      .select(
+        "id, exam_name, exam_year, paper_name, exam_type, has_conversion, created_at, updated_at",
+      )
+      .eq("id", paperId)
+      .maybeSingle();
+
+    if (paperError || !paperRow) {
+      return NextResponse.json({ error: "Paper not found" }, { status: 404 });
+    }
+
+    const paperRowData = paperRow as Record<string, unknown>;
+
+    const paper: Paper = {
+      id: paperRowData.id as number,
+      examName: paperRowData.exam_name as Paper["examName"],
+      examYear: paperRowData.exam_year as number,
+      paperName: paperRowData.paper_name as string,
+      examType: paperRowData.exam_type as Paper["examType"],
+      hasConversion: paperRowData.has_conversion as boolean,
+      createdAt: paperRowData.created_at as string,
+      updatedAt: paperRowData.updated_at as string,
+    };
+
+    const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
+    const mergeSiblings =
+      paperType === "NSAA" ||
+      paperType === "ENGAA" ||
+      paperType === "ESAT" ||
+      paperType === "TMUA";
+
+    let paperIds = [paper.id];
+    if (mergeSiblings) {
+      const { data: siblings } = await supabase
+        .from("papers")
+        .select("id")
+        .eq("exam_name", paper.examName)
+        .eq("exam_year", paper.examYear);
+
+      paperIds = ((siblings ?? []) as Array<{ id: number }>).map((r) => r.id);
+    }
+
+    const { data: questionRows, error: questionsError } = await supabase
+      .from("questions")
+      .select("part_letter, part_name, exam_type, paper_name, paper_id")
+      .in("paper_id", paperIds);
+
+    if (questionsError) {
+      console.error("[past-papers/library-sections]", questionsError);
+      return NextResponse.json(
+        { error: "Failed to load sections" },
+        { status: 500 },
+      );
+    }
+
+    const slimParts: SlimQuestionPart[] = (
+      (questionRows ?? []) as Array<Record<string, unknown>>
+    ).map((row) => ({
+      partLetter: (row.part_letter as string) ?? "",
+      partName: (row.part_name as string) ?? "",
+      examType: (row.exam_type as string) ?? undefined,
+      paperName: (row.paper_name as string) ?? undefined,
+    }));
+
+    const outline = buildPaperSectionsOutline(paper, [], slimParts);
+
+    return NextResponse.json(outline);
+  } catch (e) {
+    console.error("[past-papers/library-sections]", e);
+    return NextResponse.json(
+      { error: "Failed to load sections" },
+      { status: 500 },
+    );
+  }
+}

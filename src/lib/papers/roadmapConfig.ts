@@ -637,6 +637,24 @@ async function validateStagePapers(stage: RoadmapStage): Promise<boolean> {
 }
 
 /**
+ * Static roadmap stages for instant first paint (no TMUA DB lookup).
+ * TMUA stages are merged in when getRoadmapStages() resolves.
+ */
+export function getRoadmapStagesShell(): RoadmapStage[] {
+  const nsaaStages = ROADMAP_STAGES.filter(
+    (s) => s.examName === "NSAA" && s.year !== 2023,
+  );
+  const nsaa2023 = ROADMAP_STAGES.find(
+    (s) => s.examName === "NSAA" && s.year === 2023,
+  );
+  const engaaStages = ROADMAP_STAGES.filter((s) => s.examName === "ENGAA");
+
+  const ordered: RoadmapStage[] = [...nsaaStages, ...engaaStages];
+  if (nsaa2023) ordered.push(nsaa2023);
+  return ordered;
+}
+
+/**
  * Get all stages with proper ordering and dynamic TMUA stages
  * Order: NSAA 2016-2022, ENGAA, TMUA Paper 1, NSAA 2023 at the end
  * 

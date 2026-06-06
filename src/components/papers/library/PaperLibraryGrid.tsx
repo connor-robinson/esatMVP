@@ -7,6 +7,7 @@ import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
 import { getExamAccentTextClass } from "@/config/colors";
+import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ interface PaperLibraryGridProps {
   /** Full catalog for filter dropdown options and sibling paper loads. */
   filterSourcePapers: Paper[];
   papers: Paper[];
+  papersLoading?: boolean;
   searchQuery: string;
   onSearchChange: (value: string) => void;
   examFilter: string | "ALL";
@@ -33,6 +35,7 @@ interface PaperLibraryGridProps {
 export function PaperLibraryGrid({
   filterSourcePapers,
   papers,
+  papersLoading = false,
   searchQuery,
   onSearchChange,
   examFilter,
@@ -104,7 +107,9 @@ export function PaperLibraryGrid({
             Paper Library
           </h2>
           <span className="shrink-0 font-heading text-xs font-medium leading-none tabular-nums text-text-muted">
-            {papers.length} result{papers.length === 1 ? "" : "s"}
+            {papersLoading
+              ? "…"
+              : `${papers.length} result${papers.length === 1 ? "" : "s"}`}
           </span>
         </div>
 
@@ -122,7 +127,11 @@ export function PaperLibraryGrid({
         />
       </div>
 
-      {papers.length === 0 ? (
+      {papersLoading ? (
+        <div className="mt-5 border-t border-border-subtle/40 pt-5">
+          <LibrarySectionLoading label="Loading papers…" rows={4} />
+        </div>
+      ) : papers.length === 0 ? (
         <div className="mt-5 flex min-h-[14rem] flex-1 items-center justify-center rounded-organic-md bg-surface-mid/35 px-4 text-sm text-text-muted">
           No papers match the current filters.
         </div>
@@ -191,7 +200,6 @@ export function PaperLibraryGrid({
                             onAddFullPaper={onAddFullPaper}
                             onAddPaper={onAddPaper}
                             onAddSection={onAddSection}
-                            allPapers={filterSourcePapers}
                           />
                         ))}
                       </div>

@@ -20,6 +20,7 @@ interface RoadmapAnalyticsProps {
     { completed: number; total: number; parts: Map<string, boolean> }
   >;
   currentStageIndex: number | null;
+  completionLoading?: boolean;
 }
 
 function stageLabel(stage: RoadmapStage): string {
@@ -31,6 +32,7 @@ export function RoadmapAnalytics({
   stages,
   completionData,
   currentStageIndex,
+  completionLoading = false,
 }: RoadmapAnalyticsProps) {
   const stats = useMemo(() => {
     let totalParts = 0;
@@ -70,7 +72,13 @@ export function RoadmapAnalytics({
             </span>
           </span>
           <span className="text-sm tabular-nums text-text-muted">
-            {stats.completedParts} / {stats.totalParts} parts
+            {completionLoading ? (
+              <span className="inline-block h-4 w-24 animate-pulse rounded bg-surface-mid" />
+            ) : (
+              <>
+                {stats.completedParts} / {stats.totalParts} parts
+              </>
+            )}
           </span>
         </div>
 
@@ -98,7 +106,10 @@ export function RoadmapAnalytics({
       </div>
 
       <div
-        className="mt-3 h-2 overflow-hidden rounded-full bg-surface-mid"
+        className={cn(
+          "mt-3 h-2 overflow-hidden rounded-full bg-surface-mid",
+          completionLoading && "animate-pulse",
+        )}
         role="progressbar"
         aria-valuenow={stats.progressPercentage}
         aria-valuemin={0}

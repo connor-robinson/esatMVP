@@ -9,7 +9,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/layout/Container';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
-import { getAvailablePapers } from '@/lib/supabase/questions';
+import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData";
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import { getQuestions } from '@/lib/supabase/questions';
 import {
@@ -68,7 +68,7 @@ export default function PapersLibraryPage() {
 
   // Papers data
   const [papers, setPapers] = useState<Paper[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [papersLoading, setPapersLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Library filters
@@ -110,22 +110,27 @@ export default function PapersLibraryPage() {
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const pendingStartRef = useRef<(() => Promise<void>) | null>(null);
 
-  // Load available papers on mount
   useEffect(() => {
-    const loadPapers = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const availablePapers = await getAvailablePapers();
-        setPapers(availablePapers);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load papers');
-      } finally {
-        setLoading(false);
-      }
-    };
+    let cancelled = false;
+    setPapersLoading(true);
+    setError(null);
 
-    loadPapers();
+    void fetchPastPaperLibraryOutline()
+      .then((availablePapers) => {
+        if (!cancelled) setPapers(availablePapers);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load papers");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setPapersLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Add paper to selection
@@ -476,15 +481,7 @@ export default function PapersLibraryPage() {
     paperHasSelectedSubjects(sp.selectedSections),
   );
 
-  if (loading) {
-    return (
-      <Container size='lg'>
-        <div className='py-16 text-center text-sm text-text-muted'>Loading papers…</div>
-      </Container>
-    );
-  }
-
-  if (error && papers.length === 0) {
+  if (error && papers.length === 0 && !papersLoading) {
     return (
       <Container size='lg'>
         <div className='py-16 text-center text-sm text-error'>{error}</div>
@@ -499,6 +496,7 @@ export default function PapersLibraryPage() {
           <PaperLibraryGrid
             filterSourcePapers={papers}
             papers={filteredPapers}
+            papersLoading={papersLoading}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             examFilter={examFilter}

@@ -12,7 +12,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { UpgradeCTA } from '@/components/subscription/UpgradeCTA';
 import {
   getRoadmapStages,
-  getRoadmapStagesSync,
+  getRoadmapStagesShell,
   type RoadmapStage,
 } from '@/lib/papers/roadmapConfig';
 import {
@@ -34,20 +34,79 @@ import { shouldConfirmReplacePaperSession } from '@/lib/papers/activePaperSessio
 
 const FREE_ROADMAP_ITEMS = 3;
 
+type StageCompletionEntry = {
+  completed: number;
+  total: number;
+  parts: Map<string, boolean>;
+};
+
+function buildDefaultCompletion(stages: RoadmapStage[]): Map<string, StageCompletionEntry> {
+  const map = new Map<string, StageCompletionEntry>();
+  for (const stage of stages) {
+    map.set(stage.id, {
+      completed: 0,
+      total: stage.parts.length,
+      parts: new Map<string, boolean>(),
+    });
+  }
+  return map;
+}
+
+function computeUnlockState(
+  stages: RoadmapStage[],
+  completionMap: Map<string, StageCompletionEntry>,
+): { unlocked: Set<string>; currentIndex: number | null } {
+  const unlocked = new Set<string>();
+  let currentIndex: number | null = null;
+
+  for (let i = 0; i < stages.length; i++) {
+    const stage = stages[i];
+    const data = completionMap.get(stage.id);
+    const isCompleted =
+      (data?.completed || 0) === (data?.total || stage.parts.length) &&
+      (data?.total || 0) > 0;
+
+    let isUnlocked = false;
+    if (i === 0) {
+      isUnlocked = true;
+    } else {
+      const prevStage = stages[i - 1];
+      const prevData = completionMap.get(prevStage.id);
+      const isPrevCompleted =
+        (prevData?.completed || 0) ===
+          (prevData?.total || prevStage.parts.length) &&
+        (prevData?.total || 0) > 0;
+      isUnlocked = isPrevCompleted || isCompleted;
+    }
+
+    if (isUnlocked) {
+      unlocked.add(stage.id);
+      if (!isCompleted && currentIndex === null) {
+        currentIndex = i;
+      }
+    }
+  }
+
+  return { unlocked, currentIndex: currentIndex ?? 0 };
+}
+
+const INITIAL_STAGES = getRoadmapStagesShell();
+const INITIAL_COMPLETION = buildDefaultCompletion(INITIAL_STAGES);
+const INITIAL_UNLOCK = computeUnlockState(INITIAL_STAGES, INITIAL_COMPLETION);
+
 export default function PapersRoadmapPage() {
   const router = useRouter();
   const session = useSupabaseSession();
   const { hasFullAccess } = useSubscription();
   const { startSession, loadQuestions, setQuestions } = usePaperSessionStore();
-  const [stages, setStages] = useState<RoadmapStage[]>([]);
-  const [unlockedStages, setUnlockedStages] = useState<Set<string>>(new Set());
+  const [stages, setStages] = useState<RoadmapStage[]>(INITIAL_STAGES);
+  const [unlockedStages, setUnlockedStages] = useState<Set<string>>(
+    () => new Set(INITIAL_UNLOCK.unlocked),
+  );
   const [completionData, setCompletionData] = useState<
-    Map<
-      string,
-      { completed: number; total: number; parts: Map<string, boolean> }
-    >
-  >(new Map());
-  const [loading, setLoading] = useState(true);
+    Map<string, StageCompletionEntry>
+  >(() => new Map(INITIAL_COMPLETION));
+  const [completionLoading, setCompletionLoading] = useState(true);
   const [replaceModalOpen, setReplaceModalOpen] = useState(false);
   const [replaceConfirming, setReplaceConfirming] = useState(false);
   const pendingRoadmapStartRef = useRef<{
@@ -55,7 +114,7 @@ export default function PapersRoadmapPage() {
     selectedParts: RoadmapPart[];
   } | null>(null);
   const [currentStageIndex, setCurrentStageIndex] = useState<number | null>(
-    null,
+    INITIAL_UNLOCK.currentIndex,
   );
   const [examPreference, setExamPreference] = useState<'ESAT' | 'TMUA' | null>(
     null,
@@ -79,58 +138,50 @@ export default function PapersRoadmapPage() {
     loadExamPreference();
   }, [session]);
 
-  // Load stages (including dynamic TMUA stages)
+  // Hydrate full stage list (includes TMUA from DB) without blocking first paint
   useEffect(() => {
+    let cancelled = false;
+
     async function loadStages() {
       try {
         const loadedStages = await getRoadmapStages();
+        if (cancelled) return;
 
-        // Debug: Log all stages by exam type
-        const stagesByExam = loadedStages.reduce(
-          (acc, stage) => {
-            if (!acc[stage.examName]) acc[stage.examName] = [];
-            acc[stage.examName].push(stage.id);
-            return acc;
-          },
-          {} as Record<string, string[]>,
-        );
-
-        // Debug: Check for duplicates
-        const stageIds = loadedStages.map((s) => s.id);
-        const duplicates = stageIds.filter(
-          (id, index) => stageIds.indexOf(id) !== index,
-        );
-        if (duplicates.length > 0) {
-          console.warn('[roadmap] Duplicate stage IDs found:', duplicates);
-        }
-
-        // Roadmap shows ALL exams regardless of preference (preference only affects other views)
-        // Don't filter by examPreference - users should see all available practice materials
         setStages(loadedStages);
+        setCompletionData((prev) => {
+          const next = new Map(prev);
+          for (const stage of loadedStages) {
+            if (!next.has(stage.id)) {
+              next.set(stage.id, {
+                completed: 0,
+                total: stage.parts.length,
+                parts: new Map<string, boolean>(),
+              });
+            }
+          }
+          return next;
+        });
       } catch (error) {
         console.error('[roadmap] Error loading stages:', error);
-        // Fallback to sync version if async fails
-        const syncStages = getRoadmapStagesSync();
-        // Roadmap shows ALL exams regardless of preference
-        setStages(syncStages);
       }
     }
-    loadStages();
+
+    void loadStages();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Load completion data
+  // Load completion in background (progress rings, unlock state)
   useEffect(() => {
-    if (stages.length === 0) return; // Wait for stages to load
+    if (stages.length === 0) return;
+
+    let cancelled = false;
 
     async function loadCompletionData() {
-      // Set loading to true at start
-      setLoading(true);
+      setCompletionLoading(true);
       try {
-        // 1. Get completion data for each stage
-        const completionMap = new Map<
-          string,
-          { completed: number; total: number; parts: Map<string, boolean> }
-        >();
+        const completionMap = new Map<string, StageCompletionEntry>();
 
         if (session?.user?.id) {
           const { getCompletedPartIds, getStageCompletionFromSessions } =
@@ -145,10 +196,8 @@ export default function PapersRoadmapPage() {
             );
 
             let completed = 0;
-            for (const [_, isCompleted] of parts) {
-              if (isCompleted) {
-                completed++;
-              }
+            for (const [, isCompleted] of parts) {
+              if (isCompleted) completed++;
             }
 
             completionMap.set(stage.id, {
@@ -158,7 +207,6 @@ export default function PapersRoadmapPage() {
             });
           }
         } else {
-          // No user session - set all stages to 0 completion
           for (const stage of stages) {
             completionMap.set(stage.id, {
               completed: 0,
@@ -168,75 +216,33 @@ export default function PapersRoadmapPage() {
           }
         }
 
+        if (cancelled) return;
+
         setCompletionData(completionMap);
-
-        // 2. Determine Unlocked Status and Current Stage
-        // Smart unlocking logic:
-        // - First stage is always unlocked
-        // - Stage N is unlocked if stage N-1 is completed OR if stage N itself is already completed
-        // This handles cases where users complete stages out of order (e.g., complete 2019, then 2018, unlocks 2020)
-        const unlocked = new Set<string>();
-        let currentIndex: number | null = null;
-
-        for (let i = 0; i < stages.length; i++) {
-          const stage = stages[i];
-          const data = completionMap.get(stage.id);
-          const isCompleted =
-            (data?.completed || 0) === (data?.total || stage.parts.length) &&
-            (data?.total || 0) > 0;
-
-          let isUnlocked = false;
-          if (i === 0) {
-            // First stage is always unlocked
-            isUnlocked = true;
-          } else {
-            // Stage is unlocked if:
-            // 1. Previous stage is completed (normal progression), OR
-            // 2. This stage is already completed (handles backward completion)
-            const prevStage = stages[i - 1];
-            const prevData = completionMap.get(prevStage.id);
-            const isPrevCompleted =
-              (prevData?.completed || 0) ===
-                (prevData?.total || prevStage.parts.length) &&
-              (prevData?.total || 0) > 0;
-
-            isUnlocked = isPrevCompleted || isCompleted;
-          }
-
-          if (isUnlocked) {
-            unlocked.add(stage.id);
-            // First incomplete unlocked stage is current
-            if (!isCompleted && currentIndex === null) {
-              currentIndex = i;
-            }
-          }
-        }
-
+        const { unlocked, currentIndex } = computeUnlockState(
+          stages,
+          completionMap,
+        );
         setUnlockedStages(unlocked);
-        setCurrentStageIndex(currentIndex ?? 0);
+        setCurrentStageIndex(currentIndex);
       } catch (error) {
         console.error('[roadmap] Error loading completion data:', error);
-        // Set default completion data on error to prevent infinite loading
-        const defaultCompletionMap = new Map<
-          string,
-          { completed: number; total: number; parts: Map<string, boolean> }
-        >();
-        for (const stage of stages) {
-          defaultCompletionMap.set(stage.id, {
-            completed: 0,
-            total: stage.parts.length,
-            parts: new Map<string, boolean>(),
-          });
-        }
-        setCompletionData(defaultCompletionMap);
-        setUnlockedStages(new Set([stages[0]?.id].filter(Boolean)));
-        setCurrentStageIndex(0);
+        if (cancelled) return;
+
+        const fallback = buildDefaultCompletion(stages);
+        setCompletionData(fallback);
+        const { unlocked, currentIndex } = computeUnlockState(stages, fallback);
+        setUnlockedStages(unlocked);
+        setCurrentStageIndex(currentIndex);
       } finally {
-        setLoading(false);
+        if (!cancelled) setCompletionLoading(false);
       }
     }
 
-    loadCompletionData();
+    void loadCompletionData();
+    return () => {
+      cancelled = true;
+    };
   }, [session?.user?.id, stages]);
 
   const executeStartStage = useCallback(
@@ -629,7 +635,7 @@ export default function PapersRoadmapPage() {
       console.error('[roadmap] Error refreshing completion data:', error);
     }
 
-    setLoading(false);
+    setCompletionLoading(false);
   }, [session?.user?.id, stages]);
 
   // Track actual node positions for timeline alignment - MUST be before conditional return
@@ -639,15 +645,6 @@ export default function PapersRoadmapPage() {
     setNodePositions(positions);
   }, []);
 
-  if (loading) {
-    return (
-      <Container size="lg" className="bg-background py-10 font-sans">
-        <div className="py-16 text-center text-sm text-text-muted">Loading…</div>
-      </Container>
-    );
-  }
-
-  // Limit to first N items for free users
   const visibleStages = hasFullAccess
     ? stages
     : stages.slice(0, FREE_ROADMAP_ITEMS);
@@ -659,7 +656,6 @@ export default function PapersRoadmapPage() {
       ? currentStageIndex
       : 0;
 
-  // Prepare timeline nodes data
   const timelineNodes = visibleStages.map((stage, index) => {
     const data = completionData.get(stage.id);
     const completedCount = data?.completed || 0;
@@ -684,6 +680,7 @@ export default function PapersRoadmapPage() {
         stages={visibleStages}
         completionData={completionData}
         currentStageIndex={visibleCurrentIndex}
+        completionLoading={completionLoading}
       />
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
