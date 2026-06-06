@@ -18,18 +18,18 @@ import {
   getSubjectAccentBadgeClass,
 } from "@/lib/questionBank/subjectColors";
 import {
-  visibleLibrarySubjects,
+  visibleLibraryExamGroups,
   isLibrarySearchActive,
   libraryFiltersKey,
   type LibraryFilters,
 } from "@/lib/questionBank/libraryQueryParams";
 import { labelForQuestionBankTag } from "@/lib/questionBank/esatCurriculumTopicLabels";
-import { SUBJECT_TEST_TYPE } from "@/lib/questionBank/subjectTestTypes";
 import {
   clearLibraryCaches,
   fetchLibraryOutline,
   fetchLibraryTagQuestions,
   fetchLibrarySearchResults,
+  fetchLibrarySubjectCounts,
   type LibraryOutline,
 } from "@/lib/questionBank/libraryData";
 import { QuestionLibraryFilters } from "./QuestionLibraryFilters";
@@ -76,14 +76,9 @@ function getSubjectFromQuestion(question: QuestionBankQuestion): string {
   return "Unknown";
 }
 
-function sortSubjects(subjects: string[]): string[] {
-  return [...subjects].sort((a, b) => {
-    const isMathA = a === "Math 1" || a === "Math 2";
-    const isMathB = b === "Math 1" || b === "Math 2";
-    if (isMathA && !isMathB) return 1;
-    if (!isMathA && isMathB) return -1;
-    return a.localeCompare(b);
-  });
+function formatQuestionCount(count: number | null | undefined): string {
+  if (count === null || count === undefined) return "…";
+  return `${count} question${count === 1 ? "" : "s"}`;
 }
 
 function QuestionRow({
@@ -198,8 +193,8 @@ export function QuestionLibraryGrid({
 
   const filtersKey = libraryFiltersKey(filters);
   const searchActive = isLibrarySearchActive(filters);
-  const visibleSubjects = useMemo(
-    () => sortSubjects(visibleLibrarySubjects(filters)),
+  const examGroups = useMemo(
+    () => visibleLibraryExamGroups(filters),
     [filters, subjectFilter],
   );
 
@@ -213,6 +208,9 @@ export function QuestionLibraryGrid({
   const [tagQuestions, setTagQuestions] = useState<
     Record<string, LoadState<QuestionBankQuestion[]>>
   >({});
+  const [subjectCounts, setSubjectCounts] = useState<
+    LoadState<{ counts: Record<string, number>; total: number }>
+  >({ status: "idle" });
   const [searchState, setSearchState] = useState<
     LoadState<QuestionBankQuestion[]>
   >({ status: "idle" });
@@ -251,8 +249,28 @@ export function QuestionLibraryGrid({
     setExpandedTags(new Set());
     setSubjectOutlines({});
     setTagQuestions({});
+    setSubjectCounts({ status: "idle" });
     setSearchState({ status: "idle" });
   }, [filtersKey]);
+
+  useEffect(() => {
+    if (searchActive) return;
+
+    const requestKey = filtersKeyRef.current;
+    setSubjectCounts({ status: "loading" });
+    void fetchLibrarySubjectCounts(filters)
+      .then((data) => {
+        if (filtersKeyRef.current !== requestKey) return;
+        setSubjectCounts({ status: "ready", data });
+      })
+      .catch(() => {
+        if (filtersKeyRef.current !== requestKey) return;
+        setSubjectCounts({
+          status: "error",
+          message: "Failed to load counts",
+        });
+      });
+  }, [searchActive, filtersKey, filters]);
 
   const loadSubjectOutline = useCallback(
     async (subject: string) => {
@@ -372,17 +390,175 @@ export function QuestionLibraryGrid({
       if (searchState.status === "ready") return searchState.data.length;
       return null;
     }
-    let total = 0;
-    let hasAny = false;
-    for (const subject of visibleSubjects) {
-      const outline = subjectOutlines[subject];
-      if (outline?.status === "ready") {
-        total += outline.data.total;
-        hasAny = true;
+    if (subjectCounts.status === "ready") return subjectCounts.data.total;
+    return null;
+  }, [searchActive, searchState, subjectCounts]);
+
+  const getSubjectCount = useCallback(
+    (subject: string): number | null => {
+      if (subjectCounts.status === "ready") {
+        return subjectCounts.data.counts[subject] ?? 0;
       }
-    }
-    return hasAny ? total : null;
-  }, [searchActive, searchState, subjectOutlines, visibleSubjects]);
+      if (subjectCounts.status === "loading") return null;
+      return null;
+    },
+    [subjectCounts],
+  );
+
+  const renderSubjectSection = (subject: string) => {
+    const accentClass = getSubjectAccentTextClass(subject);
+    const isExpanded = expandedSubjects.has(subject);
+    const outline = subjectOutlines[subject];
+    const subjectCount = getSubjectCount(subject);
+
+    return (
+      <div
+        key={subject}
+        className="overflow-hidden rounded-organic-lg bg-surface-mid/35"
+      >
+        <button
+          type="button"
+          onClick={() => toggleSubject(subject)}
+          className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid/70"
+        >
+          <div className="flex items-center gap-2.5">
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 transition-transform duration-200",
+                accentClass,
+                !isExpanded && "-rotate-90",
+              )}
+              strokeWidth={2.5}
+              aria-hidden
+            />
+            <span
+              className={cn(
+                "font-heading text-sm font-semibold uppercase tracking-wide",
+                accentClass,
+              )}
+            >
+              {subject}
+            </span>
+          </div>
+          <span className="font-heading text-xs tabular-nums text-text-muted">
+            {formatQuestionCount(subjectCount)}
+          </span>
+        </button>
+
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-2 p-4">
+                {outline?.status === "loading" || outline?.status === "idle" ? (
+                  <LibrarySectionLoading label="Loading topics…" />
+                ) : outline?.status === "error" ? (
+                  <div className="py-4 text-center text-xs text-error">
+                    {outline.message}
+                  </div>
+                ) : outline?.status === "ready" &&
+                  outline.data.tags.length === 0 ? (
+                  <div className="py-4 text-center text-xs text-text-muted">
+                    No questions in this subject for the current filters.
+                  </div>
+                ) : outline?.status === "ready" ? (
+                  outline.data.tags.map(({ tag, label, count }) => {
+                    const tagKey = `${subject}-${tag}`;
+                    const isTagExpanded = expandedTags.has(tagKey);
+                    const loaded = tagQuestions[tagKey];
+                    const topicLabel =
+                      label || labelForQuestionBankTag(tag, subject);
+
+                    return (
+                      <div
+                        key={tagKey}
+                        className="overflow-hidden rounded-organic-md bg-surface-elevated"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleTag(subject, tag, tagKey)}
+                          className="flex h-11 w-full items-center justify-between gap-3 px-4 transition-colors hover:bg-surface-mid"
+                        >
+                          <div className="flex min-w-0 items-center gap-2">
+                            <ChevronDown
+                              className={cn(
+                                "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+                                accentClass,
+                                !isTagExpanded && "-rotate-90",
+                              )}
+                              strokeWidth={2.5}
+                              aria-hidden
+                            />
+                            <span className="truncate font-heading text-sm font-medium text-text">
+                              {topicLabel}
+                            </span>
+                          </div>
+                          <span className="shrink-0 font-heading text-xs tabular-nums text-text-muted">
+                            {count}
+                          </span>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isTagExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                duration: 0.2,
+                                ease: [0.32, 0.72, 0, 1],
+                              }}
+                              className="overflow-hidden"
+                            >
+                              <div className="space-y-1.5 border-t border-border-subtle/40 p-2">
+                                {loaded?.status === "loading" ||
+                                loaded?.status === "idle" ? (
+                                  <LibrarySectionLoading
+                                    label="Loading questions…"
+                                    rows={1}
+                                  />
+                                ) : loaded?.status === "error" ? (
+                                  <div className="py-3 text-center text-xs text-error">
+                                    {loaded.message}
+                                  </div>
+                                ) : loaded?.status === "ready" ? (
+                                  loaded.data.map((question) => (
+                                    <QuestionRow
+                                      key={question.id}
+                                      question={question}
+                                      subject={subject}
+                                      isSelected={selectedQuestionIds.has(
+                                        question.id,
+                                      )}
+                                      hasAttempted={attemptedQuestionIds.has(
+                                        question.id,
+                                      )}
+                                      onToggle={() =>
+                                        onToggleQuestion(question)
+                                      }
+                                    />
+                                  ))
+                                ) : null}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })
+                ) : null}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
 
   return (
     <section className="flex h-full flex-col rounded-organic-xl bg-surface px-5 py-5 sm:px-6 sm:py-6">
@@ -393,7 +569,9 @@ export function QuestionLibraryGrid({
           </h2>
           <span className="shrink-0 font-heading text-xs font-medium leading-none tabular-nums text-text-muted">
             {resultCount === null
-              ? "Expand to browse"
+              ? subjectCounts.status === "loading"
+                ? "…"
+                : "Expand to browse"
               : `${resultCount} result${resultCount === 1 ? "" : "s"}`}
           </span>
         </div>
@@ -444,169 +622,22 @@ export function QuestionLibraryGrid({
           ) : null}
         </div>
       ) : (
-        <div className="mt-5 space-y-4 border-t border-border-subtle/40 pt-5">
-          {visibleSubjects.map((subject) => {
-            const accentClass = getSubjectAccentTextClass(subject);
-            const testType =
-              SUBJECT_TEST_TYPE[subject as keyof typeof SUBJECT_TEST_TYPE];
-            const isExpanded = expandedSubjects.has(subject);
-            const outline = subjectOutlines[subject];
-            const subjectCount =
-              outline?.status === "ready" ? outline.data.total : null;
-
-            return (
-              <div
-                key={subject}
-                className="overflow-hidden rounded-organic-lg bg-surface-mid/35"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleSubject(subject)}
-                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid/70"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 shrink-0 transition-transform duration-200",
-                        accentClass,
-                        !isExpanded && "-rotate-90",
-                      )}
-                      strokeWidth={2.5}
-                      aria-hidden
-                    />
-                    <span className="font-heading text-sm font-semibold uppercase tracking-wide">
-                      {testType ? (
-                        <>
-                          <span className="text-text">{testType} · </span>
-                          <span className={accentClass}>{subject}</span>
-                        </>
-                      ) : (
-                        <span className={accentClass}>{subject}</span>
-                      )}
-                    </span>
-                  </div>
-                  <span className="font-heading text-xs text-text-muted">
-                    {subjectCount === null
-                      ? "—"
-                      : `${subjectCount} question${subjectCount === 1 ? "" : "s"}`}
-                  </span>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="space-y-2 p-4">
-                        {outline?.status === "loading" ||
-                        outline?.status === "idle" ? (
-                          <LibrarySectionLoading label="Loading topics…" />
-                        ) : outline?.status === "error" ? (
-                          <div className="py-4 text-center text-xs text-error">
-                            {outline.message}
-                          </div>
-                        ) : outline?.status === "ready" &&
-                          outline.data.tags.length === 0 ? (
-                          <div className="py-4 text-center text-xs text-text-muted">
-                            No questions in this subject for the current filters.
-                          </div>
-                        ) : outline?.status === "ready" ? (
-                          outline.data.tags.map(({ tag, label, count }) => {
-                            const tagKey = `${subject}-${tag}`;
-                            const isTagExpanded = expandedTags.has(tagKey);
-                            const loaded = tagQuestions[tagKey];
-                            const topicLabel =
-                              label || labelForQuestionBankTag(tag, subject);
-
-                            return (
-                              <div
-                                key={tagKey}
-                                className="overflow-hidden rounded-organic-md bg-surface-elevated"
-                              >
-                                <button
-                                  type="button"
-                                  onClick={() => toggleTag(subject, tag, tagKey)}
-                                  className="flex h-11 w-full items-center justify-between gap-3 px-4 transition-colors hover:bg-surface-mid"
-                                >
-                                  <div className="flex min-w-0 items-center gap-2">
-                                    <ChevronDown
-                                      className={cn(
-                                        "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-                                        accentClass,
-                                        !isTagExpanded && "-rotate-90",
-                                      )}
-                                      strokeWidth={2.5}
-                                      aria-hidden
-                                    />
-                                    <span className="truncate font-heading text-sm font-medium text-text">
-                                      {topicLabel}
-                                    </span>
-                                  </div>
-                                  <span className="shrink-0 font-heading text-xs tabular-nums text-text-muted">
-                                    {count}
-                                  </span>
-                                </button>
-
-                                <AnimatePresence initial={false}>
-                                  {isTagExpanded && (
-                                    <motion.div
-                                      initial={{ height: 0, opacity: 0 }}
-                                      animate={{ height: "auto", opacity: 1 }}
-                                      exit={{ height: 0, opacity: 0 }}
-                                      transition={{
-                                        duration: 0.2,
-                                        ease: [0.32, 0.72, 0, 1],
-                                      }}
-                                      className="overflow-hidden"
-                                    >
-                                      <div className="space-y-1.5 border-t border-border-subtle/40 p-2">
-                                        {loaded?.status === "loading" ||
-                                        loaded?.status === "idle" ? (
-                                          <LibrarySectionLoading
-                                            label="Loading questions…"
-                                            rows={1}
-                                          />
-                                        ) : loaded?.status === "error" ? (
-                                          <div className="py-3 text-center text-xs text-error">
-                                            {loaded.message}
-                                          </div>
-                                        ) : loaded?.status === "ready" ? (
-                                          loaded.data.map((question) => (
-                                            <QuestionRow
-                                              key={question.id}
-                                              question={question}
-                                              subject={subject}
-                                              isSelected={selectedQuestionIds.has(
-                                                question.id,
-                                              )}
-                                              hasAttempted={attemptedQuestionIds.has(
-                                                question.id,
-                                              )}
-                                              onToggle={() =>
-                                                onToggleQuestion(question)
-                                              }
-                                            />
-                                          ))
-                                        ) : null}
-                                      </div>
-                                    </motion.div>
-                                  )}
-                                </AnimatePresence>
-                              </div>
-                            );
-                          })
-                        ) : null}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+        <div className="mt-5 space-y-6 border-t border-border-subtle/40 pt-5">
+          {subjectCounts.status === "error" ? (
+            <div className="py-4 text-center text-xs text-error">
+              {subjectCounts.message}
+            </div>
+          ) : null}
+          {examGroups.map((group) => (
+            <div key={group.testType} className="space-y-3">
+              <h3 className="px-1 font-heading text-xs font-semibold uppercase tracking-wider text-text">
+                {group.testType}
+              </h3>
+              <div className="space-y-4">
+                {group.subjects.map((subject) => renderSubjectSection(subject))}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </section>

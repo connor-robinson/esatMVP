@@ -22,6 +22,14 @@ const tagQuestionsInFlight = new Map<string, Promise<QuestionBankQuestion[]>>();
 const searchCache = new Map<string, QuestionBankQuestion[]>();
 const searchInFlight = new Map<string, Promise<QuestionBankQuestion[]>>();
 
+const subjectCountsCache = new Map<string, LibrarySubjectCounts>();
+const subjectCountsInFlight = new Map<string, Promise<LibrarySubjectCounts>>();
+
+export type LibrarySubjectCounts = {
+  counts: Record<string, number>;
+  total: number;
+};
+
 function outlineCacheKey(subject: string, filters: LibraryFilters): string {
   return `${subject}::${buildLibraryQueryParams(filters).toString()}`;
 }
@@ -41,6 +49,41 @@ export function clearLibraryCaches(): void {
   tagQuestionsInFlight.clear();
   searchCache.clear();
   searchInFlight.clear();
+  subjectCountsCache.clear();
+  subjectCountsInFlight.clear();
+}
+
+export async function fetchLibrarySubjectCounts(
+  filters: LibraryFilters,
+): Promise<LibrarySubjectCounts> {
+  const params = buildLibraryQueryParams(filters);
+  const key = params.toString();
+
+  const cached = subjectCountsCache.get(key);
+  if (cached) return cached;
+
+  const existing = subjectCountsInFlight.get(key);
+  if (existing) return existing;
+
+  const promise = (async () => {
+    const response = await fetch(
+      `/api/question-bank/library-subject-counts?${params.toString()}`,
+      { credentials: "include" },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to load subject counts");
+    }
+    const data = (await response.json()) as LibrarySubjectCounts;
+    subjectCountsCache.set(key, data);
+    return data;
+  })();
+
+  subjectCountsInFlight.set(key, promise);
+  try {
+    return await promise;
+  } finally {
+    subjectCountsInFlight.delete(key);
+  }
 }
 
 export async function fetchLibraryOutline(

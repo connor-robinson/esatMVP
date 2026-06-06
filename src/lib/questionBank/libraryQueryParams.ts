@@ -17,6 +17,23 @@ export const LIBRARY_SUBJECTS = [
 
 export type LibrarySubject = (typeof LIBRARY_SUBJECTS)[number];
 
+export type LibraryExamGroup = {
+  testType: "ESAT" | "TMUA";
+  subjects: readonly LibrarySubject[];
+};
+
+/** Display order: ESAT block then TMUA block. */
+export const LIBRARY_EXAM_GROUPS: LibraryExamGroup[] = [
+  {
+    testType: "ESAT",
+    subjects: ["Biology", "Chemistry", "Physics", "Math 1", "Math 2"],
+  },
+  {
+    testType: "TMUA",
+    subjects: ["Paper 1", "Paper 2"],
+  },
+];
+
 export const UNTAGGED_TOPIC = "Untagged";
 
 export type LibraryFilters = {
@@ -80,13 +97,38 @@ export function libraryFiltersKey(filters: LibraryFilters): string {
 export function visibleLibrarySubjects(
   filters: LibraryFilters,
 ): LibrarySubject[] {
+  const allowed = new Set(visibleLibrarySubjectSet(filters));
+  const ordered: LibrarySubject[] = [];
+  for (const group of LIBRARY_EXAM_GROUPS) {
+    for (const subject of group.subjects) {
+      if (allowed.has(subject)) ordered.push(subject);
+    }
+  }
+  return ordered;
+}
+
+function visibleLibrarySubjectSet(filters: LibraryFilters): Set<LibrarySubject> {
   if (filters.subjectFilter === "ALL") {
-    return [...LIBRARY_SUBJECTS];
+    return new Set(LIBRARY_SUBJECTS);
   }
   const selected = Array.isArray(filters.subjectFilter)
     ? filters.subjectFilter
     : [filters.subjectFilter];
-  return LIBRARY_SUBJECTS.filter((s) => selected.includes(s));
+  return new Set(
+    LIBRARY_SUBJECTS.filter((s) =>
+      selected.includes(s as SubjectFilter),
+    ),
+  );
+}
+
+export function visibleLibraryExamGroups(
+  filters: LibraryFilters,
+): Array<{ testType: "ESAT" | "TMUA"; subjects: LibrarySubject[] }> {
+  const allowed = visibleLibrarySubjectSet(filters);
+  return LIBRARY_EXAM_GROUPS.map((group) => ({
+    testType: group.testType,
+    subjects: group.subjects.filter((s) => allowed.has(s)),
+  })).filter((g) => g.subjects.length > 0);
 }
 
 export function isLibrarySearchActive(filters: LibraryFilters): boolean {
