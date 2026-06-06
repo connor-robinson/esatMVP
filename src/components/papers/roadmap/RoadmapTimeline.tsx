@@ -28,74 +28,6 @@ interface RoadmapTimelineProps {
   completedStageIndices?: ReadonlySet<number>;
 }
 
-type SpineNodeVariant = "completed" | "current" | "upcoming";
-
-function TimelineSpineNode({
-  stage,
-  centerY,
-  nodeX,
-  variant,
-}: {
-  stage: RoadmapStage;
-  centerY: number;
-  nodeX: number;
-  variant: SpineNodeVariant;
-}) {
-  const accentText = getExamAccentTextClass(stage.examName);
-  const accentFill = getExamAccentFillClass(stage.examName);
-
-  if (variant === "upcoming") {
-    return (
-      <div
-        className="absolute z-10 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-surface-neutral"
-        style={{ left: nodeX, top: centerY }}
-      />
-    );
-  }
-
-  if (variant === "current") {
-    return (
-      <div
-        className={cn(
-          "absolute z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full",
-          accentText,
-        )}
-        style={{ left: nodeX, top: centerY }}
-      >
-        <span
-          className="absolute inset-0 rounded-full ring-[3px] ring-current ring-offset-2 ring-offset-background"
-          aria-hidden
-        />
-        <span
-          className={cn("relative z-10 h-3 w-3 rounded-full", accentFill)}
-          aria-hidden
-        />
-      </div>
-    );
-  }
-
-  // Completed: thick centered ring + solid core (static — no tip pulse).
-  return (
-    <div
-      className={cn(
-        "absolute z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full",
-        accentText,
-      )}
-      style={{ left: nodeX, top: centerY }}
-      title={`${stage.examName} ${stage.year} complete`}
-    >
-      <span
-        className="absolute inset-0 rounded-full ring-[3px] ring-current ring-offset-2 ring-offset-background"
-        aria-hidden
-      />
-      <span
-        className={cn("relative z-10 h-3 w-3 rounded-full", accentFill)}
-        aria-hidden
-      />
-    </div>
-  );
-}
-
 const SPINE_WIDTH = ROADMAP_TIMELINE_SPINE_WIDTH;
 const SPINE_CENTER_X = SPINE_WIDTH / 2;
 const WAVE_AMPLITUDE = 12;
@@ -180,10 +112,12 @@ function TimelineTipMarker({
   marker,
   centerY,
   nodeX,
+  isPast,
 }: {
   marker: TimelineMarker;
   centerY: number;
   nodeX: number;
+  isPast: boolean;
 }) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
@@ -211,29 +145,38 @@ function TimelineTipMarker({
           onFocus={showTip}
           onBlur={hideTip}
           className={cn(
-            "relative flex h-7 w-7 items-center justify-center rounded-full transition-transform duration-fast ease-signature",
-            "hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
-            getExamAccentTextClass(marker.examName),
+            "relative flex items-center justify-center rounded-full transition-transform duration-fast ease-signature",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
+            isPast
+              ? "h-3.5 w-3.5 hover:scale-110"
+              : "h-6 w-6 hover:scale-105",
+            !isPast && getExamAccentTextClass(marker.examName),
           )}
           aria-label={`${marker.title}: ${marker.text}`}
         >
-          <span
-            className="absolute inset-0 rounded-full border-[3px] border-current opacity-35 animate-pulse"
-            aria-hidden
-          />
-          <span
-            className={cn(
-              "absolute inset-[5px] rounded-full ring-[3px] ring-current ring-offset-2 ring-offset-background",
-            )}
-            aria-hidden
-          />
-          <span
-            className={cn(
-              "relative z-10 h-2.5 w-2.5 rounded-full",
-              getExamAccentFillClass(marker.examName),
-            )}
-            aria-hidden
-          />
+          {isPast ? (
+            <span
+              className={cn(
+                "h-full w-full rounded-full",
+                getExamAccentFillClass(marker.examName),
+              )}
+              aria-hidden
+            />
+          ) : (
+            <>
+              <span
+                className="absolute inset-0 rounded-full border-[3px] border-current opacity-35 animate-pulse"
+                aria-hidden
+              />
+              <span
+                className={cn(
+                  "relative z-10 h-2.5 w-2.5 rounded-full",
+                  getExamAccentFillClass(marker.examName),
+                )}
+                aria-hidden
+              />
+            </>
+          )}
         </button>
       </div>
       {anchor ? <TimelineTipTooltip marker={marker} anchor={anchor} /> : null}
@@ -353,19 +296,22 @@ export function RoadmapTimeline({
 
           if (hasTip) return null;
 
-          const variant: SpineNodeVariant = isCurrent
-            ? "current"
-            : isCompleted
-              ? "completed"
-              : "upcoming";
-
           return (
-            <TimelineSpineNode
+            <div
               key={`node-${stage.id}`}
-              stage={stage}
-              centerY={centerY}
-              nodeX={nodeX}
-              variant={variant}
+              className={cn(
+                "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full",
+                isCurrent
+                  ? cn(
+                      "h-4 w-4 ring-2 ring-offset-2 ring-offset-background ring-current",
+                      getExamAccentTextClass(stage.examName),
+                      getExamAccentFillClass(stage.examName),
+                    )
+                  : isCompleted
+                    ? cn("h-3.5 w-3.5", getExamAccentFillClass(stage.examName))
+                    : "h-3 w-3 bg-surface-neutral",
+              )}
+              style={{ left: nodeX, top: centerY }}
             />
           );
         })}
@@ -375,12 +321,16 @@ export function RoadmapTimeline({
           if (nodePositions[marker.stageIndex] === undefined && stages.length > 0) {
             return null;
           }
+          const isPast = completedStageIndices
+            ? completedStageIndices.has(marker.stageIndex)
+            : marker.stageIndex < effectiveCurrentIndex;
           return (
             <TimelineTipMarker
               key={`tip-${marker.stageIndex}-${marker.title}-${idx}`}
               marker={marker}
               centerY={centerY}
               nodeX={getNodeX(centerY)}
+              isPast={isPast}
             />
           );
         })}

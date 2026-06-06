@@ -325,6 +325,7 @@ export function RoadmapList({
               completionData={stageCompletionData}
               onStartSession={onStartSession}
               timelineNodeY={timelineNodeY}
+              isStageCompleted={node.isCompleted}
               anchorRef={(el) => {
                 cardRefs.current[index] = el;
               }}

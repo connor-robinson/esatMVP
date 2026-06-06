@@ -35,6 +35,7 @@ interface StageListCardProps {
   completionData: Map<string, boolean>;
   onStartSession: (stage: RoadmapStage, selectedParts: RoadmapPart[]) => void;
   timelineNodeY?: number;
+  isStageCompleted?: boolean;
   /** Header row anchor — timeline nodes track this, not expanded body height. */
   anchorRef?: (el: HTMLDivElement | null) => void;
 }
@@ -50,6 +51,7 @@ export function StageListCard({
   completionData,
   onStartSession,
   timelineNodeY,
+  isStageCompleted = false,
   anchorRef,
 }: StageListCardProps) {
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
@@ -130,13 +132,23 @@ export function StageListCard({
           {timelineNodeY !== undefined ? (
             <div
               className="pointer-events-none absolute left-0 top-1/2 z-0 hidden -translate-x-full -translate-y-1/2 lg:block"
-              style={{
-                width: ROADMAP_TIMELINE_CONNECTOR_WIDTH,
-                height: "1px",
-                background:
-                  "linear-gradient(to left, var(--color-border-subtle), transparent)",
-              }}
-            />
+              style={{ width: ROADMAP_TIMELINE_CONNECTOR_WIDTH }}
+            >
+              <div
+                className={cn(
+                  "absolute right-0 top-1/2 h-[3px] w-full -translate-y-1/2 rounded-full",
+                  isStageCompleted
+                    ? getExamAccentFillClass(stage.examName)
+                    : "bg-border-subtle/40",
+                )}
+                style={{
+                  maskImage:
+                    "linear-gradient(to left, transparent 0%, black 28%, black 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to left, transparent 0%, black 28%, black 100%)",
+                }}
+              />
+            </div>
           ) : null}
           <div
             className={cn(
