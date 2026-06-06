@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Lock,
   ChevronDown,
@@ -19,7 +19,10 @@ import {
   getExamAccentFillClass,
 } from "@/config/colors";
 import type { RoadmapStage, RoadmapPart } from "@/lib/papers/roadmapConfig";
-import { ROADMAP_TIMELINE_CONNECTOR_WIDTH } from "./roadmapTimelineLayout";
+import {
+  ROADMAP_EXPAND_TRANSITION_CLASS,
+  ROADMAP_TIMELINE_CONNECTOR_WIDTH,
+} from "./roadmapTimelineLayout";
 
 interface StageListCardProps {
   stage: RoadmapStage;
@@ -120,8 +123,7 @@ export function StageListCard({
         />
       )}
 
-      <motion.div
-        layout
+      <div
         className={cn(
           "relative flex flex-col overflow-hidden rounded-organic-lg transition-colors duration-fast ease-signature",
           isUnlocked
@@ -199,16 +201,22 @@ export function StageListCard({
           </div>
         </div>
 
-        <AnimatePresence initial={false}>
-          {isExpanded && isUnlocked && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden border-t border-border-subtle/40"
+        <div
+          className={cn(
+            "grid transition-[grid-template-rows] border-t border-border-subtle/40",
+            ROADMAP_EXPAND_TRANSITION_CLASS,
+            isExpanded && isUnlocked ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            isExpanded && isUnlocked ? "border-t" : "border-t-transparent",
+          )}
+        >
+          <div className="overflow-hidden">
+            <div
+              className={cn(
+                "space-y-4 px-4 py-4 transition-opacity sm:px-5",
+                ROADMAP_EXPAND_TRANSITION_CLASS,
+                isExpanded && isUnlocked ? "opacity-100" : "opacity-0",
+              )}
             >
-              <div className="space-y-4 px-4 py-4 sm:px-5">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-text-muted">
                     Select parts
@@ -384,11 +392,10 @@ export function StageListCard({
                     <span>Start session</span>
                     <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.5} />
                   </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

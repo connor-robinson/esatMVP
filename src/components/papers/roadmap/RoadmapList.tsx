@@ -52,6 +52,8 @@ export function RoadmapList({
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const callbackRef = useRef(onNodePositionsUpdate);
   const rafRef = useRef<number | null>(null);
+  const positionFlushRafRef = useRef<number | null>(null);
+  const pendingPositionsRef = useRef<number[] | null>(null);
 
   const scrollRafRef = useRef<number | null>(null);
   const hasRevealedRef = useRef(false);
@@ -90,8 +92,22 @@ export function RoadmapList({
           }
         });
 
-        if (positions.length > 0 && callbackRef.current) {
-          callbackRef.current(positions);
+        if (positions.length > 0) {
+          schedulePositionFlush(positions);
+        }
+      });
+    };
+
+    const schedulePositionFlush = (positions: number[]) => {
+      pendingPositionsRef.current = positions;
+      if (positionFlushRafRef.current !== null) return;
+
+      positionFlushRafRef.current = requestAnimationFrame(() => {
+        positionFlushRafRef.current = null;
+        const next = pendingPositionsRef.current;
+        pendingPositionsRef.current = null;
+        if (next && callbackRef.current) {
+          callbackRef.current(next);
         }
       });
     };
@@ -127,6 +143,9 @@ export function RoadmapList({
       clearTimeout(observeTimeoutId);
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
+      }
+      if (positionFlushRafRef.current) {
+        cancelAnimationFrame(positionFlushRafRef.current);
       }
       window.removeEventListener("resize", throttledUpdate);
       window.removeEventListener("scroll", throttledUpdate);

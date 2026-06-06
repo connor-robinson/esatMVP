@@ -19,6 +19,7 @@ import {
   type TimelineMarker,
 } from "./roadmapTimelineMarkers";
 import { ROADMAP_TIMELINE_SPINE_WIDTH } from "./roadmapTimelineLayout";
+import { useSmoothNodePositions } from "./useSmoothNodePositions";
 
 interface RoadmapTimelineProps {
   stages: RoadmapStage[];
@@ -189,10 +190,20 @@ export function RoadmapTimeline({
   );
 
   const defaultHeight = 100;
-  const getCenterPosition = (index: number): number => {
-    if (nodePositions[index] !== undefined) return nodePositions[index];
-    return index * defaultHeight + defaultHeight / 2;
-  };
+  const measuredPositions = useMemo(() => {
+    if (nodePositions.length === stages.length && nodePositions.length > 0) {
+      return nodePositions;
+    }
+    return stages.map(
+      (_, index) => index * defaultHeight + defaultHeight / 2,
+    );
+  }, [nodePositions, stages]);
+
+  const smoothPositions = useSmoothNodePositions(measuredPositions);
+
+  const getCenterPosition = (index: number): number =>
+    smoothPositions[index] ??
+    index * defaultHeight + defaultHeight / 2;
 
   const allNodePositions = stages.map((_, index) => getCenterPosition(index));
 
@@ -283,7 +294,7 @@ export function RoadmapTimeline({
             <div
               key={`node-${stage.id}`}
               className={cn(
-                "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-fast ease-signature",
+                "absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full",
                 isCurrent
                   ? cn(
                       "h-4 w-4 ring-2 ring-offset-2 ring-offset-background ring-current",

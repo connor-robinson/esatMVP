@@ -687,7 +687,7 @@ export default function PapersRoadmapPage() {
 
       {/* Two-column layout: Timeline (left) and Roadmap (right) */}
       <div className="pb-10 pt-2">
-        <div className="flex gap-6 lg:gap-8">
+        <div className="flex gap-6 overflow-x-clip lg:gap-8">
           <div className={cn("relative z-10 hidden shrink-0 lg:block", ROADMAP_TIMELINE_COLUMN_CLASS)}>
             <div className="sticky top-8 overflow-visible">
               <RoadmapTimeline
