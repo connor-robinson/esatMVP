@@ -11,8 +11,12 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Container } from "@/components/layout/Container";
-import { CountdownCard } from "@/components/profile/CountdownCard";
 import { DeleteAccountModal } from "@/components/profile/DeleteAccountModal";
+import { SettingsPricingPanel } from "@/components/profile/SettingsPricingPanel";
+import {
+  ESAT_SUBJECTS,
+  esatSubjectPillClass,
+} from "@/components/profile/settingsSubjectPills";
 import { ChangePasswordModal } from "@/components/profile/ChangePasswordModal";
 import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
@@ -55,35 +59,6 @@ type Preferences = {
   dark_mode: boolean;
 };
 
-const ESAT_SUBJECTS = ['Math 1', 'Math 2', 'Chemistry', 'Biology', 'Physics'];
-
-/** ESAT subject chips — DESIGN.md subject tokens (no raw hex). */
-function esatSubjectPillClass(subject: string, isSelected: boolean): string {
-  const selectedMap: Record<string, string> = {
-    'Math 1':
-      'bg-maths border-maths text-text shadow-md shadow-maths/20 border',
-    'Math 2':
-      'bg-error border-error text-text shadow-md shadow-error/25 border',
-    Physics:
-      'bg-physics border-physics text-text shadow-md shadow-physics/20 border',
-    Chemistry:
-      'bg-chemistry border-chemistry text-text shadow-md shadow-chemistry/20 border',
-    Biology:
-      'bg-biology border-biology text-text shadow-md shadow-biology/20 border',
-  };
-
-  const idle =
-    'bg-surface-mid border border-border-subtle text-text-muted hover:bg-surface-neutral hover:text-text hover:border-border';
-
-  if (!isSelected) return idle;
-
-  return cn(
-    'font-semibold text-text hover:text-text',
-    selectedMap[subject] ??
-      'bg-surface-neutral border-border text-text shadow-sm border',
-  );
-}
-
 type SettingSection = {
   id: string;
   title: string;
@@ -93,6 +68,7 @@ type SettingSection = {
 const SETTING_SECTIONS: SettingSection[] = [
   { id: 'account', title: 'Account', icon: <User className="w-4 h-4" /> },
   { id: 'exam', title: 'Exam & Practice', icon: <BookOpen className="w-4 h-4" /> },
+  { id: 'pricing', title: 'Pricing', icon: <CreditCard className="w-4 h-4" /> },
   { id: 'data', title: 'Data Management', icon: <Download className="w-4 h-4" /> },
   { id: 'appearance', title: 'Appearance', icon: <Eye className="w-4 h-4" /> },
 ];
@@ -136,6 +112,14 @@ export default function ProfilePage() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showChangeEmail, setShowChangeEmail] = useState(false);
   const [showResetData, setShowResetData] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const section = params.get("section");
+    if (section && SETTING_SECTIONS.some((s) => s.id === section)) {
+      setActiveSection(section);
+    }
+  }, []);
 
   // Load preferences
   useEffect(() => {
@@ -458,21 +442,15 @@ export default function ProfilePage() {
 
   const handleESATSubjectToggle = (subject: string) => {
     const current = localESATSubjects || [];
-    let newSubjects: string[];
-    
+
     if (current.includes(subject)) {
-      // Deselect if already selected
-      newSubjects = current.filter((s) => s !== subject);
-    } else {
-      // If already at 3, replace the first one with the new selection
-      if (current.length >= 3) {
-        newSubjects = [current[1], current[2], subject];
-      } else {
-        newSubjects = [...current, subject];
-      }
+      setLocalESATSubjects(current.filter((s) => s !== subject));
+      return;
     }
 
-    setLocalESATSubjects(newSubjects);
+    if (current.length >= 3) return;
+
+    setLocalESATSubjects([...current, subject]);
   };
 
   const handleSaveESATSubjects = async () => {
@@ -539,55 +517,43 @@ export default function ProfilePage() {
     </div>
   );
 
-  const Toggle = ({ 
-    checked, 
-    onChange, 
-    label, 
-    description 
-  }: { 
-    checked: boolean; 
+  const Toggle = ({
+    checked,
+    onChange,
+    label,
+    description,
+  }: {
+    checked: boolean;
     onChange: (checked: boolean) => void;
     label: string;
     description?: string;
   }) => (
-    <label className="flex items-start gap-3 cursor-pointer group">
-      <div className="relative flex-shrink-0 mt-0.5">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="sr-only"
-        />
-        <div 
+    <div className="flex items-start gap-3">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        className={cn(
+          "relative mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-300 outline-none",
+          checked ? "bg-primary" : "bg-surface-mid",
+        )}
+      >
+        <span
           className={cn(
-            "w-11 h-6 rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-            checked
-              ? "bg-primary shadow-lg shadow-primary/30"
-              : "bg-surface-mid border border-border-subtle"
+            "inline-block h-5 w-5 rounded-full bg-text shadow-sm transition-transform duration-300",
+            checked ? "translate-x-[1.375rem]" : "translate-x-0.5",
           )}
-          style={{
-            transition: 'background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          <div 
-            className="absolute top-0.5 w-5 h-5 rounded-full bg-text shadow-lg transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-            style={{
-              transform: checked ? 'translateX(1.25rem) scale(1)' : 'translateX(0.125rem) scale(1)',
-              left: checked ? 'auto' : '0.125rem',
-              right: checked ? '0.125rem' : 'auto',
-            }}
-          />
-        </div>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-text group-hover:text-text-muted transition-colors">
-          {label}
-        </div>
+        />
+      </button>
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-medium text-text">{label}</div>
         {description && (
-          <div className="text-xs text-text-muted mt-1">{description}</div>
+          <div className="mt-1 text-xs text-text-muted">{description}</div>
         )}
       </div>
-    </label>
+    </div>
   );
 
   const RadioGroup = ({
@@ -603,19 +569,10 @@ export default function ProfilePage() {
   }) => {
     const toneSelected =
       selectedTone === "secondary"
-        ? cn(
-            "bg-secondary border-secondary/45 text-text",
-            "shadow-lg shadow-secondary/25 border",
-          )
+        ? "bg-secondary/20 text-secondary"
         : selectedTone === "accent"
-          ? cn(
-              "bg-accent border-accent/50 text-text",
-              "shadow-lg shadow-accent/20 border",
-            )
-          : cn(
-              "bg-primary border-primary/45 text-text",
-              "shadow-lg shadow-primary/35 border",
-            );
+          ? "bg-accent/15 text-accent"
+          : "bg-primary/20 text-primary";
 
     return (
       <div className="flex flex-wrap gap-2">
@@ -627,17 +584,10 @@ export default function ProfilePage() {
               type="button"
               onClick={() => onChange(option.value)}
               className={cn(
-                "px-5 py-2.5 rounded-organic-md text-sm font-medium duration-fast ease-signature transition-colors",
-                "border",
+                "rounded-organic-md px-5 py-2.5 text-sm font-medium outline-none transition-colors duration-fast ease-signature",
                 isSelected
-                  ? cn(
-                      "font-semibold hover:opacity-[0.98]",
-                      toneSelected,
-                    )
-                  : cn(
-                      "bg-surface-mid border-border text-text-muted",
-                      "hover:bg-surface-neutral hover:text-text hover:border-border",
-                    ),
+                  ? cn("font-semibold", toneSelected)
+                  : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
               )}
             >
               {option.label}
@@ -660,46 +610,32 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-3">
-            <div className="space-y-1.5 rounded-organic-xl border border-border-subtle bg-surface-elevated/60 p-2 ring-1 ring-text/[0.04] backdrop-blur-sm">
+            <div className="space-y-1 rounded-organic-xl bg-surface-elevated/60 p-2 backdrop-blur-sm">
               {SETTING_SECTIONS.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-organic-lg text-sm font-medium duration-fast ease-signature transition-colors",
+                    "flex w-full items-center gap-3 rounded-organic-lg px-4 py-3 text-sm font-medium outline-none transition-colors duration-fast ease-signature",
                     activeSection === section.id
-                      ? cn(
-                          "border border-secondary/30 bg-secondary/15 text-secondary",
-                          "shadow-sm shadow-secondary/10",
-                        )
-                      : "border border-transparent text-text-muted hover:text-text hover:bg-surface-mid",
+                      ? "bg-secondary/15 text-secondary"
+                      : "text-text-muted hover:bg-surface-mid hover:text-text",
                   )}
                 >
                   {section.icon}
                   <span className="flex-1 text-left">{section.title}</span>
                   {activeSection === section.id && (
-                    <ChevronRight className="w-4 h-4 shrink-0 opacity-90" strokeWidth={2} />
+                    <ChevronRight className="h-4 w-4 shrink-0 opacity-90" strokeWidth={2} />
                   )}
                 </button>
               ))}
-            </div>
-
-            {/* Countdown Card */}
-            <div className="mt-6">
-              <CountdownCard
-                examType={preferences.exam_preference}
-                isEarlyApplicant={preferences.is_early_applicant}
-              />
             </div>
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <Card
-              variant="elevated"
-              className="rounded-organic-xl border border-border p-8 ring-1 ring-text/[0.06]"
-            >
+            <Card variant="elevated" className="rounded-organic-xl p-8">
               {/* Account Section */}
               {activeSection === 'account' && (
                 <div className="space-y-8">
@@ -752,10 +688,13 @@ export default function ProfilePage() {
                                 onChange={handleUsernameChange}
                                 placeholder="Enter your username"
                                 className={cn(
-                                  "pr-10",
-                                  usernameAvailability.available === true && "ring-1 ring-success focus:ring-2 focus:ring-success",
-                                  usernameAvailability.available === false && "ring-1 ring-error focus:ring-2 focus:ring-error",
-                                  usernameError && "ring-1 ring-error focus:ring-2 focus:ring-error"
+                                  "pr-10 focus-visible:ring-0",
+                                  usernameAvailability.available === true &&
+                                    "border-success/60 focus-visible:border-success",
+                                  usernameAvailability.available === false &&
+                                    "border-error/60 focus-visible:border-error",
+                                  usernameError &&
+                                    "border-error/60 focus-visible:border-error",
                                 )}
                                 disabled={saving === "username"}
                                 autoComplete="username"
@@ -846,10 +785,10 @@ export default function ProfilePage() {
                         <button
                           type="button"
                           onClick={() => setShowChangeEmail(true)}
-                          className={cn(
-                            "inline-flex items-center gap-2 px-4 py-2 rounded-organic-md border border-border font-medium",
-                            "bg-surface-mid text-text hover:bg-surface-neutral duration-fast ease-signature transition-colors",
-                          )}
+                        className={cn(
+                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
+                          "bg-surface-mid text-text hover:bg-surface-neutral",
+                        )}
                         >
                           <span>Change</span>
                           <Mail className="w-4 h-4 shrink-0" strokeWidth={2} />
@@ -866,10 +805,10 @@ export default function ProfilePage() {
                         <button
                           type="button"
                           onClick={() => setShowChangePassword(true)}
-                          className={cn(
-                            "inline-flex items-center gap-2 px-4 py-2 rounded-organic-md border border-border font-medium",
-                            "bg-surface-mid text-text hover:bg-surface-neutral duration-fast ease-signature transition-colors",
-                          )}
+                        className={cn(
+                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
+                          "bg-surface-mid text-text hover:bg-surface-neutral",
+                        )}
                         >
                           <span>Change Password</span>
                           <Lock className="w-4 h-4 shrink-0" strokeWidth={2} />
@@ -898,10 +837,10 @@ export default function ProfilePage() {
                               alert("Failed to open billing portal");
                             }
                           }}
-                          className={cn(
-                            "inline-flex items-center gap-2 px-4 py-2 rounded-organic-md border border-border font-medium",
-                            "bg-surface-mid text-text hover:bg-surface-neutral duration-fast ease-signature transition-colors",
-                          )}
+                        className={cn(
+                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
+                          "bg-surface-mid text-text hover:bg-surface-neutral",
+                        )}
                         >
                           <span>Manage subscription</span>
                           <CreditCard className="w-4 h-4 shrink-0" strokeWidth={2} />
@@ -915,8 +854,8 @@ export default function ProfilePage() {
                           type="button"
                           onClick={handleLogout}
                           className={cn(
-                            "px-4 py-2.5 rounded-organic-md border border-border font-medium flex items-center justify-center gap-2",
-                            "bg-surface-mid text-text hover:bg-surface-neutral duration-fast ease-signature transition-colors",
+                            "flex items-center justify-center gap-2 rounded-organic-md px-4 py-2.5 font-medium outline-none transition-colors duration-fast ease-signature",
+                            "bg-surface-mid text-text hover:bg-surface-neutral",
                           )}
                         >
                           <span>Logout</span>
@@ -927,8 +866,8 @@ export default function ProfilePage() {
                           type="button"
                           onClick={() => setShowDeleteAccount(true)}
                           className={cn(
-                            "px-4 py-2.5 rounded-organic-md border border-border font-medium flex items-center justify-center gap-2",
-                            "bg-surface-mid text-error hover:bg-error/10 hover:border-error/40 duration-fast ease-signature transition-colors",
+                            "flex items-center justify-center gap-2 rounded-organic-md px-4 py-2.5 font-medium outline-none transition-colors duration-fast ease-signature",
+                            "bg-surface-mid text-error hover:bg-error/10",
                           )}
                         >
                           <span>Delete Account</span>
@@ -954,8 +893,16 @@ export default function ProfilePage() {
                         value={preferences.exam_preference || ''}
                         onChange={(value) => {
                           const newPref = value as ExamType;
-                          setPreferences((prev) => ({ ...prev, exam_preference: newPref, esat_subjects: [] }));
-                          savePreferences({ exam_preference: newPref, esat_subjects: [] }, "exam_preference");
+                          setLocalESATSubjects([]);
+                          setPreferences((prev) => ({
+                            ...prev,
+                            exam_preference: newPref,
+                            esat_subjects: [],
+                          }));
+                          savePreferences(
+                            { exam_preference: newPref, esat_subjects: [] },
+                            "exam_preference",
+                          );
                         }}
                         options={[
                           { value: 'ESAT', label: 'ESAT' },
@@ -979,12 +926,16 @@ export default function ProfilePage() {
                                 type="button"
                                 onClick={() => handleESATSubjectToggle(subject)}
                                 className={cn(
-                                  "rounded-organic-md px-4 py-2.5 duration-fast ease-signature transition-colors",
-                                  "outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                  "inline-flex min-h-[42px] items-center gap-2 rounded-organic-md px-4 py-2.5 text-sm font-medium outline-none transition-colors duration-fast ease-signature",
                                   "interaction-scale touch-manipulation",
-                                  "text-sm font-medium inline-flex items-center gap-2 min-h-[42px]",
                                   esatSubjectPillClass(subject, isSelected),
+                                  !isSelected &&
+                                    localESATSubjects.length >= 3 &&
+                                    "cursor-not-allowed opacity-50",
                                 )}
+                                disabled={
+                                  !isSelected && localESATSubjects.length >= 3
+                                }
                               >
                                 <span>{subject}</span>
                                 {isSelected && (
@@ -1006,10 +957,10 @@ export default function ProfilePage() {
                             onClick={handleSaveESATSubjects}
                             disabled={localESATSubjects.length !== 3 || saving === "esat_subjects"}
                             className={cn(
-                              "w-full px-5 py-3 rounded-organic-md duration-fast ease-signature font-medium border transition-colors",
+                              "w-full rounded-organic-md px-5 py-3 font-medium outline-none transition-colors duration-fast ease-signature",
                               localESATSubjects.length === 3 && saving !== "esat_subjects"
-                                ? "border-border bg-surface-mid text-text hover:bg-surface-neutral"
-                                : "border-border-subtle bg-surface-elevated/80 text-text-disabled cursor-not-allowed",
+                                ? "bg-surface-mid text-text hover:bg-surface-neutral"
+                                : "cursor-not-allowed bg-surface-elevated/80 text-text-disabled",
                             )}
                           >
                             {saving === "esat_subjects" ? (
@@ -1103,6 +1054,9 @@ export default function ProfilePage() {
                 </div>
               )}
 
+              {/* Pricing Section */}
+              {activeSection === 'pricing' && <SettingsPricingPanel />}
+
               {/* Data Management Section */}
               {activeSection === 'data' && (
                 <div className="space-y-8">
@@ -1120,9 +1074,8 @@ export default function ProfilePage() {
                         variant="secondary"
                         onClick={handleExportData}
                         className={cn(
-                          "rounded-organic-md border border-border bg-surface-mid px-5 py-2.5 font-medium",
-                          "text-text shadow-sm hover:bg-surface-neutral",
-                          "inline-flex items-center gap-2",
+                          "inline-flex items-center gap-2 rounded-organic-md bg-surface-mid px-5 py-2.5 font-medium outline-none transition-colors",
+                          "text-text hover:bg-surface-neutral",
                         )}
                       >
                         <span>Export Results (CSV)</span>
@@ -1139,9 +1092,8 @@ export default function ProfilePage() {
                           variant="secondary"
                           onClick={() => setShowResetData(true)}
                           className={cn(
-                            "rounded-organic-md border border-border bg-surface-mid px-5 py-2.5 font-medium",
-                            "text-text shadow-sm hover:border-error/50 hover:bg-error/10 hover:text-error",
-                            "inline-flex items-center gap-2",
+                            "inline-flex items-center gap-2 rounded-organic-md bg-surface-mid px-5 py-2.5 font-medium outline-none transition-colors",
+                            "text-text hover:bg-error/10 hover:text-error",
                           )}
                         >
                           <span>Reset All Data</span>
@@ -1197,9 +1149,8 @@ export default function ProfilePage() {
                         type="button"
                         onClick={toggleTheme}
                         className={cn(
-                          "inline-flex items-center gap-2 px-4 py-3 rounded-organic-md duration-fast ease-signature transition-colors border",
-                          "bg-surface-mid border-border text-text",
-                          "hover:bg-surface-neutral hover:border-border-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-3 outline-none transition-colors duration-fast ease-signature",
+                          "bg-surface-mid text-text hover:bg-surface-neutral",
                         )}
                       >
                         {isDark ? (

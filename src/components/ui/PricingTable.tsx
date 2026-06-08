@@ -25,7 +25,7 @@ interface PricingTableProps {
 }
 
 const CARD_SHELL =
-  "relative flex h-full flex-col rounded-organic-xl border border-border bg-surface-elevated p-6 ring-1 ring-white/[0.06] sm:p-7";
+  "relative flex h-full flex-col rounded-organic-xl bg-surface-elevated p-6 sm:p-7";
 
 export function PricingTable({
   tiers,
@@ -48,12 +48,12 @@ export function PricingTable({
               key={tier.id}
               className={cn(
                 CARD_SHELL,
-                tier.featured && "border-primary/20 pt-10 ring-primary/15",
+                tier.featured && "pt-10",
               )}
             >
               {tier.featured ? (
                 <div className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1/2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-background shadow-glow">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-background shadow-glow">
                     <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
                     Best value
                   </span>
@@ -99,7 +99,7 @@ export function PricingTable({
                 className={cn(
                   "w-full rounded-organic-lg",
                   !showPrimaryCta &&
-                    "border-border-subtle bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+                    "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
                 )}
                 onClick={() => onSelect(tier.id)}
               >
