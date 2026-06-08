@@ -42,13 +42,12 @@ export const metadata: Metadata = {
   keywords: [...BRAND_CONFIG.keywords],
   icons: {
     icon: [
+      { url: "/brand/favicon-light.png", media: "(prefers-color-scheme: light)" },
       { url: "/brand/favicon-dark.png", media: "(prefers-color-scheme: dark)" },
     ],
     apple: [
-      {
-        url: "/brand/apple-icon-dark.png",
-        media: "(prefers-color-scheme: dark)",
-      },
+      { url: "/brand/apple-icon-light.png", media: "(prefers-color-scheme: light)" },
+      { url: "/brand/apple-icon-dark.png", media: "(prefers-color-scheme: dark)" },
     ],
   },
 };
