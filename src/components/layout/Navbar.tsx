@@ -42,6 +42,35 @@ const questionsNavItems = [
   { href: '/questions/questionbank/drill', label: 'Drill' },
 ];
 
+const sectionNavItems = [
+  {
+    href: '/mental-maths/drill',
+    label: 'Mental Maths',
+    section: 'skills' as const,
+    activeClass: 'font-bold text-primary',
+    idleClass: 'font-semibold text-text-muted hover:text-text',
+  },
+  {
+    href: '/past-papers/library',
+    label: 'Past Papers',
+    section: 'papers' as const,
+    activeClass: 'font-bold text-accent',
+    idleClass: 'font-semibold text-text-muted hover:text-text',
+  },
+  {
+    href: '/questions',
+    label: 'Question Bank',
+    section: 'questions' as const,
+    activeClass: 'font-bold text-secondary',
+    idleClass: 'font-semibold text-text-muted hover:text-text',
+  },
+];
+
+const navPillClass =
+  'px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature will-change-transform active:scale-[0.97]';
+
+const navGroupGapClass = 'flex min-w-0 items-center gap-1 sm:gap-2';
+
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -197,9 +226,9 @@ export function Navbar() {
         )}
       {showMainNavStrip && (
       <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
-        <div className='mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8'>
-          <div className='flex h-[65px] items-center justify-between'>
-            <div className='flex min-w-0 flex-1 items-center gap-x-3 gap-y-1 lg:gap-x-6'>
+        <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
+          <div className='flex h-[65px] items-center justify-between gap-4'>
+            <div className='flex min-w-0 flex-1 items-center gap-4 sm:gap-6 lg:gap-8'>
               <Link
                 href='/'
                 className='group interaction-scale inline-flex shrink-0 items-center'
@@ -209,59 +238,48 @@ export function Navbar() {
               </Link>
 
               {!hasActiveSession && (
-                <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1'>
-                  <Link
-                    href='/mental-maths/drill'
-                    className={cn(
-                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
-                      currentSection === 'skills'
-                        ? 'font-bold text-primary'
-                        : 'font-semibold text-text-muted hover:text-text',
-                    )}
-                  >
-                    Mental Maths
-                  </Link>
-                  <span
-                    className='text-sm text-text-subtle select-none'
-                    aria-hidden
-                  >
-                    /
-                  </span>
-                  <Link
-                    href='/past-papers/library'
-                    className={cn(
-                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
-                      currentSection === 'papers'
-                        ? 'font-bold text-accent'
-                        : 'font-semibold text-text-muted hover:text-text',
-                    )}
-                  >
-                    Past Papers
-                  </Link>
-                  <span
-                    className='text-sm text-text-subtle select-none'
-                    aria-hidden
-                  >
-                    /
-                  </span>
-                  <Link
-                    href='/questions'
-                    className={cn(
-                      'text-sm uppercase tracking-wider transition-colors duration-fast ease-signature',
-                      currentSection === 'questions'
-                        ? 'font-bold text-secondary'
-                        : 'font-semibold text-text-muted hover:text-text',
-                    )}
-                  >
-                    Question Bank
-                  </Link>
+                <div className={navGroupGapClass}>
+                  {sectionNavItems.map((item) => {
+                    const isActive = currentSection === item.section;
+                    const isPressed = activePress === item.href;
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        prefetch={true}
+                        onMouseEnter={() => handleMouseEnter(item.href)}
+                        onMouseDown={() => handleMouseDown(item.href)}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        className={cn(
+                          navPillClass,
+                          isActive
+                            ? item.section === 'skills'
+                              ? 'bg-primary/15 text-primary'
+                              : item.section === 'papers'
+                                ? 'bg-accent/10 text-accent'
+                                : 'bg-secondary/10 text-secondary'
+                            : cn(item.idleClass, 'hover:bg-surface-subtle'),
+                          isPressed &&
+                            !isActive &&
+                            'bg-surface-elevated scale-[0.97]',
+                        )}
+                        style={{
+                          transform: isPressed ? 'scale(0.97)' : undefined,
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             <div className='flex min-w-0 shrink-0 items-center gap-2 sm:gap-3'>
               {!hasActiveSession && currentSection !== 'home' && (
-                <div className='flex min-w-0 items-center gap-1 sm:gap-2'>
+                <div className={navGroupGapClass}>
                   {currentNavItems.map((item) => {
                     const isActive = pathname === item.href;
                     const isPressed = activePress === item.href;
@@ -276,8 +294,7 @@ export function Navbar() {
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseUp}
                         className={cn(
-                          'px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature will-change-transform',
-                          'active:scale-[0.97]',
+                          navPillClass,
                           isActive
                             ? currentSection === 'skills'
                               ? 'bg-primary/15 text-primary'

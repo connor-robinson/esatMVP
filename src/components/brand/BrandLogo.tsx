@@ -17,8 +17,8 @@ const FULL_SIZE_CLASS: Record<BrandLogoSize, string> = {
 };
 
 const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  /** 1em beside `text-sm` nav links — same cap height as link text. */
-  nav: 'h-[1em] w-[1em]',
+  /** Slightly taller than cap height so the mark reads beside the wordmark. */
+  nav: 'h-[1.35em] w-[1.35em]',
   md: 'h-8 w-8',
   lg: 'h-12 w-12 sm:h-14 sm:w-14',
 };
@@ -48,7 +48,9 @@ export function BrandLogo({
       draggable={false}
       className={cn(
         'block shrink-0 select-none object-contain',
-        'brightness-0 dark:brightness-100 dark:invert-0',
+        variant === 'mark'
+          ? 'brightness-0 invert dark:brightness-100 dark:invert-0 dark:mix-blend-screen'
+          : 'brightness-0 dark:brightness-100 dark:invert-0',
         variant === 'full' ? FULL_SIZE_CLASS[size] : MARK_SIZE_CLASS[size],
         className,
       )}

@@ -18,8 +18,8 @@ export const BRAND_CONFIG = {
   // Short title (navbar fallback / aria)
   shortTitle: "The ESAT Guide",
 
-  // Navbar wordmark — no spaces, matches logo lockup
-  navWordmark: "TheEsatGuide",
+  // Navbar wordmark — mixed case: the + ESAT + Guide
+  navWordmark: "theESATGuide",
 
   // Logo assets in /public/brand (transparent PNG; inverted in light mode via BrandLogo)
   logoFullSrc: "/brand/logo-full.png",
