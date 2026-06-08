@@ -1,4 +1,3 @@
-import { BrandLogo } from '@/components/brand/BrandLogo';
 import { cn } from '@/lib/utils';
 
 interface BrandNavLockupProps {
@@ -9,21 +8,20 @@ interface BrandNavLockupProps {
 const navWordClass =
   'text-sm font-semibold uppercase tracking-[0.12em] leading-none';
 
-/** Logo mark + theESATGuide wordmark (the + ESAT + Guide). */
+/** Navbar wordmark — TheEsatGuide (no logo). */
 export function BrandNavLockup({ className }: BrandNavLockupProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-2.5 text-text',
+        'inline-flex items-center text-text',
+        navWordClass,
+        'whitespace-nowrap normal-case',
         className,
       )}
     >
-      <BrandLogo variant='mark' size='nav' alt='' />
-      <span className={cn(navWordClass, 'inline-flex items-baseline whitespace-nowrap normal-case')}>
-        <span className='font-semibold lowercase'>the</span>
-        <span className='font-bold'>ESAT</span>
-        <span className='font-semibold'>Guide</span>
-      </span>
+      <span className='font-semibold'>The</span>
+      <span className='font-semibold'>Esat</span>
+      <span className='font-semibold'>Guide</span>
     </span>
   );
 }
