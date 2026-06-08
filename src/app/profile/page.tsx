@@ -557,35 +557,62 @@ export default function ProfilePage() {
   );
 
   const accountBtnClass =
-    "shrink-0 bg-surface-mid font-sans text-sm text-text hover:bg-surface-neutral focus-visible:shadow-none";
+    "h-8 shrink-0 rounded-organic-md bg-background/50 px-3 font-sans text-xs font-semibold text-text transition-all duration-fast ease-signature hover:bg-background/80 focus-visible:shadow-none active:scale-[0.98]";
+
+  const accountBtnDangerClass =
+    "h-8 shrink-0 rounded-organic-md bg-background/50 px-3 font-sans text-xs font-semibold text-error transition-all duration-fast ease-signature hover:bg-error/10 focus-visible:shadow-none active:scale-[0.98]";
+
+  const AccountSection = ({
+    title,
+    className,
+    children,
+  }: {
+    title: string;
+    className?: string;
+    children: React.ReactNode;
+  }) => (
+    <section
+      className={cn(
+        "rounded-organic-lg px-4 py-3.5 sm:px-5",
+        className,
+      )}
+    >
+      <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-subtle">
+        {title}
+      </p>
+      <div className="space-y-0.5">{children}</div>
+    </section>
+  );
 
   const AccountRow = ({
     label,
-    description,
+    hint,
     value,
     action,
     children,
   }: {
     label: string;
-    description?: string;
+    hint?: string;
     value?: React.ReactNode;
     action?: React.ReactNode;
     children?: React.ReactNode;
   }) => (
-    <div className="flex flex-col gap-4 py-7 sm:flex-row sm:items-start sm:justify-between">
-      <div className="min-w-0 flex-1 space-y-1.5">
-        <p className="text-sm font-medium text-text">{label}</p>
-        {description && (
-          <p className="text-xs leading-relaxed text-text-muted">{description}</p>
-        )}
-        {value && (
-          <p className="pt-0.5 text-base font-medium tracking-tight text-text">
+    <div className="py-2">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span className="w-20 shrink-0 text-xs font-medium text-text-muted sm:w-24">
+          {label}
+        </span>
+        {value !== undefined && (
+          <span className="min-w-0 flex-1 truncate text-sm font-medium text-text">
             {value}
-          </p>
+          </span>
         )}
-        {children}
+        {action && <div className="ml-auto flex shrink-0 items-center gap-2">{action}</div>}
       </div>
-      {action && <div className="shrink-0 sm:pt-0.5">{action}</div>}
+      {hint && (
+        <p className="mt-1 pl-0 text-[11px] text-text-subtle sm:pl-24">{hint}</p>
+      )}
+      {children}
     </div>
   );
 
@@ -680,261 +707,216 @@ export default function ProfilePage() {
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <Card variant="elevated" className="rounded-organic-xl p-8">
+            <Card variant="elevated" className="rounded-organic-xl p-5 sm:p-6">
               {/* Account Section */}
               {activeSection === 'account' && (
-                <div className="font-sans">
-                  <div className="mb-10">
-                    <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-2xl">
+                <div className="space-y-3 font-sans">
+                  <div className="mb-1">
+                    <h2 className="font-heading text-lg font-bold tracking-tight text-text sm:text-xl">
                       Account
                     </h2>
-                    <p className="mt-2 text-sm text-text-muted">
+                    <p className="mt-1 text-xs text-text-muted">
                       Profile, security, and billing
                     </p>
                   </div>
 
-                  <div className="divide-y divide-border-subtle/50">
-                    <section>
-                      <p className="pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
-                        Profile
-                      </p>
-                      {!isEditingUsername ? (
-                        <AccountRow
-                          label="Username"
-                          description={usernameChangeHint}
-                          value={preferences.username || "Not set"}
-                          action={
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleStartEdit}
-                              disabled={!canEditUsername() || saving === "username"}
-                              className={cn(
-                                accountBtnClass,
-                                !canEditUsername() && "cursor-not-allowed opacity-50",
-                              )}
-                            >
-                              <Edit3 className="h-4 w-4" />
-                              Edit
-                            </Button>
-                          }
-                        />
-                      ) : (
-                        <div className="space-y-3 py-7">
-                          <div className="space-y-1.5">
-                            <p className="text-sm font-medium text-text">Username</p>
-                            {usernameChangeHint && (
-                              <p className="text-xs text-text-muted">{usernameChangeHint}</p>
+                  <AccountSection title="Profile" className="bg-surface-mid">
+                    {!isEditingUsername ? (
+                      <AccountRow
+                        label="Username"
+                        hint={usernameChangeHint}
+                        value={preferences.username || "Not set"}
+                        action={
+                          <button
+                            type="button"
+                            onClick={handleStartEdit}
+                            disabled={!canEditUsername() || saving === "username"}
+                            className={cn(
+                              accountBtnClass,
+                              "inline-flex items-center gap-1.5",
+                              !canEditUsername() && "cursor-not-allowed opacity-50",
                             )}
-                          </div>
-                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                            <div className="relative min-w-0 flex-1">
-                              <Input
-                                ref={usernameInputRef}
-                                type="text"
-                                value={usernameInput}
-                                onChange={handleUsernameChange}
-                                placeholder="Enter your username"
-                                className={cn(
-                                  "pr-10 focus-visible:ring-0",
-                                  usernameAvailability.available === true &&
-                                    "border-success/60 focus-visible:border-success",
-                                  usernameAvailability.available === false &&
-                                    "border-error/60 focus-visible:border-error",
-                                  usernameError &&
-                                    "border-error/60 focus-visible:border-error",
-                                )}
-                                disabled={saving === "username"}
-                                autoComplete="username"
-                              />
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {usernameChecking && (
-                                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary" />
-                                )}
-                                {!usernameChecking && usernameAvailability.available === true && (
-                                  <CheckCircle2 className="h-4 w-4 text-success" />
-                                )}
-                                {!usernameChecking && usernameAvailability.available === false && (
-                                  <AlertCircle className="h-4 w-4 text-error" />
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex shrink-0 gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleCancelEdit}
-                                disabled={saving === "username"}
-                                className={accountBtnClass}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleSaveUsername}
-                                disabled={
-                                  saving === "username" ||
-                                  !isUsernameValid(usernameInput) ||
-                                  usernameAvailability.available !== true ||
-                                  usernameInput === preferences.username
-                                }
-                                className={cn(
-                                  accountBtnClass,
-                                  isUsernameValid(usernameInput) &&
-                                    usernameAvailability.available === true &&
-                                    usernameInput !== preferences.username
-                                    ? "text-success hover:bg-success/10 hover:text-success"
-                                    : "cursor-not-allowed opacity-40",
-                                )}
-                              >
-                                {saving === "username" ? (
-                                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary" />
-                                ) : (
-                                  "Save"
-                                )}
-                              </Button>
-                            </div>
-                          </div>
-                          {usernameAvailability.message && (
-                            <p
+                          >
+                            <Edit3 className="h-3.5 w-3.5" />
+                            Edit
+                          </button>
+                        }
+                      />
+                    ) : (
+                      <div className="py-2">
+                        <div className="flex flex-wrap items-center gap-2 sm:pl-24">
+                          <div className="relative min-w-[12rem] flex-1">
+                            <Input
+                              ref={usernameInputRef}
+                              type="text"
+                              value={usernameInput}
+                              onChange={handleUsernameChange}
+                              placeholder="Username"
                               className={cn(
-                                "text-xs",
-                                usernameAvailability.available === true
-                                  ? "text-success"
-                                  : "text-error",
+                                "h-9 py-2 pr-9 text-sm focus-visible:ring-0",
+                                usernameAvailability.available === true &&
+                                  "border-success/60 focus-visible:border-success",
+                                usernameAvailability.available === false &&
+                                  "border-error/60 focus-visible:border-error",
+                                usernameError &&
+                                  "border-error/60 focus-visible:border-error",
                               )}
-                            >
-                              {usernameAvailability.message}
-                            </p>
-                          )}
-                          {usernameError && (
-                            <p className="flex items-center gap-1 text-xs text-error">
-                              <AlertCircle className="h-3 w-3" />
-                              {usernameError}
-                            </p>
-                          )}
-                          {!canEditUsername() && (
-                            <p className="flex items-center gap-1 text-xs text-error">
-                              <AlertCircle className="h-3 w-3" />
-                              14 days needed between each change
-                            </p>
-                          )}
-                        </div>
-                      )}
-
-                      <AccountRow
-                        label="Email"
-                        description="Used for sign-in and account recovery"
-                        value={email}
-                        action={
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowChangeEmail(true)}
-                            className={accountBtnClass}
-                          >
-                            <Mail className="h-4 w-4" />
-                            Change
-                          </Button>
-                        }
-                      />
-                    </section>
-
-                    <section>
-                      <p className="pb-1 pt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
-                        Security
-                      </p>
-                      <AccountRow
-                        label="Password"
-                        description="Keep your account secure with a strong password"
-                        value="••••••••••••"
-                        action={
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setShowChangePassword(true)}
-                            className={accountBtnClass}
-                          >
-                            <Lock className="h-4 w-4" />
-                            Update
-                          </Button>
-                        }
-                      />
-                    </section>
-
-                    <section>
-                      <p className="pb-1 pt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
-                        Billing
-                      </p>
-                      <AccountRow
-                        label="Subscription"
-                        description="Plans, invoices, and payment method"
-                        action={
-                          <div className="flex flex-wrap gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setActiveSection("pricing")}
-                              className={accountBtnClass}
-                            >
-                              View plans
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={async () => {
-                                try {
-                                  const res = await fetch("/api/stripe/create-portal-link", {
-                                    method: "POST",
-                                  });
-                                  const data = await res.json();
-                                  if (data.url) window.location.href = data.url;
-                                  else throw new Error(data.error ?? "Failed");
-                                } catch (err: unknown) {
-                                  console.error(err);
-                                  alert("Failed to open billing portal");
-                                }
-                              }}
-                              className={accountBtnClass}
-                            >
-                              <CreditCard className="h-4 w-4" />
-                              Manage billing
-                            </Button>
+                              disabled={saving === "username"}
+                              autoComplete="username"
+                            />
+                            <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                              {usernameChecking && (
+                                <div className="h-3.5 w-3.5 animate-spin rounded-full border-b-2 border-primary" />
+                              )}
+                              {!usernameChecking && usernameAvailability.available === true && (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+                              )}
+                              {!usernameChecking && usernameAvailability.available === false && (
+                                <AlertCircle className="h-3.5 w-3.5 text-error" />
+                              )}
+                            </div>
                           </div>
-                        }
-                      />
-                    </section>
-
-                    <section className="pt-8">
-                      <p className="pb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
-                        Session
-                      </p>
-                      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleLogout}
-                          className={cn(accountBtnClass, "w-full sm:w-auto")}
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Log out
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowDeleteAccount(true)}
-                          className={cn(
-                            accountBtnClass,
-                            "w-full text-error hover:bg-error/10 hover:text-error sm:w-auto",
-                          )}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete account
-                        </Button>
+                          <button
+                            type="button"
+                            onClick={handleCancelEdit}
+                            disabled={saving === "username"}
+                            className={accountBtnClass}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleSaveUsername}
+                            disabled={
+                              saving === "username" ||
+                              !isUsernameValid(usernameInput) ||
+                              usernameAvailability.available !== true ||
+                              usernameInput === preferences.username
+                            }
+                            className={cn(
+                              accountBtnClass,
+                              isUsernameValid(usernameInput) &&
+                                usernameAvailability.available === true &&
+                                usernameInput !== preferences.username
+                                ? "text-success hover:bg-success/10"
+                                : "cursor-not-allowed opacity-40",
+                            )}
+                          >
+                            {saving === "username" ? "Saving…" : "Save"}
+                          </button>
+                        </div>
+                        {usernameAvailability.message && (
+                          <p
+                            className={cn(
+                              "mt-1 text-[11px] sm:pl-24",
+                              usernameAvailability.available === true
+                                ? "text-success"
+                                : "text-error",
+                            )}
+                          >
+                            {usernameAvailability.message}
+                          </p>
+                        )}
+                        {(usernameError || !canEditUsername()) && (
+                          <p className="mt-1 flex items-center gap-1 text-[11px] text-error sm:pl-24">
+                            <AlertCircle className="h-3 w-3 shrink-0" />
+                            {usernameError ?? "14 days needed between each change"}
+                          </p>
+                        )}
                       </div>
-                    </section>
-                  </div>
+                    )}
+
+                    <AccountRow
+                      label="Email"
+                      value={email}
+                      action={
+                        <button
+                          type="button"
+                          onClick={() => setShowChangeEmail(true)}
+                          className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
+                        >
+                          <Mail className="h-3.5 w-3.5" />
+                          Change
+                        </button>
+                      }
+                    />
+                  </AccountSection>
+
+                  <AccountSection title="Security" className="bg-surface-neutral/60">
+                    <AccountRow
+                      label="Password"
+                      value="••••••••"
+                      action={
+                        <button
+                          type="button"
+                          onClick={() => setShowChangePassword(true)}
+                          className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
+                        >
+                          <Lock className="h-3.5 w-3.5" />
+                          Update
+                        </button>
+                      }
+                    />
+                  </AccountSection>
+
+                  <AccountSection title="Billing" className="bg-surface-elevated">
+                    <AccountRow
+                      label="Plan"
+                      value="Manage subscription"
+                      action={
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setActiveSection("pricing")}
+                            className={accountBtnClass}
+                          >
+                            View plans
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                const res = await fetch("/api/stripe/create-portal-link", {
+                                  method: "POST",
+                                });
+                                const data = await res.json();
+                                if (data.url) window.location.href = data.url;
+                                else throw new Error(data.error ?? "Failed");
+                              } catch (err: unknown) {
+                                console.error(err);
+                                alert("Failed to open billing portal");
+                              }
+                            }}
+                            className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
+                          >
+                            <CreditCard className="h-3.5 w-3.5" />
+                            Billing
+                          </button>
+                        </>
+                      }
+                    />
+                  </AccountSection>
+
+                  <AccountSection title="Session" className="bg-surface-subtle">
+                    <div className="flex flex-wrap items-center gap-2 py-1.5">
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        Log out
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowDeleteAccount(true)}
+                        className={cn(accountBtnDangerClass, "inline-flex items-center gap-1.5")}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete account
+                      </button>
+                    </div>
+                  </AccountSection>
                 </div>
               )}
 
