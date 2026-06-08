@@ -556,6 +556,51 @@ export default function ProfilePage() {
     </div>
   );
 
+  const accountBtnClass =
+    "shrink-0 bg-surface-mid font-sans text-sm text-text hover:bg-surface-neutral focus-visible:shadow-none";
+
+  const AccountRow = ({
+    label,
+    description,
+    value,
+    action,
+    children,
+  }: {
+    label: string;
+    description?: string;
+    value?: React.ReactNode;
+    action?: React.ReactNode;
+    children?: React.ReactNode;
+  }) => (
+    <div className="flex flex-col gap-4 py-7 sm:flex-row sm:items-start sm:justify-between">
+      <div className="min-w-0 flex-1 space-y-1.5">
+        <p className="text-sm font-medium text-text">{label}</p>
+        {description && (
+          <p className="text-xs leading-relaxed text-text-muted">{description}</p>
+        )}
+        {value && (
+          <p className="pt-0.5 text-base font-medium tracking-tight text-text">
+            {value}
+          </p>
+        )}
+        {children}
+      </div>
+      {action && <div className="shrink-0 sm:pt-0.5">{action}</div>}
+    </div>
+  );
+
+  const usernameChangeHint = preferences.last_username_change
+    ? (() => {
+        const lastChange = new Date(preferences.last_username_change);
+        const daysSinceChange =
+          (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
+        const daysRemaining = Math.max(0, Math.ceil(14 - daysSinceChange));
+        return daysRemaining > 0
+          ? `You can change your username in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`
+          : "You can change your username now";
+      })()
+    : undefined;
+
   const RadioGroup = ({
     value,
     onChange,
@@ -638,49 +683,52 @@ export default function ProfilePage() {
             <Card variant="elevated" className="rounded-organic-xl p-8">
               {/* Account Section */}
               {activeSection === 'account' && (
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Account</h2>
-                    <p className="text-sm text-text-muted">Manage your account information</p>
+                <div className="font-sans">
+                  <div className="mb-10">
+                    <h2 className="font-heading text-xl font-bold tracking-tight text-text sm:text-2xl">
+                      Account
+                    </h2>
+                    <p className="mt-2 text-sm text-text-muted">
+                      Profile, security, and billing
+                    </p>
                   </div>
 
-                  <div className="space-y-6">
-                    <SettingItem 
-                      label="Username" 
-                      description={preferences.last_username_change ? (() => {
-                        const lastChange = new Date(preferences.last_username_change);
-                        const daysSinceChange = (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24);
-                        const daysRemaining = Math.max(0, Math.ceil(14 - daysSinceChange));
-                        return daysRemaining > 0 
-                          ? `You can change your username in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}`
-                          : 'You can change your username now';
-                      })() : undefined}
-                    >
-                      <div className="space-y-3">
-                        {!isEditingUsername ? (
-                          // Default view: Label + Edit button
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-text">
-                              {preferences.username || "Not set"}
-                            </span>
+                  <div className="divide-y divide-border-subtle/50">
+                    <section>
+                      <p className="pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
+                        Profile
+                      </p>
+                      {!isEditingUsername ? (
+                        <AccountRow
+                          label="Username"
+                          description={usernameChangeHint}
+                          value={preferences.username || "Not set"}
+                          action={
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={handleStartEdit}
                               disabled={!canEditUsername() || saving === "username"}
                               className={cn(
-                                "flex items-center gap-2",
-                                !canEditUsername() && "opacity-50 cursor-not-allowed"
+                                accountBtnClass,
+                                !canEditUsername() && "cursor-not-allowed opacity-50",
                               )}
                             >
-                              <Edit3 className="w-4 h-4" />
-                              <span>Edit</span>
+                              <Edit3 className="h-4 w-4" />
+                              Edit
                             </Button>
+                          }
+                        />
+                      ) : (
+                        <div className="space-y-3 py-7">
+                          <div className="space-y-1.5">
+                            <p className="text-sm font-medium text-text">Username</p>
+                            {usernameChangeHint && (
+                              <p className="text-xs text-text-muted">{usernameChangeHint}</p>
+                            )}
                           </div>
-                        ) : (
-                          // Edit mode: Input + Save/Cancel buttons
-                          <div className="flex gap-3 items-start">
-                            <div className="relative flex-1">
+                          <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                            <div className="relative min-w-0 flex-1">
                               <Input
                                 ref={usernameInputRef}
                                 type="text"
@@ -701,26 +749,25 @@ export default function ProfilePage() {
                               />
                               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                                 {usernameChecking && (
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary" />
                                 )}
                                 {!usernameChecking && usernameAvailability.available === true && (
-                                  <CheckCircle2 className="w-4 h-4 text-success" />
+                                  <CheckCircle2 className="h-4 w-4 text-success" />
                                 )}
                                 {!usernameChecking && usernameAvailability.available === false && (
-                                  <AlertCircle className="w-4 h-4 text-error" />
+                                  <AlertCircle className="h-4 w-4 text-error" />
                                 )}
                               </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex shrink-0 gap-2">
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={handleCancelEdit}
                                 disabled={saving === "username"}
-                                className="p-2"
-                                title="Cancel"
+                                className={accountBtnClass}
                               >
-                                <X className="w-4 h-4" />
+                                Cancel
                               </Button>
                               <Button
                                 variant="ghost"
@@ -733,148 +780,160 @@ export default function ProfilePage() {
                                   usernameInput === preferences.username
                                 }
                                 className={cn(
-                                  "p-2",
-                                  (isUsernameValid(usernameInput) && usernameAvailability.available === true && usernameInput !== preferences.username)
-                                    ? "text-success hover:text-success/80"
-                                    : "opacity-30 cursor-not-allowed"
+                                  accountBtnClass,
+                                  isUsernameValid(usernameInput) &&
+                                    usernameAvailability.available === true &&
+                                    usernameInput !== preferences.username
+                                    ? "text-success hover:bg-success/10 hover:text-success"
+                                    : "cursor-not-allowed opacity-40",
                                 )}
-                                title="Save"
                               >
                                 {saving === "username" ? (
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                  <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary" />
                                 ) : (
-                                  <Check className="w-4 h-4" />
+                                  "Save"
                                 )}
                               </Button>
                             </div>
                           </div>
-                        )}
-                        {isEditingUsername && usernameAvailability.message && (
-                          <p className={cn(
-                            "text-xs",
-                            usernameAvailability.available === true ? "text-success" : "text-error"
-                          )}>
-                            {usernameAvailability.message}
-                          </p>
-                        )}
-                        {usernameError && (
-                          <p className="text-xs text-error flex items-center gap-1">
-                            <AlertCircle className="w-3 h-3" />
-                            {usernameError}
-                          </p>
-                        )}
-                        {!canEditUsername() && (
-                          <p className="text-xs text-error flex items-center gap-1">
-                            <AlertCircle className="w-3 h-3" />
-                            14 days needed between each change
-                          </p>
-                        )}
-                      </div>
-                    </SettingItem>
-
-                    <SettingItem 
-                      label="Email" 
-                      description="Your email address for account recovery"
-                    >
-                      <div className="flex gap-3">
-                        <Input
-                          value={email}
-                          disabled
-                          className="flex-1"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowChangeEmail(true)}
-                        className={cn(
-                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
-                          "bg-surface-mid text-text hover:bg-surface-neutral",
-                        )}
-                        >
-                          <span>Change</span>
-                          <Mail className="w-4 h-4 shrink-0" strokeWidth={2} />
-                        </button>
-                      </div>
-                    </SettingItem>
-
-                    <SettingItem 
-                      label="Password" 
-                      description="Change your account password"
-                    >
-                      <div className="flex gap-3">
-                        <div className="flex-1" />
-                        <button
-                          type="button"
-                          onClick={() => setShowChangePassword(true)}
-                        className={cn(
-                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
-                          "bg-surface-mid text-text hover:bg-surface-neutral",
-                        )}
-                        >
-                          <span>Change Password</span>
-                          <Lock className="w-4 h-4 shrink-0" strokeWidth={2} />
-                        </button>
-                      </div>
-                    </SettingItem>
-
-                    <SettingItem 
-                      label="Subscription" 
-                      description="Manage your subscription and payment method"
-                    >
-                      <div className="flex gap-3">
-                        <div className="flex-1" />
-                        <button
-                          type="button"
-                          onClick={async () => {
-                            try {
-                              const res = await fetch("/api/stripe/create-portal-link", {
-                                method: "POST",
-                              });
-                              const data = await res.json();
-                              if (data.url) window.location.href = data.url;
-                              else throw new Error(data.error ?? "Failed");
-                            } catch (err: unknown) {
-                              console.error(err);
-                              alert("Failed to open billing portal");
-                            }
-                          }}
-                        className={cn(
-                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-2 font-medium outline-none transition-colors duration-fast ease-signature",
-                          "bg-surface-mid text-text hover:bg-surface-neutral",
-                        )}
-                        >
-                          <span>Manage subscription</span>
-                          <CreditCard className="w-4 h-4 shrink-0" strokeWidth={2} />
-                        </button>
-                      </div>
-                    </SettingItem>
-
-                    <div className="pt-6">
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={handleLogout}
-                          className={cn(
-                            "flex items-center justify-center gap-2 rounded-organic-md px-4 py-2.5 font-medium outline-none transition-colors duration-fast ease-signature",
-                            "bg-surface-mid text-text hover:bg-surface-neutral",
+                          {usernameAvailability.message && (
+                            <p
+                              className={cn(
+                                "text-xs",
+                                usernameAvailability.available === true
+                                  ? "text-success"
+                                  : "text-error",
+                              )}
+                            >
+                              {usernameAvailability.message}
+                            </p>
                           )}
-                        >
-                          <span>Logout</span>
-                          <LogOut className="w-4 h-4 shrink-0" strokeWidth={2} />
-                        </button>
+                          {usernameError && (
+                            <p className="flex items-center gap-1 text-xs text-error">
+                              <AlertCircle className="h-3 w-3" />
+                              {usernameError}
+                            </p>
+                          )}
+                          {!canEditUsername() && (
+                            <p className="flex items-center gap-1 text-xs text-error">
+                              <AlertCircle className="h-3 w-3" />
+                              14 days needed between each change
+                            </p>
+                          )}
+                        </div>
+                      )}
 
-                        <button
-                          type="button"
+                      <AccountRow
+                        label="Email"
+                        description="Used for sign-in and account recovery"
+                        value={email}
+                        action={
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowChangeEmail(true)}
+                            className={accountBtnClass}
+                          >
+                            <Mail className="h-4 w-4" />
+                            Change
+                          </Button>
+                        }
+                      />
+                    </section>
+
+                    <section>
+                      <p className="pb-1 pt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
+                        Security
+                      </p>
+                      <AccountRow
+                        label="Password"
+                        description="Keep your account secure with a strong password"
+                        value="••••••••••••"
+                        action={
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowChangePassword(true)}
+                            className={accountBtnClass}
+                          >
+                            <Lock className="h-4 w-4" />
+                            Update
+                          </Button>
+                        }
+                      />
+                    </section>
+
+                    <section>
+                      <p className="pb-1 pt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
+                        Billing
+                      </p>
+                      <AccountRow
+                        label="Subscription"
+                        description="Plans, invoices, and payment method"
+                        action={
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setActiveSection("pricing")}
+                              className={accountBtnClass}
+                            >
+                              View plans
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={async () => {
+                                try {
+                                  const res = await fetch("/api/stripe/create-portal-link", {
+                                    method: "POST",
+                                  });
+                                  const data = await res.json();
+                                  if (data.url) window.location.href = data.url;
+                                  else throw new Error(data.error ?? "Failed");
+                                } catch (err: unknown) {
+                                  console.error(err);
+                                  alert("Failed to open billing portal");
+                                }
+                              }}
+                              className={accountBtnClass}
+                            >
+                              <CreditCard className="h-4 w-4" />
+                              Manage billing
+                            </Button>
+                          </div>
+                        }
+                      />
+                    </section>
+
+                    <section className="pt-8">
+                      <p className="pb-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-subtle">
+                        Session
+                      </p>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleLogout}
+                          className={cn(accountBtnClass, "w-full sm:w-auto")}
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Log out
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => setShowDeleteAccount(true)}
                           className={cn(
-                            "flex items-center justify-center gap-2 rounded-organic-md px-4 py-2.5 font-medium outline-none transition-colors duration-fast ease-signature",
-                            "bg-surface-mid text-error hover:bg-error/10",
+                            accountBtnClass,
+                            "w-full text-error hover:bg-error/10 hover:text-error sm:w-auto",
                           )}
                         >
-                          <span>Delete Account</span>
-                          <Trash2 className="w-4 h-4 shrink-0" strokeWidth={2} />
-                        </button>
+                          <Trash2 className="h-4 w-4" />
+                          Delete account
+                        </Button>
                       </div>
-                    </div>
+                    </section>
                   </div>
                 </div>
               )}
