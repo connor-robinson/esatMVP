@@ -17,8 +17,8 @@ const FULL_SIZE_CLASS: Record<BrandLogoSize, string> = {
 };
 
 const MARK_SIZE_CLASS: Record<BrandLogoSize, string> = {
-  /** Slightly taller than cap height so the mark reads beside the wordmark. */
-  nav: 'h-[1.35em] w-[1.35em]',
+  /** Aligns with `text-sm` nav link cap height. */
+  nav: 'h-7 w-7',
   md: 'h-8 w-8',
   lg: 'h-12 w-12 sm:h-14 sm:w-14',
 };

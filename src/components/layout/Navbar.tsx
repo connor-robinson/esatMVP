@@ -47,24 +47,21 @@ const sectionNavItems = [
     href: '/mental-maths/drill',
     label: 'Mental Maths',
     section: 'skills' as const,
-    activeClass: 'font-bold text-primary',
-    idleClass: 'font-semibold text-text-muted hover:text-text',
   },
   {
     href: '/past-papers/library',
     label: 'Past Papers',
     section: 'papers' as const,
-    activeClass: 'font-bold text-accent',
-    idleClass: 'font-semibold text-text-muted hover:text-text',
   },
   {
     href: '/questions',
     label: 'Question Bank',
     section: 'questions' as const,
-    activeClass: 'font-bold text-secondary',
-    idleClass: 'font-semibold text-text-muted hover:text-text',
   },
 ];
+
+const sectionNavLinkClass =
+  'text-sm font-semibold uppercase tracking-[0.12em] transition-colors duration-fast ease-signature';
 
 const navPillClass =
   'px-3 py-2 rounded-organic-md text-sm font-semibold uppercase tracking-[0.12em] transition-all duration-instant ease-signature will-change-transform active:scale-[0.97]';
@@ -238,39 +235,38 @@ export function Navbar() {
               </Link>
 
               {!hasActiveSession && (
-                <div className={navGroupGapClass}>
-                  {sectionNavItems.map((item) => {
+                <div className='flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1'>
+                  {sectionNavItems.map((item, index) => {
                     const isActive = currentSection === item.section;
-                    const isPressed = activePress === item.href;
 
                     return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        prefetch={true}
-                        onMouseEnter={() => handleMouseEnter(item.href)}
-                        onMouseDown={() => handleMouseDown(item.href)}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                        className={cn(
-                          navPillClass,
-                          isActive
-                            ? item.section === 'skills'
-                              ? 'bg-primary/15 text-primary'
-                              : item.section === 'papers'
-                                ? 'bg-accent/10 text-accent'
-                                : 'bg-secondary/10 text-secondary'
-                            : cn(item.idleClass, 'hover:bg-surface-subtle'),
-                          isPressed &&
-                            !isActive &&
-                            'bg-surface-elevated scale-[0.97]',
+                      <span key={item.href} className='inline-flex items-center gap-x-3'>
+                        {index > 0 && (
+                          <span
+                            className='text-sm text-text-subtle select-none'
+                            aria-hidden
+                          >
+                            /
+                          </span>
                         )}
-                        style={{
-                          transform: isPressed ? 'scale(0.97)' : undefined,
-                        }}
-                      >
-                        {item.label}
-                      </Link>
+                        <Link
+                          href={item.href}
+                          prefetch={true}
+                          onMouseEnter={() => handleMouseEnter(item.href)}
+                          className={cn(
+                            sectionNavLinkClass,
+                            isActive
+                              ? item.section === 'skills'
+                                ? 'font-bold text-primary'
+                                : item.section === 'papers'
+                                  ? 'font-bold text-accent'
+                                  : 'font-bold text-secondary'
+                              : 'text-text-muted hover:text-text',
+                          )}
+                        >
+                          {item.label}
+                        </Link>
+                      </span>
                     );
                   })}
                 </div>
