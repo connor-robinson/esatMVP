@@ -107,6 +107,60 @@ def count_questions_gate_overview(
     }
 
 
+def _count_assessed_exact(
+    client: Any,
+    *,
+    test_type: Optional[str],
+    quality_gate_action: Optional[str] = None,
+    status: Optional[str] = None,
+    include_deleted: bool = False,
+) -> int:
+    q = client.table(TABLE).select("id", count="exact").not_.is_("quality_gate_assessed_at", "null")
+    if not include_deleted:
+        q = q.neq("status", "deleted")
+    if status:
+        q = q.eq("status", status)
+    q = _apply_test_type_filter(q, test_type)
+    if quality_gate_action is not None:
+        q = q.eq("quality_gate_action", quality_gate_action)
+    resp = q.execute()
+    c = getattr(resp, "count", None)
+    if c is not None:
+        return int(c)
+    return 0
+
+
+def count_assessed_breakdown(
+    client: Any,
+    *,
+    test_type: Optional[str] = "ESAT",
+) -> Dict[str, Any]:
+    """
+    Assessed-row counts by AI action and workflow status (cheap exact counts via PostgREST).
+    """
+    actions = ("approve", "human_review", "delete", "regenerate", "move_to_math2")
+    by_action: Dict[str, int] = {
+        a: _count_assessed_exact(client, test_type=test_type, quality_gate_action=a) for a in actions
+    }
+    total = count_questions_gate_overview(client, test_type=test_type)["assessed"]
+    by_action["unknown"] = max(0, total - sum(by_action[a] for a in actions))
+    by_status = {
+        "pending": _count_assessed_exact(client, test_type=test_type, status="pending"),
+        "approved": _count_assessed_exact(client, test_type=test_type, status="approved"),
+    }
+    soft_deleted_assessed = _count_assessed_exact(
+        client, test_type=test_type, include_deleted=True, status="deleted"
+    )
+    needs_operator = sum(by_action[a] for a in ("human_review", "delete", "regenerate", "move_to_math2"))
+    return {
+        "total_assessed": total,
+        "by_action": by_action,
+        "by_status": by_status,
+        "needs_operator": needs_operator,
+        "soft_deleted_assessed": soft_deleted_assessed,
+    }
+
+
 def fetch_all_assessed_rows_for_overview(
     client: Any,
     *,

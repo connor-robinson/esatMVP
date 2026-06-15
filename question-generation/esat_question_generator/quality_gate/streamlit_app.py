@@ -369,6 +369,61 @@ def _format_qg_run_row(r: dict[str, Any]) -> str:
     return f"{sa_s}{proc_s} [{tag}] — {tail}"
 
 
+_REVIEW_BUCKET_OPTIONS: tuple[tuple[str, str, Optional[str]], ...] = (
+    ("all", "All processed", None),
+    ("needs_operator", "Needs operator (review / remove / regen / move)", "__needs_operator__"),
+    ("human_review", "Human review", "human_review"),
+    ("delete", "AI says remove", "delete"),
+    ("regenerate", "Regenerate", "regenerate"),
+    ("move_to_math2", "Move to Math 2", "move_to_math2"),
+    ("approve", "Keep (approve)", "approve"),
+)
+
+
+def _filter_assessed_bucket(rows: list[dict[str, Any]], bucket: str) -> list[dict[str, Any]]:
+    if bucket in ("", "all"):
+        return rows
+    if bucket == "needs_operator":
+        ops = {"human_review", "delete", "regenerate", "move_to_math2"}
+        return [r for r in rows if (r.get("quality_gate_action") or "").strip().lower() in ops]
+    want = bucket.strip().lower()
+    return [r for r in rows if (r.get("quality_gate_action") or "").strip().lower() == want]
+
+
+def _overview_table_column_config() -> dict[str, Any]:
+    return {
+        "Open": st.column_config.LinkColumn(
+            "Review",
+            display_text="Open",
+            help="Opens the Next.js review queue for this question",
+        ),
+        "Why": _wide_text_column("Why"),
+        "Curriculum reason": _wide_text_column("Curriculum reason"),
+        "Curriculum flags": _wide_text_column("Curriculum flags"),
+        "Format issues": _wide_text_column("Format issues"),
+    }
+
+
+def _render_assessed_table(rows: list[dict[str, Any]], review_base: str, *, csv_name: str, csv_key: str) -> None:
+    if not rows:
+        st.info("No questions in this category.")
+        return
+    df_ov = _build_overview_dataframe(rows, review_base)
+    st.dataframe(
+        df_ov,
+        use_container_width=True,
+        hide_index=True,
+        column_config=_overview_table_column_config(),
+    )
+    st.download_button(
+        label=f"Download CSV ({len(rows):,} rows)",
+        data=df_ov.to_csv(index=False).encode("utf-8"),
+        file_name=csv_name,
+        mime="text/csv",
+        key=csv_key,
+    )
+
+
 def _init_qg_supabase() -> tuple[Any | None, str | None]:
     try:
         from quality_gate.runner import init_env
@@ -1272,6 +1327,7 @@ with tab_review:
         clear_all_quality_gate_assessments,
         clear_quality_gate_for_graph_flagged_rows,
         count_approved_questions,
+        count_assessed_breakdown,
         count_assessed_questions,
         count_graph_flagged_rows,
         count_questions_gate_overview,
@@ -1313,46 +1369,67 @@ with tab_review:
                 "Each question appears **once** (one DB row per id — no duplicate questions)."
             )
 
-            st.subheader("Combined review queue (all runs)")
+            try:
+                breakdown = count_assessed_breakdown(_qg_client, test_type=tt_param)
+            except Exception as e:
+                breakdown = {}
+                st.caption(f"Action breakdown unavailable: {e}")
+
+            if breakdown:
+                st.markdown("#### All processed — by AI action")
+                ba = breakdown.get("by_action") or {}
+                c0, c1, c2, c3, c4, c5, c6 = st.columns(7)
+                with c0:
+                    st.metric("Processed", f"{breakdown.get('total_assessed', 0):,}")
+                with c1:
+                    st.metric("Human review", f"{ba.get('human_review', 0):,}")
+                with c2:
+                    st.metric("Remove", f"{ba.get('delete', 0):,}")
+                with c3:
+                    st.metric("Regenerate", f"{ba.get('regenerate', 0):,}")
+                with c4:
+                    st.metric("Move to Math 2", f"{ba.get('move_to_math2', 0):,}")
+                with c5:
+                    st.metric("Keep (approve)", f"{ba.get('approve', 0):,}")
+                with c6:
+                    st.metric("Needs operator", f"{breakdown.get('needs_operator', 0):,}")
+                bs = breakdown.get("by_status") or {}
+                st.caption(
+                    f"Workflow status (assessed, non-deleted): **pending** {bs.get('pending', 0):,} · "
+                    f"**approved** {bs.get('approved', 0):,}. "
+                    f"Soft-deleted but previously assessed: **{breakdown.get('soft_deleted_assessed', 0):,}** "
+                    "(hidden from table below)."
+                )
+
+            st.subheader("Browse all processed questions")
             st.caption(
-                "Click **Load queue table** to fetch assessed questions. The table is **not** loaded on every "
-                "page refresh — that used to run during **Score questions** auto-refresh and could hang or fail."
+                "Click **Load all processed** once to fetch every assessed row from the DB, then filter by category. "
+                "Tables show **all** rows in the selected bucket (no 2,500-row cap)."
             )
-            ov_scan_cap = st.number_input(
-                "Safety scan cap (assessed rows loaded before sorting)",
-                min_value=5_000,
-                max_value=200_000,
-                value=50_000,
-                step=5_000,
-                key="qg_overview_scan_cap",
-                help="Loads up to this many assessed rows from the DB, sorts by review priority, then shows the top “Max rows” below.",
-            )
-            ov_limit = st.number_input(
-                "Max rows to show after priority sort",
-                min_value=100,
-                max_value=15_000,
-                value=2500,
-                step=100,
-                key="qg_overview_limit",
-                help="Global sort: Major → Minor → Pass+Graph → … then action urgency.",
-            )
-            ov_cache_sig = f"{overview_tt}:{int(ov_scan_cap)}"
+            assessed_total = int(ov_stats.get("assessed") or 0)
+            ov_cache_sig = f"{overview_tt}:{assessed_total}"
             b_load_ov, b_clear_ov = st.columns([1, 1])
             with b_load_ov:
-                load_overview = st.button("Load queue table", type="primary", key="qg_load_overview")
+                load_overview = st.button(
+                    "Load all processed",
+                    type="primary",
+                    key="qg_load_overview",
+                    disabled=assessed_total <= 0,
+                )
             with b_clear_ov:
-                if st.button("Clear cached queue", key="qg_clear_overview"):
+                if st.button("Clear cached table", key="qg_clear_overview"):
                     st.session_state.pop("qg_overview_rows", None)
                     st.session_state.pop("qg_overview_cache_sig", None)
                     st.rerun()
 
             all_assessed: list[dict[str, Any]] = []
             if load_overview:
-                with st.spinner("Loading assessed questions for combined overview…"):
+                load_cap = max(assessed_total + 500, 5_000)
+                with st.spinner(f"Loading all {assessed_total:,} assessed question(s)…"):
                     all_assessed = fetch_all_assessed_rows_for_overview(
                         _qg_client,
                         test_type=tt_param,
-                        max_scan=int(ov_scan_cap),
+                        max_scan=load_cap,
                         page_size=500,
                     )
                 st.session_state["qg_overview_rows"] = all_assessed
@@ -1363,13 +1440,42 @@ with tab_review:
             ):
                 all_assessed = st.session_state["qg_overview_rows"]
             elif st.session_state.get("qg_overview_cache_sig"):
-                st.info("Pool or scan cap changed — click **Load queue table** to refresh.")
+                st.info("Pool changed — click **Load all processed** to refresh.")
             else:
-                st.info("No queue loaded yet. Click **Load queue table**.")
+                st.info(
+                    f"**{assessed_total:,}** question(s) processed. Click **Load all processed** to browse by category."
+                )
 
             if all_assessed:
+                if len(all_assessed) < assessed_total:
+                    st.warning(
+                        f"Loaded **{len(all_assessed):,}** of **{assessed_total:,}** assessed rows — "
+                        "re-click **Load all processed** or raise the DB scan if counts diverge."
+                    )
                 sorted_assessed = _sort_rows_for_results_table(all_assessed)
-                st.markdown("#### Curriculum filters")
+
+                bucket_labels: list[str] = []
+                bucket_keys: list[str] = []
+                ba = (breakdown or {}).get("by_action") or {}
+                for key, label, _action in _REVIEW_BUCKET_OPTIONS:
+                    if key == "all":
+                        n = len(sorted_assessed)
+                    elif key == "needs_operator":
+                        n = int((breakdown or {}).get("needs_operator") or 0)
+                    else:
+                        n = int(ba.get(key) or 0)
+                    bucket_keys.append(key)
+                    bucket_labels.append(f"{label} ({n:,})")
+
+                bucket_ix = st.selectbox(
+                    "Show category",
+                    range(len(bucket_keys)),
+                    format_func=lambda i: bucket_labels[i],
+                    key="qg_review_bucket",
+                )
+                bucket = bucket_keys[bucket_ix]
+
+                st.markdown("#### Optional curriculum filters")
                 cf1, cf2, cf3, cf4, cf5 = st.columns(5)
                 with cf1:
                     f_off = st.checkbox("Off-syllabus only", key="qg_f_off")
@@ -1381,8 +1487,10 @@ with tab_review:
                     f_long = st.checkbox("Likely too long (pacing ≤2)", key="qg_f_long")
                 with cf5:
                     f_tag = st.checkbox("Missing primary_tag", key="qg_f_tag")
+
+                bucket_rows = _filter_assessed_bucket(sorted_assessed, bucket)
                 filtered_assessed = _apply_curriculum_filters(
-                    sorted_assessed,
+                    bucket_rows,
                     {
                         "off_syllabus": f_off,
                         "math1_mm": f_mm,
@@ -1391,39 +1499,16 @@ with tab_review:
                         "missing_primary_tag": f_tag,
                     },
                 )
-                ov_rows = filtered_assessed[: int(ov_limit)]
-                if len(all_assessed) >= int(ov_scan_cap):
-                    st.warning(
-                        f"Hit scan cap ({ov_scan_cap:,} rows). Priority sort applies only within this subset — "
-                        "raise the cap if you need lower-priority older items."
-                    )
                 st.caption(
-                    f"Loaded **{len(all_assessed):,}** assessed question(s); showing top **{len(ov_rows):,}** after review-priority sort. "
-                    "One row per question id. **Status** reflects the DB workflow field (including **approved** from the question reviewer)."
+                    f"Showing **{len(filtered_assessed):,}** question(s) in **{bucket_labels[bucket_ix]}** "
+                    f"(of {len(all_assessed):,} loaded). **Status** = workflow in Supabase (pending / approved)."
                 )
-                if ov_rows:
-                    df_ov = _build_overview_dataframe(ov_rows, review_base)
-                    st.dataframe(
-                        df_ov,
-                        use_container_width=True,
-                        hide_index=True,
-                        column_config={
-                            "Open": st.column_config.LinkColumn(
-                                "Review",
-                                display_text="Open",
-                                help="Opens the Next.js review queue for this question",
-                            ),
-                            "Why": _wide_text_column("Why"),
-                            "Curriculum reason": _wide_text_column("Curriculum reason"),
-                        },
-                    )
-                    st.download_button(
-                        label="Download combined overview as CSV",
-                        data=df_ov.to_csv(index=False).encode("utf-8"),
-                        file_name="quality_gate_combined_overview.csv",
-                        mime="text/csv",
-                        key="qg_download_overview_csv",
-                    )
+                _render_assessed_table(
+                    filtered_assessed,
+                    review_base,
+                    csv_name=f"quality_gate_{bucket}.csv",
+                    csv_key=f"qg_download_overview_{bucket}",
+                )
             st.divider()
             _render_export_panel(
                 _qg_client,
