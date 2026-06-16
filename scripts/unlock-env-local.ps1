@@ -1,12 +1,10 @@
-# Temporarily unlock .env.local for editing. Re-run protect-env-local.ps1 when done.
+# Clear read-only on .env.local files (legacy — protect script no longer locks files).
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
-$EnvFile = Join-Path $Root ".env.local"
-$Backup = Join-Path $Root ".env.local.backup"
-
-foreach ($p in @($EnvFile, $Backup)) {
+foreach ($name in @(".env.local", ".env.local.backup")) {
+    $p = Join-Path $Root $name
     if (Test-Path -LiteralPath $p) {
         (Get-Item -LiteralPath $p -Force).IsReadOnly = $false
     }
 }
-Write-Host "[unlock-env] .env.local is writable. After saving changes, run: scripts\protect-env-local.ps1"
+Write-Host "[unlock-env] .env.local files are writable."

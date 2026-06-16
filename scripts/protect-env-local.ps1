@@ -1,20 +1,21 @@
-# Keeps repo-root .env.local safe: backup + read-only + auto-restore if wiped.
-# Run automatically from run_quality_gate_ui.bat, or manually after editing env.
+# Keeps repo-root .env.local safe: backup + auto-restore if wiped (no read-only lock).
+# Run from run_quality_gate_ui.bat on start, or manually after editing env.
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 $EnvFile = Join-Path $Root ".env.local"
 $Backup = Join-Path $Root ".env.local.backup"
 $MinBytes = 80
 
-function Set-ReadOnlyFlag([string]$Path, [bool]$ReadOnly) {
+function Ensure-Writable([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return }
     $item = Get-Item -LiteralPath $Path -Force
-    if ($ReadOnly) {
-        $item.IsReadOnly = $true
-    } else {
+    if ($item.IsReadOnly) {
         $item.IsReadOnly = $false
     }
 }
+
+Ensure-Writable $EnvFile
+Ensure-Writable $Backup
 
 # If main file is missing/empty but backup exists, restore.
 if ((Test-Path -LiteralPath $Backup) -and (
@@ -23,16 +24,14 @@ if ((Test-Path -LiteralPath $Backup) -and (
     )) {
     Write-Host "[protect-env] Restoring .env.local from .env.local.backup"
     Copy-Item -LiteralPath $Backup -Destination $EnvFile -Force
+    Ensure-Writable $EnvFile
 }
 
 # Refresh backup when main file looks healthy.
 if ((Test-Path -LiteralPath $EnvFile) -and ((Get-Item -LiteralPath $EnvFile -Force).Length -ge $MinBytes)) {
-    Set-ReadOnlyFlag $Backup $false
     Copy-Item -LiteralPath $EnvFile -Destination $Backup -Force
+    Ensure-Writable $Backup
 }
 
-Set-ReadOnlyFlag $EnvFile $true
-Set-ReadOnlyFlag $Backup $true
-
 $size = if (Test-Path -LiteralPath $EnvFile) { (Get-Item -LiteralPath $EnvFile -Force).Length } else { 0 }
-Write-Host "[protect-env] .env.local size=$size bytes (read-only). To edit: scripts\unlock-env-local.ps1"
+Write-Host "[protect-env] .env.local size=$size bytes (backup at .env.local.backup)"
