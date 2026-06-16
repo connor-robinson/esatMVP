@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import threading
+import time
 import uuid
 from dataclasses import replace
 from datetime import datetime, timezone
@@ -12,7 +13,14 @@ from project import LLMClient, safe_load_dotenv
 
 from .assess import assess_question
 from .answer_key import apply_llm_answer_key_patch, build_answer_key_patch
-from .defaults import default_llm_provider
+from .defaults import (
+    default_llm_provider,
+    is_quota_rate_limit_error,
+    long_quota_pause_seconds,
+    make_vertex_llm_client,
+    max_consecutive_quota_errors,
+    quota_error_pause_seconds,
+)
 from .batch_api import BatchAssessOutcome, default_batch_model, run_inline_batch_assessments
 from .schemas import (
     CohortFilters,
@@ -407,7 +415,7 @@ def run_quality_gate_job(
 
             llm = ClaudePurgeClient()
         else:
-            llm = LLMClient()
+            llm = make_vertex_llm_client()
     stats = {
         "processed": 0,
         "errors": 0,
@@ -434,6 +442,7 @@ def run_quality_gate_job(
 
     offset = 0
     total_done = 0
+    consecutive_quota_errors = 0
 
     try:
         while total_done < limit:
@@ -588,6 +597,25 @@ def run_quality_gate_job(
                         stats["errors"] += 1
                         last_error = f"{qid}: {e}"
                         _append_log(log_lines, f"[error] {last_error}")
+                        if is_quota_rate_limit_error(e):
+                            consecutive_quota_errors += 1
+                            pause_s = quota_error_pause_seconds()
+                            if consecutive_quota_errors >= max_consecutive_quota_errors():
+                                pause_s = max(pause_s, long_quota_pause_seconds())
+                            _append_log(
+                                log_lines,
+                                f"[pause] quota/rate-limit ({consecutive_quota_errors} in a row) — "
+                                f"waiting {pause_s:.0f}s before next question",
+                            )
+                            write_run_state(
+                                sp,
+                                job_id=job_id,
+                                running=True,
+                                stats=dict(stats),
+                                log_tail=log_lines or [],
+                                last_error=last_error,
+                            )
+                            time.sleep(pause_s)
                         write_run_state(
                             sp,
                             job_id=job_id,
@@ -601,6 +629,7 @@ def run_quality_gate_job(
                         continue
 
                 assert result is not None
+                consecutive_quota_errors = 0
                 row_err, eff = _commit_gate_row(
                     row=row_orig,
                     qid=qid,
@@ -653,7 +682,7 @@ def run_quality_gate_job(
                         if provider == "vertex" and llm is not None and not use_batch_api:
                             diagram_llm: Any = llm
                         else:
-                            diagram_llm = LLMClient()
+                            diagram_llm = make_vertex_llm_client()
 
                         new_stem, how, _raw = run_auto_diagram_for_row(
                             diagram_llm,

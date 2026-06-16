@@ -109,6 +109,70 @@ _QUALITY_GATE_VERTEX_404_FALLBACKS: tuple[str, ...] = (
 )
 
 
+def _env_float(name: str, default: float) -> float:
+    raw = (os.environ.get(name) or "").strip()
+    if not raw:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = (os.environ.get(name) or "").strip()
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def use_full_rubric() -> bool:
+    """Set ``QUALITY_GATE_FULL_RUBRIC=1`` to send the full ``prompt.md`` (~6k+ tokens) each call."""
+    raw = (os.environ.get("QUALITY_GATE_FULL_RUBRIC") or "0").strip().lower()
+    return raw in ("1", "true", "yes", "on")
+
+
+def make_vertex_llm_client():
+    """``LLMClient`` with env pacing — used by Quality Gate scoring and diagram helpers."""
+    from project import LLMClient
+
+    min_delay = _env_float("QUALITY_GATE_MIN_DELAY", _env_float("API_MIN_DELAY", 8.0))
+    rate_limit_delay = _env_float("API_RATE_LIMIT_DELAY", 30.0)
+    return LLMClient(min_delay=min_delay, rate_limit_delay=rate_limit_delay)
+
+
+def quota_error_pause_seconds() -> float:
+    """Sleep after a quota/429 failure before attempting the next question."""
+    return _env_float("QUALITY_GATE_QUOTA_PAUSE_S", 90.0)
+
+
+def long_quota_pause_seconds() -> float:
+    """Extra sleep when many consecutive quota errors occur in one job."""
+    return _env_float("QUALITY_GATE_LONG_QUOTA_PAUSE_S", 180.0)
+
+
+def max_consecutive_quota_errors() -> int:
+    return max(1, _env_int("QUALITY_GATE_MAX_CONSECUTIVE_QUOTA_ERRORS", 3))
+
+
+def is_quota_rate_limit_error(exc: BaseException) -> bool:
+    from project import GeminiQuotaExhaustedError
+
+    if isinstance(exc, GeminiQuotaExhaustedError):
+        return True
+    s = str(exc).lower()
+    return (
+        "429" in s
+        or "resource_exhausted" in s
+        or "quota" in s
+        or "rate limit" in s
+        or "too many requests" in s
+    )
+
+
 def quality_gate_model_try_order(primary: str, *, vertex_not_found_fallbacks: bool) -> List[str]:
     """Primary model first, then optional env list, then Vertex defaults — de-duplicated."""
     p = (primary or "").strip()

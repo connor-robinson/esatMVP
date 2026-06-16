@@ -18,7 +18,12 @@ _DIR = Path(__file__).resolve().parent
 
 
 def load_rubric_markdown() -> str:
-    p = _DIR / "prompt.md"
+    from .defaults import use_full_rubric
+
+    name = "prompt.md" if use_full_rubric() else "prompt_compact.md"
+    p = _DIR / name
+    if not p.is_file():
+        p = _DIR / "prompt.md"
     return p.read_text(encoding="utf-8")
 
 

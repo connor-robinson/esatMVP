@@ -120,13 +120,25 @@ def get_default_models_config() -> ModelsConfig:
     Environment variables can override individual models.
     """
     import os
+
+    def _m(name: str, default: str) -> str:
+        raw = (os.environ.get(name) or "").strip()
+        if not raw:
+            return default
+        if raw[0] in "\"'":
+            raw = raw.strip("\"'").strip()
+        hash_idx = raw.find("#")
+        if hash_idx > 0:
+            raw = raw[:hash_idx].rstrip()
+        return raw.strip() or default
+
     return ModelsConfig(
-        designer=os.environ.get("MODEL_DESIGNER", "gemini-2.5-pro"),
-        implementer=os.environ.get("MODEL_IMPLEMENTER", "gemini-2.5-pro"),
-        verifier=os.environ.get("MODEL_VERIFIER", "gemini-2.5-flash"),
-        style_judge=os.environ.get("MODEL_STYLE", "gemini-2.5-flash"),
-        classifier=os.environ.get("MODEL_CLASSIFIER", "gemini-2.5-flash"),
-        implementer_regen=(os.environ.get("MODEL_IMPLEMENTER_REGEN") or "").strip(),
+        designer=_m("MODEL_DESIGNER", "gemini-2.5-pro"),
+        implementer=_m("MODEL_IMPLEMENTER", "gemini-2.5-pro"),
+        verifier=_m("MODEL_VERIFIER", "gemini-2.5-flash"),
+        style_judge=_m("MODEL_STYLE", "gemini-2.5-flash"),
+        classifier=_m("MODEL_CLASSIFIER", "gemini-2.5-flash"),
+        implementer_regen=_m("MODEL_IMPLEMENTER_REGEN", ""),
     )
 
 
@@ -1357,10 +1369,11 @@ class LLMClient:
                             }
                         )
                         raise GeminiQuotaExhaustedError(
-                            "Gemini quota or rate limit exhausted on Vertex AI. "
-                            "Designer and Implementer stay on Gemini 3.1 Pro Preview (no automatic switch to 2.5 Pro). "
-                            "Limits are per Google Cloud project (RPM, TPM, RPD). "
-                            "Check Vertex AI quota in Google Cloud Console."
+                            f"Gemini quota or rate limit exhausted on Vertex AI "
+                            f"(model={model}, trace={trace_label or '—'}). "
+                            "Limits are per Google Cloud project (shared throughput / TPM burst on "
+                            "Standard PayGo). Check Vertex AI quotas and billing. "
+                            "For Quality Gate: increase QUALITY_GATE_MIN_DELAY / QUALITY_GATE_QUOTA_PAUSE_S."
                         ) from last_error
                     raise
                 finally:
@@ -2558,6 +2571,33 @@ def _math_tag_labeler_numeric_ok(s: str) -> bool:
     return t in ("1", "2", "3", "4", "5", "6", "7")
 
 
+def _map_math1_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
+    """Tag Labeler uses '1'-'7'; curriculum uses M1-M7."""
+
+    def conv(x: str) -> str:
+        x = str(x).strip()
+        if len(x) == 1 and x in "1234567":
+            return f"M{x}"
+        return x
+
+    if "primary_tag" in obj and obj["primary_tag"] is not None:
+        obj["primary_tag"] = conv(str(obj["primary_tag"]))
+    sec = obj.get("secondary_tags")
+    if not isinstance(sec, list):
+        return
+    out = []
+    for t in sec:
+        if isinstance(t, dict):
+            d = dict(t)
+            c = d.get("code")
+            if c is not None:
+                d["code"] = conv(str(c))
+            out.append(d)
+        else:
+            out.append(conv(str(t)))
+    obj["secondary_tags"] = out
+
+
 def _map_math2_labeler_codes_to_curriculum(obj: Dict[str, Any]) -> None:
     """Tag Labeler uses '1'-'7'; curriculum uses MM1-MM7."""
 
@@ -2719,6 +2759,7 @@ Return raw JSON only (one object)."""
         if primary_tag and not _math_tag_labeler_numeric_ok(primary_tag):
             raise ValueError(f"Tag Labeler assigned invalid Math1 primary_tag: {primary_tag}. Must be 1-7.")
 
+        _map_math1_labeler_codes_to_curriculum(obj)
         obj["_raw_text"] = txt
         return obj
 
