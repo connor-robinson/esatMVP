@@ -28,6 +28,7 @@ pipeline.log
 
 # local env files
 .env*.local
+.env.local.backup
 .env
 
 # vercel
