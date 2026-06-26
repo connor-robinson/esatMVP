@@ -85,7 +85,26 @@ function getSectionRow(
   section: PaperSection,
   paperType: PaperType,
   firstQuestion: Question | null | undefined,
+): { badgeLabel: string; subjectName: string; pillSection: PaperSection };
+function getSectionRow(
+  section: PaperSection,
+  index: number,
+  paperType: PaperType,
+  firstQuestion: Question | null | undefined,
+): { badgeLabel: string; subjectName: string; pillSection: PaperSection };
+function getSectionRow(
+  section: PaperSection,
+  arg2: PaperType | number,
+  arg3: PaperType | Question | null | undefined,
+  arg4?: Question | null | undefined,
 ): { badgeLabel: string; subjectName: string; pillSection: PaperSection } {
+  const paperType =
+    typeof arg2 === "number" ? (arg3 as PaperType) : (arg2 as PaperType);
+  const firstQuestion =
+    typeof arg2 === "number"
+      ? arg4
+      : (arg3 as Question | null | undefined);
+
   if (paperType === "TMUA") {
     const badgeLabel = section;
     const subjectName = normalizeTmuaSectionSubject(
