@@ -6,7 +6,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
-import { getExamAccentTextClass } from "@/config/colors";
+import {
+  getExamAccentSurfaceClass,
+  getExamAccentTextClass,
+} from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
 import { cn } from "@/lib/utils";
@@ -141,24 +144,28 @@ export function PaperLibraryGrid({
             const examPapers = papersByExam.grouped[examName];
             if (!examPapers?.length) return null;
 
-            const accentClass = getExamAccentTextClass(examName);
+            const accentTextClass = getExamAccentTextClass(examName);
+            const accentSurfaceClass = getExamAccentSurfaceClass(examName);
             const isExpanded = isExamExpanded(examName);
 
             return (
               <div
                 key={examName}
-                className="overflow-hidden rounded-organic-lg bg-surface-mid/35"
+                className="overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-elevated"
               >
                 <button
                   type="button"
                   onClick={() => toggleExam(examName)}
-                  className="group flex w-full items-center justify-between px-5 py-4 transition-colors hover:bg-surface-mid/70"
+                  className={cn(
+                    "group flex w-full items-center justify-between border-b border-border-subtle/50 px-5 py-4 transition-opacity hover:opacity-90",
+                    accentSurfaceClass,
+                  )}
                 >
                   <div className="flex items-center gap-2.5">
                     <ChevronDown
                       className={cn(
                         "h-4 w-4 shrink-0 transition-transform duration-200",
-                        accentClass,
+                        accentTextClass,
                         !isExpanded && "-rotate-90",
                       )}
                       strokeWidth={2.5}
@@ -167,7 +174,7 @@ export function PaperLibraryGrid({
                     <span
                       className={cn(
                         "font-heading text-sm font-semibold uppercase tracking-wide",
-                        accentClass,
+                        accentTextClass,
                       )}
                     >
                       {examName} Papers
@@ -185,9 +192,9 @@ export function PaperLibraryGrid({
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                      className="overflow-hidden"
+                      className="overflow-hidden bg-surface-elevated"
                     >
-                      <div className="space-y-2 p-4">
+                      <div className="space-y-2 bg-surface-elevated p-4">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}
