@@ -1787,8 +1787,9 @@ export default function PapersMarkPage() {
                       )}
                     </div>
 
-                  {/* Guessing Behavior (separate container) */}
-                  <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
+                  {/* Guessing Behavior + Accuracy Patterns */}
+                  <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-2">
+                  <div className={`${bubbleClass} space-y-3`}>
                     <div className="text-base font-semibold text-neutral-100">Guessing Behavior</div>
                     <div className="grid grid-cols-4 gap-2 text-center">
                       <div className="p-2 rounded bg-neutral-900">
@@ -1914,8 +1915,6 @@ export default function PapersMarkPage() {
                             </div>
                     {/* Removed separate time bars to reduce duplication; combined above */}
                   </div>
-
-                  
 
                     {/* Accuracy Patterns */}
                     <div className={`${bubbleClass} space-y-4`}>
@@ -2084,6 +2083,7 @@ export default function PapersMarkPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
 
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
