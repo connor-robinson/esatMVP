@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown, Loader2, Plus, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Check, Loader2, Plus } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
@@ -34,6 +34,40 @@ interface PaperColumnProps {
   onAddFullPaper: (paper: Paper, sectionsByMain: Map<string, Set<PaperSection>>) => void;
   onAddPaper: (paper: Paper) => void;
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
+}
+
+function PaperAttemptTick({
+  scope,
+  status,
+}: {
+  scope: "paper" | "section";
+  status: "partial" | "complete";
+}) {
+  const label =
+    status === "complete"
+      ? scope === "paper"
+        ? "Fully attempted"
+        : "This section fully attempted"
+      : "Partially attempted";
+
+  return (
+    <span className="group/attempt relative inline-flex shrink-0 items-center justify-center">
+      <Check
+        className="h-3.5 w-3.5 text-primary"
+        strokeWidth={2.75}
+        aria-hidden
+      />
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-max max-w-[13rem] -translate-x-1/2 rounded-organic-md border border-border-subtle bg-surface-elevated px-2.5 py-1.5 text-center text-[10px] leading-snug text-text-muted opacity-0 shadow-bar-floating transition-opacity duration-150 group-hover/attempt:opacity-100"
+      >
+        <span className="block font-medium text-text">{label}</span>
+        <span className="mt-0.5 block text-text-subtle">
+          Clear history in Analytics to remove
+        </span>
+      </span>
+    </span>
+  );
 }
 
 export function PaperColumn({
@@ -91,33 +125,32 @@ export function PaperColumn({
   }, [isExpanded, outline, paper.id]);
 
   useEffect(() => {
-    if (
-      !isExpanded ||
-      availableSections.length === 0 ||
-      !session?.user?.id
-    ) {
-      return;
-    }
+    if (!session?.user?.id) return;
 
     let cancelled = false;
 
     void (async () => {
       try {
+        const data = await fetchPaperSectionsOutline(paper.id);
+        if (cancelled) return;
+        setOutline((prev) => prev ?? data);
+        if (data.sections.length === 0) return;
+
         const sectionMap = await getPaperSectionCompletion(
           session.user!.id,
           paper,
-          availableSections,
+          data.sections,
         );
         if (cancelled) return;
 
         let completedCount = 0;
-        for (const section of availableSections) {
+        for (const section of data.sections) {
           if (sectionMap.get(section)) completedCount++;
         }
         const status =
           completedCount === 0
             ? "none"
-            : completedCount === availableSections.length
+            : completedCount === data.sections.length
               ? "complete"
               : "partial";
 
@@ -131,7 +164,7 @@ export function PaperColumn({
     return () => {
       cancelled = true;
     };
-  }, [isExpanded, availableSections, session?.user?.id, paper]);
+  }, [session?.user?.id, paper.id]);
 
   const buildSectionsByMain = (
     sections: PaperMainSection[],
@@ -252,17 +285,10 @@ export function PaperColumn({
             {paper.examName} {paper.examYear}
           </span>
           {paperCompletionStatus !== "none" && (
-            <span
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium",
-                paperCompletionStatus === "complete"
-                  ? "bg-success/15 text-success"
-                  : "bg-warning/15 text-warning",
-              )}
-            >
-              <CheckCircle2 className="h-2.5 w-2.5" />
-              {paperCompletionStatus === "complete" ? "Complete" : "In Progress"}
-            </span>
+            <PaperAttemptTick
+              scope="paper"
+              status={paperCompletionStatus === "complete" ? "complete" : "partial"}
+            />
           )}
         </div>
 
@@ -346,10 +372,7 @@ export function PaperColumn({
                       </span>
 
                       {allDone && (
-                        <span className="flex shrink-0 items-center gap-0.5 text-[10px] text-success">
-                          <CheckCircle2 className="h-2.5 w-2.5" />
-                          Complete
-                        </span>
+                        <PaperAttemptTick scope="section" status="complete" />
                       )}
 
                       <button

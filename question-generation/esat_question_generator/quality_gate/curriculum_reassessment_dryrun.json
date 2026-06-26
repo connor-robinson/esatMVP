@@ -1,0 +1,199 @@
+{
+  "generated_at": "2026-06-26T21:31:32.297317+00:00",
+  "mode": "dry_run",
+  "counts": {
+    "skipped_already_in_syllabus": 1185,
+    "skipped_not_confirmed_esat": 87,
+    "eligible_genuine_borderline": 273,
+    "skipped_already_out_of_syllabus": 169,
+    "skipped_missing_required_validation": 1,
+    "skipped_other_blocking": 70,
+    "skipped_ambiguous_blocking_issue": 45,
+    "null_test_type_excluded": 0
+  },
+  "eligible_total": 273,
+  "eligible_null_test_type": 0,
+  "examples": {
+    "skipped_already_in_syllabus": [
+      {
+        "id": "0020fec7",
+        "subject": "Biology",
+        "test_type": "ESAT",
+        "action": "approve",
+        "match": "in_syllabus",
+        "reasons": [
+          "stored curriculum_match=in_syllabus"
+        ]
+      },
+      {
+        "id": "00bbe1f6",
+        "subject": "Physics",
+        "test_type": "ESAT",
+        "action": "approve",
+        "match": "in_syllabus",
+        "reasons": [
+          "stored curriculum_match=in_syllabus"
+        ]
+      },
+      {
+        "id": "1edf5caf",
+        "subject": "Math 1",
+        "test_type": "ESAT",
+        "action": "approve",
+        "match": "in_syllabus",
+        "reasons": [
+          "stored curriculum_match=in_syllabus"
+        ]
+      }
+    ],
+    "eligible_genuine_borderline": [
+      {
+        "id": "39f065de",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "borderline is sole blocking issue"
+        ]
+      },
+      {
+        "id": "e718dfa4",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "borderline is sole blocking issue"
+        ]
+      },
+      {
+        "id": "0d5cae33",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "borderline is sole blocking issue"
+        ]
+      }
+    ],
+    "skipped_already_out_of_syllabus": [
+      {
+        "id": "17c1fe11",
+        "subject": "Math 1",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "off_syllabus",
+        "reasons": [
+          "stored curriculum_match=out_of_syllabus"
+        ]
+      },
+      {
+        "id": "930d2621",
+        "subject": "Physics",
+        "test_type": "ESAT",
+        "action": "regenerate",
+        "match": "off_syllabus",
+        "reasons": [
+          "stored curriculum_match=out_of_syllabus"
+        ]
+      },
+      {
+        "id": "1354dc96",
+        "subject": "Biology",
+        "test_type": "ESAT",
+        "action": "regenerate",
+        "match": "off_syllabus",
+        "reasons": [
+          "stored curriculum_match=out_of_syllabus"
+        ]
+      }
+    ],
+    "skipped_missing_required_validation": [
+      {
+        "id": "6d4b65db",
+        "subject": "Physics",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "in_syllabus",
+        "reasons": [
+          "missing options"
+        ]
+      }
+    ],
+    "skipped_other_blocking": [
+      {
+        "id": "6f02ab15",
+        "subject": "Physics",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "verdict=Minor",
+          "disposition_outcome=edit",
+          "human_blocking_issues=['distractor_map_needs_update']",
+          "auto_fixable_issues=['wrong_answer_key']"
+        ]
+      },
+      {
+        "id": "f55fa52e",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "verdict=Minor",
+          "disposition_outcome=edit",
+          "human_blocking_issues=['answer_key_validation']",
+          "auto_fixable_issues=['answer_key_validation']"
+        ]
+      },
+      {
+        "id": "f48200a9",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "verdict=Minor",
+          "disposition_outcome=edit",
+          "human_blocking_issues=['answer_key_mismatch']",
+          "auto_fixable_issues=['answer_key_mismatch']"
+        ]
+      }
+    ],
+    "skipped_ambiguous_blocking_issue": [
+      {
+        "id": "8b7060d8",
+        "subject": "Math 1",
+        "test_type": "ESAT",
+        "action": "move_to_math2",
+        "match": "borderline",
+        "reasons": [
+          "ambiguous_human_blocking=['borderline syllabus fit for Math 1', 'content better suited for Math 2']"
+        ]
+      },
+      {
+        "id": "a85f3c11",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "ambiguous_human_blocking=['pacing_too_long']"
+        ]
+      },
+      {
+        "id": "15121dc0",
+        "subject": "Math 2",
+        "test_type": "ESAT",
+        "action": "human_review",
+        "match": "borderline",
+        "reasons": [
+          "ambiguous_human_blocking=['wrong answer key requires inspection', 'deterministic flag conflict (pacing warning)']"
+        ]
+      }
+    ]
+  }
+}

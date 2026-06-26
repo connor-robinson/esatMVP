@@ -192,17 +192,17 @@ export const cssVar = {
 } as const;
 
 /**
- * Solid fill for section 1 / 2 chips — matches `getExamAccentTextClass` on the parent exam group.
+ * Section 1 / 2 number chip — exam-tinted fill, neutral label (library rows).
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return `bg-biology ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "NSAA") return `bg-accent ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "TMUA") return `bg-tmua-accent ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "ESAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "PAT") return `bg-chemistry ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "MAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
-  return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "ENGAA") return "bg-biology/25 text-text";
+  if (key === "NSAA") return "bg-accent/25 text-text";
+  if (key === "TMUA") return "bg-tmua-accent/25 text-text";
+  if (key === "ESAT") return "bg-maths/25 text-text";
+  if (key === "PAT") return "bg-chemistry/25 text-text";
+  if (key === "MAT") return "bg-maths/25 text-text";
+  return "bg-maths/25 text-text";
 }
 
 /** Borderless icon tile for session history rows (theme tokens only). */
