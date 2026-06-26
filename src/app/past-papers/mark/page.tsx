@@ -22,6 +22,7 @@ import {
   getMarkAnswerSummaryPanelClass,
   getMarkReviewToggleActiveClass,
   getMarkSessionPartHeaderClass,
+  getSectionBarTrackClass,
   getSectionSubjectPillClass,
   ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
@@ -578,7 +579,7 @@ export default function PapersMarkPage() {
       guessed: number;
     }> = {};
     
-    const qs = usePaperSessionStore.getState().questions;
+    const qs = questions;
     const examName = (qs?.[0]?.examName || '').toUpperCase();
     const examYear = qs?.[0]?.examYear;
     const isNSAA2019 = examName === 'NSAA' && examYear === 2019;
@@ -633,7 +634,7 @@ export default function PapersMarkPage() {
       return analytics;
     }
     
-    for (let i = 0; i < qs.length; i++) {
+    for (let i = 0; i < totalQuestions; i++) {
       const question = qs[i];
       if (!question) {
         console.warn(`[mark:sectionAnalytics] Question ${i} is undefined`);
@@ -787,7 +788,7 @@ export default function PapersMarkPage() {
     });
     
     return analytics;
-  }, [totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
+  }, [questions, totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
   const validSectionEntries = useMemo(() => {
     return Object.entries(sectionAnalytics).filter(([section]) => {
@@ -1345,24 +1346,35 @@ export default function PapersMarkPage() {
                                       </div>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-surface-neutral">
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-baseline justify-between gap-2">
+                                      <span className="text-sm font-semibold tabular-nums text-neutral-100">
+                                        {data.correct}/{data.total}
+                                      </span>
+                                      <span className="text-xs font-medium tabular-nums text-neutral-400">
+                                        {Math.round(accuracy)}%
+                                      </span>
+                                    </div>
+                                    <div className="h-2 w-full overflow-hidden rounded-full bg-surface-mid">
                                       <div
-                                        className="h-full rounded-full bg-maths/80"
-                                        style={{ width: `${accuracy}%` }}
+                                        className={cn(
+                                          "h-full rounded-full transition-[width] duration-500 ease-out",
+                                          getSectionBarTrackClass(sectionNameForColor),
+                                        )}
+                                        style={{
+                                          width: `${Math.min(100, Math.max(0, accuracy))}%`,
+                                        }}
                                       />
                                     </div>
-                                    <span className="shrink-0 text-xs font-medium tabular-nums text-neutral-300">
-                                      {Math.round(accuracy)}%
-                                    </span>
                                   </div>
-                                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-neutral-500">
-                                    <span>
-                                      {data.correct}/{data.total} correct
-                                    </span>
-                                    <span>Avg {formatTime(Math.round(data.avgTime))}</span>
-                                    {data.guessed > 0 && <span>{data.guessed} guessed</span>}
-                                  </div>
+                                  {(data.guessed > 0 || data.avgTime > 0) && (
+                                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-neutral-500">
+                                      {data.avgTime > 0 && (
+                                        <span>Avg {formatTime(Math.round(data.avgTime))}</span>
+                                      )}
+                                      {data.guessed > 0 && <span>{data.guessed} guessed</span>}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="shrink-0 text-right">
                                   <div className="text-[10px] uppercase tracking-wide text-neutral-500">

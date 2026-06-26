@@ -234,7 +234,7 @@ export function PercentileMiniChart({
               Score {userScore.toFixed(1)}
             </div>
             <div className="text-text-muted">
-              Top {topPct?.toFixed(1)}% · {userDensity.toFixed(1)}% of candidates at this band
+              Top {topPct?.toFixed(1)}%
             </div>
           </div>
         )}
