@@ -11,6 +11,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
@@ -65,6 +66,23 @@ export function SessionProgressBar({
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
   const [isSaving, setIsSaving] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<number | 'end' | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ left: number; top: number } | null>(
+    null,
+  );
+
+  const showNodeTooltip = (node: number | 'end', el: HTMLElement) => {
+    const rect = el.getBoundingClientRect();
+    setHoveredNode(node);
+    setTooltipPos({
+      left: rect.left + rect.width / 2,
+      top: rect.bottom + 8,
+    });
+  };
+
+  const hideNodeTooltip = () => {
+    setHoveredNode(null);
+    setTooltipPos(null);
+  };
 
   const [docFullscreen, setDocFullscreen] = useState(false);
   useEffect(() => {
@@ -114,15 +132,23 @@ export function SessionProgressBar({
   const nodeLabels = useMemo(() => {
     return selectedSections.map((section, index) => {
       const sectionQuestions = allSectionsQuestions?.[index];
-      const firstQ = sectionQuestions?.[0];
+      const firstQ =
+        sectionQuestions?.[0] ??
+        (sectionQuestions === undefined && questions.length > 0
+          ? questions.find(
+              (q) =>
+                (q.partName?.trim() || section) === section ||
+                selectedSections[index] === section,
+            )
+          : undefined);
       return {
         partLabel: formatPartLabel(firstQ?.partLetter),
         subject: firstQ?.partName?.trim() || section,
         section,
-        color: getSectionColor(section),
+        color: getSectionColor(firstQ?.partName?.trim() || section),
       };
     });
-  }, [selectedSections, allSectionsQuestions]);
+  }, [selectedSections, allSectionsQuestions, questions]);
 
   const endNodeLabel = useMemo(() => {
     if (isOnMarkPage) {
@@ -151,15 +177,6 @@ export function SessionProgressBar({
     if (hoveredNode === 'end') return endNodeLabel;
     return nodeLabels[hoveredNode] ?? null;
   }, [hoveredNode, nodeLabels, endNodeLabel]);
-
-  const hoveredPosition =
-    hoveredNode === null
-      ? null
-      : hoveredNode === 'end'
-        ? 100
-        : totalSections > 0
-          ? (hoveredNode / totalSections) * 100
-          : 0;
 
   if (!sessionId) return null;
 
@@ -285,8 +302,31 @@ export function SessionProgressBar({
     'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-subtle hover:text-text';
 
   return (
-    <nav className={outerClass} aria-label='Session progress'>
-      <div className='flex h-12 w-full items-center gap-3 px-4 sm:px-6 lg:px-8'>
+    <nav className={cn(outerClass, 'overflow-visible')} aria-label='Session progress'>
+      {hoveredLabel &&
+        tooltipPos &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className='pointer-events-none fixed z-[200] -translate-x-1/2 whitespace-nowrap rounded-organic-md border border-border-subtle bg-surface-elevated px-2.5 py-1.5 shadow-bar-floating'
+            style={{ left: tooltipPos.left, top: tooltipPos.top }}
+          >
+            <div className='flex items-center gap-2'>
+              <span
+                className='rounded-md px-1.5 py-0.5 font-heading text-[10px] font-bold uppercase tracking-wide text-background'
+                style={{ backgroundColor: hoveredLabel.color }}
+              >
+                {hoveredLabel.partLabel}
+              </span>
+              <span className='font-heading text-xs font-semibold text-text'>
+                {hoveredLabel.subject}
+              </span>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      <div className='flex h-12 w-full items-center gap-3 overflow-visible px-4 sm:px-6 lg:px-8'>
         <Link
           href='/'
           className='group interaction-scale inline-flex shrink-0 items-center'
@@ -295,34 +335,15 @@ export function SessionProgressBar({
           <BrandNavLockup />
         </Link>
 
-        <div className='relative min-w-0 flex-1'>
-          <div className='relative h-6 w-full'>
-            {hoveredLabel && hoveredPosition !== null ? (
-              <div
-                className='pointer-events-none absolute z-50 -translate-x-1/2 whitespace-nowrap rounded-organic-md bg-surface-elevated px-2.5 py-1.5 shadow-lg'
-                style={{ left: `${hoveredPosition}%`, top: '-2.75rem' }}
-              >
-                <div className='flex items-center gap-2'>
-                  <span
-                    className='rounded-md px-1.5 py-0.5 font-heading text-[10px] font-bold uppercase tracking-wide text-background'
-                    style={{ backgroundColor: hoveredLabel.color }}
-                  >
-                    {hoveredLabel.partLabel}
-                  </span>
-                  <span className='font-heading text-xs font-semibold text-text'>
-                    {hoveredLabel.subject}
-                  </span>
-                </div>
-              </div>
-            ) : null}
-
+        <div className='relative min-w-0 flex-1 overflow-visible'>
+          <div className='relative h-6 w-full overflow-visible'>
             <div className='absolute inset-x-0 top-3 h-0'>
-              <div className='absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-border-subtle' />
+              <div className='pointer-events-none absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-border-subtle' />
 
               {progressSegments.map((segment, index) => (
                 <div
                   key={`segment-${index}`}
-                  className='absolute rounded-full bg-maths transition-all duration-500 ease-out'
+                  className='pointer-events-none absolute rounded-full bg-maths transition-all duration-500 ease-out'
                   style={{
                     left: `${segment.start}%`,
                     width: `${segment.end - segment.start}%`,
@@ -341,19 +362,19 @@ export function SessionProgressBar({
                   <button
                     key={`${section}-${index}`}
                     type='button'
-                    className='absolute flex flex-col items-center'
+                    className='absolute z-10 flex flex-col items-center'
                     style={{
                       left: `${nodePosition}%`,
-                      top: '-10px',
+                      top: '-14px',
                       transform: 'translateX(-50%)',
                     }}
-                    onMouseEnter={() => setHoveredNode(index)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    onFocus={() => setHoveredNode(index)}
-                    onBlur={() => setHoveredNode(null)}
+                    onMouseEnter={(e) => showNodeTooltip(index, e.currentTarget)}
+                    onMouseLeave={hideNodeTooltip}
+                    onFocus={(e) => showNodeTooltip(index, e.currentTarget)}
+                    onBlur={hideNodeTooltip}
                     aria-label={`${nodeLabels[index]?.partLabel ?? 'Part'}: ${nodeLabels[index]?.subject ?? section}`}
                   >
-                    <span className='flex h-5 w-5 items-center justify-center'>
+                    <span className='flex h-7 w-7 items-center justify-center'>
                       <span
                         className={cn(
                           'h-3 w-3 rounded-full border-2 transition-all',
@@ -371,19 +392,19 @@ export function SessionProgressBar({
 
               <button
                 type='button'
-                className='absolute flex flex-col items-center'
+                className='absolute z-10 flex flex-col items-center'
                 style={{
                   left: '100%',
-                  top: '-10px',
+                  top: '-14px',
                   transform: 'translateX(-50%)',
                 }}
-                onMouseEnter={() => setHoveredNode('end')}
-                onMouseLeave={() => setHoveredNode(null)}
-                onFocus={() => setHoveredNode('end')}
-                onBlur={() => setHoveredNode(null)}
+                onMouseEnter={(e) => showNodeTooltip('end', e.currentTarget)}
+                onMouseLeave={hideNodeTooltip}
+                onFocus={(e) => showNodeTooltip('end', e.currentTarget)}
+                onBlur={hideNodeTooltip}
                 aria-label={`${endNodeLabel.partLabel}: ${endNodeLabel.subject}`}
               >
-                <span className='flex h-5 w-5 items-center justify-center'>
+                <span className='flex h-7 w-7 items-center justify-center'>
                   <span
                     className={cn(
                       'h-3 w-3 rounded-full border-2 transition-all duration-500',
