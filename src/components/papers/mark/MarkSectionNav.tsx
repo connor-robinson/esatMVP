@@ -24,9 +24,9 @@ const SECTIONS: {
   icon: LucideIcon;
 }[] = [
   { id: "overview", label: "Overview", shortLabel: "Overview", icon: LayoutDashboard },
-  { id: "stats", label: "Detailed Stats", shortLabel: "Stats", icon: BarChart3 },
   { id: "review", label: "Question Review", shortLabel: "Review", icon: ListChecks },
   { id: "mistakes", label: "Mistakes", shortLabel: "Mistakes", icon: ClipboardList },
+  { id: "stats", label: "Detailed Stats", shortLabel: "Stats", icon: BarChart3 },
   { id: "notes", label: "Session Notes", shortLabel: "Notes", icon: StickyNote },
 ];
 
