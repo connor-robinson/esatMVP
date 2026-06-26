@@ -1199,55 +1199,53 @@ export default function PapersMarkPage() {
                       </div>
                     </div>
 
-                    {/* Predicted score — hero */}
-                    {(() => {
-                      const scoreLabel =
-                        examName === "ENGAA" || examName === "NSAA"
-                          ? "Predicted ESAT score"
-                          : examName === "TMUA"
-                            ? "TMUA score"
-                            : "Predicted score";
-                      return (
-                        <div className="rounded-organic-lg bg-maths px-6 py-8 text-neutral-900 dark:text-white">
-                          <div className="text-sm font-medium uppercase tracking-wide opacity-90">
-                            {scoreLabel}
-                          </div>
-                          <div className="mt-1 text-5xl font-bold leading-none tracking-tight sm:text-6xl">
-                            {predictedScore !== null && predictedScore !== undefined
-                              ? predictedScore.toFixed(1)
-                              : "—"}
-                          </div>
-                          <div className="mt-3 text-sm opacity-80">
-                            {correctCountDerived}/{totalQuestions} correct (
-                            {Math.round(
-                              (correctCountDerived / Math.max(totalQuestions, 1)) * 100,
-                            )}
-                            %)
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* Secondary stats */}
-                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                      <div className={`${bubbleClass} flex min-h-[80px] flex-col items-center justify-center`}>
-                        <div className="text-xs text-neutral-400">Avg per question</div>
-                        <div className="text-lg font-semibold text-neutral-200">
-                          {formatTime(Math.round(avgTimePerQuestion))}
-                        </div>
-                      </div>
-                      <div className={`${bubbleClass} flex min-h-[80px] flex-col items-center justify-center`}>
-                        <div className="text-xs text-neutral-400">Guessed</div>
-                        <div className="text-lg font-semibold text-neutral-200">
-                          {accuracyPatterns.guessed}/{totalQuestions}
-                        </div>
-                      </div>
-                      <div className={`${bubbleClass} col-span-2 flex min-h-[80px] flex-col items-center justify-center md:col-span-1`}>
-                        <div className="text-xs text-neutral-400">Guess accuracy</div>
-                        <div className="text-lg font-semibold text-neutral-200">
-                          {guessExtended.accuracy}%
-                        </div>
-                      </div>
+                    {/* Overview pills — single row */}
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {(() => {
+                        const scoreLabel =
+                          examName === "ENGAA" || examName === "NSAA"
+                            ? "Predicted ESAT"
+                            : examName === "TMUA"
+                              ? "TMUA score"
+                              : "Predicted score";
+                        const generalAccuracy = Math.round(
+                          (correctCountDerived / Math.max(totalQuestions, 1)) * 100,
+                        );
+                        return (
+                          <>
+                            <div className="flex min-h-[104px] flex-col items-center justify-center rounded-organic-lg bg-maths px-3 py-4 text-neutral-900 dark:text-white sm:px-4 sm:py-5">
+                              <div className="text-5xl font-bold leading-none tracking-tight sm:text-6xl">
+                                {predictedScore !== null && predictedScore !== undefined
+                                  ? predictedScore.toFixed(1)
+                                  : "—"}
+                              </div>
+                              <div className="mt-2 text-xs font-medium uppercase tracking-wide opacity-90">
+                                {scoreLabel}
+                              </div>
+                            </div>
+                            <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
+                              <div className="text-3xl font-bold leading-tight text-neutral-100 sm:text-4xl">
+                                {generalAccuracy}%
+                              </div>
+                              <div className="mt-1 text-xs text-neutral-400">
+                                {correctCountDerived}/{totalQuestions} correct
+                              </div>
+                            </div>
+                            <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
+                              <div className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
+                                {formatTime(Math.round(avgTimePerQuestion))}
+                              </div>
+                              <div className="mt-1 text-xs text-neutral-400">Avg per question</div>
+                            </div>
+                            <div className={`${bubbleClass} flex min-h-[104px] flex-col items-center justify-center`}>
+                              <div className="text-2xl font-bold leading-tight text-neutral-100 sm:text-3xl">
+                                {accuracyPatterns.guessed}/{totalQuestions}
+                              </div>
+                              <div className="mt-1 text-xs text-neutral-400">Guessed</div>
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
 
                       {/* Combined Guess Distribution moved into Guessing Behavior */}
