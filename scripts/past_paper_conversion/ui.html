@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Past Paper Conversion</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <style>
+    :root {
+      --bg: #121218;
+      --surface: #1c1c24;
+      --surface2: #26262f;
+      --text: #ececf1;
+      --muted: #9494a8;
+      --accent: #5b8def;
+      --ok: #34d399;
+      --fail: #f87171;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    header { margin-bottom: 24px; }
+    header h1 { margin: 0 0 4px; font-size: 1.5rem; font-weight: 600; }
+    header p { margin: 0; color: var(--muted); font-size: 0.875rem; }
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .stats span { background: var(--surface); padding: 4px 10px; border-radius: 999px; }
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;
+    }
+    label { display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+    select, input[type=number] {
+      background: var(--surface2);
+      color: var(--text);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      min-width: 280px;
+    }
+    input[type=number] { min-width: 80px; width: 80px; }
+    .check-row {
+      display: flex; align-items: center; gap: 8px;
+      padding-bottom: 10px; font-size: 0.85rem; color: var(--muted); cursor: pointer;
+    }
+    button {
+      border: none; border-radius: 8px; padding: 10px 18px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--text); }
+    .progress-wrap {
+      margin-top: 16px; display: none;
+    }
+    .progress-wrap.visible { display: block; }
+    .progress-bar {
+      height: 6px; background: var(--surface2); border-radius: 999px; overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%; background: var(--accent); transition: width 0.3s;
+      width: 0%;
+    }
+    .progress-text { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .preview-bar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin-bottom: 16px;
+    }
+    .preview-bar h2 { margin: 0; margin-right: auto; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .flip-btn {
+      background: none; border: none; padding: 0; cursor: pointer; width: 100%;
+      perspective: 1200px;
+    }
+    .flip-inner {
+      position: relative; width: 100%; aspect-ratio: 3/4;
+      transition: transform 0.5s; transform-style: preserve-3d;
+    }
+    .flip-inner.flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute; inset: 0; border-radius: var(--radius);
+      overflow: hidden; backface-visibility: hidden;
+    }
+    .face-front { background: #0a0a0c; }
+    .face-front img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .face-back {
+      transform: rotateY(180deg); background: #fff; color: #111;
+      font-family: "Times New Roman", Georgia, serif;
+      font-size: 13px; line-height: 1.45; overflow-y: auto; padding: 6% 7%;
+    }
+    .face-back .katex { color: #111 !important; }
+    .q-num { font-weight: bold; margin-bottom: 0.5em; }
+    .options { margin-top: 0.8em; }
+    .options.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35em 6%; }
+    .opt { display: flex; gap: 0.35em; align-items: flex-start; }
+    .diagram { text-align: center; margin: 0.6em 0; }
+    .diagram img { max-width: 92%; max-height: 140px; object-fit: contain; }
+    .hint {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 8px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      color: rgba(255,255,255,0.85); font-size: 11px; pointer-events: none;
+    }
+    .meta { font-size: 11px; color: var(--muted); padding: 0 4px; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; margin-right: 6px;
+    }
+    .badge-ok { background: rgba(52,211,153,0.15); color: var(--ok); }
+    .badge-fail { background: rgba(248,113,113,0.15); color: var(--fail); }
+    .flag {
+      background: rgba(248,113,113,0.12); color: var(--fail);
+      padding: 1px 6px; border-radius: 4px; font-size: 10px;
+      margin: 2px 2px 0 0; display: inline-block;
+    }
+    .empty { text-align: center; color: var(--muted); padding: 48px 16px; grid-column: 1 / -1; }
+    .loading { text-align: center; padding: 48px; color: var(--muted); grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <h1>Past Paper Conversion</h1>
+      <p>Run AI conversion and flip cards to compare screenshots vs text output.</p>
+      <div class="stats" id="stats"></div>
+    </header>
+
+    <section class="panel">
+      <h2>Generate</h2>
+      <div class="controls">
+        <label>
+          Paper
+          <select id="paperSelect"></select>
+        </label>
+        <label>
+          Limit
+          <input type="number" id="limitInput" value="10" min="1" max="200" />
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="dryRunCheck" />
+          Dry run (no DB writes)
+        </label>
+        <button class="btn-primary" id="runBtn">Run conversion</button>
+      </div>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-text" id="progressText">Starting…</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="preview-bar">
+        <h2>Preview</h2>
+        <select id="statusFilter" class="btn-secondary" style="padding:8px 12px;min-width:auto">
+          <option value="all">All statuses</option>
+          <option value="auto_approved">Auto approved</option>
+          <option value="failed">Failed</option>
+        </select>
+        <button class="btn-secondary" id="refreshBtn">Refresh</button>
+        <button class="btn-secondary" id="shuffleBtn">Shuffle</button>
+      </div>
+      <div id="grid" class="grid"><div class="loading">Loading…</div></div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let shuffle = false;
+    let pollTimer = null;
+
+    function stripDiagram(stem) {
+      if (!stem) return "";
+      return stem.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "").trim();
+    }
+
+    function renderMath(el) {
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(el, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+          ],
+          throwOnError: false,
+        });
+      }
+    }
+
+    function flags(report) {
+      const chips = [];
+      for (const [k, v] of Object.entries(report || {})) {
+        if (v === true) chips.push(k);
+        else if (Array.isArray(v) && v.length) chips.push(k + " (" + v.length + ")");
+      }
+      return chips;
+    }
+
+    function buildCard(row) {
+      const wrap = document.createElement("div");
+      wrap.className = "card-wrap";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "flip-btn";
+
+      const inner = document.createElement("div");
+      inner.className = "flip-inner";
+
+      const front = document.createElement("div");
+      front.className = "face face-front";
+      const img = document.createElement("img");
+      img.src = row.sourceImageUrl;
+      img.alt = "Q" + row.questionNumber;
+      img.onload = () => {
+        if (img.naturalWidth && img.naturalHeight) {
+          inner.style.aspectRatio = img.naturalWidth + "/" + img.naturalHeight;
+        }
+      };
+      front.appendChild(img);
+      const hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "Click to flip — image vs text";
+      front.appendChild(hint);
+
+      const back = document.createElement("div");
+      back.className = "face face-back";
+      const qNum = row.detectedQuestionNumber ?? row.questionNumber;
+      const stem = stripDiagram(row.questionStem || "");
+      const letters = (row.optionLetters && row.optionLetters.length)
+        ? [...row.optionLetters].sort()
+        : Object.keys(row.options || {}).sort();
+      const twoCol = letters.length >= 6;
+
+      let html = '<div class="q-num">' + qNum + '.</div>';
+      if (stem) html += '<div class="stem">' + stem + '</div>';
+      const diagram = (row.diagramAssets || [])[0];
+      if (diagram && diagram.url) {
+        html += '<div class="diagram"><img src="' + diagram.url + '" alt="diagram" /></div>';
+      }
+      if (letters.length) {
+        html += '<div class="options' + (twoCol ? " two-col" : "") + '">';
+        for (const L of letters) {
+          const t = (row.options || {})[L];
+          if (!t) continue;
+          html += '<div class="opt"><span>' + L + '</span><span>' + t + '</span></div>';
+        }
+        html += "</div>";
+      }
+      if (!stem && !letters.length) html += '<p><em>No text extracted</em></p>';
+      back.innerHTML = html;
+      renderMath(back);
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      btn.appendChild(inner);
+      btn.onclick = () => inner.classList.toggle("flipped");
+      wrap.appendChild(btn);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      const badgeClass = row.status === "auto_approved" ? "badge-ok" : row.status === "failed" ? "badge-fail" : "";
+      const conf = row.confidence != null ? Math.round(row.confidence * 100) + "%" : "—";
+      meta.innerHTML =
+        '<span class="badge ' + badgeClass + '">' + row.status.replace("_", " ") + '</span>' +
+        row.examName + " " + row.examYear + " · Q" + row.questionNumber + " · conf " + conf;
+      const f = flags(row.conversionReport);
+      if (f.length) meta.innerHTML += "<br>" + f.map(x => '<span class="flag">' + x + '</span>').join("");
+      wrap.appendChild(meta);
+      return wrap;
+    }
+
+    async function loadPapers() {
+      const res = await fetch("/api/papers");
+      const data = await res.json();
+      const sel = $("paperSelect");
+      sel.innerHTML = "";
+      for (const p of data.papers || []) {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.label;
+        sel.appendChild(opt);
+      }
+      if (data.papers?.length) sel.value = String(data.papers.find(p => p.id === 62)?.id ?? data.papers[0].id);
+    }
+
+    async function loadSummary() {
+      const res = await fetch("/api/summary");
+      const data = await res.json();
+      $("stats").innerHTML =
+        '<span>' + data.totalQuestions + ' questions total</span>' +
+        '<span>' + data.conversionRows + ' conversions</span>' +
+        Object.entries(data.byStatus || {}).map(([s, n]) => '<span>' + s + ': ' + n + '</span>').join("");
+    }
+
+    async function loadConversions() {
+      const grid = $("grid");
+      grid.innerHTML = '<div class="loading">Loading…</div>';
+      const params = new URLSearchParams({
+        paperId: $("paperSelect").value,
+        limit: "24",
+        status: $("statusFilter").value,
+      });
+      if (shuffle) params.set("shuffle", "1");
+      const res = await fetch("/api/conversions?" + params);
+      const data = await res.json();
+      grid.innerHTML = "";
+      if (!data.conversions?.length) {
+        grid.innerHTML = '<p class="empty">No conversions yet — run conversion above.</p>';
+        return;
+      }
+      for (const row of data.conversions) grid.appendChild(buildCard(row));
+    }
+
+    async function pollStatus() {
+      const res = await fetch("/api/status");
+      const s = await res.json();
+      const wrap = $("progressWrap");
+      const running = s.status === "running";
+      $("runBtn").disabled = running;
+      if (s.status === "idle" && !running) {
+        wrap.classList.remove("visible");
+        return s;
+      }
+      wrap.classList.add("visible");
+      const pct = s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0;
+      $("progressFill").style.width = pct + "%";
+      $("progressText").textContent =
+        (s.message || s.status) + " — " + s.completed + "/" + s.total +
+        " (" + s.successful + " ok, " + s.failed + " failed)";
+      return s;
+    }
+
+    function startPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(async () => {
+        const s = await pollStatus();
+        if (s && s.status !== "running") {
+          clearInterval(pollTimer);
+          pollTimer = null;
+          loadConversions();
+          loadSummary();
+        }
+      }, 1500);
+    }
+
+    $("runBtn").onclick = async () => {
+      const body = {
+        paperId: Number($("paperSelect").value),
+        limit: Number($("limitInput").value) || undefined,
+        dryRun: $("dryRunCheck").checked,
+      };
+      const res = await fetch("/api/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Failed to start");
+        return;
+      }
+      $("progressWrap").classList.add("visible");
+      startPolling();
+    };
+
+    $("refreshBtn").onclick = () => { shuffle = false; loadConversions(); };
+    $("shuffleBtn").onclick = () => { shuffle = true; loadConversions(); };
+    $("statusFilter").onchange = loadConversions;
+    $("paperSelect").onchange = loadConversions;
+
+    (async () => {
+      await loadPapers();
+      await loadSummary();
+      await pollStatus();
+      await loadConversions();
+      const s = await pollStatus();
+      if (s?.status === "running") startPolling();
+    })();
+  </script>
+</body>
+</html>

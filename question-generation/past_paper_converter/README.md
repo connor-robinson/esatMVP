@@ -48,15 +48,18 @@ Set `NEXT_PUBLIC_PAST_PAPER_TEXT=1` in `.env.local` to render `content_format=te
 node scripts/summarize_conversions.js
 ```
 
-## Local review tool (Windows)
+## Local review UI (Windows)
 
-Double-click **`past_paper_conversion.bat`** at the repo root (no dev server needed):
+Double-click **`past_paper_conversion.bat`** at the repo root — opens a local web UI in your browser (not part of the main site).
 
-| Option | What it does |
-|--------|----------------|
-| **1. Run conversion** | Prompts for paper ID + limit, runs the Python pipeline |
-| **2. Preview results** | Exports conversions to JSON, opens flip-card viewer in browser |
-| **3. Status summary** | Prints conversion counts from Supabase |
-| **4. List paper IDs** | Shows paper ID → exam name mapping |
+```
+http://127.0.0.1:8777
+```
 
-Preview uses `scripts/past_paper_conversion/viewer.html` + a tiny local Python server on port 8765.
+- Pick a paper, set limit, **Run conversion**
+- Flip cards to compare screenshot (front) vs text render (back)
+- Filter by status, shuffle for spot checks
+
+Requires: `pip install flask` (included in `past_paper_converter/requirements.txt`)
+
+Legacy CLI menu: `scripts/past_paper_conversion/run.bat` and `preview.bat` still work if you prefer terminal-only.
