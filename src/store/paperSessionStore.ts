@@ -158,6 +158,7 @@ interface PaperSessionState {
   saveSessionToIndexedDB: () => Promise<void>;
   loadSessionFromIndexedDB: (sessionId: string) => Promise<void>;
   setIsMarkingInfo: (isMarkingInfo: boolean) => void;
+  finishMarkSession: () => Promise<string | null>;
 
   /** When false during browser fullscreen + paper session, main Navbar is hidden (immersive). */
   paperFullscreenShowMainNavbar: boolean;
@@ -1983,6 +1984,46 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       setIsMarkingInfo: (isMarkingInfo: boolean) => {
         set({ isMarkingInfo });
         get().saveSessionToIndexedDB();
+      },
+
+      finishMarkSession: async () => {
+        const state = get();
+        if (!state.sessionId) {
+          throw new Error("No active session");
+        }
+
+        if (!state.endedAt) {
+          set({ endedAt: Date.now() });
+        }
+
+        await get().persistSessionToServer({ immediate: true });
+
+        const updated = get();
+        if (updated.selectedPartIds && updated.selectedPartIds.length > 0) {
+          try {
+            const { supabase } = await import("@/lib/supabase/client");
+            const {
+              data: { session: supabaseSession },
+            } = await supabase.auth.getSession();
+            if (supabaseSession?.user?.id) {
+              const { markPartIdsAsCompleted, invalidateCache } =
+                await import("@/lib/papers/completionCache");
+              markPartIdsAsCompleted(
+                supabaseSession.user.id,
+                updated.selectedPartIds,
+              );
+              invalidateCache(supabaseSession.user.id);
+            }
+          } catch (error) {
+            console.warn(
+              "[finishMarkSession] completion cache update failed",
+              error,
+            );
+          }
+        }
+
+        set({ isMarkingInfo: false });
+        return get().sessionId;
       },
 
       saveSessionToIndexedDB: async () => {

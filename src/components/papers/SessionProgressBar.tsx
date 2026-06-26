@@ -12,7 +12,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import {
@@ -33,6 +33,7 @@ export function SessionProgressBar({
   embedded = false,
 }: SessionProgressBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const session = useSupabaseSession();
   const supabase = useSupabaseClient();
   const {
@@ -57,11 +58,16 @@ export function SessionProgressBar({
     isMarkingInfo,
     paperFullscreenShowMainNavbar,
     setPaperFullscreenShowMainNavbar,
+    finishMarkSession,
   } = usePaperSessionStore();
+
+  const isOnMarkPage = pathname.startsWith('/past-papers/mark');
+  const isPostCompletionMark = isMarkingInfo && isOnMarkPage;
 
   // Keep hooks before any conditional return to avoid hook-order crashes
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [isQuitting, setIsQuitting] = useState(false);
+  const [isSavingMark, setIsSavingMark] = useState(false);
   const [docFullscreen, setDocFullscreen] = useState(false);
 
   // Handle Escape key to close modal
@@ -317,8 +323,8 @@ export function SessionProgressBar({
     try {
       const state = usePaperSessionStore.getState();
 
-      // First persist current state to ensure nothing is lost
-      if (state.sessionId && !state.endedAt) {
+      // Persist current state before quitting
+      if (state.sessionId) {
         try {
           await state.persistSessionToServer({ immediate: true });
         } catch (error) {
@@ -354,6 +360,23 @@ export function SessionProgressBar({
     if (isQuitting) return; // Don't allow cancel while quitting
     setShowQuitModal(false);
     setIsQuitting(false);
+  };
+
+  const handleSaveAndContinue = async () => {
+    setIsSavingMark(true);
+    try {
+      const sessionIdToHighlight = await finishMarkSession();
+      if (sessionIdToHighlight) {
+        router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
+      } else {
+        router.push('/past-papers/analytics');
+      }
+    } catch (error) {
+      console.error('[SessionProgressBar] Failed to save mark session:', error);
+      alert('Failed to save session. Please try again.');
+    } finally {
+      setIsSavingMark(false);
+    }
   };
 
   const toggleBrowserFullscreen = async () => {
@@ -533,6 +556,7 @@ export function SessionProgressBar({
               <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto'>
                 <button
                   onClick={() => {
+                    if (isOnMarkPage) return;
                     if (typeof window !== 'undefined') {
                       const currentPath = window.location.pathname;
                       // If paused, always navigate to resume page
@@ -551,10 +575,17 @@ export function SessionProgressBar({
                       }
                     }
                   }}
-                  className='px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap hover:bg-white/5 transition-colors cursor-pointer'
+                  className={cn(
+                    'px-3 py-1 bg-transparent backdrop-blur-md rounded text-xs text-white font-medium uppercase tracking-wider whitespace-nowrap transition-colors',
+                    isOnMarkPage ? 'cursor-default' : 'hover:bg-white/5 cursor-pointer',
+                  )}
                 >
-                  {isMarkingInfo ? 'Paper completed' : 'Paper in progress'} -{' '}
-                  {paperDisplayName}
+                  {isOnMarkPage
+                    ? 'Review & mark'
+                    : isMarkingInfo
+                      ? 'Paper completed'
+                      : 'Paper in progress'}{' '}
+                  - {paperDisplayName}
                 </button>
               </div>
             </div>
@@ -577,6 +608,22 @@ export function SessionProgressBar({
               ) : (
                 <Maximize2 className='h-5 w-5' strokeWidth={2.2} />
               )}
+            </button>
+          )}
+
+          {isPostCompletionMark && (
+            <button
+              type="button"
+              onClick={() => void handleSaveAndContinue()}
+              disabled={isSavingMark}
+              className={cn(
+                'ml-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-fast ease-signature',
+                isSavingMark
+                  ? 'cursor-not-allowed bg-primary/30 text-background/70'
+                  : 'bg-primary text-background hover:bg-primary/90',
+              )}
+            >
+              {isSavingMark ? 'Saving…' : 'Save & Continue'}
             </button>
           )}
 
@@ -694,11 +741,14 @@ export function SessionProgressBar({
               <div className='flex-1 overflow-y-auto p-6'>
                 <div className='space-y-4 text-sm text-white/80 leading-relaxed'>
                   <p className='text-white font-medium'>
-                    Are you sure you want to quit this paper session?
+                    {isPostCompletionMark
+                      ? 'Exit without finishing your mark review?'
+                      : 'Are you sure you want to quit this paper session?'}
                   </p>
                   <p className='text-white/60'>
-                    Your progress will be saved automatically. You can resume
-                    this session later from the library.
+                    {isPostCompletionMark
+                      ? 'Your answers are saved. You can return to this session from analytics, or save and continue to finish.'
+                      : 'Your progress will be saved automatically. You can resume this session later from the library.'}
                   </p>
                 </div>
               </div>

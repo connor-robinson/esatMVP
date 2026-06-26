@@ -8,7 +8,6 @@ import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } fr
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { PaperBadge } from "@/components/papers/PaperBadge";
 import { ChoicePill } from "@/components/papers/ChoicePill";
@@ -31,7 +30,6 @@ import { supabase } from "@/lib/supabase/client";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { Letter, MistakeTag } from "@/types/papers";
-import { PageHeader } from "@/components/shared/PageHeader";
 import type { QuestionStats } from "@/types/questionStats";
 import {
   MarkSectionNav,
@@ -75,11 +73,9 @@ export default function PapersMarkPage() {
     setNotes,
     getTotalQuestions,
     getCorrectCount,
-    persistSessionToServer,
-    setEndedAt,
+    isMarkingInfo,
   } = usePaperSessionStore();
   
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -307,46 +303,6 @@ export default function PapersMarkPage() {
       })
       .filter(Boolean);
   }, [answers, questionNumbers]);
-  
-  const handleSaveAndContinue = async () => {
-    setIsSubmitting(true);
-    
-    try {
-      // CRITICAL: Set endedAt before persisting so session shows up in analytics/history
-      const currentState = usePaperSessionStore.getState();
-      if (!currentState.endedAt) {
-        setEndedAt(Date.now());
-      }
-      
-      await persistSessionToServer({ immediate: true });
-      
-      // Mark part IDs as completed in cache
-      const state = usePaperSessionStore.getState();
-      if (state.selectedPartIds && state.selectedPartIds.length > 0) {
-        // Get user ID from Supabase
-        const { data: { session: supabaseSession } } = await supabase.auth.getSession();
-        if (supabaseSession?.user?.id) {
-          const { markPartIdsAsCompleted, invalidateCache } = await import('@/lib/papers/completionCache');
-          markPartIdsAsCompleted(supabaseSession.user.id, state.selectedPartIds);
-          // Invalidate cache to force refresh on next load
-          invalidateCache(supabaseSession.user.id);
-        }
-      }
-      
-      // Navigate to analytics page with session ID to highlight
-      const sessionIdToHighlight = state.sessionId;
-      if (sessionIdToHighlight) {
-        router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
-      } else {
-        router.push("/past-papers/analytics");
-      }
-    } catch (error) {
-      console.error("[mark:handleSaveAndContinue] Failed to save session:", error);
-      alert("Failed to save session. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -1315,32 +1271,13 @@ export default function PapersMarkPage() {
 
   return (
     <Fragment>
-      <div className="relative flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden bg-background">
+      <div
+        className={cn(
+          "relative flex min-h-0 flex-col overflow-hidden bg-background",
+          isMarkingInfo ? "h-[calc(100dvh-3rem)]" : "h-[calc(100dvh-4.0625rem)]",
+        )}
+      >
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
-          <div className="flex shrink-0 items-center justify-between gap-4 px-1">
-            <PageHeader
-              title="Mark Session"
-              description="Review answers, mark correctness, and study solutions."
-            />
-            <div className="hidden shrink-0 items-center gap-2 sm:flex">
-              <Button
-                variant="secondary"
-                className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted hover:bg-surface-mid hover:text-text"
-                onClick={() => router.push("/past-papers/library")}
-              >
-                New Session
-              </Button>
-              <Button
-                variant="primary"
-                className="rounded-organic-md px-4 py-2 text-sm shadow-glow"
-                onClick={handleSaveAndContinue}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Saving..." : "Save & Continue"}
-              </Button>
-            </div>
-          </div>
-
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
             <MarkSectionNav active={markSection} onSelect={selectMarkSection} />
 
@@ -3072,24 +3009,6 @@ export default function PapersMarkPage() {
               )}
             </Card>
           </div>
-
-        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border-subtle px-1 pt-3 sm:hidden">
-          <Button
-            variant="secondary"
-            className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted"
-            onClick={() => router.push("/past-papers/library")}
-          >
-            New Session
-          </Button>
-          <Button
-            variant="primary"
-            className="rounded-organic-md px-4 py-2 text-sm shadow-glow"
-            onClick={handleSaveAndContinue}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Save & Continue"}
-          </Button>
-        </div>
         </div>
       </div>
     </Fragment>

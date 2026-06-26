@@ -79,6 +79,7 @@ export function Navbar() {
     endedAt,
     justQuitSessionId,
     justQuitTimestamp,
+    isMarkingInfo,
     paperFullscreenShowMainNavbar,
     setPaperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
@@ -92,7 +93,9 @@ export function Navbar() {
     justQuitTimestamp &&
     Date.now() - justQuitTimestamp < 5000;
   const hasActiveSession =
-    sessionId !== null && endedAt === null && !isJustQuit;
+    sessionId !== null &&
+    !isJustQuit &&
+    (endedAt === null || isMarkingInfo);
 
   useEffect(() => {
     const sync = () => {
