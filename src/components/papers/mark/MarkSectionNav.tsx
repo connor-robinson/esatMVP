@@ -85,7 +85,7 @@ export function MarkSectionNav({ active, onSelect }: MarkSectionNavProps) {
                 <span
                   className={cn(
                     "flex h-11 w-11 items-center justify-center rounded-organic-lg",
-                    isActive ? "bg-primary/20 text-primary" : "bg-surface-elevated",
+                    isActive ? "bg-maths/20 text-maths" : "bg-surface-elevated",
                   )}
                 >
                   <Icon className="h-5 w-5" strokeWidth={2} aria-hidden />

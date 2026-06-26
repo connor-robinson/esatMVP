@@ -165,3 +165,11 @@
     margin-bottom: 0 !important;
   }
 }
+
+/* Past Papers: signature blue (`maths`) as accent for buttons, progress, stats, icons */
+.past-papers-theme {
+  --color-primary: var(--color-maths);
+  --color-primary-hover: color-mix(in srgb, var(--color-maths) 88%, black);
+  --color-accent: var(--color-maths);
+  --color-tmua-accent: var(--color-maths);
+}

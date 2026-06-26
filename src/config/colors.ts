@@ -33,10 +33,10 @@ export const PAPER_COLORS = {
  */
 export const PAPER_TYPE_COLORS = {
   ESAT: PAPER_COLORS.mathematics,
-  TMUA: PAPER_COLORS.physics,
-  NSAA: PAPER_COLORS.biology,
-  ENGAA: PAPER_COLORS.advanced,
-  PAT: PAPER_COLORS.chemistry,
+  TMUA: PAPER_COLORS.mathematics,
+  NSAA: PAPER_COLORS.mathematics,
+  ENGAA: PAPER_COLORS.mathematics,
+  PAT: PAPER_COLORS.mathematics,
   MAT: PAPER_COLORS.mathematics,
   OTHER: PAPER_COLORS.mathematics
 } as const;
@@ -79,11 +79,11 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-biology";
-  if (key === "NSAA") return "text-accent";
-  if (key === "TMUA") return "text-tmua-accent";
+  if (key === "ENGAA") return "text-maths";
+  if (key === "NSAA") return "text-maths";
+  if (key === "TMUA") return "text-maths";
   if (key === "ESAT") return "text-maths";
-  if (key === "PAT") return "text-chemistry";
+  if (key === "PAT") return "text-maths";
   if (key === "MAT") return "text-maths";
   return "text-maths";
 }

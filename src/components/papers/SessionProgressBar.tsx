@@ -315,7 +315,7 @@ export function SessionProgressBar({
               {progressSegments.map((segment, index) => (
                 <div
                   key={`segment-${index}`}
-                  className='absolute rounded-full bg-primary transition-all duration-500 ease-out'
+                  className='absolute rounded-full bg-maths transition-all duration-500 ease-out'
                   style={{
                     left: `${segment.start}%`,
                     width: `${segment.end - segment.start}%`,
@@ -344,9 +344,9 @@ export function SessionProgressBar({
                       className={cn(
                         'h-3 w-3 rounded-full border-2 transition-all',
                         isCompleted
-                          ? 'border-primary bg-primary'
+                          ? 'border-maths bg-maths'
                           : isCurrent && !isOnInstructionPage
-                            ? 'border-primary bg-primary'
+                            ? 'border-maths bg-maths'
                             : 'border-border bg-transparent',
                       )}
                     />
@@ -383,7 +383,7 @@ export function SessionProgressBar({
                       }
                       return false;
                     })()
-                      ? 'border-primary bg-primary'
+                      ? 'border-maths bg-maths'
                       : 'border-border bg-transparent',
                   )}
                 />
@@ -430,7 +430,7 @@ export function SessionProgressBar({
             disabled={isSaving}
             className={cn(
               iconBtnClass,
-              'text-primary hover:bg-primary/10 hover:text-primary',
+              'text-maths hover:bg-maths/10 hover:text-maths',
               isSaving && 'cursor-not-allowed opacity-60',
             )}
             title={isSaving ? 'Saving…' : 'Save & Continue'}

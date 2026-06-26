@@ -5,6 +5,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useCallback, useRef, Fragment } from "react";
+import { Info } from "lucide-react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -21,7 +22,6 @@ import {
   getMarkAnswerSummaryPanelClass,
   getMarkReviewToggleActiveClass,
   getMarkSessionPartHeaderClass,
-  getSectionBarTrackClass,
   getSectionSubjectPillClass,
   ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
@@ -110,8 +110,7 @@ export default function PapersMarkPage() {
   // Section percentiles state - for all exams
   const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }>>({});
   const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
-  // NSAA: toggle to show individual subjects vs averaged
-  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(true);
+  const [selectedPercentileSection, setSelectedPercentileSection] = useState<string>("");
   // NSAA: averaged percentile across all subjects
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
   // Community stats state
@@ -790,6 +789,13 @@ export default function PapersMarkPage() {
     return analytics;
   }, [totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
+  const validSectionEntries = useMemo(() => {
+    return Object.entries(sectionAnalytics).filter(([section]) => {
+      const sectionUpper = section.toUpperCase();
+      return sectionUpper !== "SECTION" && !sectionUpper.startsWith("SECTION ");
+    });
+  }, [sectionAnalytics]);
+
   // Accuracy patterns
   const accuracyPatterns = useMemo(() => {
     const correct = derivedCorrectFlags.filter(f => f === true).length;
@@ -918,6 +924,24 @@ export default function PapersMarkPage() {
     const qs = usePaperSessionStore.getState().questions;
     return (qs?.[0]?.examName || '').toUpperCase();
   }, []);
+
+  const displayExamLabel = useMemo(
+    () => (examName === "ENGAA" || examName === "NSAA" ? "ESAT" : examName),
+    [examName],
+  );
+
+  useEffect(() => {
+    if (validSectionEntries.length === 0) return;
+    const keys = validSectionEntries.map(([section]) => section);
+    const hasAverageOption =
+      examName === "NSAA" &&
+      validSectionEntries.length > 1 &&
+      nsaaAveragedPercentile !== null;
+    const validKeys = hasAverageOption ? ["__average__", ...keys] : keys;
+    if (!selectedPercentileSection || !validKeys.includes(selectedPercentileSection)) {
+      setSelectedPercentileSection(validKeys[0]);
+    }
+  }, [validSectionEntries, selectedPercentileSection, examName, nsaaAveragedPercentile]);
 
   // Predicted overall score (weighted by section totals) - exam-specific
   const predictedScore = useMemo(() => {
@@ -1250,258 +1274,267 @@ export default function PapersMarkPage() {
 
                       {/* Combined Guess Distribution moved into Guessing Behavior */}
 
-                    {/* Section Performance & Score Conversion (moved up next to Time Management) */}
-                    <div className={`${bubbleClass} space-y-4 `}>
-                      <div className="text-base font-semibold text-neutral-100">Section Performance</div>
-                      <div className="space-y-3">
-                        {Object.entries(sectionAnalytics)
-                          .filter(([section]) => {
-                            // Filter out "SECTION" entries
-                            const sectionUpper = section.toUpperCase();
-                            const isValid = sectionUpper !== 'SECTION' && !sectionUpper.startsWith('SECTION ');
-                            if (!isValid) {
-                              console.error(`[mark:UI:sectionPerformance] Filtering out invalid "SECTION" entry:`, section);
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+                      {/* Section Performance — compact list */}
+                      <div className={`${bubbleClass} space-y-3 lg:col-span-2`}>
+                        <div className="text-base font-semibold text-neutral-100">Section Performance</div>
+                        <div className="divide-y divide-border-subtle">
+                          {validSectionEntries.map(([section, data]) => {
+                            const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
+                            let scaledScore: number | null = null;
+                            let convMatched = false;
+                            let convUsedAverage = false;
+                            if (hasConversion && conversionRows.length > 0) {
+                              const qs = usePaperSessionStore.getState().questions;
+                              const sectionExamName = (qs?.[0]?.examName || "").toUpperCase();
+                              const { scaled, matched, usedAverage } = computeScaledScore(
+                                sectionExamName,
+                                section,
+                                data.correct,
+                                qs,
+                                conversionRows as any[],
+                                paperName,
+                              );
+                              scaledScore = scaled;
+                              convMatched = matched;
+                              convUsedAverage = usedAverage;
                             }
-                            return isValid;
-                          })
-                          .map(([section, data]) => {
-                          const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
-                          let scaledScore: number | null = null;
-                          let convMatched = false;
-                          let convUsedAverage = false;
-                          if (hasConversion && conversionRows.length > 0) {
-                            const qs = usePaperSessionStore.getState().questions;
-                          const sectionExamName = (qs?.[0]?.examName || '').toUpperCase();
-                          const { scaled, matched, usedAverage } = computeScaledScore(
-                            sectionExamName,
-                            section,
-                            data.correct,
-                            qs,
-                            conversionRows as any[],
-                            paperName,
-                          );
-                            scaledScore = scaled;
-                            convMatched = matched;
-                            convUsedAverage = usedAverage;
-                          }
-                          const qsForPill = usePaperSessionStore.getState().questions;
-                          const matchForPill = findQuestionForSection(qsForPill, section, examName);
-                          const sectionNameForColor = mapPartToSection({ partLetter: (matchForPill?.partLetter || section).toString(), partName: matchForPill?.partName || '' }, (usePaperSessionStore.getState().questions?.[0]?.examName as any));
-                          return (
-                            <div key={section} className="rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3">
-                              <div className="mb-2 flex items-start justify-between">
-                                <div>
-                                  <div className="flex flex-wrap items-center gap-2">
+                            const qsForPill = usePaperSessionStore.getState().questions;
+                            const matchForPill = findQuestionForSection(qsForPill, section, examName);
+                            const sectionNameForColor = mapPartToSection(
+                              {
+                                partLetter: (matchForPill?.partLetter || section).toString(),
+                                partName: matchForPill?.partName || "",
+                              },
+                              (usePaperSessionStore.getState().questions?.[0]?.examName as any),
+                            );
+                            const conversionHint = convMatched
+                              ? "Conversion table found for this section"
+                              : convUsedAverage
+                                ? "Using average conversion table for this section"
+                                : "No conversion table found for this section";
+                            return (
+                              <div key={section} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                                <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                                  <div className="flex items-center gap-2">
                                     {sectionNameForColor && (
                                       <span
                                         className={cn(
-                                          "rounded-organic-sm px-2.5 py-1 text-xs font-medium",
+                                          "shrink-0 rounded-organic-sm px-2 py-0.5 text-[11px] font-medium",
                                           getSectionSubjectPillClass(sectionNameForColor),
                                         )}
                                       >
                                         {sectionNameForColor}
                                       </span>
                                     )}
-                                    <div className="text-sm font-medium text-neutral-200">{section}</div>
+                                    <span className="truncate text-xs text-neutral-400">{section}</span>
+                                    {hasConversion && (
+                                      <div className="group relative shrink-0">
+                                        <button
+                                          type="button"
+                                          className="flex h-5 w-5 items-center justify-center rounded-full text-text-muted transition-colors hover:text-maths"
+                                          aria-label="Conversion table info"
+                                        >
+                                          <Info className="h-3.5 w-3.5" />
+                                        </button>
+                                        <div className="absolute left-0 top-full z-20 mt-1 hidden w-52 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
+                                          {conversionHint}
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
-                                  {hasConversion && (
-                                    <div
-                                      className={cn(
-                                        "mt-2 rounded-organic-sm px-2.5 py-2 text-xs",
-                                        convMatched
-                                          ? "bg-primary/15 text-primary"
-                                          : convUsedAverage
-                                            ? "bg-maths/15 text-maths"
-                                            : "bg-surface-mid text-text-muted",
-                                      )}
-                                    >
-                                      {convMatched
-                                        ? "Conversion table found for this section"
-                                        : convUsedAverage
-                                          ? "Using average conversion table for this section"
-                                          : "No conversion table found for this section"}
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-surface-neutral">
+                                      <div
+                                        className="h-full rounded-full bg-maths/80"
+                                        style={{ width: `${accuracy}%` }}
+                                      />
+                                    </div>
+                                    <span className="shrink-0 text-xs font-medium tabular-nums text-neutral-300">
+                                      {Math.round(accuracy)}%
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-neutral-500">
+                                    <span>
+                                      {data.correct}/{data.total} correct
+                                    </span>
+                                    <span>Avg {formatTime(Math.round(data.avgTime))}</span>
+                                    {data.guessed > 0 && <span>{data.guessed} guessed</span>}
+                                  </div>
+                                </div>
+                                <div className="shrink-0 text-right">
+                                  <div className="text-[10px] uppercase tracking-wide text-neutral-500">
+                                    {displayExamLabel}
+                                  </div>
+                                  <div className="text-lg font-semibold tabular-nums text-neutral-100">
+                                    {scaledScore !== null && scaledScore !== undefined
+                                      ? scaledScore.toFixed(1)
+                                      : "—"}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Section Percentiles — focused view with part selector */}
+                      <div className={`${bubbleClass} space-y-4 lg:col-span-3`}>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
+                          {validSectionEntries.length > 0 && (
+                            <select
+                              value={selectedPercentileSection}
+                              onChange={(e) => setSelectedPercentileSection(e.target.value)}
+                              className="h-9 min-w-[12rem] rounded-organic-md bg-surface-mid px-3 text-sm text-neutral-200 focus:outline-none focus:ring-2 focus:ring-maths/40"
+                            >
+                              {examName === "NSAA" &&
+                                validSectionEntries.length > 1 &&
+                                nsaaAveragedPercentile !== null && (
+                                  <option value="__average__">Average (all subjects)</option>
+                                )}
+                              {validSectionEntries.map(([section]) => {
+                                const qs = usePaperSessionStore.getState().questions;
+                                const match = findQuestionForSection(qs, section, examName);
+                                const subject = mapPartToSection(
+                                  {
+                                    partLetter: (match?.partLetter || section).toString(),
+                                    partName: match?.partName || "",
+                                  },
+                                  (paperName as any),
+                                );
+                                return (
+                                  <option key={section} value={section}>
+                                    {subject ? `${subject} · ${section}` : section}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          )}
+                        </div>
+
+                        {(() => {
+                          if (validSectionEntries.length === 0) {
+                            return (
+                              <div className="text-sm text-neutral-400">No section data available.</div>
+                            );
+                          }
+
+                          const isAverage = selectedPercentileSection === "__average__";
+                          const section = isAverage ? null : selectedPercentileSection;
+                          const sp = section ? sectionPercentiles[section] : null;
+                          const pct = isAverage ? nsaaAveragedPercentile : sp?.percentile;
+                          const score = isAverage ? null : sp?.score;
+                          const tableLabel = isAverage ? "All subjects" : sp?.label || "—";
+                          const qs = usePaperSessionStore.getState().questions;
+                          const examYear = qs?.[0]?.examYear as number | undefined;
+                          const isTmuAPre2024 =
+                            !isAverage && examName === "TMUA" && examYear && examYear <= 2023;
+                          const chartRows =
+                            !isAverage && sp?.table ? percentileTables[sp.table] : undefined;
+                          const match = section
+                            ? findQuestionForSection(qs, section, examName)
+                            : null;
+                          const subject = section
+                            ? mapPartToSection(
+                                {
+                                  partLetter: (match?.partLetter || section).toString(),
+                                  partName: match?.partName || "",
+                                },
+                                (paperName as any),
+                              )
+                            : null;
+
+                          return (
+                            <div className="space-y-4">
+                              <div className="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                  {isAverage ? (
+                                    <span className="rounded-organic-sm bg-maths/15 px-2.5 py-1 text-xs font-medium text-maths">
+                                      Average (all subjects)
+                                    </span>
+                                  ) : (
+                                    subject && (
+                                      <span
+                                        className={cn(
+                                          "rounded-organic-sm px-2.5 py-1 text-xs font-medium",
+                                          getSectionSubjectPillClass(subject),
+                                        )}
+                                      >
+                                        {subject}
+                                      </span>
+                                    )
+                                  )}
+                                  {!isAverage && typeof score === "number" && (
+                                    <div className="mt-2 text-xs text-neutral-400">
+                                      {displayExamLabel} score: {score.toFixed(1)}
                                     </div>
                                   )}
                                 </div>
-                                <div className="text-right">
-                                  <div className="text-xs text-neutral-400">{(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName}</div>
-                                  <div className="text-xl font-semibold text-neutral-100">{scaledScore !== null && scaledScore !== undefined ? scaledScore.toFixed(1) : '—'}</div>
+                                <div className="flex items-center gap-2">
+                                  <span className="rounded-organic-sm bg-surface-mid px-2 py-1 text-[11px] text-neutral-400">
+                                    Table: {tableLabel}
+                                  </span>
+                                  <div className="group relative">
+                                    <button
+                                      type="button"
+                                      className="flex h-6 w-6 items-center justify-center rounded-full text-text-muted transition-colors hover:text-maths"
+                                      aria-label="How percentiles are calculated"
+                                    >
+                                      <Info className="h-4 w-4" />
+                                    </button>
+                                    <div className="absolute right-0 z-10 hidden w-64 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
+                                      {!isAverage && sp?.table && percentileTables[sp.table]
+                                        ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
+                                        : isAverage
+                                          ? "Average percentile across all subjects in this session."
+                                          : `We use ${displayExamLabel} conversion tables to convert your raw score to a scaled score.`}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="mb-2 flex items-center gap-2">
-                                <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-neutral">
-                                  <div
-                                    className={cn("h-full rounded-full", getSectionBarTrackClass(sectionNameForColor))}
-                                    style={{ width: `${accuracy}%` }}
-                                  />
-                                </div>
-                                <div className="text-xs font-semibold text-neutral-300">{Math.round(accuracy)}%</div>
+
+                              <div className="text-center text-4xl font-bold tracking-tight text-neutral-100 sm:text-5xl">
+                                {Number.isFinite(pct as number)
+                                  ? `TOP ${(Math.max(0, 100 - (pct as number))).toFixed(1)}%`
+                                  : "—"}
                               </div>
-                              <div className="flex items-center justify-between text-xs text-neutral-400">
-                                <span>Avg: {formatTime(Math.round(data.avgTime))}</span>
-                                {data.guessed > 0 && <span>{data.guessed} guessed</span>}
-                              </div>
-                              {/* per-section conversion rows removed; shown globally above */}
+
+                              {isTmuAPre2024 &&
+                                sp?.oldPercentile !== null &&
+                                sp?.oldPercentile !== undefined &&
+                                sp?.newEquivalentScore !== null &&
+                                sp?.newEquivalentScore !== undefined && (
+                                  <div className="rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3 text-xs text-neutral-400">
+                                    Pre-2024 TMUA scoring. Equivalent 2024–25 score:{" "}
+                                    <span className="font-medium text-neutral-200">
+                                      {sp.newEquivalentScore.toFixed(1)}
+                                    </span>
+                                  </div>
+                                )}
+
+                              {!isAverage && (
+                                <PercentileMiniChart
+                                  rows={chartRows ?? []}
+                                  score={score}
+                                  percentile={pct}
+                                  xLabel={displayExamLabel}
+                                  className="mx-auto w-full max-w-lg"
+                                />
+                              )}
+
+                              <p className="text-center text-xs text-neutral-400">
+                                {Number.isFinite(pct as number)
+                                  ? isAverage
+                                    ? `If you sat the NSAA today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you on average across all subjects.`
+                                    : `If you sat the ${displayExamLabel} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
+                                  : `Your ${displayExamLabel} score: ${typeof score === "number" ? score.toFixed(1) : "—"}`}
+                              </p>
                             </div>
                           );
-                        })}
+                        })()}
                       </div>
                     </div>
-
-                  
-
-                  {/* Section Percentiles - for all exams */}
-                  <div className={`${bubbleClass} space-y-3`}>
-                    <div className="flex items-center justify-between">
-                      <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
-                      {/* NSAA Toggle: Show individual subjects vs averaged */}
-                      {examName === 'NSAA' && Object.entries(sectionAnalytics).length > 1 && (
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <span className="text-xs text-neutral-400">Show individual subjects</span>
-                          <div className="relative inline-block w-11 h-6">
-                            <input
-                              type="checkbox"
-                              checked={showIndividualNSAASubjects}
-                              onChange={(e) => setShowIndividualNSAASubjects(e.target.checked)}
-                              className="sr-only"
-                            />
-                            <div className={cn('block h-6 w-11 rounded-full transition-colors', showIndividualNSAASubjects ? 'bg-primary' : 'bg-surface-neutral')}>
-                              <div className={cn('absolute left-1 top-1 h-4 w-4 rounded-full bg-background transition-transform', showIndividualNSAASubjects ? 'translate-x-5' : '')} />
-                            </div>
-                          </div>
-                        </label>
-                      )}
-                    </div>
-                    
-                    {/* NSAA Averaged View (when toggle is off) */}
-                    {examName === 'NSAA' && !showIndividualNSAASubjects && nsaaAveragedPercentile !== null && (
-                      <div className="p-3 rounded-md bg-neutral-900">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="rounded-full bg-primary/20 px-2 py-0.5 text-sm font-medium text-primary">
-                                Average (All Subjects)
-                              </span>
-                            </div>
-                            <div className="text-xs text-neutral-400 mt-1">
-                              Averaged across {Object.entries(sectionAnalytics).length} subject{Object.entries(sectionAnalytics).length > 1 ? 's' : ''}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
-                          TOP {(Math.max(0, 100 - nsaaAveragedPercentile)).toFixed(1)}%
-                        </div>
-                        <div className="mt-2 text-xs text-neutral-400 text-center">
-                          If you sat the NSAA today, {(100 - nsaaAveragedPercentile).toFixed(1)}% of test-takers would outperform you on average across all subjects.
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                      {(() => {
-                        const entries = Object.entries(sectionAnalytics).filter(([section]) => {
-                          const sectionUpper = section.toUpperCase();
-                          return sectionUpper !== "SECTION" && !sectionUpper.startsWith("SECTION ");
-                        });
-                        const displayEntries = entries;
-                        const isSingleGraph = displayEntries.length === 1;
-                        return displayEntries.map(([section, data], idx) => {
-                          const isLastSingle =
-                            displayEntries.length % 2 === 1 && idx === displayEntries.length - 1;
-                        const sp = sectionPercentiles[section];
-                        const pct = sp?.percentile;
-                        const score = sp?.score;
-                        const label = sp?.label || '—';
-                        const qs = usePaperSessionStore.getState().questions;
-                        const match = findQuestionForSection(qs, section, examName);
-                        const partLetterRaw = (match?.partLetter || section).toString();
-                        const partNameFull = match?.partName || '';
-                        const sectionNameForColor = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
-                        const examYear = qs?.[0]?.examYear as number | undefined;
-                        const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
-                        const chartRows = sp?.table ? percentileTables[sp.table] : undefined;
-                        const displayExamLabel = (examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName;
-                        return (
-                          <div key={section} className={cn('rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3', isLastSingle || isSingleGraph ? ' md:mx-auto' : '', isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : '')}>
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <span className={cn('rounded-organic-sm px-2.5 py-1 text-xs font-medium', getSectionSubjectPillClass(sectionNameForColor))}>
-                                    {section}
-                                  </span>
-                                </div>
-                                <div className="text-xs text-neutral-400 mt-1">
-                                  {typeof score === 'number' ? `${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} score: ${score.toFixed(1)}` : '—'}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-xs px-2 py-1 rounded-md bg-neutral-800 text-neutral-300">Table: {label}</span>
-                                {/* Tooltip for methodology */}
-                                <div className="relative group">
-                                  <button className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center" title="How this is calculated">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <circle cx="12" cy="12" r="9" />
-                                      <line x1="12" y1="16" x2="12" y2="12" />
-                                      <circle cx="12" cy="8" r="1" />
-                                    </svg>
-                                  </button>
-                                  <div className="absolute right-0 z-10 hidden w-64 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
-                                    {sp?.table && percentileTables[sp.table] 
-                                      ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
-                                      : `We use ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} conversion tables to convert your raw score to a scaled score.`}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="mt-2 text-2xl font-bold text-neutral-100 text-center">
-                              {Number.isFinite(pct as any) ? `TOP ${(Math.max(0, 100 - (pct as number))).toFixed(1)}%` : '—'}
-                            </div>
-                            
-                            {/* TMUA Score Change Info Box for <=2023 papers */}
-                            {isTmuAPre2024 && sp?.oldPercentile !== null && sp?.oldPercentile !== undefined && sp?.newEquivalentScore !== null && sp?.newEquivalentScore !== undefined && (
-                              <div className="mt-3 p-3 rounded-md bg-neutral-800/50 border border-neutral-700">
-                                <div className="flex items-start gap-2">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 mt-0.5 flex-shrink-0">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="12" y1="16" x2="12" y2="12" />
-                                    <line x1="12" y1="8" x2="12.01" y2="8" />
-                                  </svg>
-                                  <div className="flex-1 text-xs text-neutral-300">
-                                    <div className="font-medium mb-1">Score Change Notice</div>
-                                    <div className="text-neutral-400 mb-2">
-                                      Your percentile ({sp.oldPercentile.toFixed(1)}%) is based on the pre-2024 TMUA scoring system. 
-                                      If you achieved the same percentile in 2024-2025, your score would be approximately {sp.newEquivalentScore.toFixed(1)}.
-                                    </div>
-                                    <div className="text-neutral-500 text-[10px]">
-                                      TMUA changed its scoring system in 2024. This shows your equivalent performance under the new system.
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {/* Mini percentile chart */}
-                            <PercentileMiniChart
-                              rows={chartRows ?? []}
-                              score={score}
-                              percentile={pct}
-                              xLabel={displayExamLabel}
-                              className={cn(
-                                "mt-3 w-full mx-auto",
-                                isSingleGraph ? "min-w-[80%]" : "max-w-[460px]",
-                              )}
-                            />
-                            <div className="mt-2 text-xs text-neutral-400">
-                              {Number.isFinite(pct as any) 
-                                ? `If you sat the ${displayExamLabel} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
-                                : `Your ${displayExamLabel} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
-                            </div>
-                          </div>
-                        );
-                      });
-                    })()}
-                    </div>
-                  </div>
                   </div>
                 </div>
               )}

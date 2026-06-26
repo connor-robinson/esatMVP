@@ -517,7 +517,7 @@ export function PaperSessionSummary({
           className={cn(
             "shrink-0 rounded-full px-2.5 py-1 font-heading text-[11px] font-semibold tabular-nums",
             totalItems > 0
-              ? "bg-accent/15 text-accent"
+              ? "bg-maths/15 text-maths"
               : "bg-surface-mid text-text-muted",
           )}
         >
@@ -639,7 +639,7 @@ export function PaperSessionSummary({
           className={cn(
             "flex w-full items-center justify-center gap-2 rounded-organic-md py-3 font-heading text-sm font-semibold transition-colors duration-fast focus-visible:outline-none",
             canStart
-              ? "cursor-pointer bg-accent text-background hover:bg-accent/85 dark:text-white"
+              ? "cursor-pointer bg-maths text-background hover:bg-maths/85 dark:text-white"
               : "cursor-not-allowed bg-surface-neutral text-text-disabled shadow-none hover:bg-surface-neutral",
             "disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-text-disabled disabled:hover:bg-surface-neutral",
           )}
