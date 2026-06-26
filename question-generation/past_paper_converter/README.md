@@ -47,3 +47,16 @@ Set `NEXT_PUBLIC_PAST_PAPER_TEXT=1` in `.env.local` to render `content_format=te
 ```bash
 node scripts/summarize_conversions.js
 ```
+
+## Local review tool (Windows)
+
+Double-click **`past_paper_conversion.bat`** at the repo root (no dev server needed):
+
+| Option | What it does |
+|--------|----------------|
+| **1. Run conversion** | Prompts for paper ID + limit, runs the Python pipeline |
+| **2. Preview results** | Exports conversions to JSON, opens flip-card viewer in browser |
+| **3. Status summary** | Prints conversion counts from Supabase |
+| **4. List paper IDs** | Shows paper ID → exam name mapping |
+
+Preview uses `scripts/past_paper_conversion/viewer.html` + a tiny local Python server on port 8765.

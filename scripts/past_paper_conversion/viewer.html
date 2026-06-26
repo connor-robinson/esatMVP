@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Past Paper Conversion Preview</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #1a1a1f;
+      color: #e8e8ec;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .sub { color: #999; font-size: 0.85rem; margin-bottom: 24px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .flip-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      width: 100%;
+      perspective: 1200px;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+    }
+    .flip-inner.flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      backface-visibility: hidden;
+    }
+    .face-front { background: #111; }
+    .face-front img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .face-back {
+      transform: rotateY(180deg);
+      background: #fff;
+      color: #111;
+      font-family: "Times New Roman", Georgia, serif;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-y: auto;
+      padding: 6% 7%;
+    }
+    .q-num { font-weight: bold; margin-bottom: 0.5em; }
+    .options { margin-top: 0.8em; }
+    .options.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35em 6%; }
+    .opt { display: flex; gap: 0.35em; align-items: flex-start; }
+    .opt-letter { flex-shrink: 0; }
+    .diagram { text-align: center; margin: 0.6em 0; }
+    .diagram img { max-width: 92%; max-height: 140px; object-fit: contain; }
+    .meta { font-size: 11px; color: #aaa; padding: 0 4px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .badge-ok { background: #064e3b; color: #6ee7b7; }
+    .badge-fail { background: #7f1d1d; color: #fca5a5; }
+    .flag { background: #7f1d1d; color: #fca5a5; padding: 1px 6px; border-radius: 4px; font-size: 10px; margin: 2px 2px 0 0; display: inline-block; }
+    .hint {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 8px 10px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      pointer-events: none;
+    }
+    .empty { text-align: center; color: #888; padding: 48px; }
+    .face-back .katex { color: #111 !important; }
+  </style>
+</head>
+<body>
+  <h1>Past Paper Conversion Preview</h1>
+  <p class="sub" id="subtitle">Loading…</p>
+  <div id="grid" class="grid"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script>
+    function stripDiagram(stem) {
+      if (!stem) return "";
+      return stem.replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "").trim();
+    }
+
+    function renderMath(el) {
+      if (typeof renderMathInElement === "function") {
+        renderMathInElement(el, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+          ],
+          throwOnError: false,
+        });
+      }
+    }
+
+    function flags(report) {
+      const chips = [];
+      for (const [k, v] of Object.entries(report || {})) {
+        if (v === true) chips.push(k);
+        else if (Array.isArray(v) && v.length) chips.push(k + " (" + v.length + ")");
+      }
+      return chips;
+    }
+
+    function buildCard(row, aspectRatio) {
+      const wrap = document.createElement("div");
+      wrap.className = "card-wrap";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "flip-btn";
+      btn.setAttribute("aria-label", "Flip card");
+
+      const inner = document.createElement("div");
+      inner.className = "flip-inner";
+      inner.style.aspectRatio = aspectRatio || "3/4";
+
+      const front = document.createElement("div");
+      front.className = "face face-front";
+      const img = document.createElement("img");
+      img.src = row.sourceImageUrl;
+      img.alt = "Q" + row.questionNumber;
+      img.onload = () => {
+        if (img.naturalWidth && img.naturalHeight) {
+          inner.style.aspectRatio = img.naturalWidth + "/" + img.naturalHeight;
+        }
+      };
+      front.appendChild(img);
+      const hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "Click to flip — image vs text";
+      front.appendChild(hint);
+
+      const back = document.createElement("div");
+      back.className = "face face-back";
+      const qNum = row.detectedQuestionNumber ?? row.questionNumber;
+      const stem = stripDiagram(row.questionStem || "");
+      const letters = (row.optionLetters && row.optionLetters.length)
+        ? [...row.optionLetters].sort()
+        : Object.keys(row.options || {}).sort();
+      const twoCol = letters.length >= 6;
+
+      let html = '<div class="q-num">' + qNum + '.</div>';
+      if (stem) html += '<div class="stem">' + stem + '</div>';
+      const diagram = (row.diagramAssets || [])[0];
+      if (diagram && diagram.url) {
+        html += '<div class="diagram"><img src="' + diagram.url + '" alt="diagram" /></div>';
+      }
+      if (letters.length) {
+        html += '<div class="options' + (twoCol ? " two-col" : "") + '">';
+        for (const L of letters) {
+          const t = (row.options || {})[L];
+          if (!t) continue;
+          html += '<div class="opt"><span class="opt-letter">' + L + '</span><span class="opt-text">' + t + '</span></div>';
+        }
+        html += "</div>";
+      }
+      if (!stem && !letters.length) html += '<p><em>No text extracted</em></p>';
+      back.innerHTML = html;
+      renderMath(back);
+
+      inner.appendChild(front);
+      inner.appendChild(back);
+      btn.appendChild(inner);
+      btn.onclick = () => inner.classList.toggle("flipped");
+      wrap.appendChild(btn);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      const badgeClass = row.status === "auto_approved" ? "badge-ok" : row.status === "failed" ? "badge-fail" : "";
+      const conf = row.confidence != null ? Math.round(row.confidence * 100) + "%" : "—";
+      meta.innerHTML =
+        '<span class="badge ' + badgeClass + '">' + row.status.replace("_", " ") + '</span>' +
+        row.examName + " " + row.examYear + " · Q" + row.questionNumber +
+        " · conf " + conf;
+      const f = flags(row.conversionReport);
+      if (f.length) {
+        meta.innerHTML += "<br>" + f.map(x => '<span class="flag">' + x + '</span>').join("");
+      }
+      wrap.appendChild(meta);
+      return wrap;
+    }
+
+    fetch("viewer_data.json?t=" + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        const grid = document.getElementById("grid");
+        const sub = document.getElementById("subtitle");
+        sub.textContent = data.count + " conversion(s)" +
+          (data.exportedAt ? " · exported " + data.exportedAt : "") +
+          (data.paperId ? " · paper " + data.paperId : "");
+        if (!data.conversions || !data.conversions.length) {
+          grid.innerHTML = '<p class="empty">No conversions in viewer_data.json — run preview.bat first.</p>';
+          return;
+        }
+        for (const row of data.conversions) {
+          grid.appendChild(buildCard(row));
+        }
+      })
+      .catch(err => {
+        document.getElementById("subtitle").textContent = "Failed to load viewer_data.json";
+        document.getElementById("grid").innerHTML =
+          '<p class="empty">Run preview.bat to export data, or start the local server.<br><small>' + err + '</small></p>';
+      });
+  </script>
+</body>
+</html>
