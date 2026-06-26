@@ -28,6 +28,8 @@ import { useSessionActivity } from '@/hooks/useSessionActivity';
 import { usePaperSessionHydrated } from '@/hooks/usePaperSessionHydrated';
 import type { Letter, PaperType } from '@/types/papers';
 import { cn } from '@/lib/utils';
+import { shouldRenderPastPaperAsText } from '@/lib/papers/pastPaperTextMode';
+import { PastPaperTextQuestion } from '@/components/papers/PastPaperTextQuestion';
 
 const LETTERS: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
@@ -524,6 +526,9 @@ export default function PapersSolvePage() {
 
   /** Prefer section-scoped question so the first visible item matches section mode grouping */
   const displayQuestion = currentSectionQuestion ?? currentQuestion;
+  const useTextMode = displayQuestion
+    ? shouldRenderPastPaperAsText(displayQuestion)
+    : false;
 
   // Find the full index in the questions array for answer storage
   let fullQuestionIndex = currentQuestionIndex;
@@ -1145,7 +1150,18 @@ export default function PapersSolvePage() {
         >
           {/* Two-Row Button Layout */}
           <div className='space-y-4 w-full'>
-            {/* First Row: A-H Buttons */}
+            {useTextMode && displayQuestion ? (
+              <PastPaperTextQuestion
+                question={displayQuestion}
+                questionNumber={currentQuestionNumber}
+                selectedChoice={currentAnswer?.choice ?? null}
+                onChoiceSelect={handleChoiceSelect}
+                showOptionsBelow
+                showStem={false}
+                className="py-0 px-0 max-w-none"
+              />
+            ) : (
+            /* First Row: A-H Buttons */
             <div className='flex items-center justify-between gap-2 w-full'>
               {LETTERS.map((letter) => {
                 const selected = currentAnswer?.choice === letter;
@@ -1166,6 +1182,7 @@ export default function PapersSolvePage() {
                 );
               })}
             </div>
+            )}
 
             {/* Second Row: Navigation Buttons */}
             <div className='flex items-center justify-between w-full'>

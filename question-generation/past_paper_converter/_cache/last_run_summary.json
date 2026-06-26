@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "question_id": 3190,
+      "status": "failed",
+      "report": {
+        "blurry": false,
+        "blur_score": 1405.0016714866222,
+        "image_fetch_failed": false,
+        "diagram_crop_failed": false,
+        "wrong_question_number": false,
+        "missing_options": true,
+        "extra_options": false,
+        "katex_errors": [],
+        "low_confidence": false,
+        "answer_letter_missing": false,
+        "option_count": 7,
+        "expected_count": 8
+      },
+      "stem_preview": "A block of weight $W$ slides down a rough plane at a constant speed.\nThe plane is at an angle of $30^{\\circ}$ to the hor"
+    }
+  ],
+  "audits": [
+    {
+      "paper_id": 62,
+      "exam_name": "ENGAA",
+      "exam_year": 2023,
+      "paper_name": "Section 2",
+      "question_count": 20,
+      "question_range": [
+        1,
+        20
+      ],
+      "ok": true,
+      "issues": []
+    }
+  ]
+}

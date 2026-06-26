@@ -26,6 +26,31 @@ export type QuestionPartRow = {
   questionNumber: number;
 };
 
+function mapQuestionRow(row: Record<string, unknown>): Question {
+  return {
+    id: row.id as number,
+    paperId: row.paper_id as number,
+    examName: row.exam_name as Question['examName'],
+    examYear: row.exam_year as number,
+    paperName: row.paper_name as string,
+    partLetter: (row.part_letter as string) ?? '',
+    partName: (row.part_name as string) ?? '',
+    examType: row.exam_type as string,
+    questionNumber: row.question_number as number,
+    questionImage: row.question_image as string,
+    questionStem: (row.question_stem as string) ?? undefined,
+    options: (row.options as Question['options']) ?? undefined,
+    diagramAssets: (row.diagram_assets as Question['diagramAssets']) ?? undefined,
+    contentFormat: (row.content_format as Question['contentFormat']) ?? 'image',
+    solutionImage: (row.solution_image as string) ?? undefined,
+    solutionText: (row.solution_text as string) ?? undefined,
+    solutionType: row.solution_type as Question['solutionType'],
+    answerLetter: row.answer_letter as string,
+    createdAt: (row.created_at as string) ?? '',
+    updatedAt: (row.updated_at as string) ?? '',
+  };
+}
+
 function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
   return {
     paperId: row.paper_id as number,
@@ -233,24 +258,7 @@ export async function getQuestions(paperId: number) {
     if (error) throw error;
     
     // Convert database format to TypeScript interface format
-    const questions: Question[] = (data || []).map((row: any) => ({
-      id: row.id,
-      paperId: row.paper_id,
-      examName: row.exam_name,
-      examYear: row.exam_year,
-      paperName: row.paper_name,
-      partLetter: row.part_letter, // Convert snake_case to camelCase
-      partName: row.part_name, // Convert snake_case to camelCase
-      examType: row.exam_type,
-      questionNumber: row.question_number,
-      questionImage: row.question_image,
-      solutionImage: row.solution_image,
-      solutionText: row.solution_text,
-      solutionType: row.solution_type,
-      answerLetter: row.answer_letter,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }));
+    const questions: Question[] = (data || []).map((row: any) => mapQuestionRow(row));
     
     console.log('Converted questions:', questions);
     return questions;
@@ -274,24 +282,7 @@ export async function getQuestion(paperId: number, questionNumber: number) {
     if (error) throw error;
     
     // Convert database format to TypeScript interface format
-    const question: Question = {
-      id: data.id,
-      paperId: data.paper_id,
-      examName: data.exam_name,
-      examYear: data.exam_year,
-      paperName: data.paper_name,
-      partLetter: data.part_letter,
-      partName: data.part_name,
-      examType: data.exam_type,
-      questionNumber: data.question_number,
-      questionImage: data.question_image,
-      solutionImage: data.solution_image,
-      solutionText: data.solution_text,
-      solutionType: data.solution_type,
-      answerLetter: data.answer_letter,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-    };
+    const question: Question = mapQuestionRow(data);
     
     return question;
   } catch (error) {

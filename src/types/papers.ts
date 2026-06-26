@@ -11,6 +11,14 @@ export type Letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 export type ExamName = "ENGAA" | "NSAA" | "TMUA" | "ESAT" | "PAT" | "MAT";
 export type ExamType = "Official" | "Specimen";
 export type SolutionType = "official" | "generated" | "none";
+export type ContentFormat = "image" | "text" | "hybrid";
+
+export interface DiagramAsset {
+  id: string;
+  url: string;
+  alt?: string;
+  position?: string;
+}
 
 export const MISTAKE_OPTIONS = [
   "None",
@@ -131,7 +139,11 @@ export interface Question {
   
   // Question content
   questionImage: string;
-  
+  questionStem?: string;
+  options?: Partial<Record<Letter, string>>;
+  diagramAssets?: DiagramAsset[];
+  contentFormat?: ContentFormat;
+
   // Solution content
   solutionImage?: string;
   solutionText?: string;

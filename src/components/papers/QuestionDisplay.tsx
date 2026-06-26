@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { Question } from "@/types/papers";
+import { shouldRenderPastPaperAsText } from "@/lib/papers/pastPaperTextMode";
+import { PastPaperTextQuestion } from "@/components/papers/PastPaperTextQuestion";
+import { ConversionReportButton } from "@/components/papers/ConversionReportButton";
 
 interface QuestionDisplayProps {
   question: Question;
@@ -146,6 +149,20 @@ export function QuestionDisplay({
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
   };
+
+  if (shouldRenderPastPaperAsText(question)) {
+    return (
+      <div className={cn("relative h-full overflow-y-auto", className)}>
+        <PastPaperTextQuestion
+          question={question}
+          questionNumber={questionNumber}
+        />
+        <div className="px-4 pb-4">
+          <ConversionReportButton questionId={question.id} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("relative h-full", className)}>
