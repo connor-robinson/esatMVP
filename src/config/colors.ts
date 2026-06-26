@@ -277,6 +277,36 @@ export function getExamAccentSurfaceStrongClass(examName: string): string {
   return "bg-accent/18";
 }
 
+/** Past-papers library year row — exam tint, no border; lifts in dark, subtle wash in light. */
+export function getExamAccentLibraryPaperRowClass(
+  examName: string,
+  selected = false,
+): string {
+  const key = examName.trim().toUpperCase();
+  const row = (base: string, hover: string, active: string) =>
+    selected ? active : `${base} ${hover}`;
+
+  if (key === "ENGAA") {
+    return row("bg-biology/10", "hover:bg-biology/18", "bg-biology/18");
+  }
+  if (key === "NSAA") {
+    return row("bg-accent/10", "hover:bg-accent/18", "bg-accent/18");
+  }
+  if (key === "TMUA") {
+    return row("bg-tmua-accent/10", "hover:bg-tmua-accent/18", "bg-tmua-accent/18");
+  }
+  if (key === "ESAT") {
+    return row("bg-maths/10", "hover:bg-maths/18", "bg-maths/18");
+  }
+  if (key === "PAT") {
+    return row("bg-chemistry/10", "hover:bg-chemistry/18", "bg-chemistry/18");
+  }
+  if (key === "MAT") {
+    return row("bg-maths/10", "hover:bg-maths/18", "bg-maths/18");
+  }
+  return row("bg-accent/10", "hover:bg-accent/18", "bg-accent/18");
+}
+
 /** Overall roadmap progress bar — NSAA blue. */
 export const PAST_PAPERS_PROGRESS_FILL = "bg-accent";
 

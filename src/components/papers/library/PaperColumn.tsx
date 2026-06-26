@@ -8,6 +8,11 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Loader2, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  getExamAccentLibraryPaperRowClass,
+  getExamAccentTextClass,
+  getExamSectionNumberBadgeClass,
+} from "@/config/colors";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection } from "@/types/papers";
@@ -53,6 +58,7 @@ export function PaperColumn({
   const [isAddingPaper, setIsAddingPaper] = useState(false);
 
   const session = useSupabaseSession();
+  const sectionNumberBadgeClass = getExamSectionNumberBadgeClass(paper.examName);
   const paperType = examNameToPaperType(paper.examName as any) || "NSAA";
 
   const availableSections = outline?.sections ?? [];
@@ -218,7 +224,7 @@ export function PaperColumn({
       <div
         className={cn(
           "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
-          isSelected ? "bg-surface-neutral/70" : "bg-surface hover:bg-surface-neutral/40",
+          getExamAccentLibraryPaperRowClass(paper.examName, isSelected),
         )}
       >
         <button
@@ -237,7 +243,12 @@ export function PaperColumn({
         </button>
 
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <span className="truncate text-sm font-semibold text-text">
+          <span
+            className={cn(
+              "truncate text-sm font-semibold",
+              getExamAccentTextClass(paper.examName),
+            )}
+          >
             {paper.examName} {paper.examYear}
           </span>
           {paperCompletionStatus !== "none" && (
@@ -315,10 +326,15 @@ export function PaperColumn({
                   return (
                     <div
                       key={mainSection.name}
-                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface px-3 transition-colors hover:bg-surface-neutral/40"
+                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface-elevated px-3 transition-colors hover:bg-surface-mid"
                     >
                       {sectionNum ? (
-                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-surface-neutral text-xs font-bold text-text-muted">
+                        <div
+                          className={cn(
+                            "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold",
+                            sectionNumberBadgeClass,
+                          )}
+                        >
                           {sectionNum}
                         </div>
                       ) : (
