@@ -242,11 +242,8 @@ def apply_reassessment(
     patch = {
         "quality_gate_action": new_action,
         "quality_gate_payload": new_payload,
-        "quality_gate_curriculum_validation_status": "valid",
-        "quality_gate_curriculum_validator_version": REASSESS_VERSION,
         "status": new_status,
     }
-
     client.table("ai_generated_questions").update(patch).eq("id", qid).execute()
     stats["applied"] += 1
 

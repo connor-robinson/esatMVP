@@ -49,8 +49,22 @@ def build_curriculum_reassessment_payload(row: Dict[str, Any]) -> Dict[str, Any]
 
 def build_curriculum_reassessment_prompts(row: Dict[str, Any]) -> Tuple[str, str]:
     payload = build_curriculum_reassessment_payload(row)
+    schema_example = {
+        "curriculum_match": "in_syllabus",
+        "syllabus_fit_score": 5,
+        "required_topic_codes": ["M2-MM1"],
+        "required_knowledge": ["example concept"],
+        "borderline_or_external_knowledge": [],
+        "reason": "Brief curriculum justification.",
+        "confidence": "high",
+    }
     user_prompt = (
         "Assess curriculum fit only for this ESAT question.\n\n"
+        "Return a single JSON object with ALL of these keys (no omissions):\n"
+        f"{json.dumps(schema_example, indent=2)}\n\n"
+        "curriculum_match must be exactly: in_syllabus, borderline, or out_of_syllabus.\n"
+        "confidence must be exactly: high, medium, or low.\n"
+        "syllabus_fit_score must be an integer from 1 to 5.\n\n"
         "Input JSON:\n"
         + json.dumps(payload, ensure_ascii=False, indent=2)
     )
@@ -90,12 +104,18 @@ def reassess_curriculum(
     """
     system_prompt, user_prompt = build_curriculum_reassessment_prompts(row)
     last_exc: Exception | None = None
+    retry_suffix = (
+        "\n\n[Retry] Your previous response omitted required keys. "
+        "Return the full JSON object with curriculum_match, syllabus_fit_score, "
+        "required_topic_codes, required_knowledge, borderline_or_external_knowledge, "
+        "reason, and confidence."
+    )
     for attempt in range(max_retries):
         try:
             raw = llm.generate(
                 model,
                 system_prompt,
-                user_prompt,
+                user_prompt + (retry_suffix if attempt > 0 else ""),
                 temperature=temperature,
                 trace_label="curriculum_reassessment",
             )

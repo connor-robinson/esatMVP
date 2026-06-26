@@ -59,21 +59,28 @@ def action_from_reassessment(
 
 def parse_reassessment_response(data: Dict[str, Any]) -> Dict[str, Any]:
     """Validate and normalize the curriculum-only model response."""
+    if "curriculum_match" not in data and isinstance(data.get("curriculum_validation"), dict):
+        data = {**data, **data["curriculum_validation"]}
+
     match = parse_curriculum_match(data.get("curriculum_match"))
     if match is None:
         raise ValueError(f"invalid curriculum_match: {data.get('curriculum_match')!r}")
 
     score = data.get("syllabus_fit_score")
-    try:
-        score_int = int(score)
-    except (TypeError, ValueError) as e:
-        raise ValueError(f"invalid syllabus_fit_score: {score!r}") from e
-    if not 1 <= score_int <= 5:
-        raise ValueError(f"syllabus_fit_score out of range: {score_int}")
+    if score is None:
+        defaults = {"in_syllabus": 5, "borderline": 3, "out_of_syllabus": 1}
+        score_int = defaults.get(match, 3)
+    else:
+        try:
+            score_int = int(score)
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"invalid syllabus_fit_score: {score!r}") from e
+        if not 1 <= score_int <= 5:
+            raise ValueError(f"syllabus_fit_score out of range: {score_int}")
 
     confidence = parse_reassessment_confidence(data.get("confidence"))
     if confidence is None:
-        raise ValueError(f"invalid confidence: {data.get('confidence')!r}")
+        confidence = "medium"
 
     def _str_list(key: str, *, limit: int) -> list[str]:
         raw = data.get(key)
@@ -87,6 +94,8 @@ def parse_reassessment_response(data: Dict[str, Any]) -> Dict[str, Any]:
         return out[:limit]
 
     reason = str(data.get("reason") or "").strip()[:2000]
+    if not reason:
+        reason = f"Curriculum reassessment: {match}."
     return {
         "curriculum_match": match,
         "syllabus_fit_score": score_int,
