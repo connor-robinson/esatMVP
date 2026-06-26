@@ -1159,7 +1159,7 @@ export default function PapersSolvePage() {
                     className={cn(
                       'flex h-[50px] flex-1 items-center justify-center rounded-organic-md border-2 text-base font-medium transition-all duration-300 ease-out',
                       selected
-                        ? 'border-primary bg-surface-mid text-text shadow-glow'
+                        ? 'border-primary bg-primary text-background shadow-glow'
                         : 'border-transparent bg-surface-mid text-text hover:bg-surface-neutral',
                     )}
                   >
