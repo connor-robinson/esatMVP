@@ -4,7 +4,13 @@ Converts Supabase past-paper question screenshots (NSAA/ENGAA/TMUA) into KaTeX t
 
 ## Prerequisites
 
-1. Apply migration: `supabase/migrations/20260627100000_past_paper_text_conversion.sql`
+1. Apply migration (pick one):
+   - **Direct script (recommended if CLI pooler fails):** add `SUPABASE_DB_PASSWORD` to `.env.local`, then:
+     ```bash
+     python scripts/apply_past_paper_migration.py
+     ```
+   - **Supabase Dashboard:** SQL Editor → run `supabase/migrations/20260627100000_past_paper_text_conversion.sql`
+   - **CLI (if pooler works):** `npx supabase db push`
 2. Python deps: `pip install -r past_paper_converter/requirements.txt`
 3. Auth (pick one):
    - **Vertex AI** (default in this repo): `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`, ADC via `gcloud auth application-default login`
