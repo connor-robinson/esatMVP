@@ -1059,7 +1059,7 @@ export default function PapersSolvePage() {
         {/* Question Interface */}
         {/* QUESTION DIV HEIGHT: Change both '80vh' values below to adjust question div height */}
         <div
-          className='space-y-1 rounded-lg overflow-hidden flex-shrink-0'
+          className='relative z-0 flex-shrink-0 space-y-1 overflow-hidden rounded-lg'
           style={{ minHeight: '80vh', height: '80vh' }}
         >
           {/* Question Content */}
@@ -1140,15 +1140,9 @@ export default function PapersSolvePage() {
         {/* Unified Navigation Container */}
         {/* PADDING BETWEEN QUESTION AND MC: Change 'pt-4' (padding-top) below to adjust spacing. Also check 'space-y-0' on line 273 */}
         <div
-          className='px-8 pb-12 pt-4 rounded-3xl flex-shrink-0'
+          className='sticky bottom-0 z-40 flex-shrink-0 rounded-3xl bg-background/95 px-8 pb-12 pt-4 backdrop-blur-md'
           style={{
-            // Remove gradient and shadow to eliminate glow/outline
-            background: 'transparent',
             boxShadow: 'none',
-            backdropFilter: 'none',
-            position: 'sticky',
-            bottom: 0,
-            zIndex: 10,
           }}
         >
           {/* Two-Row Button Layout */}
@@ -1286,7 +1280,7 @@ export default function PapersSolvePage() {
         </div>
 
         {/* Floating Notes Icon */}
-        <div className='fixed bottom-6 left-6 z-50'>
+        <div className='fixed bottom-6 left-6 z-30'>
           <div className='relative' data-notes-popover>
             <button
               type="button"
