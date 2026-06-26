@@ -705,9 +705,10 @@ export function filterPaperSessionsByTopicAndType(
 
 export type MistakeTagCount = { label: string; count: number };
 
-export function aggregateMistakeTagCounts(
-  sessions: PaperSession[],
-): { entries: MistakeTagCount[]; total: number } {
+function countMistakeTags(mistakeTags: MistakeTag[] | undefined): {
+  entries: MistakeTagCount[];
+  total: number;
+} {
   const counts: Record<string, number> = {};
   const add = (label: string) => {
     const key = label.trim();
@@ -715,15 +716,39 @@ export function aggregateMistakeTagCounts(
     counts[key] = (counts[key] ?? 0) + 1;
   };
 
+  mistakeTags?.forEach((tag) => {
+    if (Array.isArray(tag)) {
+      (tag as unknown[]).forEach((t) => {
+        if (typeof t === 'string') t.split(',').forEach(add);
+      });
+    } else if (typeof tag === 'string') {
+      tag.split(',').forEach(add);
+    }
+  });
+
+  const entries = Object.entries(counts)
+    .map(([label, count]) => ({ label, count }))
+    .filter((e) => e.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const total = entries.reduce((sum, e) => sum + e.count, 0);
+  return { entries, total };
+}
+
+export function aggregateMistakeTagCountsFromTags(
+  mistakeTags: MistakeTag[],
+): { entries: MistakeTagCount[]; total: number } {
+  return countMistakeTags(mistakeTags);
+}
+
+export function aggregateMistakeTagCounts(
+  sessions: PaperSession[],
+): { entries: MistakeTagCount[]; total: number } {
+  const counts: Record<string, number> = {};
   sessions.forEach((session) => {
-    session.mistakeTags?.forEach((tag) => {
-      if (Array.isArray(tag)) {
-        (tag as unknown[]).forEach((t) => {
-          if (typeof t === 'string') t.split(',').forEach(add);
-        });
-      } else if (typeof tag === 'string') {
-        tag.split(',').forEach(add);
-      }
+    const { entries } = countMistakeTags(session.mistakeTags);
+    entries.forEach(({ label, count }) => {
+      counts[label] = (counts[label] ?? 0) + count;
     });
   });
 

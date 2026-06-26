@@ -11,9 +11,8 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { PaperBadge } from "@/components/papers/PaperBadge";
 import { ChoicePill } from "@/components/papers/ChoicePill";
-import { MistakeChart } from "@/components/papers/MistakeChart";
-import { MistakeSelect } from "@/components/papers/MistakeSelect";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
+import { MarkSessionMistakesSection } from "@/components/papers/mark/MarkSessionMistakesSection";
 import { MathContent } from "@/components/shared/MathContent";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
@@ -37,7 +36,7 @@ import { getConversionTable, getConversionRows, findFallbackConversionTable } fr
 import { supabase } from "@/lib/supabase/client";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
-import type { Letter, MistakeTag } from "@/types/papers";
+import type { ExamName, Letter, MistakeTag } from "@/types/papers";
 import type { QuestionStats } from "@/types/questionStats";
 import {
   MarkSectionNav,
@@ -82,9 +81,11 @@ export default function PapersMarkPage() {
     getTotalQuestions,
     getCorrectCount,
     isMarkingInfo,
+    questions,
   } = usePaperSessionStore();
   
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
+  const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -840,44 +841,46 @@ export default function PapersMarkPage() {
     return { earlyAccuracy, lateAccuracy, trend: lateAccuracy > earlyAccuracy ? 'improving' : lateAccuracy < earlyAccuracy ? 'declining' : 'steady' };
   }, [derivedCorrectFlags, totalQuestions]);
 
-  // Top mistakes (parses arrays and comma-separated tags, mirrors MistakeChart logic)
-  const topMistakes = useMemo(() => {
-    const counts: Record<string, number> = {};
-    const add = (label: string) => {
-      const key = (label || '').trim();
-      if (!key) return;
-      if (/^none$/i.test(key)) return;
-      counts[key] = (counts[key] || 0) + 1;
-    };
-    mistakeTags.forEach((tag: any) => {
-      if (Array.isArray(tag)) {
-        tag.forEach((t) => {
-          if (typeof t === 'string') t.split(',').forEach(add);
-        });
-      } else if (typeof tag === 'string') {
-        tag.split(',').forEach(add);
-      }
-    });
-    return Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3);
-  }, [mistakeTags]);
-
-  // Mistakes by section
-  const mistakesBySection = useMemo(() => {
-    const bySection: Record<string, Record<string, number>> = {};
-    const qs = usePaperSessionStore.getState().questions;
-    
-    mistakeTags.forEach((tag, i) => {
-      if (tag && tag !== "None") {
-        const part = (qs[i]?.partLetter || "").trim() || "Section";
-        if (!bySection[part]) bySection[part] = {};
-        bySection[part][tag] = (bySection[part][tag] || 0) + 1;
-      }
-    });
-    
-    return bySection;
-  }, [mistakeTags]);
+  const wrongQuestions = useMemo(() => {
+    return questionNumbers
+      .map((qn, index) => {
+        if ((derivedCorrectFlags[index] ?? correctFlags[index]) !== false) {
+          return null;
+        }
+        const q = questions[index];
+        const partLetterRaw = (q?.partLetter || "").trim();
+        const partNameFull = (q?.partName || "").trim();
+        const sectionName = mapPartToSection(
+          { partLetter: partLetterRaw, partName: partNameFull },
+          paperName as ExamName,
+        );
+        const rawTags = mistakeTags[index];
+        const tags = Array.isArray(rawTags)
+          ? (rawTags as string[])
+          : typeof rawTags === "string"
+            ? rawTags.split(",").map((t) => t.trim()).filter(Boolean)
+            : [];
+        return {
+          index,
+          questionNumber: qn,
+          sectionName,
+          yourAnswer: answers[index]?.choice ?? null,
+          correctAnswer: (q?.answerLetter as Letter) ?? null,
+          timeSec: perQuestionSec[index] || 0,
+          tags,
+        };
+      })
+      .filter((row): row is NonNullable<typeof row> => row !== null);
+  }, [
+    questionNumbers,
+    derivedCorrectFlags,
+    correctFlags,
+    questions,
+    paperName,
+    mistakeTags,
+    answers,
+    perQuestionSec,
+  ]);
 
   // Session insights (auto-generated, substantial)
   type Insight = { title: string; detail?: string; tone: 'positive' | 'negative' | 'neutral' };
@@ -1163,12 +1166,19 @@ export default function PapersMarkPage() {
 
   const selectMarkSection = (section: MarkSection) => {
     setMarkSection(section);
+    if (section !== "review") {
+      setReviewReturnSection(null);
+    }
     if (section === "review" && selectedIndex < 0) {
       setSelectedIndex(0);
     }
   };
 
-  const openQuestionInReview = (index: number) => {
+  const openQuestionInReview = (
+    index: number,
+    returnTo: MarkSection | null = null,
+  ) => {
+    setReviewReturnSection(returnTo);
     setMarkSection("review");
     setSelectedIndex(index);
   };
@@ -2195,6 +2205,18 @@ export default function PapersMarkPage() {
             <div className="h-full min-h-0 overflow-y-auto rounded-2xl p-4" style={{ scrollbarGutter: "stable" }}>
               {selectedIndex >= 0 ? (
               <div className="space-y-4">
+              {reviewReturnSection && (
+                <button
+                  type="button"
+                  onClick={() => selectMarkSection(reviewReturnSection)}
+                  className="inline-flex items-center gap-1.5 rounded-organic-md bg-surface-elevated px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                  Back to {reviewReturnSection === "mistakes" ? "Mistakes" : reviewReturnSection}
+                </button>
+              )}
 
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -2789,47 +2811,20 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
-        {/* Mistake Analysis & Drill Setup */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="text-lg font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
-              <div className={cn('rounded-md px-2 py-0.5 text-[11px]', noteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
-                {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
-              </div>
-            </div>
-            <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-              {questionNumbers.map((qn, index) => {
-                const isWrong = (derivedCorrectFlags[index] ?? correctFlags[index]) === false;
-                if (!isWrong) return null;
-                const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
-                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing',"Didn't review options"];
-                const customKey = 'paper.customMistakeTags';
-                const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
-                const opts = Array.from(new Set([...preset, ...custom]));
-                return (
-                  <div key={qn} className="flex items-center justify-between bg-surface-elevated hover:bg-surface-mid rounded-md px-3 py-2">
-                    <button className="text-sm font-medium text-neutral-200" onClick={() => openQuestionInReview(index)}>Q{qn}</button>
-                    <div className="flex items-center gap-2">
-                      <MistakeSelect
-                        value={Array.isArray(tags) ? tags : []}
-                        options={opts}
-                        onCreateOption={(label: string) => {
-                          const next = Array.from(new Set([...custom, label]));
-                          localStorage.setItem(customKey, JSON.stringify(next));
-                        }}
-                        onChange={(next: string[]) => {
-                          setNoteStatus('typing');
-                          setMistakeTag(index, next as any);
-                          setTimeout(() => setNoteStatus('saved'), 700);
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                <MarkSessionMistakesSection
+                  mistakeTags={mistakeTags}
+                  wrongQuestions={wrongQuestions}
+                  noteStatus={noteStatus}
+                  formatTime={formatTime}
+                  onTagChange={(index, tags) => {
+                    setNoteStatus("typing");
+                    setMistakeTag(index, tags as unknown as MistakeTag);
+                    setTimeout(() => setNoteStatus("saved"), 700);
+                  }}
+                  onOpenQuestion={(index) =>
+                    openQuestionInReview(index, "mistakes")
+                  }
+                />
               </div>
               )}
               {markSection === "notes" && (
