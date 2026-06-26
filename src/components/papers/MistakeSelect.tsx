@@ -19,6 +19,7 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [panelPos, setPanelPos] = useState<{ top: number; left: number; width: number } | null>(null);
   const rafRef = useRef<number | null>(null);
+  const isFullWidth = Boolean(className?.includes("w-full"));
 
   const normalized = useMemo(() => options.map(o => o.trim()).filter(Boolean), [options]);
   const filtered = useMemo(() => {
@@ -82,14 +83,16 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
     <div ref={ref} className={`relative ${className || ""}`}>
       <button
         type="button"
-        className="px-2 py-1.5 text-xs rounded-md bg-surface-mid text-text-muted hover:bg-surface-neutral flex items-center justify-between gap-1 focus:outline-none w-32 sm:w-36 flex-shrink-0"
+        className={`px-3 py-2 text-xs rounded-md bg-surface-mid text-text-muted hover:bg-surface-neutral flex items-center justify-between gap-2 focus:outline-none ${
+          isFullWidth ? "w-full min-w-0" : "w-32 sm:w-36 flex-shrink-0"
+        }`}
         onClick={() => setOpen(v => !v)}
         aria-expanded={open}
       >
-        <span className={`truncate ${value.length === 0 ? 'text-text-subtle' : 'text-text'}`}>
+        <span className={`truncate text-left ${value.length === 0 ? 'text-text-subtle' : 'text-text'}`}>
           {value.length === 0 && '0 mistakes selected'}
           {value.length === 1 && value[0]}
-          {value.length >= 2 && `${value.length}+ mistakes selected`}
+          {value.length >= 2 && value.join(", ")}
         </span>
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="6 9 12 15 18 9" />
@@ -97,7 +100,7 @@ export function MistakeSelect({ value, onChange, options, onCreateOption, placeh
       </button>
 
       {open && panelPos && createPortal(
-        <div ref={panelRef} className="fixed rounded-md bg-surface-elevated border border-border-subtle shadow-lg p-2" style={{ top: panelPos.top, left: panelPos.left, width: 180, zIndex: 2147483647 }}>
+        <div ref={panelRef} className="fixed rounded-md bg-surface-elevated border border-border-subtle shadow-lg p-2" style={{ top: panelPos.top, left: panelPos.left, width: Math.max(panelPos.width, 280), zIndex: 2147483647 }}>
           <div className="flex items-center gap-1 mb-2">
             <input
               value={query}

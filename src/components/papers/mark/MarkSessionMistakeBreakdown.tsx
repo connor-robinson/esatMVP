@@ -1,13 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-} from "recharts";
 import { motion } from "framer-motion";
 import { PAPER_COLORS } from "@/config/colors";
 import type { MistakeTag } from "@/types/papers";
@@ -23,24 +16,78 @@ const SLICE_COLORS = [
 
 interface MarkSessionMistakeBreakdownProps {
   mistakeTags: MistakeTag[];
+  emptyHint?: string;
+}
+
+function MistakeDonutChart({
+  entries,
+  total,
+}: {
+  entries: { label: string; count: number }[];
+  total: number;
+}) {
+  const radius = 82;
+  const innerHole = 58;
+  const strokeWidth = radius - innerHole;
+  const ringRadius = innerHole + strokeWidth / 2;
+  const circumference = 2 * Math.PI * ringRadius;
+  const center = 110;
+  const size = 220;
+
+  let currentOffset = 0;
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      className="mx-auto block"
+      role="img"
+      aria-label="Mistake tag breakdown"
+    >
+      <circle
+        cx={center}
+        cy={center}
+        r={ringRadius}
+        fill="none"
+        stroke="var(--color-border-subtle)"
+        strokeWidth={strokeWidth}
+      />
+      {entries.map((entry, index) => {
+        const pct = entry.count / total;
+        const dash = pct * circumference;
+        const strokeDasharray = `${dash} ${circumference - dash}`;
+        const strokeDashoffset = -currentOffset;
+        currentOffset += dash;
+        const color = SLICE_COLORS[index % SLICE_COLORS.length];
+
+        return (
+          <circle
+            key={entry.label}
+            cx={center}
+            cy={center}
+            r={ringRadius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={strokeDasharray}
+            strokeDashoffset={strokeDashoffset}
+            transform={`rotate(-90 ${center} ${center})`}
+            className="transition-all duration-300"
+          />
+        );
+      })}
+    </svg>
+  );
 }
 
 export function MarkSessionMistakeBreakdown({
   mistakeTags,
+  emptyHint = "Tag mistakes below to see a breakdown here.",
 }: MarkSessionMistakeBreakdownProps) {
   const { entries, total } = useMemo(
     () => aggregateMistakeTagCountsFromTags(mistakeTags),
     [mistakeTags],
-  );
-
-  const donutData = useMemo(
-    () =>
-      entries.map((e, i) => ({
-        name: e.label,
-        value: e.count,
-        fill: SLICE_COLORS[i % SLICE_COLORS.length],
-      })),
-    [entries],
   );
 
   const topEntries = entries.slice(0, 6);
@@ -48,7 +95,7 @@ export function MarkSessionMistakeBreakdown({
   if (total === 0) {
     return (
       <p className="rounded-organic-lg bg-surface-mid/50 px-4 py-8 text-center text-sm text-text-muted">
-        Tag mistakes below to see a breakdown here.
+        {emptyHint}
       </p>
     );
   }
@@ -59,39 +106,8 @@ export function MarkSessionMistakeBreakdown({
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
           Mistake breakdown
         </h3>
-        <div className="relative mx-auto h-[220px] w-full max-w-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={donutData}
-                cx="50%"
-                cy="50%"
-                innerRadius={58}
-                outerRadius={82}
-                paddingAngle={2}
-                dataKey="value"
-                stroke="var(--color-border-subtle)"
-                strokeWidth={1}
-              >
-                {donutData.map((entry) => (
-                  <Cell key={entry.name} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(v?: number | string) => {
-                  const n = typeof v === "number" ? v : Number(v ?? 0);
-                  return [`${n} (${((n / total) * 100).toFixed(0)}%)`, "Tagged"];
-                }}
-                contentStyle={{
-                  borderRadius: 10,
-                  border: "1px solid var(--color-border)",
-                  background: "var(--color-surface-elevated)",
-                  color: "var(--color-text)",
-                  fontSize: 12,
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="relative mx-auto h-[220px] w-[220px]">
+          <MistakeDonutChart entries={entries} total={total} />
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
               Total tags
