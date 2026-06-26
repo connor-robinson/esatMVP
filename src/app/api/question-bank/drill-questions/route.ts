@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { QuestionBankQuestion } from '@/types/questionBank';
+import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,10 +54,10 @@ export async function GET() {
       return NextResponse.json({ questions: [], count: 0 });
     }
 
-    // 2. Fetch full question rows (RLS controls visibility; no status filter so drill works even if status != 'approved')
-    const { data: rows, error: questionsError } = await (supabase as any)
-      .from('ai_generated_questions')
-      .select('*')
+    // 2. Fetch full question rows (approved only)
+    const { data: rows, error: questionsError } = await applyPublishedQuestionBankFilter(
+      (supabase as any).from('ai_generated_questions').select('*'),
+    )
       .in('id', wrongIds);
 
     if (questionsError) {

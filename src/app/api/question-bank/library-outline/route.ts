@@ -11,7 +11,10 @@ import {
   labelForEsatTag,
   compareEsatTagLabels,
 } from "@/lib/questionBank/esatTagCanonicalize";
-import { filterRowsBySubjectTestType } from "@/lib/questionBank/libraryFilterServer";
+import {
+  applyPublishedQuestionBankFilter,
+  filterRowsBySubjectTestType,
+} from "@/lib/questionBank/libraryFilterServer";
 import { SUBJECT_TEST_TYPE } from "@/lib/questionBank/subjectTestTypes";
 import type { SubjectFilter } from "@/types/questionBank";
 
@@ -163,11 +166,12 @@ export async function GET(request: NextRequest) {
     let offset = 0;
 
     for (;;) {
-      let query = supabase
-        .from("ai_generated_questions")
-        .select("id, primary_tag, schema_id, test_type, subjects")
+      let query = applyPublishedQuestionBankFilter(
+        supabase
+          .from("ai_generated_questions")
+          .select("id, primary_tag, schema_id, test_type, subjects"),
+      )
         .eq("subjects", subject)
-        .neq("status", "deleted")
         .order("id", { ascending: true })
         .range(offset, offset + PAGE_SIZE - 1);
 

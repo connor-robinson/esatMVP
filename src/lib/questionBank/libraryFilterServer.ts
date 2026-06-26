@@ -5,9 +5,17 @@ import type {
   AttemptedFilter,
 } from "@/types/questionBank";
 import { LIBRARY_SUBJECTS } from "@/lib/questionBank/libraryQueryParams";
+import { QUESTION_BANK_PUBLISH_STATUS } from "@/lib/questionBank/qualityGate";
 import { subjectMatchesTestType } from "@/lib/questionBank/subjectTestTypes";
 
 export const LIBRARY_PAGE_SIZE = 1000;
+
+/** Restrict queries to QG auto-approved questions (withhold pending / review / deleted). */
+export function applyPublishedQuestionBankFilter<
+  Q extends { eq: (col: string, val: string) => Q },
+>(query: Q): Q {
+  return query.eq("status", QUESTION_BANK_PUBLISH_STATUS);
+}
 
 export type LibraryFilterParams = {
   subjects: string[];

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import type { AiGeneratedQuestionRow } from '@/lib/supabase/types';
+import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
@@ -22,8 +23,7 @@ function isPlaceholderNumericTag(tag: string): boolean {
 
 /**
  * GET /api/question-bank/topic-tags
- * Distinct primary_tag + secondary_tags from all questions shown in the bank
- * (same visibility as GET /api/question-bank/questions — not limited to approved).
+ * Distinct primary_tag + secondary_tags from published question-bank questions only.
  */
 export async function GET() {
   try {
@@ -45,10 +45,9 @@ export async function GET() {
     let offset = 0;
 
     for (;;) {
-      const { data, error } = await supabase
-        .from('ai_generated_questions')
-        .select('primary_tag, secondary_tags')
-        .neq('status', 'deleted')
+      const { data, error } = await applyPublishedQuestionBankFilter(
+        supabase.from('ai_generated_questions').select('primary_tag, secondary_tags'),
+      )
         .order('id', { ascending: true })
         .range(offset, offset + PAGE_SIZE - 1);
 

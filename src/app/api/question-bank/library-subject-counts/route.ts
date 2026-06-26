@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import {
   applyLibraryAttemptFilters,
   applyLibraryQueryFilters,
+  applyPublishedQuestionBankFilter,
   filterRowsBySubjectTestType,
   LIBRARY_PAGE_SIZE,
   loadLibraryAttemptContext,
@@ -31,11 +32,12 @@ export async function GET(request: NextRequest) {
     let offset = 0;
 
     for (;;) {
-      let query = supabase
-        .from("ai_generated_questions")
-        .select("id, subjects, test_type")
+      let query = applyPublishedQuestionBankFilter(
+        supabase
+          .from("ai_generated_questions")
+          .select("id, subjects, test_type"),
+      )
         .in("subjects", params.subjects)
-        .neq("status", "deleted")
         .order("id", { ascending: true })
         .range(offset, offset + LIBRARY_PAGE_SIZE - 1);
 

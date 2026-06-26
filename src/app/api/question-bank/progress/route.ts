@@ -4,6 +4,7 @@ import {
   SUBJECT_TEST_TYPE,
   subjectMatchesTestType,
 } from '@/lib/questionBank/subjectTestTypes';
+import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 import type { SubjectFilter } from '@/types/questionBank';
 
 export const dynamic = 'force-dynamic';
@@ -17,10 +18,9 @@ async function countQuestionsForSubject(
   subject: string,
   testType: 'ESAT' | 'TMUA' | null,
 ): Promise<number> {
-  let countQuery = supabase
-    .from('ai_generated_questions')
-    .select('id', { count: 'exact', head: true })
-    .eq('subjects', subject);
+  let countQuery = applyPublishedQuestionBankFilter(
+    supabase.from('ai_generated_questions').select('id', { count: 'exact', head: true }),
+  ).eq('subjects', subject);
 
   if (testType) {
     countQuery = countQuery.eq('test_type', testType);
@@ -70,9 +70,9 @@ async function getPerSubjectProgress(
     return { bySubject, attempted: 0, total };
   }
 
-  const { data: questions, error: questionsError } = await supabase
-    .from('ai_generated_questions')
-    .select('id, subjects, test_type')
+  const { data: questions, error: questionsError } = await applyPublishedQuestionBankFilter(
+    supabase.from('ai_generated_questions').select('id, subjects, test_type'),
+  )
     .in('subjects', subjects)
     .limit(5000);
 
@@ -183,10 +183,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Build count query - same filters as questions API (RLS controls visibility)
-    let countQuery = supabase
-      .from('ai_generated_questions')
-      .select('id', { count: 'exact', head: true });
+    // Build count query — approved questions only (same as questions API)
+    let countQuery = applyPublishedQuestionBankFilter(
+      supabase.from('ai_generated_questions').select('id', { count: 'exact', head: true }),
+    );
 
     if (testType) {
       countQuery = countQuery.eq('test_type', testType);
@@ -212,9 +212,9 @@ export async function GET(request: NextRequest) {
 
     if (isAuthenticated) {
       // Fetch question IDs (same visibility as count - RLS applies)
-      let idQuery = supabase
-        .from('ai_generated_questions')
-        .select('id');
+      let idQuery = applyPublishedQuestionBankFilter(
+        supabase.from('ai_generated_questions').select('id'),
+      );
 
       if (testType) {
         idQuery = idQuery.eq('test_type', testType);

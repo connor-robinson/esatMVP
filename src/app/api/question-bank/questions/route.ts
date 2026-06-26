@@ -7,13 +7,14 @@ import type {
   AttemptedFilter,
 } from '@/types/questionBank';
 import { SUBJECT_TEST_TYPE } from '@/lib/questionBank/subjectTestTypes';
+import { applyPublishedQuestionBankFilter } from '@/lib/questionBank/libraryFilterServer';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/question-bank/questions
- * Fetches questions with optional filtering
- * Query params: subject, difficulty, tags, limit, offset, random, reviewStatus, attemptedStatus
+ * Fetches published (auto-approved) questions with optional filtering.
+ * Query params: subject, difficulty, tags, limit, offset, random, attemptedStatus
  */
 export async function GET(request: NextRequest) {
   try {
@@ -260,15 +261,14 @@ export async function GET(request: NextRequest) {
     }
 
     // ============================================================================
-    // STAGE 1: Build base query (include all statuses - approved, pending, etc.)
+    // STAGE 1: Build base query — only QG auto-approved questions in the bank
     // ============================================================================
     debug(
-      '[Question Bank API] Stage 1: Building base query (including ALL statuses)',
+      '[Question Bank API] Stage 1: Building base query (approved only)',
     );
-    let query = supabase
-      .from('ai_generated_questions')
-      .select('*', { count: 'exact' });
-    // Note: Not filtering by status - showing all questions including unapproved
+    let query = applyPublishedQuestionBankFilter(
+      supabase.from('ai_generated_questions').select('*', { count: 'exact' }),
+    );
 
     // Get total count of all questions (any status) for stage count only in verbose mode
     let totalAnyStatusCount: number | null = null;
@@ -747,27 +747,13 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Sort questions by status priority if not random
+    // Sort by newest first (all rows are approved)
     let finalQuestions = questions;
     if (!random) {
-      finalQuestions = questions.sort((a: any, b: any) => {
-        const statusPriority: Record<string, number> = {
-          pending_review: 1,
-          needs_revision: 1,
-          approved: 2,
-          rejected: 3,
-        };
-        const aPriority = statusPriority[a.status] || 999;
-        const bPriority = statusPriority[b.status] || 999;
-
-        if (aPriority !== bPriority) {
-          return aPriority - bPriority;
-        }
-
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      });
+      finalQuestions = questions.sort(
+        (a: any, b: any) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     }
 
     // ============================================================================
