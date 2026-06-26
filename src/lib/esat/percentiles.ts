@@ -67,6 +67,43 @@ export function interpolateScore(rows: EsatRow[], percentile: number): number {
   return s1.score + (s2.score - s1.score) * t;
 }
 
+/** Average score distributions across multiple official tables (e.g. NSAA all subjects). */
+export function averageEsatDistributionTables(tables: EsatRow[][]): EsatRow[] {
+  const valid = tables.filter((t) => t.length > 0);
+  if (valid.length === 0) return [];
+  if (valid.length === 1) return [...valid[0]];
+
+  const byScore = new Map<
+    number,
+    { cumulative: number[]; candidate: number[] }
+  >();
+
+  for (const table of valid) {
+    const sorted = [...table].sort((a, b) => a.score - b.score);
+    let prevCum: number | undefined;
+    for (const row of sorted) {
+      const density = getRowDensity(row, prevCum);
+      prevCum = row.cumulativePct;
+      if (!byScore.has(row.score)) {
+        byScore.set(row.score, { cumulative: [], candidate: [] });
+      }
+      const bucket = byScore.get(row.score)!;
+      bucket.cumulative.push(row.cumulativePct);
+      bucket.candidate.push(density);
+    }
+  }
+
+  return [...byScore.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([score, vals]) => ({
+      score,
+      cumulativePct:
+        vals.cumulative.reduce((sum, v) => sum + v, 0) / vals.cumulative.length,
+      candidatePct:
+        vals.candidate.reduce((sum, v) => sum + v, 0) / vals.candidate.length,
+    }));
+}
+
 export type MapArgs = {
   examName?: string;
   sectionLetter?: string;

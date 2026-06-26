@@ -38,7 +38,7 @@ import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectio
 import { MISTAKE_OPTIONS } from "@/types/papers";
 import { getConversionTable, getConversionRows, findFallbackConversionTable } from "@/lib/supabase/questions";
 import { supabase } from "@/lib/supabase/client";
-import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
+import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable, averageEsatDistributionTables, type EsatRow } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { ExamName, Letter, MistakeTag } from "@/types/papers";
 import type { QuestionStats } from "@/types/questionStats";
@@ -114,6 +114,8 @@ export default function PapersMarkPage() {
   const [selectedPercentileSection, setSelectedPercentileSection] = useState<string>("");
   // NSAA: averaged percentile across all subjects
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
+  const [nsaaAveragedScore, setNsaaAveragedScore] = useState<number | null>(null);
+  const [nsaaAveragedChartRows, setNsaaAveragedChartRows] = useState<EsatRow[]>([]);
   // Community stats state
   const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
   const [statsLoading, setStatsLoading] = useState(false);
@@ -933,6 +935,37 @@ export default function PapersMarkPage() {
     [examName],
   );
 
+  const paperExamYear = useMemo(() => {
+    return questions?.[0]?.examYear ?? null;
+  }, [questions]);
+
+  const selectedPercentileMeta = useMemo(() => {
+    if (validSectionEntries.length === 0 || !selectedPercentileSection) return null;
+    if (selectedPercentileSection === "__average__") {
+      return { isAverage: true as const, subject: null };
+    }
+    const match = findQuestionForSection(questions, selectedPercentileSection, examName);
+    const subject = mapPartToSection(
+      {
+        partLetter: (match?.partLetter || selectedPercentileSection).toString(),
+        partName: match?.partName || "",
+      },
+      (paperName as any),
+    );
+    return { isAverage: false as const, subject };
+  }, [
+    validSectionEntries,
+    selectedPercentileSection,
+    questions,
+    examName,
+    paperName,
+  ]);
+
+  const percentileInfoText = useMemo(() => {
+    const yearLabel = paperExamYear ? `${paperExamYear} ` : "";
+    return `We use official ${yearLabel}${displayExamLabel} score distributions from that exam year. The curve shows how candidates actually scored — real data, not an estimate. Your dot is your result; Top% is the share of candidates you would have beaten that year.`;
+  }, [paperExamYear, displayExamLabel]);
+
   useEffect(() => {
     if (validSectionEntries.length === 0) return;
     const keys = validSectionEntries.map(([section]) => section);
@@ -1068,8 +1101,24 @@ export default function PapersMarkPage() {
         if (isNSAA && nsaaPercentiles.length > 0) {
           const avg = nsaaPercentiles.reduce((sum, p) => sum + p, 0) / nsaaPercentiles.length;
           setNsaaAveragedPercentile(Math.max(0, Math.min(100, avg)));
+
+          const scores = Object.values(out)
+            .map((o) => o.score)
+            .filter((s): s is number => typeof s === "number" && Number.isFinite(s));
+          setNsaaAveragedScore(
+            scores.length > 0
+              ? scores.reduce((sum, s) => sum + s, 0) / scores.length
+              : null,
+          );
+
+          const sectionTables = Object.values(out)
+            .map((o) => (o.table ? keyToRows[o.table] : null))
+            .filter((t): t is EsatRow[] => Array.isArray(t) && t.length > 0);
+          setNsaaAveragedChartRows(averageEsatDistributionTables(sectionTables));
         } else {
           setNsaaAveragedPercentile(null);
+          setNsaaAveragedScore(null);
+          setNsaaAveragedChartRows([]);
         }
         
         setSectionPercentiles(out);
@@ -1395,12 +1444,42 @@ export default function PapersMarkPage() {
                       {/* Section Percentiles — focused view with part selector */}
                       <div className={`${bubbleClass} space-y-4 lg:col-span-3`}>
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="text-base font-semibold text-neutral-100">
+                              Section Percentiles
+                            </div>
+                            {selectedPercentileMeta?.isAverage ? (
+                              <span className="rounded-organic-sm bg-maths/15 px-2.5 py-1 text-xs font-medium text-maths">
+                                Average (all subjects)
+                              </span>
+                            ) : selectedPercentileMeta?.subject ? (
+                              <span
+                                className={cn(
+                                  "rounded-organic-sm px-2.5 py-1 text-xs font-medium",
+                                  getSectionSubjectPillClass(selectedPercentileMeta.subject),
+                                )}
+                              >
+                                {selectedPercentileMeta.subject}
+                              </span>
+                            ) : null}
+                            <div className="group relative">
+                              <button
+                                type="button"
+                                className="flex h-6 w-6 items-center justify-center rounded-full text-text-muted transition-colors hover:text-maths"
+                                aria-label="How percentiles are calculated"
+                              >
+                                <Info className="h-4 w-4" />
+                              </button>
+                              <div className="absolute left-0 top-full z-10 mt-1 hidden w-72 rounded-organic-md border border-border bg-surface-elevated p-2.5 text-[11px] leading-relaxed text-text-muted shadow-bar-floating group-hover:block">
+                                {percentileInfoText}
+                              </div>
+                            </div>
+                          </div>
                           {validSectionEntries.length > 0 && (
                             <select
                               value={selectedPercentileSection}
                               onChange={(e) => setSelectedPercentileSection(e.target.value)}
-                              className="h-9 min-w-[12rem] rounded-organic-md bg-surface-mid px-3 text-sm text-neutral-200 focus:outline-none focus:ring-2 focus:ring-maths/40"
+                              className="h-9 min-w-[12rem] cursor-pointer appearance-none rounded-organic-md border-0 bg-surface-mid px-3 text-sm text-neutral-200 outline-none focus:outline-none focus:ring-0"
                             >
                               {examName === "NSAA" &&
                                 validSectionEntries.length > 1 &&
@@ -1438,75 +1517,25 @@ export default function PapersMarkPage() {
                           const section = isAverage ? null : selectedPercentileSection;
                           const sp = section ? sectionPercentiles[section] : null;
                           const pct = isAverage ? nsaaAveragedPercentile : sp?.percentile;
-                          const score = isAverage ? null : sp?.score;
-                          const tableLabel = isAverage ? "All subjects" : sp?.label || "—";
+                          const score = isAverage ? nsaaAveragedScore : sp?.score;
                           const qs = usePaperSessionStore.getState().questions;
                           const examYear = qs?.[0]?.examYear as number | undefined;
                           const isTmuAPre2024 =
                             !isAverage && examName === "TMUA" && examYear && examYear <= 2023;
-                          const chartRows =
-                            !isAverage && sp?.table ? percentileTables[sp.table] : undefined;
-                          const match = section
-                            ? findQuestionForSection(qs, section, examName)
-                            : null;
-                          const subject = section
-                            ? mapPartToSection(
-                                {
-                                  partLetter: (match?.partLetter || section).toString(),
-                                  partName: match?.partName || "",
-                                },
-                                (paperName as any),
-                              )
-                            : null;
+                          const chartRows = isAverage
+                            ? nsaaAveragedChartRows
+                            : sp?.table
+                              ? percentileTables[sp.table]
+                              : undefined;
 
                           return (
                             <div className="space-y-4">
-                              <div className="flex flex-wrap items-start justify-between gap-3">
-                                <div>
-                                  {isAverage ? (
-                                    <span className="rounded-organic-sm bg-maths/15 px-2.5 py-1 text-xs font-medium text-maths">
-                                      Average (all subjects)
-                                    </span>
-                                  ) : (
-                                    subject && (
-                                      <span
-                                        className={cn(
-                                          "rounded-organic-sm px-2.5 py-1 text-xs font-medium",
-                                          getSectionSubjectPillClass(subject),
-                                        )}
-                                      >
-                                        {subject}
-                                      </span>
-                                    )
-                                  )}
-                                  {!isAverage && typeof score === "number" && (
-                                    <div className="mt-2 text-xs text-neutral-400">
-                                      {displayExamLabel} score: {score.toFixed(1)}
-                                    </div>
-                                  )}
+                              {typeof score === "number" && (
+                                <div className="text-xs text-neutral-400">
+                                  {displayExamLabel} score: {score.toFixed(1)}
+                                  {isAverage ? " (average across subjects)" : ""}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="rounded-organic-sm bg-surface-mid px-2 py-1 text-[11px] text-neutral-400">
-                                    Table: {tableLabel}
-                                  </span>
-                                  <div className="group relative">
-                                    <button
-                                      type="button"
-                                      className="flex h-6 w-6 items-center justify-center rounded-full text-text-muted transition-colors hover:text-maths"
-                                      aria-label="How percentiles are calculated"
-                                    >
-                                      <Info className="h-4 w-4" />
-                                    </button>
-                                    <div className="absolute right-0 z-10 hidden w-64 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
-                                      {!isAverage && sp?.table && percentileTables[sp.table]
-                                        ? "We plot the real % of candidates at each score (bell-shaped distribution from official tables). Your marker shows your score; Top% comes from the cumulative table via linear interpolation."
-                                        : isAverage
-                                          ? "Average percentile across all subjects in this session."
-                                          : `We use ${displayExamLabel} conversion tables to convert your raw score to a scaled score.`}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+                              )}
 
                               <div className="text-center text-4xl font-bold tracking-tight text-neutral-100 sm:text-5xl">
                                 {Number.isFinite(pct as number)
@@ -1527,7 +1556,7 @@ export default function PapersMarkPage() {
                                   </div>
                                 )}
 
-                              {!isAverage && (
+                              {(chartRows?.length ?? 0) >= 2 && (
                                 <PercentileMiniChart
                                   rows={chartRows ?? []}
                                   score={score}
