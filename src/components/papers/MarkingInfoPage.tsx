@@ -151,7 +151,7 @@ export function MarkingInfoPage({
         }) ??
         null;
 
-      const row = getSectionRow(section, index, paperType, firstQuestion);
+      const row = getSectionRow(section, paperType, firstQuestion);
       const timeLimit = sectionTimeLimits?.[index];
       return { ...row, timeLimit, index };
     });
