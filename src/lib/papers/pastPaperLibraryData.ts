@@ -54,7 +54,18 @@ async function fetchPaperSectionsOutlineFromClient(
       p.id !== paper.id,
   );
 
-  return buildPaperSectionsOutline(paper, siblingPapers, allQuestions);
+  const outline = buildPaperSectionsOutline(paper, siblingPapers, allQuestions);
+  return {
+    ...outline,
+    partRows: allQuestions.map((row) => ({
+      paperId: row.paperId,
+      partLetter: row.partLetter,
+      partName: row.partName,
+      examType: row.examType,
+      paperName: row.paperName,
+      questionNumber: row.questionNumber,
+    })),
+  };
 }
 
 export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {

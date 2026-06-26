@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     const { data: questionRows, error: questionsError } = await supabase
       .from("questions")
-      .select("part_letter, part_name, exam_type, paper_name, paper_id")
+      .select("part_letter, part_name, exam_type, paper_name, paper_id, question_number")
       .in("paper_id", paperIds);
 
     if (questionsError) {
@@ -104,9 +104,20 @@ export async function GET(request: NextRequest) {
       paperName: (row.paper_name as string) ?? undefined,
     }));
 
+    const partRows = (
+      (questionRows ?? []) as Array<Record<string, unknown>>
+    ).map((row) => ({
+      paperId: row.paper_id as number,
+      partLetter: (row.part_letter as string) ?? "",
+      partName: (row.part_name as string) ?? "",
+      examType: (row.exam_type as string) ?? undefined,
+      paperName: (row.paper_name as string) ?? undefined,
+      questionNumber: (row.question_number as number) ?? 0,
+    }));
+
     const outline = buildPaperSectionsOutline(paper, siblingRows, slimParts);
 
-    return NextResponse.json(outline);
+    return NextResponse.json({ ...outline, partRows });
   } catch (e) {
     console.error("[past-papers/library-sections]", e);
     return NextResponse.json(

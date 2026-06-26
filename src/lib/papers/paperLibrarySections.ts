@@ -20,6 +20,8 @@ export type PaperSectionsOutline = {
   paperId: number;
   sections: PaperSection[];
   mainSections: PaperMainSection[];
+  /** One row per question — metadata only, for basket stats (no images). */
+  partRows?: Array<SlimQuestionPart & { questionNumber: number }>;
 };
 
 export type MainExamSection = "Section 1" | "Section 2";

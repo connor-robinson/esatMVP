@@ -13,9 +13,9 @@ export const scaleScore = scaleScoreFromMarkScoring;
 const PAPER_LIST_SELECT =
   'id, exam_name, exam_year, paper_name, exam_type, has_conversion';
 
-/** Metadata only — for section outlines and completion mapping. */
+/** Metadata only — for section outlines, basket stats, and completion mapping. */
 const QUESTION_PARTS_SELECT =
-  'paper_id, part_letter, part_name, exam_type, paper_name';
+  'paper_id, part_letter, part_name, exam_type, paper_name, question_number';
 
 export type QuestionPartRow = {
   paperId: number;
@@ -23,6 +23,7 @@ export type QuestionPartRow = {
   partName: string;
   examType?: string;
   paperName?: string;
+  questionNumber: number;
 };
 
 function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
@@ -32,6 +33,7 @@ function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
     partName: (row.part_name as string) ?? '',
     examType: (row.exam_type as string) ?? undefined,
     paperName: (row.paper_name as string) ?? undefined,
+    questionNumber: (row.question_number as number) ?? 0,
   };
 }
 

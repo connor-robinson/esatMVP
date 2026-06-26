@@ -19,13 +19,14 @@ import {
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor, getSectionColor } from "@/config/colors";
-import { getQuestions } from "@/lib/supabase/questions";
+import { getQuestionPartsForPaperIds } from "@/lib/supabase/questions";
+import type { QuestionPartRow } from "@/lib/supabase/questions";
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
 import { fetchPaperSectionsOutline } from "@/lib/papers/pastPaperLibraryData";
 import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySections";
 import type { PaperMainSection } from "@/lib/papers/paperLibrarySections";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
+import type { Paper, PaperSection, ExamName } from "@/types/papers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 
 function paperHasSelectedSubjects(
@@ -58,7 +59,7 @@ interface PaperSessionSummaryProps {
 
 interface PaperData {
   mainSections: PaperMainSection[];
-  questions: Question[];
+  partRows: QuestionPartRow[];
   loading: boolean;
   catalog: Paper[];
 }
@@ -279,7 +280,7 @@ export function PaperSessionSummary({
         papersToLoad.forEach(({ paper }) => {
           next.set(paper.id, {
             mainSections: [],
-            questions: [],
+            partRows: [],
             loading: true,
             catalog: [paper],
           });
@@ -287,68 +288,63 @@ export function PaperSessionSummary({
         return next;
       });
 
-      // Load data for each new paper
-      for (const { paper } of papersToLoad) {
-        try {
-          const siblingPapers = allPapers.filter(
-            (p) =>
-              p.examName === paper.examName &&
-              p.examYear === paper.examYear,
-          );
-          const catalog = siblingPapers.some((p) => p.id === paper.id)
-            ? siblingPapers
-            : [...siblingPapers, paper];
+      // Load data for each new paper (outline + part metadata only — no question images)
+      await Promise.all(
+        papersToLoad.map(async ({ paper }) => {
+          try {
+            const siblingPapers = allPapers.filter(
+              (p) =>
+                p.examName === paper.examName &&
+                p.examYear === paper.examYear,
+            );
+            const catalog = siblingPapers.some((p) => p.id === paper.id)
+              ? siblingPapers
+              : [...siblingPapers, paper];
+            const paperIds = catalog.map((p) => p.id);
 
-          const outline = await fetchPaperSectionsOutline(paper.id);
+            const outline = await fetchPaperSectionsOutline(paper.id);
+            const partRows =
+              outline.partRows ??
+              (await getQuestionPartsForPaperIds(paperIds));
 
-          let allQuestions: Question[] = [];
-          for (const catalogPaper of catalog) {
-            try {
-              const qs = await getQuestions(catalogPaper.id);
-              allQuestions = [...allQuestions, ...qs];
-            } catch (error) {
-              console.error(
-                `[PaperSessionSummary] Error loading paper ${catalogPaper.id}:`,
-                error,
-              );
-            }
+            setPaperData((prev) => {
+              const next = new Map(prev);
+              next.set(paper.id, {
+                mainSections: outline.mainSections,
+                partRows,
+                loading: false,
+                catalog,
+              });
+              return next;
+            });
+
+            setExpandedSections((prev) => {
+              const next = new Map(prev);
+              const paperSections = new Set<string>();
+              outline.mainSections.forEach((section) => {
+                paperSections.add(section.name);
+              });
+              next.set(paper.id, paperSections);
+              return next;
+            });
+          } catch (error) {
+            console.error(
+              `[PaperSessionSummary] Error loading data for paper ${paper.id}:`,
+              error,
+            );
+            setPaperData((prev) => {
+              const next = new Map(prev);
+              next.set(paper.id, {
+                mainSections: [],
+                partRows: [],
+                loading: false,
+                catalog: [paper],
+              });
+              return next;
+            });
           }
-
-          setPaperData((prev) => {
-            const next = new Map(prev);
-            next.set(paper.id, {
-              mainSections: outline.mainSections,
-              questions: allQuestions,
-              loading: false,
-              catalog,
-            });
-            return next;
-          });
-
-          // Auto-expand all sections for this newly loaded paper
-          setExpandedSections((prev) => {
-            const next = new Map(prev);
-            const paperSections = new Set<string>();
-            outline.mainSections.forEach((section) => {
-              paperSections.add(section.name);
-            });
-            next.set(paper.id, paperSections);
-            return next;
-          });
-        } catch (error) {
-          console.error(`[PaperSessionSummary] Error loading data for paper ${paper.id}:`, error);
-          setPaperData((prev) => {
-            const next = new Map(prev);
-            next.set(paper.id, {
-              mainSections: [],
-              questions: [],
-              loading: false,
-              catalog: [paper],
-            });
-            return next;
-          });
-        }
-      }
+        }),
+      );
     })();
   }, [selectedPapers, allPapers]);
 
@@ -444,40 +440,40 @@ export function PaperSessionSummary({
       if (data && !data.loading) {
         const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
-        let filteredQuestions: Question[] = [];
+        let filteredQuestionCount = 0;
         if (paperType === "TMUA") {
           const tmuaSubjects = new Set<PaperSection>();
           selectedSections.forEach((subjects) => {
             subjects.forEach((s) => tmuaSubjects.add(s));
           });
           totalSections += tmuaSubjects.size;
-          const questionCount = data.questions.length;
-          filteredQuestions = data.questions.filter((q, index) => {
+          const questionCount = data.partRows.length;
+          filteredQuestionCount = data.partRows.filter((row, index) => {
             const section = deriveTmuaSectionFromQuestion(
-              q,
+              row as Parameters<typeof deriveTmuaSectionFromQuestion>[0],
               index,
               questionCount,
             );
             return tmuaSubjects.has(section);
-          });
+          }).length;
           totalTimeMinutes += tmuaSubjects.size * 75;
         } else {
           selectedSections.forEach((subjects) => {
             totalSections += subjects.size;
           });
-          filteredQuestions = data.questions.filter((q) =>
+          filteredQuestionCount = data.partRows.filter((row) =>
             questionMatchesSelectedSections(
-              q,
+              row,
               selectedSections,
               paperType,
               paper,
               data.catalog,
             ),
-          );
-          totalTimeMinutes += Math.ceil(filteredQuestions.length * 1.48);
+          ).length;
+          totalTimeMinutes += Math.ceil(filteredQuestionCount * 1.48);
         }
 
-        totalQuestions += filteredQuestions.length;
+        totalQuestions += filteredQuestionCount;
       } else {
         selectedSections.forEach((subjects) => {
           totalSections += subjects.size;
