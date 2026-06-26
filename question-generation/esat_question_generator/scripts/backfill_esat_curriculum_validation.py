@@ -121,6 +121,23 @@ def fetch_rows(
     return out[:limit]
 
 
+def fetch_rows_by_ids(client: Any, ids: List[str]) -> List[Dict[str, Any]]:
+    """Fetch specific question rows by UUID (batched)."""
+    out: List[Dict[str, Any]] = []
+    unique = [i.strip() for i in ids if (i or "").strip()]
+    for i in range(0, len(unique), 50):
+        chunk = unique[i : i + 50]
+        resp = (
+            client.table("ai_generated_questions")
+            .select(SELECT_COLS)
+            .in_("id", chunk)
+            .neq("status", "deleted")
+            .execute()
+        )
+        out.extend(list(resp.data or []))
+    return out
+
+
 def _apply_manual(
     manual: Dict[str, Any],
 ) -> Tuple[str, str, str]:
@@ -388,6 +405,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         limit=max(1, int(ns.limit)),
         only_human_review=bool(ns.only_human_review),
     )
+    if manual_map and not (ns.question_id or "").strip():
+        manual_ids = list(manual_map.keys())[: max(1, int(ns.limit))]
+        rows = fetch_rows_by_ids(client, manual_ids)
     print(f"Loaded {len(rows)} row(s) dry_run={dry_run}")
 
     stats: Dict[str, int] = {
@@ -441,7 +461,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     )
                 continue
 
-            if bucket == "unchanged":
+            if bucket == "unchanged" and not manual:
                 continue
 
             rerun_result = None
