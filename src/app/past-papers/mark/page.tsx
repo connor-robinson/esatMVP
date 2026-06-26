@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Container } from "@/components/layout/Container";
 import { PaperBadge } from "@/components/papers/PaperBadge";
 import { ChoicePill } from "@/components/papers/ChoicePill";
 import { MistakeChart } from "@/components/papers/MistakeChart";
@@ -34,6 +33,10 @@ import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { Letter, MistakeTag } from "@/types/papers";
 import { PageHeader } from "@/components/shared/PageHeader";
 import type { QuestionStats } from "@/types/questionStats";
+import {
+  MarkSectionNav,
+  type MarkSection,
+} from "@/components/papers/mark/MarkSectionNav";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -77,7 +80,8 @@ export default function PapersMarkPage() {
   } = usePaperSessionStore();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [markSection, setMarkSection] = useState<MarkSection>("overview");
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<'question' | 'solution' | null>(null);
@@ -1278,161 +1282,54 @@ export default function PapersMarkPage() {
     return null;
   }
 
+  const selectMarkSection = (section: MarkSection) => {
+    setMarkSection(section);
+    if (section === "review" && selectedIndex < 0) {
+      setSelectedIndex(0);
+    }
+  };
+
+  const openQuestionInReview = (index: number) => {
+    setMarkSection("review");
+    setSelectedIndex(index);
+  };
+
   return (
     <Fragment>
-      <Container size="lg">
-      <div className="space-y-8">
-        {/* Header */}
-        <PageHeader title="Mark Session" description="Review answers, mark correctness, and study solutions." />
-
-        {/* Main two-column layout - connected container with equal height */}
-        <Card className="p-0 bg-surface border border-border overflow-hidden lg:h-[156vh]">
-          <div
-            className="grid grid-cols-1 lg:[grid-template-columns:var(--left-col)_minmax(0,1fr)] h-full"
-            style={{ ['--left-col' as any]: `${LEFT_COLUMN_WIDTH_PX}px` }}
-          >
-            {/* Left column: list (narrow, scrolls) */}
-            <div className="h-full overflow-y-auto border-b border-border-subtle pt-3 pl-0 pr-1 lg:border-b-0 lg:border-r" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
-              <div className="space-y-1">
-                {/* Overview entry */}
-                <button
-                  className={cn(
-                    "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
-                    selectedIndex === -1
-                      ? "bg-surface-mid shadow-[inset_4px_0_0_0_var(--color-border)]"
-                      : "bg-surface-elevated hover:bg-surface-mid",
-                  )}
-                  onClick={() => setSelectedIndex(-1)}
-                >
-          <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 pl-0">
-                      <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
-                      <div className="text-sm font-semibold">Overview</div>
-            </div>
-                    <div className="flex items-center gap-2 text-[11px] text-neutral-400">
-                      {Math.round((correctCountDerived / Math.max(totalQuestions, 1)) * 100)}%
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
-                        <polyline points="9 6 15 12 9 18" />
-                      </svg>
-                    </div>
-              </div>
-                </button>
-                {partGroups.map((group, gi) => {
-                  // Compute group score
-                  const gCorrect = group.indexes.reduce((a, i) => a + (derivedCorrectFlags[i] === true ? 1 : 0), 0);
-                  const gTotal = group.indexes.length;
-                  const partDisplay = /^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`;
-                  return (
-                    <div key={gi} className="rounded-md">
-                      <details className="group" open>
-                        <summary className="list-none cursor-pointer">
-                          <div
-                            className={cn(
-                              "w-full rounded-md py-2 pl-0 pr-3 text-background group-open:rounded-b-none group-open:rounded-t-md",
-                              group.headerClass,
-                            )}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
-                                <div className="text-sm font-semibold">{partDisplay}</div>
-              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="text-[11px] opacity-90">{gCorrect}/{gTotal}</div>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90 transition-transform duration-200 -rotate-90 group-open:rotate-0">
-                                  <polyline points="6 9 12 15 18 9" />
-                                </svg>
+      <div className="relative flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden bg-background">
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
+          <div className="flex shrink-0 items-center justify-between gap-4 px-1">
+            <PageHeader
+              title="Mark Session"
+              description="Review answers, mark correctness, and study solutions."
+            />
+            <div className="hidden shrink-0 items-center gap-2 sm:flex">
+              <Button
+                variant="secondary"
+                className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted hover:bg-surface-mid hover:text-text"
+                onClick={() => router.push("/past-papers/library")}
+              >
+                New Session
+              </Button>
+              <Button
+                variant="primary"
+                className="rounded-organic-md px-4 py-2 text-sm shadow-glow"
+                onClick={handleSaveAndContinue}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save & Continue"}
+              </Button>
             </div>
           </div>
-          </div>
-                        </summary>
-                        <div className="mt-1 space-y-1 rounded-md bg-surface-elevated px-0.5 pb-1 transition-all duration-200 group-open:rounded-b-md group-open:rounded-t-none">
-                        {group.indexes.map((index) => {
-                          const qNumber = questionNumbers[index];
-              const answer = answers[index];
-                          const correct = derivedCorrectFlags[index];
-              const guessed = guessedFlags[index];
-              const timeSpent = perQuestionSec[index] || 0;
-                          const q = usePaperSessionStore.getState().questions[index];
-                          const partLetterRaw = (q?.partLetter || "").trim();
-                          const partNameFull = (q?.partName || "").trim();
-                          const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
-                          const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
-                          const leftAccent = guessed
-                            ? "border-l-warning"
-                            : correct === true
-                              ? "border-l-primary"
-                              : correct === false
-                                ? "border-l-error"
-                                : "border-l-text-muted";
-              return (
-                            <button
-                              key={qNumber}
-                              type="button"
-                              className={cn(
-                                "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
-                                selectedIndex === index
-                                  ? cn("border-l-4 bg-surface-mid", leftAccent)
-                                  : "bg-surface-elevated hover:bg-surface-mid",
-                              )}
-                              onClick={() => setSelectedIndex(index)}
-                            >
-                  <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 pl-0">
-                                {/* Left spacer controls alignment for Overview/Part headers and Q labels consistently */}
-                                <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
-                                {/* Fixed-width question label so Part pill aligns vertically across rows */}
-                                <span className="text-sm text-neutral-200 inline-block text-left" style={{ width: QUESTION_LABEL_WIDTH_PX }}>Q{qNumber}</span>
-                                  {/* Part pill with section color (showing Part X) */}
-                                  <div
-                                    className={cn(
-                                      "rounded-full px-2 py-0.5 text-[11px] font-medium",
-                                      getSectionSubjectPillClass(sectionName),
-                                    )}
-                                  >
-                                    {partLetter ? `Part ${partLetter}` : '—'}
-                    </div>
-                                  {guessed && (
-                                    <div className="rounded-full border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
-                                      Guess
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="text-[11px] text-text-muted">{formatTime(timeSpent)}</div>
-                                  {correct === true && (
-                                    <div className="flex items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-background">
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                                    </div>
-                                  )}
-                                  {correct === false && (
-                                    <div className="flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-text">
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              {answer?.other && (
-                                <details className="mt-1">
-                                  <summary className="text-[11px] text-neutral-400 cursor-pointer">View notes</summary>
-                                  <div className="mt-1 text-[12px] text-neutral-300">{answer.other}</div>
-                                </details>
-                              )}
-                            </button>
-                          );
-                        })}
-                        </div>
-                      </details>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
 
-            {/* Right column: detail view (fills, scrolls) */}
-            <div className="p-4 h-full overflow-y-auto rounded-2xl" style={{ scrollbarGutter: 'stable' }}>
-              {selectedIndex === -1 ? (
-                <div className="space-y-6">
+          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden lg:flex-row">
+            <MarkSectionNav active={markSection} onSelect={selectMarkSection} />
+
+            <Card className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden border border-border bg-surface p-0">
+
+              {markSection === "overview" && (
+                <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
+                  <div className="space-y-6">
                   {/* Hero Section */}
                   <div className="space-y-4">
                     {/* Compact Header: type, year, section pills, date */}
@@ -1609,6 +1506,12 @@ export default function PapersMarkPage() {
                     </div>
                   </div>
 
+                  </div>
+                </div>
+              )}
+              {markSection === "stats" && (
+                <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
+                  <div className="space-y-6">
                   {/* Main Content Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Time Management Analysis */}
@@ -2339,10 +2242,134 @@ export default function PapersMarkPage() {
 
                   {/* Time vs Question Chart - Full Width (already placed above). Duplicate removed. */}
 
-                  {/* Key Insights removed */}
+                  </div>
                 </div>
-              ) : (
+              )}
+              {markSection === "review" && (
+          <div
+            className="grid h-full min-h-0 grid-cols-1 lg:[grid-template-columns:var(--left-col)_minmax(0,1fr)]"
+            style={{ ["--left-col" as string]: `${LEFT_COLUMN_WIDTH_PX}px` }}
+          >
+            {/* Left column: list (narrow, scrolls) */}
+            <div className="h-full overflow-y-auto border-b border-border-subtle pt-3 pl-0 pr-1 lg:border-b-0 lg:border-r" style={{ scrollbarGutter: 'stable', paddingLeft: SCROLLBAR_GUTTER_PX }}>
+              <div className="space-y-1">
+                {partGroups.map((group, gi) => {
+                  // Compute group score
+                  const gCorrect = group.indexes.reduce((a, i) => a + (derivedCorrectFlags[i] === true ? 1 : 0), 0);
+                  const gTotal = group.indexes.length;
+                  const partDisplay = /^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`;
+                  return (
+                    <div key={gi} className="rounded-md">
+                      <details className="group" open>
+                        <summary className="list-none cursor-pointer">
+                          <div
+                            className={cn(
+                              "w-full rounded-md py-2 pl-0 pr-3 text-background group-open:rounded-b-none group-open:rounded-t-md",
+                              group.headerClass,
+                            )}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
+                                <div className="text-sm font-semibold">{partDisplay}</div>
+              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="text-[11px] opacity-90">{gCorrect}/{gTotal}</div>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-90 transition-transform duration-200 -rotate-90 group-open:rotate-0">
+                                  <polyline points="6 9 12 15 18 9" />
+                                </svg>
+            </div>
+          </div>
+          </div>
+                        </summary>
+                        <div className="mt-1 space-y-1 rounded-md bg-surface-elevated px-0.5 pb-1 transition-all duration-200 group-open:rounded-b-md group-open:rounded-t-none">
+                        {group.indexes.map((index) => {
+                          const qNumber = questionNumbers[index];
+              const answer = answers[index];
+                          const correct = derivedCorrectFlags[index];
+              const guessed = guessedFlags[index];
+              const timeSpent = perQuestionSec[index] || 0;
+                          const q = usePaperSessionStore.getState().questions[index];
+                          const partLetterRaw = (q?.partLetter || "").trim();
+                          const partNameFull = (q?.partName || "").trim();
+                          const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
+                          const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
+                          const leftAccent = guessed
+                            ? "border-l-warning"
+                            : correct === true
+                              ? "border-l-primary"
+                              : correct === false
+                                ? "border-l-error"
+                                : "border-l-text-muted";
+              return (
+                            <button
+                              key={qNumber}
+                              type="button"
+                              className={cn(
+                                "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
+                                selectedIndex === index
+                                  ? cn("border-l-4 bg-surface-mid", leftAccent)
+                                  : "bg-surface-elevated hover:bg-surface-mid",
+                              )}
+                              onClick={() => openQuestionInReview(index)}
+                            >
+                  <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 pl-0">
+                                {/* Left spacer controls alignment for Overview/Part headers and Q labels consistently */}
+                                <span className="inline-block" style={{ width: LEFT_LABEL_WIDTH_PX }} />
+                                {/* Fixed-width question label so Part pill aligns vertically across rows */}
+                                <span className="text-sm text-neutral-200 inline-block text-left" style={{ width: QUESTION_LABEL_WIDTH_PX }}>Q{qNumber}</span>
+                                  {/* Part pill with section color (showing Part X) */}
+                                  <div
+                                    className={cn(
+                                      "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                      getSectionSubjectPillClass(sectionName),
+                                    )}
+                                  >
+                                    {partLetter ? `Part ${partLetter}` : '—'}
+                    </div>
+                                  {guessed && (
+                                    <div className="rounded-full border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
+                                      Guess
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="text-[11px] text-text-muted">{formatTime(timeSpent)}</div>
+                                  {correct === true && (
+                                    <div className="flex items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-background">
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                                    </div>
+                                  )}
+                                  {correct === false && (
+                                    <div className="flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-text">
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              {answer?.other && (
+                                <details className="mt-1">
+                                  <summary className="text-[11px] text-neutral-400 cursor-pointer">View notes</summary>
+                                  <div className="mt-1 text-[12px] text-neutral-300">{answer.other}</div>
+                                </details>
+                              )}
+                            </button>
+                          );
+                        })}
+                        </div>
+                      </details>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right column: question detail */}
+            <div className="h-full min-h-0 overflow-y-auto rounded-2xl p-4" style={{ scrollbarGutter: "stable" }}>
+              {selectedIndex >= 0 ? (
               <div className="space-y-4">
+
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="text-base font-semibold text-neutral-200">Question</div>
@@ -2866,6 +2893,10 @@ export default function PapersMarkPage() {
                 )}
               </div>
               </div>
+              ) : (
+                <div className="flex h-full min-h-48 items-center justify-center text-sm text-text-muted">
+                  Select a question from the list.
+                </div>
               )}
               
               {/* Fullscreen overlay */}
@@ -2929,14 +2960,10 @@ export default function PapersMarkPage() {
               )}
             </div>
           </div>
-        </Card>
-
-        {/* Statistics section removed; moved into Overview toggle */}
-
-        {/* Notes & insights moved to bottom and restyled */}
-
+              )}
+              {markSection === "mistakes" && (
+              <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
         {/* Mistake Analysis & Drill Setup */}
-        <Card className="p-6 border-0">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="text-lg font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
@@ -2956,7 +2983,7 @@ export default function PapersMarkPage() {
                 const opts = Array.from(new Set([...preset, ...custom]));
                 return (
                   <div key={qn} className="flex items-center justify-between bg-surface-elevated hover:bg-surface-mid rounded-md px-3 py-2">
-                    <button className="text-sm font-medium text-neutral-200" onClick={() => setSelectedIndex(index)}>Q{qn}</button>
+                    <button className="text-sm font-medium text-neutral-200" onClick={() => openQuestionInReview(index)}>Q{qn}</button>
                     <div className="flex items-center gap-2">
                       <MistakeSelect
                         value={Array.isArray(tags) ? tags : []}
@@ -2977,10 +3004,11 @@ export default function PapersMarkPage() {
               })}
             </div>
           </div>
-        </Card>
-
-        {/* Session Notes - bottom, modern styling */}
-        <Card className="p-6 border-0">
+              </div>
+              )}
+              {markSection === "notes" && (
+              <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
+        {/* Session Notes */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -3021,15 +3049,15 @@ export default function PapersMarkPage() {
               />
               {/* Footer row removed per design - saved chip shown in header */}
             </div>
-          </Card>
+              </div>
+              )}
+            </Card>
+          </div>
 
-        {/* Key insights removed per design */}
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3">
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-border-subtle px-1 pt-3 sm:hidden">
           <Button
             variant="secondary"
-            className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted hover:bg-surface-mid hover:text-text"
+            className="rounded-organic-md border border-border bg-surface-elevated px-4 py-2 text-sm text-text-muted"
             onClick={() => router.push("/past-papers/library")}
           >
             New Session
@@ -3043,8 +3071,8 @@ export default function PapersMarkPage() {
             {isSubmitting ? "Saving..." : "Save & Continue"}
           </Button>
         </div>
+        </div>
       </div>
-    </Container>
     </Fragment>
   );
 }
