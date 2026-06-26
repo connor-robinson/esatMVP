@@ -21,7 +21,9 @@ export type PaperSectionsOutline = {
   sections: PaperSection[];
   mainSections: PaperMainSection[];
   /** One row per question — metadata only, for basket stats (no images). */
-  partRows?: Array<SlimQuestionPart & { questionNumber: number }>;
+  partRows?: Array<
+    Omit<SlimQuestionPart, "paperId"> & { paperId: number; questionNumber: number }
+  >;
 };
 
 export type MainExamSection = "Section 1" | "Section 2";
@@ -258,10 +260,7 @@ export function buildPaperSectionsOutline(
 
 /** Whether a question matches the basket's per-section subject selection. */
 export function questionMatchesSelectedSections(
-  question: Pick<
-    Question,
-    "partLetter" | "partName" | "examType" | "paperName" | "paperId"
-  >,
+  question: SlimQuestionPart,
   selectedSections: Map<string, Set<PaperSection>>,
   paperType: PaperType,
   paper: Pick<Paper, "examType" | "paperName">,
