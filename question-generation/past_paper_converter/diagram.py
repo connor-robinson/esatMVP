@@ -87,6 +87,7 @@ def process_diagrams(
             "url": url,
             "alt": caption,
             "position": "before_options",
+            "bbox_norm": bbox if isinstance(bbox, list) and len(bbox) == 4 else None,
         }
     ]
     return stem, assets, False

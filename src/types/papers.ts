@@ -18,6 +18,7 @@ export interface DiagramAsset {
   url: string;
   alt?: string;
   position?: string;
+  bbox_norm?: [number, number, number, number] | null;
 }
 
 export const MISTAKE_OPTIONS = [
