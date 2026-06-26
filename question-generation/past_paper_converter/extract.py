@@ -10,7 +10,16 @@ from typing import Any, Dict, List, Optional, Tuple
 from google import genai
 from google.genai import types
 
-from .config import DEFAULT_FLASH_MODEL, DEFAULT_PRO_MODEL, gemini_api_key, use_vertex_ai, uses_variable_option_count, vertex_client_location, vertex_config
+from .config import (
+    DEFAULT_FLASH_MODEL,
+    DEFAULT_PRO_MODEL,
+    GEMINI_REQUEST_TIMEOUT_MS,
+    gemini_api_key,
+    use_vertex_ai,
+    uses_variable_option_count,
+    vertex_client_location,
+    vertex_config,
+)
 
 SYSTEM_PROMPT = """You convert UK admissions exam question screenshots (NSAA, ENGAA, TMUA) into structured JSON for a KaTeX website.
 
@@ -40,6 +49,7 @@ Schema:
 
 
 def make_client() -> genai.Client:
+    http_options = types.HttpOptions(timeout=GEMINI_REQUEST_TIMEOUT_MS)
     if use_vertex_ai():
         project, location = vertex_config()
         if not project:
@@ -48,8 +58,9 @@ def make_client() -> genai.Client:
             vertexai=True,
             project=project,
             location=vertex_client_location(location),
+            http_options=http_options,
         )
-    return genai.Client(api_key=gemini_api_key())
+    return genai.Client(api_key=gemini_api_key(), http_options=http_options)
 
 
 def extract_json_object(text: str) -> Dict[str, Any]:

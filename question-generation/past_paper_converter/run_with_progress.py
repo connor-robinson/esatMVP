@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import traceback
 from pathlib import Path
 from typing import Any, Dict
 
@@ -47,24 +48,49 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     results = []
-    for i, job in enumerate(jobs, start=1):
-        status["message"] = f"Processing question {i}/{total} (id {job.question_id})..."
+    try:
+        for i, job in enumerate(jobs, start=1):
+            status["message"] = (
+                f"Processing question {i}/{total} (id {job.question_id}, Q{job.question_number})..."
+            )
+            write_status(status)
+
+            try:
+                result = process_single_job(job, dry_run=args.dry_run, force=False)
+            except Exception as exc:
+                err = str(exc) or exc.__class__.__name__
+                print(f"ERROR question {job.question_id}: {err}", file=sys.stderr)
+                traceback.print_exc()
+                result = {
+                    "question_id": job.question_id,
+                    "status": "failed",
+                    "report": {"pipeline_error": err},
+                }
+
+            results.append(result)
+
+            status["completed"] = i
+            st = result.get("status", "")
+            if st in ("auto_approved", "skipped_cached"):
+                status["successful"] += 1
+            elif st == "failed":
+                status["failed"] += 1
+            write_status(status)
+
+        status["status"] = "completed"
+        status["message"] = f"Done: {status['successful']} ok, {status['failed']} failed"
         write_status(status)
-
-        result = process_single_job(job, dry_run=args.dry_run, force=False)
-        results.append(result)
-
-        status["completed"] = i
-        st = result.get("status", "")
-        if st in ("auto_approved", "skipped_cached"):
-            status["successful"] += 1
-        elif st == "failed":
-            status["failed"] += 1
+    except Exception as exc:
+        status["status"] = "error"
+        status["message"] = f"Batch aborted: {exc}"
+        status["error"] = str(exc)
         write_status(status)
-
-    status["status"] = "completed"
-    status["message"] = f"Done: {status['successful']} ok, {status['failed']} failed"
-    write_status(status)
+        raise
+    finally:
+        if status.get("status") == "running":
+            status["status"] = "error"
+            status["message"] = "Batch stopped unexpectedly (process killed or crashed)"
+            write_status(status)
 
     print(json.dumps({"results": results}, indent=2))
     return 0

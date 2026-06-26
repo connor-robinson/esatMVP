@@ -170,6 +170,7 @@
           Dry run (no DB writes)
         </label>
         <button class="btn-primary" id="runBtn">Run conversion</button>
+        <button class="btn-secondary" id="resetBtn" type="button">Reset stuck job</button>
       </div>
       <div class="progress-wrap" id="progressWrap">
         <div class="progress-text" id="progressText">Starting…</div>
@@ -372,6 +373,15 @@
         }
       }, 1500);
     }
+
+    $("resetBtn").onclick = async () => {
+      await fetch("/api/reset", { method: "POST" });
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = null;
+      $("runBtn").disabled = false;
+      $("progressWrap").classList.remove("visible");
+      await pollStatus();
+    };
 
     $("runBtn").onclick = async () => {
       const body = {

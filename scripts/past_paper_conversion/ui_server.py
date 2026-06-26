@@ -20,6 +20,10 @@ from past_paper_converter.db import make_client  # noqa: E402
 STATUS_FILE = ROOT / "question-generation" / "past_paper_converter" / ".conversion_status.json"
 QGEN_DIR = ROOT / "question-generation"
 
+
+def write_status(payload: dict) -> None:
+    STATUS_FILE.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
 try:
     from flask import Flask, jsonify, request, send_from_directory
 except ImportError as exc:
@@ -110,6 +114,22 @@ def api_summary():
     })
 
 
+@app.post("/api/reset")
+def api_reset():
+    """Clear a stuck 'running' status so a new batch can start."""
+    write_status({
+        "status": "idle",
+        "total": 0,
+        "completed": 0,
+        "successful": 0,
+        "failed": 0,
+        "message": "Reset — ready for new run",
+    })
+    global _run_lock
+    _run_lock = False
+    return jsonify({"status": "idle"})
+
+
 @app.post("/api/run")
 def api_run():
     global _run_lock
@@ -142,7 +162,13 @@ def api_run():
     def _spawn():
         global _run_lock
         try:
-            subprocess.run(args, cwd=QGEN_DIR, check=False)
+            proc = subprocess.run(args, cwd=QGEN_DIR, check=False)
+            st = read_status()
+            if st.get("status") == "running":
+                st["status"] = "error" if proc.returncode else "completed"
+                if proc.returncode:
+                    st["message"] = f"Process exited with code {proc.returncode}"
+                write_status(st)
         finally:
             _run_lock = False
 
