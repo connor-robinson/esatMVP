@@ -1,4 +1,4 @@
-export type EsatRow = { score: number; cumulativePct: number };
+export type EsatRow = { score: number; cumulativePct: number; candidatePct?: number };
 
 export async function fetchEsatTable(tableKey: string): Promise<EsatRow[]> {
   const res = await fetch(`/api/esat?table=${encodeURIComponent(tableKey)}`, { cache: "force-cache" });
@@ -18,6 +18,36 @@ export function interpolatePercentile(rows: EsatRow[], score: number): number {
   const s2 = sorted[i];
   const t = (score - s1.score) / Math.max(1e-9, (s2.score - s1.score));
   return s1.cumulativePct + (s2.cumulativePct - s1.cumulativePct) * t;
+}
+
+/** Per-score density (% of candidates at each score band). */
+export function getRowDensity(row: EsatRow, prevCumulative?: number): number {
+  if (row.candidatePct != null && Number.isFinite(row.candidatePct)) {
+    return row.candidatePct;
+  }
+  if (prevCumulative != null) {
+    return Math.max(0, row.cumulativePct - prevCumulative);
+  }
+  return row.cumulativePct;
+}
+
+export function interpolateDensity(rows: EsatRow[], score: number): number {
+  if (!rows || rows.length === 0 || !Number.isFinite(score)) return NaN;
+  const sorted = [...rows].sort((a, b) => a.score - b.score);
+  const densities = sorted.map((r, i) => ({
+    score: r.score,
+    density: getRowDensity(r, i > 0 ? sorted[i - 1].cumulativePct : undefined),
+  }));
+  if (score <= densities[0].score) return densities[0].density;
+  if (score >= densities[densities.length - 1].score) {
+    return densities[densities.length - 1].density;
+  }
+  let i = 1;
+  while (i < densities.length && densities[i].score < score) i++;
+  const s1 = densities[i - 1];
+  const s2 = densities[i];
+  const t = (score - s1.score) / Math.max(1e-9, s2.score - s1.score);
+  return s1.density + (s2.density - s1.density) * t;
 }
 
 /**

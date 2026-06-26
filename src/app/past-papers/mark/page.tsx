@@ -1485,7 +1485,7 @@ export default function PapersMarkPage() {
                                     </button>
                                     <div className="absolute right-0 z-10 hidden w-64 rounded-organic-md border border-border bg-surface-elevated p-2 text-[11px] text-text-muted shadow-bar-floating group-hover:block">
                                       {!isAverage && sp?.table && percentileTables[sp.table]
-                                        ? "We use the section's cumulative distribution: locate your score on the table and linearly interpolate between scores to estimate % of candidates at or below you. Top% = 100 − cumulative."
+                                        ? "We plot the real % of candidates at each score (bell-shaped distribution from official tables). Your marker shows your score; Top% comes from the cumulative table via linear interpolation."
                                         : isAverage
                                           ? "Average percentile across all subjects in this session."
                                           : `We use ${displayExamLabel} conversion tables to convert your raw score to a scaled score.`}

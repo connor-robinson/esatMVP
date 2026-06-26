@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 
     // Parse CSV
     const lines = fileContent.trim().split("\n");
-    const rows: { score: number; cumulativePct: number }[] = [];
+    const rows: { score: number; candidatePct: number; cumulativePct: number }[] = [];
 
     // Skip header line and process data
     for (let i = 1; i < lines.length; i++) {
@@ -51,10 +51,15 @@ export async function GET(request: Request) {
       // Format: "Score,% Candidates,Cumulative % ≤ score"
       if (parts.length >= 3) {
         const score = parseFloat(parts[0]);
+        const candidatePct = parseFloat(parts[1]);
         const cumulativePct = parseFloat(parts[2]);
 
         if (!isNaN(score) && !isNaN(cumulativePct)) {
-          rows.push({ score, cumulativePct });
+          rows.push({
+            score,
+            candidatePct: !isNaN(candidatePct) ? candidatePct : 0,
+            cumulativePct,
+          });
         }
       }
     }
