@@ -68,7 +68,7 @@ export function PastPaperTextQuestion({
                   "w-full rounded-organic-md px-3.5 py-2.5 text-left transition-all duration-fast",
                   interactive && "cursor-pointer",
                   selected
-                    ? "bg-primary/15 text-text"
+                    ? "bg-primary text-background"
                     : interactive
                       ? "bg-surface-mid text-text hover:bg-surface-neutral"
                       : "bg-surface-mid text-text",

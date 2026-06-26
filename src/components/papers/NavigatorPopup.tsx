@@ -86,7 +86,7 @@ export function NavigatorPopup({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 rounded-t-organic-lg" style={{ backgroundColor: '#3d6064' }}>
+        <div className="flex items-center justify-between rounded-t-organic-lg bg-primary p-4 text-background md:rounded-t-organic-lg">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -141,7 +141,7 @@ export function NavigatorPopup({
                     }}
                     className={cn(
                       "cursor-pointer transition-colors",
-                      isCurrent ? "bg-[#5B8D94]/20 hover:bg-[#5B8D94]/30" : "hover:bg-white/5"
+                      isCurrent ? "bg-primary/20 hover:bg-primary/30" : "hover:bg-white/5"
                     )}
                   >
                     <td className="py-3 px-4 text-sm text-neutral-200">
@@ -155,7 +155,7 @@ export function NavigatorPopup({
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-center">
                         {isFlagged && (
-                          <svg className="w-7 h-7" fill="#5B8D94" stroke="#5B8D94" viewBox="0 0 24 24" strokeWidth={2}>
+                          <svg className="h-7 w-7 text-primary" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 21V3h12l-4 6 4 6H5z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v18" />
                           </svg>

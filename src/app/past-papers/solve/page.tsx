@@ -1171,10 +1171,10 @@ export default function PapersSolvePage() {
                     type="button"
                     onClick={() => handleChoiceSelect(letter)}
                     className={cn(
-                      'flex h-[50px] flex-1 items-center justify-center rounded-organic-md border-2 text-base font-medium transition-all duration-300 ease-out',
+                      'flex h-[50px] flex-1 items-center justify-center rounded-organic-md text-base font-medium transition-all duration-300 ease-out',
                       selected
-                        ? 'border-primary bg-primary text-background shadow-glow'
-                        : 'border-transparent bg-surface-mid text-text hover:bg-surface-neutral',
+                        ? 'bg-primary text-background shadow-glow'
+                        : 'bg-surface-mid text-text hover:bg-surface-neutral',
                     )}
                   >
                     {letter}

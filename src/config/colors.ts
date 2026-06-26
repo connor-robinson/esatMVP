@@ -33,12 +33,12 @@ export const PAPER_COLORS = {
  */
 export const PAPER_TYPE_COLORS = {
   ESAT: PAPER_COLORS.mathematics,
-  TMUA: PAPER_COLORS.physics,
-  NSAA: PAPER_COLORS.biology,
-  ENGAA: PAPER_COLORS.advanced,
+  TMUA: colorTokens.tmuaAccent.dark,
+  NSAA: colorTokens.accent.dark,
+  ENGAA: PAPER_COLORS.biology,
   PAT: PAPER_COLORS.chemistry,
   MAT: PAPER_COLORS.mathematics,
-  OTHER: PAPER_COLORS.mathematics
+  OTHER: PAPER_COLORS.mathematics,
 } as const;
 
 /**
@@ -79,9 +79,9 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-advanced";
-  if (key === "NSAA") return "text-biology";
-  if (key === "TMUA") return "text-physics";
+  if (key === "ENGAA") return "text-biology";
+  if (key === "NSAA") return "text-accent";
+  if (key === "TMUA") return "text-tmua-accent";
   if (key === "ESAT") return "text-maths";
   if (key === "PAT") return "text-chemistry";
   if (key === "MAT") return "text-maths";
@@ -196,9 +196,9 @@ export const cssVar = {
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return `bg-advanced ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "NSAA") return `bg-biology ${ON_SOLID_SUBJECT_TEXT}`;
-  if (key === "TMUA") return `bg-physics ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "ENGAA") return `bg-biology ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "NSAA") return `bg-accent ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "TMUA") return `bg-tmua-accent ${ON_SOLID_SUBJECT_TEXT}`;
   if (key === "ESAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
   if (key === "PAT") return `bg-chemistry ${ON_SOLID_SUBJECT_TEXT}`;
   if (key === "MAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
