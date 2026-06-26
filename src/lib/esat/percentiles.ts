@@ -39,62 +39,65 @@ export function interpolateScore(rows: EsatRow[], percentile: number): number {
 
 export type MapArgs = {
   examName?: string;
-  sectionLetter?: string; // e.g., 'A'
-  sectionName?: string; // e.g., 'Biology'
-  paperName?: string; // TMUA: Paper 1 / Paper 2
+  sectionLetter?: string;
+  sectionName?: string;
+  paperName?: string;
 };
 
-export function mapSectionToTable({ examName, sectionLetter, sectionName, paperName }: MapArgs): { key: string | null; label: string } {
-  const exam = (examName || '').toUpperCase();
-  const name = (sectionName || '').toLowerCase();
-  const letter = (sectionLetter || '').toUpperCase();
-  
-  // ESAT mapping
-  if (exam === 'ESAT') {
-    if (name.includes('biology')) return { key: 'esat_biology_cumulative', label: 'Biology' };
-    if (name.includes('chem')) return { key: 'esat_chemistry_cumulative', label: 'Chemistry' };
-    if (name.includes('phys')) return { key: 'esat_physics_cumulative', label: 'Physics' };
-    if (name.includes('math') || name.includes('mathematics')) return { key: 'esat_math2_cumulative', label: 'Mathematics' };
-  }
-  
-  // NSAA mapping - convert NSAA sections to ESAT scores, then lookup in ESAT tables
-  if (exam === 'NSAA') {
-    // NSAA has math1, math2, and physics sections
-    // Check for math1 or mathematics 1 (usually Section 1)
-    if (name.includes('math 1') || name.includes('mathematics 1') || name.includes('math1') || (name.includes('mathematics') && letter === '1')) {
-      return { key: 'esat_math1_cumulative', label: 'Mathematics 1' };
-    }
-    // Check for math2 or mathematics 2
-    if (name.includes('math 2') || name.includes('mathematics 2') || name.includes('math2') || (name.includes('mathematics') && (letter === '2' || letter === 'B'))) {
-      return { key: 'esat_math2_cumulative', label: 'Mathematics 2' };
-    }
-    // Physics
-    if (name.includes('phys')) {
-      return { key: 'esat_physics_cumulative', label: 'Physics' };
-    }
-    // Fallback: if it says math/mathematics but we can't determine which, default to math2
-    if (name.includes('math') || name.includes('mathematics')) {
-      return { key: 'esat_math2_cumulative', label: 'Mathematics' };
-    }
-  }
-  
-  // ENGAA mapping
-  if (exam === 'ENGAA') {
-    return { key: 'esat_combined_math_phys_cumulative', label: 'Combined (Math/Phys)' };
-  }
-  
-  // TMUA mapping - Paper 1 and Paper 2 (identified by paper_name, not parts)
-  if (exam === 'TMUA') {
-    const paper = (paperName || sectionName || '').toLowerCase();
-    if (paper.includes('paper 2') || paper.includes('paper2') || letter === '2') {
-      return { key: 'tmua_paper', label: 'Paper 2' };
-    }
-    if (paper.includes('paper 1') || paper.includes('paper1') || letter === '1') {
-      return { key: 'tmua_paper', label: 'Paper 1' };
-    }
-  }
-  
-  return { key: null, label: 'Unknown' };
+function extractPartLetter(sectionLetter: string): string {
+  const upper = (sectionLetter || "").trim().toUpperCase();
+  if (upper.length === 1 && /[A-Z]/.test(upper)) return upper;
+  const match = upper.match(/\b([A-E1-5])\b/);
+  return match?.[1] || "";
 }
 
+export function mapSectionToTable({ examName, sectionLetter, sectionName, paperName }: MapArgs): { key: string | null; label: string } {
+  const exam = (examName || "").toUpperCase();
+  const name = (sectionName || "").toLowerCase();
+  const letter = extractPartLetter(sectionLetter || "");
 
+  if (exam === "ESAT") {
+    if (name.includes("biology")) return { key: "esat_biology_cumulative", label: "Biology" };
+    if (name.includes("chem")) return { key: "esat_chemistry_cumulative", label: "Chemistry" };
+    if (name.includes("phys")) return { key: "esat_physics_cumulative", label: "Physics" };
+    if (name.includes("math") || name.includes("mathematics")) return { key: "esat_math2_cumulative", label: "Mathematics" };
+  }
+
+  if (exam === "NSAA") {
+    if (letter === "A" || letter === "1") return { key: "esat_math1_cumulative", label: "Mathematics 1" };
+    if (letter === "B" || letter === "2") return { key: "esat_physics_cumulative", label: "Physics" };
+    if (letter === "C" || letter === "3") return { key: "esat_chemistry_cumulative", label: "Chemistry" };
+    if (letter === "D" || letter === "4") return { key: "esat_biology_cumulative", label: "Biology" };
+    if (letter === "E" || letter === "5") return { key: "esat_math2_cumulative", label: "Mathematics 2" };
+
+    if (name.includes("math 1") || name.includes("mathematics 1") || name.includes("math1")) {
+      return { key: "esat_math1_cumulative", label: "Mathematics 1" };
+    }
+    if (name.includes("math 2") || name.includes("mathematics 2") || name.includes("math2")) {
+      return { key: "esat_math2_cumulative", label: "Mathematics 2" };
+    }
+    if (name.includes("phys")) return { key: "esat_physics_cumulative", label: "Physics" };
+    if (name.includes("chem")) return { key: "esat_chemistry_cumulative", label: "Chemistry" };
+    if (name.includes("biol")) return { key: "esat_biology_cumulative", label: "Biology" };
+    if (name.includes("advanced")) return { key: "esat_math2_cumulative", label: "Mathematics 2" };
+    if (name.includes("math") || name.includes("mathematics")) {
+      return { key: "esat_math1_cumulative", label: "Mathematics 1" };
+    }
+  }
+
+  if (exam === "ENGAA") {
+    return { key: "esat_combined_math_phys_cumulative", label: "Combined (Math/Phys)" };
+  }
+
+  if (exam === "TMUA") {
+    const paper = (paperName || sectionName || "").toLowerCase();
+    if (paper.includes("paper 2") || paper.includes("paper2") || letter === "2") {
+      return { key: "tmua_paper", label: "Paper 2" };
+    }
+    if (paper.includes("paper 1") || paper.includes("paper1") || letter === "1") {
+      return { key: "tmua_paper", label: "Paper 1" };
+    }
+  }
+
+  return { key: null, label: "Unknown" };
+}

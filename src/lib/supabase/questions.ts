@@ -4,7 +4,10 @@
  */
 
 import { supabase, handleSupabaseError } from './client';
+import { scaleScore as scaleScoreFromMarkScoring } from '@/lib/papers/markScoring';
 import type { Paper, Question, ConversionTable, ConversionRow, ExamName, ExamType } from '@/types/papers';
+
+export const scaleScore = scaleScoreFromMarkScoring;
 
 /** Columns that exist on production `papers` (no created_at / updated_at). */
 const PAPER_LIST_SELECT =
@@ -565,59 +568,4 @@ export async function getAvailableExamTypes(examName: ExamName, examYear: number
     handleSupabaseError(error);
     throw error;
   }
-}
-
-// Helper function to scale a raw score using conversion table
-export function scaleScore(
-  conversionRows: ConversionRow[], 
-  partName: string, 
-  rawScore: number, 
-  policy: 'clamp' | 'nearest' | 'linear' = 'clamp'
-): number | null {
-  const partRows = conversionRows.filter(row => row.partName === partName);
-  
-  if (partRows.length === 0) return null;
-  
-  // Sort by raw score
-  partRows.sort((a, b) => a.rawScore - b.rawScore);
-  
-  // Find exact match
-  const exactMatch = partRows.find(row => row.rawScore === rawScore);
-  if (exactMatch) return exactMatch.scaledScore;
-  
-  // Apply fallback policy
-  const minRow = partRows[0];
-  const maxRow = partRows[partRows.length - 1];
-  
-  if (rawScore <= minRow.rawScore) return minRow.scaledScore;
-  if (rawScore >= maxRow.rawScore) return maxRow.scaledScore;
-  
-  if (policy === 'clamp') {
-    return rawScore < minRow.rawScore ? minRow.scaledScore : maxRow.scaledScore;
-  }
-  
-  if (policy === 'nearest') {
-    const lower = partRows.filter(row => row.rawScore < rawScore).pop();
-    const upper = partRows.find(row => row.rawScore > rawScore);
-    
-    if (!lower) return minRow.scaledScore;
-    if (!upper) return maxRow.scaledScore;
-    
-    const lowerDist = rawScore - lower.rawScore;
-    const upperDist = upper.rawScore - rawScore;
-    
-    return lowerDist <= upperDist ? lower.scaledScore : upper.scaledScore;
-  }
-  
-  if (policy === 'linear') {
-    const lower = partRows.filter(row => row.rawScore < rawScore).pop();
-    const upper = partRows.find(row => row.rawScore > rawScore);
-    
-    if (!lower || !upper) return null;
-    
-    const ratio = (rawScore - lower.rawScore) / (upper.rawScore - lower.rawScore);
-    return lower.scaledScore + ratio * (upper.scaledScore - lower.scaledScore);
-  }
-  
-  return null;
 }

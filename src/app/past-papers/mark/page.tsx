@@ -11,8 +11,9 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { PaperBadge } from "@/components/papers/PaperBadge";
 import { ChoicePill } from "@/components/papers/ChoicePill";
+import { MistakeChart } from "@/components/papers/MistakeChart";
+import { MistakeSelect } from "@/components/papers/MistakeSelect";
 import { TimeScatterChart } from "@/components/papers/TimeScatterChart";
-import { MarkSessionMistakesSection } from "@/components/papers/mark/MarkSessionMistakesSection";
 import { MathContent } from "@/components/shared/MathContent";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
@@ -22,13 +23,21 @@ import {
   getSectionSubjectPillClass,
 } from "@/config/colors";
 import { cn } from "@/lib/utils";
+import {
+  buildPercentileTableArgs,
+  computePredictedScore,
+  computeScaledScore,
+  findQuestionForSection,
+  resolveConversionPartName,
+  resolveTmuaPercentileTableKey,
+} from "@/lib/papers/markScoring";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import { MISTAKE_OPTIONS } from "@/types/papers";
-import { getConversionTable, getConversionRows, scaleScore, findFallbackConversionTable } from "@/lib/supabase/questions";
+import { getConversionTable, getConversionRows, findFallbackConversionTable } from "@/lib/supabase/questions";
 import { supabase } from "@/lib/supabase/client";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
-import type { ExamName, Letter, MistakeTag } from "@/types/papers";
+import type { Letter, MistakeTag } from "@/types/papers";
 import type { QuestionStats } from "@/types/questionStats";
 import {
   MarkSectionNav,
@@ -73,11 +82,9 @@ export default function PapersMarkPage() {
     getTotalQuestions,
     getCorrectCount,
     isMarkingInfo,
-    questions,
   } = usePaperSessionStore();
   
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
-  const [reviewReturnSection, setReviewReturnSection] = useState<MarkSection | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -833,46 +840,44 @@ export default function PapersMarkPage() {
     return { earlyAccuracy, lateAccuracy, trend: lateAccuracy > earlyAccuracy ? 'improving' : lateAccuracy < earlyAccuracy ? 'declining' : 'steady' };
   }, [derivedCorrectFlags, totalQuestions]);
 
-  const wrongQuestions = useMemo(() => {
-    return questionNumbers
-      .map((qn, index) => {
-        if ((derivedCorrectFlags[index] ?? correctFlags[index]) !== false) {
-          return null;
-        }
-        const q = questions[index];
-        const partLetterRaw = (q?.partLetter || "").trim();
-        const partNameFull = (q?.partName || "").trim();
-        const sectionName = mapPartToSection(
-          { partLetter: partLetterRaw, partName: partNameFull },
-          paperName as ExamName,
-        );
-        const rawTags = mistakeTags[index];
-        const tags = Array.isArray(rawTags)
-          ? (rawTags as string[])
-          : typeof rawTags === "string"
-            ? rawTags.split(",").map((t) => t.trim()).filter(Boolean)
-            : [];
-        return {
-          index,
-          questionNumber: qn,
-          sectionName,
-          yourAnswer: answers[index]?.choice ?? null,
-          correctAnswer: (q?.answerLetter as Letter) ?? null,
-          timeSec: perQuestionSec[index] || 0,
-          tags,
-        };
-      })
-      .filter((row): row is NonNullable<typeof row> => row !== null);
-  }, [
-    questionNumbers,
-    derivedCorrectFlags,
-    correctFlags,
-    questions,
-    paperName,
-    mistakeTags,
-    answers,
-    perQuestionSec,
-  ]);
+  // Top mistakes (parses arrays and comma-separated tags, mirrors MistakeChart logic)
+  const topMistakes = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const add = (label: string) => {
+      const key = (label || '').trim();
+      if (!key) return;
+      if (/^none$/i.test(key)) return;
+      counts[key] = (counts[key] || 0) + 1;
+    };
+    mistakeTags.forEach((tag: any) => {
+      if (Array.isArray(tag)) {
+        tag.forEach((t) => {
+          if (typeof t === 'string') t.split(',').forEach(add);
+        });
+      } else if (typeof tag === 'string') {
+        tag.split(',').forEach(add);
+      }
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+  }, [mistakeTags]);
+
+  // Mistakes by section
+  const mistakesBySection = useMemo(() => {
+    const bySection: Record<string, Record<string, number>> = {};
+    const qs = usePaperSessionStore.getState().questions;
+    
+    mistakeTags.forEach((tag, i) => {
+      if (tag && tag !== "None") {
+        const part = (qs[i]?.partLetter || "").trim() || "Section";
+        if (!bySection[part]) bySection[part] = {};
+        bySection[part][tag] = (bySection[part][tag] || 0) + 1;
+      }
+    });
+    
+    return bySection;
+  }, [mistakeTags]);
 
   // Session insights (auto-generated, substantial)
   type Insight = { title: string; detail?: string; tone: 'positive' | 'negative' | 'neutral' };
@@ -933,74 +938,6 @@ export default function PapersMarkPage() {
   // Session insights (auto-generated, substantial)
   // Key insights removed per product direction
 
-  // Resolve the canonical conversion table part name for a given exam and part
-  // Cache to avoid duplicate logs
-  const resolveCache = useRef<Map<string, { name: string; matched: boolean }>>(new Map());
-  const resolveConversionPartName = useCallback((examName: string, partLetterRaw: string, partName: string | undefined, rows: any[], paperName?: string): { name: string; matched: boolean } => {
-    const cacheKey = `${examName}:${paperName || ''}:${partLetterRaw}:${partName || ''}`;
-    if (resolveCache.current.has(cacheKey)) {
-      return resolveCache.current.get(cacheKey)!;
-    }
-    
-    const raw = (partLetterRaw || '').toString().trim();
-    const upperRaw = raw.toUpperCase();
-    // Extract a single part letter if present (handles 'A' or 'PART A')
-    const letter = (upperRaw.length === 1 && /[A-Z]/.test(upperRaw))
-      ? upperRaw
-      : (upperRaw.match(/\b([A-Z])\b/)?.[1] || '');
-    const candidateNames: string[] = [];
-    // Highest priority: exam-specific rules
-    if (examName === 'TMUA') {
-      // TMUA conversion tables are per-paper; rows use a single "Overall" part
-      candidateNames.push('Overall');
-      if (partName) {
-        const partLower = partName.toLowerCase();
-        if (partLower.includes('paper 1') || partLower.includes('paper1')) candidateNames.push('Paper 1');
-        if (partLower.includes('paper 2') || partLower.includes('paper2')) candidateNames.push('Paper 2');
-      }
-    }
-    if (examName === 'ENGAA') {
-      const paperLower = (paperName || '').toLowerCase();
-      if (paperLower.includes('section 2')) {
-        candidateNames.push('Section 2');
-      } else {
-        if (/A/.test(letter)) candidateNames.push('Section 1A');
-        else if (/B/.test(letter)) candidateNames.push('Section 1B');
-        else if (/2/.test(letter)) candidateNames.push('Section 2');
-      }
-    }
-    if (examName === 'NSAA') {
-      // NSAA Section 1 typically uses Part A, B, C, D, E
-      // Part A = Mathematics, Part B = Physics, Part C = Chemistry, Part D = Biology, Part E = Advanced Mathematics and Advanced Physics
-      if (letter === 'A' || letter === '1') candidateNames.push('Part A');
-      if (letter === 'B' || letter === '2') candidateNames.push('Part B');
-      if (letter === 'C' || letter === '3') candidateNames.push('Part C');
-      if (letter === 'D' || letter === '4') candidateNames.push('Part D');
-      if (letter === 'E' || letter === '5') candidateNames.push('Part E');
-      // Also check if partName contains section names
-      if (partName) {
-        const partLower = partName.toLowerCase();
-        if (partLower.includes('math') && !partLower.includes('advanced')) candidateNames.push('Part A');
-        if (partLower.includes('phys') && !partLower.includes('advanced')) candidateNames.push('Part B');
-        if (partLower.includes('chem')) candidateNames.push('Part C');
-        if (partLower.includes('biol')) candidateNames.push('Part D');
-        if (partLower.includes('advanced')) candidateNames.push('Part E');
-      }
-    }
-    // Generic patterns commonly used in tables
-    if (letter) candidateNames.push(`Part ${letter}`);
-    if (raw) candidateNames.push(raw); // e.g., 'PART A' or 'Part A'
-    if (partName) candidateNames.push(partName);
-
-    const rowsLower = rows.map((r: any) => (r.partName || '').toString().toLowerCase());
-    const match = candidateNames.find(n => rowsLower.includes(n.toLowerCase()));
-    const result = match ? { name: match, matched: true } : { name: candidateNames[0] || (partName || letter || 'Section'), matched: false };
-    
-    // Cache the result
-    resolveCache.current.set(cacheKey, result);
-    return result;
-  }, []);
-
   // Get exam name for determining scoring method
   const examName = useMemo(() => {
     const qs = usePaperSessionStore.getState().questions;
@@ -1010,39 +947,15 @@ export default function PapersMarkPage() {
   // Predicted overall score (weighted by section totals) - exam-specific
   const predictedScore = useMemo(() => {
     if (!hasConversion || (conversionRows as any[])?.length === 0) return null;
-    const entries = Object.entries(sectionAnalytics) as Array<[string, {
-      correct: number;
-      total: number;
-      avgTime: number;
-      totalTime: number;
-      guessed: number;
-    }]>;
-    if (entries.length === 0) return null;
     const qs = usePaperSessionStore.getState().questions;
-    let weightedSum = 0;
-    let totalWeight = 0;
-    
-    for (const [section, data] of entries) {
-      // CRITICAL: Skip "SECTION" entries - they're invalid
-      const sectionUpper = section.toUpperCase();
-      if (sectionUpper === 'SECTION' || sectionUpper.startsWith('SECTION ')) {
-        console.error(`[mark:predictedScore] ⚠️ Skipping invalid "SECTION" entry:`, { section, data });
-        continue;
-      }
-      
-      const match = qs.find(q => (q.partLetter || '').trim() === section);
-      const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
-      
-      const { name: convPartName } = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[], match?.paperName ?? paperName);
-      const scaled = scaleScore(conversionRows as any, convPartName as any, (data as any).correct, 'nearest');
-      if (typeof scaled === 'number') {
-        weightedSum += (scaled as number) * (data as any).total;
-        totalWeight += (data as any).total;
-      }
-    }
-    if (totalWeight === 0) return null;
-    return Math.round((weightedSum / totalWeight) * 10) / 10;
-  }, [hasConversion, conversionRows, sectionAnalytics, examName, resolveConversionPartName]);
+    return computePredictedScore(
+      sectionAnalytics,
+      examName,
+      qs,
+      conversionRows as any[],
+      paperName,
+    );
+  }, [hasConversion, conversionRows, sectionAnalytics, examName, paperName]);
 
   useEffect(() => {
     // Calculate percentiles for all exams that have percentile tables
@@ -1068,37 +981,20 @@ export default function PapersMarkPage() {
             continue;
           }
           
-          const match = qs.find(q => {
-            if (isTMUA) {
-              return mapTmuaPaperNameToSection(q.paperName) === section;
-            }
-            return (q.partLetter || '').trim() === section;
-          });
-          const partLetterRaw = isTMUA
-            ? section
-            : (match?.partLetter || section).toString().toUpperCase();
-          
-          const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[], match?.paperName ?? paperName);
-          const convPartName = resolved.name;
-          const scaled = hasConversion ? scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest') : null;
-          const score = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
-          let { key: tableKey, label } = mapSectionToTable({
+          const match = findQuestionForSection(qs, section, examName);
+          const { scaled: score } = computeScaledScore(
             examName,
-            sectionLetter: partLetterRaw,
-            sectionName: match?.partName,
-            paperName: isTMUA ? (match?.paperName ?? section) : undefined,
-          });
+            section,
+            data.correct,
+            qs,
+            conversionRows as any[],
+            paperName,
+          );
+          let { key: tableKey, label } = mapSectionToTable(buildPercentileTableArgs(examName, section, qs));
           
           // For TMUA, determine which table to use based on year
           if (isTMUA && tableKey === 'tmua_paper') {
-            if (examYear && examYear <= 2023) {
-              tableKey = 'tmua_pre_change_cumulative_2023';
-            } else if (examYear && examYear >= 2024) {
-              tableKey = 'tmua_post_change_cumulative_2024_2025';
-            } else {
-              // Default to new table if year unknown
-              tableKey = 'tmua_post_change_cumulative_2024_2025';
-            }
+            tableKey = resolveTmuaPercentileTableKey(examYear);
           }
           
           needed[section] = { score, tableKey, label };
@@ -1131,7 +1027,7 @@ export default function PapersMarkPage() {
         
         for (const [section, info] of Object.entries(needed)) {
           // Always include the score
-          if (!info.score) {
+          if (info.score == null) {
             out[section] = { percentile: null, score: null, table: info.tableKey, label: info.label || `${displayExamName} Score` };
             continue;
           }
@@ -1181,7 +1077,7 @@ export default function PapersMarkPage() {
         console.error('[mark] Error calculating section percentiles', e);
       }
     })();
-  }, [sectionAnalytics, hasConversion, JSON.stringify(conversionRows), examName]);
+  }, [sectionAnalytics, hasConversion, JSON.stringify(conversionRows), examName, paperName]);
 
   // Crop images for TMUA (when both question and answer are images)
   useEffect(() => {
@@ -1267,19 +1163,12 @@ export default function PapersMarkPage() {
 
   const selectMarkSection = (section: MarkSection) => {
     setMarkSection(section);
-    if (section !== "review") {
-      setReviewReturnSection(null);
-    }
     if (section === "review" && selectedIndex < 0) {
       setSelectedIndex(0);
     }
   };
 
-  const openQuestionInReview = (
-    index: number,
-    returnTo: MarkSection | null = null,
-  ) => {
-    setReviewReturnSection(returnTo);
+  const openQuestionInReview = (index: number) => {
     setMarkSection("review");
     setSelectedIndex(index);
   };
@@ -1394,7 +1283,7 @@ export default function PapersMarkPage() {
                                     return isValid;
                                   })
                                   .map(([section, data]) => {
-                                  const match = qs.find(q => (q.partLetter || '').trim() === section);
+                                  const match = findQuestionForSection(qs, section, examName);
                                   const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
                                   
                                   const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[], match?.paperName ?? paperName);
@@ -1505,19 +1394,21 @@ export default function PapersMarkPage() {
                           let scaledScore: number | null = null;
                           if (hasConversion && conversionRows.length > 0) {
                             const qs = usePaperSessionStore.getState().questions;
-                          const match = qs.find(q => (q.partLetter || '').trim() === section);
                           const sectionExamName = (qs?.[0]?.examName || '').toUpperCase();
-                          const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
-                          
-                          const resolved = resolveConversionPartName(sectionExamName, partLetterRaw, match?.partName, conversionRows as any[], match?.paperName ?? paperName);
-                          const convPartName = resolved.name;
-                          const scaled = scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest');
-                            scaledScore = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
+                          const { scaled, convPartName, matched } = computeScaledScore(
+                            sectionExamName,
+                            section,
+                            data.correct,
+                            qs,
+                            conversionRows as any[],
+                            paperName,
+                          );
+                            scaledScore = scaled;
                             (data as any).__convPartName = convPartName;
-                          (data as any).__convRowsFound = (conversionRows as any[]).some(r => (r.partName || '').toString().toLowerCase() === convPartName.toLowerCase());
+                          (data as any).__convRowsFound = matched;
                           }
                           const qsForPill = usePaperSessionStore.getState().questions;
-                          const matchForPill = qsForPill.find(q => (q.partLetter || '').trim() === section);
+                          const matchForPill = findQuestionForSection(qsForPill, section, examName);
                           const sectionNameForColor = mapPartToSection({ partLetter: (matchForPill?.partLetter || section).toString(), partName: matchForPill?.partName || '' }, (usePaperSessionStore.getState().questions?.[0]?.examName as any));
                           return (
                             <div key={section} className="rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3">
@@ -1583,7 +1474,7 @@ export default function PapersMarkPage() {
                   
 
                   {/* Section Percentiles - for all exams */}
-                  <div className={`${bubbleClass} space-y-3 md:col-span-2`}>
+                  <div className={`${bubbleClass} space-y-3`}>
                     <div className="flex items-center justify-between">
                       <div className="text-base font-semibold text-neutral-100">Section Percentiles</div>
                       {/* NSAA Toggle: Show individual subjects vs averaged */}
@@ -1643,14 +1534,14 @@ export default function PapersMarkPage() {
                         const label = sp?.label || '—';
                         const percentile = sp?.percentile;
                         const qs = usePaperSessionStore.getState().questions;
-                        const match = qs.find(q => (q.partLetter || '').trim() === section);
+                        const match = findQuestionForSection(qs, section, examName);
                         const partLetterRaw = (match?.partLetter || section).toString();
                         const partNameFull = match?.partName || '';
                         const sectionNameForColor = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                         const examYear = qs?.[0]?.examYear as number | undefined;
                         const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
                         return (
-                          <div key={section} className={cn('rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3', isLastSingle || isSingleGraph ? 'md:col-span-2 md:mx-auto' : '', isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : '')}>
+                          <div key={section} className={cn('rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3', isLastSingle || isSingleGraph ? ' md:mx-auto' : '', isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : '')}>
                             <div className="flex items-start justify-between">
                               <div>
                                 <div className="flex flex-wrap items-center gap-2">
@@ -1796,10 +1687,12 @@ export default function PapersMarkPage() {
 
                   </div>
                 </div>
+                </div>
               )}
               {markSection === "stats" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
                   <div className="space-y-6">
+
                     {/* Pacing Profile */}
                     <div className={`${bubbleClass}`}>
                       <div className="text-base font-semibold text-neutral-100 mb-4">Pacing Profile</div>
@@ -2176,6 +2069,7 @@ export default function PapersMarkPage() {
 
                   </div>
                 </div>
+                </div>
               )}
               {markSection === "review" && (
           <div
@@ -2301,18 +2195,6 @@ export default function PapersMarkPage() {
             <div className="h-full min-h-0 overflow-y-auto rounded-2xl p-4" style={{ scrollbarGutter: "stable" }}>
               {selectedIndex >= 0 ? (
               <div className="space-y-4">
-              {reviewReturnSection && (
-                <button
-                  type="button"
-                  onClick={() => selectMarkSection(reviewReturnSection)}
-                  className="inline-flex items-center gap-1.5 rounded-organic-md bg-surface-elevated px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                  Back to {reviewReturnSection === "mistakes" ? "Mistakes" : reviewReturnSection}
-                </button>
-              )}
 
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -2907,20 +2789,47 @@ export default function PapersMarkPage() {
               )}
               {markSection === "mistakes" && (
               <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6">
-                <MarkSessionMistakesSection
-                  mistakeTags={mistakeTags}
-                  wrongQuestions={wrongQuestions}
-                  noteStatus={noteStatus}
-                  formatTime={formatTime}
-                  onTagChange={(index, tags) => {
-                    setNoteStatus("typing");
-                    setMistakeTag(index, tags as MistakeTag);
-                    setTimeout(() => setNoteStatus("saved"), 700);
-                  }}
-                  onOpenQuestion={(index) =>
-                    openQuestionInReview(index, "mistakes")
-                  }
-                />
+        {/* Mistake Analysis & Drill Setup */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="text-lg font-semibold text-neutral-100">Mistake Analysis & Drill Setup</div>
+              <div className={cn('rounded-md px-2 py-0.5 text-[11px]', noteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
+                {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
+              </div>
+            </div>
+            <div className="text-sm text-neutral-300">Click a question number to open it on the right. Tag the mistake. All wrong answers are automatically added to your drill pool.</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+              {questionNumbers.map((qn, index) => {
+                const isWrong = (derivedCorrectFlags[index] ?? correctFlags[index]) === false;
+                if (!isWrong) return null;
+                const tags = Array.isArray(mistakeTags[index]) ? (mistakeTags[index] as any[]) : [];
+                const preset = ['Misread question','Rushed calculation','Concept gap','Method recall','Careless arithmetic','Unit/scale error','Diagram interpretation','Time pressure','Second-guessing',"Didn't review options"];
+                const customKey = 'paper.customMistakeTags';
+                const custom = (() => { try { return JSON.parse((localStorage.getItem(customKey) || '[]') as unknown as string); } catch { return []; } })();
+                const opts = Array.from(new Set([...preset, ...custom]));
+                return (
+                  <div key={qn} className="flex items-center justify-between bg-surface-elevated hover:bg-surface-mid rounded-md px-3 py-2">
+                    <button className="text-sm font-medium text-neutral-200" onClick={() => openQuestionInReview(index)}>Q{qn}</button>
+                    <div className="flex items-center gap-2">
+                      <MistakeSelect
+                        value={Array.isArray(tags) ? tags : []}
+                        options={opts}
+                        onCreateOption={(label: string) => {
+                          const next = Array.from(new Set([...custom, label]));
+                          localStorage.setItem(customKey, JSON.stringify(next));
+                        }}
+                        onChange={(next: string[]) => {
+                          setNoteStatus('typing');
+                          setMistakeTag(index, next as any);
+                          setTimeout(() => setNoteStatus('saved'), 700);
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
               </div>
               )}
               {markSection === "notes" && (
