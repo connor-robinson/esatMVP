@@ -544,17 +544,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               allQuestions.forEach((question, index) => {
                 let section: string;
                 if (isTmuaPaper) {
-                  // For TMUA, try mapPartToSection first, then fall back to deriveTmuaSectionFromQuestion
-                  const mappedSection = mapPartToSection(
-                    { partLetter: (question as any).partLetter || '', partName: question.partName || '' },
-                    'TMUA'
-                  );
-                  // If mapPartToSection returns a valid TMUA section, use it; otherwise use deriveTmuaSectionFromQuestion
-                  if (mappedSection === 'Paper 1' || mappedSection === 'Paper 2') {
-                    section = mappedSection;
-                  } else {
-                    section = deriveTmuaSectionFromQuestion(question, index, totalQuestions);
-                  }
+                  section = deriveTmuaSectionFromQuestion(question, index, totalQuestions);
                 } else {
                   section = mapPartToSection({ partLetter: (question as any).partLetter, partName: question.partName }, state.paperName as any);
                 }

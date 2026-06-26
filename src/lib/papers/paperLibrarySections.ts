@@ -1,5 +1,5 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
-import { mapPartToSection } from "@/lib/papers/sectionMapping";
+import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import type { ExamName, Paper, PaperSection, PaperType, Question } from "@/types/papers";
 
 export type SlimQuestionPart = {
@@ -180,14 +180,25 @@ export function buildPaperSectionsOutline(
   const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
   const sectionSet = new Set<PaperSection>();
-  questionRows.forEach((row) => {
-    sectionSet.add(
-      mapPartToSection(
-        { partLetter: row.partLetter, partName: row.partName },
-        paperType,
-      ),
-    );
-  });
+  if (paperType === "TMUA") {
+    questionRows.forEach((row) => {
+      const section = mapTmuaPaperNameToSection(row.paperName ?? paper.paperName);
+      if (section) sectionSet.add(section);
+    });
+    if (sectionSet.size === 0) {
+      const fallback = mapTmuaPaperNameToSection(paper.paperName);
+      if (fallback) sectionSet.add(fallback);
+    }
+  } else {
+    questionRows.forEach((row) => {
+      sectionSet.add(
+        mapPartToSection(
+          { partLetter: row.partLetter, partName: row.partName },
+          paperType,
+        ),
+      );
+    });
+  }
 
   const sections = Array.from(sectionSet);
   const mainSections = groupSectionsIntoMainSections(

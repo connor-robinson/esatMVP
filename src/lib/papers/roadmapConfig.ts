@@ -582,16 +582,16 @@ async function generateTmuaStages(): Promise<RoadmapStage[]> {
     const parts: RoadmapPart[] = [];
     if (paper1Exists) {
       parts.push({
-        partLetter: 'Paper 1',
-        partName: 'Paper 1',
+        partLetter: '',
+        partName: '',
         paperName: 'Paper 1',
         examType: 'Official',
       });
     }
     if (paper2Exists) {
       parts.push({
-        partLetter: 'Paper 2',
-        partName: 'Paper 2',
+        partLetter: '',
+        partName: '',
         paperName: 'Paper 2',
         examType: 'Official',
       });

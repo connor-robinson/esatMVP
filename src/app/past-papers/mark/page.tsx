@@ -24,7 +24,7 @@ import {
   getSectionSubjectPillClass,
 } from "@/config/colors";
 import { cn } from "@/lib/utils";
-import { mapPartToSection } from "@/lib/papers/sectionMapping";
+import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import { MISTAKE_OPTIONS } from "@/types/papers";
 import { getConversionTable, getConversionRows, scaleScore, findFallbackConversionTable } from "@/lib/supabase/questions";
 import { supabase } from "@/lib/supabase/client";
@@ -646,6 +646,7 @@ export default function PapersMarkPage() {
     const examName = (qs?.[0]?.examName || '').toUpperCase();
     const examYear = qs?.[0]?.examYear;
     const isNSAA2019 = examName === 'NSAA' && examYear === 2019;
+    const isTMUA = examName === 'TMUA';
     
     // DEEP DEBUG: Log all questions with their partLetters to find the source of "SECTION"
     const allQuestionParts = qs.slice(0, totalQuestions).map((q, idx) => ({
@@ -705,6 +706,19 @@ export default function PapersMarkPage() {
       
       let part = (question.partLetter || "").trim();
       const partName = (question.partName || "").trim();
+
+      // TMUA: group by paper (Paper 1 / Paper 2), not question parts
+      if (isTMUA) {
+        const paperSection = mapTmuaPaperNameToSection(question.paperName) ?? "Paper 1";
+        if (!analytics[paperSection]) {
+          analytics[paperSection] = { correct: 0, total: 0, avgTime: 0, totalTime: 0, guessed: 0 };
+        }
+        analytics[paperSection].total++;
+        if (derivedCorrectFlags[i] === true) analytics[paperSection].correct++;
+        if (guessedFlags[i]) analytics[paperSection].guessed++;
+        analytics[paperSection].totalTime += perQuestionSec[i] || 0;
+        continue;
+      }
       
       // If partLetter is empty, try to derive it from partName
       if (!part || part === '—' || part === '') {
@@ -978,20 +992,13 @@ export default function PapersMarkPage() {
     const candidateNames: string[] = [];
     // Highest priority: exam-specific rules
     if (examName === 'TMUA') {
-      // TMUA typically uses "Paper 1" and "Paper 2" as part names
+      // TMUA conversion tables are per-paper; rows use a single "Overall" part
+      candidateNames.push('Overall');
       if (partName) {
-        // Check if partName contains "Paper 1" or "Paper 2"
         const partLower = partName.toLowerCase();
         if (partLower.includes('paper 1') || partLower.includes('paper1')) candidateNames.push('Paper 1');
         if (partLower.includes('paper 2') || partLower.includes('paper2')) candidateNames.push('Paper 2');
       }
-      // Also check letter-based mapping for TMUA (sometimes Paper 1 = A, Paper 2 = B)
-      if (letter === 'A' || letter === '1') candidateNames.push('Paper 1');
-      if (letter === 'B' || letter === '2') candidateNames.push('Paper 2');
-      // Add raw part name if it matches paper pattern
-      const rawLower = raw.toLowerCase();
-      if (rawLower.includes('paper 1') || rawLower.includes('paper1')) candidateNames.push('Paper 1');
-      if (rawLower.includes('paper 2') || rawLower.includes('paper2')) candidateNames.push('Paper 2');
     }
     if (examName === 'ENGAA') {
       if (/A/.test(letter)) candidateNames.push('Section 1A');
@@ -1097,14 +1104,26 @@ export default function PapersMarkPage() {
             continue;
           }
           
-          const match = qs.find(q => (q.partLetter || '').trim() === section);
-          const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
+          const match = qs.find(q => {
+            if (isTMUA) {
+              return mapTmuaPaperNameToSection(q.paperName) === section;
+            }
+            return (q.partLetter || '').trim() === section;
+          });
+          const partLetterRaw = isTMUA
+            ? section
+            : (match?.partLetter || section).toString().toUpperCase();
           
           const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[]);
           const convPartName = resolved.name;
           const scaled = hasConversion ? scaleScore(conversionRows as any, convPartName as any, data.correct, 'nearest') : null;
           const score = typeof scaled === 'number' ? Math.round((scaled as number) * 10) / 10 : null;
-          let { key: tableKey, label } = mapSectionToTable({ examName, sectionLetter: partLetterRaw, sectionName: match?.partName });
+          let { key: tableKey, label } = mapSectionToTable({
+            examName,
+            sectionLetter: partLetterRaw,
+            sectionName: match?.partName,
+            paperName: isTMUA ? (match?.paperName ?? section) : undefined,
+          });
           
           // For TMUA, determine which table to use based on year
           if (isTMUA && tableKey === 'tmua_paper') {

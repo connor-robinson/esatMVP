@@ -30,6 +30,16 @@ export function normalizeTmuaSectionSubject(partName: string | null | undefined,
 export interface PartInfo {
   partLetter: string;
   partName: string;
+  /** TMUA: section identity lives on the paper row (`Paper 1` / `Paper 2`), not parts. */
+  paperName?: string;
+}
+
+/** Map a TMUA `papers.paper_name` value to a library section. */
+export function mapTmuaPaperNameToSection(paperName: string | null | undefined): TmuaSection | null {
+  const normalized = (paperName ?? "").trim().toLowerCase();
+  if (/\bpaper\s*2\b/.test(normalized)) return "Paper 2";
+  if (/\bpaper\s*1\b/.test(normalized)) return "Paper 1";
+  return null;
 }
 
 /**
@@ -230,6 +240,23 @@ export function getAvailableSectionsFromParts(
   }
   }
   
+  // TMUA: papers only — section = Paper 1 / Paper 2 from `paper_name`, not parts
+  if (paperType === 'TMUA') {
+    const tmuaSections = ['Paper 1', 'Paper 2'] as PaperSection[];
+    const fromPapers = new Set<TmuaSection>();
+    for (const part of parts) {
+      const section = mapTmuaPaperNameToSection(part.paperName);
+      if (section) fromPapers.add(section);
+    }
+    if (fromPapers.size > 0) {
+      const derived = tmuaSections.filter((section) => fromPapers.has(section as TmuaSection));
+      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA from paper names', { derived }); } catch {}
+      return derived;
+    }
+    try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA fallback to both papers'); } catch {}
+    return tmuaSections;
+  }
+
   // For other papers, map parts to sections
   const sectionSet = new Set<PaperSection>();
   
@@ -239,16 +266,6 @@ export function getAvailableSectionsFromParts(
   });
 
   let sections: PaperSection[] = Array.from(sectionSet) as PaperSection[];
-  if (paperType === 'TMUA') {
-    const tmuaSections = ['Paper 1', 'Paper 2'] as PaperSection[];
-    const derived = tmuaSections.filter((section) => sections.includes(section));
-    if (derived.length === tmuaSections.length) {
-      try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA derived sections', { derived }); } catch {}
-      return derived;
-    }
-    try { console.debug('[sectionMapping.getAvailableSectionsFromParts] TMUA fallback to both sections'); } catch {}
-    return tmuaSections;
-  }
   // Guard-rail: if NSAA Section 2 slipped through, filter to sciences only
   if (paperType === 'NSAA') {
     const examTypeNorm = (examType || '').toString().toLowerCase();
@@ -277,59 +294,29 @@ export function getAvailableSectionsFromParts(
 }
 
 /**
- * Derives TMUA section (Paper 1 / Paper 2) for a question using metadata fallbacks.
+ * Derives TMUA section (Paper 1 / Paper 2) from the paper row, not question parts.
  */
 export function deriveTmuaSectionFromQuestion(question: Question, index: number, totalQuestions: number): TmuaSection {
-  const baseSection = mapPartToSection(
-    {
-      partLetter: (question.partLetter ?? "") as string,
-      partName: (question.partName ?? "") as string,
-    },
-    "TMUA"
-  );
-
-  if (isTmuaSection(baseSection)) {
-    return baseSection;
+  const fromPaper = mapTmuaPaperNameToSection(question.paperName);
+  if (fromPaper) {
+    return fromPaper;
   }
 
-  const meta = [
-    question.paperName ?? "",
-    question.partLetter ?? "",
-    question.partName ?? "",
-    question.examType ?? "",
-  ]
+  // Legacy rows that still have part metadata but no reliable paper_name
+  const meta = [question.partLetter ?? "", question.partName ?? ""]
     .map((value) => value.toString().toLowerCase())
     .join(" ");
 
-  if (
-    /\bpaper\s*2\b/.test(meta) ||
-    /\bpart\s*b\b/.test(meta) ||
-    /\bsection\s*2\b/.test(meta) ||
-    /\bs2\b/.test(meta) ||
-    /\bsecond\b/.test(meta) ||
-    /reason/.test(meta) ||
-    /logic/.test(meta)
-  ) {
+  if (/\bpaper\s*2\b/.test(meta) || /\bpart\s*b\b/.test(meta)) {
     return "Paper 2";
   }
-
-  if (
-    /\bpaper\s*1\b/.test(meta) ||
-    /\bpart\s*a\b/.test(meta) ||
-    /\bsection\s*1\b/.test(meta) ||
-    /\bs1\b/.test(meta) ||
-    /\bfirst\b/.test(meta) ||
-    /math/.test(meta)
-  ) {
+  if (/\bpaper\s*1\b/.test(meta) || /\bpart\s*a\b/.test(meta)) {
     return "Paper 1";
   }
 
   if (typeof question.questionNumber === "number" && totalQuestions > 0) {
     const halfway = Math.max(1, Math.ceil(totalQuestions / 2));
-    if (question.questionNumber > halfway) {
-      return "Paper 2";
-    }
-    return "Paper 1";
+    return question.questionNumber > halfway ? "Paper 2" : "Paper 1";
   }
 
   if (totalQuestions > 0 && index >= Math.floor(totalQuestions / 2)) {

@@ -52,6 +52,7 @@ export function PaperRow({
           const parts = questions.map((q) => ({
             partLetter: q.partLetter,
             partName: q.partName,
+            paperName: q.paperName,
           }));
           const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
           const sections = getAvailableSectionsFromParts(

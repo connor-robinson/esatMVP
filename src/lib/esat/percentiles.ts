@@ -41,9 +41,10 @@ export type MapArgs = {
   examName?: string;
   sectionLetter?: string; // e.g., 'A'
   sectionName?: string; // e.g., 'Biology'
+  paperName?: string; // TMUA: Paper 1 / Paper 2
 };
 
-export function mapSectionToTable({ examName, sectionLetter, sectionName }: MapArgs): { key: string | null; label: string } {
+export function mapSectionToTable({ examName, sectionLetter, sectionName, paperName }: MapArgs): { key: string | null; label: string } {
   const exam = (examName || '').toUpperCase();
   const name = (sectionName || '').toLowerCase();
   const letter = (sectionLetter || '').toUpperCase();
@@ -82,16 +83,14 @@ export function mapSectionToTable({ examName, sectionLetter, sectionName }: MapA
     return { key: 'esat_combined_math_phys_cumulative', label: 'Combined (Math/Phys)' };
   }
   
-  // TMUA mapping - Paper 1 and Paper 2
-  // Note: The actual table selection (pre_change vs post_change) will be handled in the mark page based on paper year
+  // TMUA mapping - Paper 1 and Paper 2 (identified by paper_name, not parts)
   if (exam === 'TMUA') {
-    if (name.includes('paper 1') || name.includes('paper1') || letter === 'A' || letter === '1') {
-      // Return a generic key - the mark page will determine which table to use based on year
-      return { key: 'tmua_paper', label: 'Paper 1' };
-    }
-    if (name.includes('paper 2') || name.includes('paper2') || letter === 'B' || letter === '2') {
-      // Return a generic key - the mark page will determine which table to use based on year
+    const paper = (paperName || sectionName || '').toLowerCase();
+    if (paper.includes('paper 2') || paper.includes('paper2') || letter === '2') {
       return { key: 'tmua_paper', label: 'Paper 2' };
+    }
+    if (paper.includes('paper 1') || paper.includes('paper1') || letter === '1') {
+      return { key: 'tmua_paper', label: 'Paper 1' };
     }
   }
   
