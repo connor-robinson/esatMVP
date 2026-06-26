@@ -21,6 +21,8 @@ import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
+const MARK_SAVE_HINT_KEY = 'papers.mark.saveLeaveHintSeen';
+
 interface SessionProgressBarProps {
   /** When true, render below the main navbar (hybrid fullscreen layout). */
   embedded?: boolean;
@@ -65,6 +67,7 @@ export function SessionProgressBar({
 
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
   const [isSaving, setIsSaving] = useState(false);
+  const [hasSeenSaveHint, setHasSeenSaveHint] = useState<boolean | null>(null);
   const [hoveredNode, setHoveredNode] = useState<number | 'end' | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ left: number; top: number } | null>(
     null,
@@ -83,6 +86,29 @@ export function SessionProgressBar({
     setHoveredNode(null);
     setTooltipPos(null);
   };
+
+  useEffect(() => {
+    try {
+      setHasSeenSaveHint(localStorage.getItem(MARK_SAVE_HINT_KEY) === '1');
+    } catch {
+      setHasSeenSaveHint(false);
+    }
+  }, []);
+
+  const dismissSaveHint = () => {
+    try {
+      localStorage.setItem(MARK_SAVE_HINT_KEY, '1');
+    } catch {
+      // ignore storage errors
+    }
+    setHasSeenSaveHint(true);
+  };
+
+  const showSaveHint =
+    hasSeenSaveHint === false &&
+    isOnMarkPage &&
+    isMarkingInfo &&
+    !isSaving;
 
   const [docFullscreen, setDocFullscreen] = useState(false);
   useEffect(() => {
@@ -267,6 +293,7 @@ export function SessionProgressBar({
   const progressSegments = getProgressSegments();
 
   const handleSaveAndContinue = async () => {
+    if (isOnMarkPage) dismissSaveHint();
     setIsSaving(true);
     try {
       if (isMarkingInfo) {
@@ -436,25 +463,56 @@ export function SessionProgressBar({
           </div>
         </div>
 
-        <div className='flex shrink-0 items-center'>
-          <button
-            type='button'
-            onClick={() => void handleSaveAndContinue()}
-            disabled={isSaving}
-            className={cn(
-              iconBtnClass,
-              'text-maths hover:bg-maths/10 hover:text-maths',
-              isSaving && 'cursor-not-allowed opacity-60',
+        <div className='relative flex shrink-0 items-center'>
+          {showSaveHint && (
+            <div
+              className='pointer-events-none absolute right-0 bottom-full z-30 mb-2 sm:bottom-auto sm:right-full sm:top-1/2 sm:mb-0 sm:mr-3 sm:-translate-y-1/2'
+              role='status'
+              aria-live='polite'
+            >
+              <div className='animate-gentle-slide relative max-w-[min(16rem,calc(100vw-2rem))] rounded-organic-md border border-border-subtle bg-surface-elevated px-3 py-2 text-xs font-medium leading-snug text-text shadow-bar-floating sm:max-w-none sm:whitespace-nowrap'>
+                Press Save to keep your results &amp; leave
+                <span
+                  className='absolute -bottom-1 right-4 h-2 w-2 rotate-45 border-b border-r border-border-subtle bg-surface-elevated sm:-right-1 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:border-b-0 sm:border-l-0 sm:border-r sm:border-t'
+                  aria-hidden
+                />
+              </div>
+            </div>
+          )}
+
+          <div className='relative'>
+            {showSaveHint && (
+              <>
+                <span className='pointer-events-none absolute -inset-1 animate-ping rounded-lg bg-maths/20' />
+                <span className='pointer-events-none absolute -inset-0.5 animate-pulse rounded-lg ring-2 ring-maths/40' />
+              </>
             )}
-            title={isSaving ? 'Saving…' : 'Save & leave'}
-            aria-label={isSaving ? 'Saving session' : 'Save and leave'}
-          >
-            {isSaving ? (
-              <Loader2 className='h-[18px] w-[18px] animate-spin' strokeWidth={2.2} />
-            ) : (
-              <Save className='h-[18px] w-[18px]' strokeWidth={2.2} />
-            )}
-          </button>
+            <button
+              type='button'
+              onClick={() => void handleSaveAndContinue()}
+              disabled={isSaving}
+              className={cn(
+                iconBtnClass,
+                'relative z-10 text-maths hover:bg-maths/10 hover:text-maths',
+                showSaveHint && 'animate-pulse-soft bg-maths/10 text-maths',
+                isSaving && 'cursor-not-allowed opacity-60',
+              )}
+              title={isSaving ? 'Saving…' : 'Save & leave'}
+              aria-label={
+                isSaving
+                  ? 'Saving session'
+                  : showSaveHint
+                    ? 'Save and leave — keeps your results'
+                    : 'Save and leave'
+              }
+            >
+              {isSaving ? (
+                <Loader2 className='h-[18px] w-[18px] animate-spin' strokeWidth={2.2} />
+              ) : (
+                <Save className='h-[18px] w-[18px]' strokeWidth={2.2} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
