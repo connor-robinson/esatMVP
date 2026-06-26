@@ -5,18 +5,18 @@
  * - Brand logo (always visible)
  * - Full-width section timeline
  * - Current part / section info
- * - Save & Continue
+ * - Save & leave
  */
 
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import { getSectionColor } from '@/config/colors';
-import { Info, Save, Loader2 } from 'lucide-react';
+import { BookmarkCheck, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
@@ -64,8 +64,7 @@ export function SessionProgressBar({
 
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
   const [isSaving, setIsSaving] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
-  const infoRef = useRef<HTMLDivElement>(null);
+  const [hoveredNode, setHoveredNode] = useState<number | 'end' | null>(null);
 
   const [docFullscreen, setDocFullscreen] = useState(false);
   useEffect(() => {
@@ -92,17 +91,6 @@ export function SessionProgressBar({
     };
   }, [embedded]);
 
-  useEffect(() => {
-    if (!infoOpen) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (infoRef.current && !infoRef.current.contains(e.target as Node)) {
-        setInfoOpen(false);
-      }
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [infoOpen]);
-
   const totalSections = selectedSections.length;
   const isOnInstructionPage =
     sectionInstructionTimer !== null && sectionInstructionTimer > 0;
@@ -123,55 +111,55 @@ export function SessionProgressBar({
     return year ? `${paperName} ${year}` : paperName;
   }, [paperName, paperVariant, sessionName]);
 
-  const currentContext = useMemo(() => {
-    const currentQuestion = questions[currentQuestionIndex];
-    const sectionSubject = selectedSections[currentSectionIndex] ?? '';
-    const sectionColor = getSectionColor(sectionSubject);
+  const nodeLabels = useMemo(() => {
+    return selectedSections.map((section, index) => {
+      const sectionQuestions = allSectionsQuestions?.[index];
+      const firstQ = sectionQuestions?.[0];
+      return {
+        partLabel: formatPartLabel(firstQ?.partLetter),
+        subject: firstQ?.partName?.trim() || section,
+        section,
+        color: getSectionColor(section),
+      };
+    });
+  }, [selectedSections, allSectionsQuestions]);
 
+  const endNodeLabel = useMemo(() => {
     if (isOnMarkPage) {
       return {
         partLabel: 'Review',
-        subject: paperDisplayName,
-        sectionColor: getSectionColor(sectionSubject || 'Mathematics'),
-        examLabel: paperName ?? '',
+        subject: 'Mark session',
+        color: getSectionColor('Mathematics'),
       };
     }
-
     if (isMarkingInfo) {
       return {
         partLabel: 'Complete',
         subject: 'Ready to mark',
-        sectionColor: getSectionColor(sectionSubject || 'Mathematics'),
-        examLabel: paperDisplayName,
+        color: getSectionColor('Mathematics'),
       };
     }
-
-    if (isOnInstructionPage) {
-      return {
-        partLabel: 'Instructions',
-        subject: sectionSubject,
-        sectionColor,
-        examLabel: paperDisplayName,
-      };
-    }
-
     return {
-      partLabel: formatPartLabel(currentQuestion?.partLetter),
-      subject: currentQuestion?.partName?.trim() || sectionSubject,
-      sectionColor,
-      examLabel: paperDisplayName,
+      partLabel: 'Finish',
+      subject: 'End of paper',
+      color: getSectionColor('Mathematics'),
     };
-  }, [
-    questions,
-    currentQuestionIndex,
-    selectedSections,
-    currentSectionIndex,
-    isOnMarkPage,
-    isMarkingInfo,
-    isOnInstructionPage,
-    paperDisplayName,
-    paperName,
-  ]);
+  }, [isOnMarkPage, isMarkingInfo]);
+
+  const hoveredLabel = useMemo(() => {
+    if (hoveredNode === null) return null;
+    if (hoveredNode === 'end') return endNodeLabel;
+    return nodeLabels[hoveredNode] ?? null;
+  }, [hoveredNode, nodeLabels, endNodeLabel]);
+
+  const hoveredPosition =
+    hoveredNode === null
+      ? null
+      : hoveredNode === 'end'
+        ? 100
+        : totalSections > 0
+          ? (hoveredNode / totalSections) * 100
+          : 0;
 
   if (!sessionId) return null;
 
@@ -309,6 +297,25 @@ export function SessionProgressBar({
 
         <div className='relative min-w-0 flex-1'>
           <div className='relative h-6 w-full'>
+            {hoveredLabel && hoveredPosition !== null ? (
+              <div
+                className='pointer-events-none absolute z-50 -translate-x-1/2 whitespace-nowrap rounded-organic-md bg-surface-elevated px-2.5 py-1.5 shadow-lg'
+                style={{ left: `${hoveredPosition}%`, top: '-2.75rem' }}
+              >
+                <div className='flex items-center gap-2'>
+                  <span
+                    className='rounded-md px-1.5 py-0.5 font-heading text-[10px] font-bold uppercase tracking-wide text-background'
+                    style={{ backgroundColor: hoveredLabel.color }}
+                  >
+                    {hoveredLabel.partLabel}
+                  </span>
+                  <span className='font-heading text-xs font-semibold text-text'>
+                    {hoveredLabel.subject}
+                  </span>
+                </div>
+              </div>
+            ) : null}
+
             <div className='absolute inset-x-0 top-3 h-0'>
               <div className='absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-border-subtle' />
 
@@ -331,99 +338,84 @@ export function SessionProgressBar({
                 const nodePosition = (index / totalSections) * 100;
 
                 return (
-                  <div
+                  <button
                     key={`${section}-${index}`}
+                    type='button'
                     className='absolute flex flex-col items-center'
                     style={{
                       left: `${nodePosition}%`,
-                      top: '-6px',
+                      top: '-10px',
                       transform: 'translateX(-50%)',
                     }}
+                    onMouseEnter={() => setHoveredNode(index)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    onFocus={() => setHoveredNode(index)}
+                    onBlur={() => setHoveredNode(null)}
+                    aria-label={`${nodeLabels[index]?.partLabel ?? 'Part'}: ${nodeLabels[index]?.subject ?? section}`}
                   >
-                    <div
-                      className={cn(
-                        'h-3 w-3 rounded-full border-2 transition-all',
-                        isCompleted
-                          ? 'border-maths bg-maths'
-                          : isCurrent && !isOnInstructionPage
+                    <span className='flex h-5 w-5 items-center justify-center'>
+                      <span
+                        className={cn(
+                          'h-3 w-3 rounded-full border-2 transition-all',
+                          isCompleted
                             ? 'border-maths bg-maths'
-                            : 'border-border bg-transparent',
-                      )}
-                    />
-                  </div>
+                            : isCurrent && !isOnInstructionPage
+                              ? 'border-maths bg-maths'
+                              : 'border-border bg-transparent',
+                        )}
+                      />
+                    </span>
+                  </button>
                 );
               })}
 
-              <div
+              <button
+                type='button'
                 className='absolute flex flex-col items-center'
                 style={{
                   left: '100%',
-                  top: '-6px',
+                  top: '-10px',
                   transform: 'translateX(-50%)',
                 }}
+                onMouseEnter={() => setHoveredNode('end')}
+                onMouseLeave={() => setHoveredNode(null)}
+                onFocus={() => setHoveredNode('end')}
+                onBlur={() => setHoveredNode(null)}
+                aria-label={`${endNodeLabel.partLabel}: ${endNodeLabel.subject}`}
               >
-                <div
-                  className={cn(
-                    'h-3 w-3 rounded-full border-2 transition-all duration-500',
-                    (() => {
-                      if (isMarkingInfo) return true;
-                      if (currentSectionIndex >= totalSections) return true;
-                      if (
-                        currentSectionIndex >= totalSections - 1 &&
-                        allSectionsQuestions &&
-                        allSectionsQuestions.length > currentSectionIndex
-                      ) {
-                        const lastSectionQuestions =
-                          allSectionsQuestions[currentSectionIndex] || [];
-                        if (lastSectionQuestions.length > 0) {
-                          const lastSectionProgress =
-                            calculateSectionProgress(currentSectionIndex);
-                          if (lastSectionProgress >= 1.0) return true;
+                <span className='flex h-5 w-5 items-center justify-center'>
+                  <span
+                    className={cn(
+                      'h-3 w-3 rounded-full border-2 transition-all duration-500',
+                      (() => {
+                        if (isMarkingInfo) return true;
+                        if (currentSectionIndex >= totalSections) return true;
+                        if (
+                          currentSectionIndex >= totalSections - 1 &&
+                          allSectionsQuestions &&
+                          allSectionsQuestions.length > currentSectionIndex
+                        ) {
+                          const lastSectionQuestions =
+                            allSectionsQuestions[currentSectionIndex] || [];
+                          if (lastSectionQuestions.length > 0) {
+                            const lastSectionProgress =
+                              calculateSectionProgress(currentSectionIndex);
+                            if (lastSectionProgress >= 1.0) return true;
+                          }
                         }
-                      }
-                      return false;
-                    })()
-                      ? 'border-maths bg-maths'
-                      : 'border-border bg-transparent',
-                  )}
-                />
-              </div>
+                        return false;
+                      })()
+                        ? 'border-maths bg-maths'
+                        : 'border-border bg-transparent',
+                    )}
+                  />
+                </span>
+              </button>
             </div>
           </div>
         </div>
 
-        <div className='flex shrink-0 items-center gap-1'>
-          <div className='relative' ref={infoRef}>
-            <button
-              type='button'
-              onClick={() => setInfoOpen((open) => !open)}
-              className={cn(iconBtnClass, infoOpen && 'bg-surface-subtle text-text')}
-              aria-label='Current section info'
-              aria-expanded={infoOpen}
-            >
-              <Info className='h-[18px] w-[18px]' strokeWidth={2.2} />
-            </button>
-
-            {infoOpen ? (
-              <div className='absolute right-0 top-full z-50 mt-2 min-w-[12rem] rounded-organic-md bg-surface-elevated px-3 py-2.5 shadow-lg'>
-                <div className='flex items-center gap-2'>
-                  <span
-                    className='rounded-md px-2 py-0.5 font-heading text-[11px] font-bold uppercase tracking-wide text-background'
-                    style={{ backgroundColor: currentContext.sectionColor }}
-                  >
-                    {currentContext.partLabel}
-                  </span>
-                  <span className='font-heading text-sm font-semibold text-text'>
-                    {currentContext.subject}
-                  </span>
-                </div>
-                <p className='mt-1.5 font-heading text-xs text-text-muted'>
-                  {currentContext.examLabel}
-                </p>
-              </div>
-            ) : null}
-          </div>
-
+        <div className='flex shrink-0 items-center'>
           <button
             type='button'
             onClick={() => void handleSaveAndContinue()}
@@ -433,13 +425,13 @@ export function SessionProgressBar({
               'text-maths hover:bg-maths/10 hover:text-maths',
               isSaving && 'cursor-not-allowed opacity-60',
             )}
-            title={isSaving ? 'Saving…' : 'Save & Continue'}
-            aria-label={isSaving ? 'Saving session' : 'Save and continue'}
+            title={isSaving ? 'Saving…' : 'Save & leave'}
+            aria-label={isSaving ? 'Saving session' : 'Save and leave'}
           >
             {isSaving ? (
               <Loader2 className='h-[18px] w-[18px] animate-spin' strokeWidth={2.2} />
             ) : (
-              <Save className='h-[18px] w-[18px]' strokeWidth={2.2} />
+              <BookmarkCheck className='h-[18px] w-[18px]' strokeWidth={2.2} />
             )}
           </button>
         </div>
