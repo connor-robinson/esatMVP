@@ -31,7 +31,6 @@ import {
   computePredictedScore,
   computeScaledScore,
   findQuestionForSection,
-  resolveConversionPartName,
   resolveTmuaPercentileTableKey,
 } from "@/lib/papers/markScoring";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
@@ -115,9 +114,6 @@ export default function PapersMarkPage() {
   const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
   // NSAA: averaged percentile across all subjects
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
-  // Conversion table popup state
-  const [showConversionPopup, setShowConversionPopup] = useState(false);
-  const conversionPopupRef = useRef<HTMLDivElement>(null);
   // Community stats state
   const [questionStats, setQuestionStats] = useState<Record<number, QuestionStats>>({});
   const [statsLoading, setStatsLoading] = useState(false);
@@ -223,34 +219,6 @@ export default function PapersMarkPage() {
       mounted = false;
     };
   }, [paperId]);
-
-  // Close conversion popup when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!showConversionPopup) return;
-      
-      const target = event.target as HTMLElement;
-      // Don't close if clicking the info button or inside the popup
-      if (target.closest('button[title="View conversion table"]') || 
-          conversionPopupRef.current?.contains(target)) {
-        return;
-      }
-      
-      setShowConversionPopup(false);
-    };
-
-    if (showConversionPopup) {
-      // Use a small delay to avoid closing immediately when opening
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-      }, 100);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [showConversionPopup]);
 
   // Fetch community stats for all questions in session
   useEffect(() => {
@@ -1234,135 +1202,54 @@ export default function PapersMarkPage() {
                     </div>
                   </div>
 
-                    {/* Overview Pills */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {/* Score */}
-                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px]`}>
-                        <div className="text-4xl font-bold text-neutral-100 leading-tight">{Math.round((correctCountDerived / Math.max(totalQuestions, 1)) * 100)}%</div>
-                        <div className="text-xs text-neutral-400">{correctCountDerived}/{totalQuestions} correct</div>
-                      </div>
-                      {/* Predicted Score (exam-specific) */}
-                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px] relative`}>
-                        {/* Info button */}
-                        {(examName === 'ENGAA' || examName === 'NSAA') && (
-                          <button
-                            onClick={() => setShowConversionPopup(!showConversionPopup)}
-                            className="absolute top-2 right-2 w-5 h-5 rounded-full bg-neutral-700 hover:bg-neutral-600 flex items-center justify-center transition-colors"
-                            title="View conversion table"
-                          >
-                            <svg className="w-3 h-3 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </button>
-                        )}
-                        <div className="text-4xl font-bold text-neutral-100 leading-tight">{predictedScore !== null && predictedScore !== undefined ? predictedScore.toFixed(1) : '—'}</div>
-                        <div className="text-xs text-neutral-400 flex items-center gap-1">
-                          Predicted {(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : (examName || 'score')}
-                        </div>
-                        {/* Conversion table popup */}
-                        {showConversionPopup && (examName === 'ENGAA' || examName === 'NSAA') && (
-                          <div
-                            ref={conversionPopupRef}
-                            className="absolute top-full right-0 mt-2 w-80 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl z-50 p-4"
-                            style={{ maxHeight: '400px', overflowY: 'auto' }}
-                          >
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="text-sm font-semibold text-neutral-100">Conversion Table</div>
-                              <button
-                                onClick={() => setShowConversionPopup(false)}
-                                className="text-neutral-400 hover:text-neutral-200"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                              </button>
-                            </div>
-                            <div className="space-y-3">
-                              {(() => {
-                                const qs = usePaperSessionStore.getState().questions;
-                                const sections = Object.entries(sectionAnalytics);
-                                
-                                if (sections.length === 0) {
-                                  return <div className="text-xs text-neutral-400">No sections found</div>;
-                                }
-                                
-                                return sections
-                                  .filter(([section]) => {
-                                    // Filter out "SECTION" entries
-                                    const sectionUpper = section.toUpperCase();
-                                    const isValid = sectionUpper !== 'SECTION' && !sectionUpper.startsWith('SECTION ');
-                                    if (!isValid) {
-                                      console.error(`[mark:UI:percentiles] Filtering out invalid "SECTION" entry:`, section);
-                                    }
-                                    return isValid;
-                                  })
-                                  .map(([section, data]) => {
-                                  const match = findQuestionForSection(qs, section, examName);
-                                  const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
-                                  
-                                  const resolved = resolveConversionPartName(examName, partLetterRaw, match?.partName, conversionRows as any[], match?.paperName ?? paperName);
-                                  const convPartName = resolved.name;
-                                  const partRows = (conversionRows as any[]).filter((r: any) => 
-                                    (r.partName || '').toString().toLowerCase() === convPartName.toLowerCase()
-                                  );
-                                  
-                                  const hasConversion = partRows.length > 0;
-                                  const sectionName = mapPartToSection(
-                                    { partLetter: partLetterRaw, partName: match?.partName || '' },
-                                    examName as any
-                                  );
-                                  
-                                  if (partRows.length > 0) {
-                                    const sortedRows = [...partRows].sort((a, b) => a.rawScore - b.rawScore);
-                                    const minRaw = sortedRows[0].rawScore;
-                                    const maxRaw = sortedRows[sortedRows.length - 1].rawScore;
-                                    const minScaled = sortedRows[0].scaledScore;
-                                    const maxScaled = sortedRows[sortedRows.length - 1].scaledScore;
-                                    
-                                    return (
-                                      <div key={section} className="border-b border-neutral-700 pb-2 last:border-0 last:pb-0">
-                                        <div className="flex items-center justify-between mb-1">
-                                          <div className="text-xs font-medium text-neutral-200">{sectionName}</div>
-                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-900/30 text-green-300">
-                                            Found
-                                          </span>
-                                        </div>
-                                        <div className="text-[10px] text-neutral-400 space-y-0.5">
-                                          <div>Raw: {minRaw === maxRaw ? minRaw : `${minRaw} - ${maxRaw}`}</div>
-                                          <div>ESAT: {minScaled === maxScaled ? minScaled.toFixed(1) : `${minScaled.toFixed(1)} - ${maxScaled.toFixed(1)}`}</div>
-                                        </div>
-                                      </div>
-                                    );
-                                  } else {
-                                    return (
-                                      <div key={section} className="border-b border-neutral-700 pb-2 last:border-0 last:pb-0">
-                                        <div className="flex items-center justify-between mb-1">
-                                          <div className="text-xs font-medium text-neutral-200">{sectionName}</div>
-                                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-700 text-neutral-400">
-                                            Not Found
-                                          </span>
-                                        </div>
-                                        <div className="text-[10px] text-neutral-400">
-                                          No conversion data available
-                                        </div>
-                                      </div>
-                                    );
-                                  }
-                                });
-                              })()}
-                            </div>
+                    {/* Predicted score — hero */}
+                    {(() => {
+                      const scoreLabel =
+                        examName === "ENGAA" || examName === "NSAA"
+                          ? "Predicted ESAT score"
+                          : examName === "TMUA"
+                            ? "TMUA score"
+                            : "Predicted score";
+                      return (
+                        <div className="rounded-organic-lg bg-maths px-6 py-8 text-neutral-900 dark:text-white">
+                          <div className="text-sm font-medium uppercase tracking-wide opacity-90">
+                            {scoreLabel}
                           </div>
-                        )}
+                          <div className="mt-1 text-5xl font-bold leading-none tracking-tight sm:text-6xl">
+                            {predictedScore !== null && predictedScore !== undefined
+                              ? predictedScore.toFixed(1)
+                              : "—"}
+                          </div>
+                          <div className="mt-3 text-sm opacity-80">
+                            {correctCountDerived}/{totalQuestions} correct (
+                            {Math.round(
+                              (correctCountDerived / Math.max(totalQuestions, 1)) * 100,
+                            )}
+                            %)
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Secondary stats */}
+                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                      <div className={`${bubbleClass} flex min-h-[80px] flex-col items-center justify-center`}>
+                        <div className="text-xs text-neutral-400">Avg per question</div>
+                        <div className="text-lg font-semibold text-neutral-200">
+                          {formatTime(Math.round(avgTimePerQuestion))}
+                        </div>
                       </div>
-                      {/* Avg per Question */}
-                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px]`}>
-                        <div className="text-xs text-neutral-400">Avg per Question</div>
-                        <div className="text-lg font-semibold text-neutral-200 leading-tight">{formatTime(Math.round(avgTimePerQuestion))}</div>
-                      </div>
-                      {/* Guessed */}
-                      <div className={`${bubbleClass} flex flex-col items-center justify-center min-h-[96px]`}>
+                      <div className={`${bubbleClass} flex min-h-[80px] flex-col items-center justify-center`}>
                         <div className="text-xs text-neutral-400">Guessed</div>
-                        <div className="text-lg font-semibold text-neutral-200 leading-tight">{accuracyPatterns.guessed}/{totalQuestions}</div>
+                        <div className="text-lg font-semibold text-neutral-200">
+                          {accuracyPatterns.guessed}/{totalQuestions}
+                        </div>
+                      </div>
+                      <div className={`${bubbleClass} col-span-2 flex min-h-[80px] flex-col items-center justify-center md:col-span-1`}>
+                        <div className="text-xs text-neutral-400">Guess accuracy</div>
+                        <div className="text-lg font-semibold text-neutral-200">
+                          {guessExtended.accuracy}%
+                        </div>
                       </div>
                     </div>
 
@@ -1371,27 +1258,6 @@ export default function PapersMarkPage() {
                     {/* Section Performance & Score Conversion (moved up next to Time Management) */}
                     <div className={`${bubbleClass} space-y-4 `}>
                       <div className="text-base font-semibold text-neutral-100">Section Performance</div>
-                      {/* Global conversion rows (all sections) */}
-                      {hasConversion && (
-                        <details>
-                          <summary className="cursor-pointer text-[11px] text-neutral-400">View conversion rows</summary>
-                          <div className="mt-2 text-[11px] text-neutral-300 space-y-1 max-h-48 overflow-y-auto">
-                            {(() => {
-                              const rows = (conversionRows as any[]).slice().sort((a,b) => {
-                                if (a.partName === b.partName) return a.rawScore - b.rawScore;
-                                return a.partName.localeCompare(b.partName);
-                              });
-                              if (rows.length === 0) return <div className="text-neutral-500">No conversion rows found</div>;
-                              return rows.map((r, idx) => (
-                                <div key={idx} className="flex items-center justify-between">
-                                  <span>{r.partName} • Raw {r.rawScore}</span>
-                                  <span>→ {examName} {r.scaledScore !== undefined && r.scaledScore !== null ? Number(r.scaledScore).toFixed(1) : '—'}</span>
-                                </div>
-                              ));
-                            })()}
-                          </div>
-                        </details>
-                      )}
                       <div className="space-y-3">
                         {Object.entries(sectionAnalytics)
                           .filter(([section]) => {
@@ -1406,10 +1272,12 @@ export default function PapersMarkPage() {
                           .map(([section, data]) => {
                           const accuracy = data.total > 0 ? (data.correct / data.total) * 100 : 0;
                           let scaledScore: number | null = null;
+                          let convMatched = false;
+                          let convUsedAverage = false;
                           if (hasConversion && conversionRows.length > 0) {
                             const qs = usePaperSessionStore.getState().questions;
                           const sectionExamName = (qs?.[0]?.examName || '').toUpperCase();
-                          const { scaled, convPartName, matched } = computeScaledScore(
+                          const { scaled, matched, usedAverage } = computeScaledScore(
                             sectionExamName,
                             section,
                             data.correct,
@@ -1418,8 +1286,8 @@ export default function PapersMarkPage() {
                             paperName,
                           );
                             scaledScore = scaled;
-                            (data as any).__convPartName = convPartName;
-                          (data as any).__convRowsFound = matched;
+                            convMatched = matched;
+                            convUsedAverage = usedAverage;
                           }
                           const qsForPill = usePaperSessionStore.getState().questions;
                           const matchForPill = findQuestionForSection(qsForPill, section, examName);
@@ -1442,21 +1310,21 @@ export default function PapersMarkPage() {
                                     <div className="text-sm font-medium text-neutral-200">{section}</div>
                                   </div>
                                   {hasConversion && (
-                                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                                      <span
-                                        className={cn(
-                                          "rounded-organic-sm px-2 py-0.5 text-xs",
-                                          (data as any).__convRowsFound
-                                            ? "bg-primary/20 text-primary"
-                                            : "bg-error/15 text-error",
-                                        )}
-                                      >
-                                        {(data as any).__convRowsFound ? 'Mapped' : 'Not mapped'}
-                                      </span>
-                                      {(data as any).__convPartName && (
-                                        <span className="text-xs text-neutral-400">{((data as any).__convPartName as string)}</span>
+                                    <div
+                                      className={cn(
+                                        "mt-2 rounded-organic-sm px-2.5 py-2 text-xs",
+                                        convMatched
+                                          ? "bg-primary/15 text-primary"
+                                          : convUsedAverage
+                                            ? "bg-maths/15 text-maths"
+                                            : "bg-surface-mid text-text-muted",
                                       )}
-                                      <span className="text-xs text-neutral-500">{data.correct}/{data.total} raw</span>
+                                    >
+                                      {convMatched
+                                        ? "Conversion table found for this section"
+                                        : convUsedAverage
+                                          ? "Using average conversion table for this section"
+                                          : "No conversion table found for this section"}
                                     </div>
                                   )}
                                 </div>

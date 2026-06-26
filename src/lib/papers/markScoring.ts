@@ -133,7 +133,12 @@ export function computeScaledScore(
   questions: Question[],
   conversionRows: ConversionRow[],
   sessionPaperName?: string,
-): { scaled: number | null; convPartName: string; matched: boolean } {
+): {
+  scaled: number | null;
+  convPartName: string;
+  matched: boolean;
+  usedAverage: boolean;
+} {
   const match = findQuestionForSection(questions, section, examName);
   const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
   const { name: convPartName, matched } = resolveConversionPartName(
@@ -143,11 +148,68 @@ export function computeScaledScore(
     conversionRows,
     match?.paperName ?? sessionPaperName,
   );
-  const scaled = scaleScore(conversionRows, convPartName, correct, "nearest");
+
+  const roundScaled = (value: number) => Math.round(value * 10) / 10;
+
+  if (matched) {
+    const scaled = scaleScore(conversionRows, convPartName, correct, "nearest");
+    if (typeof scaled === "number") {
+      return {
+        scaled: roundScaled(scaled),
+        convPartName,
+        matched: true,
+        usedAverage: false,
+      };
+    }
+  }
+
+  const rowsLower = conversionRows.map((r) =>
+    (r.partName || "").toString().toLowerCase(),
+  );
+  if (rowsLower.includes("general")) {
+    const generalScaled = scaleScore(
+      conversionRows,
+      "General",
+      correct,
+      "nearest",
+    );
+    if (typeof generalScaled === "number") {
+      return {
+        scaled: roundScaled(generalScaled),
+        convPartName: "General",
+        matched: true,
+        usedAverage: false,
+      };
+    }
+  }
+
+  const partNames = [
+    ...new Set(
+      conversionRows
+        .map((r) => r.partName)
+        .filter((name): name is string => Boolean(name?.trim())),
+    ),
+  ];
+  const averaged: number[] = [];
+  for (const partName of partNames) {
+    const value = scaleScore(conversionRows, partName, correct, "nearest");
+    if (typeof value === "number") averaged.push(value);
+  }
+  if (averaged.length > 0) {
+    const mean = averaged.reduce((sum, v) => sum + v, 0) / averaged.length;
+    return {
+      scaled: roundScaled(mean),
+      convPartName: "Average",
+      matched: false,
+      usedAverage: true,
+    };
+  }
+
   return {
-    scaled: typeof scaled === "number" ? Math.round(scaled * 10) / 10 : null,
+    scaled: null,
     convPartName,
-    matched,
+    matched: false,
+    usedAverage: false,
   };
 }
 
