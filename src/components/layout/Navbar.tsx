@@ -15,7 +15,6 @@ import { cn } from '@/lib/utils';
 import { SessionProgressBar } from '@/components/papers/SessionProgressBar';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { useTheme } from '@/contexts/ThemeContext';
-import { BrandLogo } from '@/components/brand/BrandLogo';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import { LogIn, LogOut, Moon, Settings, Sun } from 'lucide-react';
@@ -81,7 +80,6 @@ export function Navbar() {
     justQuitTimestamp,
     isMarkingInfo,
     paperFullscreenShowMainNavbar,
-    setPaperFullscreenShowMainNavbar,
   } = usePaperSessionStore();
   const [docFullscreen, setDocFullscreen] = useState(false);
   const { theme, toggleTheme, isDark } = useTheme();
@@ -211,18 +209,6 @@ export function Navbar() {
 
   return (
     <>
-      {hasActiveSession &&
-        docFullscreen &&
-        !paperFullscreenShowMainNavbar && (
-          <button
-            type='button'
-            onClick={() => setPaperFullscreenShowMainNavbar(true)}
-            className='fixed top-3 left-4 z-[100] rounded-lg border border-white/15 bg-background/90 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-text shadow-lg backdrop-blur-md transition-opacity duration-200 hover:bg-surface-subtle'
-            aria-label='Show site navigation'
-          >
-            <BrandLogo variant='mark' className='h-7 w-7' />
-          </button>
-        )}
       {showMainNavStrip && (
       <nav className='sticky top-0 z-50 w-full border-b border-border bg-background/98 backdrop-blur-xl'>
         <div className='w-full px-4 sm:px-6 lg:px-10 xl:px-12'>
