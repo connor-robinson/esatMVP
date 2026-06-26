@@ -318,16 +318,15 @@ export default function PapersMarkPage() {
 
   // Auto-derive correctness if not manually set
   const derivedCorrectFlags = useMemo(() => {
-    const qs = usePaperSessionStore.getState().questions;
     return questionNumbers.map((_, i) => {
       if (correctFlags[i] !== null && correctFlags[i] !== undefined) return correctFlags[i];
       const user = (answers[i]?.choice || "").toString().toUpperCase();
-      const correct = (qs[i]?.answerLetter || "").toString().toUpperCase();
+      const correct = (questions[i]?.answerLetter || "").toString().toUpperCase();
       if (!correct) return null;
       if (!user) return false; // unanswered counts as incorrect
       return user === correct;
     });
-  }, [questionNumbers, correctFlags, answers]);
+  }, [questionNumbers, correctFlags, answers, questions]);
 
   const correctCountDerived = useMemo(() => derivedCorrectFlags.filter(f => f === true).length, [derivedCorrectFlags]);
 
@@ -790,7 +789,7 @@ export default function PapersMarkPage() {
     });
     
     return analytics;
-  }, [questions, totalQuestions, derivedCorrectFlags, guessedFlags, perQuestionSec]);
+  }, [questions, totalQuestions, correctFlags, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
   const validSectionEntries = useMemo(() => {
     return Object.entries(sectionAnalytics).filter(([section]) => {
@@ -1404,14 +1403,14 @@ export default function PapersMarkPage() {
                                         {Math.round(accuracy)}%
                                       </span>
                                     </div>
-                                    <div className="h-2 w-full overflow-hidden rounded-full bg-surface-mid">
+                                    <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-surface-mid">
                                       <div
                                         className={cn(
-                                          "h-full rounded-full transition-[width] duration-500 ease-out",
+                                          "absolute inset-y-0 left-0 w-full origin-left rounded-full transition-transform duration-500 ease-out",
                                           getSectionBarTrackClass(sectionNameForColor),
                                         )}
                                         style={{
-                                          width: `${Math.min(100, Math.max(0, accuracy))}%`,
+                                          transform: `scaleX(${Math.min(1, Math.max(0, accuracy / 100))})`,
                                         }}
                                       />
                                     </div>
@@ -1562,7 +1561,7 @@ export default function PapersMarkPage() {
                                   score={score}
                                   percentile={pct}
                                   xLabel={displayExamLabel}
-                                  className="mx-auto w-full max-w-lg"
+                                  className="w-full"
                                 />
                               )}
 

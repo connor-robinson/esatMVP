@@ -1046,7 +1046,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
         set((state) => {
           const newAnswers = [...state.answers];
           newAnswers[questionIndex] = { ...newAnswers[questionIndex], choice };
-          return { answers: newAnswers };
+          const newCorrectFlags = [...state.correctFlags];
+          newCorrectFlags[questionIndex] = null;
+          return { answers: newAnswers, correctFlags: newCorrectFlags };
         });
         get().schedulePersist();
       },

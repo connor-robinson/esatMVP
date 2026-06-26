@@ -34,9 +34,9 @@ export function PercentileMiniChart({
       density: getRowDensity(r, i > 0 ? sorted[i - 1].cumulativePct : undefined),
     }));
 
-    const w = 400;
-    const h = 175;
-    const pad = 28;
+    const w = 720;
+    const h = 220;
+    const pad = 32;
     const minX = densityPoints[0].score;
     const maxX = densityPoints[densityPoints.length - 1].score;
     const maxY = Math.max(...densityPoints.map((p) => p.density), 1) * 1.12;

@@ -124,11 +124,11 @@ export function getMarkSessionPartHeaderClass(sectionName: string): string {
 /** Progress / bar fill tint for section-accuracy rows. */
 export function getSectionBarTrackClass(sectionName: string): string {
   const ref = resolveSectionColorRef(sectionName);
-  if (ref === PAPER_COLORS.physics) return "bg-physics/80";
-  if (ref === PAPER_COLORS.chemistry) return "bg-chemistry/80";
-  if (ref === PAPER_COLORS.biology) return "bg-biology/80";
-  if (ref === PAPER_COLORS.advanced) return "bg-advanced/80";
-  return "bg-maths/80";
+  if (ref === PAPER_COLORS.physics) return "bg-physics";
+  if (ref === PAPER_COLORS.chemistry) return "bg-chemistry";
+  if (ref === PAPER_COLORS.biology) return "bg-biology";
+  if (ref === PAPER_COLORS.advanced) return "bg-advanced";
+  return "bg-maths";
 }
 
 /**
