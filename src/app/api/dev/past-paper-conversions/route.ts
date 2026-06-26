@@ -146,7 +146,7 @@ export async function GET(request: Request) {
     const { data, error, count } = await query.range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("[conversions/list]", error);
+      console.error("[dev/past-paper-conversions]", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -160,7 +160,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ conversions: rows, total: count ?? rows.length });
   } catch (e) {
-    console.error("[conversions/list]", e);
+    console.error("[dev/past-paper-conversions]", e);
     return NextResponse.json({ error: "Failed to load conversions" }, { status: 500 });
   }
 }

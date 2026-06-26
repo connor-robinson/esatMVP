@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: "Conversion started", status: "running" });
   } catch (error) {
-    console.error("[conversions/run]", error);
+    console.error("[dev/past-paper-conversions/run]", error);
     return NextResponse.json({ error: "Failed to start conversion" }, { status: 500 });
   }
 }

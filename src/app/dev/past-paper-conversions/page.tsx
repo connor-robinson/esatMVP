@@ -9,11 +9,13 @@ import { isQuestionGenerationEnabled } from "@/lib/features";
 import type { ConversionPreviewRow, ConversionRunStatus } from "@/types/conversions";
 import type { Paper } from "@/types/papers";
 
+const API_BASE = "/api/dev/past-paper-conversions";
+
 function paperLabel(p: Paper): string {
   return `${p.examName} ${p.examYear} — ${p.paperName}`;
 }
 
-export default function ConversionsReviewPage() {
+export default function PastPaperConversionsDevPage() {
   const router = useRouter();
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [papers, setPapers] = useState<Paper[]>([]);
@@ -55,7 +57,7 @@ export default function ConversionsReviewPage() {
       if (statusFilter !== "all") params.set("status", statusFilter);
       if (shuffleKey > 0) params.set("shuffle", "1");
 
-      const res = await fetch(`/api/past-papers/conversions?${params}`);
+      const res = await fetch(`${API_BASE}?${params}`);
       if (res.ok) {
         const data = await res.json();
         setConversions(data.conversions ?? []);
@@ -66,7 +68,7 @@ export default function ConversionsReviewPage() {
   }, [paperId, statusFilter, shuffleKey]);
 
   const pollStatus = useCallback(async () => {
-    const res = await fetch("/api/past-papers/conversions/status");
+    const res = await fetch(`${API_BASE}/status`);
     if (res.ok) {
       const s: ConversionRunStatus = await res.json();
       setRunStatus(s);
@@ -105,7 +107,7 @@ export default function ConversionsReviewPage() {
   const handleRun = async () => {
     if (!paperId) return;
     setRunning(true);
-    const res = await fetch("/api/past-papers/conversions/run", {
+    const res = await fetch(`${API_BASE}/run`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ paperId, limit: limit || undefined, dryRun }),
@@ -132,13 +134,15 @@ export default function ConversionsReviewPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 space-y-8">
       <header className="space-y-1">
+        <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+          Dev tool · not linked from past papers
+        </p>
         <h1 className="text-2xl font-semibold text-text">Past Paper Conversion Review</h1>
         <p className="text-sm text-text-muted">
           Run AI conversion on a paper, then flip cards to compare screenshots vs text output.
         </p>
       </header>
 
-      {/* Run controls */}
       <section className="rounded-organic-lg bg-surface-mid p-5 space-y-4">
         <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide">
           Generate
@@ -221,7 +225,6 @@ export default function ConversionsReviewPage() {
         )}
       </section>
 
-      {/* Preview filters */}
       <section className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wide mr-auto">
