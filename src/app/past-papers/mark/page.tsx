@@ -2669,7 +2669,6 @@ export default function PapersMarkPage() {
                 <MarkSessionMistakesSection
                   mistakeTags={mistakeTags}
                   wrongQuestions={wrongQuestions}
-                  formatTime={formatTime}
                   onTagChange={(index, tags) => {
                     setNoteStatus("typing");
                     setMistakeTag(index, tags as unknown as MistakeTag);

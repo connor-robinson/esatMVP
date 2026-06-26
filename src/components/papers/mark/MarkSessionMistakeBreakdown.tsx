@@ -8,11 +8,18 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-import { cssVar } from "@/config/colors";
+import { motion } from "framer-motion";
+import { PAPER_COLORS } from "@/config/colors";
 import type { MistakeTag } from "@/types/papers";
 import { aggregateMistakeTagCountsFromTags } from "@/lib/papers/analytics";
 
-const SLICE_OPACITIES = [1, 0.82, 0.68, 0.54, 0.42];
+const SLICE_COLORS = [
+  PAPER_COLORS.mathematics,
+  PAPER_COLORS.physics,
+  PAPER_COLORS.chemistry,
+  PAPER_COLORS.biology,
+  PAPER_COLORS.advanced,
+];
 
 interface MarkSessionMistakeBreakdownProps {
   mistakeTags: MistakeTag[];
@@ -31,92 +38,114 @@ export function MarkSessionMistakeBreakdown({
       entries.map((e, i) => ({
         name: e.label,
         value: e.count,
-        fillOpacity: SLICE_OPACITIES[i % SLICE_OPACITIES.length],
+        fill: SLICE_COLORS[i % SLICE_COLORS.length],
       })),
     [entries],
   );
 
-  const topEntries = entries.slice(0, 5);
+  const topEntries = entries.slice(0, 6);
+
+  if (total === 0) {
+    return (
+      <p className="rounded-organic-lg bg-surface-mid/50 px-4 py-8 text-center text-sm text-text-muted">
+        Tag mistakes below to see a breakdown here.
+      </p>
+    );
+  }
 
   return (
-    <div className="h-[168px] overflow-hidden rounded-organic-lg bg-surface-elevated px-4 py-3">
-      {total === 0 ? (
-        <div className="flex h-full items-center justify-center text-center text-xs text-text-muted">
-          Tag mistakes below to see a breakdown here.
-        </div>
-      ) : (
-        <div className="flex h-full gap-4">
-          <div className="relative h-full w-[108px] shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={donutData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={30}
-                  outerRadius={46}
-                  paddingAngle={2}
-                  dataKey="value"
-                  stroke="var(--color-border-subtle)"
-                  strokeWidth={1}
-                >
-                  {donutData.map((entry, i) => (
-                    <Cell
-                      key={entry.name}
-                      fill={cssVar.maths}
-                      fillOpacity={entry.fillOpacity}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(v?: number | string) => {
-                    const n = typeof v === "number" ? v : Number(v ?? 0);
-                    return [`${n} (${((n / total) * 100).toFixed(0)}%)`, "Tagged"];
-                  }}
-                  contentStyle={{
-                    borderRadius: 10,
-                    border: "1px solid var(--color-border)",
-                    background: "var(--color-surface-elevated)",
-                    color: "var(--color-text)",
-                    fontSize: 12,
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-[9px] font-medium uppercase tracking-wide text-text-subtle">
-                Tags
-              </span>
-              <span className="text-lg font-bold tabular-nums text-text">{total}</span>
-            </div>
+    <div className="grid gap-6 rounded-organic-lg bg-surface-elevated p-4 sm:gap-8 lg:grid-cols-12 lg:gap-10 lg:p-5">
+      <div className="lg:col-span-5">
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
+          Mistake breakdown
+        </h3>
+        <div className="relative mx-auto h-[220px] w-full max-w-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={donutData}
+                cx="50%"
+                cy="50%"
+                innerRadius={58}
+                outerRadius={82}
+                paddingAngle={2}
+                dataKey="value"
+                stroke="var(--color-border-subtle)"
+                strokeWidth={1}
+              >
+                {donutData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(v?: number | string) => {
+                  const n = typeof v === "number" ? v : Number(v ?? 0);
+                  return [`${n} (${((n / total) * 100).toFixed(0)}%)`, "Tagged"];
+                }}
+                contentStyle={{
+                  borderRadius: 10,
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface-elevated)",
+                  color: "var(--color-text)",
+                  fontSize: 12,
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-text-subtle">
+              Total tags
+            </span>
+            <span className="text-3xl font-bold tabular-nums text-text">{total}</span>
           </div>
+        </div>
+      </div>
 
-          <div className="min-w-0 flex-1 overflow-y-auto pr-1">
-            <ul className="space-y-2">
-              {topEntries.map((entry, i) => {
-                const pct = (entry.count / total) * 100;
-                const opacity = SLICE_OPACITIES[i % SLICE_OPACITIES.length];
-                return (
-                  <li key={entry.label}>
-                    <div className="mb-0.5 flex items-center justify-between gap-2 text-[11px]">
-                      <span className="min-w-0 truncate font-medium text-text">{entry.label}</span>
-                      <span className="shrink-0 tabular-nums text-text-muted">
-                        {entry.count}
-                      </span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-surface-mid">
-                      <div
-                        className="h-full rounded-full bg-maths"
-                        style={{ width: `${pct}%`, opacity }}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-      )}
+      <div className="lg:col-span-7">
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
+          Most common mistakes
+        </h3>
+        <ul className="space-y-3">
+          {topEntries.map((entry, i) => {
+            const pct = (entry.count / total) * 100;
+            const color = SLICE_COLORS[i % SLICE_COLORS.length];
+            return (
+              <li key={entry.label}>
+                <div className="mb-1 flex items-center justify-between gap-2 text-sm">
+                  <span className="flex min-w-0 items-center gap-2 font-medium text-text">
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="truncate">{entry.label}</span>
+                  </span>
+                  <span className="shrink-0 tabular-nums text-text-muted">
+                    {entry.count} ({pct.toFixed(0)}%)
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-surface-mid">
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: color }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{
+                      duration: 0.35,
+                      ease: [0.32, 0.72, 0, 1],
+                    }}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        {entries.length > 6 && (
+          <p className="mt-4 text-xs text-text-subtle">
+            +{entries.length - 6} more mistake type
+            {entries.length - 6 === 1 ? "" : "s"} tagged
+          </p>
+        )}
+      </div>
     </div>
   );
 }
