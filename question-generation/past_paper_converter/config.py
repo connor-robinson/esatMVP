@@ -99,3 +99,12 @@ def supabase_service_key() -> str:
     if not key:
         raise RuntimeError("SUPABASE_SERVICE_ROLE_KEY required for writes")
     return key
+
+
+def promote_to_questions_table() -> bool:
+    """Whether auto-approved conversions should copy text into questions table."""
+    return os.environ.get("PAST_PAPER_PROMOTE_TO_QUESTIONS", "1").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )

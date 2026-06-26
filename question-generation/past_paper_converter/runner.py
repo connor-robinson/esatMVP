@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .batch import run_batch_extract
-from .config import CACHE_DIR
+from .config import CACHE_DIR, promote_to_questions_table
 from .db import (
     approve_question_text,
     fetch_existing_conversion,
@@ -38,6 +38,35 @@ def job_meta(job: QuestionJob) -> Dict[str, Any]:
         "part_letter": job.part_letter,
         "part_name": job.part_name,
     }
+
+
+def _maybe_promote_question(
+    job: QuestionJob,
+    report: Dict[str, Any],
+    *,
+    stem: str,
+    options: Dict[str, str],
+    diagram_assets: Optional[List[Dict[str, Any]]],
+) -> None:
+    if not promote_to_questions_table():
+        report["questions_promote_skipped"] = True
+        report["questions_promote_reason"] = "PAST_PAPER_PROMOTE_TO_QUESTIONS=0"
+        return
+    promoted = approve_question_text(
+        job.question_id,
+        {
+            "question_stem": stem,
+            "options": options,
+            "diagram_assets": diagram_assets or None,
+            "content_format": "text",
+        },
+    )
+    if not promoted:
+        report["questions_promote_failed"] = True
+        report["questions_promote_reason"] = (
+            "questions table is protected — run migration "
+            "20260627110000_questions_text_conversion_promote.sql in Supabase SQL Editor"
+        )
 
 
 def process_single_job(
@@ -127,15 +156,11 @@ def process_single_job(
             supersede_conversions(job.question_id)
         upsert_conversion(row)
         if status == "auto_approved":
-            approve_question_text(
-                job.question_id,
-                {
-                    "question_stem": stem,
-                    "options": options,
-                    "diagram_assets": diagram_assets or None,
-                    "content_format": "text",
-                },
+            _maybe_promote_question(
+                job, report, stem=stem, options=options, diagram_assets=diagram_assets
             )
+            if not dry_run and report.get("questions_promote_failed"):
+                upsert_conversion({**row, "conversion_report": report})
 
     return {
         "question_id": job.question_id,
@@ -233,12 +258,11 @@ def run_conversion(
                     supersede_conversions(job.question_id)
                 upsert_conversion(row)
                 if status == "auto_approved":
-                    approve_question_text(job.question_id, {
-                        "question_stem": stem,
-                        "options": options,
-                        "diagram_assets": diagram_assets or None,
-                        "content_format": "text",
-                    })
+                    _maybe_promote_question(
+                        job, report, stem=stem, options=options, diagram_assets=diagram_assets
+                    )
+                    if report.get("questions_promote_failed"):
+                        upsert_conversion({**row, "conversion_report": report})
             results.append({"question_id": job.question_id, "status": status, "report": report})
     else:
         for job in jobs:

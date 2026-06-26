@@ -87,7 +87,13 @@ def upsert_conversion(row: Dict[str, Any]) -> Dict[str, Any]:
         raise
 
 
-def approve_question_text(question_id: int, payload: Dict[str, Any]) -> None:
+def _is_protected_questions_error(exc: Exception) -> bool:
+    msg = str(exc)
+    return "protected data" in msg.lower() or "not allowed on table questions" in msg.lower()
+
+
+def approve_question_text(question_id: int, payload: Dict[str, Any]) -> bool:
+    """Copy approved conversion text into questions. Returns False if blocked."""
     client = make_client()
     update_payload = {
         "question_stem": payload.get("question_stem"),
@@ -95,15 +101,41 @@ def approve_question_text(question_id: int, payload: Dict[str, Any]) -> None:
         "diagram_assets": payload.get("diagram_assets"),
         "content_format": payload.get("content_format", "text"),
     }
+    rpc_args = {
+        "p_question_id": question_id,
+        "p_question_stem": update_payload["question_stem"],
+        "p_options": update_payload["options"],
+        "p_diagram_assets": update_payload["diagram_assets"],
+        "p_content_format": update_payload["content_format"],
+    }
+
+    try:
+        client.rpc("approve_question_text_conversion", rpc_args).execute()
+        return True
+    except Exception as rpc_exc:
+        if _is_protected_questions_error(rpc_exc):
+            return False
+        msg = str(rpc_exc).lower()
+        rpc_missing = (
+            "approve_question_text_conversion" in msg
+            or "pgrst202" in msg
+            or "does not exist" in msg
+        )
+        if not rpc_missing:
+            raise
+
     try:
         client.table("questions").update(update_payload).eq("id", question_id).execute()
+        return True
     except Exception as exc:
-        # content_format column may not exist until migration
         if "content_format" in str(exc) or "question_stem" in str(exc):
-            raise RuntimeError(
-                "questions text columns missing. Apply migration "
-                "supabase/migrations/20260627100000_past_paper_text_conversion.sql"
-            ) from exc
+            if "does not exist" in str(exc) or "PGRST204" in str(exc):
+                raise RuntimeError(
+                    "questions text columns missing. Apply migration "
+                    "supabase/migrations/20260627100000_past_paper_text_conversion.sql"
+                ) from exc
+        if _is_protected_questions_error(exc):
+            return False
         raise
 
 
