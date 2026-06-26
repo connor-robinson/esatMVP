@@ -1024,12 +1024,10 @@ export default function PapersSolvePage() {
   // Show marking info page if active
   if (isMarkingInfo) {
     return (
-      <Container size='lg' className='min-h-screen'>
-        <MarkingInfoPage
-          selectedSections={selectedSections}
-          onNext={handleMarkingInfoNext}
-        />
-      </Container>
+      <MarkingInfoPage
+        selectedSections={selectedSections}
+        onNext={handleMarkingInfoNext}
+      />
     );
   }
 
