@@ -217,8 +217,8 @@ export function PaperColumn({
     <div className="space-y-1">
       <div
         className={cn(
-          "flex h-14 items-center gap-2.5 rounded-lg border border-border-subtle/40 px-3 transition-colors",
-          isSelected ? "bg-surface-neutral" : "bg-surface hover:bg-surface-neutral/60",
+          "flex h-14 items-center gap-2.5 rounded-lg px-3 transition-colors",
+          isSelected ? "bg-surface-neutral/70" : "bg-surface hover:bg-surface-neutral/40",
         )}
       >
         <button
@@ -315,7 +315,7 @@ export function PaperColumn({
                   return (
                     <div
                       key={mainSection.name}
-                      className="flex h-11 items-center gap-2.5 rounded-lg border border-border-subtle/30 bg-surface px-3 transition-colors hover:bg-surface-neutral/50"
+                      className="flex h-11 items-center gap-2.5 rounded-lg bg-surface px-3 transition-colors hover:bg-surface-neutral/40"
                     >
                       {sectionNum ? (
                         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-surface-neutral text-xs font-bold text-text-muted">

@@ -6,10 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Paper, PaperSection } from "@/types/papers";
 import { PaperColumn } from "./PaperColumn";
 import { PaperLibraryFilters } from "./PaperLibraryFilters";
-import {
-  getExamAccentSurfaceClass,
-  getExamAccentTextClass,
-} from "@/config/colors";
+import { getExamAccentTextClass } from "@/config/colors";
 import { LibrarySectionLoading } from "@/components/questionBank/library/LibrarySectionLoading";
 import { compareLibraryExamGroupNames } from "@/lib/papers/paperConfig";
 import { cn } from "@/lib/utils";
@@ -145,21 +142,17 @@ export function PaperLibraryGrid({
             if (!examPapers?.length) return null;
 
             const accentTextClass = getExamAccentTextClass(examName);
-            const accentSurfaceClass = getExamAccentSurfaceClass(examName);
             const isExpanded = isExamExpanded(examName);
 
             return (
               <div
                 key={examName}
-                className="overflow-hidden rounded-organic-lg border border-border-subtle bg-surface-elevated"
+                className="overflow-hidden rounded-organic-lg bg-surface"
               >
                 <button
                   type="button"
                   onClick={() => toggleExam(examName)}
-                  className={cn(
-                    "group flex w-full items-center justify-between border-b border-border-subtle/50 px-5 py-4 transition-opacity hover:opacity-90",
-                    accentSurfaceClass,
-                  )}
+                  className="group flex w-full items-center justify-between bg-surface px-5 py-4 transition-colors hover:bg-surface-neutral/40"
                 >
                   <div className="flex items-center gap-2.5">
                     <ChevronDown
@@ -192,9 +185,9 @@ export function PaperLibraryGrid({
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                      className="overflow-hidden bg-surface-elevated"
+                      className="overflow-hidden bg-surface"
                     >
-                      <div className="space-y-2 bg-surface-elevated p-4">
+                      <div className="space-y-2 bg-surface px-4 pb-4 pt-1">
                         {examPapers.map((paper) => (
                           <PaperColumn
                             key={paper.id}
