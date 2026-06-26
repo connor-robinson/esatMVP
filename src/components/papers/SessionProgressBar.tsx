@@ -3,24 +3,21 @@
  *
  * Replaces the navbar during active paper sessions, showing:
  * - Progress through sections with nodes
- * - Current section progress based on time remaining
- * - Resume/Quit buttons when paused
+ * - Save & Continue to leave the paper (progress is persisted)
  */
 
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import {
-  useSupabaseClient,
   useSupabaseSession,
 } from '@/components/auth/SupabaseSessionProvider';
 import { UserIcon, LogInIcon } from '@/components/icons';
-import { X, AlertCircle, Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
@@ -35,7 +32,6 @@ export function SessionProgressBar({
   const router = useRouter();
   const pathname = usePathname();
   const session = useSupabaseSession();
-  const supabase = useSupabaseClient();
   const {
     sessionId,
     sessionName,
@@ -50,7 +46,6 @@ export function SessionProgressBar({
     isPaused,
     getSectionRemainingTime,
     resumeSession,
-    resetSession,
     answers,
     visitedQuestions,
     allSectionsQuestions,
@@ -59,34 +54,15 @@ export function SessionProgressBar({
     paperFullscreenShowMainNavbar,
     setPaperFullscreenShowMainNavbar,
     finishMarkSession,
+    persistSessionToServer,
+    pauseSession,
   } = usePaperSessionStore();
 
   const isOnMarkPage = pathname.startsWith('/past-papers/mark');
-  const isPostCompletionMark = isMarkingInfo && isOnMarkPage;
 
   // Keep hooks before any conditional return to avoid hook-order crashes
-  const [showQuitModal, setShowQuitModal] = useState(false);
-  const [isQuitting, setIsQuitting] = useState(false);
-  const [isSavingMark, setIsSavingMark] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [docFullscreen, setDocFullscreen] = useState(false);
-
-  // Handle Escape key to close modal
-  useEffect(() => {
-    if (!showQuitModal) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isQuitting) {
-        setShowQuitModal(false);
-        setIsQuitting(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, [showQuitModal, isQuitting]);
-
   useEffect(() => {
     if (!embedded) return;
     const sync = () => {
@@ -314,68 +290,29 @@ export function SessionProgressBar({
 
   const progressSegments = getProgressSegments();
 
-  const handleQuit = async () => {
-    setShowQuitModal(true);
-  };
-
-  const handleConfirmQuit = async () => {
-    setIsQuitting(true);
-    try {
-      const state = usePaperSessionStore.getState();
-
-      // Persist current state before quitting
-      if (state.sessionId) {
-        try {
-          await state.persistSessionToServer({ immediate: true });
-        } catch (error) {
-          console.error(
-            '[SessionProgressBar] Failed to persist session before quit:',
-            error,
-          );
-          // Continue with quit even if persist fails
-        }
-      }
-
-      // Reset session (this will mark as ended in database and clear state)
-      await resetSession();
-
-      // Close modal and navigate
-      setShowQuitModal(false);
-      setIsQuitting(false);
-
-      // Small delay before navigation to ensure state is cleared
-      setTimeout(() => {
-        router.push('/past-papers/library');
-      }, 100);
-    } catch (error) {
-      console.error('[SessionProgressBar] Failed to quit session:', error);
-      setIsQuitting(false);
-      setShowQuitModal(false);
-      // Show error to user
-      alert('Failed to quit session. Please try again.');
-    }
-  };
-
-  const handleCancelQuit = () => {
-    if (isQuitting) return; // Don't allow cancel while quitting
-    setShowQuitModal(false);
-    setIsQuitting(false);
-  };
-
   const handleSaveAndContinue = async () => {
-    setIsSavingMark(true);
+    setIsSaving(true);
     try {
-      const sessionIdToHighlight = await finishMarkSession();
-      if (sessionIdToHighlight) {
-        router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
-      } else {
-        router.push('/past-papers/analytics');
+      if (isMarkingInfo) {
+        const sessionIdToHighlight = await finishMarkSession();
+        if (sessionIdToHighlight) {
+          router.push(`/past-papers/analytics?highlight=${sessionIdToHighlight}`);
+        } else {
+          router.push('/past-papers/analytics');
+        }
+        return;
       }
+
+      if (!isPaused) {
+        pauseSession();
+      }
+      await persistSessionToServer({ immediate: true });
+      router.push('/past-papers/library');
     } catch (error) {
-      console.error('[SessionProgressBar] Failed to save mark session:', error);
+      console.error('[SessionProgressBar] Failed to save session:', error);
       alert('Failed to save session. Please try again.');
     } finally {
-      setIsSavingMark(false);
+      setIsSaving(false);
     }
   };
 
@@ -611,49 +548,18 @@ export function SessionProgressBar({
             </button>
           )}
 
-          {isPostCompletionMark && (
-            <button
-              type="button"
-              onClick={() => void handleSaveAndContinue()}
-              disabled={isSavingMark}
-              className={cn(
-                'ml-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-fast ease-signature',
-                isSavingMark
-                  ? 'cursor-not-allowed bg-primary/30 text-background/70'
-                  : 'bg-primary text-background hover:bg-primary/90',
-              )}
-            >
-              {isSavingMark ? 'Saving…' : 'Save & Continue'}
-            </button>
-          )}
-
-          {/* Quit button (X) - positioned between progress bar and user icon */}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleQuit();
-            }}
-            className='ml-2 p-2 rounded-lg transition-all duration-fast ease-signature hover:bg-red-500/20 group'
-            title='Quit paper session'
-            type='button'
+            type="button"
+            onClick={() => void handleSaveAndContinue()}
+            disabled={isSaving}
+            className={cn(
+              'ml-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-fast ease-signature',
+              isSaving
+                ? 'cursor-not-allowed bg-primary/30 text-background/70'
+                : 'bg-primary text-background hover:bg-primary/90',
+            )}
           >
-            <svg
-              width='20'
-              height='20'
-              viewBox='0 0 24 24'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              className='text-red-400/80 group-hover:text-red-400 transition-colors'
-            >
-              <path
-                d='M18 6L6 18M6 6L18 18'
-                stroke='currentColor'
-                strokeWidth='2'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
+            {isSaving ? 'Saving…' : 'Save & Continue'}
           </button>
 
           {/* User icon / Login (hide on embedded secondary bar) */}
@@ -704,110 +610,6 @@ export function SessionProgressBar({
           )}
         </div>
       </div>
-
-      {/* Quit Confirmation Modal - Rendered via Portal */}
-      {showQuitModal &&
-        typeof window !== 'undefined' &&
-        createPortal(
-          <div
-            className='fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm'
-            onClick={handleCancelQuit}
-          >
-            <div
-              className='relative mx-4 flex w-full max-w-md flex-col overflow-hidden rounded-organic-lg border border-error/30 bg-surface-elevated shadow-bar-floating'
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className='flex items-center justify-between p-6 border-b border-red-500/30 flex-shrink-0'>
-                <div className='flex items-center gap-3'>
-                  <AlertCircle
-                    className='w-5 h-5 text-red-400'
-                    strokeWidth={2.5}
-                  />
-                  <h2 className='text-lg font-semibold text-white'>
-                    Quit Session
-                  </h2>
-                </div>
-                <button
-                  onClick={handleCancelQuit}
-                  disabled={isQuitting}
-                  className='p-2 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-colors disabled:opacity-50'
-                >
-                  <X className='w-5 h-5' strokeWidth={2.5} />
-                </button>
-              </div>
-
-              {/* Content */}
-              <div className='flex-1 overflow-y-auto p-6'>
-                <div className='space-y-4 text-sm text-white/80 leading-relaxed'>
-                  <p className='text-white font-medium'>
-                    {isPostCompletionMark
-                      ? 'Exit without finishing your mark review?'
-                      : 'Are you sure you want to quit this paper session?'}
-                  </p>
-                  <p className='text-white/60'>
-                    {isPostCompletionMark
-                      ? 'Your answers are saved. You can return to this session from analytics, or save and continue to finish.'
-                      : 'Your progress will be saved automatically. You can resume this session later from the library.'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className='p-6 border-t border-red-500/30 flex-shrink-0 flex gap-3'>
-                <button
-                  onClick={handleCancelQuit}
-                  disabled={isQuitting}
-                  className='flex-1 px-4 py-3 rounded-lg transition-all duration-fast ease-signature flex items-center justify-center gap-2 text-sm font-medium bg-white/5 hover:bg-white/10 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmQuit}
-                  disabled={isQuitting}
-                  className={cn(
-                    'flex-1 px-4 py-3 rounded-lg transition-all duration-fast ease-signature flex items-center justify-center gap-2 text-sm font-medium',
-                    isQuitting
-                      ? 'bg-red-500/20 text-red-400/50 cursor-not-allowed'
-                      : 'bg-red-500/30 hover:bg-red-500/40 text-red-400 hover:text-red-300 cursor-pointer',
-                  )}
-                >
-                  {isQuitting ? (
-                    <>
-                      <svg
-                        className='animate-spin h-4 w-4'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                      >
-                        <circle
-                          className='opacity-25'
-                          cx='12'
-                          cy='12'
-                          r='10'
-                          stroke='currentColor'
-                          strokeWidth='4'
-                        ></circle>
-                        <path
-                          className='opacity-75'
-                          fill='currentColor'
-                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                        ></path>
-                      </svg>
-                      <span>Quitting...</span>
-                    </>
-                  ) : (
-                    <>
-                      <X className='w-4 h-4' strokeWidth={2.5} />
-                      <span>Quit Session</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body,
-        )}
     </nav>
   );
 }
