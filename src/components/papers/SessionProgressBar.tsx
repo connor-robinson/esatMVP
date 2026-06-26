@@ -16,7 +16,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { BrandNavLockup } from '@/components/brand/BrandNavLockup';
 import { APP_NAME } from '@/config/brand';
 import { getSectionColor } from '@/config/colors';
-import { BookmarkCheck, Loader2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePaperSessionStore } from '@/store/paperSessionStore';
 
@@ -431,7 +431,7 @@ export function SessionProgressBar({
             {isSaving ? (
               <Loader2 className='h-[18px] w-[18px] animate-spin' strokeWidth={2.2} />
             ) : (
-              <BookmarkCheck className='h-[18px] w-[18px]' strokeWidth={2.2} />
+              <Save className='h-[18px] w-[18px]' strokeWidth={2.2} />
             )}
           </button>
         </div>
