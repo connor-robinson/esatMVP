@@ -846,6 +846,8 @@ export default function PapersMarkPage() {
           correctAnswer: (q?.answerLetter as Letter) ?? null,
           timeSec: perQuestionSec[index] || 0,
           tags,
+          previewStem: q?.questionStem ?? null,
+          previewImage: q?.questionImage ?? null,
         };
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);
@@ -2667,7 +2669,6 @@ export default function PapersMarkPage() {
                 <MarkSessionMistakesSection
                   mistakeTags={mistakeTags}
                   wrongQuestions={wrongQuestions}
-                  noteStatus={noteStatus}
                   formatTime={formatTime}
                   onTagChange={(index, tags) => {
                     setNoteStatus("typing");
