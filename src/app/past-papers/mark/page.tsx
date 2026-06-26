@@ -1975,21 +1975,14 @@ export default function PapersMarkPage() {
                           const partNameFull = (q?.partName || "").trim();
                           const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                           const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
-                          const leftAccent = guessed
-                            ? "border-l-warning"
-                            : correct === true
-                              ? "border-l-primary"
-                              : correct === false
-                                ? "border-l-error"
-                                : "border-l-text-muted";
               return (
                             <button
                               key={qNumber}
                               type="button"
                               className={cn(
-                                "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition",
+                                "relative w-full overflow-hidden rounded-md py-2 pl-0 pr-3 text-left transition-colors",
                                 selectedIndex === index
-                                  ? cn("border-l-4 bg-surface-mid", leftAccent)
+                                  ? "bg-surface-neutral"
                                   : "bg-surface-elevated hover:bg-surface-mid",
                               )}
                               onClick={() => openQuestionInReview(index)}
