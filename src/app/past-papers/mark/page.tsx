@@ -41,10 +41,10 @@ import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTa
 import { cropImageToContent } from "@/lib/utils/imageCrop";
 import type { ExamName, Letter, MistakeTag } from "@/types/papers";
 import type { QuestionStats } from "@/types/questionStats";
-import {
-  MarkSectionNav,
+import { MarkSectionNav,
   type MarkSection,
 } from "@/components/papers/mark/MarkSectionNav";
+import { PercentileMiniChart } from "@/components/papers/mark/PercentileMiniChart";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -111,7 +111,7 @@ export default function PapersMarkPage() {
   const [sectionPercentiles, setSectionPercentiles] = useState<Record<string, { percentile: number | null; score: number | null; table: string | null; label: string; oldPercentile?: number | null; newEquivalentScore?: number | null }>>({});
   const [percentileTables, setPercentileTables] = useState<Record<string, { score: number; cumulativePct: number }[]>>({});
   // NSAA: toggle to show individual subjects vs averaged
-  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(false);
+  const [showIndividualNSAASubjects, setShowIndividualNSAASubjects] = useState(true);
   // NSAA: averaged percentile across all subjects
   const [nsaaAveragedPercentile, setNsaaAveragedPercentile] = useState<number | null>(null);
   // Community stats state
@@ -1172,16 +1172,13 @@ export default function PapersMarkPage() {
               {markSection === "overview" && (
                 <div className="h-full min-h-0 overflow-y-auto p-4 sm:p-6" style={{ scrollbarGutter: "stable" }}>
                   <div className="space-y-6">
-                  {/* Hero Section */}
-                  <div className="space-y-4">
                     {/* Compact Header: type, year, section pills, date */}
                     <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <div className="text-lg font-semibold text-neutral-100">
                             {paperName} {sessionYear ?? ''}{variantDisplay ? `, ${variantDisplay}` : ''}
                           </div>
-                          {/* Section pills */}
                           {sectionPills.map((s) => (
                             <span
                               key={s}
@@ -1198,9 +1195,9 @@ export default function PapersMarkPage() {
                           {startedAt && (
                             <div className="text-xs text-neutral-500">{new Date(startedAt).toLocaleDateString()}</div>
                           )}
-            </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
 
                     {/* Predicted score — hero */}
                     {(() => {
@@ -1402,19 +1399,21 @@ export default function PapersMarkPage() {
                       </div>
                     )}
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                       {(() => {
-                        const entries = Object.entries(sectionAnalytics);
-                        // For NSAA, only show individual if toggle is on
-                        const displayEntries = (examName === 'NSAA' && !showIndividualNSAASubjects) ? [] : entries;
+                        const entries = Object.entries(sectionAnalytics).filter(([section]) => {
+                          const sectionUpper = section.toUpperCase();
+                          return sectionUpper !== "SECTION" && !sectionUpper.startsWith("SECTION ");
+                        });
+                        const displayEntries = entries;
                         const isSingleGraph = displayEntries.length === 1;
                         return displayEntries.map(([section, data], idx) => {
-                          const isLastSingle = displayEntries.length % 2 === 1 && idx === displayEntries.length - 1;
+                          const isLastSingle =
+                            displayEntries.length % 2 === 1 && idx === displayEntries.length - 1;
                         const sp = sectionPercentiles[section];
                         const pct = sp?.percentile;
                         const score = sp?.score;
                         const label = sp?.label || '—';
-                        const percentile = sp?.percentile;
                         const qs = usePaperSessionStore.getState().questions;
                         const match = findQuestionForSection(qs, section, examName);
                         const partLetterRaw = (match?.partLetter || section).toString();
@@ -1422,6 +1421,8 @@ export default function PapersMarkPage() {
                         const sectionNameForColor = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
                         const examYear = qs?.[0]?.examYear as number | undefined;
                         const isTmuAPre2024 = examName === 'TMUA' && examYear && examYear <= 2023;
+                        const chartRows = sp?.table ? percentileTables[sp.table] : undefined;
+                        const displayExamLabel = (examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName;
                         return (
                           <div key={section} className={cn('rounded-organic-md border border-border-subtle bg-surface-mid/50 p-3', isLastSingle || isSingleGraph ? ' md:mx-auto' : '', isSingleGraph ? 'md:w-[80%]' : isLastSingle ? 'md:max-w-[560px]' : '')}>
                             <div className="flex items-start justify-between">
@@ -1481,94 +1482,29 @@ export default function PapersMarkPage() {
                               </div>
                             )}
                             
-                            {/* Explanation moved to tooltip above */}
                             {/* Mini percentile chart */}
-                            {sp?.table && percentileTables[sp.table] && (
-                              <div className={`mt-3 w-full mx-auto ${isSingleGraph ? 'min-w-[80%]' : 'max-w-[460px]'}`}>
-                                {(() => {
-                                  const rows = percentileTables[sp.table] || [];
-                                  const w = 400; const h = 175; const pad = 24;
-                                  const xs = rows.map(r => r.score);
-                                  const ys = rows.map(r => r.cumulativePct);
-                                  if (xs.length < 2) return null;
-                                  const minX = Math.min(...xs), maxX = Math.max(...xs);
-                                  const minY = 0, maxY = 100;
-                                  const toX = (x: number) => pad + ((x - minX) / Math.max(1e-9, (maxX - minX))) * (w - 2*pad);
-                                  const toY = (y: number) => h - pad - ((y - minY) / Math.max(1e-9, (maxY - minY))) * (h - 2*pad);
-                                  const points = rows.map(r => `${toX(r.score)},${toY(r.cumulativePct)}`).join(' ');
-                                  const userX = toX(score ?? minX);
-                                  const userY = toY(pct ?? 0);
-                                  // Build shaded area polygon (area under curve up to user's score)
-                                  const shadedPoints: string[] = [];
-                                  shadedPoints.push(`${pad},${h - pad}`); // bottom-left
-                                  // Add points up to user's score
-                                  rows.forEach((r) => {
-                                    if (r.score <= (score ?? minX)) {
-                                      shadedPoints.push(`${toX(r.score)},${toY(r.cumulativePct)}`);
-                                    }
-                                  });
-                                  shadedPoints.push(`${userX},${userY}`); // user's point
-                                  shadedPoints.push(`${userX},${h - pad}`); // down to bottom
-                                  shadedPoints.push(`${pad},${h - pad}`); // close polygon
-                                  // Ticks
-                                  const xTicks = [] as number[];
-                                  for (let s = Math.ceil(minX); s <= Math.floor(maxX); s += 1) xTicks.push(s);
-                                  const yTicks = [0, 25, 50, 75, 100];
-                                  return (
-                                    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid meet" className="block">
-                                      <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke={cssVar.borderSubtle} />
-                                      <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke={cssVar.borderSubtle} />
-                                      {Number.isFinite(score) && Number.isFinite(pct) && (
-                                        <polygon
-                                          points={shadedPoints.join(' ')}
-                                          fill="color-mix(in srgb, var(--color-primary) 18%, transparent)"
-                                          stroke="none"
-                                        />
-                                      )}
-                                      {xTicks.map((t, i) => (
-                                        <g key={`xt-${i}`}>
-                                          <line x1={toX(t)} y1={h - pad} x2={toX(t)} y2={h - pad + 4} stroke={cssVar.borderSubtle} />
-                                          <text x={toX(t)} y={h - pad + 12} fill={cssVar.textMuted} fontSize="9" textAnchor="middle">{t}</text>
-                                        </g>
-                                      ))}
-                                      {yTicks.map((t, i) => (
-                                        <g key={`yt-${i}`}>
-                                          <line x1={pad - 4} y1={toY(t)} x2={pad} y2={toY(t)} stroke={cssVar.borderSubtle} />
-                                          <text x={pad - 6} y={toY(t) + 3} fill={cssVar.textMuted} fontSize="9" textAnchor="end">{t}</text>
-                                        </g>
-                                      ))}
-                                      <polyline points={points} fill="none" stroke={cssVar.textSubtle} strokeWidth="2" />
-                                      <line
-                                        x1={userX}
-                                        y1={pad}
-                                        x2={userX}
-                                        y2={h-pad}
-                                        stroke="color-mix(in srgb, var(--color-text) 22%, transparent)"
-                                        strokeDasharray="4 4"
-                                      />
-                                      <circle cx={userX} cy={userY} r="3" fill={cssVar.text} />
-                                      <text x={w/2} y={h - 4} fill={cssVar.textMuted} fontSize="10" textAnchor="middle">{examName || 'Score'}</text>
-                                      <text x={8} y={pad - 8} fill={cssVar.textMuted} fontSize="10">Cumulative %</text>
-                                    </svg>
-                                  );
-                                })()}
-                              </div>
-                            )}
+                            <PercentileMiniChart
+                              rows={chartRows ?? []}
+                              score={score}
+                              percentile={pct}
+                              xLabel={displayExamLabel}
+                              className={cn(
+                                "mt-3 w-full mx-auto",
+                                isSingleGraph ? "min-w-[80%]" : "max-w-[460px]",
+                              )}
+                            />
                             <div className="mt-2 text-xs text-neutral-400">
                               {Number.isFinite(pct as any) 
-                                ? `If you sat the ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
-                                : `Your ${(examName === 'ENGAA' || examName === 'NSAA') ? 'ESAT' : examName} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
+                                ? `If you sat the ${displayExamLabel} today, ${(100 - (pct as number)).toFixed(1)}% of test-takers would outperform you in ${section}.`
+                                : `Your ${displayExamLabel} score: ${typeof score === 'number' ? score.toFixed(1) : '—'}`}
                             </div>
                           </div>
                         );
                       });
                     })()}
+                    </div>
                   </div>
-
                   </div>
-
-                  </div>
-                </div>
                 </div>
               )}
               {markSection === "stats" && (
