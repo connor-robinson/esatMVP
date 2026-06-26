@@ -88,23 +88,42 @@ export function getExamAccentTextClass(examName: string): string {
   return "text-maths";
 }
 
+/** Text on saturated subject / status fills — dark in light mode, white in dark mode. */
+export const ON_SOLID_SUBJECT_TEXT = "text-neutral-900 dark:text-white";
+
+function resolveSectionColorRef(sectionName: string): string {
+  return (
+    SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS] ??
+    PAPER_COLORS.mathematics
+  );
+}
+
+function subjectRefToSolidClass(ref: string): string {
+  if (ref === PAPER_COLORS.physics) {
+    return `bg-physics ${ON_SOLID_SUBJECT_TEXT}`;
+  }
+  if (ref === PAPER_COLORS.chemistry) {
+    return `bg-chemistry ${ON_SOLID_SUBJECT_TEXT}`;
+  }
+  if (ref === PAPER_COLORS.biology) {
+    return `bg-biology ${ON_SOLID_SUBJECT_TEXT}`;
+  }
+  if (ref === PAPER_COLORS.advanced) {
+    return `bg-advanced ${ON_SOLID_SUBJECT_TEXT}`;
+  }
+  return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
+}
+
 /**
- * Solid header bar for mark-session part groups (high contrast for `text-background`).
+ * Solid header bar for mark-session part groups (high contrast in both themes).
  */
 export function getMarkSessionPartHeaderClass(sectionName: string): string {
-  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
-  const ref = resolved ?? PAPER_COLORS.mathematics;
-  if (ref === PAPER_COLORS.physics) return "bg-physics text-background";
-  if (ref === PAPER_COLORS.chemistry) return "bg-chemistry text-background";
-  if (ref === PAPER_COLORS.biology) return "bg-biology text-background";
-  if (ref === PAPER_COLORS.advanced) return "bg-advanced text-background";
-  return "bg-maths text-background";
+  return subjectRefToSolidClass(resolveSectionColorRef(sectionName));
 }
 
 /** Progress / bar fill tint for section-accuracy rows. */
 export function getSectionBarTrackClass(sectionName: string): string {
-  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
-  const ref = resolved ?? PAPER_COLORS.mathematics;
+  const ref = resolveSectionColorRef(sectionName);
   if (ref === PAPER_COLORS.physics) return "bg-physics/80";
   if (ref === PAPER_COLORS.chemistry) return "bg-chemistry/80";
   if (ref === PAPER_COLORS.biology) return "bg-biology/80";
@@ -113,24 +132,35 @@ export function getSectionBarTrackClass(sectionName: string): string {
 }
 
 /**
- * Softer section pill for question rows (border + tinted fill).
+ * Solid section pill — colored background with theme-aware label text.
  */
 export function getSectionSubjectPillClass(sectionName: string): string {
-  const resolved = SECTION_COLORS[sectionName as keyof typeof SECTION_COLORS];
-  const ref = resolved ?? PAPER_COLORS.mathematics;
-  if (ref === PAPER_COLORS.physics) {
-    return "bg-physics/20 text-physics border border-physics/30";
-  }
-  if (ref === PAPER_COLORS.chemistry) {
-    return "bg-chemistry/20 text-chemistry border border-chemistry/30";
-  }
-  if (ref === PAPER_COLORS.biology) {
-    return "bg-biology/20 text-biology border border-biology/30";
-  }
-  if (ref === PAPER_COLORS.advanced) {
-    return "bg-advanced/20 text-advanced border border-advanced/30";
-  }
-  return "bg-maths/20 text-maths border border-maths/25";
+  return subjectRefToSolidClass(resolveSectionColorRef(sectionName));
+}
+
+/** Compact correct / wrong / guess badges on mark review rows. */
+export function getMarkAnswerBadgeClass(
+  kind: "correct" | "incorrect" | "guess",
+): string {
+  if (kind === "correct") return `bg-primary ${ON_SOLID_SUBJECT_TEXT}`;
+  if (kind === "incorrect") return `bg-error ${ON_SOLID_SUBJECT_TEXT}`;
+  return `bg-warning ${ON_SOLID_SUBJECT_TEXT}`;
+}
+
+/** Active state for Correct / Wrong / Guess toggle buttons in mark review. */
+export function getMarkReviewToggleActiveClass(
+  kind: "correct" | "incorrect" | "guess",
+): string {
+  return getMarkAnswerBadgeClass(kind);
+}
+
+/** Answer summary panels (your answer / correct answer) when status-colored. */
+export function getMarkAnswerSummaryPanelClass(
+  status: "correct" | "incorrect" | "guess",
+): string {
+  if (status === "correct") return `bg-primary/90 ${ON_SOLID_SUBJECT_TEXT}`;
+  if (status === "incorrect") return `bg-error/90 ${ON_SOLID_SUBJECT_TEXT}`;
+  return `bg-warning/85 ${ON_SOLID_SUBJECT_TEXT}`;
 }
 
 /** Accent text class for highlighting a section name (e.g. Part labels in intros). */

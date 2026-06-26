@@ -17,9 +17,13 @@ import { MathContent } from "@/components/shared/MathContent";
 import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
+  getMarkAnswerBadgeClass,
+  getMarkAnswerSummaryPanelClass,
+  getMarkReviewToggleActiveClass,
   getMarkSessionPartHeaderClass,
   getSectionBarTrackClass,
   getSectionSubjectPillClass,
+  ON_SOLID_SUBJECT_TEXT,
 } from "@/config/colors";
 import { cn } from "@/lib/utils";
 import {
@@ -1819,14 +1823,20 @@ export default function PapersMarkPage() {
                           <div className="h-6 w-full overflow-hidden rounded-full border border-border-subtle bg-surface-mid">
                             <div className="flex w-full h-full">
                               <div
-                                className="flex h-full items-center justify-center bg-primary/85 text-[11px] font-medium text-background"
+                                className={cn(
+                                  "flex h-full items-center justify-center bg-primary/85 text-[11px] font-medium",
+                                  ON_SOLID_SUBJECT_TEXT,
+                                )}
                                 style={{ width: `${correctPct}%` }}
                                 title={`Correct guesses • ${correctPct}% of guess time`}
                               >
                                 {correctPct >= 12 ? `${correctPct}%` : ''}
                           </div>
                               <div
-                                className="flex h-full items-center justify-center bg-error/80 text-[11px] font-medium text-text"
+                                className={cn(
+                                  "flex h-full items-center justify-center bg-error/80 text-[11px] font-medium",
+                                  ON_SOLID_SUBJECT_TEXT,
+                                )}
                                 style={{ width: `${wrongPct}%` }}
                                 title={`Wrong guesses • ${wrongPct}% of guess time`}
                               >
@@ -2099,8 +2109,8 @@ export default function PapersMarkPage() {
                       <details className="group" open>
                         <summary className="list-none cursor-pointer">
                           <div
-                            className={cn(
-                              "w-full rounded-md py-2 pl-0 pr-3 text-background group-open:rounded-b-none group-open:rounded-t-md",
+                              className={cn(
+                              "w-full rounded-md py-2 pl-0 pr-3 group-open:rounded-b-none group-open:rounded-t-md",
                               group.headerClass,
                             )}
                           >
@@ -2165,7 +2175,12 @@ export default function PapersMarkPage() {
                                     {partLetter ? `Part ${partLetter}` : '—'}
                     </div>
                                   {guessed && (
-                                    <div className="rounded-full border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
+                                    <div
+                                      className={cn(
+                                        "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                                        getMarkAnswerBadgeClass("guess"),
+                                      )}
+                                    >
                                       Guess
                                     </div>
                                   )}
@@ -2173,12 +2188,22 @@ export default function PapersMarkPage() {
                                 <div className="flex items-center gap-2">
                                   <div className="text-[11px] text-text-muted">{formatTime(timeSpent)}</div>
                                   {correct === true && (
-                                    <div className="flex items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-background">
+                                    <div
+                                      className={cn(
+                                        "flex items-center justify-center rounded-full px-1.5 py-0.5",
+                                        getMarkAnswerBadgeClass("correct"),
+                                      )}
+                                    >
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                     </div>
                                   )}
                                   {correct === false && (
-                                    <div className="flex items-center justify-center rounded-full bg-error px-1.5 py-0.5 text-text">
+                                    <div
+                                      className={cn(
+                                        "flex items-center justify-center rounded-full px-1.5 py-0.5",
+                                        getMarkAnswerBadgeClass("incorrect"),
+                                      )}
+                                    >
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                     </div>
                                   )}
@@ -2250,7 +2275,7 @@ export default function PapersMarkPage() {
                     className={cn(
                       "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true
-                        ? "bg-primary text-background"
+                        ? getMarkReviewToggleActiveClass("correct")
                         : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
                     )}
                     onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === true ? null : true)}
@@ -2263,7 +2288,7 @@ export default function PapersMarkPage() {
                       className={cn(
                       "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false
-                        ? "bg-error text-text"
+                        ? getMarkReviewToggleActiveClass("incorrect")
                         : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
                       )}
                     onClick={() => setCorrectFlag(selectedIndex, correctFlags[selectedIndex] === false ? null : false)}
@@ -2276,12 +2301,12 @@ export default function PapersMarkPage() {
                       className={cn(
                         "flex items-center gap-1 rounded-organic-sm px-2 py-1 text-xs ring-1 transition ring-border",
                         guessedFlags[selectedIndex]
-                          ? "bg-warning text-background"
+                          ? getMarkReviewToggleActiveClass("guess")
                           : "bg-surface-mid text-text-muted hover:bg-surface-neutral",
                       )}
                       onClick={() => setGuessedFlag(selectedIndex, !guessedFlags[selectedIndex])}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={guessedFlags[selectedIndex] ? "text-background" : "text-text-muted"}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="8.5" />
                         <path d="M9.25 9.9c.35-1.2 1.5-2 2.75-2 1.6 0 2.9 1.2 2.9 2.7 0 1.9-1.9 2.2-2.6 3.3" />
                         <path d="M12 16.9h.01" />
@@ -2296,13 +2321,13 @@ export default function PapersMarkPage() {
                 <div
                   className={cn(
                     "rounded-organic-md border border-border-subtle p-3",
-                    guessedFlags[selectedIndex] && "bg-warning/85 text-background",
+                    guessedFlags[selectedIndex] && getMarkAnswerSummaryPanelClass("guess"),
                     !guessedFlags[selectedIndex] &&
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true &&
-                      "bg-primary/90 text-background",
+                      getMarkAnswerSummaryPanelClass("correct"),
                     !guessedFlags[selectedIndex] &&
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false &&
-                      "bg-error/90 text-text",
+                      getMarkAnswerSummaryPanelClass("incorrect"),
                     !guessedFlags[selectedIndex] &&
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== true &&
                       (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== false &&
@@ -2312,7 +2337,7 @@ export default function PapersMarkPage() {
                   <div className="text-xs opacity-90">Your answer</div>
                   <div className="mt-1 text-sm font-medium">{answers[selectedIndex]?.choice ?? "—"}</div>
                 </div>
-                <div className="rounded-organic-md border border-border-subtle bg-primary/90 p-3 text-background">
+                <div className={cn("rounded-organic-md border border-border-subtle p-3", getMarkAnswerSummaryPanelClass("correct"))}>
                   <div className="text-xs opacity-90">Correct answer</div>
                   <div className="mt-1 text-sm font-medium">
                     {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}
