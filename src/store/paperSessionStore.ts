@@ -26,8 +26,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
+import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
-import type { Answer, Letter, MistakeTag, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
+import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
 import { saveSession, loadSession, deleteSession } from '@/lib/storage/sessionStorage';
 import { generatePartIdsFromSections, generatePartIdFromRoadmapPart } from '@/lib/papers/partIdUtils';
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
@@ -316,6 +317,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
             );
           }
         }
+
+        const sectionCount =
+          selectedPartIds.length > 0
+            ? selectedPartIds.length
+            : selectedSections.length;
         
         set({
           sessionId, // Unique identifier for this session
@@ -340,7 +346,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
           endedAt: null,
           deadline,
           lastActiveTimestamp: startedAt,
-          sectionElapsedTimes: Array.from({ length: selectedSections.length }, () => 0),
+          sectionElapsedTimes: Array.from({ length: sectionCount }, () => 0),
           isPaused: false,
           pausedAt: null,
           notes: '',
@@ -538,6 +544,12 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               }
               
               const isTmuaPaper = state.paperName === 'TMUA';
+              const willUsePartIdFilter =
+                state.selectedPartIds.length > 0 &&
+                !isTmuaPaper &&
+                (state.paperName === 'NSAA' ||
+                  state.paperName === 'ENGAA' ||
+                  state.paperName === 'ESAT');
               const totalQuestions = allQuestions.length;
               const sectionByQuestionId = new Map<number, string>();
 
@@ -554,7 +566,11 @@ export const usePaperSessionStore = create<PaperSessionState>()(
 
               // Filter questions by question range first (if specified)
               let filteredQuestions = allQuestions;
-              if (state.questionRange.start > 1 || state.questionRange.end < allQuestions.length) {
+              if (
+                !willUsePartIdFilter &&
+                (state.questionRange.start > 1 ||
+                  state.questionRange.end < allQuestions.length)
+              ) {
                 filteredQuestions = allQuestions.filter(q => 
                   q.questionNumber >= state.questionRange.start && 
                   q.questionNumber <= state.questionRange.end
@@ -639,7 +655,56 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               }
               
               // Then filter by selected sections (must use filteredQuestions — not allQuestions — so SECTION rows etc. stay excluded)
-              if (state.selectedSections.length > 0) {
+              const usesPartIdFilter = willUsePartIdFilter;
+
+              const questionCatalog = usesPartIdFilter
+                ? (() => {
+                    const byId = new Map<number, Paper>();
+                    allQuestions.forEach((q) => {
+                      if (!byId.has(q.paperId)) {
+                        byId.set(q.paperId, {
+                          id: q.paperId,
+                          examName: q.examName,
+                          examYear: q.examYear,
+                          paperName: q.paperName,
+                          examType: q.examType as ExamType,
+                          hasConversion: false,
+                          createdAt: '',
+                          updatedAt: '',
+                        });
+                      }
+                    });
+                    return Array.from(byId.values());
+                  })()
+                : [];
+
+              const anchorPaper =
+                allQuestions.length > 0
+                  ? {
+                      examName: allQuestions[0].examName,
+                      examYear: allQuestions[0].examYear,
+                      paperName: allQuestions[0].paperName,
+                      examType: allQuestions[0].examType,
+                    }
+                  : {
+                      examName: state.paperName as ExamName,
+                      examYear: 0,
+                      paperName: '',
+                      examType: 'Official' as ExamType,
+                    };
+
+              if (usesPartIdFilter) {
+                filteredQuestions = filteredQuestions.filter((q) =>
+                  state.selectedPartIds.some((partId) =>
+                    questionMatchesPartId(
+                      q,
+                      partId,
+                      anchorPaper,
+                      questionCatalog,
+                    ),
+                  ),
+                );
+              } else if (state.selectedSections.length > 0) {
                 const normalizedSelectedSections = state.selectedSections.map(s => String(s).trim());
 
                 filteredQuestions = filteredQuestions.filter((q) => {
@@ -736,7 +801,42 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               
               if (processedQuestions.length > 0) {
                 // Sort by selected sections if provided, otherwise keep original order
-                if (state.selectedSections.length > 0) {
+                if (usesPartIdFilter && state.selectedPartIds.length > 0) {
+                  processedQuestions.sort((a, b) => {
+                    const indexA = state.selectedPartIds.findIndex((partId) =>
+                      questionMatchesPartId(
+                        a,
+                        partId,
+                        anchorPaper,
+                        questionCatalog,
+                      ),
+                    );
+                    const indexB = state.selectedPartIds.findIndex((partId) =>
+                      questionMatchesPartId(
+                        b,
+                        partId,
+                        anchorPaper,
+                        questionCatalog,
+                      ),
+                    );
+                    const fallback = state.selectedPartIds.length + 1;
+                    const ia = indexA < 0 ? fallback : indexA;
+                    const ib = indexB < 0 ? fallback : indexB;
+                    if (ia === ib) return a.questionNumber - b.questionNumber;
+                    return ia - ib;
+                  });
+
+                  allSectionsQuestions = state.selectedPartIds.map((partId) =>
+                    processedQuestions.filter((q) =>
+                      questionMatchesPartId(
+                        q,
+                        partId,
+                        anchorPaper,
+                        questionCatalog,
+                      ),
+                    ),
+                  );
+                } else if (state.selectedSections.length > 0) {
                   processedQuestions.sort((a, b) => {
                     const sectionA = sectionByQuestionId.get(a.id) ?? mapPartToSection({ partLetter: (a as any).partLetter, partName: a.partName }, state.paperName as any);
                     const sectionB = sectionByQuestionId.get(b.id) ?? mapPartToSection({ partLetter: (b as any).partLetter, partName: b.partName }, state.paperName as any);

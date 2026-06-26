@@ -15,9 +15,10 @@ const PAPER_LIST_SELECT =
 
 /** Metadata only — for section outlines and completion mapping. */
 const QUESTION_PARTS_SELECT =
-  'part_letter, part_name, exam_type, paper_name';
+  'paper_id, part_letter, part_name, exam_type, paper_name';
 
 export type QuestionPartRow = {
+  paperId: number;
   partLetter: string;
   partName: string;
   examType?: string;
@@ -26,6 +27,7 @@ export type QuestionPartRow = {
 
 function mapQuestionPartRow(row: Record<string, unknown>): QuestionPartRow {
   return {
+    paperId: row.paper_id as number,
     partLetter: (row.part_letter as string) ?? '',
     partName: (row.part_name as string) ?? '',
     examType: (row.exam_type as string) ?? undefined,

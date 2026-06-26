@@ -57,14 +57,28 @@ export async function GET(request: NextRequest) {
       paperType === "TMUA";
 
     let paperIds = [paper.id];
+    let siblingRows: Paper[] = [];
     if (mergeSiblings) {
       const { data: siblings } = await supabase
         .from("papers")
-        .select("id")
+        .select("id, exam_name, exam_year, paper_name, exam_type, has_conversion")
         .eq("exam_name", paper.examName)
         .eq("exam_year", paper.examYear);
 
-      paperIds = ((siblings ?? []) as Array<{ id: number }>).map((r) => r.id);
+      const siblingsList = (siblings ?? []) as Array<Record<string, unknown>>;
+      paperIds = siblingsList.map((r) => r.id as number);
+      siblingRows = siblingsList
+        .filter((r) => (r.id as number) !== paper.id)
+        .map((r) => ({
+          id: r.id as number,
+          examName: r.exam_name as Paper["examName"],
+          examYear: r.exam_year as number,
+          paperName: r.paper_name as string,
+          examType: r.exam_type as Paper["examType"],
+          hasConversion: r.has_conversion as boolean,
+          createdAt: "",
+          updatedAt: "",
+        }));
     }
 
     const { data: questionRows, error: questionsError } = await supabase
@@ -83,13 +97,14 @@ export async function GET(request: NextRequest) {
     const slimParts: SlimQuestionPart[] = (
       (questionRows ?? []) as Array<Record<string, unknown>>
     ).map((row) => ({
+      paperId: row.paper_id as number,
       partLetter: (row.part_letter as string) ?? "",
       partName: (row.part_name as string) ?? "",
       examType: (row.exam_type as string) ?? undefined,
       paperName: (row.paper_name as string) ?? undefined,
     }));
 
-    const outline = buildPaperSectionsOutline(paper, [], slimParts);
+    const outline = buildPaperSectionsOutline(paper, siblingRows, slimParts);
 
     return NextResponse.json(outline);
   } catch (e) {

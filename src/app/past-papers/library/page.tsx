@@ -12,10 +12,9 @@ import { usePaperSessionStore } from '@/store/paperSessionStore';
 import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData";
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import { getQuestions } from '@/lib/supabase/questions';
-import {
-  mapPartToSection,
-  deriveTmuaSectionFromQuestion,
-} from '@/lib/papers/sectionMapping';
+import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
+import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySections";
+import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
 import { PaperSessionSummary } from '@/components/papers/library/PaperSessionSummary';
@@ -50,6 +49,18 @@ function mergeMainSectionMaps(
     merged.set(mainSectionName, next);
   });
   return merged;
+}
+
+const MAIN_SECTION_ORDER = ['Section 1', 'Section 2', 'Paper 1', 'Paper 2'];
+
+function sortMainSectionEntries(
+  sections: Map<string, Set<PaperSection>>,
+): Array<[string, Set<PaperSection>]> {
+  return [...sections.entries()].sort(([a], [b]) => {
+    const ai = MAIN_SECTION_ORDER.indexOf(a);
+    const bi = MAIN_SECTION_ORDER.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
 }
 
 function cloneMainSectionMap(
@@ -344,23 +355,39 @@ export default function PapersLibraryPage() {
 
     const firstPaper = validPapers[0];
     const paper = firstPaper.paper;
-    const selectedSections: PaperSection[] = [];
-    firstPaper.selectedSections.forEach((subjects) => {
-      subjects.forEach((subject) => selectedSections.push(subject));
-    });
 
     const runStart = async () => {
       try {
         setIsStartingSession(true);
         setError(null);
 
-        const allQuestions = await getQuestions(paper.id);
-
-        let filteredQuestions: Question[] = [];
         const paperType =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
+        const mergeSiblings =
+          paperType === 'NSAA' ||
+          paperType === 'ENGAA' ||
+          paperType === 'ESAT' ||
+          paperType === 'TMUA';
 
+        const catalog = mergeSiblings
+          ? papers.filter(
+              (p) =>
+                p.examName === paper.examName && p.examYear === paper.examYear,
+            )
+          : [paper];
+
+        let allQuestions: Question[] = [];
+        for (const catalogPaper of catalog) {
+          const qs = await getQuestions(catalogPaper.id);
+          allQuestions = [...allQuestions, ...qs];
+        }
+
+        let filteredQuestions: Question[] = [];
         if (paperType === 'TMUA') {
+          const tmuaSubjects = new Set<PaperSection>();
+          firstPaper.selectedSections.forEach((subjects) => {
+            subjects.forEach((s) => tmuaSubjects.add(s));
+          });
           const totalQuestions = allQuestions.length;
           filteredQuestions = allQuestions.filter((q, index) => {
             const section = deriveTmuaSectionFromQuestion(
@@ -368,16 +395,18 @@ export default function PapersLibraryPage() {
               index,
               totalQuestions,
             );
-            return selectedSections.includes(section);
+            return tmuaSubjects.has(section);
           });
         } else {
-          filteredQuestions = allQuestions.filter((q) => {
-            const questionSection = mapPartToSection(
-              { partLetter: q.partLetter, partName: q.partName },
+          filteredQuestions = allQuestions.filter((q) =>
+            questionMatchesSelectedSections(
+              q,
+              firstPaper.selectedSections,
               paperType,
-            );
-            return selectedSections.includes(questionSection);
-          });
+              paper,
+              catalog,
+            ),
+          );
         }
 
         if (filteredQuestions.length === 0) {
@@ -392,7 +421,11 @@ export default function PapersLibraryPage() {
 
         let timeLimitMinutes: number;
         if (paperType === 'TMUA') {
-          timeLimitMinutes = selectedSections.length * 75;
+          let tmuaPaperCount = 0;
+          firstPaper.selectedSections.forEach((subjects) => {
+            tmuaPaperCount += subjects.size;
+          });
+          timeLimitMinutes = tmuaPaperCount * 75;
         } else {
           timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
         }
@@ -400,6 +433,25 @@ export default function PapersLibraryPage() {
         const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
         const paperTypeName =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
+
+        const selectedSections: PaperSection[] = [];
+        const selectedPartIds: string[] = [];
+        for (const [mainSectionName, subjects] of sortMainSectionEntries(
+          firstPaper.selectedSections,
+        )) {
+          subjects.forEach((subject) => {
+            selectedSections.push(subject);
+            selectedPartIds.push(
+              generateSectionId(
+                paper.examName,
+                paper.examYear,
+                mainSectionName,
+                subject,
+                paper.examType,
+              ),
+            );
+          });
+        }
 
         // Must await: startSession sets sessionId/paperId after async in-progress cleanup;
         // loadQuestions reads store state and breaks navigation if it runs too early.
@@ -415,6 +467,8 @@ export default function PapersLibraryPage() {
           },
           selectedSections:
             selectedSections.length > 0 ? selectedSections : undefined,
+          selectedPartIds:
+            selectedPartIds.length > 0 ? selectedPartIds : undefined,
         });
 
         await loadQuestions(paper.id);

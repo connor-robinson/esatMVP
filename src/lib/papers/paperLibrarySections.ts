@@ -1,5 +1,6 @@
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
+import { generateSectionId } from "./partIdUtils";
 import type { ExamName, Paper, PaperSection, PaperType, Question } from "@/types/papers";
 
 export type SlimQuestionPart = {
@@ -7,6 +8,7 @@ export type SlimQuestionPart = {
   partName: string;
   examType?: string;
   paperName?: string;
+  paperId?: number;
 };
 
 export type PaperMainSection = {
@@ -20,58 +22,78 @@ export type PaperSectionsOutline = {
   mainSections: PaperMainSection[];
 };
 
-function getMainSectionForQuestion(
-  question: SlimQuestionPart,
-  paperType: PaperType,
-  paperExamType?: string,
-  paperName?: string,
-): "Section 1" | "Section 2" {
-  const examTypeLower = (question.examType || paperExamType || "").toLowerCase();
-  const partLetter = (question.partLetter || "").toString().toLowerCase();
-  const partName = (question.partName || "").toString().toLowerCase();
-  const paperNameLower = (question.paperName || paperName || "").toLowerCase();
+export type MainExamSection = "Section 1" | "Section 2";
 
-  const isSection2 =
-    /(^|\s)(section|paper)\s*2\b/.test(examTypeLower) ||
-    examTypeLower === "s2" ||
-    examTypeLower.includes("sec 2");
-  const isSection1 =
-    /(^|\s)(section|paper)\s*1\b/.test(examTypeLower) ||
-    examTypeLower === "s1" ||
-    examTypeLower.includes("sec 1");
-
-  if (isSection2) return "Section 2";
-  if (isSection1) return "Section 1";
-
+/** Parse "Section 1", "Section 2", "Paper 1", S1/S2, etc. from a label string. */
+export function parseMainSectionFromLabel(
+  text: string | undefined,
+): MainExamSection | null {
+  if (!text?.trim()) return null;
+  const normalized = text.trim().toLowerCase();
   if (
-    /(^|\s)(section|paper)\s*2\b/.test(paperNameLower) ||
-    paperNameLower.includes("sec 2")
+    /(^|\s)(section|paper)\s*2\b/.test(normalized) ||
+    normalized === "s2" ||
+    normalized.includes("sec 2")
   ) {
     return "Section 2";
   }
   if (
-    /(^|\s)(section|paper)\s*1\b/.test(paperNameLower) ||
-    paperNameLower.includes("sec 1")
+    /(^|\s)(section|paper)\s*1\b/.test(normalized) ||
+    normalized === "s1" ||
+    normalized.includes("sec 1")
   ) {
     return "Section 1";
   }
+  return null;
+}
+
+function resolveQuestionPaperName(
+  question: SlimQuestionPart,
+  anchorPaper: Pick<Paper, "paperName">,
+  catalog: Paper[],
+): string | undefined {
+  if (question.paperName?.trim()) return question.paperName.trim();
+  if (question.paperId != null) {
+    const source = catalog.find((p) => p.id === question.paperId);
+    if (source?.paperName?.trim()) return source.paperName.trim();
+  }
+  return anchorPaper.paperName?.trim() || undefined;
+}
+
+/**
+ * Which main exam section (Section 1 / Section 2) a question belongs to.
+ * For NSAA, part letters B/C/D appear in BOTH sections — paper name is authoritative.
+ */
+export function getMainSectionForQuestion(
+  question: SlimQuestionPart,
+  paperType: PaperType,
+  paperExamType?: string,
+  resolvedPaperName?: string,
+): MainExamSection {
+  const fromExamType =
+    parseMainSectionFromLabel(question.examType) ??
+    parseMainSectionFromLabel(paperExamType);
+  if (fromExamType) return fromExamType;
+
+  const fromPaperName = parseMainSectionFromLabel(
+    question.paperName ?? resolvedPaperName,
+  );
+  if (fromPaperName) return fromPaperName;
+
+  const partLetter = (question.partLetter || "").toString().toLowerCase().trim();
+  const partName = (question.partName || "").toString().toLowerCase();
 
   if (paperType === "NSAA") {
-    const hasMathematics =
-      (partName.includes("mathematics") || partLetter === "a" || partLetter === "1") &&
-      !partName.includes("advanced");
-    if (hasMathematics) return "Section 1";
-
-    const isSciencePart =
-      partLetter === "b" ||
-      partLetter === "c" ||
-      partLetter === "d" ||
-      partLetter === "2" ||
-      partLetter === "3" ||
-      partLetter === "4";
-    if (isSciencePart && !partName.includes("mathematics")) {
+    // Part E / Advanced — Section 2 only (pre-2020)
+    if (
+      partLetter === "e" ||
+      partLetter === "5" ||
+      (partName.includes("advanced") && partName.includes("mathematics"))
+    ) {
       return "Section 2";
     }
+    // Part B/C/D sciences exist in Section 1 AND Section 2 — never infer from letter alone.
+    return "Section 1";
   }
 
   if (paperType === "ENGAA") {
@@ -105,8 +127,10 @@ export function groupSectionsIntoMainSections(
   examType: string,
   questions: SlimQuestionPart[],
   paper?: Pick<Paper, "examType" | "paperName">,
+  catalog: Paper[] = [],
 ): PaperMainSection[] {
   const mainSections: PaperMainSection[] = [];
+  const anchorPaper = paper ?? { examType, paperName: "" };
 
   if (paperType === "TMUA") {
     const paper1Exists = sections.includes("Paper 1");
@@ -128,20 +152,23 @@ export function groupSectionsIntoMainSections(
     const section2Parts = new Set<PaperSection>();
 
     questions.forEach((question) => {
-      const mainSection = getMainSectionForQuestion(
+      const resolvedPaperName = resolveQuestionPaperName(
         question,
+        anchorPaper,
+        catalog,
+      );
+      const mainSection = getMainSectionForQuestion(
+        { ...question, paperName: resolvedPaperName ?? question.paperName },
         paperType,
-        paper?.examType,
-        paper?.paperName,
+        anchorPaper.examType,
+        resolvedPaperName,
       );
       const subjectPart = mapPartToSection(
         { partLetter: question.partLetter, partName: question.partName },
         paperType,
       );
 
-      if (mainSection === "Section 1") {
-        section1Parts.add(subjectPart);
-      } else if (mainSection === "Section 2") {
+      if (mainSection === "Section 2") {
         section2Parts.add(subjectPart);
       } else {
         section1Parts.add(subjectPart);
@@ -178,10 +205,20 @@ export function buildPaperSectionsOutline(
   questionRows: SlimQuestionPart[],
 ): PaperSectionsOutline {
   const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
+  const catalog = [
+    paper,
+    ...siblingPapers.filter((p) => p.id !== paper.id),
+  ];
+
+  const normalizedRows = questionRows.map((row) => ({
+    ...row,
+    paperName:
+      resolveQuestionPaperName(row, paper, catalog) ?? row.paperName,
+  }));
 
   const sectionSet = new Set<PaperSection>();
   if (paperType === "TMUA") {
-    questionRows.forEach((row) => {
+    normalizedRows.forEach((row) => {
       const section = mapTmuaPaperNameToSection(row.paperName ?? paper.paperName);
       if (section) sectionSet.add(section);
     });
@@ -190,7 +227,7 @@ export function buildPaperSectionsOutline(
       if (fallback) sectionSet.add(fallback);
     }
   } else {
-    questionRows.forEach((row) => {
+    normalizedRows.forEach((row) => {
       sectionSet.add(
         mapPartToSection(
           { partLetter: row.partLetter, partName: row.partName },
@@ -205,8 +242,9 @@ export function buildPaperSectionsOutline(
     sections,
     paperType,
     paper.examType,
-    questionRows,
+    normalizedRows,
     paper,
+    catalog,
   );
 
   return {
@@ -216,6 +254,115 @@ export function buildPaperSectionsOutline(
   };
 }
 
+/** Whether a question matches the basket's per-section subject selection. */
+export function questionMatchesSelectedSections(
+  question: Pick<
+    Question,
+    "partLetter" | "partName" | "examType" | "paperName" | "paperId"
+  >,
+  selectedSections: Map<string, Set<PaperSection>>,
+  paperType: PaperType,
+  paper: Pick<Paper, "examType" | "paperName">,
+  catalog: Paper[] = [],
+): boolean {
+  const resolvedPaperName = resolveQuestionPaperName(
+    {
+      partLetter: question.partLetter,
+      partName: question.partName,
+      examType: question.examType,
+      paperName: question.paperName,
+      paperId: question.paperId,
+    },
+    paper,
+    catalog,
+  );
+  const mainSection = getMainSectionForQuestion(
+    {
+      partLetter: question.partLetter,
+      partName: question.partName,
+      examType: question.examType,
+      paperName: resolvedPaperName,
+    },
+    paperType,
+    paper.examType,
+    resolvedPaperName,
+  );
+  const subject = mapPartToSection(
+    { partLetter: question.partLetter, partName: question.partName },
+    paperType,
+  );
+  return selectedSections.get(mainSection)?.has(subject) ?? false;
+}
+
+/** Stable section ID for a question (matches library `generateSectionId`). */
+export function getQuestionSectionId(
+  question: Pick<
+    Question,
+    | "partLetter"
+    | "partName"
+    | "examType"
+    | "paperName"
+    | "paperId"
+    | "examName"
+    | "examYear"
+  >,
+  paper: Pick<Paper, "examType" | "paperName" | "examName" | "examYear">,
+  catalog: Paper[] = [],
+): string {
+  const examName = question.examName ?? paper.examName;
+  const year = question.examYear ?? paper.examYear;
+  const examType = question.examType ?? paper.examType;
+  const paperType = examNameToPaperType(examName as ExamName) || "NSAA";
+  const resolvedPaperName = resolveQuestionPaperName(
+    {
+      partLetter: question.partLetter,
+      partName: question.partName,
+      examType: question.examType,
+      paperName: question.paperName,
+      paperId: question.paperId,
+    },
+    paper,
+    catalog,
+  );
+  const mainSection = getMainSectionForQuestion(
+    {
+      partLetter: question.partLetter,
+      partName: question.partName,
+      examType: question.examType,
+      paperName: resolvedPaperName,
+    },
+    paperType,
+    paper.examType,
+    resolvedPaperName,
+  );
+  const subject = mapPartToSection(
+    { partLetter: question.partLetter, partName: question.partName },
+    paperType,
+  );
+  return generateSectionId(examName, year, mainSection, subject, examType);
+}
+
+export function questionMatchesPartId(
+  question: Pick<
+    Question,
+    | "partLetter"
+    | "partName"
+    | "examType"
+    | "paperName"
+    | "paperId"
+    | "examName"
+    | "examYear"
+  >,
+  partId: string,
+  paper: Pick<Paper, "examType" | "paperName" | "examName" | "examYear">,
+  catalog: Paper[] = [],
+): boolean {
+  return (
+    getQuestionSectionId(question, paper, catalog).toLowerCase() ===
+    partId.toLowerCase()
+  );
+}
+
 /** Convert full questions to slim parts for grouping (client-side fallback). */
 export function slimQuestionParts(questions: Question[]): SlimQuestionPart[] {
   return questions.map((q) => ({
@@ -223,5 +370,6 @@ export function slimQuestionParts(questions: Question[]): SlimQuestionPart[] {
     partName: q.partName,
     examType: q.examType,
     paperName: q.paperName,
+    paperId: q.paperId,
   }));
 }

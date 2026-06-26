@@ -20,7 +20,10 @@ import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import { getPaperTypeColor, getSectionColor } from "@/config/colors";
 import { getQuestions } from "@/lib/supabase/questions";
-import { mapPartToSection, deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
+import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
+import { fetchPaperSectionsOutline } from "@/lib/papers/pastPaperLibraryData";
+import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySections";
+import type { PaperMainSection } from "@/lib/papers/paperLibrarySections";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection, Question, ExamName } from "@/types/papers";
 import { SectionsLoadingState } from "./SectionsLoadingState";
@@ -53,79 +56,11 @@ interface PaperSessionSummaryProps {
   allPapers?: Paper[]; // All papers to find sibling sections
 }
 
-interface MainSection {
-  name: string; // "Section 1", "Section 2", "Paper 1", "Paper 2"
-  subjectParts: PaperSection[];
-}
-
 interface PaperData {
-  mainSections: MainSection[];
+  mainSections: PaperMainSection[];
   questions: Question[];
   loading: boolean;
-}
-
-// Determine which main section a question belongs to
-function getMainSectionForQuestion(
-  question: Question,
-  paperType: string,
-  paperExamType?: string,
-  paperName?: string
-): "Section 1" | "Section 2" {
-  const examTypeLower = (question.examType || paperExamType || "").toLowerCase();
-  const partLetter = (question.partLetter || "").toString().toLowerCase();
-  const partName = (question.partName || "").toString().toLowerCase();
-  const paperNameLower = (question.paperName || paperName || "").toLowerCase();
-
-  const isSection2 = /(^|\s)(section|paper)\s*2\b/.test(examTypeLower) || 
-                     examTypeLower === "s2" || 
-                     examTypeLower.includes("sec 2");
-  const isSection1 = /(^|\s)(section|paper)\s*1\b/.test(examTypeLower) || 
-                     examTypeLower === "s1" || 
-                     examTypeLower.includes("sec 1");
-
-  if (isSection2) return "Section 2";
-  if (isSection1) return "Section 1";
-
-  if (/(^|\s)(section|paper)\s*2\b/.test(paperNameLower) || paperNameLower.includes("sec 2")) {
-    return "Section 2";
-  }
-  if (/(^|\s)(section|paper)\s*1\b/.test(paperNameLower) || paperNameLower.includes("sec 1")) {
-    return "Section 1";
-  }
-
-  if (paperType === "NSAA") {
-    const hasMathematics = (partName.includes("mathematics") || partLetter === "a" || partLetter === "1") && 
-                           !partName.includes("advanced");
-    if (hasMathematics) return "Section 1";
-    
-    const isSciencePart = partLetter === "b" || partLetter === "c" || partLetter === "d" ||
-                         partLetter === "2" || partLetter === "3" || partLetter === "4";
-    if (isSciencePart && !partName.includes("mathematics")) {
-      return "Section 2";
-    }
-  }
-
-  if (paperType === "ENGAA") {
-    if (partLetter === "a" || partLetter === "1") {
-      return "Section 1";
-    }
-    if (partLetter === "b" || partLetter === "2") {
-      return "Section 2";
-    }
-    
-    if (partName.includes("mathematics") && partName.includes("physics") && !partName.includes("advanced")) {
-      return "Section 1";
-    }
-    if (partName.includes("advanced") && partName.includes("mathematics") && partName.includes("physics")) {
-      return "Section 2";
-    }
-  }
-
-  if (paperType === "ESAT") {
-    return "Section 1";
-  }
-
-  return "Section 1";
+  catalog: Paper[];
 }
 
 // Memoized Paper Item Component to prevent unnecessary re-renders
@@ -265,7 +200,7 @@ function PaperItemComponent({
 
                     return (
                       <button
-                        key={subject}
+                        key={`${mainSection.name}-${subject}`}
                         type="button"
                         onClick={() => onToggleSection(paper.id, subject, mainSection.name)}
                         className={cn(
@@ -308,76 +243,6 @@ function PaperItemComponent({
 
 const PaperItem = memo(PaperItemComponent);
 
-// Group sections into main sections
-function groupSectionsIntoMainSections(
-  questions: Question[],
-  paperType: string,
-  paper: Paper
-): MainSection[] {
-  const mainSections: MainSection[] = [];
-
-  if (paperType === "TMUA") {
-    const paper1Parts = new Set<PaperSection>();
-    const paper2Parts = new Set<PaperSection>();
-
-    questions.forEach((q, index) => {
-      const section = deriveTmuaSectionFromQuestion(q, index, questions.length);
-      if (section === "Paper 1") {
-        paper1Parts.add("Paper 1");
-      } else if (section === "Paper 2") {
-        paper2Parts.add("Paper 2");
-      }
-    });
-
-    if (paper1Parts.size > 0) {
-      mainSections.push({ name: "Paper 1", subjectParts: ["Paper 1"] });
-    }
-    if (paper2Parts.size > 0) {
-      mainSections.push({ name: "Paper 2", subjectParts: ["Paper 2"] });
-    }
-  } else if (paperType === "NSAA" || paperType === "ENGAA" || paperType === "ESAT") {
-    const section1Parts = new Set<PaperSection>();
-    const section2Parts = new Set<PaperSection>();
-
-    questions.forEach((question) => {
-      const mainSection = getMainSectionForQuestion(
-        question,
-        paperType,
-        paper.examType,
-        paper.paperName
-      );
-      const subjectPart = mapPartToSection(
-        { partLetter: question.partLetter, partName: question.partName },
-        paperType
-      );
-
-      if (mainSection === "Section 1") {
-        section1Parts.add(subjectPart);
-      } else if (mainSection === "Section 2") {
-        section2Parts.add(subjectPart);
-      } else {
-        section1Parts.add(subjectPart);
-      }
-    });
-
-    if (section1Parts.size > 0) {
-      mainSections.push({
-        name: "Section 1",
-        subjectParts: Array.from(section1Parts),
-      });
-    }
-
-    if (section2Parts.size > 0) {
-      mainSections.push({
-        name: "Section 2",
-        subjectParts: Array.from(section2Parts),
-      });
-    }
-  }
-
-  return mainSections;
-}
-
 export function PaperSessionSummary({
   selectedPapers,
   onRemovePaper,
@@ -412,7 +277,12 @@ export function PaperSessionSummary({
       setPaperData((prev) => {
         const next = new Map(prev);
         papersToLoad.forEach(({ paper }) => {
-          next.set(paper.id, { mainSections: [], questions: [], loading: true });
+          next.set(paper.id, {
+            mainSections: [],
+            questions: [],
+            loading: true,
+            catalog: [paper],
+          });
         });
         return next;
       });
@@ -420,36 +290,37 @@ export function PaperSessionSummary({
       // Load data for each new paper
       for (const { paper } of papersToLoad) {
         try {
-          // Find sibling papers from all papers
           const siblingPapers = allPapers.filter(
             (p) =>
               p.examName === paper.examName &&
-              p.examYear === paper.examYear &&
-              p.id !== paper.id
+              p.examYear === paper.examYear,
           );
+          const catalog = siblingPapers.some((p) => p.id === paper.id)
+            ? siblingPapers
+            : [...siblingPapers, paper];
 
-          const currentQuestions = await getQuestions(paper.id);
-          let allQuestions = [...currentQuestions];
+          const outline = await fetchPaperSectionsOutline(paper.id);
 
-          for (const siblingPaper of siblingPapers) {
+          let allQuestions: Question[] = [];
+          for (const catalogPaper of catalog) {
             try {
-              const siblingQuestions = await getQuestions(siblingPaper.id);
-              allQuestions = [...allQuestions, ...siblingQuestions];
+              const qs = await getQuestions(catalogPaper.id);
+              allQuestions = [...allQuestions, ...qs];
             } catch (error) {
-              console.error(`[PaperSessionSummary] Error loading sibling paper ${siblingPaper.id}:`, error);
+              console.error(
+                `[PaperSessionSummary] Error loading paper ${catalogPaper.id}:`,
+                error,
+              );
             }
           }
 
-          const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
-          const mainSections = groupSectionsIntoMainSections(allQuestions, paperType, paper);
-
-          // Update only this paper's data
           setPaperData((prev) => {
             const next = new Map(prev);
             next.set(paper.id, {
-              mainSections,
+              mainSections: outline.mainSections,
               questions: allQuestions,
               loading: false,
+              catalog,
             });
             return next;
           });
@@ -458,7 +329,7 @@ export function PaperSessionSummary({
           setExpandedSections((prev) => {
             const next = new Map(prev);
             const paperSections = new Set<string>();
-            mainSections.forEach((section) => {
+            outline.mainSections.forEach((section) => {
               paperSections.add(section.name);
             });
             next.set(paper.id, paperSections);
@@ -472,6 +343,7 @@ export function PaperSessionSummary({
               mainSections: [],
               questions: [],
               loading: false,
+              catalog: [paper],
             });
             return next;
           });
@@ -562,49 +434,54 @@ export function PaperSessionSummary({
     let totalTimeMinutes = 0;
 
     selectedPapers.forEach(({ paper, selectedSections }) => {
-      // Count total selected subjects across all main sections
       let totalSelectedSubjects = 0;
       selectedSections.forEach((subjects) => {
         totalSelectedSubjects += subjects.size;
       });
       if (totalSelectedSubjects === 0) return;
-      
-      // Flatten all selected subjects from all main sections
-      const selectedSectionsArray: PaperSection[] = [];
-      selectedSections.forEach((subjects, mainSectionName) => {
-        subjects.forEach((subject) => selectedSectionsArray.push(subject));
-      });
-      
-      totalSections += selectedSectionsArray.length;
-      
+
       const data = paperData.get(paper.id);
       if (data && !data.loading) {
         const paperType = examNameToPaperType(paper.examName as ExamName) || "NSAA";
 
         let filteredQuestions: Question[] = [];
         if (paperType === "TMUA") {
-          const totalQuestions = data.questions.length;
+          const tmuaSubjects = new Set<PaperSection>();
+          selectedSections.forEach((subjects) => {
+            subjects.forEach((s) => tmuaSubjects.add(s));
+          });
+          totalSections += tmuaSubjects.size;
+          const questionCount = data.questions.length;
           filteredQuestions = data.questions.filter((q, index) => {
-            const section = deriveTmuaSectionFromQuestion(q, index, totalQuestions);
-            return selectedSectionsArray.includes(section);
-          });
-        } else {
-          filteredQuestions = data.questions.filter((q) => {
-            const questionSection = mapPartToSection(
-              { partLetter: q.partLetter, partName: q.partName },
-              paperType
+            const section = deriveTmuaSectionFromQuestion(
+              q,
+              index,
+              questionCount,
             );
-            return selectedSectionsArray.includes(questionSection);
+            return tmuaSubjects.has(section);
           });
+          totalTimeMinutes += tmuaSubjects.size * 75;
+        } else {
+          selectedSections.forEach((subjects) => {
+            totalSections += subjects.size;
+          });
+          filteredQuestions = data.questions.filter((q) =>
+            questionMatchesSelectedSections(
+              q,
+              selectedSections,
+              paperType,
+              paper,
+              data.catalog,
+            ),
+          );
+          totalTimeMinutes += Math.ceil(filteredQuestions.length * 1.48);
         }
 
         totalQuestions += filteredQuestions.length;
-
-        if (paperType === "TMUA") {
-          totalTimeMinutes += selectedSectionsArray.length * 75;
-        } else {
-          totalTimeMinutes += Math.ceil(filteredQuestions.length * 1.48);
-        }
+      } else {
+        selectedSections.forEach((subjects) => {
+          totalSections += subjects.size;
+        });
       }
     });
 

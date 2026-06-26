@@ -47,8 +47,14 @@ async function fetchPaperSectionsOutlineFromClient(
     : [paper.id];
 
   const allQuestions = await getQuestionPartsForPaperIds(paperIds);
+  const siblingPapers = papers.filter(
+    (p) =>
+      p.examName === paper.examName &&
+      p.examYear === paper.examYear &&
+      p.id !== paper.id,
+  );
 
-  return buildPaperSectionsOutline(paper, [], allQuestions);
+  return buildPaperSectionsOutline(paper, siblingPapers, allQuestions);
 }
 
 export async function fetchPastPaperLibraryOutline(): Promise<Paper[]> {
