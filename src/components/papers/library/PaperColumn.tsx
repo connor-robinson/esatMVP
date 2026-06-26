@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { ChevronDown, Loader2, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { getExamSectionNumberBadgeClass } from "@/config/colors";
+import { getExamAccentTextClass, getExamSectionNumberBadgeClass } from "@/config/colors";
 import { SectionsLoadingState } from "./SectionsLoadingState";
 import { examNameToPaperType } from "@/lib/papers/paperConfig";
 import type { Paper, PaperSection } from "@/types/papers";
@@ -239,7 +239,12 @@ export function PaperColumn({
         </button>
 
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <span className="truncate text-sm font-semibold text-text">
+          <span
+            className={cn(
+              "truncate text-sm font-semibold",
+              getExamAccentTextClass(paper.examName),
+            )}
+          >
             {paper.examName} {paper.examYear}
           </span>
           {paperCompletionStatus !== "none" && (

@@ -33,10 +33,10 @@ export const PAPER_COLORS = {
  */
 export const PAPER_TYPE_COLORS = {
   ESAT: PAPER_COLORS.mathematics,
-  TMUA: PAPER_COLORS.mathematics,
-  NSAA: PAPER_COLORS.mathematics,
-  ENGAA: PAPER_COLORS.mathematics,
-  PAT: PAPER_COLORS.mathematics,
+  TMUA: PAPER_COLORS.physics,
+  NSAA: PAPER_COLORS.biology,
+  ENGAA: PAPER_COLORS.advanced,
+  PAT: PAPER_COLORS.chemistry,
   MAT: PAPER_COLORS.mathematics,
   OTHER: PAPER_COLORS.mathematics
 } as const;
@@ -79,11 +79,11 @@ export function getPaperTypeColor(paperType: string): string {
 /** Tailwind text class for grouped exam titles (theme tokens — no hex in UI). */
 export function getExamAccentTextClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "text-maths";
-  if (key === "NSAA") return "text-maths";
-  if (key === "TMUA") return "text-maths";
+  if (key === "ENGAA") return "text-advanced";
+  if (key === "NSAA") return "text-biology";
+  if (key === "TMUA") return "text-physics";
   if (key === "ESAT") return "text-maths";
-  if (key === "PAT") return "text-maths";
+  if (key === "PAT") return "text-chemistry";
   if (key === "MAT") return "text-maths";
   return "text-maths";
 }
@@ -196,13 +196,13 @@ export const cssVar = {
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology text-background dark:text-white";
-  if (key === "NSAA") return "bg-accent text-background dark:text-white";
-  if (key === "TMUA") return "bg-tmua-accent text-background dark:text-white";
-  if (key === "ESAT") return "bg-maths text-background dark:text-white";
-  if (key === "PAT") return "bg-chemistry text-background dark:text-white";
-  if (key === "MAT") return "bg-maths text-background dark:text-white";
-  return "bg-maths text-background dark:text-white";
+  if (key === "ENGAA") return `bg-advanced ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "NSAA") return `bg-biology ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "TMUA") return `bg-physics ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "ESAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "PAT") return `bg-chemistry ${ON_SOLID_SUBJECT_TEXT}`;
+  if (key === "MAT") return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
+  return `bg-maths ${ON_SOLID_SUBJECT_TEXT}`;
 }
 
 /** Borderless icon tile for session history rows (theme tokens only). */

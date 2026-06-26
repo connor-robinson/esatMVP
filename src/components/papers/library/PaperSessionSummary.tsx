@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
-import { getPaperTypeColor, getSectionColor } from "@/config/colors";
+import { getExamAccentTextClass, getPaperTypeColor, getSectionColor } from "@/config/colors";
 import { getQuestionPartsForPaperIds } from "@/lib/supabase/questions";
 import type { QuestionPartRow } from "@/lib/supabase/questions";
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
@@ -105,7 +105,12 @@ function PaperItemComponent({
       {/* Paper level */}
       <div className="flex h-14 items-center gap-3 bg-surface-mid px-3 transition-colors hover:bg-surface-mid/90">
         <div className="min-w-0 flex-1">
-          <div className="font-heading text-base font-bold text-text">
+          <div
+            className={cn(
+              "font-heading text-base font-bold",
+              getExamAccentTextClass(paper.examName),
+            )}
+          >
             {paper.examName} {paper.examYear}
           </div>
         </div>
