@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -14,16 +14,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { error } = await supabase.from('question_conversion_reports').insert({
-      question_id: questionId,
-      user_id: user?.id ?? null,
-      report_reason: reportReason.slice(0, 2000),
-    });
+    const { error } = await (supabase as any)
+      .from('question_conversion_reports')
+      .insert({
+        question_id: questionId,
+        user_id: user?.id ?? null,
+        report_reason: reportReason.slice(0, 2000),
+      });
 
     if (error) {
       // Table may not exist until migration is applied
