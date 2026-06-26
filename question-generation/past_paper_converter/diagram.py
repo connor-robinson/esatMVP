@@ -7,12 +7,24 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from PIL import Image
 
-from .config import STORAGE_BUCKET, STORAGE_PREFIX, supabase_service_key, supabase_url
+from .config import STORAGE_BUCKET, STORAGE_PREFIX, DIAGRAM_BBOX_PAD_X, DIAGRAM_BBOX_PAD_Y, supabase_service_key, supabase_url
 
 try:
     from supabase import create_client
 except ImportError:
     create_client = None  # type: ignore
+
+
+def expand_bbox_norm(bbox_norm: List[float]) -> List[float]:
+    """Add margin so diagram labels/lines are not clipped at crop edges."""
+    if len(bbox_norm) != 4:
+        return bbox_norm
+    x, y, w, h = bbox_norm
+    x = max(0.0, x - DIAGRAM_BBOX_PAD_X)
+    y = max(0.0, y - DIAGRAM_BBOX_PAD_Y)
+    w = min(1.0 - x, w + 2 * DIAGRAM_BBOX_PAD_X)
+    h = min(1.0 - y, h + 2 * DIAGRAM_BBOX_PAD_Y)
+    return [x, y, w, h]
 
 
 def crop_diagram(
@@ -21,7 +33,7 @@ def crop_diagram(
 ) -> Optional[bytes]:
     if not bbox_norm or len(bbox_norm) != 4:
         return None
-    x, y, w, h = bbox_norm
+    x, y, w, h = expand_bbox_norm(bbox_norm)
     img = Image.open(io.BytesIO(image_bytes))
     width, height = img.size
     left = max(0, int(x * width))
@@ -70,6 +82,7 @@ def process_diagrams(
         return stem, [], False
 
     bbox = parsed.get("diagram_bbox_norm") or []
+    expanded = expand_bbox_norm(bbox) if bbox else bbox
     cropped = crop_diagram(image_bytes, bbox)
     if not cropped:
         return stem, [], True
@@ -87,7 +100,8 @@ def process_diagrams(
             "url": url,
             "alt": caption,
             "position": "before_options",
-            "bbox_norm": bbox if isinstance(bbox, list) and len(bbox) == 4 else None,
+            "bbox_norm": expanded if isinstance(expanded, list) and len(expanded) == 4 else None,
+            "bbox_norm_raw": bbox if isinstance(bbox, list) and len(bbox) == 4 else None,
         }
     ]
     return stem, assets, False

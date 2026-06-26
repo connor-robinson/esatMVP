@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from google import genai
 from google.genai import types
 
-from .config import DEFAULT_FLASH_MODEL, DEFAULT_PRO_MODEL, gemini_api_key, use_vertex_ai, vertex_client_location, vertex_config
+from .config import DEFAULT_FLASH_MODEL, DEFAULT_PRO_MODEL, gemini_api_key, use_vertex_ai, uses_variable_option_count, vertex_client_location, vertex_config
 
 SYSTEM_PROMPT = """You convert UK admissions exam question screenshots (NSAA, ENGAA, TMUA) into structured JSON for a KaTeX website.
 
@@ -21,7 +21,7 @@ Rules:
 - Use $...$ for inline math, $$...$$ for display math
 - Escape backslashes in JSON (e.g. \\\\frac not \\frac in the raw JSON string values)
 - Do NOT invent diagram details — if a diagram/graph is present, set has_diagram=true and provide diagram_bbox_norm
-- diagram_bbox_norm: [x, y, w, h] normalized 0-1 relative to full image (diagram region only, not text)
+- diagram_bbox_norm: [x, y, w, h] normalized 0-1 relative to full image. Include the ENTIRE diagram/graph with all labels, axes, and arrows — add ~5% margin beyond the ink; do not crop tightly to lines
 - detected_question_number: integer shown top-left of screenshot
 - confidence: 0-1 how sure you are
 - If image is unreadable, set confidence below 0.5 and empty stem/options
@@ -65,10 +65,20 @@ def extract_json_object(text: str) -> Dict[str, Any]:
 
 
 def build_user_text(job_meta: Dict[str, Any], pdf_hint: Optional[str] = None) -> str:
+    exam = job_meta.get("exam_name") or ""
+    paper = job_meta.get("paper_name") or ""
+    if uses_variable_option_count(exam, paper):
+        option_hint = (
+            "Option letters: variable per question (often A–F, A–G, or A–H). "
+            "Extract ONLY the option letters actually printed — do not invent G/H if not shown."
+        )
+    else:
+        option_hint = f"Expected option letters: {', '.join(job_meta.get('expected_letters', []))}"
+
     parts = [
-        f"Exam: {job_meta.get('exam_name')} {job_meta.get('exam_year')} {job_meta.get('paper_name')}",
+        f"Exam: {exam} {job_meta.get('exam_year')} {paper}",
         f"Expected question number in DB: {job_meta.get('question_number')}",
-        f"Expected option letters: {', '.join(job_meta.get('expected_letters', []))}",
+        option_hint,
         f"Part: {job_meta.get('part_letter')} — {job_meta.get('part_name')}",
         "Extract stem and options from the attached question screenshot.",
     ]

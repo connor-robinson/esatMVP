@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Tuple
 
-from .config import CONFIDENCE_THRESHOLD
+from .config import CONFIDENCE_THRESHOLD, uses_variable_option_count
 from .export_questions import QuestionJob
 from .katex_validate import validate_question_content
 
@@ -25,6 +25,15 @@ def normalize_options(options: Dict[str, Any]) -> Dict[str, str]:
         if letter and v is not None:
             out[letter] = normalize_latex_delimiters(str(v).strip())
     return out
+
+
+def _letters_contiguous_from_a(letters: List[str]) -> bool:
+    if not letters:
+        return False
+    ords = sorted(ord(l) - ord("A") for l in letters if len(l) == 1 and l.isalpha())
+    if len(ords) != len(letters):
+        return False
+    return ords == list(range(len(ords)))
 
 
 def validate_extraction(
@@ -68,7 +77,20 @@ def validate_extraction(
 
     option_letters = sorted(options.keys())
     expected = job.expected_letters
-    if len(option_letters) < len(expected):
+    variable_count = uses_variable_option_count(job.exam_name, job.paper_name)
+
+    if variable_count:
+        # Section 1: each question may show A–F, A–G, or A–H — not always 8 options
+        if len(option_letters) < 4:
+            report["missing_options"] = True
+            report["option_count"] = len(option_letters)
+            report["expected_count"] = "4-8 (variable Section 1)"
+        elif not _letters_contiguous_from_a(option_letters):
+            report["missing_options"] = True
+            report["option_count"] = len(option_letters)
+            report["expected_count"] = "contiguous from A"
+            report["option_gaps"] = True
+    elif len(option_letters) < len(expected):
         report["missing_options"] = True
         report["option_count"] = len(option_letters)
         report["expected_count"] = len(expected)

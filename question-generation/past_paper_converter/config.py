@@ -27,6 +27,17 @@ CONFIDENCE_THRESHOLD = float(os.environ.get("PAST_PAPER_CONFIDENCE_THRESHOLD", "
 CACHE_DIR = Path(__file__).resolve().parent / "_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
+# Extra margin around AI diagram bbox (fraction of image width/height)
+DIAGRAM_BBOX_PAD_X = float(os.environ.get("PAST_PAPER_DIAGRAM_PAD_X", "0.04"))
+DIAGRAM_BBOX_PAD_Y = float(os.environ.get("PAST_PAPER_DIAGRAM_PAD_Y", "0.08"))
+
+
+def uses_variable_option_count(exam_name: str, paper_name: str) -> bool:
+    """ENGAA/NSAA Section 1 questions have 4–8 options depending on the item."""
+    exam = (exam_name or "").upper()
+    paper = (paper_name or "").lower()
+    return exam in ("ENGAA", "NSAA") and "section 1" in paper
+
 
 def expected_option_letters(
     exam_name: str,
