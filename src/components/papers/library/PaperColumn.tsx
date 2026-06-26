@@ -5,7 +5,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown, Plus, CheckCircle2 } from "lucide-react";
+import { ChevronDown, Loader2, Plus, CheckCircle2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getExamSectionNumberBadgeClass } from "@/config/colors";
@@ -51,6 +51,7 @@ export function PaperColumn({
   const [sectionCompletionMap, setSectionCompletionMap] = useState<
     Map<PaperSection, boolean>
   >(new Map());
+  const [isAddingPaper, setIsAddingPaper] = useState(false);
 
   const session = useSupabaseSession();
   const sectionNumberBadgeClass = getExamSectionNumberBadgeClass(paper.examName);
@@ -128,37 +129,77 @@ export function PaperColumn({
     };
   }, [isExpanded, availableSections, session?.user?.id, paper]);
 
-  const buildSectionsByMain = (): Map<string, Set<PaperSection>> => {
+  const buildSectionsByMain = (
+    sections: PaperMainSection[],
+  ): Map<string, Set<PaperSection>> => {
     const sectionsByMain = new Map<string, Set<PaperSection>>();
-    mainSections.forEach((mainSection) => {
+    sections.forEach((mainSection) => {
       sectionsByMain.set(mainSection.name, new Set(mainSection.subjectParts));
     });
     return sectionsByMain;
   };
 
-  const handleAddPaperClick = () => {
+  const buildSectionsByMainFromFlat = (
+    sections: PaperSection[],
+  ): Map<string, Set<PaperSection>> => {
+    const sectionsByMain = new Map<string, Set<PaperSection>>();
+    if (paperType === "TMUA") {
+      for (const section of sections) {
+        if (section === "Paper 1" || section === "Paper 2") {
+          sectionsByMain.set(section, new Set([section]));
+        }
+      }
+    }
+    if (sectionsByMain.size === 0) {
+      sectionsByMain.set("Section 1", new Set(sections));
+    }
+    return sectionsByMain;
+  };
+
+  const defaultTmuaSectionsByMain = (): Map<string, Set<PaperSection>> =>
+    new Map<string, Set<PaperSection>>([
+      ["Paper 1", new Set<PaperSection>(["Paper 1"])],
+      ["Paper 2", new Set<PaperSection>(["Paper 2"])],
+    ]);
+
+  const handleAddPaperClick = async () => {
+    if (isAddingPaper) return;
+
     if (mainSections.length > 0) {
-      onAddFullPaper(paper, buildSectionsByMain());
+      onAddFullPaper(paper, buildSectionsByMain(mainSections));
       return;
     }
 
     if (availableSections.length > 0) {
-      const sectionsByMain = new Map<string, Set<PaperSection>>();
-      if (paperType === "TMUA") {
-        for (const section of availableSections) {
-          if (section === "Paper 1" || section === "Paper 2") {
-            sectionsByMain.set(section, new Set([section]));
-          }
-        }
-      }
-      if (sectionsByMain.size === 0) {
-        sectionsByMain.set("Section 1", new Set(availableSections));
-      }
-      onAddFullPaper(paper, sectionsByMain);
+      onAddFullPaper(paper, buildSectionsByMainFromFlat(availableSections));
       return;
     }
 
-    onAddPaper(paper);
+    // Sections are lazy-loaded on expand — fetch (or use TMUA defaults) before adding.
+    if (paperType === "TMUA") {
+      onAddFullPaper(paper, defaultTmuaSectionsByMain());
+      return;
+    }
+
+    setIsAddingPaper(true);
+    setSectionsError(null);
+    try {
+      const data = await fetchPaperSectionsOutline(paper.id);
+      setOutline(data);
+
+      if (data.mainSections.length > 0) {
+        onAddFullPaper(paper, buildSectionsByMain(data.mainSections));
+      } else if (data.sections.length > 0) {
+        onAddFullPaper(paper, buildSectionsByMainFromFlat(data.sections));
+      } else {
+        setSectionsError("No sections available for this paper");
+      }
+    } catch (error) {
+      console.error(`[PaperColumn] Error adding paper ${paper.id}:`, error);
+      setSectionsError("Failed to load sections");
+    } finally {
+      setIsAddingPaper(false);
+    }
   };
 
   const handleAddSectionClick = (
@@ -224,11 +265,20 @@ export function PaperColumn({
 
         <button
           type="button"
-          onClick={handleAddPaperClick}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text"
+          onClick={() => void handleAddPaperClick()}
+          disabled={isAddingPaper}
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text",
+            isAddingPaper && "cursor-wait opacity-70",
+          )}
           aria-label="Add paper to session"
+          aria-busy={isAddingPaper}
         >
-          <Plus className="h-4 w-4" strokeWidth={2} />
+          {isAddingPaper ? (
+            <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+          ) : (
+            <Plus className="h-4 w-4" strokeWidth={2} />
+          )}
         </button>
       </div>
 
