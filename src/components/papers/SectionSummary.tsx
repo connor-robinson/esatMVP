@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import type { PaperSection, Question } from "@/types/papers";
 import { mapPartToSection } from "@/lib/papers/sectionMapping";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/config/colors";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { usePaperSessionStore } from "@/store/paperSessionStore";
 
 interface SectionSummaryProps {
   currentSectionIndex: number;
@@ -39,7 +40,11 @@ export function SectionSummary({
 }: SectionSummaryProps) {
   const [displaySeconds, setDisplaySeconds] = useState(60);
   const timerInitializedRef = useRef<number>(-1);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sectionInstructionDeadline = usePaperSessionStore(
+    (s) => s.sectionInstructionDeadline,
+  );
+  const isPaused = usePaperSessionStore((s) => s.isPaused);
 
   const currentSection = selectedSections[currentSectionIndex];
   const currentSectionQuestions = allSectionsQuestions[currentSectionIndex] || [];
@@ -72,37 +77,30 @@ export function SectionSummary({
     sectionTitle = `This is Part ${cleanPartLetter}: ${partName} of the ${paperName}${yearText} paper`;
   }
 
-  // Sync display with store value (which is deadline-based and updated by updateTimerState)
-  useEffect(() => {
-    if (sectionInstructionTimer !== null) {
-      setDisplaySeconds(sectionInstructionTimer);
-      
-      // Check if timer expired
-      if (sectionInstructionTimer <= 0) {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-        onTimerExpire();
-      }
-    }
-  }, [sectionInstructionTimer, onTimerExpire]);
+  // Tick every second from the deadline (store sync was only every 5s)
+  const tickInstructionTimer = useCallback(() => {
+    if (!sectionInstructionDeadline) return;
 
-  // Initialize timer display when section changes
-  useEffect(() => {
-    // Only initialize if this is a new section (not already initialized for this section)
-    if (timerInitializedRef.current !== currentSectionIndex) {
-      // Clear any existing interval first
+    const remaining = Math.max(
+      0,
+      Math.ceil((sectionInstructionDeadline - Date.now()) / 1000),
+    );
+    setDisplaySeconds(remaining);
+
+    if (remaining <= 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-
-      // Use store value if available, otherwise default to 60
-      const initialSeconds = sectionInstructionTimer !== null ? sectionInstructionTimer : 60;
-      setDisplaySeconds(initialSeconds);
-      timerInitializedRef.current = currentSectionIndex;
+      onTimerExpire();
     }
+  }, [sectionInstructionDeadline, onTimerExpire]);
+
+  useEffect(() => {
+    if (!sectionInstructionDeadline || isPaused) return;
+
+    tickInstructionTimer();
+    intervalRef.current = setInterval(tickInstructionTimer, 1000);
 
     return () => {
       if (intervalRef.current) {
@@ -110,6 +108,16 @@ export function SectionSummary({
         intervalRef.current = null;
       }
     };
+  }, [sectionInstructionDeadline, isPaused, tickInstructionTimer]);
+
+  // Initialize display when section changes
+  useEffect(() => {
+    if (timerInitializedRef.current !== currentSectionIndex) {
+      const initialSeconds =
+        sectionInstructionTimer !== null ? sectionInstructionTimer : 60;
+      setDisplaySeconds(initialSeconds);
+      timerInitializedRef.current = currentSectionIndex;
+    }
   }, [currentSectionIndex, sectionInstructionTimer]);
 
   const formatTime = (seconds: number) => {

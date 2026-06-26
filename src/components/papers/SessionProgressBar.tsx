@@ -386,14 +386,12 @@ export function SessionProgressBar({
       ? `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`
       : `/login?redirectTo=${encodeURIComponent('/past-papers/library')}`;
 
-  const immersiveNoMainNav =
-    embedded &&
-    docFullscreen &&
-    !paperFullscreenShowMainNavbar;
+  const mainNavStripVisible =
+    docFullscreen && paperFullscreenShowMainNavbar;
   const outerClass = embedded
-    ? immersiveNoMainNav
-      ? 'sticky top-0 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
-      : 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+    ? mainNavStripVisible
+      ? 'sticky top-16 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
+      : 'sticky top-0 z-40 w-full border-b border-white/10 bg-background/95 backdrop-blur-md'
     : 'sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md';
   const rowHeight = embedded ? 'h-12' : 'h-16';
 

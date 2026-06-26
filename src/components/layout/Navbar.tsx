@@ -120,8 +120,7 @@ export function Navbar() {
 
   const showMainNavStrip =
     !hasActiveSession ||
-    !docFullscreen ||
-    paperFullscreenShowMainNavbar;
+    (docFullscreen && paperFullscreenShowMainNavbar);
 
   const currentSection = pathname.startsWith('/mental-maths')
     ? 'skills'
