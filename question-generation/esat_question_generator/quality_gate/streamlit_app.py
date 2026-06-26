@@ -170,7 +170,7 @@ def _curriculum_cols(row: dict[str, Any]) -> dict[str, Any]:
         "Format issues": fields.get("formatting_issues") or "—",
         "Disposition": fields.get("disposition") or "—",
         "Labels": fields.get("disposition_labels") or "—",
-        "_off_syllabus": fields.get("curriculum_match") == "off_syllabus",
+        "_off_syllabus": fields.get("curriculum_match") in ("off_syllabus", "out_of_syllabus"),
         "_math1_mm": bool(fields.get("math1_mm_required")),
         "_calculus_math1": bool(fields.get("calculus_in_math1")),
         "_likely_too_long": False,

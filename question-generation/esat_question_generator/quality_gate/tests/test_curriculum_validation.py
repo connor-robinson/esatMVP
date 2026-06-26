@@ -57,7 +57,7 @@ class TestCurriculumValidation(unittest.TestCase):
         )
         flags = detect_curriculum_flags(row)
         self.assertTrue(any(f.get("flag_id") == "integration" for f in flags))
-        eff = self._effective_after_flags(row, flags, curriculum_match="off_syllabus")
+        eff = self._effective_after_flags(row, flags, curriculum_match="out_of_syllabus")
         self.assertNotEqual(eff, "approve")
 
     def test_c_math1_quadratic_in_syllabus(self):

@@ -9,7 +9,8 @@ RecommendedAction = Literal["approve", "human_review", "regenerate", "move_to_ma
 Confidence = Literal["high", "medium", "low"]
 CalibrationTier = Literal["gold"]
 GraphMode = Literal["none", "candidate", "missing_expected"]
-CurriculumMatch = Literal["in_syllabus", "borderline", "off_syllabus"]
+CurriculumMatch = Literal["in_syllabus", "borderline", "out_of_syllabus"]
+CurriculumValidationStatus = Literal["valid", "invalid_model_output", "model_error"]
 CurriculumSeverity = Literal["hard_fail", "warning"]
 DispositionOutcome = Literal["keep", "edit", "disregard", "regenerate", "move_paper"]
 
@@ -165,7 +166,10 @@ class QualityGateResult:
     graph_insertion_placeholders: List[str] = field(default_factory=list)
     graph_notes_for_human: str = ""
     syllabus_fit_score: int = 3
-    curriculum_match: CurriculumMatch = "in_syllabus"
+    curriculum_match: Optional[CurriculumMatch] = None
+    curriculum_validation_status: CurriculumValidationStatus = "valid"
+    curriculum_validator_version: str = "v2"
+    curriculum_inconsistency_reason: Optional[str] = None
     required_topic_codes: List[str] = field(default_factory=list)
     suspicious_topics: List[str] = field(default_factory=list)
     curriculum_reason: str = ""
@@ -211,6 +215,9 @@ class QualityGateResult:
             "curriculum_validation": {
                 "syllabus_fit_score": self.syllabus_fit_score,
                 "curriculum_match": self.curriculum_match,
+                "curriculum_validation_status": self.curriculum_validation_status,
+                "curriculum_validator_version": self.curriculum_validator_version,
+                "curriculum_inconsistency_reason": self.curriculum_inconsistency_reason,
                 "required_topic_codes": list(self.required_topic_codes),
                 "suspicious_topics": list(self.suspicious_topics),
                 "curriculum_reason": self.curriculum_reason,
@@ -240,6 +247,13 @@ class QualityGateResult:
                 "reason": self.auto_fix_triage_reason,
             },
         }
+
+
+def _curriculum_is_out_of_syllabus(match: Optional[str]) -> bool:
+    if not match:
+        return False
+    m = str(match).casefold().replace("-", "_")
+    return m in ("out_of_syllabus", "off_syllabus")
 
 
 def _parse_str_list(raw: Any, *, limit: int = 24) -> List[str]:
@@ -281,7 +295,7 @@ def merge_deterministic_curriculum_flags(
     result.curriculum_flags = merged
     if any(f.severity == "hard_fail" for f in merged):
         if result.curriculum_match == "in_syllabus":
-            result.curriculum_match = "off_syllabus"
+            result.curriculum_match = "out_of_syllabus"
         for f in merged:
             if f.severity == "hard_fail" and f.reason and f.reason not in result.suspicious_topics:
                 result.suspicious_topics.append(f.reason[:200])
@@ -356,9 +370,18 @@ def parse_quality_gate_json(
         syllabus_fit_score = int(scores.get("syllabus_fit") or 3)
     scores["syllabus_fit"] = syllabus_fit_score
 
-    curriculum_match = cv.get("curriculum_match") or data.get("curriculum_match") or "in_syllabus"
-    if curriculum_match not in ("in_syllabus", "borderline", "off_syllabus"):
-        curriculum_match = "borderline"
+    from .curriculum_match_parse import (
+        CURRICULUM_VALIDATOR_VERSION,
+        detect_curriculum_inconsistency,
+        parse_curriculum_match,
+    )
+
+    raw_curriculum_match = cv.get("curriculum_match", data.get("curriculum_match"))
+    curriculum_match = parse_curriculum_match(raw_curriculum_match)
+    if curriculum_match is None:
+        curriculum_validation_status: CurriculumValidationStatus = "invalid_model_output"
+    else:
+        curriculum_validation_status = "valid"
 
     reasoning = (data.get("reasoning") or "").strip()
     if not reasoning:
@@ -475,7 +498,9 @@ def parse_quality_gate_json(
         graph_insertion_placeholders=placeholders[:12],
         graph_notes_for_human=notes_human[:8000],
         syllabus_fit_score=syllabus_fit_score,
-        curriculum_match=curriculum_match,  # type: ignore[arg-type]
+        curriculum_match=curriculum_match,
+        curriculum_validation_status=curriculum_validation_status,
+        curriculum_validator_version=CURRICULUM_VALIDATOR_VERSION,
         required_topic_codes=_parse_str_list(cv.get("required_topic_codes")),
         suspicious_topics=_parse_str_list(cv.get("suspicious_topics")),
         curriculum_reason=str(cv.get("curriculum_reason") or "")[:4000],
@@ -497,6 +522,17 @@ def parse_quality_gate_json(
         auto_fix_triage_reason=triage_reason,
         raw=dict(data),
     )
+    if curriculum_validation_status == "valid" and curriculum_match is not None:
+        inc = detect_curriculum_inconsistency(
+            curriculum_match=curriculum_match,
+            syllabus_fit_score=syllabus_fit_score,
+            curriculum_flags=[f.to_dict() for f in llm_flags],
+            suspicious_topics=result.suspicious_topics,
+            recommended_action=action,
+            curriculum_reason=result.curriculum_reason,
+        )
+        if inc:
+            result.curriculum_inconsistency_reason = inc
     return merge_deterministic_curriculum_flags(result, pre)
 
 
@@ -561,7 +597,7 @@ def resolve_action_after_auto_fix(
         return "human_review"
     if _blocking_disposition_labels(result.disposition_labels):
         return "human_review"
-    if result.curriculum_match == "off_syllabus" or _has_hard_fail(result.curriculum_flags):
+    if _curriculum_is_out_of_syllabus(result.curriculum_match) or _has_hard_fail(result.curriculum_flags):
         return "human_review"
     if result.curriculum_match == "borderline":
         return "human_review"
@@ -600,7 +636,7 @@ def apply_post_auto_fix_action(
         return action
     if result.verdict != "Pass":
         return action
-    if result.curriculum_match == "off_syllabus" or _has_hard_fail(result.curriculum_flags):
+    if _curriculum_is_out_of_syllabus(result.curriculum_match) or _has_hard_fail(result.curriculum_flags):
         return action
     if result.human_blocking_issues:
         return action
@@ -662,7 +698,7 @@ def _salvageable_math1_paper_move(result: QualityGateResult, *, subject: str) ->
     """Heuristic: MM/off-syllabus on Math 1 but question may belong on Math 2 paper."""
     if not _is_math1_subject(subject):
         return False
-    if not (_required_has_mm(result.required_topic_codes) or result.curriculum_match == "off_syllabus"):
+    if not (_required_has_mm(result.required_topic_codes) or _curriculum_is_out_of_syllabus(result.curriculum_match)):
         return False
     labels = set(result.disposition_labels)
     if labels & {"solution_error", "unclear_wording", "weak_distractors"}:
@@ -682,10 +718,24 @@ def effective_action(
     answer_key_will_fix: bool = False,
 ) -> RecommendedAction:
     """Apply curriculum + confidence overrides; trust LLM delete, guard against bad auto-approve."""
+    from .curriculum_match_parse import action_from_curriculum
+
+    if result.curriculum_validation_status != "valid" or result.curriculum_match is None:
+        return "human_review"
+
     action = result.recommended_action
     subject = _subject_label(row)
     subj_cf = subject.casefold()
     has_hard = _has_hard_fail(result.curriculum_flags)
+
+    # Curriculum-driven baseline when LLM action conflicts with match
+    curriculum_action = action_from_curriculum(result.curriculum_match)
+    if result.curriculum_match == "borderline" and action == "approve":
+        action = curriculum_action
+    if _curriculum_is_out_of_syllabus(result.curriculum_match) and action == "approve":
+        action = curriculum_action
+    if result.curriculum_inconsistency_reason and action == "approve":
+        action = "human_review"
 
     if "deterministic_conflict" in result.disposition_labels:
         if action in ("approve", "delete"):
@@ -698,7 +748,7 @@ def effective_action(
     if result.curriculum_match == "borderline" and action == "approve":
         action = "human_review"
 
-    if result.curriculum_match == "off_syllabus" and action == "approve":
+    if _curriculum_is_out_of_syllabus(result.curriculum_match) and action == "approve":
         action = "human_review"
 
     if has_hard and action == "approve":

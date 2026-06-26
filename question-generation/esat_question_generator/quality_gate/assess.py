@@ -161,7 +161,9 @@ def build_assessment_system_user_prompts(
         "Always label review_disposition.labels. "
         "When multiple issues exist, fill auto_fix_triage with auto-fixable vs human-blocking issues and "
         "recommended_action_after_auto_fix (approve only when no human-blocking issues remain). "
-        "Do not auto-approve borderline or off-syllabus items. "
+        "Do not auto-approve borderline or out-of-syllabus items. "
+        "curriculum_validation.curriculum_match must be exactly one string: "
+        "in_syllabus, borderline, or out_of_syllabus — never a Boolean or explanatory sentence. "
         "For Mathematics 1 rows with curriculum_math2_snapshot, check whether a sound question "
         "belongs on Math 2 (move_to_math2) before regenerate.\n\n"
         + rubric
@@ -182,6 +184,17 @@ def _vertex_model_not_found(exc: BaseException) -> bool:
     if "Publisher Model" in s and "not found" in s.lower():
         return True
     return False
+
+
+CURRICULUM_PARSE_MAX_RETRIES = 2
+
+
+def _curriculum_retry_user_suffix(attempt: int) -> str:
+    return (
+        f"\n\n[Retry {attempt}/{CURRICULUM_PARSE_MAX_RETRIES}] "
+        "Your previous response had an invalid curriculum_validation.curriculum_match. "
+        "Return exactly one of: in_syllabus, borderline, out_of_syllabus (lowercase string only)."
+    )
 
 
 def assess_question(
@@ -208,22 +221,43 @@ def assess_question(
     last_exc: Optional[BaseException] = None
     for m in quality_gate_model_try_order(primary, vertex_not_found_fallbacks=vertex_not_found_fallbacks):
         try:
-            raw = llm.generate(
-                m,
-                system_prompt,
-                user_prompt,
-                temperature=temperature,
-                trace_label="quality_gate",
-            )
+            last_raw = ""
+            result: Optional[QualityGateResult] = None
+            for attempt in range(1 + CURRICULUM_PARSE_MAX_RETRIES):
+                user_extra = _curriculum_retry_user_suffix(attempt) if attempt > 0 else ""
+                raw = llm.generate(
+                    m,
+                    system_prompt,
+                    user_prompt + user_extra,
+                    temperature=temperature,
+                    trace_label="quality_gate",
+                )
+                last_raw = raw
+                data = extract_json_object(raw)
+                result = parse_quality_gate_json(
+                    data,
+                    pre_flags=flags if deterministic_prechecks_enabled() else [],
+                )
+                if (
+                    result.curriculum_validation_status == "valid"
+                    and result.curriculum_match is not None
+                    and not result.curriculum_inconsistency_reason
+                ):
+                    break
+                if attempt < CURRICULUM_PARSE_MAX_RETRIES:
+                    _gemini_console(
+                        f"Quality gate: invalid curriculum_match on attempt {attempt + 1}; retrying…"
+                    )
+            assert result is not None
+            raw = last_raw
             if m != primary:
                 _gemini_console(
                     f"Quality gate: primary model {primary!r} was not available; used {m!r} for this question."
                 )
-            data = extract_json_object(raw)
-            result = parse_quality_gate_json(
-                data,
-                pre_flags=flags if deterministic_prechecks_enabled() else [],
-            )
+            if result.curriculum_validation_status != "valid" or result.curriculum_match is None:
+                result.curriculum_validation_status = "invalid_model_output"
+                if result.recommended_action == "approve":
+                    result.recommended_action = "human_review"
             if deterministic_prechecks_enabled():
                 fmt_issues = detect_formatting_issues(row)
                 if fmt_issues and not result.formatting_issues:

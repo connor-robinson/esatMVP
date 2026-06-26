@@ -1,0 +1,5 @@
+{
+  "manual_audit_version": "esat_100_v1",
+  "description": "Manual curriculum decisions for 100 audited questions. Populate with accept|borderline|reject per id.",
+  "decisions": []
+}
