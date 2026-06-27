@@ -8,14 +8,14 @@ import { sectionShell, statTile } from './styles';
 
 interface PaperStatsOverviewProps {
   analytics: SessionAnalytics;
-  sectionsPracticed: number;
+  highestPredictedScore: number | null;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
 export function PaperStatsOverview({
   analytics,
-  sectionsPracticed,
+  highestPredictedScore,
   isCollapsed = false,
   onToggleCollapse,
 }: PaperStatsOverviewProps) {
@@ -78,10 +78,12 @@ export function PaperStatsOverview({
               </div>
               <div className={statTile}>
                 <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-subtle">
-                  Sections practiced
+                  Highest ESAT / TMUA score
                 </div>
                 <div className="text-2xl font-bold leading-none tabular-nums text-text">
-                  {sectionsPracticed}
+                  {highestPredictedScore !== null
+                    ? highestPredictedScore.toFixed(1)
+                    : '—'}
                 </div>
               </div>
             </div>

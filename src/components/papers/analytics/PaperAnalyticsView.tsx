@@ -76,19 +76,21 @@ export function PaperAnalyticsView({
     [filteredSessions],
   );
 
-  const sectionsPracticed = useMemo(() => {
-    const sections = new Set<PaperSection>();
-    filteredSessions.forEach((s) => {
-      s.selectedSections?.forEach((sec) => sections.add(sec));
-    });
-    return sections.size;
+  const highestPredictedScore = useMemo(() => {
+    let max: number | null = null;
+    for (const session of filteredSessions) {
+      const score = session.predictedScore;
+      if (typeof score !== 'number' || !Number.isFinite(score)) continue;
+      max = max === null ? score : Math.max(max, score);
+    }
+    return max;
   }, [filteredSessions]);
 
   return (
     <div className="space-y-6 sm:space-y-8">
       <PaperStatsOverview
         analytics={analytics}
-        sectionsPracticed={sectionsPracticed}
+        highestPredictedScore={highestPredictedScore}
         isCollapsed={collapsedSections.has('overview')}
         onToggleCollapse={() => toggleSection('overview')}
       />
