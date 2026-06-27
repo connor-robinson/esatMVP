@@ -2213,7 +2213,10 @@ export default function PapersMarkPage() {
                                 <img
                                   src={questionImgSrc}
                                   alt={`Question ${questionNumbers[selectedIndex]}`}
-                                  className="block h-auto w-full transition-opacity duration-300 ease-in-out"
+                                  className={cn(
+                                    "block h-auto w-full transition-opacity duration-300 ease-in-out",
+                                    isDarkMode && "mix-blend-difference",
+                                  )}
                                   style={{
                                     display: 'block',
                                     height: 'auto',
@@ -2223,8 +2226,6 @@ export default function PapersMarkPage() {
                                     margin: 0,
                                     padding: 0,
                                     verticalAlign: 'bottom',
-                                    filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                    mixBlendMode: isDarkMode ? 'difference' : 'normal'
                                   }}
                                 />
                               </div>
@@ -2313,7 +2314,10 @@ export default function PapersMarkPage() {
                                       <img
                                         src={answerImgSrc as string}
                                         alt="Solution"
-                                        className="block h-auto w-full transition-opacity duration-300 ease-in-out"
+                                        className={cn(
+                                          "block h-auto w-full transition-opacity duration-300 ease-in-out",
+                                          isDarkMode && "mix-blend-difference",
+                                        )}
                                         style={{
                                           display: 'block',
                                           height: 'auto',
@@ -2323,8 +2327,6 @@ export default function PapersMarkPage() {
                                           margin: 0,
                                           padding: 0,
                                           verticalAlign: 'bottom',
-                                          filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                          mixBlendMode: isDarkMode ? 'difference' : 'normal'
                                         }}
                                       />
                                     </div>
@@ -2405,17 +2407,26 @@ export default function PapersMarkPage() {
                               />
                             )}
                             {question?.solutionImage && (
-                              <div className="relative">
-                                <img
-                                  src={answerImgSrc as string}
-                                  alt="Solution"
-                                  className="h-auto object-contain rounded-md mx-auto"
+                              <div className="relative flex justify-center">
+                                <div
+                                  className="inline-block"
                                   style={{
-                                    filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none',
-                                    transition: "filter 300ms ease-in-out",
-                                    maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`
+                                    lineHeight: 0,
+                                    backgroundColor: isDarkMode ? cssVar.text : "transparent",
                                   }}
-                                />
+                                >
+                                  <img
+                                    src={answerImgSrc as string}
+                                    alt="Solution"
+                                    className={cn(
+                                      "mx-auto h-auto rounded-md object-contain",
+                                      isDarkMode && "mix-blend-difference",
+                                    )}
+                                    style={{
+                                      maxWidth: `${RIGHT_PANEL_IMAGE_SCALE * 100}%`,
+                                    }}
+                                  />
+                                </div>
                                 <div className="absolute bottom-4 right-4 pointer-events-auto">
                         <button
                                     onClick={() => {
@@ -2569,12 +2580,22 @@ export default function PapersMarkPage() {
                         : (croppedQuestionImage || question?.questionImage);
                       const imgAlt = isSolution ? 'Solution' : `Question ${questionNumbers[selectedIndex]}`;
                       return (
-                        <img
-                          src={imgSrc as string}
-                          alt={imgAlt}
-                          className="rounded-md object-contain max-h-full max-w-full"
-                          style={{ filter: isDarkMode ? 'invert(1) hue-rotate(180deg)' : 'none' }}
-                        />
+                        <div
+                          className="inline-block"
+                          style={{
+                            lineHeight: 0,
+                            backgroundColor: isDarkMode ? cssVar.text : "transparent",
+                          }}
+                        >
+                          <img
+                            src={imgSrc as string}
+                            alt={imgAlt}
+                            className={cn(
+                              "max-h-full max-w-full rounded-md object-contain",
+                              isDarkMode && "mix-blend-difference",
+                            )}
+                          />
+                        </div>
                       );
                     })()}
                   </div>
