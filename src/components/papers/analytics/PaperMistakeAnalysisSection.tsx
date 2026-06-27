@@ -16,6 +16,31 @@ import { aggregateMistakeTagCounts } from '@/lib/papers/analytics';
 import { cn } from '@/lib/utils';
 import { sectionShell } from './styles';
 
+function MistakePieTooltip({
+  active,
+  payload,
+  total,
+}: {
+  active?: boolean;
+  payload?: Array<{ name?: string; value?: number; payload?: { fill?: string } }>;
+  total: number;
+}) {
+  if (!active || !payload?.length) return null;
+  const item = payload[0];
+  const name = item.name ?? 'Mistake';
+  const count = typeof item.value === 'number' ? item.value : Number(item.value ?? 0);
+  const pct = total > 0 ? ((count / total) * 100).toFixed(0) : '0';
+
+  return (
+    <div className="rounded-organic-md border border-border bg-surface-elevated px-3 py-2 text-xs shadow-bar-floating">
+      <div className="font-medium text-text">{name}</div>
+      <div className="tabular-nums text-text">
+        {count} ({pct}%)
+      </div>
+    </div>
+  );
+}
+
 const SLICE_COLORS = [
   PAPER_COLORS.mathematics,
   PAPER_COLORS.physics,
@@ -114,21 +139,7 @@ export function PaperMistakeAnalysisSection({
                           ))}
                         </Pie>
                         <Tooltip
-                          formatter={(v?: number | string) => {
-                            const n =
-                              typeof v === 'number' ? v : Number(v ?? 0);
-                            return [
-                              `${n} (${((n / total) * 100).toFixed(0)}%)`,
-                              'Tagged',
-                            ];
-                          }}
-                          contentStyle={{
-                            borderRadius: 10,
-                            border: '1px solid var(--color-border)',
-                            background: 'var(--color-surface-elevated)',
-                            color: 'var(--color-text)',
-                            fontSize: 12,
-                          }}
+                          content={<MistakePieTooltip total={total} />}
                         />
                       </PieChart>
                     </ResponsiveContainer>

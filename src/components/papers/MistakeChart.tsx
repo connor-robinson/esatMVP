@@ -5,6 +5,7 @@
 import { useMemo } from "react";
 import type { MistakeTag } from "@/types/papers";
 import { PAPER_COLORS } from "@/config/colors";
+import { normalizeMistakeTagLabels } from "@/lib/papers/analytics";
 
 interface MistakeChartProps {
   mistakeTags: MistakeTag[];
@@ -14,24 +15,11 @@ interface MistakeChartProps {
 export function MistakeChart({ mistakeTags, className }: MistakeChartProps) {
   const chartData = useMemo(() => {
     const counts: Record<string, number> = {};
-    const add = (label: string) => {
-      const key = label.trim();
-      if (!key) return; // ignore empties
-      if (/^none$/i.test(key)) return; // ignore explicit none
-      counts[key] = (counts[key] ?? 0) + 1;
-    };
 
-    mistakeTags.forEach((tag: any) => {
-      if (Array.isArray(tag)) {
-        tag.forEach((t) => {
-          if (typeof t === 'string') {
-            t.split(',').forEach(add);
-          }
-        });
-      } else if (typeof tag === 'string') {
-        tag.split(',').forEach(add);
-      }
-      // else ignore null/undefined
+    mistakeTags.forEach((tag) => {
+      normalizeMistakeTagLabels(tag).forEach((label) => {
+        counts[label] = (counts[label] ?? 0) + 1;
+      });
     });
 
     const entries = Object.entries(counts)

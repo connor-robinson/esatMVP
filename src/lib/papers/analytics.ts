@@ -705,25 +705,60 @@ export function filterPaperSessionsByTopicAndType(
 
 export type MistakeTagCount = { label: string; count: number };
 
+/** Flatten stored mistake tags (strings, arrays, JSON strings) into display labels. */
+export function normalizeMistakeTagLabels(tag: unknown): string[] {
+  const labels: string[] = [];
+
+  const pushLabel = (raw: string) => {
+    const label = raw
+      .trim()
+      .replace(/^["']+|["']+$/g, "")
+      .replace(/^\[+|\]+$/g, "")
+      .trim();
+    if (!label || /^none$/i.test(label)) return;
+    labels.push(label);
+  };
+
+  const visit = (value: unknown) => {
+    if (value == null) return;
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+    if (typeof value !== "string") return;
+
+    const trimmed = value.trim();
+    if (!trimmed) return;
+
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          parsed.forEach(visit);
+          return;
+        }
+      } catch {
+        // fall through to comma split
+      }
+    }
+
+    trimmed.split(",").forEach(pushLabel);
+  };
+
+  visit(tag);
+  return labels;
+}
+
 function countMistakeTags(mistakeTags: MistakeTag[] | undefined): {
   entries: MistakeTagCount[];
   total: number;
 } {
   const counts: Record<string, number> = {};
-  const add = (label: string) => {
-    const key = label.trim();
-    if (!key || /^none$/i.test(key)) return;
-    counts[key] = (counts[key] ?? 0) + 1;
-  };
 
   mistakeTags?.forEach((tag) => {
-    if (Array.isArray(tag)) {
-      (tag as unknown[]).forEach((t) => {
-        if (typeof t === 'string') t.split(',').forEach(add);
-      });
-    } else if (typeof tag === 'string') {
-      tag.split(',').forEach(add);
-    }
+    normalizeMistakeTagLabels(tag).forEach((label) => {
+      counts[label] = (counts[label] ?? 0) + 1;
+    });
   });
 
   const entries = Object.entries(counts)
