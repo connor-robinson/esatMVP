@@ -37,6 +37,7 @@ import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectio
 import {
   formatMarkPartDisplay,
   formatSessionVariantLabel,
+  formatSolutionTextForDisplay,
   getSessionQuestionNumber,
   resolveMarkPartKey,
 } from "@/lib/papers/markQuestionUtils";
@@ -104,7 +105,6 @@ export default function PapersMarkPage() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<'question' | 'solution' | null>(null);
-  const [showAnswer, setShowAnswer] = useState(true);
   const [showNotesBox, setShowNotesBox] = useState(false);
   const [drillSelection, setDrillSelection] = useState<number[]>([]);
   const [showSavedToast, setShowSavedToast] = useState(false);
@@ -2028,27 +2028,6 @@ export default function PapersMarkPage() {
                 <div className="flex items-center gap-2">
                   <div className="text-base font-semibold text-neutral-200">Question</div>
                   <div className="text-base font-semibold text-neutral-200">{questionNumbers[selectedIndex]}</div>
-                    <button
-                    onClick={() => setShowAnswer(!showAnswer)}
-                    className="ml-1 px-2 py-1 text-xs rounded-md ring-1 transition bg-neutral-800 text-neutral-300 ring-white/10 hover:bg-neutral-700 flex items-center gap-1"
-                    title={showAnswer ? "Hide answer key" : "Show answer key"}
-                  >
-                    {showAnswer ? (
-                      // eye-off (simplified)
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.8 21.8 0 014.22-5.56" />
-                        <path d="M9.88 5.09A10.94 10.94 0 0112 5c7 0 11 7 11 7a21.8 21.8 0 01-3.87 5.13" />
-                        <line x1="1" y1="1" x2="23" y2="23" />
-                      </svg>
-                    ) : (
-                      // eye (simplified)
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    )}
-                    {showAnswer ? "Hide Answer" : "Show Answer"}
-                  </button>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -2298,8 +2277,8 @@ export default function PapersMarkPage() {
                       </div>
                     </div>
 
-                    {/* Answer/Solution section - only show when showAnswer is true */}
-                    {showAnswer && (() => {
+                    {/* Answer/Solution section */}
+                    {(() => {
                       const question = usePaperSessionStore.getState().questions[selectedIndex];
                       const isTMUA = question?.questionImage && question?.solutionImage && !question?.solutionText;
                       const answerImgSrc = (isTMUA && croppedAnswerImage) ? croppedAnswerImage : question?.solutionImage;
@@ -2418,13 +2397,11 @@ export default function PapersMarkPage() {
                           </div>
                           <div className="space-y-3">
                             {question?.solutionText && (
-                              <MathContent 
-                                content={(question.solutionText || "")
-                                  .replace(/<tip>.*?<\/tip>/gis, '')
-                                  .replace(/<question_title>[\s\S]*?<\/question_title>/gi, '')
-                                  .replace(/<question>[\s\S]*?<\/question>/gi, '')
-                                  .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, '')} 
-                                className="text-neutral-200 text-sm" 
+                              <MathContent
+                                content={formatSolutionTextForDisplay(
+                                  question.solutionText || "",
+                                )}
+                                className="text-neutral-200 text-sm"
                               />
                             )}
                             {question?.solutionImage && (

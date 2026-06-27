@@ -141,3 +141,15 @@ export function formatSessionVariantLabel(opts: {
   const filtered = parts.filter((p, idx) => !(idx === 0 && p === yearStr));
   return filtered.join(" ");
 }
+
+/** Strip pipeline markup tags from solution text for mark review display. */
+export function formatSolutionTextForDisplay(raw: string): string {
+  return raw
+    .replace(/<tip>[\s\S]*?<\/tip>/gi, "")
+    .replace(/<question_title>[\s\S]*?<\/question_title>/gi, "")
+    .replace(/<question>[\s\S]*?<\/question>/gi, "")
+    .replace(/<\/?solution>/gi, "")
+    .replace(/<\/?final[_\s-]?answer>/gi, "")
+    .replace(/^\s*Question\s+\d+\s*[:.\-]?\s*/i, "")
+    .trim();
+}
