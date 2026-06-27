@@ -4,7 +4,7 @@ export const sessionHistorySelectClass =
   'appearance-none cursor-pointer rounded-organic-md border-0 bg-surface-dark py-2.5 pl-3 pr-9 text-sm font-medium text-text outline-none transition-colors hover:opacity-90 focus:outline-none focus-visible:outline-none dark:bg-surface-neutral';
 
 export const sessionHistoryClearBtnClass =
-  'inline-flex items-center gap-2 rounded-organic-md border-0 bg-error/10 px-4 py-2.5 text-sm font-medium text-error transition-colors hover:bg-error/20 disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex items-center gap-2 rounded-organic-md border-0 bg-surface-dark px-4 py-2.5 text-sm font-medium text-error transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-surface-neutral';
 
 export const sessionHistoryCollapseBtnClass =
   'group inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-organic-md border-0 bg-surface-mid text-text-muted transition-colors hover:bg-surface-neutral hover:text-text';

@@ -1,11 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ChevronDown, Trash2, ScrollText } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { EnrichedPaperSession } from '@/lib/papers/analytics';
 import { extractYearFromVariant } from '@/lib/papers/analytics';
-import { getPaperSessionIconClass } from '@/config/colors';
+import { getExamAccentTextClass } from '@/config/colors';
 import { ClearSessionHistoryModal } from '@/components/analytics/ClearSessionHistoryModal';
 import {
   sessionHistoryClearBtnClass,
@@ -181,14 +181,10 @@ export function PaperSessionsHistorySection({
                     <tbody>
                       {visibleSessions.map((s) => {
                         const year = extractYearFromVariant(s.paperVariant);
-                        const mainTitle = year
-                          ? `${s.paperName} ${year}`
-                          : `${s.paperName} ${s.paperVariant}`;
                         const sectionInfo =
                           s.selectedSections && s.selectedSections.length > 0
                             ? s.selectedSections.join(', ')
                             : s.sessionName || '—';
-                        const iconClass = getPaperSessionIconClass(s.paperName);
                         const isHighlighted = highlightedSessionId === s.id;
                         const date = s.startedAt
                           ? new Date(s.startedAt).toLocaleDateString('en-GB', {
@@ -211,33 +207,36 @@ export function PaperSessionsHistorySection({
                             )}
                           >
                             <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={cn(
-                                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-organic-md',
-                                    iconClass,
-                                  )}
+                              <span className="truncate font-medium">
+                                <span
+                                  className={getExamAccentTextClass(s.paperName)}
                                 >
-                                  <ScrollText
-                                    className="h-4 w-4"
-                                    strokeWidth={2}
-                                    aria-hidden
-                                  />
-                                </div>
-                                <span className="truncate font-medium text-text">
-                                  {mainTitle}
+                                  {s.paperName}
                                 </span>
-                              </div>
+                                {year ? (
+                                  <>
+                                    {' '}
+                                    <span className="text-text-muted">
+                                      {year}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <span className="text-text-muted">
+                                    {' '}
+                                    {s.paperVariant}
+                                  </span>
+                                )}
+                              </span>
                             </td>
                             <td className="max-w-[200px] truncate px-4 py-3 text-text-muted">
                               {sectionInfo}
                             </td>
-                            <td className="px-4 py-3 text-right tabular-nums text-maths">
+                            <td className="px-4 py-3 text-right tabular-nums text-text">
                               {s.scorePercentage !== null
                                 ? `${s.scorePercentage.toFixed(1)}%`
                                 : '—'}
                             </td>
-                            <td className="px-4 py-3 text-right tabular-nums text-accent">
+                            <td className="px-4 py-3 text-right tabular-nums text-text">
                               {s.percentile !== null
                                 ? `${s.percentile.toFixed(1)}th`
                                 : '—'}
