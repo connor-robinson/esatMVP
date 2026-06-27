@@ -1,0 +1,82 @@
+{
+  "generated_at": "2026-06-27T12:11:27.732385+00:00",
+  "mode": "apply",
+  "manual_file": "C:\\Users\\anson\\Desktop\\nocalcMVP2_real\\data\\manual_overrides\\esat_228_manual_keep_reject.json",
+  "source_checksum_sha256": "08346b04a98308d52c8d2ccec6a8343f4d0e3731188323b5104acbf7eafff9b8",
+  "manual_audit_version": "esat_228_manual_review_v1",
+  "source_filename": "esat_228_manual_keep_reject.json",
+  "total_decisions_loaded": 228,
+  "unique_ids": 228,
+  "processed_ids": 228,
+  "counts": {
+    "would_approve": 186,
+    "applied": 228,
+    "would_regenerate_out_of_syllabus": 40,
+    "would_regenerate_invalid_question": 2
+  },
+  "exceptions": [],
+  "examples": {
+    "would_approve": [
+      {
+        "id": "003005bb",
+        "decision": "keep",
+        "category": "in_syllabus",
+        "reasons": []
+      },
+      {
+        "id": "0d5cae33",
+        "decision": "keep",
+        "category": "in_syllabus",
+        "reasons": []
+      },
+      {
+        "id": "14695eed",
+        "decision": "keep",
+        "category": "in_syllabus",
+        "reasons": []
+      }
+    ],
+    "would_regenerate_out_of_syllabus": [
+      {
+        "id": "39f065de",
+        "decision": "reject",
+        "category": "out_of_syllabus",
+        "reasons": []
+      },
+      {
+        "id": "3ab4ca8f",
+        "decision": "reject",
+        "category": "out_of_syllabus",
+        "reasons": []
+      },
+      {
+        "id": "51f57eca",
+        "decision": "reject",
+        "category": "out_of_syllabus",
+        "reasons": []
+      }
+    ],
+    "would_regenerate_invalid_question": [
+      {
+        "id": "524f5ed5",
+        "decision": "reject",
+        "category": "invalid_question",
+        "reasons": []
+      },
+      {
+        "id": "bbcfdc45",
+        "decision": "reject",
+        "category": "invalid_question",
+        "reasons": []
+      }
+    ]
+  },
+  "verification": {
+    "manual_rows": 228,
+    "stats": {
+      "keep_approved": 186,
+      "reject_regenerate": 42
+    },
+    "contradictory_ids": []
+  }
+}

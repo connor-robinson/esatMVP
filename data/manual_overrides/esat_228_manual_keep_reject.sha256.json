@@ -1,0 +1,6 @@
+{
+  "manual_audit_version": "esat_228_manual_review_v1",
+  "source_file": "esat_228_manual_keep_reject.json",
+  "algorithm": "sha256",
+  "checksum": "08346b04a98308d52c8d2ccec6a8343f4d0e3731188323b5104acbf7eafff9b8"
+}
