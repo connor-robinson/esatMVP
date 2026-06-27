@@ -514,6 +514,21 @@ export default function ProfilePage() {
     return null;
   };
 
+  const settingsButtonClass =
+    "bg-surface-elevated border-border-subtle hover:bg-surface-mid hover:border-border";
+
+  const SettingsButton = ({
+    className,
+    ...props
+  }: React.ComponentProps<typeof Button>) => (
+    <Button
+      variant="secondary"
+      size="sm"
+      className={cn(settingsButtonClass, className)}
+      {...props}
+    />
+  );
+
   const SettingsSectionHeader = ({
     title,
     description,
@@ -522,9 +537,9 @@ export default function ProfilePage() {
     description?: string;
   }) => (
     <div className="border-b border-border-subtle px-5 py-4 sm:px-7">
-      <h2 className="text-lg font-semibold text-text">{title}</h2>
+      <h2 className="text-lg font-semibold text-text sm:text-xl">{title}</h2>
       {description && (
-        <p className="mt-0.5 text-sm text-text-muted">{description}</p>
+        <p className="mt-1 text-sm text-text-muted">{description}</p>
       )}
     </div>
   );
@@ -536,9 +551,9 @@ export default function ProfilePage() {
     title?: string;
     children: React.ReactNode;
   }) => (
-    <div>
+    <div className="border-t border-border-subtle first:border-t-0">
       {title && (
-        <p className="px-5 pt-5 pb-1 text-sm font-semibold text-text sm:px-7">
+        <p className="px-5 pt-6 pb-2 text-xs font-semibold uppercase tracking-[0.12em] text-text sm:px-7">
           {title}
         </p>
       )}
@@ -562,13 +577,13 @@ export default function ProfilePage() {
     <div className="px-5 py-4 sm:px-7">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="min-w-0 sm:w-44 shrink-0">
-          <p className="text-sm font-medium text-text">{label}</p>
+          <p className="text-sm text-text-muted">{label}</p>
           {description && (
-            <p className="mt-0.5 text-xs text-text-muted">{description}</p>
+            <p className="mt-0.5 text-xs text-text-subtle">{description}</p>
           )}
         </div>
         {value !== undefined && (
-          <div className="min-w-0 flex-1 text-sm text-text">{value}</div>
+          <div className="min-w-0 flex-1 text-sm text-text-subtle">{value}</div>
         )}
         {action && (
           <div className="flex shrink-0 flex-wrap items-center gap-2 sm:ml-auto">
@@ -593,9 +608,11 @@ export default function ProfilePage() {
   }) => (
     <div className={cn("space-y-2", className)}>
       <div>
-        <label className="text-sm font-medium text-text">{label}</label>
+        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-text">
+          {label}
+        </label>
         {description && (
-          <p className="mt-0.5 text-xs text-text-muted">{description}</p>
+          <p className="mt-1 text-xs text-text-subtle">{description}</p>
         )}
       </div>
       {children}
@@ -633,9 +650,9 @@ export default function ProfilePage() {
         />
       </button>
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium text-text">{label}</div>
+        <div className="text-sm text-text-muted">{label}</div>
         {description && (
-          <div className="mt-1 text-xs text-text-muted">{description}</div>
+          <div className="mt-1 text-xs text-text-subtle">{description}</div>
         )}
       </div>
     </div>
@@ -768,7 +785,7 @@ export default function ProfilePage() {
                       label="Avatar"
                       description="Generated from your username"
                       value={
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-border bg-primary/10 text-sm font-semibold text-primary ring-1 ring-border-subtle">
                           {getDisplayInitials(preferences.username, email)}
                         </div>
                       }
@@ -780,21 +797,19 @@ export default function ProfilePage() {
                         description={usernameChangeHint}
                         value={preferences.username || "Not set"}
                         action={
-                          <Button
+                          <SettingsButton
                             type="button"
-                            variant="secondary"
-                            size="sm"
                             onClick={handleStartEdit}
                             disabled={!canEditUsername() || saving === "username"}
                           >
                             Edit
-                          </Button>
+                          </SettingsButton>
                         }
                       />
                     ) : (
                       <div className="px-5 py-4 sm:px-7">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                          <p className="text-sm font-medium text-text sm:w-44 shrink-0">
+                          <p className="text-sm text-text-muted sm:w-44 shrink-0">
                             Username
                           </p>
                           <div className="min-w-0 flex-1 space-y-2">
@@ -830,19 +845,15 @@ export default function ProfilePage() {
                                   )}
                                 </div>
                               </div>
-                              <Button
+                              <SettingsButton
                                 type="button"
-                                variant="secondary"
-                                size="sm"
                                 onClick={handleCancelEdit}
                                 disabled={saving === "username"}
                               >
                                 Cancel
-                              </Button>
-                              <Button
+                              </SettingsButton>
+                              <SettingsButton
                                 type="button"
-                                variant="secondary"
-                                size="sm"
                                 onClick={handleSaveUsername}
                                 disabled={
                                   saving === "username" ||
@@ -852,7 +863,7 @@ export default function ProfilePage() {
                                 }
                               >
                                 {saving === "username" ? "Saving…" : "Save"}
-                              </Button>
+                              </SettingsButton>
                             </div>
                             {usernameAvailability.message && (
                               <p
@@ -881,14 +892,12 @@ export default function ProfilePage() {
                       label="Email"
                       value={email}
                       action={
-                        <Button
+                        <SettingsButton
                           type="button"
-                          variant="secondary"
-                          size="sm"
                           onClick={() => setShowChangeEmail(true)}
                         >
                           Change
-                        </Button>
+                        </SettingsButton>
                       }
                     />
                   </SettingsGroup>
@@ -898,14 +907,12 @@ export default function ProfilePage() {
                       label="Password"
                       value="••••••••"
                       action={
-                        <Button
+                        <SettingsButton
                           type="button"
-                          variant="secondary"
-                          size="sm"
                           onClick={() => setShowChangePassword(true)}
                         >
                           Update
-                        </Button>
+                        </SettingsButton>
                       }
                     />
                   </SettingsGroup>
@@ -916,18 +923,14 @@ export default function ProfilePage() {
                       value="Manage subscription"
                       action={
                         <>
-                          <Button
+                          <SettingsButton
                             type="button"
-                            variant="secondary"
-                            size="sm"
                             onClick={() => setActiveSection("pricing")}
                           >
                             View plans
-                          </Button>
-                          <Button
+                          </SettingsButton>
+                          <SettingsButton
                             type="button"
-                            variant="secondary"
-                            size="sm"
                             onClick={async () => {
                               try {
                                 const res = await fetch("/api/stripe/create-portal-link", {
@@ -943,7 +946,7 @@ export default function ProfilePage() {
                             }}
                           >
                             Billing
-                          </Button>
+                          </SettingsButton>
                         </>
                       }
                     />
@@ -954,29 +957,22 @@ export default function ProfilePage() {
                       label="Sign out"
                       description="Log out of this device"
                       action={
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          size="sm"
-                          onClick={handleLogout}
-                        >
+                        <SettingsButton type="button" onClick={handleLogout}>
                           Log out
-                        </Button>
+                        </SettingsButton>
                       }
                     />
                     <SettingsRow
                       label="Delete account"
                       description="Permanently remove your account and data"
                       action={
-                        <Button
+                        <SettingsButton
                           type="button"
-                          variant="secondary"
-                          size="sm"
                           onClick={() => setShowDeleteAccount(true)}
                           className="text-error hover:bg-error/10 hover:text-error"
                         >
                           Delete account
-                        </Button>
+                        </SettingsButton>
                       }
                     />
                   </SettingsGroup>
@@ -1054,10 +1050,8 @@ export default function ProfilePage() {
                               </button>
                             );
                           })}
-                          <Button
+                          <SettingsButton
                             type="button"
-                            variant="secondary"
-                            size="sm"
                             onClick={handleSaveESATSubjects}
                             disabled={
                               localESATSubjects.length !== 3 ||
@@ -1066,7 +1060,7 @@ export default function ProfilePage() {
                             className="min-h-[42px]"
                           >
                             {saving === "esat_subjects" ? "Saving…" : "Save Subjects"}
-                          </Button>
+                          </SettingsButton>
                         </div>
                         {localESATSubjects.length !== 3 && (
                           <div className="mt-2 flex items-center gap-2 text-xs text-error">
@@ -1110,7 +1104,9 @@ export default function ProfilePage() {
 
                     <div className="pt-6 border-t border-border-subtle space-y-6">
                       <div>
-                        <h3 className="text-sm font-semibold text-text mb-4">Exam Arrangements</h3>
+                        <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-text">
+                          Exam Arrangements
+                        </h3>
                         <div className="space-y-5">
                           <Toggle
                             checked={preferences.has_extra_time}
@@ -1193,13 +1189,9 @@ export default function ProfilePage() {
                       label="Export Data" 
                       description="Download all your sessions, attempts, and progress data as CSV"
                     >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={handleExportData}
-                      >
+                      <SettingsButton onClick={handleExportData}>
                         Export Results (CSV)
-                      </Button>
+                      </SettingsButton>
                     </SettingItem>
 
                     <div className="pt-6 border-t border-border-subtle">
@@ -1207,14 +1199,12 @@ export default function ProfilePage() {
                         label="Reset All Data" 
                         description="Permanently delete all your sessions, attempts, and progress. This cannot be undone."
                       >
-                        <Button
-                          variant="secondary"
-                          size="sm"
+                        <SettingsButton
                           onClick={() => setShowResetData(true)}
                           className="text-error hover:bg-error/10 hover:text-error"
                         >
                           Reset All Data
-                        </Button>
+                        </SettingsButton>
                       </SettingItem>
                     </div>
                   </div>
@@ -1260,14 +1250,9 @@ export default function ProfilePage() {
                       label="Theme"
                       description={`Currently using ${isDark ? "Dark" : "Light"} mode.`}
                     >
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        onClick={toggleTheme}
-                      >
+                      <SettingsButton type="button" onClick={toggleTheme}>
                         {isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                      </Button>
+                      </SettingsButton>
                     </SettingItem>
                   </div>
                 </>
