@@ -32,6 +32,14 @@ interface PaperLibraryGridProps {
   onAddSection?: (paper: Paper, sectionName: string, sections: PaperSection[]) => void;
 }
 
+function representativePaperScore(paper: Paper): number {
+  const name = (paper.paperName ?? "").toLowerCase();
+  if (name.includes("section 1") || name.includes("paper 1")) return 0;
+  if (name.includes("section 2") || name.includes("paper 2")) return 1;
+  if (name === "paper") return 2;
+  return 3;
+}
+
 export function PaperLibraryGrid({
   filterSourcePapers,
   papers,
@@ -71,10 +79,9 @@ export function PaperLibraryGrid({
         seenCombinations.set(key, paper);
       } else {
         const existing = seenCombinations.get(key)!;
-        const curr = (paper.paperName ?? "").toLowerCase();
-        const prev = (existing.paperName ?? "").toLowerCase();
-        if (curr === "paper" && prev !== "paper") seenCombinations.set(key, paper);
-        else if (curr === "" && prev !== "" && prev !== "paper") seenCombinations.set(key, paper);
+        if (representativePaperScore(paper) < representativePaperScore(existing)) {
+          seenCombinations.set(key, paper);
+        }
       }
     });
 

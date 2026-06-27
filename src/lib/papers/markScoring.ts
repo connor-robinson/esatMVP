@@ -1,5 +1,7 @@
-import type { ConversionRow, Question } from "@/types/papers";
+import type { ConversionRow, PaperType, Question } from "@/types/papers";
 import { mapSectionToTable, type MapArgs } from "@/lib/esat/percentiles";
+import { resolveMarkPartKey } from "@/lib/papers/markQuestionUtils";
+import { parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
 import { mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 
 export function scaleScore(
@@ -64,7 +66,36 @@ export function findQuestionForSection(
   if (exam === "TMUA") {
     return questions.find((q) => mapTmuaPaperNameToSection(q.paperName) === section);
   }
-  return questions.find((q) => (q.partLetter || "").trim() === section);
+
+  const normalizedSection = section.trim();
+  const direct = questions.find(
+    (q) => (q.partLetter || "").trim() === normalizedSection,
+  );
+  if (direct) return direct;
+
+  const paperType = exam as PaperType;
+  return questions.find((q) => {
+    const key = resolveMarkPartKey(q, paperType);
+    return (
+      key === normalizedSection ||
+      key.toLowerCase() === normalizedSection.toLowerCase()
+    );
+  });
+}
+
+export function getConversionRowsForSection(
+  questions: Question[],
+  section: string,
+  examName: string,
+  fallbackRows: ConversionRow[],
+  rowsByPaperId?: Map<number, ConversionRow[]>,
+): ConversionRow[] {
+  if (!rowsByPaperId || rowsByPaperId.size === 0) return fallbackRows;
+  const match = findQuestionForSection(questions, section, examName);
+  if (match?.paperId != null && rowsByPaperId.has(match.paperId)) {
+    return rowsByPaperId.get(match.paperId)!;
+  }
+  return fallbackRows;
 }
 
 export function resolveConversionPartName(
@@ -94,18 +125,44 @@ export function resolveConversionPartName(
       else if (/2/.test(letter)) candidateNames.push("Section 2");
     }
   } else if (examName === "NSAA") {
-    if (letter === "A" || letter === "1") candidateNames.push("Part A");
-    if (letter === "B" || letter === "2") candidateNames.push("Part B");
-    if (letter === "C" || letter === "3") candidateNames.push("Part C");
-    if (letter === "D" || letter === "4") candidateNames.push("Part D");
-    if (letter === "E" || letter === "5") candidateNames.push("Part E");
+    const mainSection = parseMainSectionFromLabel(paperName);
+    const partLabels: Array<{ letters: string[]; label: string }> = [
+      { letters: ["A", "1"], label: "Part A" },
+      { letters: ["B", "2"], label: "Part B" },
+      { letters: ["C", "3"], label: "Part C" },
+      { letters: ["D", "4"], label: "Part D" },
+      { letters: ["E", "5"], label: "Part E" },
+    ];
+    for (const { letters, label } of partLabels) {
+      if (letters.some((l) => l === letter)) {
+        candidateNames.push(label);
+        if (mainSection) {
+          candidateNames.push(`${mainSection} ${label}`);
+        }
+      }
+    }
     if (partName) {
       const partLower = partName.toLowerCase();
-      if (partLower.includes("math") && !partLower.includes("advanced")) candidateNames.push("Part A");
-      if (partLower.includes("phys") && !partLower.includes("advanced")) candidateNames.push("Part B");
-      if (partLower.includes("chem")) candidateNames.push("Part C");
-      if (partLower.includes("biol")) candidateNames.push("Part D");
-      if (partLower.includes("advanced")) candidateNames.push("Part E");
+      if (partLower.includes("math") && !partLower.includes("advanced")) {
+        candidateNames.push("Part A");
+        if (mainSection) candidateNames.push(`${mainSection} Part A`);
+      }
+      if (partLower.includes("phys") && !partLower.includes("advanced")) {
+        candidateNames.push("Part B");
+        if (mainSection) candidateNames.push(`${mainSection} Part B`);
+      }
+      if (partLower.includes("chem")) {
+        candidateNames.push("Part C");
+        if (mainSection) candidateNames.push(`${mainSection} Part C`);
+      }
+      if (partLower.includes("biol")) {
+        candidateNames.push("Part D");
+        if (mainSection) candidateNames.push(`${mainSection} Part D`);
+      }
+      if (partLower.includes("advanced")) {
+        candidateNames.push("Part E");
+        if (mainSection) candidateNames.push(`${mainSection} Part E`);
+      }
     }
   }
 
@@ -133,26 +190,34 @@ export function computeScaledScore(
   questions: Question[],
   conversionRows: ConversionRow[],
   sessionPaperName?: string,
+  rowsByPaperId?: Map<number, ConversionRow[]>,
 ): {
   scaled: number | null;
   convPartName: string;
   matched: boolean;
   usedAverage: boolean;
 } {
+  const scopedRows = getConversionRowsForSection(
+    questions,
+    section,
+    examName,
+    conversionRows,
+    rowsByPaperId,
+  );
   const match = findQuestionForSection(questions, section, examName);
   const partLetterRaw = (match?.partLetter || section).toString().toUpperCase();
   const { name: convPartName, matched } = resolveConversionPartName(
     examName,
     partLetterRaw,
     match?.partName,
-    conversionRows,
+    scopedRows,
     match?.paperName ?? sessionPaperName,
   );
 
   const roundScaled = (value: number) => Math.round(value * 10) / 10;
 
   if (matched) {
-    const scaled = scaleScore(conversionRows, convPartName, correct, "nearest");
+    const scaled = scaleScore(scopedRows, convPartName, correct, "nearest");
     if (typeof scaled === "number") {
       return {
         scaled: roundScaled(scaled),
@@ -163,12 +228,12 @@ export function computeScaledScore(
     }
   }
 
-  const rowsLower = conversionRows.map((r) =>
+  const rowsLower = scopedRows.map((r) =>
     (r.partName || "").toString().toLowerCase(),
   );
   if (rowsLower.includes("general")) {
     const generalScaled = scaleScore(
-      conversionRows,
+      scopedRows,
       "General",
       correct,
       "nearest",
@@ -185,14 +250,14 @@ export function computeScaledScore(
 
   const partNames = [
     ...new Set(
-      conversionRows
+      scopedRows
         .map((r) => r.partName)
         .filter((name): name is string => Boolean(name?.trim())),
     ),
   ];
   const averaged: number[] = [];
   for (const partName of partNames) {
-    const value = scaleScore(conversionRows, partName, correct, "nearest");
+    const value = scaleScore(scopedRows, partName, correct, "nearest");
     if (typeof value === "number") averaged.push(value);
   }
   if (averaged.length > 0) {
@@ -242,9 +307,15 @@ export function computePredictedScore(
   questions: Question[],
   conversionRows: ConversionRow[],
   sessionPaperName?: string,
+  rowsByPaperId?: Map<number, ConversionRow[]>,
 ): number | null {
   const entries = Object.entries(sectionAnalytics);
-  if (entries.length === 0 || conversionRows.length === 0) return null;
+  const hasScopedRows =
+    rowsByPaperId != null &&
+    [...rowsByPaperId.values()].some((rows) => rows.length > 0);
+  if (entries.length === 0 || (!hasScopedRows && conversionRows.length === 0)) {
+    return null;
+  }
 
   let weightedSum = 0;
   let totalWeight = 0;
@@ -260,6 +331,7 @@ export function computePredictedScore(
       questions,
       conversionRows,
       sessionPaperName,
+      rowsByPaperId,
     );
     if (typeof scaled === "number") {
       weightedSum += scaled * data.total;

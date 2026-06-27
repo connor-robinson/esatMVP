@@ -37,15 +37,20 @@ import {
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
 import {
   formatMarkPartDisplay,
+  formatSessionVariantLabel,
   getSessionQuestionNumber,
   resolveMarkPartKey,
 } from "@/lib/papers/markQuestionUtils";
 import { MISTAKE_OPTIONS } from "@/types/papers";
-import { getConversionTable, getConversionRows, findFallbackConversionTable } from "@/lib/supabase/questions";
-import { supabase } from "@/lib/supabase/client";
+import {
+  findFallbackConversionTable,
+  getConversionRows,
+  getConversionTable,
+  loadConversionRowsByPaperIds,
+} from "@/lib/supabase/questions";
 import { fetchEsatTable, interpolatePercentile, interpolateScore, mapSectionToTable, averageEsatDistributionTables, type EsatRow } from "@/lib/esat/percentiles";
 import { cropImageToContent } from "@/lib/utils/imageCrop";
-import type { ExamName, Letter, MistakeTag } from "@/types/papers";
+import type { ConversionRow, ExamName, Letter, MistakeTag } from "@/types/papers";
 import type { QuestionStats } from "@/types/questionStats";
 import { MarkSectionNav,
   type MarkSection,
@@ -91,6 +96,7 @@ export default function PapersMarkPage() {
     getCorrectCount,
     isMarkingInfo,
     questions,
+    selectedPartIds,
   } = usePaperSessionStore();
   
   const [markSection, setMarkSection] = useState<MarkSection>("overview");
@@ -103,7 +109,10 @@ export default function PapersMarkPage() {
   const [showNotesBox, setShowNotesBox] = useState(false);
   const [drillSelection, setDrillSelection] = useState<number[]>([]);
   const [showSavedToast, setShowSavedToast] = useState(false);
-  const [conversionRows, setConversionRows] = useState<any[]>([]);
+  const [conversionRows, setConversionRows] = useState<ConversionRow[]>([]);
+  const [conversionRowsByPaperId, setConversionRowsByPaperId] = useState<
+    Map<number, ConversionRow[]>
+  >(new Map());
   const [hasConversion, setHasConversion] = useState(false);
   const [croppedQuestionImage, setCroppedQuestionImage] = useState<string | null>(null);
   const [croppedAnswerImage, setCroppedAnswerImage] = useState<string | null>(null);
@@ -151,86 +160,78 @@ export default function PapersMarkPage() {
     let mounted = true;
     (async () => {
       try {
-        if (!paperId) return;
         const qs = usePaperSessionStore.getState().questions;
-        const currentExamName = (qs?.[0]?.examName || '').toUpperCase();
-        const currentPaperName = paperName;
-        
-        // Verify paperId matches expected exam
-        const { data: paperCheck } = await supabase
-          .from('papers')
-          .select('id, exam_name, exam_year, paper_name, exam_type')
-          .eq('id', paperId)
-          .single();
-        
-        if (paperCheck) {
-          const paperExamName = ((paperCheck as any).exam_name || '').toUpperCase();
-          if (paperExamName !== currentExamName) {
-            console.error('[mark] CRITICAL: Paper ID mismatch!', {
-              paperId,
-              paperExamName,
-              expectedExamName: currentExamName,
-              paperData: paperCheck
-            });
-            // Still continue but log the error
-          }
-        }
-        
-        const table = await getConversionTable(paperId as any);
-        if (!mounted) return;
-        if (table) {
-          // Double-check: verify the conversion table's paper belongs to the correct exam
-          const { data: tablePaperCheck } = await supabase
-            .from('papers')
-            .select('exam_name, exam_year, paper_name, exam_type')
-            .eq('id', table.paperId)
-            .single();
-          
-          if (tablePaperCheck) {
-            const tableExamName = ((tablePaperCheck as any).exam_name || '').toUpperCase();
-            if (tableExamName !== currentExamName) {
-              console.error('[mark] CRITICAL: Conversion table belongs to wrong exam!', {
-                tableId: table.id,
-                tablePaperId: table.paperId,
-                tableExamName,
-                expectedExamName: currentExamName,
-                paperCheck: tablePaperCheck
-              });
-              // Don't use this table - it's for the wrong exam!
-              setConversionRows([]);
-              setHasConversion(false);
-              return;
+        const currentExamName = (qs?.[0]?.examName || "").toUpperCase();
+        const paperIdsFromQuestions = [
+          ...new Set(
+            (qs || [])
+              .map((q) => q.paperId)
+              .filter((id): id is number => typeof id === "number" && id > 0),
+          ),
+        ];
+        const idsToLoad =
+          paperIdsFromQuestions.length > 0
+            ? paperIdsFromQuestions
+            : paperId
+              ? [paperId]
+              : [];
+
+        if (idsToLoad.length === 0) return;
+
+        let rowsByPaper = await loadConversionRowsByPaperIds(idsToLoad);
+
+        if (rowsByPaper.size === 0 && paperId) {
+          const table = await getConversionTable(paperId as number);
+          if (table) {
+            const rows = await getConversionRows(table.id);
+            if (rows.length > 0) {
+              rowsByPaper = new Map([[paperId, rows]]);
             }
           }
-          
-          const rows = await getConversionRows(table.id);
-          if (!mounted) return;
-          if (rows.length > 0) {
-            setConversionRows(rows);
-            setHasConversion(true);
-            return;
-          }
         }
-        // Fallback: try sibling paper's conversion table for same exam/year/examType
-        const examName = qs?.[0]?.examName as any;
-        const year = qs?.[0]?.examYear as number | undefined;
-        const examType = (paperCheck as any)?.exam_type as any;
-        if (examName && year) {
-          const fallback = await findFallbackConversionTable(examName as any, year, examType);
+
+        if (rowsByPaper.size === 0 && qs?.[0]?.examName && qs?.[0]?.examYear) {
+          const examType = qs[0].examType as any;
+          const fallback = await findFallbackConversionTable(
+            qs[0].examName as ExamName,
+            qs[0].examYear,
+            examType,
+          );
           if (fallback) {
             const rows = await getConversionRows(fallback.id);
-            if (!mounted) return;
-          setConversionRows(rows);
-          setHasConversion(rows.length > 0);
-            return;
+            if (rows.length > 0) {
+              rowsByPaper = new Map([[fallback.paperId, rows]]);
+            }
           }
         }
-        // No conversion found
-          setConversionRows([]);
-          setHasConversion(false);
+
+        if (!mounted) return;
+
+        if (currentExamName && qs?.length) {
+          const mismatched = [...rowsByPaper.entries()].filter(([pid]) => {
+            const sample = qs.find((q) => q.paperId === pid);
+            return (
+              sample &&
+              (sample.examName || "").toUpperCase() !== currentExamName
+            );
+          });
+          if (mismatched.length > 0) {
+            console.error("[mark] Rejecting conversion tables from wrong exam", {
+              currentExamName,
+              mismatchedPaperIds: mismatched.map(([pid]) => pid),
+            });
+            rowsByPaper = new Map();
+          }
+        }
+
+        const merged = Array.from(rowsByPaper.values()).flat();
+        setConversionRowsByPaperId(rowsByPaper);
+        setConversionRows(merged);
+        setHasConversion(merged.length > 0);
       } catch {
         if (!mounted) return;
-        console.warn('[mark] Conversion load failed, falling back to none');
+        console.warn("[mark] Conversion load failed, falling back to none");
+        setConversionRowsByPaperId(new Map());
         setConversionRows([]);
         setHasConversion(false);
       }
@@ -238,7 +239,7 @@ export default function PapersMarkPage() {
     return () => {
       mounted = false;
     };
-  }, [paperId]);
+  }, [paperId, questions]);
 
   // Fetch community stats for all questions in session
   useEffect(() => {
@@ -400,13 +401,12 @@ export default function PapersMarkPage() {
 
   // Human-readable variant without duplicated year and hyphens
   const variantDisplay = useMemo(() => {
-    const v = (paperVariant || '').trim();
-    if (!v) return '';
-    const yearStr = sessionYear ? String(sessionYear) : '';
-    const parts = v.split('-').map(s => s.trim()).filter(Boolean);
-    const filtered = parts.filter((p, idx) => !(idx === 0 && yearStr && p === yearStr));
-    return filtered.join(' ');
-  }, [paperVariant, sessionYear]);
+    return formatSessionVariantLabel({
+      partIds: selectedPartIds,
+      paperVariant,
+      examType: questions[0]?.examType ?? null,
+    });
+  }, [selectedPartIds, paperVariant, questions]);
 
   const sectionBreakdownDerived = useMemo(() => {
     const bySection: Record<string, { correct: number; total: number }> = {};
@@ -878,10 +878,18 @@ export default function PapersMarkPage() {
       sectionAnalytics,
       examName,
       qs,
-      conversionRows as any[],
+      conversionRows,
       paperName,
+      conversionRowsByPaperId,
     );
-  }, [hasConversion, conversionRows, sectionAnalytics, examName, paperName]);
+  }, [
+    hasConversion,
+    conversionRows,
+    conversionRowsByPaperId,
+    sectionAnalytics,
+    examName,
+    paperName,
+  ]);
 
   useEffect(() => {
     // Calculate percentiles for all exams that have percentile tables
@@ -913,8 +921,9 @@ export default function PapersMarkPage() {
             section,
             data.correct,
             qs,
-            conversionRows as any[],
+            conversionRows,
             paperName,
+            conversionRowsByPaperId,
           );
           let { key: tableKey, label } = mapSectionToTable(buildPercentileTableArgs(examName, section, qs));
           
@@ -1019,7 +1028,14 @@ export default function PapersMarkPage() {
         console.error('[mark] Error calculating section percentiles', e);
       }
     })();
-  }, [sectionAnalytics, hasConversion, JSON.stringify(conversionRows), examName, paperName]);
+  }, [
+    sectionAnalytics,
+    hasConversion,
+    conversionRows,
+    conversionRowsByPaperId,
+    examName,
+    paperName,
+  ]);
 
   // Crop images for TMUA (when both question and answer are images)
   useEffect(() => {
@@ -1235,8 +1251,9 @@ export default function PapersMarkPage() {
                                 section,
                                 data.correct,
                                 qs,
-                                conversionRows as any[],
+                                conversionRows,
                                 paperName,
+                                conversionRowsByPaperId,
                               );
                               scaledScore = scaled;
                               convMatched = matched;
@@ -1307,14 +1324,13 @@ export default function PapersMarkPage() {
                                       />
                                     </div>
                                   </div>
-                                  {(data.guessed > 0 || data.avgTime > 0) && (
-                                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-neutral-500">
-                                      {data.avgTime > 0 && (
-                                        <span>Avg {formatTime(Math.round(data.avgTime))}</span>
-                                      )}
-                                      {data.guessed > 0 && <span>{data.guessed} guessed</span>}
-                                    </div>
-                                  )}
+                                  <div className="min-h-4">
+                                    {data.guessed > 0 && (
+                                      <div className="text-[11px] text-neutral-500">
+                                        {data.guessed} guessed
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                                 <div className="shrink-0 text-right">
                                   <div className="text-[10px] uppercase tracking-wide text-neutral-500">

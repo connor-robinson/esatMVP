@@ -13,7 +13,7 @@ import { fetchPastPaperLibraryOutline } from "@/lib/papers/pastPaperLibraryData"
 import { examNameToPaperType } from '@/lib/papers/paperConfig';
 import { getQuestions } from '@/lib/supabase/questions';
 import { deriveTmuaSectionFromQuestion } from "@/lib/papers/sectionMapping";
-import { questionMatchesSelectedSections } from "@/lib/papers/paperLibrarySections";
+import { questionMatchesSelectedSections, parseMainSectionFromLabel } from "@/lib/papers/paperLibrarySections";
 import { generateSectionId } from '@/lib/papers/partIdUtils';
 import type { Paper, PaperSection, Question, ExamName } from '@/types/papers';
 import { PaperLibraryGrid } from '@/components/papers/library/PaperLibraryGrid';
@@ -71,6 +71,40 @@ function cloneMainSectionMap(
     copy.set(mainSectionName, new Set(subjects));
   });
   return copy;
+}
+
+function resolveAnchorPaperForSession(
+  catalog: Paper[],
+  selectedSections: Map<string, Set<PaperSection>>,
+  fallback: Paper,
+): Paper {
+  const activeMainSections = sortMainSectionEntries(selectedSections)
+    .filter(([, subjects]) => subjects.size > 0)
+    .map(([name]) => name);
+
+  for (const mainSection of activeMainSections) {
+    const match = catalog.find((p) => {
+      const fromPaperName = parseMainSectionFromLabel(p.paperName);
+      return fromPaperName === mainSection || p.paperName === mainSection;
+    });
+    if (match) return match;
+  }
+
+  return fallback;
+}
+
+function buildSessionPaperVariant(
+  year: number,
+  examType: string,
+  selectedSections: Map<string, Set<PaperSection>>,
+  fallbackPaperName: string,
+): string {
+  const activeMainSections = sortMainSectionEntries(selectedSections)
+    .filter(([, subjects]) => subjects.size > 0)
+    .map(([name]) => name);
+  const paperName =
+    activeMainSections.length > 0 ? activeMainSections[0] : fallbackPaperName;
+  return `${year}-${paperName}-${examType}`;
 }
 
 export default function PapersLibraryPage() {
@@ -430,7 +464,17 @@ export default function PapersLibraryPage() {
           timeLimitMinutes = Math.ceil(filteredQuestions.length * 1.48);
         }
 
-        const variantString = `${paper.examYear}-${paper.paperName}-${paper.examType}`;
+        const anchorPaper = resolveAnchorPaperForSession(
+          catalog,
+          firstPaper.selectedSections,
+          paper,
+        );
+        const variantString = buildSessionPaperVariant(
+          paper.examYear,
+          paper.examType || "Official",
+          firstPaper.selectedSections,
+          anchorPaper.paperName,
+        );
         const paperTypeName =
           examNameToPaperType(paper.examName as ExamName) || 'NSAA';
 
@@ -456,7 +500,7 @@ export default function PapersLibraryPage() {
         // Must await: startSession sets sessionId/paperId after async in-progress cleanup;
         // loadQuestions reads store state and breaks navigation if it runs too early.
         await startSession({
-          paperId: paper.id,
+          paperId: anchorPaper.id,
           paperName: paperTypeName,
           paperVariant: variantString,
           sessionName: `${paper.examName} ${paper.examYear} - ${new Date().toLocaleString()}`,
@@ -471,18 +515,18 @@ export default function PapersLibraryPage() {
             selectedPartIds.length > 0 ? selectedPartIds : undefined,
         });
 
-        await loadQuestions(paper.id);
+        await loadQuestions(anchorPaper.id);
 
         const storeAfter = usePaperSessionStore.getState();
         if (storeAfter.questionsError) {
           setError(
-            `Could not load "${paper.examName} ${paper.examYear}" (paper #${paper.id}): ${storeAfter.questionsError}`,
+            `Could not load "${paper.examName} ${paper.examYear}" (paper #${anchorPaper.id}): ${storeAfter.questionsError}`,
           );
           return;
         }
         if (!storeAfter.questions || storeAfter.questions.length === 0) {
           setError(
-            `No questions loaded for "${paper.examName} ${paper.examYear}" (#${paper.id}). Try different sections or contact support.`,
+            `No questions loaded for "${paper.examName} ${paper.examYear}" (#${anchorPaper.id}). Try different sections or contact support.`,
           );
           return;
         }

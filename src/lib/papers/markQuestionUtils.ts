@@ -88,3 +88,56 @@ export function getSessionQuestionCount(
   }
   return questionRange.end - questionRange.start + 1;
 }
+
+const MAIN_SECTION_DISPLAY_ORDER = [
+  "Section 1",
+  "Section 2",
+  "Paper 1",
+  "Paper 2",
+] as const;
+
+function parseMainSectionToken(token: string): string | null {
+  const t = token.toLowerCase();
+  if (t === "section1") return "Section 1";
+  if (t === "section2") return "Section 2";
+  if (t === "paper1") return "Paper 1";
+  if (t === "paper2") return "Paper 2";
+  return null;
+}
+
+/** Main exam sections (Section 1 / Section 2) encoded in library part IDs. */
+export function mainSectionsFromPartIds(partIds: string[]): string[] {
+  const found = new Set<string>();
+  for (const id of partIds) {
+    const match = id.match(/-(Section\d|Paper\d)-/i);
+    if (!match) continue;
+    const label = parseMainSectionToken(match[1]);
+    if (label) found.add(label);
+  }
+  return MAIN_SECTION_DISPLAY_ORDER.filter((s) => found.has(s));
+}
+
+/** Human-readable session variant for mark/overview headers. */
+export function formatSessionVariantLabel(opts: {
+  partIds: string[];
+  paperVariant: string;
+  examType?: string | null;
+}): string {
+  const fromParts = mainSectionsFromPartIds(opts.partIds);
+  const examType =
+    opts.examType?.trim() ||
+    opts.paperVariant.split("-").pop()?.trim() ||
+    "Official";
+
+  if (fromParts.length > 0) {
+    return `${fromParts.join(" · ")} ${examType}`;
+  }
+
+  const v = (opts.paperVariant || "").trim();
+  if (!v) return "";
+  const parts = v.split("-").map((s) => s.trim()).filter(Boolean);
+  if (parts.length < 2) return v;
+  const yearStr = parts[0];
+  const filtered = parts.filter((p, idx) => !(idx === 0 && p === yearStr));
+  return filtered.join(" ");
+}

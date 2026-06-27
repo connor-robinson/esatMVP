@@ -394,6 +394,25 @@ export async function getConversionRows(tableId: number) {
   }
 }
 
+/** Load conversion rows keyed by paper id (for multi-section NSAA/ENGAA sessions). */
+export async function loadConversionRowsByPaperIds(
+  paperIds: number[],
+): Promise<Map<number, ConversionRow[]>> {
+  const result = new Map<number, ConversionRow[]>();
+  const uniqueIds = [...new Set(paperIds.filter((id) => Number.isFinite(id)))];
+
+  for (const paperId of uniqueIds) {
+    const table = await getConversionTable(paperId);
+    if (!table) continue;
+    const rows = await getConversionRows(table.id);
+    if (rows.length > 0) {
+      result.set(paperId, rows);
+    }
+  }
+
+  return result;
+}
+
 // Find a fallback conversion table for the same exam, year, and exam type when the current paper lacks one
 export async function findFallbackConversionTable(examName: ExamName, examYear: number, examType?: ExamType) {
   try {
