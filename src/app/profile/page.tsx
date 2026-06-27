@@ -21,6 +21,7 @@ import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
 import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
 import { cn } from "@/lib/utils";
+import { getExamAccentFillClass } from "@/config/colors";
 import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import type { ExamType } from "@/lib/profile/countdown";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -76,7 +77,7 @@ export default function ProfilePage() {
   const [preferences, setPreferences] = useState<Preferences>({
     username: null,
     last_username_change: null,
-    exam_preference: null,
+    exam_preference: "ESAT",
     esat_subjects: [],
     is_early_applicant: true,
     has_extra_time: false,
@@ -127,19 +128,32 @@ export default function ProfilePage() {
         const response = await fetch("/api/profile/preferences");
         if (response.ok) {
           const data = await response.json();
+          const examPreference =
+            data.exam_preference === "ESAT" || data.exam_preference === "TMUA"
+              ? data.exam_preference
+              : "ESAT";
+
           setPreferences({
             username: data.username || null,
             last_username_change: data.last_username_change || null,
-            exam_preference: data.exam_preference || null,
+            exam_preference: examPreference,
             esat_subjects: data.esat_subjects || [],
             is_early_applicant: data.is_early_applicant ?? true,
             has_extra_time: data.has_extra_time ?? false,
             extra_time_percentage: data.extra_time_percentage ?? 25,
             has_rest_breaks: data.has_rest_breaks ?? false,
-            font_size: data.font_size || 'medium',
+            font_size: data.font_size || "medium",
             reduced_motion: data.reduced_motion ?? false,
             dark_mode: data.dark_mode ?? false,
           });
+
+          if (!data.exam_preference) {
+            void fetch("/api/profile/preferences", {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ exam_preference: examPreference }),
+            });
+          }
           
           // Show username setup if username is missing
           if (!data.username) {
@@ -173,7 +187,16 @@ export default function ProfilePage() {
       }
 
       const data = await response.json();
-      setPreferences((prev) => ({ ...prev, ...data }));
+      setPreferences((prev) => {
+        const next = { ...prev };
+        for (const key of Object.keys(updates) as Array<keyof Preferences>) {
+          if (key in data) {
+            (next as Record<keyof Preferences, Preferences[keyof Preferences]>)[key] =
+              data[key];
+          }
+        }
+        return next;
+      });
       
       if (updates.exam_preference !== undefined) {
         router.refresh();
@@ -450,7 +473,11 @@ export default function ProfilePage() {
       alert("Please select exactly 3 subjects");
       return;
     }
-    await savePreferences({ esat_subjects: localESATSubjects }, "esat_subjects");
+    const examPreference = preferences.exam_preference ?? "ESAT";
+    await savePreferences(
+      { esat_subjects: localESATSubjects, exam_preference: examPreference },
+      "esat_subjects",
+    );
   };
 
   if (!session?.user) {
@@ -625,6 +652,37 @@ export default function ProfilePage() {
           : "You can change your username now";
       })()
     : undefined;
+
+  const ChoicePillGroup = ({
+    value,
+    onChange,
+    options,
+  }: {
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string; selectedClass: string }[];
+  }) => (
+    <div className="flex flex-wrap items-center gap-2">
+      {options.map((option) => {
+        const isSelected = value === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "inline-flex min-h-[42px] items-center rounded-organic-md px-4 py-2.5 text-sm font-medium outline-none transition-colors duration-fast ease-signature",
+              isSelected
+                ? cn("font-semibold", option.selectedClass)
+                : "bg-surface-mid text-text-muted hover:bg-surface-neutral hover:text-text",
+            )}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   const RadioGroup = ({
     value,
@@ -934,8 +992,8 @@ export default function ProfilePage() {
                   />
                   <div className="space-y-6 px-5 py-5 sm:px-7">
                     <SettingItem label="Exam Type">
-                      <RadioGroup
-                        value={preferences.exam_preference || ''}
+                      <ChoicePillGroup
+                        value={preferences.exam_preference ?? "ESAT"}
                         onChange={(value) => {
                           const newPref = value as ExamType;
                           setLocalESATSubjects([]);
@@ -950,19 +1008,26 @@ export default function ProfilePage() {
                           );
                         }}
                         options={[
-                          { value: 'ESAT', label: 'ESAT' },
-                          { value: 'TMUA', label: 'TMUA' },
+                          {
+                            value: "ESAT",
+                            label: "ESAT",
+                            selectedClass: getExamAccentFillClass("ESAT"),
+                          },
+                          {
+                            value: "TMUA",
+                            label: "TMUA",
+                            selectedClass: getExamAccentFillClass("TMUA"),
+                          },
                         ]}
-                        selectedTone="secondary"
                       />
                     </SettingItem>
 
-                    {preferences.exam_preference === 'ESAT' && (
-                      <SettingItem 
-                        label="ESAT Subjects" 
+                    {preferences.exam_preference === "ESAT" && (
+                      <SettingItem
+                        label="ESAT Subjects"
                         description={`Select exactly 3 subjects (${localESATSubjects.length}/3 selected)`}
                       >
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           {ESAT_SUBJECTS.map((subject) => {
                             const isSelected = localESATSubjects.includes(subject);
                             return (
@@ -989,52 +1054,56 @@ export default function ProfilePage() {
                               </button>
                             );
                           })}
-                        </div>
-                        <div className="mt-4 space-y-2">
-                          {localESATSubjects.length !== 3 && (
-                            <div className="flex items-center gap-2 text-xs text-error">
-                              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                              <span>Please select exactly three subjects</span>
-                            </div>
-                          )}
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="sm"
                             onClick={handleSaveESATSubjects}
-                            disabled={localESATSubjects.length !== 3 || saving === "esat_subjects"}
-                            className={cn(
-                              "w-full rounded-organic-md px-5 py-3 font-medium outline-none transition-colors duration-fast ease-signature",
-                              localESATSubjects.length === 3 && saving !== "esat_subjects"
-                                ? "bg-surface-mid text-text hover:bg-surface-neutral"
-                                : "cursor-not-allowed bg-surface-elevated/80 text-text-disabled",
-                            )}
+                            disabled={
+                              localESATSubjects.length !== 3 ||
+                              saving === "esat_subjects"
+                            }
+                            className="min-h-[42px]"
                           >
-                            {saving === "esat_subjects" ? (
-                              <div className="flex items-center justify-center gap-2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                                <span>Saving...</span>
-                              </div>
-                            ) : (
-                              <span>Save Subjects</span>
-                            )}
-                          </button>
+                            {saving === "esat_subjects" ? "Saving…" : "Save Subjects"}
+                          </Button>
                         </div>
+                        {localESATSubjects.length !== 3 && (
+                          <div className="mt-2 flex items-center gap-2 text-xs text-error">
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                            <span>Please select exactly three subjects</span>
+                          </div>
+                        )}
                       </SettingItem>
                     )}
 
                     <div className="pt-6">
                       <SettingItem label="Application Type">
-                        <RadioGroup
-                          value={preferences.is_early_applicant ? 'early' : 'late'}
+                        <ChoicePillGroup
+                          value={preferences.is_early_applicant ? "early" : "late"}
                           onChange={(value) => {
-                            const isEarly = value === 'early';
-                            setPreferences((prev) => ({ ...prev, is_early_applicant: isEarly }));
-                            savePreferences({ is_early_applicant: isEarly }, "applicant_type");
+                            const isEarly = value === "early";
+                            setPreferences((prev) => ({
+                              ...prev,
+                              is_early_applicant: isEarly,
+                            }));
+                            savePreferences(
+                              { is_early_applicant: isEarly },
+                              "applicant_type",
+                            );
                           }}
                           options={[
-                            { value: 'early', label: 'Early Applicant' },
-                            { value: 'late', label: 'Late Applicant' },
+                            {
+                              value: "early",
+                              label: "Early Applicant",
+                              selectedClass: "bg-accent text-background hover:opacity-90",
+                            },
+                            {
+                              value: "late",
+                              label: "Late Applicant",
+                              selectedClass: "bg-biology text-background hover:opacity-90",
+                            },
                           ]}
-                          selectedTone="accent"
                         />
                       </SettingItem>
                     </div>

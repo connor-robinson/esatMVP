@@ -153,16 +153,30 @@ export async function PATCH(request: NextRequest) {
           { status: 400 }
         );
       }
+    }
 
-      // Validate ESAT subjects if exam_preference is ESAT
-      if (exam_preference === 'ESAT' && esat_subjects !== undefined) {
+    // Validate ESAT subjects when they are being updated
+    if (esat_subjects !== undefined) {
+      let effectiveExamPreference = exam_preference as string | null | undefined;
+
+      if (effectiveExamPreference === undefined) {
+        const { data: currentProfile } = await supabase
+          .from('profiles')
+          .select('exam_preference')
+          .eq('id', session.user.id)
+          .single() as { data: { exam_preference: string | null } | null };
+
+        effectiveExamPreference = currentProfile?.exam_preference ?? null;
+      }
+
+      if (effectiveExamPreference === 'ESAT') {
         if (!Array.isArray(esat_subjects) || esat_subjects.length !== 3) {
           return NextResponse.json(
             { error: 'ESAT requires exactly 3 subjects' },
             { status: 400 }
           );
         }
-        
+
         const validSubjects = ['Math 1', 'Math 2', 'Chemistry', 'Biology', 'Physics'];
         const invalidSubjects = esat_subjects.filter((s: string) => !validSubjects.includes(s));
         if (invalidSubjects.length > 0) {
