@@ -37,9 +37,11 @@ interface PaperColumnProps {
 }
 
 function PaperAttemptTick({
+  examName,
   scope,
   status,
 }: {
+  examName: string;
   scope: "paper" | "section";
   status: "partial" | "complete";
 }) {
@@ -51,9 +53,9 @@ function PaperAttemptTick({
       : "Partially attempted";
 
   return (
-    <span className="group/attempt relative inline-flex shrink-0 items-center justify-center">
+    <span className="group/attempt relative inline-flex h-5 w-5 shrink-0 items-center justify-center">
       <Check
-        className="h-3.5 w-3.5 text-primary"
+        className={cn("h-3.5 w-3.5", getExamAccentTextClass(examName))}
         strokeWidth={2.75}
         aria-hidden
       />
@@ -275,21 +277,10 @@ export function PaperColumn({
           />
         </button>
 
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <span
-            className={cn(
-              "truncate text-sm font-semibold",
-              getExamAccentTextClass(paper.examName),
-            )}
-          >
+        <div className="flex min-w-0 flex-1 items-center">
+          <span className="truncate text-sm font-semibold text-text">
             {paper.examName} {paper.examYear}
           </span>
-          {paperCompletionStatus !== "none" && (
-            <PaperAttemptTick
-              scope="paper"
-              status={paperCompletionStatus === "complete" ? "complete" : "partial"}
-            />
-          )}
         </div>
 
         {paper.examType && (
@@ -298,23 +289,35 @@ export function PaperColumn({
           </span>
         )}
 
-        <button
-          type="button"
-          onClick={() => void handleAddPaperClick()}
-          disabled={isAddingPaper}
-          className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text",
-            isAddingPaper && "cursor-wait opacity-70",
-          )}
-          aria-label="Add paper to session"
-          aria-busy={isAddingPaper}
-        >
-          {isAddingPaper ? (
-            <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+        <div className="flex w-[4.75rem] shrink-0 items-center justify-end gap-1.5">
+          {paperCompletionStatus !== "none" ? (
+            <PaperAttemptTick
+              examName={paper.examName}
+              scope="paper"
+              status={paperCompletionStatus === "complete" ? "complete" : "partial"}
+            />
           ) : (
-            <Plus className="h-4 w-4" strokeWidth={2} />
+            <span className="h-5 w-5 shrink-0" aria-hidden />
           )}
-        </button>
+
+          <button
+            type="button"
+            onClick={() => void handleAddPaperClick()}
+            disabled={isAddingPaper}
+            className={cn(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-surface-dark text-text-muted transition-colors hover:bg-surface-neutral hover:text-text",
+              isAddingPaper && "cursor-wait opacity-70",
+            )}
+            aria-label="Add paper to session"
+            aria-busy={isAddingPaper}
+          >
+            {isAddingPaper ? (
+              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
+            ) : (
+              <Plus className="h-4 w-4" strokeWidth={2} />
+            )}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence initial={false}>
@@ -371,23 +374,31 @@ export function PaperColumn({
                         {mainSection.name}
                       </span>
 
-                      {allDone && (
-                        <PaperAttemptTick scope="section" status="complete" />
-                      )}
+                      <div className="flex w-[4.75rem] shrink-0 items-center justify-end gap-1.5">
+                        {allDone ? (
+                          <PaperAttemptTick
+                            examName={paper.examName}
+                            scope="section"
+                            status="complete"
+                          />
+                        ) : (
+                          <span className="h-5 w-5 shrink-0" aria-hidden />
+                        )}
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleAddSectionClick(
-                            mainSection.name,
-                            mainSection.subjectParts,
-                          )
-                        }
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
-                        aria-label={`Add ${mainSection.name}`}
-                      >
-                        <Plus className="h-4 w-4" strokeWidth={2} />
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleAddSectionClick(
+                              mainSection.name,
+                              mainSection.subjectParts,
+                            )
+                          }
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-mid hover:text-text"
+                          aria-label={`Add ${mainSection.name}`}
+                        >
+                          <Plus className="h-4 w-4" strokeWidth={2} />
+                        </button>
+                      </div>
                     </div>
                   );
                 })

@@ -192,17 +192,17 @@ export const cssVar = {
 } as const;
 
 /**
- * Section 1 / 2 number chip — exam-tinted fill, neutral label (library rows).
+ * Section 1 / 2 number chip — exam-colored pill, neutral digit (library rows).
  */
 export function getExamSectionNumberBadgeClass(examName: string): string {
   const key = examName.trim().toUpperCase();
-  if (key === "ENGAA") return "bg-biology/25 text-text";
-  if (key === "NSAA") return "bg-accent/25 text-text";
-  if (key === "TMUA") return "bg-tmua-accent/25 text-text";
-  if (key === "ESAT") return "bg-maths/25 text-text";
-  if (key === "PAT") return "bg-chemistry/25 text-text";
-  if (key === "MAT") return "bg-maths/25 text-text";
-  return "bg-maths/25 text-text";
+  if (key === "ENGAA") return "bg-biology text-text";
+  if (key === "NSAA") return "bg-accent text-text";
+  if (key === "TMUA") return "bg-tmua-accent text-text";
+  if (key === "ESAT") return "bg-maths text-text";
+  if (key === "PAT") return "bg-chemistry text-text";
+  if (key === "MAT") return "bg-maths text-text";
+  return "bg-accent text-text";
 }
 
 /** Borderless icon tile for session history rows (theme tokens only). */
