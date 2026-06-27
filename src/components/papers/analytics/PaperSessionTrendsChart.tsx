@@ -13,8 +13,11 @@ import {
 } from 'recharts';
 import { ChevronDown } from 'lucide-react';
 import type { EnrichedPaperSession } from '@/lib/papers/analytics';
+import {
+  percentileToChartValue,
+  extractYearFromVariant,
+} from '@/lib/papers/analytics';
 import { buildSmoothedTrendSeries } from '@/lib/analytics/sessionTrendSmoothing';
-import { extractYearFromVariant } from '@/lib/papers/analytics';
 import { cn } from '@/lib/utils';
 import { analyticsSelectClass } from './styles';
 
@@ -53,9 +56,9 @@ type ChartRow = {
   sessionNumber: number;
   dateTs: number;
   tooltipLabel: string;
-  scorePct: number | null;
+  accuracy: number | null;
   percentile: number | null;
-  scoreTrend: number | null;
+  accuracyTrend: number | null;
   percentileTrend: number | null;
   showSmoothedTrend: boolean;
 };
@@ -75,16 +78,16 @@ function PaperTrendTooltip({
     <div className="rounded-organic-md border border-border bg-surface-elevated px-3 py-2.5 text-xs shadow-lg">
       <p className="mb-2 font-medium text-text-muted">{row.tooltipLabel}</p>
       <div className="space-y-1 text-text">
-        {row.scorePct != null && (
+        {row.accuracy != null && (
           <p>
-            <span className="text-text-muted">Score: </span>
+            <span className="text-text-muted">Accuracy: </span>
             <span className="font-semibold text-[var(--color-maths)]">
-              {row.scorePct.toFixed(1)}%
+              {row.accuracy.toFixed(1)}%
             </span>
-            {row.showSmoothedTrend && row.scoreTrend != null && (
+            {row.showSmoothedTrend && row.accuracyTrend != null && (
               <span className="text-text-muted">
                 {' '}
-                (trend {row.scoreTrend.toFixed(1)}%)
+                (trend {row.accuracyTrend.toFixed(1)}%)
               </span>
             )}
           </p>
@@ -92,7 +95,7 @@ function PaperTrendTooltip({
         {row.percentile != null && (
           <p>
             <span className="text-text-muted">Percentile: </span>
-            <span className="font-semibold text-[var(--color-accent)]">
+            <span className="font-semibold text-[var(--color-warning)]">
               {row.percentile.toFixed(1)}th
             </span>
             {row.showSmoothedTrend && row.percentileTrend != null && (
@@ -116,10 +119,14 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
       .filter((s) => s.startedAt && s.scorePercentage != null)
       .sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0));
 
-    const scorePct = list.map((s) => s.scorePercentage);
-    const percentile = list.map((s) => s.percentile);
-    const { accuracyTrend: scoreTrend, speedTrend: percentileTrend } =
-      buildSmoothedTrendSeries(scorePct, percentile);
+    const accuracy = list.map((s) => s.scorePercentage);
+    const percentile = list.map((s) =>
+      s.percentile != null
+        ? percentileToChartValue(s.percentile, s.percentileSource)
+        : null,
+    );
+    const { accuracyTrend, speedTrend: percentileTrend } =
+      buildSmoothedTrendSeries(accuracy, percentile);
 
     const showSmoothedTrend = list.length >= 3;
 
@@ -134,30 +141,14 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
           xAxisMode === 'session'
             ? `Session #${sessionNumber} · ${paper} · ${formatTooltipDate(dateTs)}`
             : `${paper} · ${formatTooltipDate(dateTs)}`,
-        scorePct: scorePct[index],
+        accuracy: accuracy[index],
         percentile: percentile[index],
-        scoreTrend: scoreTrend[index],
+        accuracyTrend: accuracyTrend[index],
         percentileTrend: percentileTrend[index],
         showSmoothedTrend,
       };
     });
   }, [sessions, xAxisMode]);
-
-  const percentileDomain = useMemo((): [number, number] => {
-    const values = chartData.flatMap((d) =>
-      [d.percentileTrend, d.percentile].filter(
-        (v): v is number => v != null,
-      ),
-    );
-    if (values.length === 0) return [0, 100];
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const padding = Math.max((max - min) * 0.15, 5);
-    return [
-      Math.max(0, Math.floor(min - padding)),
-      Math.min(100, Math.ceil(max + padding)),
-    ];
-  }, [chartData]);
 
   const useSmoothedTrend = chartData.length >= 3;
 
@@ -188,7 +179,7 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
         </div>
         {useSmoothedTrend && (
           <p className="text-xs text-text-muted sm:ml-auto">
-            Dots are session scores; lines show smoothed trend.
+            Smoothed trend; unusual sessions are de-emphasised.
           </p>
         )}
       </div>
@@ -238,25 +229,33 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
             />
           )}
           <YAxis
-            yAxisId="score"
+            yAxisId="accuracy"
             domain={[0, 100]}
             tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }}
             tickLine={false}
             axisLine={{ stroke: 'var(--color-border-subtle)' }}
             tickFormatter={(v) => `${v}%`}
             width={44}
+            label={{
+              value: 'Accuracy',
+              angle: -90,
+              position: 'insideLeft',
+              fill: 'var(--color-text-subtle)',
+              fontSize: 10,
+              dx: -4,
+            }}
           />
           <YAxis
             yAxisId="percentile"
             orientation="right"
-            domain={percentileDomain}
+            domain={[0, 100]}
             tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }}
             tickLine={false}
             axisLine={{ stroke: 'var(--color-border-subtle)' }}
             tickFormatter={(v) => `${v}`}
             width={44}
             label={{
-              value: 'pctile',
+              value: 'Percentile',
               angle: -90,
               position: 'insideRight',
               fill: 'var(--color-text-subtle)',
@@ -271,22 +270,22 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
           {useSmoothedTrend ? (
             <>
               <Line
-                yAxisId="score"
+                yAxisId="accuracy"
                 type="basis"
-                dataKey="scoreTrend"
+                dataKey="accuracyTrend"
                 stroke="var(--color-maths)"
                 strokeWidth={2.5}
                 dot={false}
                 activeDot={false}
                 connectNulls
-                name="Score trend"
+                name="Accuracy trend"
                 legendType="line"
               />
               <Line
                 yAxisId="percentile"
                 type="basis"
                 dataKey="percentileTrend"
-                stroke="var(--color-accent)"
+                stroke="var(--color-warning)"
                 strokeWidth={2.5}
                 dot={false}
                 activeDot={false}
@@ -295,25 +294,25 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
                 legendType="line"
               />
               <Line
-                yAxisId="score"
+                yAxisId="accuracy"
                 type="monotone"
-                dataKey="scorePct"
+                dataKey="accuracy"
                 stroke="var(--color-maths)"
                 strokeWidth={0}
                 dot={{ r: 3, fill: 'var(--color-maths)' }}
                 activeDot={{ r: 5, fill: 'var(--color-maths)' }}
                 connectNulls
-                name="Score %"
+                name="Accuracy"
                 legendType="circle"
               />
               <Line
                 yAxisId="percentile"
                 type="monotone"
                 dataKey="percentile"
-                stroke="var(--color-accent)"
+                stroke="var(--color-warning)"
                 strokeWidth={0}
-                dot={{ r: 3, fill: 'var(--color-accent)' }}
-                activeDot={{ r: 5, fill: 'var(--color-accent)' }}
+                dot={{ r: 3, fill: 'var(--color-warning)' }}
+                activeDot={{ r: 5, fill: 'var(--color-warning)' }}
                 connectNulls
                 name="Percentile"
                 legendType="circle"
@@ -322,23 +321,23 @@ export function PaperSessionTrendsChart({ sessions }: PaperSessionTrendsChartPro
           ) : (
             <>
               <Line
-                yAxisId="score"
+                yAxisId="accuracy"
                 type="monotone"
-                dataKey="scorePct"
+                dataKey="accuracy"
                 stroke="var(--color-maths)"
                 strokeWidth={2}
                 dot={{ r: 3, fill: 'var(--color-maths)' }}
                 activeDot={{ r: 5 }}
                 connectNulls
-                name="Score %"
+                name="Accuracy"
               />
               <Line
                 yAxisId="percentile"
                 type="monotone"
                 dataKey="percentile"
-                stroke="var(--color-accent)"
+                stroke="var(--color-warning)"
                 strokeWidth={2}
-                dot={{ r: 3, fill: 'var(--color-accent)' }}
+                dot={{ r: 3, fill: 'var(--color-warning)' }}
                 activeDot={{ r: 5 }}
                 connectNulls
                 name="Percentile"

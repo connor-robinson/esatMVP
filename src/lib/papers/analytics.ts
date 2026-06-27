@@ -621,7 +621,9 @@ export function calculateTimeManagementInsights(
 
 export type EnrichedPaperSession = PaperSession & {
   scorePercentage: number | null;
+  /** Raw percentile rank (official cumulative % or relative session rank). */
   percentile: number | null;
+  percentileSource: 'official' | 'relative' | null;
 };
 
 export function topicToPaperSections(topic: string): PaperSection[] {
@@ -648,6 +650,39 @@ export function topicToPaperSections(topic: string): PaperSection[] {
   }
 }
 
+/**
+ * Average official exam percentile (cumulative % at or below score) from stored section data.
+ * Higher values mean stronger performance vs the wider candidate pool.
+ */
+export function extractOfficialSessionPercentile(
+  session: PaperSession,
+): number | null {
+  const sectionPercentiles = session.sectionPercentiles;
+  if (!sectionPercentiles) return null;
+
+  const values = Object.entries(sectionPercentiles)
+    .filter(([key]) => key !== 'SECTION')
+    .map(([, entry]) => entry.percentile)
+    .filter((p): p is number => p != null && Number.isFinite(p));
+
+  if (values.length === 0) return null;
+
+  const avg = values.reduce((sum, p) => sum + p, 0) / values.length;
+  return Math.round(Math.max(0, Math.min(100, avg)) * 10) / 10;
+}
+
+/**
+ * Map stored percentile to chart height (0–100, higher = better).
+ * Official tables store cumulative % ≤ score (higher = better).
+ * Relative session rank is also higher-is-better; both plot directly on 0–100.
+ */
+export function percentileToChartValue(
+  percentile: number,
+  _source: EnrichedPaperSession['percentileSource'],
+): number {
+  return Math.max(0, Math.min(100, percentile));
+}
+
 export function enrichPaperSessionsWithPercentiles(
   sessions: PaperSession[],
 ): EnrichedPaperSession[] {
@@ -669,15 +704,24 @@ export function enrichPaperSessionsWithPercentiles(
     const scorePercentage = session.score
       ? (session.score.correct / session.score.total) * 100
       : null;
+    const officialPercentile = extractOfficialSessionPercentile(session);
     const allScoresForPaper = scoresByPaper.get(session.paperName) || [];
-    const percentile =
+    const relativePercentile =
       scorePercentage !== null
         ? calculatePercentileFromPaperDistribution(
             scorePercentage,
             allScoresForPaper,
           )
         : null;
-    return { ...session, scorePercentage, percentile };
+    const percentile =
+      officialPercentile ?? relativePercentile;
+    const percentileSource: EnrichedPaperSession['percentileSource'] =
+      officialPercentile != null
+        ? 'official'
+        : relativePercentile != null
+          ? 'relative'
+          : null;
+    return { ...session, scorePercentage, percentile, percentileSource };
   });
 }
 

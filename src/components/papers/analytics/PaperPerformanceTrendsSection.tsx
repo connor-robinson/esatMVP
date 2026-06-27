@@ -83,7 +83,7 @@ export function PaperPerformanceTrendsSection({
             Performance Trends
           </h2>
           <p className="mt-1 text-sm text-text-muted">
-            Score and relative percentile — dots show each session, lines show trend
+            Accuracy and percentile by session — dots show each session, lines show trend
           </p>
         </div>
         <ChevronDown
