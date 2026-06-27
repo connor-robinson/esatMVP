@@ -19,7 +19,6 @@ import { usePaperSessionStore } from "@/store/paperSessionStore";
 import {
   cssVar,
   getMarkAnswerBadgeClass,
-  getMarkAnswerSummaryPanelClass,
   getMarkReviewToggleActiveClass,
   getMarkSessionPartHeaderClass,
   getSectionBarTrackClass,
@@ -2100,34 +2099,26 @@ export default function PapersMarkPage() {
 
               {/* Answers summary */}
               <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-                <div
-                  className={cn(
-                    "rounded-organic-md border border-border-subtle p-3",
-                    guessedFlags[selectedIndex] && getMarkAnswerSummaryPanelClass("guess"),
-                    !guessedFlags[selectedIndex] &&
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === true &&
-                      getMarkAnswerSummaryPanelClass("correct"),
-                    !guessedFlags[selectedIndex] &&
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) === false &&
-                      getMarkAnswerSummaryPanelClass("incorrect"),
-                    !guessedFlags[selectedIndex] &&
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== true &&
-                      (derivedCorrectFlags[selectedIndex] ?? correctFlags[selectedIndex]) !== false &&
-                      "bg-surface-mid text-text",
-                  )}
-                >
-                  <div className="text-xs opacity-90">Your answer</div>
-                  <div className="mt-1 text-sm font-medium">{answers[selectedIndex]?.choice ?? "—"}</div>
-                </div>
-                <div className={cn("rounded-organic-md border border-border-subtle p-3", getMarkAnswerSummaryPanelClass("correct"))}>
-                  <div className="text-xs opacity-90">Correct answer</div>
-                  <div className="mt-1 text-sm font-medium">
-                    {(usePaperSessionStore.getState().questions[selectedIndex]?.answerLetter || "").toUpperCase()}
+                <div>
+                  <div className="text-xs text-text-muted">Your answer</div>
+                  <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
+                    {answers[selectedIndex]?.choice ?? "—"}
                   </div>
                 </div>
-                <div className="rounded-organic-md border border-border-subtle bg-surface-mid p-3 text-text">
+                <div>
+                  <div className="text-xs text-text-muted">Correct answer</div>
+                  <div className="mt-1.5 inline-flex min-h-[1.75rem] min-w-[2.25rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
+                    {(
+                      usePaperSessionStore.getState().questions[selectedIndex]
+                        ?.answerLetter || ""
+                    ).toUpperCase() || "—"}
+                  </div>
+                </div>
+                <div>
                   <div className="text-xs text-text-muted">Time taken</div>
-                  <div className="mt-1 text-sm font-medium">{formatTime(perQuestionSec[selectedIndex] || 0)}</div>
+                  <div className="mt-1.5 inline-flex min-h-[1.75rem] items-center justify-center rounded-full bg-surface-mid px-3 py-1 text-sm font-medium tabular-nums text-text">
+                    {formatTime(perQuestionSec[selectedIndex] || 0)}
+                  </div>
                 </div>
               </div>
 
