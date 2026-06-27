@@ -124,15 +124,8 @@ export function SettingsPricingPanel() {
   }, []);
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="mb-1 text-lg font-semibold text-text">Pricing</h2>
-        <p className="text-sm text-text-muted">
-          Choose a plan that fits your exam timeline.
-        </p>
-      </div>
-
-      <div className="flex max-w-md flex-wrap items-center gap-3 rounded-organic-xl bg-surface-elevated px-4 py-3">
+    <div className="space-y-6">
+      <div className="flex max-w-md flex-wrap items-center gap-3 rounded-organic-xl bg-surface-subtle px-4 py-3">
         <label className="text-sm text-text-subtle">I&apos;m preparing for</label>
         <input
           type="number"

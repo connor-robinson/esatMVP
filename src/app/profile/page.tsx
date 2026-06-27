@@ -7,7 +7,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabaseClient, useSupabaseSession } from "@/components/auth/SupabaseSessionProvider";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Container } from "@/components/layout/Container";
@@ -22,26 +21,7 @@ import { ChangeEmailModal } from "@/components/profile/ChangeEmailModal";
 import { ResetDataModal } from "@/components/profile/ResetDataModal";
 import { UsernameSetupModal } from "@/components/profile/UsernameSetupModal";
 import { cn } from "@/lib/utils";
-import { 
-  LogOut, 
-  Trash2, 
-  Download, 
-  RotateCcw, 
-  Mail, 
-  Lock, 
-  User,
-  BookOpen, 
-  Eye,
-  ChevronRight,
-  CheckCircle2,
-  AlertCircle,
-  Sun,
-  Moon,
-  Edit3,
-  X,
-  Check,
-  CreditCard
-} from "lucide-react";
+import { CheckCircle2, AlertCircle, Check } from "lucide-react";
 import type { ExamType } from "@/lib/profile/countdown";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -62,16 +42,28 @@ type Preferences = {
 type SettingSection = {
   id: string;
   title: string;
-  icon: React.ReactNode;
 };
 
 const SETTING_SECTIONS: SettingSection[] = [
-  { id: 'account', title: 'Account', icon: <User className="w-4 h-4" /> },
-  { id: 'exam', title: 'Exam & Practice', icon: <BookOpen className="w-4 h-4" /> },
-  { id: 'pricing', title: 'Pricing', icon: <CreditCard className="w-4 h-4" /> },
-  { id: 'data', title: 'Data Management', icon: <Download className="w-4 h-4" /> },
-  { id: 'appearance', title: 'Appearance', icon: <Eye className="w-4 h-4" /> },
+  { id: "account", title: "Account" },
+  { id: "exam", title: "Exam & Practice" },
+  { id: "pricing", title: "Pricing" },
+  { id: "data", title: "Data Management" },
+  { id: "appearance", title: "Appearance" },
 ];
+
+function getDisplayInitials(
+  name: string | null | undefined,
+  email?: string,
+): string {
+  const source = (name || email || "?").trim();
+  if (!source || source === "?") return "?";
+  const words = source.split(/\s+/);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return source.substring(0, 2).toUpperCase();
+}
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -495,6 +487,72 @@ export default function ProfilePage() {
     return null;
   };
 
+  const SettingsSectionHeader = ({
+    title,
+    description,
+  }: {
+    title: string;
+    description?: string;
+  }) => (
+    <div className="border-b border-border-subtle px-5 py-4 sm:px-7">
+      <h2 className="text-lg font-semibold text-text">{title}</h2>
+      {description && (
+        <p className="mt-0.5 text-sm text-text-muted">{description}</p>
+      )}
+    </div>
+  );
+
+  const SettingsGroup = ({
+    title,
+    children,
+  }: {
+    title?: string;
+    children: React.ReactNode;
+  }) => (
+    <div>
+      {title && (
+        <p className="px-5 pt-5 pb-1 text-sm font-semibold text-text sm:px-7">
+          {title}
+        </p>
+      )}
+      <div className="divide-y divide-border-subtle">{children}</div>
+    </div>
+  );
+
+  const SettingsRow = ({
+    label,
+    description,
+    value,
+    action,
+    children,
+  }: {
+    label: string;
+    description?: string;
+    value?: React.ReactNode;
+    action?: React.ReactNode;
+    children?: React.ReactNode;
+  }) => (
+    <div className="px-5 py-4 sm:px-7">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="min-w-0 sm:w-44 shrink-0">
+          <p className="text-sm font-medium text-text">{label}</p>
+          {description && (
+            <p className="mt-0.5 text-xs text-text-muted">{description}</p>
+          )}
+        </div>
+        {value !== undefined && (
+          <div className="min-w-0 flex-1 text-sm text-text">{value}</div>
+        )}
+        {action && (
+          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:ml-auto">
+            {action}
+          </div>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+
   const SettingItem = ({ 
     label, 
     description, 
@@ -507,10 +565,10 @@ export default function ProfilePage() {
     className?: string;
   }) => (
     <div className={cn("space-y-2", className)}>
-      <div className="space-y-1">
+      <div>
         <label className="text-sm font-medium text-text">{label}</label>
         {description && (
-          <p className="text-xs text-text-muted">{description}</p>
+          <p className="mt-0.5 text-xs text-text-muted">{description}</p>
         )}
       </div>
       {children}
@@ -553,66 +611,6 @@ export default function ProfilePage() {
           <div className="mt-1 text-xs text-text-muted">{description}</div>
         )}
       </div>
-    </div>
-  );
-
-  const accountBtnClass =
-    "h-8 shrink-0 rounded-organic-md bg-background/50 px-3 font-sans text-xs font-semibold text-text transition-all duration-fast ease-signature hover:bg-background/80 focus-visible:shadow-none active:scale-[0.98]";
-
-  const accountBtnDangerClass =
-    "h-8 shrink-0 rounded-organic-md bg-background/50 px-3 font-sans text-xs font-semibold text-error transition-all duration-fast ease-signature hover:bg-error/10 focus-visible:shadow-none active:scale-[0.98]";
-
-  const AccountSection = ({
-    title,
-    className,
-    children,
-  }: {
-    title: string;
-    className?: string;
-    children: React.ReactNode;
-  }) => (
-    <section
-      className={cn(
-        "rounded-organic-lg px-4 py-3.5 sm:px-5",
-        className,
-      )}
-    >
-      <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-text-subtle">
-        {title}
-      </p>
-      <div className="space-y-0.5">{children}</div>
-    </section>
-  );
-
-  const AccountRow = ({
-    label,
-    hint,
-    value,
-    action,
-    children,
-  }: {
-    label: string;
-    hint?: string;
-    value?: React.ReactNode;
-    action?: React.ReactNode;
-    children?: React.ReactNode;
-  }) => (
-    <div className="py-2">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className="w-20 shrink-0 text-xs font-medium text-text-muted sm:w-24">
-          {label}
-        </span>
-        {value !== undefined && (
-          <span className="min-w-0 flex-1 truncate text-sm font-medium text-text">
-            {value}
-          </span>
-        )}
-        {action && <div className="ml-auto flex shrink-0 items-center gap-2">{action}</div>}
-      </div>
-      {hint && (
-        <p className="mt-1 pl-0 text-[11px] text-text-subtle sm:pl-24">{hint}</p>
-      )}
-      {children}
     </div>
   );
 
@@ -671,209 +669,207 @@ export default function ProfilePage() {
   };
 
   return (
-    <Container size="lg" className="py-4">
-      <div className="py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-text mb-2">Settings</h1>
-          <p className="text-sm text-text-muted">Manage your account and preferences</p>
-        </div>
+    <Container size="lg" className="py-6 sm:py-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start lg:gap-10">
+        <aside className="lg:col-span-3">
+          <h1 className="text-xl font-semibold text-text sm:text-2xl">Settings</h1>
+          <p className="mt-1 text-sm text-text-muted">
+            Manage your account and preferences
+          </p>
+          <nav className="mt-5 flex flex-row flex-wrap gap-1 lg:flex-col">
+            {SETTING_SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                type="button"
+                className={cn(
+                  "rounded-organic-md px-3 py-2 text-left text-sm font-medium outline-none transition-colors duration-fast ease-signature lg:w-full lg:px-4 lg:py-2.5",
+                  activeSection === section.id
+                    ? "bg-surface-mid text-text"
+                    : "text-text-muted hover:bg-surface-subtle hover:text-text",
+                )}
+              >
+                {section.title}
+              </button>
+            ))}
+          </nav>
+        </aside>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Sidebar Navigation */}
-          <div className="lg:col-span-3">
-            <div className="space-y-1 rounded-organic-xl bg-surface-elevated/60 p-2 backdrop-blur-sm">
-              {SETTING_SECTIONS.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  type="button"
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-organic-lg px-4 py-3 text-sm font-medium outline-none transition-colors duration-fast ease-signature",
-                    activeSection === section.id
-                      ? "bg-secondary/15 text-secondary"
-                      : "text-text-muted hover:bg-surface-mid hover:text-text",
-                  )}
-                >
-                  {section.icon}
-                  <span className="flex-1 text-left">{section.title}</span>
-                  {activeSection === section.id && (
-                    <ChevronRight className="h-4 w-4 shrink-0 opacity-90" strokeWidth={2} />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-9">
-            <Card variant="elevated" className="rounded-organic-xl p-5 sm:p-6">
+        <div className="min-w-0 lg:col-span-9">
+          <div className="overflow-hidden rounded-organic-xl border border-border-subtle bg-surface">
               {/* Account Section */}
               {activeSection === 'account' && (
-                <div className="space-y-3 font-sans">
-                  <div className="mb-1">
-                    <h2 className="font-heading text-lg font-bold tracking-tight text-text sm:text-xl">
-                      Account
-                    </h2>
-                    <p className="mt-1 text-xs text-text-muted">
-                      Profile, security, and billing
-                    </p>
-                  </div>
+                <>
+                  <SettingsSectionHeader
+                    title="Account"
+                    description="Profile, security, and billing"
+                  />
 
-                  <AccountSection title="Profile" className="bg-surface-mid">
+                  <SettingsGroup title="Profile">
+                    <SettingsRow
+                      label="Avatar"
+                      description="Generated from your username"
+                      value={
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                          {getDisplayInitials(preferences.username, email)}
+                        </div>
+                      }
+                    />
+
                     {!isEditingUsername ? (
-                      <AccountRow
+                      <SettingsRow
                         label="Username"
-                        hint={usernameChangeHint}
+                        description={usernameChangeHint}
                         value={preferences.username || "Not set"}
                         action={
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="sm"
                             onClick={handleStartEdit}
                             disabled={!canEditUsername() || saving === "username"}
-                            className={cn(
-                              accountBtnClass,
-                              "inline-flex items-center gap-1.5",
-                              !canEditUsername() && "cursor-not-allowed opacity-50",
-                            )}
                           >
-                            <Edit3 className="h-3.5 w-3.5" />
                             Edit
-                          </button>
+                          </Button>
                         }
                       />
                     ) : (
-                      <div className="py-2">
-                        <div className="flex flex-wrap items-center gap-2 sm:pl-24">
-                          <div className="relative min-w-[12rem] flex-1">
-                            <Input
-                              ref={usernameInputRef}
-                              type="text"
-                              value={usernameInput}
-                              onChange={handleUsernameChange}
-                              placeholder="Username"
-                              className={cn(
-                                "h-9 py-2 pr-9 text-sm focus-visible:ring-0",
-                                usernameAvailability.available === true &&
-                                  "border-success/60 focus-visible:border-success",
-                                usernameAvailability.available === false &&
-                                  "border-error/60 focus-visible:border-error",
-                                usernameError &&
-                                  "border-error/60 focus-visible:border-error",
-                              )}
-                              disabled={saving === "username"}
-                              autoComplete="username"
-                            />
-                            <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-                              {usernameChecking && (
-                                <div className="h-3.5 w-3.5 animate-spin rounded-full border-b-2 border-primary" />
-                              )}
-                              {!usernameChecking && usernameAvailability.available === true && (
-                                <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-                              )}
-                              {!usernameChecking && usernameAvailability.available === false && (
-                                <AlertCircle className="h-3.5 w-3.5 text-error" />
-                              )}
+                      <div className="px-5 py-4 sm:px-7">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                          <p className="text-sm font-medium text-text sm:w-44 shrink-0">
+                            Username
+                          </p>
+                          <div className="min-w-0 flex-1 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="relative min-w-[12rem] flex-1">
+                                <Input
+                                  ref={usernameInputRef}
+                                  type="text"
+                                  value={usernameInput}
+                                  onChange={handleUsernameChange}
+                                  placeholder="Username"
+                                  className={cn(
+                                    "h-9 py-2 pr-9 text-sm focus-visible:ring-0",
+                                    usernameAvailability.available === true &&
+                                      "border-success/60 focus-visible:border-success",
+                                    usernameAvailability.available === false &&
+                                      "border-error/60 focus-visible:border-error",
+                                    usernameError &&
+                                      "border-error/60 focus-visible:border-error",
+                                  )}
+                                  disabled={saving === "username"}
+                                  autoComplete="username"
+                                />
+                                <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                                  {usernameChecking && (
+                                    <div className="h-3.5 w-3.5 animate-spin rounded-full border-b-2 border-primary" />
+                                  )}
+                                  {!usernameChecking && usernameAvailability.available === true && (
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+                                  )}
+                                  {!usernameChecking && usernameAvailability.available === false && (
+                                    <AlertCircle className="h-3.5 w-3.5 text-error" />
+                                  )}
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                onClick={handleCancelEdit}
+                                disabled={saving === "username"}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                onClick={handleSaveUsername}
+                                disabled={
+                                  saving === "username" ||
+                                  !isUsernameValid(usernameInput) ||
+                                  usernameAvailability.available !== true ||
+                                  usernameInput === preferences.username
+                                }
+                              >
+                                {saving === "username" ? "Saving…" : "Save"}
+                              </Button>
                             </div>
+                            {usernameAvailability.message && (
+                              <p
+                                className={cn(
+                                  "text-xs",
+                                  usernameAvailability.available === true
+                                    ? "text-success"
+                                    : "text-error",
+                                )}
+                              >
+                                {usernameAvailability.message}
+                              </p>
+                            )}
+                            {(usernameError || !canEditUsername()) && (
+                              <p className="flex items-center gap-1 text-xs text-error">
+                                <AlertCircle className="h-3 w-3 shrink-0" />
+                                {usernameError ?? "14 days needed between each change"}
+                              </p>
+                            )}
                           </div>
-                          <button
-                            type="button"
-                            onClick={handleCancelEdit}
-                            disabled={saving === "username"}
-                            className={accountBtnClass}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleSaveUsername}
-                            disabled={
-                              saving === "username" ||
-                              !isUsernameValid(usernameInput) ||
-                              usernameAvailability.available !== true ||
-                              usernameInput === preferences.username
-                            }
-                            className={cn(
-                              accountBtnClass,
-                              isUsernameValid(usernameInput) &&
-                                usernameAvailability.available === true &&
-                                usernameInput !== preferences.username
-                                ? "text-success hover:bg-success/10"
-                                : "cursor-not-allowed opacity-40",
-                            )}
-                          >
-                            {saving === "username" ? "Saving…" : "Save"}
-                          </button>
                         </div>
-                        {usernameAvailability.message && (
-                          <p
-                            className={cn(
-                              "mt-1 text-[11px] sm:pl-24",
-                              usernameAvailability.available === true
-                                ? "text-success"
-                                : "text-error",
-                            )}
-                          >
-                            {usernameAvailability.message}
-                          </p>
-                        )}
-                        {(usernameError || !canEditUsername()) && (
-                          <p className="mt-1 flex items-center gap-1 text-[11px] text-error sm:pl-24">
-                            <AlertCircle className="h-3 w-3 shrink-0" />
-                            {usernameError ?? "14 days needed between each change"}
-                          </p>
-                        )}
                       </div>
                     )}
 
-                    <AccountRow
+                    <SettingsRow
                       label="Email"
                       value={email}
                       action={
-                        <button
+                        <Button
                           type="button"
+                          variant="secondary"
+                          size="sm"
                           onClick={() => setShowChangeEmail(true)}
-                          className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
                         >
-                          <Mail className="h-3.5 w-3.5" />
                           Change
-                        </button>
+                        </Button>
                       }
                     />
-                  </AccountSection>
+                  </SettingsGroup>
 
-                  <AccountSection title="Security" className="bg-surface-neutral/60">
-                    <AccountRow
+                  <SettingsGroup title="Security">
+                    <SettingsRow
                       label="Password"
                       value="••••••••"
                       action={
-                        <button
+                        <Button
                           type="button"
+                          variant="secondary"
+                          size="sm"
                           onClick={() => setShowChangePassword(true)}
-                          className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
                         >
-                          <Lock className="h-3.5 w-3.5" />
                           Update
-                        </button>
+                        </Button>
                       }
                     />
-                  </AccountSection>
+                  </SettingsGroup>
 
-                  <AccountSection title="Billing" className="bg-surface-elevated">
-                    <AccountRow
+                  <SettingsGroup title="Billing">
+                    <SettingsRow
                       label="Plan"
                       value="Manage subscription"
                       action={
                         <>
-                          <button
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="sm"
                             onClick={() => setActiveSection("pricing")}
-                            className={accountBtnClass}
                           >
                             View plans
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
+                            variant="secondary"
+                            size="sm"
                             onClick={async () => {
                               try {
                                 const res = await fetch("/api/stripe/create-portal-link", {
@@ -887,48 +883,56 @@ export default function ProfilePage() {
                                 alert("Failed to open billing portal");
                               }
                             }}
-                            className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
                           >
-                            <CreditCard className="h-3.5 w-3.5" />
                             Billing
-                          </button>
+                          </Button>
                         </>
                       }
                     />
-                  </AccountSection>
+                  </SettingsGroup>
 
-                  <AccountSection title="Session" className="bg-surface-subtle">
-                    <div className="flex flex-wrap items-center gap-2 py-1.5">
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className={cn(accountBtnClass, "inline-flex items-center gap-1.5")}
-                      >
-                        <LogOut className="h-3.5 w-3.5" />
-                        Log out
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowDeleteAccount(true)}
-                        className={cn(accountBtnDangerClass, "inline-flex items-center gap-1.5")}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Delete account
-                      </button>
-                    </div>
-                  </AccountSection>
-                </div>
+                  <SettingsGroup title="Session">
+                    <SettingsRow
+                      label="Sign out"
+                      description="Log out of this device"
+                      action={
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={handleLogout}
+                        >
+                          Log out
+                        </Button>
+                      }
+                    />
+                    <SettingsRow
+                      label="Delete account"
+                      description="Permanently remove your account and data"
+                      action={
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setShowDeleteAccount(true)}
+                          className="text-error hover:bg-error/10 hover:text-error"
+                        >
+                          Delete account
+                        </Button>
+                      }
+                    />
+                  </SettingsGroup>
+                </>
               )}
 
               {/* Exam & Practice Section */}
               {activeSection === 'exam' && (
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Exam & Practice</h2>
-                    <p className="text-sm text-text-muted">Configure your exam type, subjects, and practice behavior</p>
-                  </div>
-
-                  <div className="space-y-6">
+                <>
+                  <SettingsSectionHeader
+                    title="Exam & Practice"
+                    description="Configure your exam type, subjects, and practice behavior"
+                  />
+                  <div className="space-y-6 px-5 py-5 sm:px-7">
                     <SettingItem label="Exam Type">
                       <RadioGroup
                         value={preferences.exam_preference || ''}
@@ -1092,35 +1096,40 @@ export default function ProfilePage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </>
               )}
 
               {/* Pricing Section */}
-              {activeSection === 'pricing' && <SettingsPricingPanel />}
+              {activeSection === 'pricing' && (
+                <>
+                  <SettingsSectionHeader
+                    title="Pricing"
+                    description="Choose a plan that fits your exam timeline."
+                  />
+                  <div className="px-5 py-5 sm:px-7">
+                    <SettingsPricingPanel />
+                  </div>
+                </>
+              )}
 
               {/* Data Management Section */}
               {activeSection === 'data' && (
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Data Management</h2>
-                    <p className="text-sm text-text-muted">Export or reset your practice data</p>
-                  </div>
-
-                  <div className="space-y-6">
+                <>
+                  <SettingsSectionHeader
+                    title="Data Management"
+                    description="Export or reset your practice data"
+                  />
+                  <div className="space-y-6 px-5 py-5 sm:px-7">
                     <SettingItem 
                       label="Export Data" 
                       description="Download all your sessions, attempts, and progress data as CSV"
                     >
                       <Button
                         variant="secondary"
+                        size="sm"
                         onClick={handleExportData}
-                        className={cn(
-                          "inline-flex items-center gap-2 rounded-organic-md bg-surface-mid px-5 py-2.5 font-medium outline-none transition-colors",
-                          "text-text hover:bg-surface-neutral",
-                        )}
                       >
-                        <span>Export Results (CSV)</span>
-                        <Download className="h-4 w-4 shrink-0" strokeWidth={2} />
+                        Export Results (CSV)
                       </Button>
                     </SettingItem>
 
@@ -1131,30 +1140,26 @@ export default function ProfilePage() {
                       >
                         <Button
                           variant="secondary"
+                          size="sm"
                           onClick={() => setShowResetData(true)}
-                          className={cn(
-                            "inline-flex items-center gap-2 rounded-organic-md bg-surface-mid px-5 py-2.5 font-medium outline-none transition-colors",
-                            "text-text hover:bg-error/10 hover:text-error",
-                          )}
+                          className="text-error hover:bg-error/10 hover:text-error"
                         >
-                          <span>Reset All Data</span>
-                          <RotateCcw className="h-4 w-4 shrink-0" strokeWidth={2} />
+                          Reset All Data
                         </Button>
                       </SettingItem>
                     </div>
                   </div>
-                </div>
+                </>
               )}
 
               {/* Appearance Section */}
               {activeSection === 'appearance' && (
-                <div className="space-y-8">
-                  <div>
-                    <h2 className="text-lg font-semibold text-text mb-1">Appearance</h2>
-                    <p className="text-sm text-text-muted">Customize the visual appearance of the app</p>
-                  </div>
-
-                  <div className="space-y-6">
+                <>
+                  <SettingsSectionHeader
+                    title="Appearance"
+                    description="Customize the visual appearance of the app"
+                  />
+                  <div className="space-y-6 px-5 py-5 sm:px-7">
                     <SettingItem label="Font Size">
                       <RadioGroup
                         value={preferences.font_size}
@@ -1182,35 +1187,22 @@ export default function ProfilePage() {
                       description="Reduce animations for better accessibility"
                     />
 
-                    <SettingItem 
-                      label="Theme" 
-                      description={`Currently using ${isDark ? 'Dark' : 'Light'} mode.`}
+                    <SettingItem
+                      label="Theme"
+                      description={`Currently using ${isDark ? "Dark" : "Light"} mode.`}
                     >
-                      <button
+                      <Button
                         type="button"
+                        variant="secondary"
+                        size="sm"
                         onClick={toggleTheme}
-                        className={cn(
-                          "inline-flex items-center gap-2 rounded-organic-md px-4 py-3 outline-none transition-colors duration-fast ease-signature",
-                          "bg-surface-mid text-text hover:bg-surface-neutral",
-                        )}
                       >
-                        {isDark ? (
-                          <>
-                            <span className="text-sm font-medium">Switch to Light Mode</span>
-                            <Sun className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} />
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-sm font-medium">Switch to Dark Mode</span>
-                            <Moon className="h-4 w-4 shrink-0 text-text-muted" strokeWidth={2} />
-                          </>
-                        )}
-                      </button>
+                        {isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                      </Button>
                     </SettingItem>
                   </div>
-                </div>
+                </>
               )}
-            </Card>
           </div>
         </div>
       </div>
