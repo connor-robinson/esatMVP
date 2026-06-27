@@ -86,7 +86,6 @@ export default function PapersMarkPage() {
     endedAt,
     timeLimitMinutes,
     setCorrectChoice,
-    setExplanation,
     setAddToDrill,
     setCorrectFlag,
     setGuessedFlag,
@@ -105,7 +104,6 @@ export default function PapersMarkPage() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<'question' | 'solution' | null>(null);
-  const [showNotesBox, setShowNotesBox] = useState(false);
   const [drillSelection, setDrillSelection] = useState<number[]>([]);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [conversionRows, setConversionRows] = useState<ConversionRow[]>([]);
@@ -115,9 +113,6 @@ export default function PapersMarkPage() {
   const [hasConversion, setHasConversion] = useState(false);
   const [croppedQuestionImage, setCroppedQuestionImage] = useState<string | null>(null);
   const [croppedAnswerImage, setCroppedAnswerImage] = useState<string | null>(null);
-  // Notes saving UX state
-  const [noteStatus, setNoteStatus] = useState<'idle' | 'typing' | 'saved'>('idle');
-  const noteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Session notes saving UX
   const [sessionNoteStatus, setSessionNoteStatus] = useState<'idle' | 'typing' | 'saved'>('idle');
   const sessionNoteDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2390,7 +2385,7 @@ export default function PapersMarkPage() {
                       return (
                         <div className="rounded-lg p-4 bg-neutral-800 overflow-y-auto transition-all duration-300" style={{ maxHeight: '72vh' }}>
                           <div className="flex items-center justify-between mb-3">
-                            <div className="text-sm font-semibold text-neutral-200">Suggested Answer</div>
+                            <div className="text-sm font-semibold text-maths">Suggested Answer</div>
                             {currentQuestionTitle && (
                               <div className="ml-3 rounded-full bg-surface-mid px-2 py-0.5 text-xs font-medium text-text-muted">
                                 {currentQuestionTitle}
@@ -2403,7 +2398,7 @@ export default function PapersMarkPage() {
                                 content={formatSolutionTextForDisplay(
                                   question.solutionText || "",
                                 )}
-                                className="text-neutral-200 text-sm"
+                                className="text-sm leading-relaxed text-maths"
                               />
                             )}
                             {question?.solutionImage && (
@@ -2445,7 +2440,7 @@ export default function PapersMarkPage() {
                     </div>
                   )}
                             {!question?.solutionText && !question?.solutionImage && (
-                              <div className="text-sm text-neutral-500">No solution available</div>
+                              <div className="text-sm text-maths/70">No solution available</div>
                             )}
                           </div>
                         </div>
@@ -2457,75 +2452,18 @@ export default function PapersMarkPage() {
 
               {/* Tip Section - Full Width Below Question/Answer */}
               {currentTip && (
-                <div className="mt-4 rounded-organic-lg border border-primary/25 bg-primary/10 p-4">
+                <div className="mt-4 rounded-lg bg-neutral-800 p-4">
                   <div className="space-y-3">
-                    {/* Tip Header */}
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="h-4 w-4 text-maths" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
-                      <div className="text-base font-bold text-primary">Tip</div>
-                  </div>
-                    {/* Tip Content */}
-                    <div className="text-sm text-neutral-200 leading-relaxed">
-                      <MathContent content={currentTip} className="text-sm text-text" />
+                      <div className="text-sm font-semibold text-maths">Tip</div>
                     </div>
+                    <MathContent content={currentTip} className="text-sm leading-relaxed text-maths" />
                   </div>
                 </div>
               )}
-
-              {/* Notes for this question & Add to Drill */}
-              <div className="mt-4 space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowNotesBox(!showNotesBox)}
-                      className="px-2.5 py-1.5 text-xs rounded-md transition bg-surface-elevated text-neutral-300 hover:bg-surface-mid flex items-center gap-1.5"
-                      aria-expanded={showNotesBox}
-                      title={showNotesBox ? "Hide note" : "Add a personal note"}
-                    >
-                      <svg className={`${showNotesBox ? 'rotate-90' : ''}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 6 15 12 9 18" />
-                      </svg>
-                      <span>{showNotesBox ? 'Hide note' : 'Add a personal note'}</span>
-                  </button>
-                    {/* Tooltip icon (same style as other tooltips on this page) */}
-                    <div className="relative group">
-                      <button className="w-5 h-5 rounded-full bg-neutral-800 text-neutral-300 flex items-center justify-center" title="Notes info">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="9" />
-                          <line x1="12" y1="16" x2="12" y2="12" />
-                          <circle cx="12" cy="8" r="1" />
-                        </svg>
-                  </button>
-                      <div className="absolute left-0 z-10 hidden group-hover:block bg-surface-elevated text-[11px] text-neutral-300 p-2 rounded-md border border-border w-64 shadow-lg">
-                        This note will appear with this question if you add it to Drill. You can review your notes in the Papers archive. Everything you type is autosaved.
-                      </div>
-                      </div>
-                    </div>
-                    {(noteStatus === 'typing' || noteStatus === 'saved') && (
-                    <div className={cn('rounded-md px-2 py-0.5 text-[11px]', noteStatus === 'saved' ? 'bg-primary/15 text-primary' : 'bg-transparent text-text-muted')}>
-                        {noteStatus === 'typing' ? 'Saving…' : 'Saved'}
-                      </div>
-                    )}
-                  </div>
-                {showNotesBox && (
-                  <div>
-                    <textarea
-                      value={answers[selectedIndex]?.explanation || ""}
-                      onChange={(e) => {
-                        setExplanation(selectedIndex, e.target.value);
-                        setNoteStatus('typing');
-                        if (noteDebounceRef.current) clearTimeout(noteDebounceRef.current);
-                        noteDebounceRef.current = setTimeout(() => setNoteStatus('saved'), 700);
-                      }}
-                      placeholder="Key takeaways for later practice… Use \\( ... \\) or \\[ ... \\] for math."
-                      className="w-full px-4 py-3 text-neutral-100 rounded-lg bg-white/5 text-sm resize-none placeholder:text-neutral-400 outline-none focus:outline-none focus:ring-0 ring-0 border-0"
-                      rows={4}
-                    />
-                  </div>
-                )}
-              </div>
               </div>
               ) : (
                 <div className="flex h-full min-h-48 items-center justify-center text-sm text-text-muted">
@@ -2611,9 +2549,7 @@ export default function PapersMarkPage() {
                   mistakeTags={mistakeTags}
                   wrongQuestions={wrongQuestions}
                   onTagChange={(index, tags) => {
-                    setNoteStatus("typing");
                     setMistakeTag(index, tags as unknown as MistakeTag);
-                    setTimeout(() => setNoteStatus("saved"), 700);
                   }}
                   onOpenQuestion={(index) =>
                     openQuestionInReview(index, "mistakes")
