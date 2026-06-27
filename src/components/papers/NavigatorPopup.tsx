@@ -86,16 +86,16 @@ export function NavigatorPopup({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between rounded-t-organic-lg bg-primary p-4 text-background md:rounded-t-organic-lg">
+        <div className="flex items-center justify-between rounded-t-organic-lg bg-accent p-4 text-neutral-900 md:rounded-t-organic-lg">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <h3 className="text-lg font-semibold text-white uppercase tracking-wider">Navigator - Select A Question To Go To It</h3>
+            <h3 className="text-lg font-semibold uppercase tracking-wider">Navigator - Select A Question To Go To It</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-neutral-300 transition-colors"
+            className="text-neutral-900/70 hover:text-neutral-900 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -141,7 +141,7 @@ export function NavigatorPopup({
                     }}
                     className={cn(
                       "cursor-pointer transition-colors",
-                      isCurrent ? "bg-primary/20 hover:bg-primary/30" : "hover:bg-white/5"
+                      isCurrent ? "bg-accent/25 hover:bg-accent/35" : "hover:bg-white/5"
                     )}
                   >
                     <td className="py-3 px-4 text-sm text-neutral-200">
@@ -155,7 +155,7 @@ export function NavigatorPopup({
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-center">
                         {isFlagged && (
-                          <svg className="h-7 w-7 text-primary" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <svg className="h-7 w-7 text-accent" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 21V3h12l-4 6 4 6H5z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v18" />
                           </svg>

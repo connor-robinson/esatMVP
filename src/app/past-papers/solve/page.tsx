@@ -30,13 +30,13 @@ import type { Letter, PaperType } from '@/types/papers';
 import { cn } from '@/lib/utils';
 import { shouldRenderPastPaperAsText } from '@/lib/papers/pastPaperTextMode';
 import { PastPaperTextQuestion } from '@/components/papers/PastPaperTextQuestion';
+import {
+  solveSessionChoiceBtn,
+  solveSessionChoiceBtnSelected,
+  solveSessionNavBtn,
+} from '@/lib/papers/solveSessionStyles';
 
 const LETTERS: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-
-const solvePrimaryNavBtn =
-  'flex items-center gap-2 rounded-organic-md bg-primary px-6 py-3 font-medium text-background transition-all duration-fast ease-signature hover:bg-primary-hover hover:shadow-glow active:scale-95 disabled:pointer-events-none disabled:opacity-30';
-const solveSecondaryNavBtn =
-  'flex items-center gap-2 rounded-organic-md border border-border bg-surface-mid px-6 py-3 font-medium text-text transition-all duration-fast ease-signature hover:bg-surface-neutral active:scale-95 disabled:pointer-events-none disabled:opacity-30';
 
 export default function PapersSolvePage() {
   const router = useRouter();
@@ -1171,10 +1171,7 @@ export default function PapersSolvePage() {
                     type="button"
                     onClick={() => handleChoiceSelect(letter)}
                     className={cn(
-                      'flex h-[50px] flex-1 items-center justify-center rounded-organic-md text-base font-medium transition-all duration-300 ease-out',
-                      selected
-                        ? 'bg-primary text-background shadow-glow'
-                        : 'bg-surface-mid text-text hover:bg-surface-neutral',
+                      selected ? solveSessionChoiceBtnSelected : solveSessionChoiceBtn,
                     )}
                   >
                     {letter}
@@ -1192,7 +1189,7 @@ export default function PapersSolvePage() {
                 <button
                   type="button"
                   onClick={handleSubmitSection}
-                  className={solvePrimaryNavBtn}
+                  className={solveSessionNavBtn}
                   title='Submit section'
                 >
                   <svg
@@ -1219,7 +1216,7 @@ export default function PapersSolvePage() {
                   type="button"
                   onClick={() => handleNavigation(-1)}
                   disabled={sectionQuestionIndex === 0}
-                  className={solveSecondaryNavBtn}
+                  className={solveSessionNavBtn}
                   title='Previous question'
                 >
                   <svg
@@ -1242,7 +1239,7 @@ export default function PapersSolvePage() {
                 <button
                   type="button"
                   onClick={() => setShowNavigator(true)}
-                  className={solvePrimaryNavBtn}
+                  className={solveSessionNavBtn}
                   title='Open navigator'
                 >
                   <svg
@@ -1271,7 +1268,7 @@ export default function PapersSolvePage() {
                         currentSectionQuestions.length - 1
                       : sectionQuestionIndex >= actualQuestionCount - 1
                   }
-                  className={solvePrimaryNavBtn}
+                  className={solveSessionNavBtn}
                   title='Next question'
                 >
                   <span>Next</span>

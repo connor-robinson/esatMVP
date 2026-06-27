@@ -365,12 +365,12 @@ export function SessionProgressBar({
         <div className='relative min-w-0 flex-1 overflow-visible'>
           <div className='relative h-6 w-full overflow-visible'>
             <div className='absolute inset-x-0 top-3 h-0'>
-              <div className='pointer-events-none absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-border-subtle' />
+              <div className='pointer-events-none absolute -top-0.5 left-0 right-0 h-[5px] overflow-hidden rounded-full bg-accent/20' />
 
               {progressSegments.map((segment, index) => (
                 <div
                   key={`segment-${index}`}
-                  className='pointer-events-none absolute rounded-full bg-maths transition-all duration-500 ease-out'
+                  className='pointer-events-none absolute rounded-full bg-accent transition-all duration-500 ease-out'
                   style={{
                     left: `${segment.start}%`,
                     width: `${segment.end - segment.start}%`,
@@ -406,10 +406,10 @@ export function SessionProgressBar({
                         className={cn(
                           'h-3 w-3 rounded-full border-2 transition-all',
                           isCompleted
-                            ? 'border-maths bg-maths'
+                            ? 'border-accent bg-accent'
                             : isCurrent && !isOnInstructionPage
-                              ? 'border-maths bg-maths'
-                              : 'border-border bg-transparent',
+                              ? 'border-accent bg-accent'
+                              : 'border-accent/35 bg-accent/20',
                         )}
                       />
                     </span>
@@ -453,8 +453,8 @@ export function SessionProgressBar({
                         }
                         return false;
                       })()
-                        ? 'border-maths bg-maths'
-                        : 'border-border bg-transparent',
+                        ? 'border-accent bg-accent'
+                        : 'border-accent/35 bg-accent/20',
                     )}
                   />
                 </span>
@@ -483,8 +483,8 @@ export function SessionProgressBar({
           <div className='relative'>
             {showSaveHint && (
               <>
-                <span className='pointer-events-none absolute -inset-1 animate-ping rounded-lg bg-maths/20' />
-                <span className='pointer-events-none absolute -inset-0.5 animate-pulse rounded-lg ring-2 ring-maths/40' />
+                <span className='pointer-events-none absolute -inset-1 animate-ping rounded-lg bg-accent/20' />
+                <span className='pointer-events-none absolute -inset-0.5 animate-pulse rounded-lg ring-2 ring-accent/40' />
               </>
             )}
             <button
@@ -493,8 +493,8 @@ export function SessionProgressBar({
               disabled={isSaving}
               className={cn(
                 iconBtnClass,
-                'relative z-10 text-maths hover:bg-maths/10 hover:text-maths',
-                showSaveHint && 'animate-pulse-soft bg-maths/10 text-maths',
+                'relative z-10 text-accent hover:bg-accent/15 hover:text-accent',
+                showSaveHint && 'animate-pulse-soft bg-accent/15 text-accent',
                 isSaving && 'cursor-not-allowed opacity-60',
               )}
               title={isSaving ? 'Saving…' : 'Save & leave'}

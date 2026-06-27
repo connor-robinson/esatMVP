@@ -6,6 +6,7 @@ import {
   getPastPaperOptionLetters,
   shouldRenderPastPaperAsText,
 } from "@/lib/papers/pastPaperTextMode";
+import { solveSessionLightBlue } from "@/lib/papers/solveSessionStyles";
 import type { Letter, Question } from "@/types/papers";
 
 interface PastPaperTextQuestionProps {
@@ -68,10 +69,10 @@ export function PastPaperTextQuestion({
                   "w-full rounded-organic-md px-3.5 py-2.5 text-left transition-all duration-fast",
                   interactive && "cursor-pointer",
                   selected
-                    ? "bg-primary text-background"
+                    ? cn(solveSessionLightBlue, "font-semibold ring-2 ring-maths/50")
                     : interactive
-                      ? "bg-surface-mid text-text hover:bg-surface-neutral"
-                      : "bg-surface-mid text-text",
+                      ? solveSessionLightBlue
+                      : solveSessionLightBlue,
                 )}
               >
                 <div className="flex items-start gap-3">
