@@ -247,12 +247,17 @@ export function QuestionBankHomeScreen() {
                     }}
                   />
                 </div>
-                <div className="mt-2.5 grid grid-cols-3 items-center text-xs text-text-muted">
-                  <span>0%</span>
-                  <span className="text-center tabular-nums font-medium text-text">
-                    {aggregatePct}%
-                  </span>
-                  <span className="text-right">100%</span>
+                <div className="relative mt-2.5 h-4 text-xs text-text-muted">
+                  <span className="absolute left-0">0%</span>
+                  {aggregatePct > 0 && aggregatePct < 100 && (
+                    <span
+                      className="absolute -translate-x-1/2 tabular-nums font-medium text-text"
+                      style={{ left: `${aggregatePct}%` }}
+                    >
+                      {aggregatePct}%
+                    </span>
+                  )}
+                  <span className="absolute right-0">100%</span>
                 </div>
               </>
             )}
