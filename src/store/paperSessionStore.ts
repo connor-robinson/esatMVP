@@ -27,6 +27,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { mapPartToSection, deriveTmuaSectionFromQuestion, isTmuaSection } from '@/lib/papers/sectionMapping';
 import { questionMatchesPartId } from '@/lib/papers/paperLibrarySections';
+import { isBogusPartLetter } from '@/lib/papers/markQuestionUtils';
 import { cropImageToContent } from '@/lib/utils/imageCrop';
 import type { Answer, Letter, MistakeTag, Paper, PaperSection, Question, ExamName, ExamType } from '@/types/papers';
 import { saveSession, loadSession, deleteSession } from '@/lib/storage/sessionStorage';
@@ -631,8 +632,7 @@ export const usePaperSessionStore = create<PaperSessionState>()(
                 
                 // Check for any "SECTION" that might have slipped through
                 const sectionQuestions = filteredQuestions.filter(q => {
-                  const partUpper = (q.partLetter || '').toString().trim().toUpperCase();
-                  return partUpper === 'SECTION' || partUpper.startsWith('SECTION ');
+                  return isBogusPartLetter(q.partLetter) && (q.partLetter ?? '').trim().toUpperCase() === 'SECTION';
                 });
                 if (sectionQuestions.length > 0) {
                   console.error(`[loadQuestions] ⚠️⚠️⚠️ CRITICAL: Found ${sectionQuestions.length} questions with "SECTION" after filtering!`, 
@@ -647,10 +647,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               } else {
                 // For other papers, still filter out "SECTION" parts as they're invalid
                 const beforeCount = filteredQuestions.length;
-                filteredQuestions = filteredQuestions.filter(q => {
-                  const partLetter = (q.partLetter || '').toString().trim().toUpperCase();
-                  const isSection = partLetter === 'SECTION' || partLetter.startsWith('SECTION ');
-                  return !isSection;
+                filteredQuestions = filteredQuestions.filter((q) => {
+                  const letter = (q.partLetter ?? "").trim().toUpperCase();
+                  return letter !== "SECTION";
                 });
               }
               
@@ -903,9 +902,17 @@ export const usePaperSessionStore = create<PaperSessionState>()(
               let actualQuestionEnd = actualQuestionCount;
               
               if (processedQuestions.length > 0) {
-                const questionNumbers = processedQuestions.map(q => q.questionNumber).sort((a, b) => a - b);
-                actualQuestionStart = questionNumbers[0];
-                actualQuestionEnd = questionNumbers[questionNumbers.length - 1];
+                const validNumbers = processedQuestions
+                  .map((q) => q.questionNumber)
+                  .filter((n) => typeof n === "number" && Number.isFinite(n) && n >= 1)
+                  .sort((a, b) => a - b);
+                if (validNumbers.length > 0) {
+                  actualQuestionStart = validNumbers[0];
+                  actualQuestionEnd = validNumbers[validNumbers.length - 1];
+                } else {
+                  actualQuestionStart = 1;
+                  actualQuestionEnd = actualQuestionCount;
+                }
               }
               
               // Always update questionRange to match actual loaded questions
@@ -1715,6 +1722,9 @@ export const usePaperSessionStore = create<PaperSessionState>()(
       // Computed getters
       getTotalQuestions: () => {
         const state = get();
+        if (state.questions.length > 0) {
+          return state.questions.length;
+        }
         if (!state.questionRange || state.questionRange.end < state.questionRange.start || state.questionRange.start < 1) {
           return 0;
         }

@@ -251,7 +251,7 @@ export function computePredictedScore(
 
   for (const [section, data] of entries) {
     const sectionUpper = section.toUpperCase();
-    if (sectionUpper === "SECTION" || sectionUpper.startsWith("SECTION ")) continue;
+    if (sectionUpper === "SECTION") continue;
 
     const { scaled } = computeScaledScore(
       examName,

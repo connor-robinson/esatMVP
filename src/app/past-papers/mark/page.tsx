@@ -35,6 +35,11 @@ import {
   resolveTmuaPercentileTableKey,
 } from "@/lib/papers/markScoring";
 import { mapPartToSection, mapTmuaPaperNameToSection } from "@/lib/papers/sectionMapping";
+import {
+  formatMarkPartDisplay,
+  getSessionQuestionNumber,
+  resolveMarkPartKey,
+} from "@/lib/papers/markQuestionUtils";
 import { MISTAKE_OPTIONS } from "@/types/papers";
 import { getConversionTable, getConversionRows, findFallbackConversionTable } from "@/lib/supabase/questions";
 import { supabase } from "@/lib/supabase/client";
@@ -121,12 +126,25 @@ export default function PapersMarkPage() {
   const [statsLoading, setStatsLoading] = useState(false);
   
   // Compute values needed for hooks (with safe defaults if no session)
-  const totalQuestions = sessionId ? getTotalQuestions() : 0;
+  const totalQuestions = sessionId
+    ? questions.length > 0
+      ? questions.length
+      : getTotalQuestions()
+    : 0;
   const correctCount = sessionId ? getCorrectCount() : 0;
-  const maxQuestionNumber = sessionId && totalQuestions > 0 ? (questionRange.start + totalQuestions - 1) : 0;
+  const maxQuestionNumber = sessionId && totalQuestions > 0
+    ? Math.max(
+        ...questions.map((q, i) => getSessionQuestionNumber(questions, i, questionRange)),
+      )
+    : 0;
   const maxDigits = Math.max(1, String(maxQuestionNumber).length);
   const QUESTION_LABEL_WIDTH_PX = maxDigits >= 3 ? 36 : 28;
-  const questionNumbers = sessionId && totalQuestions > 0 ? Array.from({ length: totalQuestions }, (_, i) => questionRange.start + i) : [];
+  const questionNumbers = useMemo(() => {
+    if (!sessionId || questions.length === 0) return [];
+    return questions.map((_, i) =>
+      getSessionQuestionNumber(questions, i, questionRange),
+    );
+  }, [sessionId, questions, questionRange]);
   
   // All hooks must be called before any early returns
   useEffect(() => {
@@ -300,15 +318,15 @@ export default function PapersMarkPage() {
     if (!qs || qs.length === 0) return bySection;
     for (let i = 0; i < qs.length; i++) {
       let part = (qs[i]?.partLetter || "").trim();
-      const partUpper = part.toUpperCase();
       
-      // Filter out "SECTION" parts
-      if (partUpper === 'SECTION' || partUpper.startsWith('SECTION ')) {
-        console.warn(`[mark:sectionBreakdown] Skipping question ${qs[i]?.questionNumber} with invalid partLetter="${part}"`);
+      if (part.toUpperCase() === "SECTION") {
         continue;
       }
       
-      const key = part || "Section";
+      const key = resolveMarkPartKey(
+        { partLetter: qs[i]?.partLetter, partName: qs[i]?.partName },
+        paperName as ExamName,
+      );
       if (!bySection[key]) bySection[key] = { correct: 0, total: 0 };
       if (correctFlags[i] === true) bySection[key].correct += 1;
       bySection[key].total += 1;
@@ -340,64 +358,21 @@ export default function PapersMarkPage() {
       indexes: number[];
     }> = [];
     const map: Record<string, number> = {};
-    
-    // Helper to derive partLetter from partName when missing
-    const derivePartLetter = (partLetter: string, partName: string, paperType: string): string => {
-      const trimmedLetter = (partLetter || '').trim();
-      if (trimmedLetter && trimmedLetter !== '—') {
-        return trimmedLetter;
-      }
-      
-      // If partLetter is missing, try to derive it from partName
-      const trimmedName = (partName || '').trim().toLowerCase();
-      if (!trimmedName) return '—';
-      
-      // NSAA mappings: derive partLetter from partName
-      // IMPORTANT: Check for "Advanced" first to avoid misclassifying Advanced Mathematics as Part A
-      if (paperType === 'NSAA') {
-        if (trimmedName.includes('advanced mathematics') && trimmedName.includes('advanced physics')) {
-          return 'Part E';
-        }
-        // Check for "advanced" before regular subjects to avoid false matches
-        if (trimmedName.includes('advanced')) {
-          // If it has "advanced" but didn't match the full pattern above, still likely Part E
-          return 'Part E';
-        }
-        if (trimmedName === 'mathematics' || (trimmedName.includes('mathematics') && !trimmedName.includes('advanced'))) {
-          return 'Part A';
-        }
-        if (trimmedName === 'physics' || (trimmedName.includes('physics') && !trimmedName.includes('advanced'))) {
-          return 'Part B';
-        }
-        if (trimmedName === 'chemistry' || trimmedName.includes('chemistry')) {
-          return 'Part C';
-        }
-        if (trimmedName === 'biology' || trimmedName.includes('biology')) {
-          return 'Part D';
-        }
-      }
-      
-      // ENGAA mappings
-      if (paperType === 'ENGAA') {
-        if (trimmedName.includes('advanced mathematics') && trimmedName.includes('advanced physics')) {
-          return 'Part B';
-        }
-        if (trimmedName.includes('mathematics') && trimmedName.includes('physics')) {
-          return 'Part A';
-        }
-      }
-      
-      return '—';
-    };
-    
+
     if (!qs || qs.length === 0) return groups;
     for (let i = 0; i < qs.length; i++) {
-      const rawPartLetter = qs[i]?.partLetter || '';
-      const partName = qs[i]?.partName || '';
-      const pl = derivePartLetter(rawPartLetter, partName, paperName as string);
-      
+      if ((qs[i]?.partLetter ?? "").trim().toUpperCase() === "SECTION") continue;
+
+      const pl = resolveMarkPartKey(
+        { partLetter: qs[i]?.partLetter, partName: qs[i]?.partName },
+        paperName as ExamName,
+      );
+
       if (map[pl] === undefined) {
-        const section = mapPartToSection({ partLetter: pl, partName }, paperName as any);
+        const section = mapPartToSection(
+          { partLetter: qs[i]?.partLetter, partName: qs[i]?.partName },
+          paperName as ExamName,
+        );
         const headerClass = getMarkSessionPartHeaderClass(section);
         map[pl] = groups.length;
         groups.push({ partLetter: pl, sectionName: section, headerClass, indexes: [i] });
@@ -406,7 +381,7 @@ export default function PapersMarkPage() {
       }
     }
     return groups;
-  }, [paperName, questionNumbers]);
+  }, [paperName, questions.length]);
 
   // Derived meta for header pills
   const sessionYear = useMemo(() => {
@@ -439,15 +414,12 @@ export default function PapersMarkPage() {
     if (!qs || qs.length === 0) return bySection;
     for (let i = 0; i < qs.length; i++) {
       let part = (qs[i]?.partLetter || "").trim();
-      const partUpper = part.toUpperCase();
-      
-      // Filter out "SECTION" parts
-      if (partUpper === 'SECTION' || partUpper.startsWith('SECTION ')) {
-        console.warn(`[mark:sectionBreakdownDerived] Skipping question ${qs[i]?.questionNumber} with invalid partLetter="${part}"`);
-        continue;
-      }
-      
-      const key = part || "Section";
+      if (part.toUpperCase() === "SECTION") continue;
+
+      const key = resolveMarkPartKey(
+        { partLetter: qs[i]?.partLetter, partName: qs[i]?.partName },
+        paperName as ExamName,
+      );
       if (!bySection[key]) bySection[key] = { correct: 0, total: 0 };
       if (derivedCorrectFlags[i] === true) bySection[key].correct += 1;
       bySection[key].total += 1;
@@ -658,116 +630,37 @@ export default function PapersMarkPage() {
         continue;
       }
       
-      // If partLetter is empty, try to derive it from partName
-      if (!part || part === '—' || part === '') {
-        if (partName) {
-          const partNameLower = partName.toLowerCase();
-          if (isNSAA2019) {
-            if (partNameLower.includes('advanced mathematics') && partNameLower.includes('advanced physics')) {
-              part = 'Part E';
-            } else if (partNameLower.includes('mathematics') && !partNameLower.includes('advanced')) {
-              part = 'Part A';
-            } else if (partNameLower.includes('physics') && !partNameLower.includes('advanced')) {
-              part = 'Part B';
-            } else if (partNameLower.includes('chemistry')) {
-              // Part C - should be filtered out for NSAA 2019
-              console.warn(`[mark:sectionAnalytics] Question ${question.questionNumber} has empty partLetter but partName="Chemistry" - should be filtered`, {
-                questionNumber: question.questionNumber,
-                partName: partName
-              });
-              invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: part || 'empty', partName: partName });
-              continue;
-            } else if (partNameLower.includes('biology')) {
-              // Part D - should be filtered out for NSAA 2019
-              console.warn(`[mark:sectionAnalytics] Question ${question.questionNumber} has empty partLetter but partName="Biology" - should be filtered`, {
-                questionNumber: question.questionNumber,
-                partName: partName
-              });
-              invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: part || 'empty', partName: partName });
-              continue;
-            }
-          }
-        }
-        
-        // If still empty after derivation attempt, log it
-        if (!part || part === '—' || part === '') {
-          console.warn(`[mark:sectionAnalytics] Question ${question.questionNumber} has empty partLetter and couldn't derive from partName="${partName}"`, {
-            questionNumber: question.questionNumber,
-            partName: partName
-          });
-          // For NSAA 2019, skip questions we can't categorize
-          if (isNSAA2019) {
-            invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: 'empty', partName: partName });
-            continue;
-          }
-        }
-      }
-      
-      const partUpper = part.toUpperCase();
-      
-      // CRITICAL: Filter out "SECTION" parts - they're invalid
-      if (partUpper === 'SECTION' || partUpper.startsWith('SECTION ')) {
-        console.error(`[mark:sectionAnalytics] ⚠️ INVALID PART DETECTED: Question ${question.questionNumber} has partLetter="${part}"`, {
+      if (part.toUpperCase() === "SECTION") {
+        invalidParts.push({
+          index: i,
           questionNumber: question.questionNumber,
           partLetter: part,
-          partName: partName,
-          examName: question.examName,
-          examYear: question.examYear,
-          examType: question.examType
+          partName,
         });
-        invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: part, partName: partName });
-        // Skip this question - don't add it to analytics
         continue;
       }
-      
-      // For NSAA 2019, only allow Part A, B, E
+
+      const key = resolveMarkPartKey(question, paperName as ExamName);
+
       if (isNSAA2019) {
-        const validParts = ['PART A', 'PART B', 'PART E', 'A', 'B', 'E'];
-        const isValid = validParts.some(valid => {
-          if (partUpper === valid) return true;
-          if (partUpper === `PART ${valid}`) return true;
-          if (partUpper.includes(valid) && !partUpper.includes('SECTION')) {
-            // Make sure it's not Part C or D
-            if (valid === 'A' && (partUpper.includes('PART C') || partUpper.includes('PART D'))) return false;
-            if (valid === 'B' && (partUpper.includes('PART C') || partUpper.includes('PART D'))) return false;
-            return true;
-          }
-          return false;
-        });
-        
-        // Also check partName for Part E
-        const isPartE = partName.toLowerCase().includes('advanced mathematics') && 
-                       partName.toLowerCase().includes('advanced physics');
-        
-        if (!isValid && !isPartE) {
-          console.error(`[mark:sectionAnalytics] ⚠️ NSAA 2019 INVALID PART: Question ${question.questionNumber} has partLetter="${part}", partName="${partName}"`, {
+        const partNameLower = partName.toLowerCase();
+        const allowed =
+          key === "Part A" ||
+          key === "Part B" ||
+          key === "Part E" ||
+          (partNameLower.includes("advanced mathematics") &&
+            partNameLower.includes("advanced physics"));
+        if (!allowed) {
+          invalidParts.push({
+            index: i,
             questionNumber: question.questionNumber,
-            partLetter: part,
-            partName: partName
+            partLetter: part || "empty",
+            partName,
           });
-          invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: part, partName: partName });
-          continue; // Skip this question
+          continue;
         }
       }
-      
-      // Use partLetter as key (should already be set from derivation above)
-      let key = part;
-      
-      // If key is still empty after derivation, log and skip for NSAA 2019
-      if (!key || key === '—' || key === '') {
-        if (isNSAA2019) {
-          console.error(`[mark:sectionAnalytics] ⚠️ Cannot determine part for question ${question.questionNumber} - skipping`, {
-            questionNumber: question.questionNumber,
-            partName: partName,
-            originalPartLetter: question.partLetter
-          });
-          invalidParts.push({ index: i, questionNumber: question.questionNumber, partLetter: 'empty', partName: partName });
-          continue; // Skip this question for NSAA 2019
-        }
-        // For other papers, use "Section" as fallback
-        key = "Section";
-      }
-      
+
       if (!analytics[key]) {
         analytics[key] = { correct: 0, total: 0, avgTime: 0, totalTime: 0, guessed: 0 };
       }
@@ -792,10 +685,9 @@ export default function PapersMarkPage() {
   }, [questions, totalQuestions, correctFlags, derivedCorrectFlags, guessedFlags, perQuestionSec]);
 
   const validSectionEntries = useMemo(() => {
-    return Object.entries(sectionAnalytics).filter(([section]) => {
-      const sectionUpper = section.toUpperCase();
-      return sectionUpper !== "SECTION" && !sectionUpper.startsWith("SECTION ");
-    });
+    return Object.entries(sectionAnalytics).filter(
+      ([section]) => section.toUpperCase() !== "SECTION",
+    );
   }, [sectionAnalytics]);
 
   // Accuracy patterns
@@ -1010,7 +902,7 @@ export default function PapersMarkPage() {
         for (const [section, data] of entries) {
           // CRITICAL: Skip "SECTION" entries - they're invalid
           const sectionUpper = section.toUpperCase();
-          if (sectionUpper === 'SECTION' || sectionUpper.startsWith('SECTION ')) {
+          if (sectionUpper === "SECTION") {
             console.error(`[mark:percentiles] ⚠️ Skipping invalid "SECTION" entry in percentile calculation:`, { section, data });
             continue;
           }
@@ -1980,7 +1872,7 @@ export default function PapersMarkPage() {
                   // Compute group score
                   const gCorrect = group.indexes.reduce((a, i) => a + (derivedCorrectFlags[i] === true ? 1 : 0), 0);
                   const gTotal = group.indexes.length;
-                  const partDisplay = /^part/i.test(group.partLetter) ? group.partLetter : `Part ${group.partLetter}`;
+                  const partDisplay = formatMarkPartDisplay(group.partLetter);
                   return (
                     <div key={gi} className="rounded-md">
                       <details className="group" open>
@@ -2013,10 +1905,14 @@ export default function PapersMarkPage() {
               const guessed = guessedFlags[index];
               const timeSpent = perQuestionSec[index] || 0;
                           const q = usePaperSessionStore.getState().questions[index];
-                          const partLetterRaw = (q?.partLetter || "").trim();
-                          const partNameFull = (q?.partName || "").trim();
-                          const sectionName = mapPartToSection({ partLetter: partLetterRaw, partName: partNameFull }, (paperName as any));
-                          const partLetter = (partLetterRaw.replace(/^part\s*/i, '').trim() || partLetterRaw || '—').replace(/^Part\s*/,'');
+                          const partKey = resolveMarkPartKey(
+                            { partLetter: q?.partLetter, partName: q?.partName },
+                            paperName as ExamName,
+                          );
+                          const sectionName = mapPartToSection(
+                            { partLetter: q?.partLetter, partName: q?.partName },
+                            paperName as ExamName,
+                          );
               return (
                             <button
                               key={qNumber}
@@ -2042,7 +1938,7 @@ export default function PapersMarkPage() {
                                       getSectionSubjectPillClass(sectionName),
                                     )}
                                   >
-                                    {partLetter ? `Part ${partLetter}` : '—'}
+                                    {formatMarkPartDisplay(partKey)}
                     </div>
                                   {guessed && (
                                     <div
