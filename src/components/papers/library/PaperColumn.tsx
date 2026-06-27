@@ -277,17 +277,16 @@ export function PaperColumn({
           />
         </button>
 
-        <div className="flex min-w-0 flex-1 items-center">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <span className="truncate text-sm font-semibold text-text">
             {paper.examName} {paper.examYear}
           </span>
+          {paper.examType && (
+            <span className="inline-flex h-7 shrink-0 items-center rounded-[6px] bg-surface-neutral px-2.5 text-[10px] uppercase tracking-wide text-text-muted">
+              {paper.examType}
+            </span>
+          )}
         </div>
-
-        {paper.examType && (
-          <span className="inline-flex h-8 shrink-0 items-center rounded-[6px] bg-surface-neutral px-3 text-[10px] uppercase tracking-wide text-text-muted">
-            {paper.examType}
-          </span>
-        )}
 
         <div className="flex w-[4.75rem] shrink-0 items-center justify-end gap-1.5">
           {paperCompletionStatus !== "none" ? (
